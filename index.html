@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F.R.Ai.D.A.Y // System Interface</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="vignette"></div>
+<div class="noise"></div>
+
+<div class="boot-screen" id="bootScreen">
+  <div class="boot-log" id="bootLog"></div>
+</div>
+
+<div class="hud" id="hud">
+
+  <!-- ===== TOP BAR ===== -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <span class="brand-name">F.R.<span class="accent">A</span>I.D.A.Y</span>
+      <span class="brand-sub">FEMTOSCALE RECURSIVE ARTIFICIAL INTELLIGENCE&nbsp;·&nbsp;DAILY ASSISTANT</span>
+    </div>
+    <div class="status-pill" id="statusPill">
+      <span class="dot"></span> ALLE SYSTEME ONLINE
+    </div>
+    <div class="clock-block">
+      <div class="clock" id="clock">00:00:00</div>
+      <div class="date" id="dateline">--- -- ----</div>
+    </div>
+  </header>
+
+  <!-- ===== KOMMANDOZENTRALE / WELTLAGE-GLOBUS ===== -->
+  <div class="grid grid-globe">
+    <section class="panel globe-panel">
+      <div class="panel-head">
+        <span>WELTLAGE-GLOBUS</span>
+        <span class="tag" id="globeTag">BEREIT</span>
+      </div>
+
+      <div class="globe-layout">
+        <div class="globe-stage">
+          <canvas id="globeCanvas"></canvas>
+        </div>
+
+        <div class="globe-news">
+          <form class="globe-command" id="globeCommandForm">
+            <span class="prompt">&gt;</span>
+            <input type="text" id="globeCommandInput" autocomplete="off"
+                   placeholder='Land nennen, z.B. &quot;USA&quot; oder &quot;zeig mir Deutschland&quot;'>
+            <button type="button" id="micButton" title="Dauerzuhören aktivieren">🎤</button>
+          </form>
+          <div class="globe-status" id="globeStatus">Sag oder tippe einen Landnamen, um die Weltlage abzufragen.</div>
+          <div class="wake-status" id="wakeStatus">
+            <span class="wake-dot"></span>
+            <span id="wakeStatusText">Dauerzuhören aus — Mikrofon aktivieren, dann reagiert F.R.Ai.D.A.Y nur auf „Friday …“.</span>
+          </div>
+
+          <div class="news-card" id="newsCard" hidden>
+            <div class="news-head">
+              <span class="news-country" id="newsCountry"></span>
+              <span class="news-source" id="newsSource"></span>
+            </div>
+            <div class="news-weather" id="newsWeather" hidden>
+              <span class="weather-temp" id="weatherTemp"></span>
+              <span class="weather-condition" id="weatherCondition"></span>
+              <span class="weather-wind" id="weatherWind"></span>
+            </div>
+            <h3 class="news-title" id="newsTitle"></h3>
+            <div class="news-title-orig" id="newsTitleOrig" hidden></div>
+            <div class="news-media" id="newsMedia"></div>
+            <div class="news-foot">
+              <a class="news-link" id="newsLink" href="#" target="_blank" rel="noopener">QUELLE ANSEHEN ↗</a>
+              <button type="button" class="news-speak" id="newsSpeakBtn">🔊 VORLESEN</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="grid">
+
+    <!-- ===== LEFT COLUMN ===== -->
+    <section class="col col-left">
+
+      <div class="panel">
+        <div class="panel-head"><span>SYSTEMDIAGNOSE</span><span class="tag">LIVE</span></div>
+        <div class="meter-row">
+          <div class="meter-label">CPU LAST</div>
+          <div class="meter"><div class="meter-fill" id="m-cpu"></div></div>
+          <div class="meter-val" id="v-cpu">--%</div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-label">SPEICHER</div>
+          <div class="meter"><div class="meter-fill" id="m-mem"></div></div>
+          <div class="meter-val" id="v-mem">--%</div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-label">NETZWERK</div>
+          <div class="meter"><div class="meter-fill" id="m-net"></div></div>
+          <div class="meter-val" id="v-net">--%</div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-label">THERMISCH</div>
+          <div class="meter"><div class="meter-fill" id="m-therm"></div></div>
+          <div class="meter-val" id="v-therm">--%</div>
+        </div>
+      </div>
+
+      <div class="panel brain-icon-panel">
+        <div class="panel-head"><span>GEHIRN</span><span class="tag" id="brainIconTag">--</span></div>
+
+        <button type="button" class="brain-icon-toggle" id="brainIconToggle" aria-expanded="false">
+          <svg viewBox="0 0 220 180" class="brain-icon-svg">
+            <ellipse class="brain-icon-ground" cx="120" cy="150" rx="46" ry="7"/>
+            <g class="brain-icon-glow">
+              <path d="M131.6,86.0 L131.9,87.4 L132.1,88.9 L132.2,90.4 L132.3,91.9 L132.2,93.4 L132.1,94.8 L131.8,96.3 L131.4,97.7 L130.8,99.1 L130.2,100.5 L129.5,101.7 L128.6,102.9 L127.7,104.0 L126.7,105.0 L125.7,106.0 L124.7,106.9 L123.6,107.7 L122.5,108.5 L121.4,109.3 L120.4,110.0 L119.3,110.8 L118.3,111.5 L117.2,112.3 L116.2,113.0 L115.1,113.8 L114.1,114.5 L113.0,115.3 L111.9,116.1 L110.7,116.8 L109.5,117.4 L108.3,118.0 L107.0,118.5 L105.7,118.9 L104.4,119.2 L103.0,119.4 L101.6,119.4 L100.3,119.3 L98.9,119.0 L97.6,118.6 L96.4,118.1 L95.1,117.5 L93.9,116.8 L92.8,116.0 L91.7,115.2 L90.6,114.3 L89.6,113.4 L88.6,112.5 L87.7,111.7 L86.7,110.8 L85.7,109.9 L84.8,109.0 L83.8,108.2 L82.8,107.3 L81.8,106.4 L80.8,105.5 L79.8,104.6 L78.9,103.6 L77.9,102.5 L77.0,101.4 L76.2,100.2 L75.4,99.0 L74.8,97.7 L74.2,96.3 L73.8,94.9 L73.5,93.4 L73.3,92.0 L73.2,90.5 L73.3,89.0 L73.4,87.5 L73.6,86.0 L74.0,84.6 L74.3,83.2 L74.8,81.8 L75.2,80.4 L75.7,79.1 L76.1,77.8 L76.6,76.5 L77.1,75.3 L77.5,74.0 L78.0,72.7 L78.4,71.4 L78.8,70.1 L79.3,68.8 L79.8,67.4 L80.4,66.1 L81.0,64.8 L81.7,63.5 L82.4,62.3 L83.3,61.1 L84.2,60.0 L85.2,59.0 L86.3,58.1 L87.5,57.3 L88.7,56.7 L90.0,56.1 L91.3,55.7 L92.6,55.4 L93.9,55.2 L95.3,55.1 L96.6,55.0 L97.9,55.1 L99.2,55.1 L100.5,55.2 L101.8,55.3 L103.0,55.4 L104.2,55.5 L105.5,55.5 L106.7,55.6 L108.0,55.7 L109.3,55.7 L110.5,55.8 L111.9,55.9 L113.2,56.1 L114.5,56.3 L115.8,56.7 L117.1,57.1 L118.4,57.6 L119.6,58.2 L120.8,59.0 L121.9,59.9 L122.9,60.8 L123.9,61.9 L124.7,63.1 L125.5,64.3 L126.2,65.6 L126.7,67.0 L127.3,68.3 L127.7,69.7 L128.1,71.1 L128.4,72.5 L128.8,73.8 L129.1,75.2 L129.4,76.5 L129.7,77.9 L130.0,79.2 L130.3,80.5 L130.7,81.9 L131.0,83.2 L131.3,84.6 L131.6,86.0 Z"/>
+              <path d="M166.3,86.0 L166.0,87.4 L165.6,88.8 L165.2,90.2 L164.7,91.6 L164.3,92.9 L163.8,94.2 L163.4,95.5 L162.9,96.7 L162.5,98.0 L162.1,99.3 L161.6,100.6 L161.2,101.9 L160.7,103.3 L160.2,104.6 L159.7,105.9 L159.1,107.3 L158.4,108.5 L157.6,109.8 L156.7,110.9 L155.8,112.0 L154.8,113.0 L153.7,113.9 L152.5,114.7 L151.3,115.3 L150.0,115.9 L148.7,116.3 L147.4,116.6 L146.1,116.7 L144.7,116.9 L143.4,116.9 L142.1,116.9 L140.8,116.8 L139.5,116.8 L138.2,116.7 L137.0,116.6 L135.8,116.5 L134.5,116.5 L133.3,116.4 L132.0,116.4 L130.7,116.3 L129.4,116.2 L128.1,116.1 L126.8,115.9 L125.5,115.7 L124.2,115.4 L122.9,115.0 L121.6,114.4 L120.4,113.8 L119.2,113.0 L118.1,112.1 L117.1,111.2 L116.1,110.1 L115.3,108.9 L114.5,107.7 L113.9,106.3 L113.3,105.0 L112.8,103.6 L112.3,102.3 L112.0,100.9 L111.6,99.5 L111.3,98.1 L110.9,96.8 L110.6,95.5 L110.3,94.1 L110.0,92.8 L109.6,91.5 L109.3,90.1 L108.9,88.8 L108.6,87.4 L108.3,86.0 L108.0,84.6 L107.8,83.1 L107.7,81.6 L107.7,80.1 L107.7,78.6 L107.9,77.1 L108.2,75.7 L108.6,74.3 L109.2,72.9 L109.8,71.6 L110.6,70.3 L111.4,69.1 L112.3,68.0 L113.3,67.0 L114.3,66.0 L115.4,65.1 L116.4,64.3 L117.5,63.5 L118.6,62.7 L119.6,62.0 L120.7,61.2 L121.7,60.5 L122.8,59.7 L123.8,59.0 L124.9,58.2 L125.9,57.4 L127.0,56.6 L128.1,55.9 L129.3,55.2 L130.5,54.5 L131.7,53.9 L133.0,53.4 L134.3,53.0 L135.6,52.7 L137.0,52.6 L138.4,52.6 L139.7,52.7 L141.1,53.0 L142.4,53.4 L143.6,53.9 L144.9,54.5 L146.1,55.3 L147.2,56.0 L148.3,56.9 L149.3,57.7 L150.4,58.6 L151.4,59.5 L152.3,60.4 L153.3,61.2 L154.3,62.1 L155.2,63.0 L156.2,63.8 L157.2,64.7 L158.2,65.5 L159.2,66.4 L160.2,67.4 L161.2,68.4 L162.1,69.4 L163.0,70.5 L163.9,71.7 L164.6,73.0 L165.2,74.3 L165.8,75.7 L166.2,77.1 L166.5,78.6 L166.7,80.1 L166.8,81.6 L166.7,83.1 L166.5,84.5 L166.3,86.0 Z"/>
+              <path d="M135.7,130.0 L135.7,130.7 L135.4,131.4 L135.0,132.1 L134.4,132.8 L133.8,133.3 L133.2,133.9 L132.6,134.5 L132.1,135.0 L131.6,135.6 L131.2,136.2 L130.7,136.9 L130.1,137.5 L129.5,138.1 L128.8,138.7 L127.9,139.1 L126.9,139.4 L125.8,139.6 L124.7,139.7 L123.6,139.7 L122.5,139.6 L121.5,139.6 L120.5,139.5 L119.5,139.5 L118.5,139.5 L117.5,139.6 L116.4,139.6 L115.3,139.6 L114.2,139.6 L113.1,139.4 L112.1,139.1 L111.2,138.7 L110.4,138.2 L109.8,137.6 L109.2,136.9 L108.8,136.3 L108.3,135.7 L107.9,135.0 L107.4,134.5 L106.9,133.9 L106.3,133.3 L105.7,132.7 L105.2,132.1 L104.7,131.4 L104.4,130.7 L104.3,130.0 L104.3,129.3 L104.6,128.6 L105.0,127.9 L105.6,127.2 L106.2,126.7 L106.8,126.1 L107.4,125.5 L107.9,125.0 L108.4,124.4 L108.8,123.8 L109.3,123.1 L109.9,122.5 L110.5,121.9 L111.2,121.3 L112.1,120.9 L113.1,120.6 L114.2,120.4 L115.3,120.3 L116.4,120.3 L117.5,120.4 L118.5,120.4 L119.5,120.5 L120.5,120.5 L121.5,120.5 L122.5,120.4 L123.6,120.4 L124.7,120.4 L125.8,120.4 L126.9,120.6 L127.9,120.9 L128.8,121.3 L129.6,121.8 L130.2,122.4 L130.8,123.1 L131.2,123.7 L131.7,124.3 L132.1,125.0 L132.6,125.5 L133.1,126.1 L133.7,126.7 L134.3,127.3 L134.8,127.9 L135.3,128.6 L135.6,129.3 L135.7,130.0 Z"/>
+            </g>
+            <g class="brain-icon-mesh">
+              <line class="brain-icon-edge" x1="143.2" y1="20.3" x2="145.1" y2="17.0"/>
+              <line class="brain-icon-edge" x1="113.7" y1="84.9" x2="123.3" y2="86.2"/>
+              <line class="brain-icon-edge" x1="89.1" y1="13.3" x2="82.7" y2="16.9"/>
+              <line class="brain-icon-edge" x1="127.3" y1="68.7" x2="126.1" y2="76.4"/>
+              <line class="brain-icon-edge" x1="90.5" y1="65.0" x2="83.9" y2="70.9"/>
+              <line class="brain-icon-edge" x1="105.6" y1="54.2" x2="109.1" y2="55.6"/>
+              <line class="brain-icon-edge" x1="200.5" y1="40.1" x2="200.4" y2="55.1"/>
+              <line class="brain-icon-edge" x1="91.3" y1="61.8" x2="95.1" y2="68.4"/>
+              <line class="brain-icon-edge" x1="110.5" y1="68.1" x2="106.6" y2="76.6"/>
+              <line class="brain-icon-edge" x1="82.8" y1="119.8" x2="90.1" y2="113.5"/>
+              <line class="brain-icon-edge" x1="209.8" y1="93.9" x2="213.6" y2="92.7"/>
+              <line class="brain-icon-edge" x1="131.7" y1="138.4" x2="133.0" y2="144.3"/>
+              <line class="brain-icon-edge" x1="193.6" y1="55.4" x2="192.4" y2="68.3"/>
+              <line class="brain-icon-edge" x1="95.2" y1="41.4" x2="113.7" y2="30.0"/>
+              <line class="brain-icon-edge" x1="145.5" y1="145.9" x2="149.3" y2="140.8"/>
+              <line class="brain-icon-edge" x1="76.8" y1="70.5" x2="83.9" y2="70.9"/>
+              <line class="brain-icon-edge" x1="143.1" y1="61.4" x2="138.6" y2="67.6"/>
+              <line class="brain-icon-edge" x1="164.9" y1="104.6" x2="155.1" y2="106.9"/>
+              <line class="brain-icon-edge" x1="132.5" y1="57.6" x2="135.0" y2="56.7"/>
+              <line class="brain-icon-edge" x1="111.4" y1="57.2" x2="109.1" y2="55.6"/>
+              <line class="brain-icon-edge" x1="110.3" y1="113.7" x2="103.8" y2="111.4"/>
+              <line class="brain-icon-edge" x1="88.1" y1="92.2" x2="89.5" y2="84.9"/>
+              <line class="brain-icon-edge" x1="146.4" y1="64.0" x2="138.6" y2="67.6"/>
+              <line class="brain-icon-edge" x1="110.1" y1="124.5" x2="116.2" y2="121.1"/>
+              <line class="brain-icon-edge" x1="132.9" y1="87.6" x2="123.3" y2="86.2"/>
+              <line class="brain-icon-edge" x1="145.3" y1="128.7" x2="157.5" y2="125.2"/>
+              <line class="brain-icon-edge" x1="138.8" y1="143.7" x2="149.3" y2="140.8"/>
+              <line class="brain-icon-edge" x1="131.9" y1="58.2" x2="131.3" y2="56.6"/>
+              <line class="brain-icon-edge" x1="126.0" y1="79.0" x2="132.9" y2="87.6"/>
+              <line class="brain-icon-edge" x1="118.3" y1="135.1" x2="113.4" y2="125.9"/>
+              <line class="brain-icon-edge" x1="133.9" y1="98.6" x2="125.0" y2="97.2"/>
+              <line class="brain-icon-edge" x1="74.9" y1="67.7" x2="76.8" y2="70.5"/>
+              <line class="brain-icon-edge" x1="73.3" y1="65.8" x2="58.1" y2="49.9"/>
+              <line class="brain-icon-edge" x1="131.7" y1="138.4" x2="139.9" y2="131.3"/>
+              <line class="brain-icon-edge" x1="152.4" y1="56.3" x2="152.6" y2="65.1"/>
+              <line class="brain-icon-edge" x1="132.5" y1="57.6" x2="131.1" y2="55.4"/>
+              <line class="brain-icon-edge" x1="199.9" y1="122.8" x2="205.6" y2="109.1"/>
+              <line class="brain-icon-edge" x1="152.4" y1="56.3" x2="150.4" y2="39.6"/>
+              <line class="brain-icon-edge" x1="76.2" y1="150.2" x2="78.6" y2="170.2"/>
+              <line class="brain-icon-edge" x1="180.2" y1="82.6" x2="180.0" y2="90.2"/>
+              <line class="brain-icon-edge" x1="126.0" y1="79.0" x2="127.3" y2="68.7"/>
+              <line class="brain-icon-edge" x1="110.1" y1="124.5" x2="112.2" y2="123.5"/>
+              <line class="brain-icon-edge" x1="90.1" y1="113.5" x2="103.8" y2="111.4"/>
+              <line class="brain-icon-edge" x1="152.6" y1="65.1" x2="150.5" y2="74.0"/>
+              <line class="brain-icon-edge" x1="213.6" y1="92.7" x2="205.6" y2="109.1"/>
+              <line class="brain-icon-edge" x1="114.6" y1="55.8" x2="120.1" y2="56.8"/>
+              <line class="brain-icon-edge" x1="133.9" y1="98.6" x2="133.1" y2="109.4"/>
+              <line class="brain-icon-edge" x1="171.4" y1="100.6" x2="164.9" y2="104.6"/>
+              <line class="brain-icon-edge" x1="70.1" y1="101.1" x2="75.8" y2="107.0"/>
+              <line class="brain-icon-edge" x1="133.9" y1="98.6" x2="125.2" y2="97.9"/>
+              <line class="brain-icon-edge" x1="157.5" y1="125.2" x2="163.6" y2="129.3"/>
+              <line class="brain-icon-edge" x1="105.5" y1="107.6" x2="103.8" y2="111.4"/>
+              <line class="brain-icon-edge" x1="219.0" y1="116.9" x2="205.6" y2="109.1"/>
+              <line class="brain-icon-edge" x1="132.5" y1="57.6" x2="131.9" y2="58.2"/>
+              <line class="brain-icon-edge" x1="100.0" y1="135.2" x2="94.9" y2="135.4"/>
+              <line class="brain-icon-edge" x1="75.8" y1="107.0" x2="76.6" y2="100.1"/>
+              <line class="brain-icon-edge" x1="96.9" y1="94.0" x2="88.1" y2="92.2"/>
+              <line class="brain-icon-edge" x1="112.2" y1="123.5" x2="120.6" y2="120.5"/>
+              <line class="brain-icon-edge" x1="192.1" y1="82.2" x2="180.2" y2="82.6"/>
+              <line class="brain-icon-edge" x1="79.3" y1="56.1" x2="78.7" y2="59.0"/>
+              <line class="brain-icon-edge" x1="135.0" y1="56.7" x2="143.1" y2="61.4"/>
+              <line class="brain-icon-edge" x1="195.2" y1="126.2" x2="199.9" y2="122.8"/>
+              <line class="brain-icon-edge" x1="163.6" y1="129.3" x2="178.0" y2="127.3"/>
+              <line class="brain-icon-edge" x1="195.2" y1="126.2" x2="178.0" y2="127.3"/>
+              <line class="brain-icon-edge" x1="73.6" y1="73.3" x2="77.1" y2="81.8"/>
+              <line class="brain-icon-edge" x1="165.2" y1="111.3" x2="155.1" y2="106.9"/>
+              <line class="brain-icon-edge" x1="74.9" y1="67.7" x2="73.6" y2="73.3"/>
+              <line class="brain-icon-edge" x1="69.3" y1="171.4" x2="75.6" y2="177.7"/>
+              <line class="brain-icon-edge" x1="209.8" y1="93.9" x2="205.6" y2="109.1"/>
+              <line class="brain-icon-edge" x1="82.8" y1="119.8" x2="92.7" y2="113.9"/>
+              <line class="brain-icon-edge" x1="193.6" y1="55.4" x2="200.4" y2="55.1"/>
+              <line class="brain-icon-edge" x1="195.4" y1="50.0" x2="200.4" y2="55.1"/>
+              <line class="brain-icon-edge" x1="95.7" y1="12.9" x2="82.7" y2="16.9"/>
+              <line class="brain-icon-edge" x1="211.2" y1="111.5" x2="205.6" y2="109.1"/>
+              <line class="brain-icon-edge" x1="71.2" y1="35.0" x2="82.7" y2="16.9"/>
+              <line class="brain-icon-edge" x1="125.2" y1="97.9" x2="116.7" y2="97.9"/>
+              <line class="brain-icon-edge" x1="110.5" y1="68.1" x2="117.2" y2="65.7"/>
+              <line class="brain-icon-edge" x1="155.4" y1="50.2" x2="152.4" y2="56.3"/>
+              <line class="brain-icon-edge" x1="98.4" y1="58.2" x2="100.3" y2="57.6"/>
+              <line class="brain-icon-edge" x1="135.0" y1="56.7" x2="131.3" y2="56.6"/>
+              <line class="brain-icon-edge" x1="95.1" y1="68.4" x2="95.9" y2="59.0"/>
+              <line class="brain-icon-edge" x1="146.4" y1="64.0" x2="143.1" y2="61.4"/>
+              <line class="brain-icon-edge" x1="153.2" y1="176.8" x2="141.9" y2="175.1"/>
+              <line class="brain-icon-edge" x1="131.3" y1="56.6" x2="131.1" y2="55.4"/>
+              <line class="brain-icon-edge" x1="165.6" y1="111.2" x2="155.1" y2="106.9"/>
+              <line class="brain-icon-edge" x1="69.3" y1="171.4" x2="78.6" y2="170.2"/>
+              <line class="brain-icon-edge" x1="35.2" y1="67.8" x2="40.8" y2="74.0"/>
+              <line class="brain-icon-edge" x1="120.3" y1="106.3" x2="112.1" y2="99.0"/>
+              <line class="brain-icon-edge" x1="70.1" y1="101.1" x2="66.5" y2="97.8"/>
+              <line class="brain-icon-edge" x1="45.4" y1="96.1" x2="40.9" y2="89.0"/>
+              <line class="brain-icon-edge" x1="90.5" y1="65.0" x2="95.1" y2="68.4"/>
+              <line class="brain-icon-edge" x1="49.0" y1="97.0" x2="40.9" y2="89.0"/>
+              <line class="brain-icon-edge" x1="137.5" y1="53.4" x2="135.0" y2="56.7"/>
+              <line class="brain-icon-edge" x1="105.6" y1="54.2" x2="111.4" y2="57.2"/>
+              <line class="brain-icon-edge" x1="126.0" y1="79.0" x2="123.3" y2="86.2"/>
+              <line class="brain-icon-edge" x1="74.9" y1="67.7" x2="73.3" y2="65.8"/>
+              <line class="brain-icon-edge" x1="114.6" y1="55.8" x2="109.1" y2="55.6"/>
+              <line class="brain-icon-edge" x1="126.0" y1="79.0" x2="126.1" y2="76.4"/>
+              <line class="brain-icon-edge" x1="110.1" y1="124.5" x2="113.4" y2="125.9"/>
+              <line class="brain-icon-edge" x1="112.2" y1="123.5" x2="116.2" y2="121.1"/>
+              <line class="brain-icon-edge" x1="88.1" y1="92.2" x2="95.7" y2="87.3"/>
+              <line class="brain-icon-edge" x1="120.3" y1="106.3" x2="116.7" y2="97.9"/>
+              <line class="brain-icon-edge" x1="101.6" y1="79.3" x2="106.6" y2="76.6"/>
+              <line class="brain-icon-edge" x1="146.4" y1="64.0" x2="150.5" y2="74.0"/>
+              <line class="brain-icon-edge" x1="137.5" y1="53.4" x2="131.1" y2="55.4"/>
+              <line class="brain-icon-edge" x1="105.6" y1="54.2" x2="102.6" y2="40.3"/>
+              <line class="brain-icon-edge" x1="143.2" y1="20.3" x2="149.0" y2="14.6"/>
+              <line class="brain-icon-edge" x1="133.9" y1="98.6" x2="132.9" y2="87.6"/>
+              <line class="brain-icon-edge" x1="193.3" y1="135.9" x2="195.2" y2="126.2"/>
+              <line class="brain-icon-edge" x1="89.1" y1="13.3" x2="95.7" y2="12.9"/>
+              <line class="brain-icon-edge" x1="45.4" y1="96.1" x2="49.0" y2="97.0"/>
+              <line class="brain-icon-edge" x1="180.0" y1="90.2" x2="184.9" y2="88.1"/>
+              <line class="brain-icon-edge" x1="122.9" y1="64.9" x2="117.2" y2="65.7"/>
+              <line class="brain-icon-edge" x1="134.0" y1="143.2" x2="138.8" y2="143.7"/>
+              <line class="brain-icon-edge" x1="145.5" y1="145.9" x2="138.8" y2="143.7"/>
+              <line class="brain-icon-edge" x1="171.9" y1="68.1" x2="162.0" y2="67.1"/>
+              <line class="brain-icon-edge" x1="133.0" y1="144.3" x2="123.8" y2="136.5"/>
+              <line class="brain-icon-edge" x1="200.5" y1="40.1" x2="195.4" y2="50.0"/>
+              <line class="brain-icon-edge" x1="77.2" y1="78.3" x2="77.1" y2="81.8"/>
+              <line class="brain-icon-edge" x1="76.8" y1="70.5" x2="73.6" y2="73.3"/>
+              <line class="brain-icon-edge" x1="180.0" y1="105.8" x2="164.9" y2="104.6"/>
+              <line class="brain-icon-edge" x1="193.6" y1="55.4" x2="181.7" y2="60.7"/>
+              <line class="brain-icon-edge" x1="113.7" y1="30.0" x2="102.6" y2="40.3"/>
+              <line class="brain-icon-edge" x1="92.7" y1="113.9" x2="103.8" y2="111.4"/>
+              <line class="brain-icon-edge" x1="150.5" y1="74.0" x2="151.5" y2="87.7"/>
+              <line class="brain-icon-edge" x1="79.9" y1="62.0" x2="84.7" y2="67.2"/>
+              <line class="brain-icon-edge" x1="105.5" y1="107.6" x2="112.1" y2="99.0"/>
+              <line class="brain-icon-edge" x1="132.5" y1="57.6" x2="137.5" y2="53.4"/>
+              <line class="brain-icon-edge" x1="91.3" y1="61.8" x2="95.9" y2="59.0"/>
+              <line class="brain-icon-edge" x1="129.2" y1="52.8" x2="131.3" y2="56.6"/>
+              <line class="brain-icon-edge" x1="127.3" y1="68.7" x2="122.9" y2="64.9"/>
+              <line class="brain-icon-edge" x1="100.0" y1="135.2" x2="92.9" y2="128.3"/>
+              <line class="brain-icon-edge" x1="42.7" y1="76.4" x2="40.8" y2="74.0"/>
+              <line class="brain-icon-edge" x1="105.6" y1="54.2" x2="95.2" y2="41.4"/>
+              <line class="brain-icon-edge" x1="152.6" y1="65.1" x2="162.0" y2="67.1"/>
+              <line class="brain-icon-edge" x1="120.6" y1="120.5" x2="116.2" y2="121.1"/>
+              <line class="brain-icon-edge" x1="133.9" y1="108.0" x2="134.2" y2="115.2"/>
+              <line class="brain-icon-edge" x1="58.5" y1="140.1" x2="71.6" y2="136.2"/>
+              <line class="brain-icon-edge" x1="145.1" y1="17.0" x2="149.0" y2="14.6"/>
+              <line class="brain-icon-edge" x1="167.5" y1="72.1" x2="164.4" y2="83.5"/>
+              <line class="brain-icon-edge" x1="96.9" y1="94.0" x2="89.5" y2="84.9"/>
+              <line class="brain-icon-edge" x1="77.2" y1="78.3" x2="73.6" y2="73.3"/>
+              <line class="brain-icon-edge" x1="117.7" y1="79.5" x2="123.3" y2="86.2"/>
+              <line class="brain-icon-edge" x1="117.7" y1="79.5" x2="126.1" y2="76.4"/>
+              <line class="brain-icon-edge" x1="55.9" y1="112.8" x2="51.2" y2="113.6"/>
+              <line class="brain-icon-edge" x1="113.4" y1="125.9" x2="120.6" y2="120.5"/>
+              <line class="brain-icon-edge" x1="145.5" y1="145.9" x2="149.9" y2="159.9"/>
+              <line class="brain-icon-edge" x1="113.7" y1="84.9" x2="106.6" y2="76.6"/>
+              <line class="brain-icon-edge" x1="116.7" y1="97.9" x2="112.1" y2="99.0"/>
+              <line class="brain-icon-edge" x1="79.3" y1="56.1" x2="79.9" y2="62.0"/>
+              <line class="brain-icon-edge" x1="94.9" y1="135.4" x2="92.9" y2="128.3"/>
+              <line class="brain-icon-edge" x1="118.3" y1="135.1" x2="112.2" y2="123.5"/>
+              <line class="brain-icon-edge" x1="76.2" y1="150.2" x2="71.6" y2="136.2"/>
+              <line class="brain-icon-edge" x1="171.9" y1="68.1" x2="167.5" y2="72.1"/>
+              <line class="brain-icon-edge" x1="111.4" y1="57.2" x2="110.5" y2="68.1"/>
+              <line class="brain-icon-edge" x1="120.3" y1="106.3" x2="125.2" y2="97.9"/>
+              <line class="brain-icon-edge" x1="95.7" y1="87.3" x2="89.5" y2="84.9"/>
+              <line class="brain-icon-edge" x1="71.2" y1="35.0" x2="58.1" y2="49.9"/>
+              <line class="brain-icon-edge" x1="120.1" y1="56.8" x2="122.9" y2="64.9"/>
+              <line class="brain-icon-edge" x1="180.0" y1="105.8" x2="171.4" y2="100.6"/>
+              <line class="brain-icon-edge" x1="95.2" y1="41.4" x2="102.6" y2="40.3"/>
+              <line class="brain-icon-edge" x1="219.0" y1="116.9" x2="211.2" y2="111.5"/>
+              <line class="brain-icon-edge" x1="126.0" y1="79.0" x2="117.7" y2="79.5"/>
+              <line class="brain-icon-edge" x1="100.3" y1="57.6" x2="95.9" y2="59.0"/>
+              <line class="brain-icon-edge" x1="181.7" y1="60.7" x2="192.4" y2="68.3"/>
+              <line class="brain-icon-edge" x1="105.6" y1="54.2" x2="100.3" y2="57.6"/>
+              <line class="brain-icon-edge" x1="92.7" y1="113.9" x2="90.1" y2="113.5"/>
+              <line class="brain-icon-edge" x1="105.5" y1="107.6" x2="110.3" y2="113.7"/>
+              <line class="brain-icon-edge" x1="149.9" y1="159.9" x2="141.9" y2="175.1"/>
+              <line class="brain-icon-edge" x1="120.1" y1="56.8" x2="117.2" y2="65.7"/>
+              <line class="brain-icon-edge" x1="131.9" y1="58.2" x2="135.0" y2="56.7"/>
+              <line class="brain-icon-edge" x1="79.9" y1="62.0" x2="78.7" y2="59.0"/>
+              <line class="brain-icon-edge" x1="117.7" y1="79.5" x2="113.7" y2="84.9"/>
+              <line class="brain-icon-edge" x1="165.6" y1="111.2" x2="165.2" y2="111.3"/>
+              <line class="brain-icon-edge" x1="98.4" y1="58.2" x2="91.3" y2="61.8"/>
+              <line class="brain-icon-edge" x1="125.2" y1="97.9" x2="125.0" y2="97.2"/>
+              <line class="brain-icon-edge" x1="133.1" y1="109.4" x2="134.2" y2="115.2"/>
+              <line class="brain-icon-edge" x1="58.5" y1="140.1" x2="76.2" y2="150.2"/>
+              <line class="brain-icon-edge" x1="90.5" y1="65.0" x2="91.3" y2="61.8"/>
+              <line class="brain-icon-edge" x1="70.1" y1="101.1" x2="76.6" y2="100.1"/>
+              <line class="brain-icon-edge" x1="64.0" y1="77.4" x2="68.3" y2="88.6"/>
+              <line class="brain-icon-edge" x1="193.6" y1="55.4" x2="195.4" y2="50.0"/>
+              <line class="brain-icon-edge" x1="132.5" y1="57.6" x2="131.3" y2="56.6"/>
+              <line class="brain-icon-edge" x1="66.5" y1="97.8" x2="68.3" y2="88.6"/>
+              <line class="brain-icon-edge" x1="113.4" y1="125.9" x2="116.2" y2="121.1"/>
+              <line class="brain-icon-edge" x1="64.0" y1="77.4" x2="73.6" y2="73.3"/>
+              <line class="brain-icon-edge" x1="149.9" y1="159.9" x2="153.2" y2="176.8"/>
+              <line class="brain-icon-edge" x1="146.4" y1="64.0" x2="152.6" y2="65.1"/>
+              <line class="brain-icon-edge" x1="167.5" y1="72.1" x2="162.0" y2="67.1"/>
+              <line class="brain-icon-edge" x1="131.9" y1="58.2" x2="131.1" y2="55.4"/>
+              <line class="brain-icon-edge" x1="66.5" y1="97.8" x2="76.6" y2="100.1"/>
+              <line class="brain-icon-edge" x1="193.3" y1="135.9" x2="199.9" y2="122.8"/>
+              <line class="brain-icon-edge" x1="36.5" y1="123.8" x2="51.2" y2="113.6"/>
+              <line class="brain-icon-edge" x1="138.8" y1="143.7" x2="133.0" y2="144.3"/>
+              <line class="brain-icon-edge" x1="162.0" y1="67.1" x2="150.5" y2="74.0"/>
+              <line class="brain-icon-edge" x1="90.5" y1="65.0" x2="84.7" y2="67.2"/>
+              <line class="brain-icon-edge" x1="110.3" y1="113.7" x2="116.2" y2="121.1"/>
+              <line class="brain-icon-edge" x1="45.4" y1="96.1" x2="30.5" y2="97.7"/>
+              <line class="brain-icon-edge" x1="171.9" y1="68.1" x2="181.7" y2="60.7"/>
+              <line class="brain-icon-edge" x1="164.4" y1="83.5" x2="151.5" y2="87.7"/>
+              <line class="brain-icon-edge" x1="165.2" y1="111.3" x2="164.9" y2="104.6"/>
+              <line class="brain-icon-edge" x1="127.3" y1="68.7" x2="138.6" y2="67.6"/>
+              <line class="brain-icon-edge" x1="113.4" y1="125.9" x2="112.2" y2="123.5"/>
+              <line class="brain-icon-edge" x1="75.6" y1="177.7" x2="78.6" y2="170.2"/>
+              <line class="brain-icon-edge" x1="116.7" y1="97.9" x2="125.0" y2="97.2"/>
+              <line class="brain-icon-edge" x1="120.3" y1="106.3" x2="125.0" y2="97.2"/>
+              <line class="brain-icon-edge" x1="98.4" y1="58.2" x2="95.9" y2="59.0"/>
+              <line class="brain-icon-edge" x1="145.3" y1="128.7" x2="139.9" y2="131.3"/>
+              <line class="brain-icon-edge" x1="68.3" y1="88.6" x2="77.1" y2="81.8"/>
+              <line class="brain-icon-edge" x1="35.2" y1="67.8" x2="42.7" y2="76.4"/>
+              <line class="brain-icon-edge" x1="133.9" y1="98.6" x2="133.9" y2="108.0"/>
+              <line class="brain-icon-edge" x1="55.9" y1="112.8" x2="57.8" y2="107.6"/>
+              <line class="brain-icon-edge" x1="165.6" y1="111.2" x2="164.9" y2="104.6"/>
+              <line class="brain-icon-edge" x1="76.8" y1="70.5" x2="77.2" y2="78.3"/>
+              <line class="brain-icon-edge" x1="96.9" y1="94.0" x2="95.7" y2="87.3"/>
+              <line class="brain-icon-edge" x1="101.6" y1="79.3" x2="95.7" y2="87.3"/>
+              <line class="brain-icon-edge" x1="95.1" y1="68.4" x2="101.6" y2="79.3"/>
+              <line class="brain-icon-edge" x1="132.9" y1="87.6" x2="151.5" y2="87.7"/>
+              <line class="brain-icon-edge" x1="118.3" y1="135.1" x2="123.8" y2="136.5"/>
+              <line class="brain-icon-edge" x1="120.6" y1="120.5" x2="134.2" y2="115.2"/>
+              <line class="brain-icon-edge" x1="180.2" y1="82.6" x2="184.9" y2="88.1"/>
+              <line class="brain-icon-edge" x1="134.0" y1="143.2" x2="131.7" y2="138.4"/>
+              <line class="brain-icon-edge" x1="57.8" y1="107.6" x2="51.2" y2="113.6"/>
+              <line class="brain-icon-edge" x1="180.2" y1="82.6" x2="164.4" y2="83.5"/>
+              <line class="brain-icon-edge" x1="129.2" y1="52.8" x2="131.1" y2="55.4"/>
+              <line class="brain-icon-edge" x1="83.9" y1="70.9" x2="84.7" y2="67.2"/>
+              <line class="brain-icon-edge" x1="30.5" y1="97.7" x2="40.9" y2="89.0"/>
+              <line class="brain-icon-edge" x1="133.1" y1="109.4" x2="133.9" y2="108.0"/>
+              <line class="brain-icon-edge" x1="131.7" y1="138.4" x2="123.8" y2="136.5"/>
+              <line class="brain-icon-edge" x1="114.6" y1="55.8" x2="111.4" y2="57.2"/>
+              <line class="brain-icon-edge" x1="73.3" y1="65.8" x2="76.8" y2="70.5"/>
+              <line class="brain-icon-edge" x1="192.1" y1="82.2" x2="184.9" y2="88.1"/>
+              <line class="brain-icon-edge" x1="155.4" y1="50.2" x2="150.4" y2="39.6"/>
+              <line class="brain-icon-edge" x1="134.0" y1="143.2" x2="133.0" y2="144.3"/>
+            </g>
+            <path class="brain-icon-hemi" d="M131.6,86.0 L131.9,87.4 L132.1,88.9 L132.2,90.4 L132.3,91.9 L132.2,93.4 L132.1,94.8 L131.8,96.3 L131.4,97.7 L130.8,99.1 L130.2,100.5 L129.5,101.7 L128.6,102.9 L127.7,104.0 L126.7,105.0 L125.7,106.0 L124.7,106.9 L123.6,107.7 L122.5,108.5 L121.4,109.3 L120.4,110.0 L119.3,110.8 L118.3,111.5 L117.2,112.3 L116.2,113.0 L115.1,113.8 L114.1,114.5 L113.0,115.3 L111.9,116.1 L110.7,116.8 L109.5,117.4 L108.3,118.0 L107.0,118.5 L105.7,118.9 L104.4,119.2 L103.0,119.4 L101.6,119.4 L100.3,119.3 L98.9,119.0 L97.6,118.6 L96.4,118.1 L95.1,117.5 L93.9,116.8 L92.8,116.0 L91.7,115.2 L90.6,114.3 L89.6,113.4 L88.6,112.5 L87.7,111.7 L86.7,110.8 L85.7,109.9 L84.8,109.0 L83.8,108.2 L82.8,107.3 L81.8,106.4 L80.8,105.5 L79.8,104.6 L78.9,103.6 L77.9,102.5 L77.0,101.4 L76.2,100.2 L75.4,99.0 L74.8,97.7 L74.2,96.3 L73.8,94.9 L73.5,93.4 L73.3,92.0 L73.2,90.5 L73.3,89.0 L73.4,87.5 L73.6,86.0 L74.0,84.6 L74.3,83.2 L74.8,81.8 L75.2,80.4 L75.7,79.1 L76.1,77.8 L76.6,76.5 L77.1,75.3 L77.5,74.0 L78.0,72.7 L78.4,71.4 L78.8,70.1 L79.3,68.8 L79.8,67.4 L80.4,66.1 L81.0,64.8 L81.7,63.5 L82.4,62.3 L83.3,61.1 L84.2,60.0 L85.2,59.0 L86.3,58.1 L87.5,57.3 L88.7,56.7 L90.0,56.1 L91.3,55.7 L92.6,55.4 L93.9,55.2 L95.3,55.1 L96.6,55.0 L97.9,55.1 L99.2,55.1 L100.5,55.2 L101.8,55.3 L103.0,55.4 L104.2,55.5 L105.5,55.5 L106.7,55.6 L108.0,55.7 L109.3,55.7 L110.5,55.8 L111.9,55.9 L113.2,56.1 L114.5,56.3 L115.8,56.7 L117.1,57.1 L118.4,57.6 L119.6,58.2 L120.8,59.0 L121.9,59.9 L122.9,60.8 L123.9,61.9 L124.7,63.1 L125.5,64.3 L126.2,65.6 L126.7,67.0 L127.3,68.3 L127.7,69.7 L128.1,71.1 L128.4,72.5 L128.8,73.8 L129.1,75.2 L129.4,76.5 L129.7,77.9 L130.0,79.2 L130.3,80.5 L130.7,81.9 L131.0,83.2 L131.3,84.6 L131.6,86.0 Z"/>
+            <path class="brain-icon-hemi" d="M166.3,86.0 L166.0,87.4 L165.6,88.8 L165.2,90.2 L164.7,91.6 L164.3,92.9 L163.8,94.2 L163.4,95.5 L162.9,96.7 L162.5,98.0 L162.1,99.3 L161.6,100.6 L161.2,101.9 L160.7,103.3 L160.2,104.6 L159.7,105.9 L159.1,107.3 L158.4,108.5 L157.6,109.8 L156.7,110.9 L155.8,112.0 L154.8,113.0 L153.7,113.9 L152.5,114.7 L151.3,115.3 L150.0,115.9 L148.7,116.3 L147.4,116.6 L146.1,116.7 L144.7,116.9 L143.4,116.9 L142.1,116.9 L140.8,116.8 L139.5,116.8 L138.2,116.7 L137.0,116.6 L135.8,116.5 L134.5,116.5 L133.3,116.4 L132.0,116.4 L130.7,116.3 L129.4,116.2 L128.1,116.1 L126.8,115.9 L125.5,115.7 L124.2,115.4 L122.9,115.0 L121.6,114.4 L120.4,113.8 L119.2,113.0 L118.1,112.1 L117.1,111.2 L116.1,110.1 L115.3,108.9 L114.5,107.7 L113.9,106.3 L113.3,105.0 L112.8,103.6 L112.3,102.3 L112.0,100.9 L111.6,99.5 L111.3,98.1 L110.9,96.8 L110.6,95.5 L110.3,94.1 L110.0,92.8 L109.6,91.5 L109.3,90.1 L108.9,88.8 L108.6,87.4 L108.3,86.0 L108.0,84.6 L107.8,83.1 L107.7,81.6 L107.7,80.1 L107.7,78.6 L107.9,77.1 L108.2,75.7 L108.6,74.3 L109.2,72.9 L109.8,71.6 L110.6,70.3 L111.4,69.1 L112.3,68.0 L113.3,67.0 L114.3,66.0 L115.4,65.1 L116.4,64.3 L117.5,63.5 L118.6,62.7 L119.6,62.0 L120.7,61.2 L121.7,60.5 L122.8,59.7 L123.8,59.0 L124.9,58.2 L125.9,57.4 L127.0,56.6 L128.1,55.9 L129.3,55.2 L130.5,54.5 L131.7,53.9 L133.0,53.4 L134.3,53.0 L135.6,52.7 L137.0,52.6 L138.4,52.6 L139.7,52.7 L141.1,53.0 L142.4,53.4 L143.6,53.9 L144.9,54.5 L146.1,55.3 L147.2,56.0 L148.3,56.9 L149.3,57.7 L150.4,58.6 L151.4,59.5 L152.3,60.4 L153.3,61.2 L154.3,62.1 L155.2,63.0 L156.2,63.8 L157.2,64.7 L158.2,65.5 L159.2,66.4 L160.2,67.4 L161.2,68.4 L162.1,69.4 L163.0,70.5 L163.9,71.7 L164.6,73.0 L165.2,74.3 L165.8,75.7 L166.2,77.1 L166.5,78.6 L166.7,80.1 L166.8,81.6 L166.7,83.1 L166.5,84.5 L166.3,86.0 Z"/>
+            <path class="brain-icon-fold" d="M86.7,62.6 L87.9,63.4 L89.2,63.9 L90.5,64.1 L91.7,64.0 L93.0,63.5 L94.2,62.8 L95.5,61.9 L96.7,61.1 L98.0,60.4 L99.2,60.0 L100.5,59.9 L101.7,60.2 L103.0,60.7 L104.3,61.5 L105.5,62.4 L106.8,63.2 L108.0,63.8 L109.3,64.1 L110.5,64.0 L111.8,63.7 L113.0,63.0 L114.3,62.2 L115.5,61.3 L116.8,60.6 L118.1,60.1 L119.3,59.9"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M83.8,67.9 L85.2,67.4 L86.7,66.7 L88.2,65.8 L89.7,65.0 L91.2,64.3 L92.6,64.0 L94.1,63.9 L95.6,64.2 L97.1,64.8 L98.6,65.6 L100.0,66.5 L101.5,67.3 L103.0,67.8 L104.5,68.1 L106.0,68.0 L107.4,67.6 L108.9,66.9 L110.4,66.1 L111.9,65.2 L113.4,64.5 L114.8,64.0 L116.3,63.9 L117.8,64.1 L119.3,64.6 L120.8,65.4 L122.2,66.2"/>
+            <path class="brain-icon-fold" d="M81.7,68.9 L83.3,68.3 L84.9,67.9 L86.6,68.0 L88.2,68.3 L89.9,68.9 L91.5,69.8 L93.1,70.6 L94.8,71.4 L96.4,71.9 L98.1,72.1 L99.7,72.0 L101.4,71.5 L103.0,70.8 L104.6,69.9 L106.3,69.1 L107.9,68.4 L109.6,68.0 L111.2,67.9 L112.9,68.2 L114.5,68.7 L116.1,69.5 L117.8,70.4 L119.4,71.2 L121.1,71.8 L122.7,72.1 L124.3,72.0"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M80.1,72.4 L81.9,73.0 L83.7,73.9 L85.4,74.7 L87.2,75.4 L88.9,75.9 L90.7,76.1 L92.5,75.9 L94.2,75.4 L96.0,74.7 L97.7,73.8 L99.5,73.0 L101.2,72.3 L103.0,72.0 L104.8,71.9 L106.5,72.2 L108.3,72.8 L110.0,73.6 L111.8,74.5 L113.5,75.3 L115.3,75.8 L117.1,76.1 L118.8,76.0 L120.6,75.6 L122.3,74.9 L124.1,74.1 L125.9,73.2"/>
+            <path class="brain-icon-fold" d="M79.1,79.5 L81.0,80.0 L82.8,80.1 L84.6,79.9 L86.5,79.3 L88.3,78.6 L90.1,77.7 L92.0,76.9 L93.8,76.3 L95.7,75.9 L97.5,75.9 L99.3,76.3 L101.2,76.9 L103.0,77.7 L104.8,78.6 L106.7,79.3 L108.5,79.9 L110.3,80.1 L112.2,80.0 L114.0,79.5 L115.9,78.8 L117.7,78.0 L119.5,77.1 L121.4,76.4 L123.2,76.0 L125.0,75.9 L126.9,76.2"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M78.5,83.2 L80.4,82.4 L82.3,81.6 L84.2,80.8 L86.1,80.2 L87.9,79.9 L89.8,80.0 L91.7,80.4 L93.6,81.0 L95.5,81.9 L97.4,82.7 L99.2,83.4 L101.1,83.9 L103.0,84.1 L104.9,83.9 L106.8,83.4 L108.6,82.7 L110.5,81.8 L112.4,81.0 L114.3,80.4 L116.2,80.0 L118.1,79.9 L119.9,80.2 L121.8,80.8 L123.7,81.6 L125.6,82.5 L127.5,83.2"/>
+            <path class="brain-icon-fold" d="M78.3,84.2 L80.2,83.9 L82.1,84.0 L84.0,84.4 L85.9,85.1 L87.8,86.0 L89.7,86.8 L91.6,87.5 L93.5,88.0 L95.4,88.1 L97.3,87.9 L99.2,87.3 L101.1,86.6 L103.0,85.7 L104.9,84.9 L106.8,84.3 L108.7,83.9 L110.6,83.9 L112.5,84.3 L114.4,84.9 L116.3,85.7 L118.2,86.6 L120.1,87.3 L122.0,87.9 L123.9,88.1 L125.8,88.0 L127.7,87.5"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M78.5,89.2 L80.4,90.1 L82.3,90.9 L84.2,91.6 L86.1,92.0 L87.9,92.1 L89.8,91.8 L91.7,91.2 L93.6,90.5 L95.5,89.6 L97.4,88.8 L99.2,88.2 L101.1,87.9 L103.0,88.0 L104.9,88.4 L106.8,89.0 L108.6,89.8 L110.5,90.7 L112.4,91.4 L114.3,91.9 L116.2,92.1 L118.1,91.9 L119.9,91.4 L121.8,90.7 L123.7,89.9 L125.6,89.0 L127.5,88.4"/>
+            <path class="brain-icon-fold" d="M79.1,96.0 L81.0,96.1 L82.8,95.8 L84.6,95.1 L86.5,94.3 L88.3,93.5 L90.1,92.7 L92.0,92.2 L93.8,91.9 L95.7,92.0 L97.5,92.4 L99.3,93.1 L101.2,94.0 L103.0,94.8 L104.8,95.5 L106.7,96.0 L108.5,96.1 L110.3,95.9 L112.2,95.3 L114.0,94.6 L115.9,93.7 L117.7,92.9 L119.5,92.3 L121.4,91.9 L123.2,91.9 L125.0,92.3 L126.9,92.9"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M80.1,98.2 L81.9,97.4 L83.7,96.6 L85.4,96.1 L87.2,95.9 L88.9,96.0 L90.7,96.5 L92.5,97.2 L94.2,98.1 L96.0,98.9 L97.7,99.6 L99.5,100.0 L101.2,100.1 L103.0,99.8 L104.8,99.3 L106.5,98.5 L108.3,97.6 L110.0,96.8 L111.8,96.2 L113.5,95.9 L115.3,96.0 L117.1,96.3 L118.8,97.0 L120.6,97.8 L122.3,98.7 L124.1,99.4 L125.9,99.9"/>
+            <path class="brain-icon-fold" d="M81.7,99.9 L83.3,100.1 L84.9,100.6 L86.6,101.3 L88.2,102.2 L89.9,103.0 L91.5,103.7 L93.1,104.0 L94.8,104.1 L96.4,103.8 L98.1,103.2 L99.7,102.4 L101.4,101.5 L103.0,100.7 L104.6,100.2 L106.3,99.9 L107.9,100.0 L109.6,100.4 L111.2,101.1 L112.9,101.9 L114.5,102.8 L116.1,103.5 L117.8,104.0 L119.4,104.1 L121.1,103.9 L122.7,103.4 L124.3,102.6"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M83.8,106.3 L85.2,107.1 L86.7,107.7 L88.2,108.1 L89.7,108.0 L91.2,107.7 L92.6,107.1 L94.1,106.2 L95.6,105.4 L97.1,104.6 L98.6,104.1 L100.0,103.9 L101.5,104.0 L103.0,104.5 L104.5,105.2 L106.0,106.1 L107.4,106.9 L108.9,107.6 L110.4,108.0 L111.9,108.1 L113.4,107.8 L114.8,107.3 L116.3,106.5 L117.8,105.6 L119.3,104.8 L120.8,104.2 L122.2,103.9"/>
+            <path class="brain-icon-fold" d="M86.7,112.0 L87.9,111.6 L89.2,111.0 L90.5,110.1 L91.7,109.3 L93.0,108.5 L94.2,108.1 L95.5,107.9 L96.7,108.1 L98.0,108.6 L99.2,109.3 L100.5,110.2 L101.7,111.0 L103.0,111.7 L104.3,112.0 L105.5,112.1 L106.8,111.8 L108.0,111.2 L109.3,110.4 L110.5,109.5 L111.8,108.7 L113.0,108.2 L114.3,107.9 L115.5,108.0 L116.8,108.4 L118.1,109.1 L119.3,109.9"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M91.1,113.2 L92.0,112.5 L92.9,112.0 L93.8,111.9 L94.7,112.1 L95.7,112.7 L96.6,113.4 L97.5,114.3 L98.4,115.1 L99.3,115.7 L100.2,116.1 L101.2,116.1 L102.1,115.7 L103.0,115.1 L103.9,114.3 L104.8,113.4 L105.8,112.6 L106.7,112.1 L107.6,111.9 L108.5,112.0 L109.4,112.5 L110.3,113.2 L111.3,114.0 L112.2,114.9 L113.1,115.6 L114.0,116.0 L114.9,116.1"/>
+            <path class="brain-icon-fold" d="M97.0,116.2 L97.5,116.8 L97.9,117.6 L98.4,118.4 L98.9,119.2 L99.3,119.8 L99.8,120.1 L100.2,120.0 L100.7,119.6 L101.2,119.0 L101.6,118.1 L102.1,117.3 L102.5,116.6 L103.0,116.1 L103.5,115.9 L103.9,116.1 L104.4,116.6 L104.8,117.3 L105.3,118.2 L105.8,119.0 L106.2,119.6 L106.7,120.0 L107.1,120.1 L107.6,119.8 L108.1,119.2 L108.5,118.4 L109.0,117.5"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M120.7,63.9 L121.9,64.1 L123.2,64.0 L124.5,63.5 L125.7,62.8 L127.0,62.0 L128.2,61.1 L129.5,60.4 L130.7,60.0 L132.0,59.9 L133.2,60.2 L134.5,60.7 L135.7,61.5 L137.0,62.3 L138.3,63.1 L139.5,63.7 L140.8,64.1 L142.0,64.0 L143.3,63.7 L144.5,63.0 L145.8,62.2 L147.0,61.4 L148.3,60.6 L149.5,60.1 L150.8,59.9 L152.1,60.0 L153.3,60.5"/>
+            <path class="brain-icon-fold" d="M117.8,65.9 L119.2,65.1 L120.7,64.4 L122.2,64.0 L123.7,63.9 L125.2,64.2 L126.6,64.8 L128.1,65.6 L129.6,66.4 L131.1,67.2 L132.6,67.8 L134.0,68.1 L135.5,68.0 L137.0,67.6 L138.5,67.0 L140.0,66.1 L141.4,65.3 L142.9,64.6 L144.4,64.1 L145.9,63.9 L147.4,64.1 L148.8,64.6 L150.3,65.3 L151.8,66.2 L153.3,67.0 L154.8,67.7 L156.2,68.0"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M115.7,68.3 L117.3,68.9 L118.9,69.7 L120.6,70.5 L122.2,71.3 L123.9,71.8 L125.5,72.1 L127.1,72.0 L128.8,71.6 L130.4,70.9 L132.1,70.0 L133.7,69.2 L135.4,68.5 L137.0,68.0 L138.6,67.9 L140.3,68.1 L141.9,68.7 L143.6,69.4 L145.2,70.3 L146.9,71.1 L148.5,71.7 L150.1,72.1 L151.8,72.1 L153.4,71.7 L155.1,71.1 L156.7,70.3 L158.3,69.4"/>
+            <path class="brain-icon-fold" d="M114.1,75.9 L115.9,76.1 L117.7,76.0 L119.4,75.5 L121.2,74.8 L122.9,73.9 L124.7,73.1 L126.5,72.4 L128.2,72.0 L130.0,71.9 L131.7,72.2 L133.5,72.7 L135.2,73.5 L137.0,74.4 L138.8,75.2 L140.5,75.8 L142.3,76.1 L144.0,76.0 L145.8,75.7 L147.5,75.0 L149.3,74.2 L151.1,73.3 L152.8,72.6 L154.6,72.1 L156.3,71.9 L158.1,72.1 L159.9,72.5"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M113.1,77.8 L115.0,77.0 L116.8,76.4 L118.6,76.0 L120.5,75.9 L122.3,76.2 L124.1,76.8 L126.0,77.6 L127.8,78.5 L129.7,79.2 L131.5,79.8 L133.3,80.1 L135.2,80.0 L137.0,79.6 L138.8,78.9 L140.7,78.1 L142.5,77.2 L144.3,76.5 L146.2,76.1 L148.0,75.9 L149.9,76.1 L151.7,76.6 L153.5,77.4 L155.4,78.2 L157.2,79.0 L159.0,79.7 L160.9,80.0"/>
+            <path class="brain-icon-fold" d="M112.5,80.3 L114.4,80.9 L116.3,81.7 L118.2,82.6 L120.1,83.3 L121.9,83.9 L123.8,84.1 L125.7,84.0 L127.6,83.5 L129.5,82.8 L131.4,82.0 L133.2,81.2 L135.1,80.5 L137.0,80.0 L138.9,79.9 L140.8,80.1 L142.6,80.7 L144.5,81.4 L146.4,82.3 L148.3,83.1 L150.2,83.7 L152.1,84.1 L153.9,84.1 L155.8,83.7 L157.7,83.1 L159.6,82.3 L161.5,81.4"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M112.3,87.9 L114.2,88.1 L116.1,87.9 L118.0,87.5 L119.9,86.7 L121.8,85.9 L123.7,85.1 L125.6,84.4 L127.5,84.0 L129.4,83.9 L131.3,84.2 L133.2,84.8 L135.1,85.5 L137.0,86.4 L138.9,87.2 L140.8,87.8 L142.7,88.1 L144.6,88.0 L146.5,87.6 L148.4,87.0 L150.3,86.2 L152.2,85.3 L154.1,84.6 L156.0,84.1 L157.9,83.9 L159.8,84.1 L161.7,84.6"/>
+            <path class="brain-icon-fold" d="M112.5,89.8 L114.4,89.0 L116.3,88.3 L118.2,88.0 L120.1,87.9 L121.9,88.2 L123.8,88.8 L125.7,89.6 L127.6,90.5 L129.5,91.3 L131.4,91.8 L133.2,92.1 L135.1,92.0 L137.0,91.6 L138.9,90.9 L140.8,90.1 L142.6,89.2 L144.5,88.5 L146.4,88.0 L148.3,87.9 L150.2,88.1 L152.1,88.6 L153.9,89.4 L155.8,90.2 L157.7,91.1 L159.6,91.7 L161.5,92.0"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M113.1,92.3 L115.0,92.9 L116.8,93.7 L118.6,94.6 L120.5,95.3 L122.3,95.9 L124.1,96.1 L126.0,96.0 L127.8,95.5 L129.7,94.8 L131.5,94.0 L133.3,93.1 L135.2,92.4 L137.0,92.0 L138.8,91.9 L140.7,92.2 L142.5,92.7 L144.3,93.5 L146.2,94.3 L148.0,95.1 L149.9,95.7 L151.7,96.1 L153.5,96.0 L155.4,95.7 L157.2,95.0 L159.0,94.2 L160.9,93.4"/>
+            <path class="brain-icon-fold" d="M114.1,99.9 L115.9,100.1 L117.7,99.9 L119.4,99.4 L121.2,98.7 L122.9,97.9 L124.7,97.0 L126.5,96.4 L128.2,96.0 L130.0,95.9 L131.7,96.2 L133.5,96.8 L135.2,97.6 L137.0,98.4 L138.8,99.2 L140.5,99.8 L142.3,100.1 L144.0,100.0 L145.8,99.6 L147.5,98.9 L149.3,98.1 L151.1,97.3 L152.8,96.5 L154.6,96.1 L156.3,95.9 L158.1,96.1 L159.9,96.6"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M115.7,101.8 L117.3,101.0 L118.9,100.3 L120.6,100.0 L122.2,99.9 L123.9,100.3 L125.5,100.9 L127.1,101.7 L128.8,102.5 L130.4,103.3 L132.1,103.8 L133.7,104.1 L135.4,104.0 L137.0,103.6 L138.6,102.9 L140.3,102.0 L141.9,101.2 L143.6,100.5 L145.2,100.0 L146.9,99.9 L148.5,100.1 L150.1,100.7 L151.8,101.4 L153.4,102.3 L155.1,103.1 L156.7,103.7 L158.3,104.1"/>
+            <path class="brain-icon-fold" d="M117.8,104.3 L119.2,105.0 L120.7,105.8 L122.2,106.6 L123.7,107.4 L125.2,107.9 L126.6,108.1 L128.1,108.0 L129.6,107.5 L131.1,106.8 L132.6,105.9 L134.0,105.1 L135.5,104.4 L137.0,104.0 L138.5,103.9 L140.0,104.2 L141.4,104.7 L142.9,105.5 L144.4,106.4 L145.9,107.2 L147.4,107.8 L148.8,108.1 L150.3,108.0 L151.8,107.7 L153.3,107.0 L154.8,106.2 L156.2,105.3"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M120.7,111.9 L121.9,112.1 L123.2,111.9 L124.5,111.4 L125.7,110.7 L127.0,109.8 L128.2,109.0 L129.5,108.4 L130.7,108.0 L132.0,107.9 L133.2,108.2 L134.5,108.8 L135.7,109.6 L137.0,110.5 L138.3,111.2 L139.5,111.8 L140.8,112.1 L142.0,112.0 L143.3,111.6 L144.5,110.9 L145.8,110.1 L147.0,109.2 L148.3,108.5 L149.5,108.0 L150.8,107.9 L152.1,108.1 L153.3,108.6"/>
+            <path class="brain-icon-fold" d="M125.1,113.7 L126.0,112.9 L126.9,112.3 L127.8,111.9 L128.7,111.9 L129.7,112.3 L130.6,112.9 L131.5,113.7 L132.4,114.6 L133.3,115.3 L134.2,115.9 L135.2,116.1 L136.1,116.0 L137.0,115.5 L137.9,114.8 L138.8,114.0 L139.8,113.2 L140.7,112.5 L141.6,112.0 L142.5,111.9 L143.4,112.1 L144.3,112.7 L145.3,113.5 L146.2,114.3 L147.1,115.1 L148.0,115.7 L148.9,116.1"/>
+            <path class="brain-icon-fold brain-icon-fold-dim" d="M131.0,116.3 L131.5,117.0 L131.9,117.8 L132.4,118.7 L132.9,119.4 L133.3,119.9 L133.8,120.1 L134.2,119.9 L134.7,119.5 L135.2,118.7 L135.6,117.9 L136.1,117.1 L136.5,116.4 L137.0,116.0 L137.5,115.9 L137.9,116.2 L138.4,116.8 L138.8,117.6 L139.3,118.4 L139.8,119.2 L140.2,119.8 L140.7,120.1 L141.1,120.0 L141.6,119.6 L142.1,119.0 L142.5,118.1 L143.0,117.3"/>
+            <path class="brain-icon-fissure" d="M121.4,56.0 L122.0,60.2 L122.4,64.4 L122.5,68.6 L122.4,72.8 L122.0,77.0 L121.4,81.2 L120.7,85.4 L119.9,89.6 L119.1,93.8 L118.4,98.0 L117.9,102.2 L117.6,106.4 L117.5,110.6 L117.7,114.8 L118.2,119.0 L118.8,123.2 L119.6,127.4 L120.4,131.6 L121.2,135.8 L121.8,140.0"/>
+            <path class="brain-icon-hemi brain-icon-cereb" d="M135.7,130.0 L135.7,130.7 L135.4,131.4 L135.0,132.1 L134.4,132.8 L133.8,133.3 L133.2,133.9 L132.6,134.5 L132.1,135.0 L131.6,135.6 L131.2,136.2 L130.7,136.9 L130.1,137.5 L129.5,138.1 L128.8,138.7 L127.9,139.1 L126.9,139.4 L125.8,139.6 L124.7,139.7 L123.6,139.7 L122.5,139.6 L121.5,139.6 L120.5,139.5 L119.5,139.5 L118.5,139.5 L117.5,139.6 L116.4,139.6 L115.3,139.6 L114.2,139.6 L113.1,139.4 L112.1,139.1 L111.2,138.7 L110.4,138.2 L109.8,137.6 L109.2,136.9 L108.8,136.3 L108.3,135.7 L107.9,135.0 L107.4,134.5 L106.9,133.9 L106.3,133.3 L105.7,132.7 L105.2,132.1 L104.7,131.4 L104.4,130.7 L104.3,130.0 L104.3,129.3 L104.6,128.6 L105.0,127.9 L105.6,127.2 L106.2,126.7 L106.8,126.1 L107.4,125.5 L107.9,125.0 L108.4,124.4 L108.8,123.8 L109.3,123.1 L109.9,122.5 L110.5,121.9 L111.2,121.3 L112.1,120.9 L113.1,120.6 L114.2,120.4 L115.3,120.3 L116.4,120.3 L117.5,120.4 L118.5,120.4 L119.5,120.5 L120.5,120.5 L121.5,120.5 L122.5,120.4 L123.6,120.4 L124.7,120.4 L125.8,120.4 L126.9,120.6 L127.9,120.9 L128.8,121.3 L129.6,121.8 L130.2,122.4 L130.8,123.1 L131.2,123.7 L131.7,124.3 L132.1,125.0 L132.6,125.5 L133.1,126.1 L133.7,126.7 L134.3,127.3 L134.8,127.9 L135.3,128.6 L135.6,129.3 L135.7,130.0 Z"/>
+            <path class="brain-icon-fold brain-icon-cfold" d="M113.0,120.9 L113.5,121.2 L114.1,121.8 L114.6,122.3 L115.1,122.8 L115.7,123.1 L116.2,123.0 L116.8,122.7 L117.3,122.2 L117.8,121.6 L118.4,121.1 L118.9,120.9 L119.5,121.0 L120.0,121.3 L120.5,121.9 L121.1,122.4 L121.6,122.9 L122.2,123.1 L122.7,123.0 L123.2,122.6 L123.8,122.1 L124.3,121.5 L124.9,121.1 L125.4,120.9 L125.9,121.0 L126.5,121.4 L127.0,122.0"/>
+            <path class="brain-icon-fold brain-icon-cfold" d="M109.9,126.0 L110.6,125.6 L111.4,125.1 L112.2,124.5 L113.0,124.1 L113.8,123.9 L114.5,124.0 L115.3,124.4 L116.1,125.0 L116.9,125.5 L117.7,126.0 L118.4,126.1 L119.2,125.9 L120.0,125.5 L120.8,125.0 L121.6,124.4 L122.3,124.0 L123.1,123.9 L123.9,124.1 L124.7,124.5 L125.5,125.1 L126.2,125.6 L127.0,126.0 L127.8,126.1 L128.6,125.9 L129.4,125.4 L130.1,124.9"/>
+            <path class="brain-icon-fold brain-icon-cfold" d="M108.5,127.1 L109.4,127.5 L110.3,128.1 L111.2,128.6 L112.1,129.0 L112.9,129.1 L113.8,128.9 L114.7,128.4 L115.6,127.8 L116.5,127.3 L117.4,127.0 L118.2,126.9 L119.1,127.2 L120.0,127.6 L120.9,128.2 L121.8,128.7 L122.6,129.0 L123.5,129.1 L124.4,128.8 L125.3,128.3 L126.2,127.7 L127.1,127.2 L127.9,126.9 L128.8,126.9 L129.7,127.2 L130.6,127.7 L131.5,128.3"/>
+            <path class="brain-icon-fold brain-icon-cfold" d="M108.4,131.8 L109.3,131.3 L110.1,130.7 L111.0,130.2 L111.9,129.9 L112.8,129.9 L113.7,130.2 L114.6,130.8 L115.5,131.3 L116.4,131.8 L117.3,132.1 L118.2,132.0 L119.1,131.7 L120.0,131.2 L120.9,130.6 L121.8,130.1 L122.7,129.9 L123.6,130.0 L124.5,130.3 L125.4,130.9 L126.3,131.4 L127.2,131.9 L128.1,132.1 L129.0,132.0 L129.9,131.6 L130.7,131.1 L131.6,130.5"/>
+            <path class="brain-icon-fold brain-icon-cfold" d="M109.3,133.3 L110.1,133.9 L110.9,134.4 L111.8,134.9 L112.6,135.1 L113.4,135.0 L114.2,134.6 L115.1,134.1 L115.9,133.5 L116.7,133.1 L117.5,132.9 L118.4,133.0 L119.2,133.4 L120.0,134.0 L120.8,134.5 L121.6,134.9 L122.5,135.1 L123.3,134.9 L124.1,134.5 L124.9,134.0 L125.8,133.4 L126.6,133.0 L127.4,132.9 L128.2,133.1 L129.1,133.5 L129.9,134.1 L130.7,134.6"/>
+            <path class="brain-icon-fold brain-icon-cfold" d="M111.6,137.5 L112.3,137.0 L112.9,136.4 L113.6,136.0 L114.2,135.9 L114.9,136.1 L115.5,136.5 L116.1,137.1 L116.8,137.6 L117.4,138.0 L118.1,138.1 L118.7,137.9 L119.4,137.4 L120.0,136.8 L120.6,136.3 L121.3,136.0 L121.9,135.9 L122.6,136.2 L123.2,136.6 L123.9,137.2 L124.5,137.7 L125.1,138.0 L125.8,138.1 L126.4,137.8 L127.1,137.3 L127.7,136.7 L128.4,136.2"/>
+            <rect class="brain-icon-stem" x="115" y="138" width="10" height="16" rx="5"/>
+            <g class="brain-icon-pulses">
+              <circle class="brain-icon-pulse" cx="55.9" cy="112.8" r="0.81" style="animation-delay:0.00s"/>
+              <circle class="brain-icon-pulse" cx="57.8" cy="107.6" r="0.67" style="animation-delay:0.19s"/>
+              <circle class="brain-icon-pulse" cx="145.5" cy="145.9" r="0.73" style="animation-delay:0.38s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="132.5" cy="57.6" r="0.99" style="animation-delay:0.57s"/>
+              <circle class="brain-icon-pulse" cx="193.3" cy="135.9" r="0.38" style="animation-delay:0.76s"/>
+              <circle class="brain-icon-pulse" cx="192.1" cy="82.2" r="0.6" style="animation-delay:0.95s"/>
+              <circle class="brain-icon-pulse" cx="145.3" cy="128.7" r="0.75" style="animation-delay:1.14s"/>
+              <circle class="brain-icon-pulse" cx="165.6" cy="111.2" r="0.54" style="animation-delay:1.33s"/>
+              <circle class="brain-icon-pulse" cx="180.0" cy="105.8" r="0.58" style="animation-delay:1.52s"/>
+              <circle class="brain-icon-pulse" cx="155.4" cy="50.2" r="0.84" style="animation-delay:1.71s"/>
+              <circle class="brain-icon-pulse" cx="45.4" cy="96.1" r="0.48" style="animation-delay:1.90s"/>
+              <circle class="brain-icon-pulse" cx="209.8" cy="93.9" r="0.38" style="animation-delay:2.09s"/>
+              <circle class="brain-icon-pulse" cx="100.0" cy="135.2" r="0.6" style="animation-delay:2.28s"/>
+              <circle class="brain-icon-pulse" cx="195.2" cy="126.2" r="0.35" style="animation-delay:2.47s"/>
+              <circle class="brain-icon-pulse" cx="152.4" cy="56.3" r="1.19" style="animation-delay:2.66s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="146.4" cy="64.0" r="0.87" style="animation-delay:2.85s"/>
+              <circle class="brain-icon-pulse" cx="171.9" cy="68.1" r="1.11" style="animation-delay:3.04s"/>
+              <circle class="brain-icon-pulse" cx="82.8" cy="119.8" r="0.83" style="animation-delay:0.00s"/>
+              <circle class="brain-icon-pulse" cx="129.2" cy="52.8" r="0.46" style="animation-delay:0.19s"/>
+              <circle class="brain-icon-pulse" cx="69.3" cy="171.4" r="0.35" style="animation-delay:0.38s"/>
+              <circle class="brain-icon-pulse" cx="157.5" cy="125.2" r="0.41" style="animation-delay:0.57s"/>
+              <circle class="brain-icon-pulse" cx="199.9" cy="122.8" r="0.35" style="animation-delay:0.76s"/>
+              <circle class="brain-icon-pulse" cx="64.0" cy="77.4" r="0.48" style="animation-delay:0.95s"/>
+              <circle class="brain-icon-pulse" cx="114.6" cy="55.8" r="0.96" style="animation-delay:1.14s"/>
+              <circle class="brain-icon-pulse" cx="163.6" cy="129.3" r="0.43" style="animation-delay:1.33s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="137.5" cy="53.4" r="1.75" style="animation-delay:1.52s"/>
+              <circle class="brain-icon-pulse" cx="134.0" cy="143.2" r="1.06" style="animation-delay:1.71s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="90.5" cy="65.0" r="1.89" style="animation-delay:1.90s"/>
+              <circle class="brain-icon-pulse" cx="131.7" cy="138.4" r="1.06" style="animation-delay:2.09s"/>
+              <circle class="brain-icon-pulse" cx="94.9" cy="135.4" r="0.4" style="animation-delay:2.28s"/>
+              <circle class="brain-icon-pulse" cx="178.0" cy="127.3" r="0.38" style="animation-delay:2.47s"/>
+              <circle class="brain-icon-pulse" cx="74.9" cy="67.7" r="0.74" style="animation-delay:2.66s"/>
+              <circle class="brain-icon-pulse" cx="180.2" cy="82.6" r="0.74" style="animation-delay:2.85s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="152.6" cy="65.1" r="0.8" style="animation-delay:3.04s"/>
+              <circle class="brain-icon-pulse" cx="193.6" cy="55.4" r="0.35" style="animation-delay:0.00s"/>
+              <circle class="brain-icon-pulse" cx="149.9" cy="159.9" r="0.72" style="animation-delay:0.19s"/>
+              <circle class="brain-icon-pulse" cx="153.2" cy="176.8" r="0.42" style="animation-delay:0.38s"/>
+              <circle class="brain-icon-pulse" cx="73.3" cy="65.8" r="0.44" style="animation-delay:0.57s"/>
+              <circle class="brain-icon-pulse" cx="219.0" cy="116.9" r="0.35" style="animation-delay:0.76s"/>
+              <circle class="brain-icon-pulse" cx="105.6" cy="54.2" r="1.1" style="animation-delay:0.95s"/>
+              <circle class="brain-icon-pulse" cx="76.8" cy="70.5" r="0.54" style="animation-delay:1.14s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="111.4" cy="57.2" r="0.9" style="animation-delay:1.33s"/>
+              <circle class="brain-icon-pulse" cx="35.2" cy="67.8" r="0.38" style="animation-delay:1.52s"/>
+              <circle class="brain-icon-pulse" cx="101.6" cy="177.3" r="0.35" style="animation-delay:1.71s"/>
+              <circle class="brain-icon-pulse" cx="171.4" cy="100.6" r="0.7" style="animation-delay:1.90s"/>
+              <circle class="brain-icon-pulse" cx="165.2" cy="111.3" r="0.64" style="animation-delay:2.09s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="77.2" cy="78.3" r="1.07" style="animation-delay:2.28s"/>
+              <circle class="brain-icon-pulse" cx="200.5" cy="40.1" r="0.35" style="animation-delay:2.47s"/>
+              <circle class="brain-icon-pulse" cx="95.2" cy="41.4" r="0.42" style="animation-delay:2.66s"/>
+              <circle class="brain-icon-pulse" cx="164.9" cy="104.6" r="1.14" style="animation-delay:2.85s"/>
+              <circle class="brain-icon-pulse" cx="89.1" cy="13.3" r="0.35" style="animation-delay:3.04s"/>
+              <circle class="brain-icon-pulse" cx="79.3" cy="56.1" r="0.96" style="animation-delay:0.00s"/>
+              <circle class="brain-icon-pulse" cx="75.6" cy="177.7" r="0.35" style="animation-delay:0.19s"/>
+              <circle class="brain-icon-pulse" cx="42.7" cy="76.4" r="0.65" style="animation-delay:0.38s"/>
+              <circle class="brain-icon-pulse" cx="113.7" cy="30.0" r="0.7" style="animation-delay:0.57s"/>
+              <circle class="brain-icon-pulse" cx="167.5" cy="72.1" r="0.95" style="animation-delay:0.76s"/>
+              <circle class="brain-icon-pulse" cx="195.4" cy="50.0" r="0.35" style="animation-delay:0.95s"/>
+              <circle class="brain-icon-pulse" cx="143.2" cy="20.3" r="0.48" style="animation-delay:1.14s"/>
+              <circle class="brain-icon-pulse" cx="79.9" cy="62.0" r="0.87" style="animation-delay:1.33s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="83.9" cy="70.9" r="1.43" style="animation-delay:1.52s"/>
+              <circle class="brain-icon-pulse" cx="213.6" cy="92.7" r="0.35" style="animation-delay:1.71s"/>
+              <circle class="brain-icon-pulse" cx="58.5" cy="140.1" r="0.39" style="animation-delay:1.90s"/>
+              <circle class="brain-icon-pulse" cx="36.5" cy="123.8" r="0.35" style="animation-delay:2.09s"/>
+              <circle class="brain-icon-pulse" cx="120.1" cy="56.8" r="0.89" style="animation-delay:2.28s"/>
+              <circle class="brain-icon-pulse" cx="70.1" cy="101.1" r="0.94" style="animation-delay:2.47s"/>
+              <circle class="brain-icon-pulse" cx="49.0" cy="97.0" r="0.79" style="animation-delay:2.66s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="118.3" cy="135.1" r="0.99" style="animation-delay:2.85s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="98.4" cy="58.2" r="0.82" style="animation-delay:3.04s"/>
+              <circle class="brain-icon-pulse" cx="181.7" cy="60.7" r="0.56" style="animation-delay:0.00s"/>
+              <circle class="brain-icon-pulse" cx="162.0" cy="67.1" r="0.95" style="animation-delay:0.19s"/>
+              <circle class="brain-icon-pulse" cx="138.8" cy="143.7" r="0.95" style="animation-delay:0.38s"/>
+              <circle class="brain-icon-pulse" cx="200.4" cy="55.1" r="0.35" style="animation-delay:0.57s"/>
+              <circle class="brain-icon-pulse" cx="73.6" cy="73.3" r="0.49" style="animation-delay:0.76s"/>
+              <circle class="brain-icon-pulse" cx="30.5" cy="97.7" r="0.45" style="animation-delay:0.95s"/>
+              <circle class="brain-icon-pulse" cx="95.7" cy="12.9" r="0.35" style="animation-delay:1.14s"/>
+              <circle class="brain-icon-pulse" cx="149.3" cy="140.8" r="0.49" style="animation-delay:1.33s"/>
+              <circle class="brain-icon-pulse" cx="133.0" cy="144.3" r="0.87" style="animation-delay:1.52s"/>
+              <circle class="brain-icon-pulse" cx="66.5" cy="97.8" r="1.02" style="animation-delay:1.71s"/>
+              <circle class="brain-icon-pulse" cx="180.0" cy="90.2" r="0.37" style="animation-delay:1.90s"/>
+              <circle class="brain-icon-pulse" cx="211.2" cy="111.5" r="0.35" style="animation-delay:2.09s"/>
+              <circle class="brain-icon-pulse" cx="102.6" cy="40.3" r="0.53" style="animation-delay:2.28s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="131.9" cy="58.2" r="0.78" style="animation-delay:2.47s"/>
+              <circle class="brain-icon-pulse" cx="75.8" cy="107.0" r="1.06" style="animation-delay:2.66s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="123.8" cy="136.5" r="0.66" style="animation-delay:2.85s"/>
+              <circle class="brain-icon-pulse" cx="78.7" cy="59.0" r="0.89" style="animation-delay:3.04s"/>
+              <circle class="brain-icon-pulse" cx="71.2" cy="35.0" r="0.75" style="animation-delay:0.00s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="100.3" cy="57.6" r="1.22" style="animation-delay:0.19s"/>
+              <circle class="brain-icon-pulse" cx="139.9" cy="131.3" r="0.77" style="animation-delay:0.38s"/>
+              <circle class="brain-icon-pulse" cx="109.1" cy="55.6" r="0.64" style="animation-delay:0.57s"/>
+              <circle class="brain-icon-pulse" cx="76.2" cy="150.2" r="0.45" style="animation-delay:0.76s"/>
+              <circle class="brain-icon-pulse" cx="58.1" cy="49.9" r="0.46" style="animation-delay:0.95s"/>
+              <circle class="brain-icon-pulse" cx="145.1" cy="17.0" r="0.35" style="animation-delay:1.14s"/>
+              <circle class="brain-icon-pulse" cx="192.4" cy="68.3" r="0.35" style="animation-delay:1.33s"/>
+              <circle class="brain-icon-pulse" cx="51.2" cy="113.6" r="0.73" style="animation-delay:1.52s"/>
+              <circle class="brain-icon-pulse" cx="71.6" cy="136.2" r="0.7" style="animation-delay:1.71s"/>
+              <circle class="brain-icon-pulse" cx="149.0" cy="14.6" r="0.36" style="animation-delay:1.90s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="91.3" cy="61.8" r="1.54" style="animation-delay:2.09s"/>
+              <circle class="brain-icon-pulse" cx="150.4" cy="39.6" r="0.81" style="animation-delay:2.28s"/>
+              <circle class="brain-icon-pulse" cx="141.9" cy="175.1" r="0.57" style="animation-delay:2.47s"/>
+              <circle class="brain-icon-pulse" cx="184.9" cy="88.1" r="0.81" style="animation-delay:2.66s"/>
+              <circle class="brain-icon-pulse" cx="78.6" cy="170.2" r="0.42" style="animation-delay:2.85s"/>
+              <circle class="brain-icon-pulse" cx="92.9" cy="128.3" r="0.67" style="animation-delay:3.04s"/>
+              <circle class="brain-icon-pulse" cx="40.8" cy="74.0" r="0.42" style="animation-delay:0.00s"/>
+              <circle class="brain-icon-pulse" cx="205.6" cy="109.1" r="0.35" style="animation-delay:0.19s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="135.0" cy="56.7" r="1.04" style="animation-delay:0.38s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="131.3" cy="56.6" r="0.79" style="animation-delay:0.57s"/>
+              <circle class="brain-icon-pulse" cx="40.9" cy="89.0" r="0.61" style="animation-delay:0.76s"/>
+              <circle class="brain-icon-pulse" cx="82.7" cy="16.9" r="0.36" style="animation-delay:0.95s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="164.4" cy="83.5" r="0.89" style="animation-delay:1.14s"/>
+              <circle class="brain-icon-pulse" cx="68.3" cy="88.6" r="0.97" style="animation-delay:1.33s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="133.9" cy="98.6" r="1.7" style="animation-delay:1.52s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="126.0" cy="79.0" r="1.1" style="animation-delay:1.71s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="127.3" cy="68.7" r="1.3" style="animation-delay:1.90s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="120.3" cy="106.3" r="0.64" style="animation-delay:2.09s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="110.1" cy="124.5" r="1.33" style="animation-delay:2.28s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="76.6" cy="100.1" r="1.14" style="animation-delay:2.47s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="96.9" cy="94.0" r="0.77" style="animation-delay:2.66s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="113.4" cy="125.9" r="1.77" style="animation-delay:2.85s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="117.7" cy="79.5" r="0.85" style="animation-delay:3.04s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="92.7" cy="113.9" r="1.02" style="animation-delay:0.00s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="105.5" cy="107.6" r="0.74" style="animation-delay:0.19s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="143.1" cy="61.4" r="1.26" style="animation-delay:0.38s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="95.1" cy="68.4" r="1.29" style="animation-delay:0.57s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="113.7" cy="84.9" r="1.14" style="animation-delay:0.76s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="122.9" cy="64.9" r="0.87" style="animation-delay:0.95s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="133.1" cy="109.4" r="1.29" style="animation-delay:1.14s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="155.1" cy="106.9" r="1.71" style="animation-delay:1.33s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="101.6" cy="79.3" r="1.8" style="animation-delay:1.52s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="95.9" cy="59.0" r="1.68" style="animation-delay:1.71s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="112.2" cy="123.5" r="0.76" style="animation-delay:1.90s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="110.3" cy="113.7" r="0.62" style="animation-delay:2.09s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="90.1" cy="113.5" r="1.78" style="animation-delay:2.28s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="120.6" cy="120.5" r="1.25" style="animation-delay:2.47s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="138.6" cy="67.6" r="0.69" style="animation-delay:2.66s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="125.2" cy="97.9" r="1.34" style="animation-delay:2.85s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="84.7" cy="67.2" r="0.87" style="animation-delay:3.04s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="116.2" cy="121.1" r="1.02" style="animation-delay:0.00s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="116.7" cy="97.9" r="1.16" style="animation-delay:0.19s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="88.1" cy="92.2" r="1.56" style="animation-delay:0.38s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="110.5" cy="68.1" r="0.81" style="animation-delay:0.57s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="132.9" cy="87.6" r="1.38" style="animation-delay:0.76s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="150.5" cy="74.0" r="1.78" style="animation-delay:0.95s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="151.5" cy="87.7" r="1.77" style="animation-delay:1.14s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="77.1" cy="81.8" r="1.21" style="animation-delay:1.33s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="133.9" cy="108.0" r="0.9" style="animation-delay:1.52s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="103.8" cy="111.4" r="1.34" style="animation-delay:1.71s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="123.3" cy="86.2" r="1.9" style="animation-delay:1.90s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="134.2" cy="115.2" r="1.59" style="animation-delay:2.09s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="95.7" cy="87.3" r="0.67" style="animation-delay:2.28s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="89.5" cy="84.9" r="0.73" style="animation-delay:2.47s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="125.0" cy="97.2" r="1.86" style="animation-delay:2.66s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="117.2" cy="65.7" r="1.24" style="animation-delay:2.85s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="131.1" cy="55.4" r="1.83" style="animation-delay:3.04s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="112.1" cy="99.0" r="1.38" style="animation-delay:0.00s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="106.6" cy="76.6" r="1.45" style="animation-delay:0.19s"/>
+              <circle class="brain-icon-pulse brain-icon-pulse-in" cx="126.1" cy="76.4" r="1.53" style="animation-delay:0.38s"/>
+            </g>
+          </svg>
+          <div class="brain-icon-caption">
+            <span id="brainIconStats">GEDÄCHTNIS WIRD GELADEN…</span>
+            <span class="brain-icon-hint">KLICKEN ZUM ÖFFNEN</span>
+          </div>
+        </button>
+
+        <div class="brain-network" id="brainNetwork" hidden>
+          <svg viewBox="0 0 300 260" id="brainNetworkSvg"></svg>
+          <a href="#neuronalesGehirn" class="brain-network-link" id="brainNetworkLink">IM GEHIRN-PANEL BEARBEITEN ↓</a>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span>SENSOR-LOG</span><span class="tag" id="logTag">--</span></div>
+        <ul class="log" id="logList"></ul>
+      </div>
+
+    </section>
+
+    <!-- ===== CENTER COLUMN ===== -->
+    <section class="col col-center">
+
+      <div class="reactor-stage">
+        <svg viewBox="0 0 400 400" class="reactor">
+          <g class="ring ring-outer">
+            <circle cx="200" cy="200" r="180" class="ring-dash"/>
+          </g>
+          <g class="ring ring-mid">
+            <circle cx="200" cy="200" r="150" class="ring-dash-thin"/>
+          </g>
+          <g class="ring ring-inner-rot">
+            <circle cx="200" cy="200" r="118" class="ring-seg"/>
+          </g>
+          <g class="ring ring-inner-rot-rev">
+            <circle cx="200" cy="200" r="98" class="ring-seg-b"/>
+          </g>
+          <polygon points="200,120 232,160 220,214 180,214 168,160" class="triangle"/>
+          <circle cx="200" cy="200" r="46" class="core-glow"/>
+          <circle cx="200" cy="200" r="26" class="core-solid"/>
+          <g class="tick-ring">
+            <circle cx="200" cy="200" r="180" class="tick-circle"/>
+          </g>
+        </svg>
+        <div class="reactor-caption">
+          <span class="rc-line">FRAIDAY ONLINE</span>
+          <span class="rc-sub">GUTEN TAG, SIR</span>
+        </div>
+      </div>
+
+      <div class="panel command-panel">
+        <div class="panel-head"><span>SPRACHBEFEHL</span><span class="tag">MIC READY</span></div>
+        <div class="command-line">
+          <span class="prompt">&gt;</span>
+          <span id="typedCommand"></span><span class="cursor">▌</span>
+        </div>
+        <div class="wave" id="wave">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== RIGHT COLUMN ===== -->
+    <section class="col col-right">
+
+      <div class="panel">
+        <div class="panel-head"><span>UMGEBUNG</span><span class="tag" id="geoTag">--</span></div>
+        <div class="env-grid">
+          <div class="env-item"><span class="env-k">KOORDINATEN</span><span class="env-v" id="envCoord">ERFASSE…</span></div>
+          <div class="env-item"><span class="env-k">ZEITZONE</span><span class="env-v" id="envTz">--</span></div>
+          <div class="env-item"><span class="env-k">AUFLÖSUNG</span><span class="env-v" id="envRes">--</span></div>
+          <div class="env-item"><span class="env-k">VERBINDUNG</span><span class="env-v" id="envConn">--</span></div>
+          <div class="env-item"><span class="env-k">BATTERIE</span><span class="env-v" id="envBatt">--</span></div>
+          <div class="env-item"><span class="env-k">AGENT</span><span class="env-v" id="envAgent">--</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span>RADAR</span><span class="tag">360°</span></div>
+        <div class="radar">
+          <svg viewBox="0 0 200 200" class="radar-svg">
+            <circle cx="100" cy="100" r="90" class="radar-ring"/>
+            <circle cx="100" cy="100" r="60" class="radar-ring"/>
+            <circle cx="100" cy="100" r="30" class="radar-ring"/>
+            <line x1="10" y1="100" x2="190" y2="100" class="radar-cross"/>
+            <line x1="100" y1="10" x2="100" y2="190" class="radar-cross"/>
+            <g class="radar-sweep-group">
+              <path d="M100,100 L100,10 A90,90 0 0,1 178,55 Z" class="radar-sweep"/>
+            </g>
+            <circle cx="140" cy="70" r="3" class="blip blip-1"/>
+            <circle cx="60" cy="130" r="3" class="blip blip-2"/>
+            <circle cx="130" cy="140" r="3" class="blip blip-3"/>
+          </svg>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <!-- ===== NEURONALES GEHIRN ===== -->
+  <div class="grid grid-brain" id="neuronalesGehirn">
+    <section class="panel brain-panel">
+      <div class="panel-head">
+        <span>NEURONALES GEHIRN</span>
+        <span class="tag" id="brainTag">VERBINDE…</span>
+      </div>
+
+      <div class="brain-tabs" role="tablist">
+        <button class="brain-tab active" data-view="data" role="tab" aria-selected="true">DATEN</button>
+        <button class="brain-tab" data-view="functions" role="tab" aria-selected="false">FUNKTIONEN</button>
+        <button class="brain-tab" data-view="memory" role="tab" aria-selected="false">GEDÄCHTNIS</button>
+      </div>
+
+      <div class="brain-body">
+
+        <!-- DATEN VIEW -->
+        <div class="brain-view" id="view-data">
+          <form class="brain-form" id="dataForm">
+            <input type="text" id="dataTitle" placeholder="TITEL" maxlength="200" required>
+            <input type="text" id="dataTag" placeholder="TAG (optional)" maxlength="60">
+            <textarea id="dataContent" placeholder="INHALT / FAKTEN / NOTIZ …" maxlength="20000" required></textarea>
+            <button type="submit">EINTRAG SPEICHERN</button>
+          </form>
+          <input type="search" class="brain-search" id="dataSearch" placeholder="Gedächtnis durchsuchen…">
+          <p class="brain-empty" id="dataEmpty" hidden>Noch keine Einträge gespeichert.</p>
+          <ul class="brain-list" id="dataList"></ul>
+        </div>
+
+        <!-- FUNKTIONEN VIEW -->
+        <div class="brain-view" id="view-functions" hidden>
+          <form class="brain-form" id="funcForm">
+            <input type="text" id="funcName" placeholder="FUNKTIONSNAME" maxlength="120" required>
+            <input type="text" id="funcTrigger" placeholder="SPRACHBEFEHL / TRIGGER (optional)" maxlength="200">
+            <input type="text" id="funcDesc" placeholder="BESCHREIBUNG (optional)" maxlength="500">
+            <textarea id="funcCode" placeholder="// JS-CODE, z.B. return 21 * 2;" maxlength="20000" required></textarea>
+            <button type="submit">FUNKTION SPEICHERN</button>
+          </form>
+          <p class="brain-empty" id="funcEmpty" hidden>Noch keine Funktionen gespeichert.</p>
+          <ul class="brain-list" id="funcList"></ul>
+        </div>
+
+        <!-- GEDÄCHTNIS VIEW -->
+        <div class="brain-view" id="view-memory" hidden>
+          <p class="memory-intro">
+            F.R.Ai.D.A.Y merkt sich automatisch jeden Weltlage-/Sprachbefehl
+            sowie jede Spotify-/YouTube-Suche und -Wiedergabe — als
+            Grundlage für Vorlieben und Verlauf. Alles bleibt lokal in
+            deiner eigenen Datenbank.
+          </p>
+
+          <div class="memory-stats" id="memoryStats"></div>
+
+          <div class="memory-toolbar">
+            <input type="search" class="brain-search" id="memorySearch" placeholder="Gedächtnis durchsuchen…">
+            <select id="memoryTypeFilter">
+              <option value="">ALLE TYPEN</option>
+              <option value="weltlage_suche">WELTLAGE</option>
+              <option value="sprachbefehl">SPRACHBEFEHLE</option>
+              <option value="youtube_suche">YOUTUBE-SUCHE</option>
+              <option value="youtube_wiedergabe">YOUTUBE-WIEDERGABE</option>
+              <option value="spotify_suche">SPOTIFY-SUCHE</option>
+              <option value="spotify_wiedergabe">SPOTIFY-WIEDERGABE</option>
+              <option value="gmail_suche">GMAIL-SUCHE</option>
+              <option value="kalender_termin">KALENDER-TERMIN</option>
+            </select>
+            <button type="button" class="delete-btn" id="memoryClearBtn">ALLES LÖSCHEN</button>
+          </div>
+
+          <p class="brain-empty" id="memoryEmpty" hidden>Noch keine Aktivität aufgezeichnet.</p>
+          <ul class="brain-list" id="memoryList"></ul>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== INTEGRATIONEN ===== -->
+  <div class="grid grid-brain" id="integrations">
+    <section class="panel integrations-panel">
+      <div class="panel-head">
+        <span>INTEGRATIONEN</span>
+        <span class="tag">MAIL &middot; KALENDER &middot; KONTAKTE &middot; SPOTIFY &middot; YOUTUBE</span>
+      </div>
+
+      <div class="integrations-connect">
+        <div class="connect-row">
+          <span class="connect-label">GOOGLE</span>
+          <span class="connect-status" id="googleStatus">PRÜFE…</span>
+          <a class="connect-btn" id="googleConnectBtn" href="/auth/google">VERBINDEN</a>
+          <button type="button" class="connect-btn-secondary" id="googleDisconnectBtn" hidden>TRENNEN</button>
+        </div>
+        <div class="connect-row">
+          <span class="connect-label">SPOTIFY</span>
+          <span class="connect-status" id="spotifyStatus">PRÜFE…</span>
+          <a class="connect-btn" id="spotifyConnectBtn" href="/auth/spotify">VERBINDEN</a>
+          <button type="button" class="connect-btn-secondary" id="spotifyDisconnectBtn" hidden>TRENNEN</button>
+        </div>
+      </div>
+
+      <div class="brain-tabs" role="tablist">
+        <button class="brain-tab int-tab active" data-int-view="mail" role="tab" aria-selected="true">MAIL</button>
+        <button class="brain-tab int-tab" data-int-view="calendar" role="tab" aria-selected="false">KALENDER</button>
+        <button class="brain-tab int-tab" data-int-view="contacts" role="tab" aria-selected="false">KONTAKTE</button>
+        <button class="brain-tab int-tab" data-int-view="spotify" role="tab" aria-selected="false">SPOTIFY</button>
+        <button class="brain-tab int-tab" data-int-view="youtube" role="tab" aria-selected="false">YOUTUBE</button>
+        <button class="brain-tab int-tab" data-int-view="whatsapp" role="tab" aria-selected="false">WHATSAPP</button>
+      </div>
+
+      <div class="brain-body">
+
+        <!-- MAIL -->
+        <div class="int-view" id="int-view-mail">
+          <form class="brain-form" id="mailForm">
+            <input type="text" id="mailTo" placeholder="AN (E-Mail)" required>
+            <input type="text" id="mailSubject" placeholder="BETREFF" required>
+            <textarea id="mailBody" placeholder="NACHRICHT …" required></textarea>
+            <button type="submit">SENDEN</button>
+          </form>
+          <div class="int-toolbar">
+            <input type="search" class="brain-search" id="mailSearch" placeholder="Gmail durchsuchen… (z.B. von:chef@firma.de, betreff:rechnung)">
+            <button type="button" class="int-refresh" id="mailRefreshBtn">AKTUALISIEREN</button>
+          </div>
+          <p class="brain-empty" id="mailEmpty" hidden>Keine Mails geladen — Google verbinden und aktualisieren.</p>
+          <ul class="brain-list" id="mailList"></ul>
+        </div>
+
+        <!-- KALENDER -->
+        <div class="int-view" id="int-view-calendar" hidden>
+          <form class="brain-form" id="calendarForm">
+            <input type="text" id="calSummary" placeholder="TITEL" required>
+            <input type="datetime-local" id="calStart" required>
+            <input type="datetime-local" id="calEnd" required>
+            <input type="text" id="calLocation" placeholder="ORT (optional)">
+            <button type="submit">TERMIN ANLEGEN</button>
+          </form>
+          <div class="int-toolbar">
+            <button type="button" class="int-refresh" id="calRefreshBtn">AKTUALISIEREN</button>
+          </div>
+          <p class="brain-empty" id="calEmpty" hidden>Keine Termine geladen — Google verbinden und aktualisieren.</p>
+          <ul class="brain-list" id="calList"></ul>
+        </div>
+
+        <!-- KONTAKTE -->
+        <div class="int-view" id="int-view-contacts" hidden>
+          <div class="int-toolbar">
+            <input type="search" class="brain-search" id="contactsSearch" placeholder="Kontakte durchsuchen…">
+            <button type="button" class="int-refresh" id="contactsSyncBtn">SYNCHRONISIEREN</button>
+          </div>
+          <p class="brain-empty" id="contactsEmpty" hidden>Keine Kontakte geladen — Google verbinden und synchronisieren.</p>
+          <ul class="brain-list" id="contactsList"></ul>
+        </div>
+
+        <!-- SPOTIFY -->
+        <div class="int-view" id="int-view-spotify" hidden>
+          <div class="spotify-now" id="spotifyNow" hidden>
+            <img id="spotifyNowImg" alt="">
+            <div class="spotify-now-info">
+              <div class="spotify-now-track" id="spotifyNowTrack"></div>
+              <div class="spotify-now-artist" id="spotifyNowArtist"></div>
+              <div class="spotify-now-controls">
+                <button type="button" id="spotifyPrevBtn">⏮</button>
+                <button type="button" id="spotifyPlayBtn">▶</button>
+                <button type="button" id="spotifyPauseBtn">⏸</button>
+                <button type="button" id="spotifyNextBtn">⏭</button>
+              </div>
+            </div>
+          </div>
+          <p class="brain-empty" id="spotifyEmpty" hidden>Keine Wiedergabe — Spotify verbinden und ein Gerät öffnen.</p>
+          <form class="brain-form" id="spotifySearchForm">
+            <input type="text" id="spotifySearchInput" placeholder="Titel oder Interpret suchen…" required>
+            <button type="submit">SUCHEN</button>
+          </form>
+          <ul class="brain-list" id="spotifyResults"></ul>
+        </div>
+
+        <!-- YOUTUBE -->
+        <div class="int-view" id="int-view-youtube" hidden>
+          <form class="brain-form" id="youtubeSearchForm">
+            <input type="text" id="youtubeSearchInput" placeholder="YouTube durchsuchen…" required>
+            <button type="submit">SUCHEN</button>
+          </form>
+          <div class="youtube-player" id="youtubePlayer" hidden>
+            <iframe id="youtubeIframe" src="" title="YouTube Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <ul class="brain-list youtube-results" id="youtubeResults"></ul>
+        </div>
+
+        <!-- WHATSAPP -->
+        <div class="int-view" id="int-view-whatsapp" hidden>
+          <p class="wa-warning">
+            Inoffizielle Anbindung an dein echtes WhatsApp-Konto (wie WhatsApp Web).
+            Verstößt gegen die WhatsApp-Nutzungsbedingungen — Risiko einer Kontosperrung.
+          </p>
+
+          <div class="wa-status-box" id="waDisconnected">
+            <button type="button" class="int-refresh" id="waConnectBtn">MIT WHATSAPP VERBINDEN</button>
+          </div>
+
+          <div class="wa-status-box" id="waInitializing" hidden>
+            <span class="wake-dot"></span> Verbindung wird aufgebaut …
+          </div>
+
+          <div class="wa-status-box" id="waQr" hidden>
+            <p>Mit dem Handy scannen: WhatsApp → Einstellungen → Verknüpfte Geräte → Gerät verknüpfen</p>
+            <img id="waQrImg" alt="WhatsApp QR-Code">
+          </div>
+
+          <div class="wa-status-box" id="waError" hidden>
+            <span id="waErrorText"></span>
+            <button type="button" class="int-refresh" id="waRetryBtn">ERNEUT VERSUCHEN</button>
+          </div>
+
+          <div class="wa-ready" id="waReady" hidden>
+            <div class="int-toolbar">
+              <span class="connect-status is-connected">VERBUNDEN</span>
+              <button type="button" class="connect-btn-secondary" id="waLogoutBtn">TRENNEN</button>
+            </div>
+            <form class="brain-form" id="waSendForm">
+              <input type="text" id="waTo" placeholder="Name oder Nummer (z.B. 491701234567)" required>
+              <input type="text" id="waSearchInput" placeholder="Kontakt durchsuchen…">
+              <textarea id="waMessage" placeholder="NACHRICHT …" required></textarea>
+              <button type="submit">SENDEN</button>
+            </form>
+            <ul class="brain-list" id="waContactResults"></ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <footer class="footbar">
+    <span>STARK-KLASSE INTERFACE SIMULATION</span>
+    <span class="foot-sep">&middot;</span>
+    <span id="uptime">LAUFZEIT 00:00:00</span>
+    <span class="foot-sep">&middot;</span>
+    <span>BUILD MK-01</span>
+  </footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
