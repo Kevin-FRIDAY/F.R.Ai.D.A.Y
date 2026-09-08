@@ -300,6 +300,7 @@
         <button class="brain-tab int-tab" data-int-view="contacts" role="tab" aria-selected="false">KONTAKTE</button>
         <button class="brain-tab int-tab" data-int-view="spotify" role="tab" aria-selected="false">SPOTIFY</button>
         <button class="brain-tab int-tab" data-int-view="youtube" role="tab" aria-selected="false">YOUTUBE</button>
+        <button class="brain-tab int-tab" data-int-view="whatsapp" role="tab" aria-selected="false">WHATSAPP</button>
       </div>
 
       <div class="brain-body">
@@ -378,6 +379,46 @@
             <iframe id="youtubeIframe" src="" title="YouTube Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
           <ul class="brain-list youtube-results" id="youtubeResults"></ul>
+        </div>
+
+        <!-- WHATSAPP -->
+        <div class="int-view" id="int-view-whatsapp" hidden>
+          <p class="wa-warning">
+            Inoffizielle Anbindung an dein echtes WhatsApp-Konto (wie WhatsApp Web).
+            Verstößt gegen die WhatsApp-Nutzungsbedingungen — Risiko einer Kontosperrung.
+          </p>
+
+          <div class="wa-status-box" id="waDisconnected">
+            <button type="button" class="int-refresh" id="waConnectBtn">MIT WHATSAPP VERBINDEN</button>
+          </div>
+
+          <div class="wa-status-box" id="waInitializing" hidden>
+            <span class="wake-dot"></span> Verbindung wird aufgebaut …
+          </div>
+
+          <div class="wa-status-box" id="waQr" hidden>
+            <p>Mit dem Handy scannen: WhatsApp → Einstellungen → Verknüpfte Geräte → Gerät verknüpfen</p>
+            <img id="waQrImg" alt="WhatsApp QR-Code">
+          </div>
+
+          <div class="wa-status-box" id="waError" hidden>
+            <span id="waErrorText"></span>
+            <button type="button" class="int-refresh" id="waRetryBtn">ERNEUT VERSUCHEN</button>
+          </div>
+
+          <div class="wa-ready" id="waReady" hidden>
+            <div class="int-toolbar">
+              <span class="connect-status is-connected">VERBUNDEN</span>
+              <button type="button" class="connect-btn-secondary" id="waLogoutBtn">TRENNEN</button>
+            </div>
+            <form class="brain-form" id="waSendForm">
+              <input type="text" id="waTo" placeholder="Name oder Nummer (z.B. 491701234567)" required>
+              <input type="text" id="waSearchInput" placeholder="Kontakt durchsuchen…">
+              <textarea id="waMessage" placeholder="NACHRICHT …" required></textarea>
+              <button type="submit">SENDEN</button>
+            </form>
+            <ul class="brain-list" id="waContactResults"></ul>
+          </div>
         </div>
 
       </div>

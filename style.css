@@ -382,6 +382,20 @@ html,body{
 .yt-card-title{ font-size:12px; color:var(--cyan-bright); }
 .yt-card-channel{ font-size:10px; color:var(--cyan-dim); }
 
+.wa-warning{
+  font-size:10px; letter-spacing:.5px; color:var(--red); line-height:1.5;
+  border:1px solid rgba(255,59,59,.4); background:rgba(255,59,59,.06); padding:8px 12px;
+}
+.wa-status-box{
+  display:flex; flex-direction:column; gap:10px; align-items:flex-start;
+  border:1px solid var(--line); background:rgba(255,122,26,0.04); padding:14px;
+  font-size:11px; color:var(--cyan-dim);
+}
+.wa-status-box[hidden]{ display:none; }
+.wa-status-box img{ width:220px; height:220px; border:1px solid var(--line); background:#fff; padding:8px; }
+.wa-ready{ display:flex; flex-direction:column; gap:12px; }
+.wa-ready[hidden]{ display:none; }
+
 /* ===== brain / memory core ===== */
 .grid-brain{ grid-template-columns:1fr; padding-top:0; }
 .brain-panel{ padding:16px 22px 22px; }

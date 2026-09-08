@@ -18,7 +18,9 @@ Ein JARVIS/F.R.I.D.A.Y-artiges HUD-Dashboard mit:
   sortieren, Google-Kalender-Termine anlegen/verschieben/löschen,
   Google-Kontakte synchronisieren (Klick auf einen Kontakt trägt die
   E-Mail-Adresse direkt ins Sendeformular ein), Spotify-Wiedergabe
-  steuern + durchsuchen, YouTube durchsuchen und im Dashboard abspielen.
+  steuern + durchsuchen, YouTube durchsuchen und im Dashboard abspielen,
+  sowie **WhatsApp** (inoffiziell, siehe Warnhinweis unten): Kontakte
+  durchsuchen und Nachrichten senden.
   Jede Anbindung braucht eigene Zugangsdaten, siehe unten.
 
 ## Starten
@@ -102,6 +104,29 @@ Dashboard funktioniert trotzdem normal weiter.
 Die Zugangs-Tokens (nach dem Verbinden) liegen ebenfalls in
 `server/data/brain.db` und werden bei Bedarf automatisch erneuert.
 "TRENNEN" im Dashboard löscht sie wieder.
+
+### WhatsApp (inoffiziell — bitte vorher lesen)
+
+⚠️ **Diese Anbindung nutzt [whatsapp-web.js](https://wwebjs.dev/), das dein
+echtes WhatsApp-Konto wie eine zusätzliche WhatsApp-Web-Sitzung im
+Hintergrund fernsteuert. Das ist von Meta nicht autorisiert und verstößt
+gegen die WhatsApp-Nutzungsbedingungen — im schlimmsten Fall kann dein
+Konto gesperrt werden.** Es gibt dafür keine offizielle Alternative für
+den persönlichen Gebrauch (die offizielle WhatsApp Business API kann
+keine beliebigen Kontakte ohne vorherige Zustimmung anschreiben).
+
+Keine Konfiguration nötig — einfach im Dashboard unter "INTEGRATIONEN →
+WHATSAPP" auf "MIT WHATSAPP VERBINDEN" klicken, dann mit dem Handy den
+angezeigten QR-Code scannen (WhatsApp → Einstellungen → Verknüpfte
+Geräte → Gerät verknüpfen). Die Sitzung bleibt danach dauerhaft
+angemeldet (Sitzungsdaten liegen in `server/data/whatsapp-session/`,
+nicht im Repo). "TRENNEN" meldet die Sitzung wieder ab.
+
+Voraussetzung auf dem Server: eine Chromium/Chrome-Installation, die
+Puppeteer selbst herunterlädt (passiert automatisch bei `npm install`).
+Falls der Server bereits ein System-Chrome hat, kann `.env` optional
+`PUPPETEER_EXECUTABLE_PATH=/pfad/zu/chrome` setzen, um den Download zu
+sparen.
 
 ## Live-Deployment auf einem eigenen Server
 

@@ -37,6 +37,16 @@ fi
 echo "==> Nginx & Certbot sicherstellen"
 apt-get install -y nginx certbot python3-certbot-nginx git
 
+echo "==> Chromium-Laufzeitbibliotheken sicherstellen (für WhatsApp-Integration/Puppeteer)"
+apt-get install -y \
+  libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 \
+  libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2t64 \
+  libpango-1.0-0 libcairo2 libgtk-3-0 || \
+apt-get install -y \
+  libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 \
+  libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2 \
+  libpango-1.0-0 libcairo2 libgtk-3-0
+
 echo "==> Dedizierten Systembenutzer '${APP_USER}' anlegen"
 if ! id -u "${APP_USER}" >/dev/null 2>&1; then
   useradd --system --no-create-home --shell /usr/sbin/nologin "${APP_USER}"

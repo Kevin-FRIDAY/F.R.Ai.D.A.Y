@@ -8,6 +8,7 @@ const authRouter = require('./routes/auth');
 const googleApiRouter = require('./routes/google-api');
 const spotifyRouter = require('./routes/spotify');
 const youtubeRouter = require('./routes/youtube');
+const whatsappRouter = require('./routes/whatsapp');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.use('/auth', authRouter);
 app.use('/api/google', googleApiRouter);
 app.use('/api/spotify', spotifyRouter);
 app.use('/api/youtube', youtubeRouter);
+app.use('/api/whatsapp', whatsappRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ONLINE', time: new Date().toISOString() });

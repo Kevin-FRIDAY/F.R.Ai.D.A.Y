@@ -845,7 +845,7 @@ async function refreshIntegrationStatus(){
 
 function initIntegrationsTabs(){
   const tabs = document.querySelectorAll('.int-tab');
-  const views = ['mail', 'calendar', 'contacts', 'spotify', 'youtube'];
+  const views = ['mail', 'calendar', 'contacts', 'spotify', 'youtube', 'whatsapp'];
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
@@ -1204,6 +1204,119 @@ function initYoutube(){
   });
 }
 
+// ---------- WhatsApp (inoffiziell) ----------
+let waPollTimer = null;
+
+function showOnly(id, ids){
+  ids.forEach(i => { document.getElementById(i).hidden = i !== id; });
+}
+
+function renderWaState(state){
+  const boxes = ['waDisconnected', 'waInitializing', 'waQr', 'waError'];
+  const readyEl = document.getElementById('waReady');
+
+  if (state.status === 'ready') {
+    boxes.forEach(id => { document.getElementById(id).hidden = true; });
+    readyEl.hidden = false;
+    return;
+  }
+  readyEl.hidden = true;
+
+  if (state.status === 'qr' && state.qrDataUrl) {
+    showOnly('waQr', boxes);
+    document.getElementById('waQrImg').src = state.qrDataUrl;
+  } else if (state.status === 'initializing' || state.status === 'authenticated') {
+    showOnly('waInitializing', boxes);
+  } else if (state.status === 'auth_failure') {
+    showOnly('waError', boxes);
+    document.getElementById('waErrorText').textContent = state.error || 'Verbindung fehlgeschlagen.';
+  } else {
+    showOnly('waDisconnected', boxes);
+  }
+}
+
+async function pollWaStatus(){
+  try {
+    const state = await apiJson('/api/whatsapp/status');
+    renderWaState(state);
+    if (state.status === 'ready' || state.status === 'disconnected') {
+      clearInterval(waPollTimer);
+      waPollTimer = null;
+    }
+  } catch (err) {
+    // Statusabfrage fehlgeschlagen — beim nächsten Poll erneut versuchen.
+  }
+}
+
+function startWaPolling(){
+  if (waPollTimer) return;
+  pollWaStatus();
+  waPollTimer = setInterval(pollWaStatus, 2500);
+}
+
+function renderWaContacts(contacts){
+  const list = document.getElementById('waContactResults');
+  list.innerHTML = '';
+  contacts.forEach(c => {
+    const card = el('li', 'brain-card contact-card');
+    const head = el('div', 'brain-card-head');
+    head.appendChild(el('span', 'brain-card-title', c.name));
+    if (c.number) head.appendChild(el('span', 'brain-card-tag', c.number));
+    card.appendChild(head);
+    card.addEventListener('click', () => {
+      document.getElementById('waTo').value = c.id;
+      list.innerHTML = '';
+      document.getElementById('waSearchInput').value = c.name;
+    });
+    list.appendChild(card);
+  });
+}
+
+function initWhatsapp(){
+  document.getElementById('waConnectBtn').addEventListener('click', async () => {
+    await apiJson('/api/whatsapp/connect', { method: 'POST' });
+    startWaPolling();
+  });
+  document.getElementById('waRetryBtn').addEventListener('click', async () => {
+    await apiJson('/api/whatsapp/connect', { method: 'POST' });
+    startWaPolling();
+  });
+  document.getElementById('waLogoutBtn').addEventListener('click', async () => {
+    await apiJson('/api/whatsapp/logout', { method: 'POST' });
+    renderWaState({ status: 'disconnected' });
+  });
+
+  let searchTimer = null;
+  document.getElementById('waSearchInput').addEventListener('input', (e) => {
+    clearTimeout(searchTimer);
+    const q = e.target.value.trim();
+    if (!q) { document.getElementById('waContactResults').innerHTML = ''; return; }
+    searchTimer = setTimeout(async () => {
+      try {
+        const contacts = await apiJson(`/api/whatsapp/contacts?q=${encodeURIComponent(q)}`);
+        renderWaContacts(contacts);
+      } catch (err) { /* z.B. noch nicht verbunden — ignorieren */ }
+    }, 300);
+  });
+
+  document.getElementById('waSendForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const to = document.getElementById('waTo').value.trim();
+    const message = document.getElementById('waMessage').value.trim();
+    try {
+      await apiJson('/api/whatsapp/send', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to, message }),
+      });
+      document.getElementById('waMessage').value = '';
+    } catch (err) {
+      alert(`Senden fehlgeschlagen: ${err.message}`);
+    }
+  });
+
+  startWaPolling();
+}
+
 function initIntegrations(){
   initIntegrationsTabs();
   initIntegrationConnectButtons();
@@ -1212,6 +1325,7 @@ function initIntegrations(){
   initContacts();
   initSpotify();
   initYoutube();
+  initWhatsapp();
   refreshIntegrationStatus();
   loadMail();
   loadCalendar();
