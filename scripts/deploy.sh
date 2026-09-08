@@ -87,6 +87,22 @@ systemctl daemon-reload
 systemctl enable fraiday
 systemctl restart fraiday
 
+echo "==> Bestehende Nginx-Konfigurationen für ${DOMAIN} ersetzen"
+BACKUP_DIR="/etc/nginx/disabled-by-fraiday-deploy"
+mkdir -p "${BACKUP_DIR}"
+for f in /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*.conf; do
+  [[ -e "${f}" ]] || continue
+  # Unsere eigene Zielkonfiguration wird gleich unten neu geschrieben, die lassen wir hier aus.
+  if [[ "${f}" == "/etc/nginx/sites-enabled/${DOMAIN}" ]]; then
+    continue
+  fi
+  if grep -Eq "server_name[[:space:]]+.*\b${DOMAIN}\b" "${f}" 2>/dev/null; then
+    dest="${BACKUP_DIR}/$(basename "${f}").$(date +%s).bak"
+    echo "   -> ersetze bestehende Konfiguration: ${f} (gesichert nach ${dest})"
+    mv "${f}" "${dest}"
+  fi
+done
+
 echo "==> Nginx als Reverse-Proxy einrichten"
 cat > "/etc/nginx/sites-available/${DOMAIN}" <<EOF
 server {
