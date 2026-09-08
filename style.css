@@ -508,6 +508,39 @@ html,body{
 }
 .brain-card-result.is-error{ color:var(--red); border-color:rgba(255,59,59,.5); }
 
+.memory-intro{ font-size:11px; color:var(--cyan-dim); line-height:1.6; margin:0; }
+
+.memory-stats{ display:grid; gap:10px; }
+.memory-stat-total{
+  font-family:'Orbitron', sans-serif; font-size:11px; letter-spacing:1.5px; color:var(--amber);
+}
+.memory-pref-grid{
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px;
+}
+.memory-pref-col{
+  border:1px solid var(--line); background:rgba(255,122,26,0.04); padding:10px 12px; display:grid; gap:6px;
+}
+.memory-pref-head{ font-size:9px; letter-spacing:1.5px; color:var(--amber); }
+.memory-pref-list{ list-style:none; margin:0; padding:0; display:grid; gap:4px; }
+.memory-pref-list li{
+  display:flex; justify-content:space-between; gap:8px; font-size:11px; color:var(--cyan);
+}
+.memory-pref-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.memory-pref-count{ color:var(--cyan-dim); white-space:nowrap; }
+
+.memory-toolbar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.memory-toolbar .brain-search{ flex:1; min-width:160px; }
+.memory-toolbar select{
+  background:rgba(0,0,0,0.5); border:1px solid var(--line); color:var(--cyan-bright);
+  font-family:'Share Tech Mono', monospace; font-size:11px; padding:9px 10px; outline:none;
+}
+.memory-toolbar .delete-btn{
+  font-family:'Share Tech Mono', monospace; font-size:10px; letter-spacing:1px;
+  background:transparent; border:1px solid var(--line); color:var(--cyan-dim);
+  padding:9px 14px; cursor:pointer; transition:color .2s ease, border-color .2s ease;
+}
+.memory-toolbar .delete-btn:hover{ color:var(--red); border-color:var(--red); }
+
 @media (max-width: 640px){
   .brain-form{ grid-template-columns:1fr; }
 }

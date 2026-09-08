@@ -227,6 +227,19 @@ async function brainApi(path, options) {
   return res.json();
 }
 
+// Schreibt automatisch Weltlage-/Sprachbefehle sowie Spotify-/YouTube-
+// Suchen und -Wiedergaben ins Gedächtnis (server/routes/memory-log.js).
+// Bewusst "fire and forget": ein Logging-Fehler darf die eigentliche
+// Aktion (Suche, Wiedergabe, …) nie blockieren oder sichtbar stören.
+function logMemory(type, content, meta) {
+  if (!content) return;
+  fetch('/api/memory-log', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type, content, meta: meta || null }),
+  }).catch(() => { /* Gedächtnis-Log ist nicht kritisch */ });
+}
+
 function setBrainTag(text, ok){
   const tag = document.getElementById('brainTag');
   tag.textContent = text;
@@ -371,6 +384,8 @@ function initBrainTabs(){
       brain.view = tab.dataset.view;
       document.getElementById('view-data').hidden = brain.view !== 'data';
       document.getElementById('view-functions').hidden = brain.view !== 'functions';
+      document.getElementById('view-memory').hidden = brain.view !== 'memory';
+      if (brain.view === 'memory') { loadMemoryLog(); loadMemoryStats(); }
     });
   });
 }
@@ -522,10 +537,127 @@ function initBrainIcon(){
   document.getElementById('brainIconToggle').addEventListener('click', toggleBrainNetwork);
 }
 
+// ---------- Gedächtnis (automatisches Aktivitätsprotokoll) ----------
+const MEMORY_TYPE_LABELS = {
+  weltlage_suche: 'WELTLAGE',
+  sprachbefehl: 'SPRACHBEFEHL',
+  youtube_suche: 'YOUTUBE-SUCHE',
+  youtube_wiedergabe: 'YOUTUBE-WIEDERGABE',
+  spotify_suche: 'SPOTIFY-SUCHE',
+  spotify_wiedergabe: 'SPOTIFY-WIEDERGABE',
+};
+
+function memoryTypeLabel(type){
+  return MEMORY_TYPE_LABELS[type] || type.toUpperCase();
+}
+
+function renderMemoryList(events){
+  const list = document.getElementById('memoryList');
+  const empty = document.getElementById('memoryEmpty');
+  list.innerHTML = '';
+  empty.hidden = events.length > 0;
+
+  events.forEach(ev => {
+    const card = el('li', 'brain-card memory-card');
+    const head = el('div', 'brain-card-head');
+    head.appendChild(el('span', 'brain-card-title', ev.content));
+    head.appendChild(el('span', 'brain-card-tag', memoryTypeLabel(ev.type)));
+    card.appendChild(head);
+    card.appendChild(el('div', 'brain-card-meta', fmtTime(ev.createdAt)));
+
+    const actions = el('div', 'brain-card-actions');
+    const delBtn = el('button', 'delete-btn', 'LÖSCHEN');
+    delBtn.type = 'button';
+    delBtn.addEventListener('click', async () => {
+      try {
+        await brainApi(`/api/memory-log/${ev.id}`, { method: 'DELETE' });
+        await loadMemoryLog();
+        await loadMemoryStats();
+      } catch (err) {
+        alert(`Löschen fehlgeschlagen: ${err.message}`);
+      }
+    });
+    actions.appendChild(delBtn);
+    card.appendChild(actions);
+
+    list.appendChild(card);
+  });
+}
+
+async function loadMemoryLog(){
+  const q = document.getElementById('memorySearch').value.trim();
+  const type = document.getElementById('memoryTypeFilter').value;
+  const params = new URLSearchParams();
+  if (q) params.set('q', q);
+  if (type) params.set('type', type);
+  try {
+    const events = await brainApi(`/api/memory-log?${params.toString()}`);
+    renderMemoryList(events);
+  } catch (err) {
+    /* Gedächtnis-Tab bleibt leer, Hauptfunktionen sind davon unabhängig */
+  }
+}
+
+function renderMemoryStats(stats){
+  const box = document.getElementById('memoryStats');
+  box.innerHTML = '';
+
+  const total = el('div', 'memory-stat-total', `${stats.totalCount} EREIGNISSE INSGESAMT GESPEICHERT`);
+  box.appendChild(total);
+
+  const groups = Object.entries(stats.preferences || {}).filter(([, items]) => items.length > 0);
+  if (groups.length === 0) return;
+
+  const grid = el('div', 'memory-pref-grid');
+  groups.forEach(([type, items]) => {
+    const col = el('div', 'memory-pref-col');
+    col.appendChild(el('div', 'memory-pref-head', memoryTypeLabel(type)));
+    const ul = el('ul', 'memory-pref-list');
+    items.slice(0, 5).forEach(item => {
+      const li = el('li', '');
+      li.appendChild(el('span', 'memory-pref-name', item.content));
+      li.appendChild(el('span', 'memory-pref-count', `×${item.count}`));
+      ul.appendChild(li);
+    });
+    col.appendChild(ul);
+    grid.appendChild(col);
+  });
+  box.appendChild(grid);
+}
+
+async function loadMemoryStats(){
+  try {
+    const stats = await brainApi('/api/memory-log/stats');
+    renderMemoryStats(stats);
+  } catch (err) {
+    /* nicht kritisch */
+  }
+}
+
+function initMemoryTab(){
+  let searchTimer = null;
+  document.getElementById('memorySearch').addEventListener('input', (e) => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(loadMemoryLog, 250);
+  });
+  document.getElementById('memoryTypeFilter').addEventListener('change', loadMemoryLog);
+  document.getElementById('memoryClearBtn').addEventListener('click', async () => {
+    if (!confirm('Wirklich das gesamte Gedächtnis löschen? Das kann nicht rückgängig gemacht werden.')) return;
+    try {
+      await brainApi('/api/memory-log', { method: 'DELETE' });
+      await loadMemoryLog();
+      await loadMemoryStats();
+    } catch (err) {
+      alert(`Löschen fehlgeschlagen: ${err.message}`);
+    }
+  });
+}
+
 async function initBrain(){
   initBrainTabs();
   initBrainForms();
   initBrainIcon();
+  initMemoryTab();
   try {
     await brainApi('/api/health');
     setBrainTag('ONLINE', true);
@@ -781,9 +913,10 @@ async function speakText(text, lang) {
   window.speechSynthesis.speak(utter);
 }
 
-async function runGlobeCommand(rawText) {
+async function runGlobeCommand(rawText, viaVoice) {
   const text = (rawText || '').trim();
   if (!text) return;
+  logMemory('weltlage_suche', text, { viaVoice: Boolean(viaVoice) });
 
   const card = document.getElementById('newsCard');
   const tag = document.getElementById('globeTag');
@@ -904,13 +1037,15 @@ function initWakeWordListening(input) {
     const match = transcript.match(WAKE_WORD_RE);
     if (!match) return; // kein "Friday" gehört -> ignorieren
 
+    logMemory('sprachbefehl', transcript);
+
     const command = match[1].trim();
     if (!command) {
       setWakeStatus('Ja, Sir? Sag z.B. „Friday, zeig mir Deutschland“.', true);
       return;
     }
     input.value = command;
-    runGlobeCommand(command);
+    runGlobeCommand(command, true);
   });
 
   micBtn.addEventListener('click', () => {
@@ -1267,6 +1402,7 @@ function renderSpotifyResults(tracks){
           method: 'PUT', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ uri: t.uri }),
         });
+        logMemory('spotify_wiedergabe', `${t.name} — ${t.artist}`, { uri: t.uri });
         setTimeout(loadSpotifyNow, 800);
       } catch (err) {
         alert(`Abspielen fehlgeschlagen: ${err.message}`);
@@ -1283,6 +1419,7 @@ function initSpotify(){
     e.preventDefault();
     const q = document.getElementById('spotifySearchInput').value.trim();
     if (!q) return;
+    logMemory('spotify_suche', q);
     try {
       const tracks = await apiJson(`/api/spotify/search?q=${encodeURIComponent(q)}`);
       renderSpotifyResults(tracks);
@@ -1315,6 +1452,7 @@ function initYoutube(){
     e.preventDefault();
     const q = document.getElementById('youtubeSearchInput').value.trim();
     if (!q) return;
+    logMemory('youtube_suche', q);
     try {
       const results = await apiJson(`/api/youtube/search?q=${encodeURIComponent(q)}`);
       const list = document.getElementById('youtubeResults');
@@ -1334,6 +1472,7 @@ function initYoutube(){
         card.addEventListener('click', () => {
           document.getElementById('youtubePlayer').hidden = false;
           document.getElementById('youtubeIframe').src = `https://www.youtube.com/embed/${r.videoId}?autoplay=1`;
+          logMemory('youtube_wiedergabe', r.title, { channel: r.channel });
         });
         list.appendChild(card);
       });

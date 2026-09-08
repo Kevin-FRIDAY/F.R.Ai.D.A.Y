@@ -23,6 +23,11 @@ Ein JARVIS/F.R.I.D.A.Y-artiges HUD-Dashboard mit:
   automatisch aktuell (alle 4 Minuten) und protokolliert seine
   tatsächliche Tätigkeit — sichtbar live im Sensor-Log-Panel. Kein
   simuliertes "Lernen", nur echte, nachvollziehbare Aktionen;
+- ein **Gedächtnis** (dritter Tab "GEDÄCHTNIS" im Gehirn-Panel): protokolliert
+  automatisch jeden Weltlage-/Sprachbefehl sowie jede Spotify-/YouTube-
+  Suche und -Wiedergabe, wertet daraus Vorlieben/Häufigkeiten aus und
+  bleibt komplett lokal in der eigenen Datenbank — durchsuchbar, filterbar
+  und jederzeit einzeln oder komplett löschbar;
 - **Integrationen** (eigenes Panel "INTEGRATIONEN"): Gmail lesen/senden/
   sortieren, Google-Kalender-Termine anlegen/verschieben/löschen,
   Google-Kontakte synchronisieren (Klick auf einen Kontakt trägt die
@@ -52,6 +57,11 @@ liefert das Frontend aus und stellt die Gehirn-API bereit:
 - `GET /api/news/countries` – Liste der unterstützten Länder (für den Globus)
 - `GET /api/activity` – echtes Aktivitätsprotokoll des Hintergrunddienstes
   (für das Sensor-Log-Panel)
+- `GET/POST /api/memory-log`, `DELETE /api/memory-log/:id`,
+  `DELETE /api/memory-log` – Gedächtnis: automatisches Protokoll aller
+  Weltlage-/Sprachbefehle sowie Spotify-/YouTube-Suchen und -Wiedergaben
+  (`?type=` und `?q=` filtern/durchsuchen)
+- `GET /api/memory-log/stats` – Vorlieben/Häufigkeiten aus dem Gedächtnis
 
 Die Daten liegen in `server/data/brain.db` (SQLite, wird beim ersten
 Start automatisch angelegt und ist nicht Teil des Repos). Nachrichten

@@ -666,6 +666,7 @@
       <div class="brain-tabs" role="tablist">
         <button class="brain-tab active" data-view="data" role="tab" aria-selected="true">DATEN</button>
         <button class="brain-tab" data-view="functions" role="tab" aria-selected="false">FUNKTIONEN</button>
+        <button class="brain-tab" data-view="memory" role="tab" aria-selected="false">GEDÄCHTNIS</button>
       </div>
 
       <div class="brain-body">
@@ -694,6 +695,35 @@
           </form>
           <p class="brain-empty" id="funcEmpty" hidden>Noch keine Funktionen gespeichert.</p>
           <ul class="brain-list" id="funcList"></ul>
+        </div>
+
+        <!-- GEDÄCHTNIS VIEW -->
+        <div class="brain-view" id="view-memory" hidden>
+          <p class="memory-intro">
+            F.R.Ai.D.A.Y merkt sich automatisch jeden Weltlage-/Sprachbefehl
+            sowie jede Spotify-/YouTube-Suche und -Wiedergabe — als
+            Grundlage für Vorlieben und Verlauf. Alles bleibt lokal in
+            deiner eigenen Datenbank.
+          </p>
+
+          <div class="memory-stats" id="memoryStats"></div>
+
+          <div class="memory-toolbar">
+            <input type="search" class="brain-search" id="memorySearch" placeholder="Gedächtnis durchsuchen…">
+            <select id="memoryTypeFilter">
+              <option value="">ALLE TYPEN</option>
+              <option value="weltlage_suche">WELTLAGE</option>
+              <option value="sprachbefehl">SPRACHBEFEHLE</option>
+              <option value="youtube_suche">YOUTUBE-SUCHE</option>
+              <option value="youtube_wiedergabe">YOUTUBE-WIEDERGABE</option>
+              <option value="spotify_suche">SPOTIFY-SUCHE</option>
+              <option value="spotify_wiedergabe">SPOTIFY-WIEDERGABE</option>
+            </select>
+            <button type="button" class="delete-btn" id="memoryClearBtn">ALLES LÖSCHEN</button>
+          </div>
+
+          <p class="brain-empty" id="memoryEmpty" hidden>Noch keine Aktivität aufgezeichnet.</p>
+          <ul class="brain-list" id="memoryList"></ul>
         </div>
 
       </div>

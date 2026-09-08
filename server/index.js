@@ -10,6 +10,7 @@ const spotifyRouter = require('./routes/spotify');
 const youtubeRouter = require('./routes/youtube');
 const whatsappRouter = require('./routes/whatsapp');
 const activityRouter = require('./routes/activity');
+const memoryLogRouter = require('./routes/memory-log');
 const background = require('./background');
 
 const app = express();
@@ -26,6 +27,7 @@ app.use('/api/spotify', spotifyRouter);
 app.use('/api/youtube', youtubeRouter);
 app.use('/api/whatsapp', whatsappRouter);
 app.use('/api/activity', activityRouter);
+app.use('/api/memory-log', memoryLogRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ONLINE', time: new Date().toISOString() });

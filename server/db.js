@@ -49,6 +49,17 @@ db.exec(`
     message TEXT NOT NULL,
     created_at TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS memory_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type TEXT NOT NULL,
+    content TEXT NOT NULL,
+    meta TEXT,
+    created_at TEXT NOT NULL
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_memory_events_type ON memory_events(type);
+  CREATE INDEX IF NOT EXISTS idx_memory_events_created_at ON memory_events(created_at);
 `);
 
 module.exports = db;
