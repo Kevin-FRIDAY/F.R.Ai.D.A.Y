@@ -5,6 +5,7 @@
 
 const db = require('./db');
 const news = require('./routes/news');
+const weather = require('./routes/weather');
 
 const CYCLE_MS = 4 * 60 * 1000; // alle 4 Minuten
 const MAX_LOG_ROWS = 200;
@@ -50,6 +51,17 @@ async function runCycle() {
     if (unchanged > 0) parts.push(`${unchanged} unverändert`);
     if (failed > 0) parts.push(`${failed} nicht erreichbar`);
     log(`Hintergrundzyklus abgeschlossen — ${updated} aktualisiert, ${parts.join(', ')}.`);
+  }
+
+  for (const code of weather.getCachedCodes()) {
+    try {
+      const { data, changed } = await weather.refreshCountryByCode(code);
+      if (changed) {
+        log(`Wetter „${data.country}“ aktualisiert: ${Math.round(data.temperature)}°C, ${data.conditionDe}.`);
+      }
+    } catch (err) {
+      // Wetterdienst kurzzeitig nicht erreichbar — beim nächsten Zyklus erneut versuchen.
+    }
   }
 }
 

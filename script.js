@@ -848,6 +848,18 @@ function renderNewsMedia(container, item) {
   }
 }
 
+function renderWeather(weather) {
+  const box = document.getElementById('newsWeather');
+  if (!weather) {
+    box.hidden = true;
+    return;
+  }
+  document.getElementById('weatherTemp').textContent = `${Math.round(weather.temperature)}°C`;
+  document.getElementById('weatherCondition').textContent = weather.conditionDe;
+  document.getElementById('weatherWind').textContent = `Wind ${Math.round(weather.windspeed)} km/h`;
+  box.hidden = false;
+}
+
 // ---------- Automatische Stimmauswahl ----------
 // Sucht unter den vom Browser/Betriebssystem angebotenen (lizenzfreien)
 // Stimmen automatisch die beste deutsche aus — bevorzugt Cloud-/Premium-
@@ -927,6 +939,10 @@ async function runGlobeCommand(rawText, viaVoice) {
   setGlobeStatus(`Suche Weltlage für "${text}" …`);
   tag.textContent = 'SUCHE…';
 
+  // Läuft parallel zur Weltlage-Suche los statt danach — beide sind
+  // unabhängig, ein Fehlschlag beim Wetter darf die Nachricht nicht blockieren.
+  const weatherPromise = brainApi(`/api/weather?country=${encodeURIComponent(text)}`).catch(() => null);
+
   try {
     const data = await brainApi(`/api/news?country=${encodeURIComponent(text)}`);
     const titleDe = data.titleDe || data.title;
@@ -946,6 +962,7 @@ async function runGlobeCommand(rawText, viaVoice) {
     link.href = data.link || '#';
     renderNewsMedia(document.getElementById('newsMedia'), data);
     card.hidden = false;
+    renderWeather(null); // "lädt…"-Zustand, bis weatherPromise auflöst
 
     setGlobeStatus(
       data.stale
@@ -956,6 +973,8 @@ async function runGlobeCommand(rawText, viaVoice) {
 
     focusGlobeOnCountry(data.code, data.lon);
     speakText(titleDe, 'de-DE');
+
+    weatherPromise.then(renderWeather);
   } catch (err) {
     setGlobeStatus(err.message || 'Land nicht erkannt.', true);
     tag.textContent = 'FEHLER';

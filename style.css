@@ -332,6 +332,12 @@ html,body{
 .news-title{ margin:0; font-family:'Share Tech Mono', monospace; font-weight:normal; font-size:15px; line-height:1.4; color:var(--cyan-bright); }
 .news-title-orig{ font-size:11px; font-style:italic; color:var(--cyan-dim); line-height:1.4; }
 
+.news-weather{ display:flex; gap:14px; align-items:baseline; font-size:11px; letter-spacing:.5px; }
+.news-weather[hidden]{ display:none; }
+.weather-temp{ font-family:'Orbitron', sans-serif; font-size:14px; color:var(--amber); }
+.weather-condition{ color:var(--cyan); }
+.weather-wind{ color:var(--cyan-dim); }
+
 .wake-status{
   font-size:10px; letter-spacing:.5px; color:var(--cyan-dim);
   border:1px solid var(--line); padding:6px 10px; display:flex; align-items:center; gap:8px;

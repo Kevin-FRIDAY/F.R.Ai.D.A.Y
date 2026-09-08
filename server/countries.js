@@ -137,6 +137,101 @@ const COUNTRIES = [
     feedUrl: 'https://www.batimes.com.ar/feed', source: 'Buenos Aires Times',
     aliases: ['argentinien', 'argentina'],
   },
+  {
+    code: 'SE', name: 'Schweden', lat: 59.3, lon: 18.1, lang: 'sv-SE',
+    feedUrl: 'https://www.dn.se/rss/', source: 'Dagens Nyheter',
+    aliases: ['schweden', 'sweden'],
+  },
+  {
+    code: 'NO', name: 'Norwegen', lat: 59.9, lon: 10.8, lang: 'no-NO',
+    feedUrl: 'https://www.nrk.no/toppsaker.rss', source: 'NRK',
+    aliases: ['norwegen', 'norway'],
+  },
+  {
+    code: 'DK', name: 'Dänemark', lat: 55.7, lon: 12.6, lang: 'da-DK',
+    feedUrl: 'https://www.dr.dk/nyheder/service/feeds/allenyheder', source: 'DR',
+    aliases: ['dänemark', 'daenemark', 'denmark'],
+  },
+  {
+    code: 'FI', name: 'Finnland', lat: 60.2, lon: 24.9, lang: 'fi-FI',
+    feedUrl: 'https://feeds.yle.fi/uutiset/v1/majorHeadlines/YLE_UUTISET.rss', source: 'YLE',
+    aliases: ['finnland', 'finland'],
+  },
+  {
+    code: 'BE', name: 'Belgien', lat: 50.9, lon: 4.4, lang: 'nl-BE',
+    feedUrl: 'https://www.vrt.be/vrtnws/nl.rss.articles.xml', source: 'VRT NWS',
+    aliases: ['belgien', 'belgium'],
+  },
+  {
+    code: 'PT', name: 'Portugal', lat: 38.7, lon: -9.1, lang: 'pt-PT',
+    feedUrl: 'https://www.rtp.pt/noticias/rss', source: 'RTP',
+    aliases: ['portugal'],
+  },
+  {
+    code: 'GR', name: 'Griechenland', lat: 38.0, lon: 23.7, lang: 'el-GR',
+    feedUrl: 'https://www.protothema.gr/rss/', source: 'Protothema',
+    aliases: ['griechenland', 'greece'],
+  },
+  {
+    code: 'IE', name: 'Irland', lat: 53.3, lon: -6.3, lang: 'en-IE',
+    feedUrl: 'https://www.rte.ie/feeds/rss/?index=/news', source: 'RTE',
+    aliases: ['irland', 'ireland'],
+  },
+  {
+    code: 'CZ', name: 'Tschechien', lat: 50.1, lon: 14.4, lang: 'cs-CZ',
+    feedUrl: 'https://www.irozhlas.cz/rss/irozhlas', source: 'iROZHLAS',
+    aliases: ['tschechien', 'tschechische republik', 'czechia', 'czech republic'],
+  },
+  {
+    code: 'HU', name: 'Ungarn', lat: 47.5, lon: 19.0, lang: 'en-HU',
+    feedUrl: 'https://hungarytoday.hu/feed/', source: 'Hungary Today',
+    aliases: ['ungarn', 'hungary'],
+  },
+  {
+    code: 'RO', name: 'Rumänien', lat: 44.4, lon: 26.1, lang: 'ro-RO',
+    feedUrl: 'https://www.digi24.ro/rss', source: 'Digi24',
+    aliases: ['rumänien', 'rumaenien', 'romania'],
+  },
+  {
+    code: 'VN', name: 'Vietnam', lat: 21.0, lon: 105.8, lang: 'vi-VN',
+    feedUrl: 'https://vnexpress.net/rss/tin-moi-nhat.rss', source: 'VnExpress',
+    aliases: ['vietnam'],
+  },
+  {
+    code: 'ID', name: 'Indonesien', lat: -6.2, lon: 106.8, lang: 'id-ID',
+    feedUrl: 'https://www.antaranews.com/rss/terkini.xml', source: 'Antara News',
+    aliases: ['indonesien', 'indonesia'],
+  },
+  {
+    code: 'PH', name: 'Philippinen', lat: 14.6, lon: 121.0, lang: 'en-PH',
+    feedUrl: 'https://www.philstar.com/rss/headlines', source: 'Philstar',
+    aliases: ['philippinen', 'philippines'],
+  },
+  {
+    code: 'PK', name: 'Pakistan', lat: 33.7, lon: 73.1, lang: 'en-PK',
+    feedUrl: 'https://www.dawn.com/feeds/home', source: 'Dawn',
+    aliases: ['pakistan'],
+  },
+  {
+    code: 'NG', name: 'Nigeria', lat: 9.1, lon: 7.5, lang: 'en-NG',
+    feedUrl: 'https://punchng.com/feed/', source: 'The Punch',
+    aliases: ['nigeria'],
+  },
+  {
+    code: 'KE', name: 'Kenia', lat: -1.3, lon: 36.8, lang: 'en-KE',
+    feedUrl: 'https://nation.africa/kenya/rss.xml', source: 'Nation Africa',
+    aliases: ['kenia', 'kenya'],
+  },
+  {
+    code: 'PE', name: 'Peru', lat: -12.0, lon: -77.0, lang: 'es-PE',
+    feedUrl: 'https://elcomercio.pe/arcio/rss/', source: 'El Comercio',
+    aliases: ['peru'],
+  },
+  {
+    code: 'NZ', name: 'Neuseeland', lat: -41.3, lon: 174.8, lang: 'en-NZ',
+    feedUrl: 'https://www.rnz.co.nz/rss/national.xml', source: 'RNZ',
+    aliases: ['neuseeland', 'new zealand'],
+  },
 ];
 
 function escapeRegex(str) {
