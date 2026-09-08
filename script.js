@@ -230,4 +230,230 @@ function startDashboard(){
   typewriter();
 }
 
+// ================== NEURONALES GEHIRN (Memory Core) ==================
+const brain = {
+  entries: [],
+  functions: [],
+  view: 'data',
+};
+
+async function brainApi(path, options) {
+  const res = await fetch(path, options);
+  if (!res.ok) {
+    let message = `HTTP ${res.status}`;
+    try {
+      const body = await res.json();
+      if (body && body.error) message = body.error;
+    } catch (_) { /* no JSON body */ }
+    throw new Error(message);
+  }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
+function setBrainTag(text, ok){
+  const tag = document.getElementById('brainTag');
+  tag.textContent = text;
+  tag.style.color = ok === false ? 'var(--red)' : '';
+  tag.style.borderColor = ok === false ? 'rgba(255,59,59,.5)' : '';
+}
+
+function fmtTime(iso){
+  try {
+    return new Date(iso).toLocaleString('de-DE', { hour12:false });
+  } catch (_) {
+    return iso;
+  }
+}
+
+function el(tag, className, text){
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function renderEntries(){
+  const list = document.getElementById('dataList');
+  const empty = document.getElementById('dataEmpty');
+  list.innerHTML = '';
+  empty.hidden = brain.entries.length > 0;
+
+  brain.entries.forEach(entry => {
+    const card = el('li', 'brain-card');
+    const head = el('div', 'brain-card-head');
+    head.appendChild(el('span', 'brain-card-title', entry.title));
+    if (entry.tag) head.appendChild(el('span', 'brain-card-tag', entry.tag));
+    card.appendChild(head);
+    card.appendChild(el('div', 'brain-card-body', entry.content));
+    card.appendChild(el('div', 'brain-card-meta', `AKTUALISIERT ${fmtTime(entry.updatedAt)}`));
+
+    const actions = el('div', 'brain-card-actions');
+    const delBtn = el('button', 'delete-btn', 'LÖSCHEN');
+    delBtn.type = 'button';
+    delBtn.addEventListener('click', () => deleteEntry(entry.id));
+    actions.appendChild(delBtn);
+    card.appendChild(actions);
+
+    list.appendChild(card);
+  });
+}
+
+function renderFunctions(){
+  const list = document.getElementById('funcList');
+  const empty = document.getElementById('funcEmpty');
+  list.innerHTML = '';
+  empty.hidden = brain.functions.length > 0;
+
+  brain.functions.forEach(fn => {
+    const card = el('li', 'brain-card');
+    const head = el('div', 'brain-card-head');
+    head.appendChild(el('span', 'brain-card-title', fn.name));
+    if (fn.trigger) head.appendChild(el('span', 'brain-card-tag', fn.trigger));
+    card.appendChild(head);
+    if (fn.description) card.appendChild(el('div', 'brain-card-body', fn.description));
+    card.appendChild(el('pre', 'brain-card-code', fn.code));
+    card.appendChild(el('div', 'brain-card-meta', `AKTUALISIERT ${fmtTime(fn.updatedAt)}`));
+
+    const actions = el('div', 'brain-card-actions');
+    const runBtn = el('button', 'run-btn', 'AUSFÜHREN');
+    runBtn.type = 'button';
+    const delBtn = el('button', 'delete-btn', 'LÖSCHEN');
+    delBtn.type = 'button';
+    delBtn.addEventListener('click', () => deleteFunction(fn.id));
+    actions.appendChild(runBtn);
+    actions.appendChild(delBtn);
+    card.appendChild(actions);
+
+    let resultBox = null;
+    runBtn.addEventListener('click', () => {
+      if (resultBox) resultBox.remove();
+      resultBox = el('div', 'brain-card-result');
+      try {
+        const runner = new Function(fn.code);
+        const value = runner();
+        resultBox.textContent = `→ ${value === undefined ? '(kein Rückgabewert)' : JSON.stringify(value)}`;
+      } catch (err) {
+        resultBox.classList.add('is-error');
+        resultBox.textContent = `FEHLER: ${err.message}`;
+      }
+      card.appendChild(resultBox);
+    });
+
+    list.appendChild(card);
+  });
+}
+
+async function loadEntries(query){
+  try {
+    const q = query ? `?q=${encodeURIComponent(query)}` : '';
+    brain.entries = await brainApi(`/api/memory${q}`);
+    renderEntries();
+  } catch (err) {
+    setBrainTag('OFFLINE', false);
+  }
+}
+
+async function loadFunctions(){
+  try {
+    brain.functions = await brainApi('/api/functions');
+    renderFunctions();
+  } catch (err) {
+    setBrainTag('OFFLINE', false);
+  }
+}
+
+async function deleteEntry(id){
+  try {
+    await brainApi(`/api/memory/${id}`, { method: 'DELETE' });
+    await loadEntries(document.getElementById('dataSearch').value.trim());
+  } catch (err) {
+    alert(`Löschen fehlgeschlagen: ${err.message}`);
+  }
+}
+
+async function deleteFunction(id){
+  try {
+    await brainApi(`/api/functions/${id}`, { method: 'DELETE' });
+    await loadFunctions();
+  } catch (err) {
+    alert(`Löschen fehlgeschlagen: ${err.message}`);
+  }
+}
+
+function initBrainTabs(){
+  const tabs = document.querySelectorAll('.brain-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      brain.view = tab.dataset.view;
+      document.getElementById('view-data').hidden = brain.view !== 'data';
+      document.getElementById('view-functions').hidden = brain.view !== 'functions';
+    });
+  });
+}
+
+function initBrainForms(){
+  document.getElementById('dataForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const title = document.getElementById('dataTitle').value.trim();
+    const tag = document.getElementById('dataTag').value.trim();
+    const content = document.getElementById('dataContent').value.trim();
+    try {
+      await brainApi('/api/memory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, tag, content }),
+      });
+      e.target.reset();
+      await loadEntries();
+    } catch (err) {
+      alert(`Speichern fehlgeschlagen: ${err.message}`);
+    }
+  });
+
+  document.getElementById('funcForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('funcName').value.trim();
+    const trigger = document.getElementById('funcTrigger').value.trim();
+    const description = document.getElementById('funcDesc').value.trim();
+    const code = document.getElementById('funcCode').value.trim();
+    try {
+      await brainApi('/api/functions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, trigger, description, code }),
+      });
+      e.target.reset();
+      await loadFunctions();
+    } catch (err) {
+      alert(`Speichern fehlgeschlagen: ${err.message}`);
+    }
+  });
+
+  let searchTimer = null;
+  document.getElementById('dataSearch').addEventListener('input', (e) => {
+    clearTimeout(searchTimer);
+    const value = e.target.value.trim();
+    searchTimer = setTimeout(() => loadEntries(value), 250);
+  });
+}
+
+async function initBrain(){
+  initBrainTabs();
+  initBrainForms();
+  try {
+    await brainApi('/api/health');
+    setBrainTag('ONLINE', true);
+  } catch (err) {
+    setBrainTag('OFFLINE', false);
+    return;
+  }
+  loadEntries();
+  loadFunctions();
+}
+
 window.addEventListener('DOMContentLoaded', runBoot);
+window.addEventListener('DOMContentLoaded', initBrain);

@@ -1,0 +1,27 @@
+{
+  "name": "f.r.ai.d.a.y",
+  "version": "1.0.0",
+  "description": "F.R.Ai.D.A.Y HUD dashboard with a persistent memory core (data entries + custom functions).",
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kevin-FRIDAY/F.R.Ai.D.A.Y.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kevin-FRIDAY/F.R.Ai.D.A.Y/issues"
+  },
+  "homepage": "https://github.com/Kevin-FRIDAY/F.R.Ai.D.A.Y#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

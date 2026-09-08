@@ -182,6 +182,51 @@
     </section>
   </div>
 
+  <!-- ===== NEURONALES GEHIRN ===== -->
+  <div class="grid grid-brain">
+    <section class="panel brain-panel">
+      <div class="panel-head">
+        <span>NEURONALES GEHIRN</span>
+        <span class="tag" id="brainTag">VERBINDE…</span>
+      </div>
+
+      <div class="brain-tabs" role="tablist">
+        <button class="brain-tab active" data-view="data" role="tab" aria-selected="true">DATEN</button>
+        <button class="brain-tab" data-view="functions" role="tab" aria-selected="false">FUNKTIONEN</button>
+      </div>
+
+      <div class="brain-body">
+
+        <!-- DATEN VIEW -->
+        <div class="brain-view" id="view-data">
+          <form class="brain-form" id="dataForm">
+            <input type="text" id="dataTitle" placeholder="TITEL" maxlength="200" required>
+            <input type="text" id="dataTag" placeholder="TAG (optional)" maxlength="60">
+            <textarea id="dataContent" placeholder="INHALT / FAKTEN / NOTIZ …" maxlength="20000" required></textarea>
+            <button type="submit">EINTRAG SPEICHERN</button>
+          </form>
+          <input type="search" class="brain-search" id="dataSearch" placeholder="Gedächtnis durchsuchen…">
+          <p class="brain-empty" id="dataEmpty" hidden>Noch keine Einträge gespeichert.</p>
+          <ul class="brain-list" id="dataList"></ul>
+        </div>
+
+        <!-- FUNKTIONEN VIEW -->
+        <div class="brain-view" id="view-functions" hidden>
+          <form class="brain-form" id="funcForm">
+            <input type="text" id="funcName" placeholder="FUNKTIONSNAME" maxlength="120" required>
+            <input type="text" id="funcTrigger" placeholder="SPRACHBEFEHL / TRIGGER (optional)" maxlength="200">
+            <input type="text" id="funcDesc" placeholder="BESCHREIBUNG (optional)" maxlength="500">
+            <textarea id="funcCode" placeholder="// JS-CODE, z.B. return 21 * 2;" maxlength="20000" required></textarea>
+            <button type="submit">FUNKTION SPEICHERN</button>
+          </form>
+          <p class="brain-empty" id="funcEmpty" hidden>Noch keine Funktionen gespeichert.</p>
+          <ul class="brain-list" id="funcList"></ul>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
   <footer class="footbar">
     <span>STARK-KLASSE INTERFACE SIMULATION</span>
     <span class="foot-sep">&middot;</span>
