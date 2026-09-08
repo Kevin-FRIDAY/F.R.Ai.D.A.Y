@@ -9,6 +9,8 @@ const googleApiRouter = require('./routes/google-api');
 const spotifyRouter = require('./routes/spotify');
 const youtubeRouter = require('./routes/youtube');
 const whatsappRouter = require('./routes/whatsapp');
+const activityRouter = require('./routes/activity');
+const background = require('./background');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +25,7 @@ app.use('/api/google', googleApiRouter);
 app.use('/api/spotify', spotifyRouter);
 app.use('/api/youtube', youtubeRouter);
 app.use('/api/whatsapp', whatsappRouter);
+app.use('/api/activity', activityRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ONLINE', time: new Date().toISOString() });
@@ -38,4 +41,5 @@ app.use('/assets', express.static(path.join(rootDir, 'assets')));
 
 app.listen(PORT, () => {
   console.log(`F.R.Ai.D.A.Y Gehirn läuft auf http://localhost:${PORT}`);
+  background.start();
 });

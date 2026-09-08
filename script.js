@@ -74,29 +74,30 @@ function updateMeters(){
   setMeter('m-therm','v-therm', stats.therm);
 }
 
-// ---------- Sensor log ----------
-const logMessages = [
-  "Perimeter-Scan abgeschlossen — keine Bedrohungen",
-  "Repulsor-Kalibrierung nominal",
-  "Wetterdaten synchronisiert",
-  "Kommunikationssatellit verbunden",
-  "Biometrie: Vitalwerte stabil",
-  "Flugbahn-Berechnung aktualisiert",
-  "Sicherheitsprotokoll bestätigt",
-  "Energieverteilung optimiert",
-  "Sensor-Array neu ausgerichtet",
-  "Diagnosezyklus abgeschlossen",
-];
-function pushLog(){
-  const list = document.getElementById('logList');
-  const li = document.createElement('li');
-  const now = new Date();
-  const t = now.toLocaleTimeString('de-DE', { hour12:false });
-  const msg = logMessages[Math.floor(Math.random() * logMessages.length)];
-  li.innerHTML = `<span class="t">[${t}]</span><span>${msg}</span>`;
-  list.prepend(li);
-  while (list.children.length > 6) list.removeChild(list.lastChild);
-  document.getElementById('logTag').textContent = t;
+// ---------- Sensor log: echte Hintergrund-Aktivität ----------
+// Zeigt, was der permanent laufende Hintergrunddienst (server/background.js)
+// tatsächlich tut — keine erfundenen Meldungen.
+async function pollActivityLog(){
+  try {
+    const res = await fetch('/api/activity?limit=6');
+    if (!res.ok) return;
+    const rows = await res.json();
+    if (!rows.length) return;
+
+    const list = document.getElementById('logList');
+    list.innerHTML = '';
+    rows.forEach(row => {
+      const li = el('li');
+      const t = new Date(row.createdAt).toLocaleTimeString('de-DE', { hour12:false });
+      li.appendChild(el('span', 't', `[${t}]`));
+      li.appendChild(el('span', undefined, row.message));
+      list.appendChild(li);
+    });
+    document.getElementById('logTag').textContent =
+      new Date(rows[0].createdAt).toLocaleTimeString('de-DE', { hour12:false });
+  } catch (err) {
+    // Server (noch) nicht erreichbar — Log bleibt wie zuletzt angezeigt.
+  }
 }
 
 // ---------- Command typewriter ----------
@@ -197,8 +198,8 @@ function startDashboard(){
   updateMeters();
   setInterval(updateMeters, 2200);
 
-  pushLog();
-  setInterval(pushLog, 3400);
+  pollActivityLog();
+  setInterval(pollActivityLog, 15000);
 
   initEnvironment();
 

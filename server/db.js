@@ -43,6 +43,12 @@ db.exec(`
     phone TEXT,
     synced_at TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS activity_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    message TEXT NOT NULL,
+    created_at TEXT NOT NULL
+  );
 `);
 
 module.exports = db;

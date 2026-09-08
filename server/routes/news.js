@@ -1,6 +1,6 @@
 const express = require('express');
 const { XMLParser } = require('fast-xml-parser');
-const { findCountry, listCountries } = require('../countries');
+const { findCountry, listCountries, getCountryByCode } = require('../countries');
 
 const router = express.Router();
 const parser = new XMLParser({ ignoreAttributes: false });
@@ -96,6 +96,64 @@ async function translateToGerman(text, sourceLang) {
   }
 }
 
+// Holt die aktuelle Top-Meldung für ein Land direkt von der Quelle und
+// aktualisiert den Cache. Wird sowohl von der Route als auch vom
+// Hintergrunddienst (server/background.js) verwendet.
+async function fetchAndCache(country) {
+  const feedRes = await fetchWithTimeout(country.feedUrl);
+  if (!feedRes.ok) throw new Error(`Feed-Status ${feedRes.status}`);
+  const feedText = await feedRes.text();
+
+  const parsed = parser.parse(feedText);
+  const topItem = firstItemFrom(parsed);
+  if (!topItem) throw new Error('Keine Meldungen im Feed gefunden.');
+
+  const title = extractTitle(topItem);
+  const link = extractLink(topItem);
+  const publishedAt = topItem.pubDate || topItem.published || topItem.updated || null;
+
+  let image = null;
+  let video = null;
+  if (link) {
+    const media = await fetchArticleMedia(link);
+    image = media.image;
+    video = media.video;
+  }
+
+  const titleDe = await translateToGerman(title, country.lang);
+
+  const data = {
+    country: country.name,
+    code: country.code,
+    lat: country.lat,
+    lon: country.lon,
+    lang: country.lang,
+    title,
+    titleDe,
+    source: country.source,
+    publishedAt,
+    link,
+    image,
+    video,
+  };
+  const previous = cache.get(country.code);
+  const changed = !previous || previous.data.title !== title;
+  cache.set(country.code, { data, timestamp: Date.now() });
+  return { data, changed };
+}
+
+// Für den Hintergrunddienst: welche Länder wurden schon abgefragt (also im
+// Cache) und sollen im Hintergrund aktuell gehalten werden.
+function getCachedCodes() {
+  return Array.from(cache.keys());
+}
+
+async function refreshCountryByCode(code) {
+  const country = getCountryByCode(code);
+  if (!country) throw new Error(`Unbekannter Ländercode: ${code}`);
+  return fetchAndCache(country);
+}
+
 router.get('/countries', (req, res) => {
   res.json(listCountries());
 });
@@ -115,43 +173,7 @@ router.get('/', async (req, res) => {
   }
 
   try {
-    const feedRes = await fetchWithTimeout(country.feedUrl);
-    if (!feedRes.ok) throw new Error(`Feed-Status ${feedRes.status}`);
-    const feedText = await feedRes.text();
-
-    const parsed = parser.parse(feedText);
-    const topItem = firstItemFrom(parsed);
-    if (!topItem) throw new Error('Keine Meldungen im Feed gefunden.');
-
-    const title = extractTitle(topItem);
-    const link = extractLink(topItem);
-    const publishedAt = topItem.pubDate || topItem.published || topItem.updated || null;
-
-    let image = null;
-    let video = null;
-    if (link) {
-      const media = await fetchArticleMedia(link);
-      image = media.image;
-      video = media.video;
-    }
-
-    const titleDe = await translateToGerman(title, country.lang);
-
-    const data = {
-      country: country.name,
-      code: country.code,
-      lat: country.lat,
-      lon: country.lon,
-      lang: country.lang,
-      title,
-      titleDe,
-      source: country.source,
-      publishedAt,
-      link,
-      image,
-      video,
-    };
-    cache.set(country.code, { data, timestamp: Date.now() });
+    const { data } = await fetchAndCache(country);
     res.json(data);
   } catch (err) {
     // Quelle gerade nicht erreichbar/blockiert — lieber eine veraltete,
@@ -164,3 +186,5 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
+module.exports.getCachedCodes = getCachedCodes;
+module.exports.refreshCountryByCode = refreshCountryByCode;

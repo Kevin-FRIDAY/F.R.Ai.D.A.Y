@@ -14,6 +14,15 @@ Ein JARVIS/F.R.I.D.A.Y-artiges HUD-Dashboard mit:
 - **Dauerzuhören mit Weckwort**: Mikrofon einmal aktivieren, danach hört
   F.R.Ai.D.A.Y permanent mit, reagiert aber nur auf Sätze, die "Friday"
   enthalten (z.B. "Friday, zeig mir Japan");
+- ein **anatomisch gestaltetes Gehirn-Icon** (Hemisphären, Windungen,
+  Kleinhirn, Hirnstamm, pulsierende Nervenaktivität) anstelle des
+  früheren Energiekern-Panels — Klick öffnet die Netzwerk-Ansicht aller
+  gespeicherten Daten (siehe oben);
+- ein **echter Hintergrunddienst** (`server/background.js`): läuft
+  permanent im Node-Prozess mit, hält bereits abgefragte Weltlage-Länder
+  automatisch aktuell (alle 4 Minuten) und protokolliert seine
+  tatsächliche Tätigkeit — sichtbar live im Sensor-Log-Panel. Kein
+  simuliertes "Lernen", nur echte, nachvollziehbare Aktionen;
 - **Integrationen** (eigenes Panel "INTEGRATIONEN"): Gmail lesen/senden/
   sortieren, Google-Kalender-Termine anlegen/verschieben/löschen,
   Google-Kontakte synchronisieren (Klick auf einen Kontakt trägt die
@@ -41,6 +50,8 @@ liefert das Frontend aus und stellt die Gehirn-API bereit:
   deutsche Übersetzung, Quelle, Bild/Video falls vorhanden), erkennt
   deutsche/englische Landesnamen im Freitext
 - `GET /api/news/countries` – Liste der unterstützten Länder (für den Globus)
+- `GET /api/activity` – echtes Aktivitätsprotokoll des Hintergrunddienstes
+  (für das Sensor-Log-Panel)
 
 Die Daten liegen in `server/data/brain.db` (SQLite, wird beim ersten
 Start automatisch angelegt und ist nicht Teil des Repos). Nachrichten

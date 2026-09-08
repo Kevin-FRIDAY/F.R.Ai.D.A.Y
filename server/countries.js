@@ -164,4 +164,8 @@ function listCountries() {
   return COUNTRIES.map(c => ({ code: c.code, name: c.name, lat: c.lat, lon: c.lon, lang: c.lang }));
 }
 
-module.exports = { COUNTRIES, findCountry, listCountries };
+function getCountryByCode(code) {
+  return COUNTRIES.find(c => c.code === code) || null;
+}
+
+module.exports = { COUNTRIES, findCountry, listCountries, getCountryByCode };
