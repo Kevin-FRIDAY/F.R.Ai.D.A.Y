@@ -382,7 +382,7 @@ async function deleteFunction(id){
 }
 
 function initBrainTabs(){
-  const tabs = document.querySelectorAll('.brain-tab');
+  const tabs = document.querySelectorAll('.brain-panel .brain-tab');
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
@@ -784,8 +784,444 @@ function initWakeWordListening(input) {
   });
 }
 
+// ================== INTEGRATIONEN (Google / Spotify / YouTube) ==================
+
+async function apiJson(path, options) {
+  const res = await fetch(path, options);
+  let body = null;
+  try { body = await res.json(); } catch (_) { /* kein JSON */ }
+  if (!res.ok) throw new Error((body && body.error) || `HTTP ${res.status}`);
+  return body;
+}
+
+function fmtDateTime(iso){
+  if (!iso) return '';
+  try { return new Date(iso).toLocaleString('de-DE', { hour12:false }); }
+  catch (_) { return iso; }
+}
+
+function toDatetimeLocalValue(date){
+  const pad = n => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+async function refreshIntegrationStatus(){
+  try {
+    const status = await apiJson('/auth/status');
+
+    const googleStatus = document.getElementById('googleStatus');
+    const googleConnectBtn = document.getElementById('googleConnectBtn');
+    const googleDisconnectBtn = document.getElementById('googleDisconnectBtn');
+    if (status.google.connected) {
+      googleStatus.textContent = 'VERBUNDEN';
+      googleStatus.classList.add('is-connected');
+      googleConnectBtn.hidden = true;
+      googleDisconnectBtn.hidden = false;
+    } else {
+      googleStatus.textContent = status.google.configured ? 'GETRENNT' : 'NICHT KONFIGURIERT';
+      googleStatus.classList.remove('is-connected');
+      googleConnectBtn.hidden = !status.google.configured;
+      googleDisconnectBtn.hidden = true;
+    }
+
+    const spotifyStatus = document.getElementById('spotifyStatus');
+    const spotifyConnectBtn = document.getElementById('spotifyConnectBtn');
+    const spotifyDisconnectBtn = document.getElementById('spotifyDisconnectBtn');
+    if (status.spotify.connected) {
+      spotifyStatus.textContent = 'VERBUNDEN';
+      spotifyStatus.classList.add('is-connected');
+      spotifyConnectBtn.hidden = true;
+      spotifyDisconnectBtn.hidden = false;
+    } else {
+      spotifyStatus.textContent = status.spotify.configured ? 'GETRENNT' : 'NICHT KONFIGURIERT';
+      spotifyStatus.classList.remove('is-connected');
+      spotifyConnectBtn.hidden = !status.spotify.configured;
+      spotifyDisconnectBtn.hidden = true;
+    }
+  } catch (err) {
+    // Statusabfrage fehlgeschlagen — Anzeige bleibt auf "PRÜFE…", kein harter Fehler nötig.
+  }
+}
+
+function initIntegrationsTabs(){
+  const tabs = document.querySelectorAll('.int-tab');
+  const views = ['mail', 'calendar', 'contacts', 'spotify', 'youtube'];
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      const active = tab.dataset.intView;
+      views.forEach(v => { document.getElementById(`int-view-${v}`).hidden = v !== active; });
+    });
+  });
+}
+
+function initIntegrationConnectButtons(){
+  document.getElementById('googleDisconnectBtn').addEventListener('click', async () => {
+    await apiJson('/auth/google/disconnect', { method: 'POST' });
+    refreshIntegrationStatus();
+  });
+  document.getElementById('spotifyDisconnectBtn').addEventListener('click', async () => {
+    await apiJson('/auth/spotify/disconnect', { method: 'POST' });
+    refreshIntegrationStatus();
+  });
+}
+
+// ---------- Mail ----------
+function renderMailList(messages){
+  const list = document.getElementById('mailList');
+  const empty = document.getElementById('mailEmpty');
+  list.innerHTML = '';
+  empty.hidden = messages.length > 0;
+
+  messages.forEach(msg => {
+    const card = el('li', 'brain-card mail-card' + (msg.unread ? ' is-unread' : ''));
+    const head = el('div', 'brain-card-head');
+    head.appendChild(el('span', 'brain-card-title', msg.subject));
+    head.appendChild(el('span', 'brain-card-tag', msg.from.split('<')[0].trim()));
+    card.appendChild(head);
+    card.appendChild(el('div', 'brain-card-body', msg.snippet || ''));
+    card.appendChild(el('div', 'brain-card-meta', fmtDateTime(msg.date)));
+
+    const actions = el('div', 'brain-card-actions');
+    if (msg.unread) {
+      const readBtn = el('button', '', 'ALS GELESEN');
+      readBtn.type = 'button';
+      readBtn.addEventListener('click', async () => {
+        await apiJson(`/api/google/mail/${msg.id}/labels`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ remove: ['UNREAD'] }),
+        });
+        loadMail();
+      });
+      actions.appendChild(readBtn);
+    }
+    const archiveBtn = el('button', '', 'ARCHIVIEREN');
+    archiveBtn.type = 'button';
+    archiveBtn.addEventListener('click', async () => {
+      await apiJson(`/api/google/mail/${msg.id}/labels`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ remove: ['INBOX'] }),
+      });
+      loadMail();
+    });
+    actions.appendChild(archiveBtn);
+    card.appendChild(actions);
+
+    list.appendChild(card);
+  });
+}
+
+async function loadMail(){
+  try {
+    const messages = await apiJson('/api/google/mail?max=15');
+    renderMailList(messages);
+  } catch (err) {
+    document.getElementById('mailEmpty').hidden = false;
+    document.getElementById('mailEmpty').textContent = err.message;
+    document.getElementById('mailList').innerHTML = '';
+  }
+}
+
+function initMail(){
+  document.getElementById('mailForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const to = document.getElementById('mailTo').value.trim();
+    const subject = document.getElementById('mailSubject').value.trim();
+    const body = document.getElementById('mailBody').value.trim();
+    try {
+      await apiJson('/api/google/mail/send', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to, subject, body }),
+      });
+      e.target.reset();
+      loadMail();
+    } catch (err) {
+      alert(`Senden fehlgeschlagen: ${err.message}`);
+    }
+  });
+  document.getElementById('mailRefreshBtn').addEventListener('click', loadMail);
+}
+
+// ---------- Kalender ----------
+function renderCalendarList(events){
+  const list = document.getElementById('calList');
+  const empty = document.getElementById('calEmpty');
+  list.innerHTML = '';
+  empty.hidden = events.length > 0;
+
+  events.forEach(ev => {
+    const card = el('li', 'brain-card cal-card');
+    const head = el('div', 'brain-card-head');
+    head.appendChild(el('span', 'brain-card-title', ev.summary));
+    if (ev.location) head.appendChild(el('span', 'brain-card-tag', ev.location));
+    card.appendChild(head);
+    card.appendChild(el('div', 'brain-card-meta', `${fmtDateTime(ev.start)} – ${fmtDateTime(ev.end)}`));
+
+    const actions = el('div', 'brain-card-actions');
+    const moveBtn = el('button', '', 'VERSCHIEBEN');
+    moveBtn.type = 'button';
+    moveBtn.addEventListener('click', async () => {
+      const newStart = prompt('Neuer Start (JJJJ-MM-TTTHH:MM), z.B. 2026-09-10T14:00', ev.start?.slice(0,16) || '');
+      if (!newStart) return;
+      const newEnd = prompt('Neues Ende (JJJJ-MM-TTTHH:MM)', ev.end?.slice(0,16) || '');
+      if (!newEnd) return;
+      try {
+        await apiJson(`/api/google/calendar/events/${ev.id}`, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ start: newStart, end: newEnd }),
+        });
+        loadCalendar();
+      } catch (err) {
+        alert(`Verschieben fehlgeschlagen: ${err.message}`);
+      }
+    });
+    actions.appendChild(moveBtn);
+
+    const delBtn = el('button', 'delete-btn', 'LÖSCHEN');
+    delBtn.type = 'button';
+    delBtn.addEventListener('click', async () => {
+      try {
+        await apiJson(`/api/google/calendar/events/${ev.id}`, { method: 'DELETE' });
+        loadCalendar();
+      } catch (err) {
+        alert(`Löschen fehlgeschlagen: ${err.message}`);
+      }
+    });
+    actions.appendChild(delBtn);
+    card.appendChild(actions);
+
+    list.appendChild(card);
+  });
+}
+
+async function loadCalendar(){
+  try {
+    const events = await apiJson('/api/google/calendar/events?max=15');
+    renderCalendarList(events);
+  } catch (err) {
+    document.getElementById('calEmpty').hidden = false;
+    document.getElementById('calEmpty').textContent = err.message;
+    document.getElementById('calList').innerHTML = '';
+  }
+}
+
+function initCalendar(){
+  const now = new Date();
+  const later = new Date(now.getTime() + 60 * 60 * 1000);
+  document.getElementById('calStart').value = toDatetimeLocalValue(now);
+  document.getElementById('calEnd').value = toDatetimeLocalValue(later);
+
+  document.getElementById('calendarForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const summary = document.getElementById('calSummary').value.trim();
+    const start = document.getElementById('calStart').value;
+    const end = document.getElementById('calEnd').value;
+    const location = document.getElementById('calLocation').value.trim();
+    try {
+      await apiJson('/api/google/calendar/events', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ summary, start, end, location }),
+      });
+      e.target.reset();
+      document.getElementById('calStart').value = toDatetimeLocalValue(now);
+      document.getElementById('calEnd').value = toDatetimeLocalValue(later);
+      loadCalendar();
+    } catch (err) {
+      alert(`Anlegen fehlgeschlagen: ${err.message}`);
+    }
+  });
+  document.getElementById('calRefreshBtn').addEventListener('click', loadCalendar);
+}
+
+// ---------- Kontakte ----------
+let allContacts = [];
+
+function renderContactsList(contacts){
+  const list = document.getElementById('contactsList');
+  const empty = document.getElementById('contactsEmpty');
+  list.innerHTML = '';
+  empty.hidden = contacts.length > 0;
+
+  contacts.forEach(c => {
+    const card = el('li', 'brain-card contact-card');
+    const head = el('div', 'brain-card-head');
+    head.appendChild(el('span', 'brain-card-title', c.name));
+    if (c.phone) head.appendChild(el('span', 'brain-card-tag', c.phone));
+    card.appendChild(head);
+    if (c.email) card.appendChild(el('div', 'brain-card-body', c.email));
+
+    card.addEventListener('click', () => {
+      if (!c.email) return;
+      document.getElementById('mailTo').value = c.email;
+      document.querySelector('.int-tab[data-int-view="mail"]').click();
+      document.getElementById('mailSubject').focus();
+    });
+
+    list.appendChild(card);
+  });
+}
+
+async function loadContacts(forceSync){
+  try {
+    const data = await apiJson(`/api/google/contacts${forceSync ? '?sync=true' : ''}`);
+    allContacts = data.contacts || [];
+    renderContactsList(allContacts);
+  } catch (err) {
+    document.getElementById('contactsEmpty').hidden = false;
+    document.getElementById('contactsEmpty').textContent = err.message;
+    document.getElementById('contactsList').innerHTML = '';
+  }
+}
+
+function initContacts(){
+  document.getElementById('contactsSyncBtn').addEventListener('click', () => loadContacts(true));
+  document.getElementById('contactsSearch').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = !q ? allContacts : allContacts.filter(c =>
+      (c.name || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q)
+    );
+    renderContactsList(filtered);
+  });
+}
+
+// ---------- Spotify ----------
+async function loadSpotifyNow(){
+  try {
+    const data = await apiJson('/api/spotify/player');
+    const now = document.getElementById('spotifyNow');
+    const empty = document.getElementById('spotifyEmpty');
+    if (!data.playing) {
+      now.hidden = true;
+      empty.hidden = false;
+      empty.textContent = 'Keine Wiedergabe — Spotify verbinden und ein Gerät öffnen.';
+      return;
+    }
+    now.hidden = false;
+    empty.hidden = true;
+    document.getElementById('spotifyNowImg').src = data.image || '';
+    document.getElementById('spotifyNowTrack').textContent = data.track || '';
+    document.getElementById('spotifyNowArtist').textContent = data.artist || '';
+  } catch (err) {
+    document.getElementById('spotifyNow').hidden = true;
+    document.getElementById('spotifyEmpty').hidden = false;
+    document.getElementById('spotifyEmpty').textContent = err.message;
+  }
+}
+
+function renderSpotifyResults(tracks){
+  const list = document.getElementById('spotifyResults');
+  list.innerHTML = '';
+  tracks.forEach(t => {
+    const card = el('li', 'brain-card');
+    const head = el('div', 'brain-card-head');
+    head.appendChild(el('span', 'brain-card-title', t.name));
+    head.appendChild(el('span', 'brain-card-tag', t.artist));
+    card.appendChild(head);
+    const actions = el('div', 'brain-card-actions');
+    const playBtn = el('button', '', '▶ ABSPIELEN');
+    playBtn.type = 'button';
+    playBtn.addEventListener('click', async () => {
+      try {
+        await apiJson('/api/spotify/player/play', {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uri: t.uri }),
+        });
+        setTimeout(loadSpotifyNow, 800);
+      } catch (err) {
+        alert(`Abspielen fehlgeschlagen: ${err.message}`);
+      }
+    });
+    actions.appendChild(playBtn);
+    card.appendChild(actions);
+    list.appendChild(card);
+  });
+}
+
+function initSpotify(){
+  document.getElementById('spotifySearchForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const q = document.getElementById('spotifySearchInput').value.trim();
+    if (!q) return;
+    try {
+      const tracks = await apiJson(`/api/spotify/search?q=${encodeURIComponent(q)}`);
+      renderSpotifyResults(tracks);
+    } catch (err) {
+      alert(`Suche fehlgeschlagen: ${err.message}`);
+    }
+  });
+
+  document.getElementById('spotifyPlayBtn').addEventListener('click', async () => {
+    await apiJson('/api/spotify/player/play', { method: 'PUT' });
+    setTimeout(loadSpotifyNow, 500);
+  });
+  document.getElementById('spotifyPauseBtn').addEventListener('click', async () => {
+    await apiJson('/api/spotify/player/pause', { method: 'PUT' });
+    setTimeout(loadSpotifyNow, 500);
+  });
+  document.getElementById('spotifyNextBtn').addEventListener('click', async () => {
+    await apiJson('/api/spotify/player/next', { method: 'POST' });
+    setTimeout(loadSpotifyNow, 500);
+  });
+  document.getElementById('spotifyPrevBtn').addEventListener('click', async () => {
+    await apiJson('/api/spotify/player/previous', { method: 'POST' });
+    setTimeout(loadSpotifyNow, 500);
+  });
+}
+
+// ---------- YouTube ----------
+function initYoutube(){
+  document.getElementById('youtubeSearchForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const q = document.getElementById('youtubeSearchInput').value.trim();
+    if (!q) return;
+    try {
+      const results = await apiJson(`/api/youtube/search?q=${encodeURIComponent(q)}`);
+      const list = document.getElementById('youtubeResults');
+      list.innerHTML = '';
+      results.forEach(r => {
+        const card = el('li', 'brain-card yt-card');
+        if (r.thumbnail) {
+          const img = document.createElement('img');
+          img.src = r.thumbnail;
+          img.alt = '';
+          card.appendChild(img);
+        }
+        const info = el('div', 'yt-card-info');
+        info.appendChild(el('div', 'yt-card-title', r.title));
+        info.appendChild(el('div', 'yt-card-channel', r.channel));
+        card.appendChild(info);
+        card.addEventListener('click', () => {
+          document.getElementById('youtubePlayer').hidden = false;
+          document.getElementById('youtubeIframe').src = `https://www.youtube.com/embed/${r.videoId}?autoplay=1`;
+        });
+        list.appendChild(card);
+      });
+    } catch (err) {
+      alert(`YouTube-Suche fehlgeschlagen: ${err.message}`);
+    }
+  });
+}
+
+function initIntegrations(){
+  initIntegrationsTabs();
+  initIntegrationConnectButtons();
+  initMail();
+  initCalendar();
+  initContacts();
+  initSpotify();
+  initYoutube();
+  refreshIntegrationStatus();
+  loadMail();
+  loadCalendar();
+  loadContacts(false);
+  loadSpotifyNow();
+}
+
 window.addEventListener('DOMContentLoaded', runBoot);
 window.addEventListener('DOMContentLoaded', initBrain);
+window.addEventListener('DOMContentLoaded', initIntegrations);
 window.addEventListener('DOMContentLoaded', () => {
   initGlobe();
   initGlobeCommand();

@@ -57,7 +57,16 @@ npm ci --omit=dev
 
 echo "==> Datenverzeichnis vorbereiten"
 mkdir -p "${APP_DIR}/server/data"
+
+echo "==> .env vorbereiten (falls noch nicht vorhanden)"
+if [[ ! -f "${APP_DIR}/.env" ]]; then
+  cp "${APP_DIR}/.env.example" "${APP_DIR}/.env"
+  sed -i "s#^BASE_URL=.*#BASE_URL=https://${DOMAIN}#" "${APP_DIR}/.env"
+  echo "   -> ${APP_DIR}/.env angelegt. Für Google/Spotify/YouTube bitte editieren (siehe README)."
+fi
+
 chown -R "${APP_USER}:${APP_USER}" "${APP_DIR}"
+chmod 600 "${APP_DIR}/.env"
 
 echo "==> systemd-Service einrichten"
 cat > /etc/systemd/system/fraiday.service <<EOF
@@ -69,6 +78,7 @@ After=network.target
 Type=simple
 User=${APP_USER}
 WorkingDirectory=${APP_DIR}
+EnvironmentFile=-${APP_DIR}/.env
 Environment=PORT=${PORT}
 Environment=NODE_ENV=production
 ExecStart=$(command -v node) server/index.js
@@ -135,3 +145,4 @@ echo
 echo "Fertig. F.R.Ai.D.A.Y läuft unter https://${DOMAIN}"
 echo "Service-Status: systemctl status fraiday"
 echo "Logs:           journalctl -u fraiday -f"
+echo "Integrationen:  ${APP_DIR}/.env editieren (siehe README), dann: systemctl restart fraiday"

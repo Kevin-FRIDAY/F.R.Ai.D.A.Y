@@ -271,6 +271,119 @@
     </section>
   </div>
 
+  <!-- ===== INTEGRATIONEN ===== -->
+  <div class="grid grid-brain" id="integrations">
+    <section class="panel integrations-panel">
+      <div class="panel-head">
+        <span>INTEGRATIONEN</span>
+        <span class="tag">MAIL &middot; KALENDER &middot; KONTAKTE &middot; SPOTIFY &middot; YOUTUBE</span>
+      </div>
+
+      <div class="integrations-connect">
+        <div class="connect-row">
+          <span class="connect-label">GOOGLE</span>
+          <span class="connect-status" id="googleStatus">PRÜFE…</span>
+          <a class="connect-btn" id="googleConnectBtn" href="/auth/google">VERBINDEN</a>
+          <button type="button" class="connect-btn-secondary" id="googleDisconnectBtn" hidden>TRENNEN</button>
+        </div>
+        <div class="connect-row">
+          <span class="connect-label">SPOTIFY</span>
+          <span class="connect-status" id="spotifyStatus">PRÜFE…</span>
+          <a class="connect-btn" id="spotifyConnectBtn" href="/auth/spotify">VERBINDEN</a>
+          <button type="button" class="connect-btn-secondary" id="spotifyDisconnectBtn" hidden>TRENNEN</button>
+        </div>
+      </div>
+
+      <div class="brain-tabs" role="tablist">
+        <button class="brain-tab int-tab active" data-int-view="mail" role="tab" aria-selected="true">MAIL</button>
+        <button class="brain-tab int-tab" data-int-view="calendar" role="tab" aria-selected="false">KALENDER</button>
+        <button class="brain-tab int-tab" data-int-view="contacts" role="tab" aria-selected="false">KONTAKTE</button>
+        <button class="brain-tab int-tab" data-int-view="spotify" role="tab" aria-selected="false">SPOTIFY</button>
+        <button class="brain-tab int-tab" data-int-view="youtube" role="tab" aria-selected="false">YOUTUBE</button>
+      </div>
+
+      <div class="brain-body">
+
+        <!-- MAIL -->
+        <div class="int-view" id="int-view-mail">
+          <form class="brain-form" id="mailForm">
+            <input type="text" id="mailTo" placeholder="AN (E-Mail)" required>
+            <input type="text" id="mailSubject" placeholder="BETREFF" required>
+            <textarea id="mailBody" placeholder="NACHRICHT …" required></textarea>
+            <button type="submit">SENDEN</button>
+          </form>
+          <div class="int-toolbar">
+            <button type="button" class="int-refresh" id="mailRefreshBtn">AKTUALISIEREN</button>
+          </div>
+          <p class="brain-empty" id="mailEmpty" hidden>Keine Mails geladen — Google verbinden und aktualisieren.</p>
+          <ul class="brain-list" id="mailList"></ul>
+        </div>
+
+        <!-- KALENDER -->
+        <div class="int-view" id="int-view-calendar" hidden>
+          <form class="brain-form" id="calendarForm">
+            <input type="text" id="calSummary" placeholder="TITEL" required>
+            <input type="datetime-local" id="calStart" required>
+            <input type="datetime-local" id="calEnd" required>
+            <input type="text" id="calLocation" placeholder="ORT (optional)">
+            <button type="submit">TERMIN ANLEGEN</button>
+          </form>
+          <div class="int-toolbar">
+            <button type="button" class="int-refresh" id="calRefreshBtn">AKTUALISIEREN</button>
+          </div>
+          <p class="brain-empty" id="calEmpty" hidden>Keine Termine geladen — Google verbinden und aktualisieren.</p>
+          <ul class="brain-list" id="calList"></ul>
+        </div>
+
+        <!-- KONTAKTE -->
+        <div class="int-view" id="int-view-contacts" hidden>
+          <div class="int-toolbar">
+            <input type="search" class="brain-search" id="contactsSearch" placeholder="Kontakte durchsuchen…">
+            <button type="button" class="int-refresh" id="contactsSyncBtn">SYNCHRONISIEREN</button>
+          </div>
+          <p class="brain-empty" id="contactsEmpty" hidden>Keine Kontakte geladen — Google verbinden und synchronisieren.</p>
+          <ul class="brain-list" id="contactsList"></ul>
+        </div>
+
+        <!-- SPOTIFY -->
+        <div class="int-view" id="int-view-spotify" hidden>
+          <div class="spotify-now" id="spotifyNow" hidden>
+            <img id="spotifyNowImg" alt="">
+            <div class="spotify-now-info">
+              <div class="spotify-now-track" id="spotifyNowTrack"></div>
+              <div class="spotify-now-artist" id="spotifyNowArtist"></div>
+              <div class="spotify-now-controls">
+                <button type="button" id="spotifyPrevBtn">⏮</button>
+                <button type="button" id="spotifyPlayBtn">▶</button>
+                <button type="button" id="spotifyPauseBtn">⏸</button>
+                <button type="button" id="spotifyNextBtn">⏭</button>
+              </div>
+            </div>
+          </div>
+          <p class="brain-empty" id="spotifyEmpty" hidden>Keine Wiedergabe — Spotify verbinden und ein Gerät öffnen.</p>
+          <form class="brain-form" id="spotifySearchForm">
+            <input type="text" id="spotifySearchInput" placeholder="Titel oder Interpret suchen…" required>
+            <button type="submit">SUCHEN</button>
+          </form>
+          <ul class="brain-list" id="spotifyResults"></ul>
+        </div>
+
+        <!-- YOUTUBE -->
+        <div class="int-view" id="int-view-youtube" hidden>
+          <form class="brain-form" id="youtubeSearchForm">
+            <input type="text" id="youtubeSearchInput" placeholder="YouTube durchsuchen…" required>
+            <button type="submit">SUCHEN</button>
+          </form>
+          <div class="youtube-player" id="youtubePlayer" hidden>
+            <iframe id="youtubeIframe" src="" title="YouTube Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <ul class="brain-list youtube-results" id="youtubeResults"></ul>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
   <footer class="footbar">
     <span>STARK-KLASSE INTERFACE SIMULATION</span>
     <span class="foot-sep">&middot;</span>

@@ -26,6 +26,23 @@ db.exec(`
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS oauth_tokens (
+    provider TEXT PRIMARY KEY,
+    access_token TEXT,
+    refresh_token TEXT,
+    expires_at INTEGER,
+    scope TEXT,
+    updated_at TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS contacts_cache (
+    id TEXT PRIMARY KEY,
+    name TEXT,
+    email TEXT,
+    phone TEXT,
+    synced_at TEXT NOT NULL
+  );
 `);
 
 module.exports = db;
