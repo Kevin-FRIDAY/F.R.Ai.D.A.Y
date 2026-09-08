@@ -78,6 +78,24 @@ function extractTitle(item) {
   return typeof raw === 'string' ? raw.trim() : String(raw?.['#text'] || raw || '').trim();
 }
 
+// Übersetzt die Meldung ins Deutsche, damit F.R.Ai.D.A.Y sie auf Deutsch
+// vorlesen kann — unabhängig von der Sprache der Originalquelle.
+async function translateToGerman(text, sourceLang) {
+  const primary = (sourceLang || '').split('-')[0].toLowerCase();
+  if (!text || primary === 'de') return text;
+
+  try {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${encodeURIComponent(primary || 'en')}|de`;
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) return text;
+    const body = await res.json();
+    const translated = body?.responseData?.translatedText;
+    return typeof translated === 'string' && translated.trim() ? translated.trim() : text;
+  } catch (err) {
+    return text;
+  }
+}
+
 router.get('/countries', (req, res) => {
   res.json(listCountries());
 });
@@ -117,6 +135,8 @@ router.get('/', async (req, res) => {
       video = media.video;
     }
 
+    const titleDe = await translateToGerman(title, country.lang);
+
     const data = {
       country: country.name,
       code: country.code,
@@ -124,6 +144,7 @@ router.get('/', async (req, res) => {
       lon: country.lon,
       lang: country.lang,
       title,
+      titleDe,
       source: country.source,
       publishedAt,
       link,

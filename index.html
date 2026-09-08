@@ -52,9 +52,13 @@
             <span class="prompt">&gt;</span>
             <input type="text" id="globeCommandInput" autocomplete="off"
                    placeholder='Land nennen, z.B. &quot;USA&quot; oder &quot;zeig mir Deutschland&quot;'>
-            <button type="button" id="micButton" title="Spracheingabe">🎤</button>
+            <button type="button" id="micButton" title="Dauerzuhören aktivieren">🎤</button>
           </form>
           <div class="globe-status" id="globeStatus">Sag oder tippe einen Landnamen, um die Weltlage abzufragen.</div>
+          <div class="wake-status" id="wakeStatus">
+            <span class="wake-dot"></span>
+            <span id="wakeStatusText">Dauerzuhören aus — Mikrofon aktivieren, dann reagiert F.R.Ai.D.A.Y nur auf „Friday …“.</span>
+          </div>
 
           <div class="news-card" id="newsCard" hidden>
             <div class="news-head">
@@ -62,6 +66,7 @@
               <span class="news-source" id="newsSource"></span>
             </div>
             <h3 class="news-title" id="newsTitle"></h3>
+            <div class="news-title-orig" id="newsTitleOrig" hidden></div>
             <div class="news-media" id="newsMedia"></div>
             <div class="news-foot">
               <a class="news-link" id="newsLink" href="#" target="_blank" rel="noopener">QUELLE ANSEHEN ↗</a>

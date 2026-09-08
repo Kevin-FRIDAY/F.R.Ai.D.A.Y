@@ -292,6 +292,19 @@ html,body{
 .news-country{ font-family:'Orbitron', sans-serif; font-size:12px; letter-spacing:2px; color:var(--cyan-bright); }
 .news-source{ font-size:10px; letter-spacing:1.5px; color:var(--amber); }
 .news-title{ margin:0; font-family:'Share Tech Mono', monospace; font-weight:normal; font-size:15px; line-height:1.4; color:var(--cyan-bright); }
+.news-title-orig{ font-size:11px; font-style:italic; color:var(--cyan-dim); line-height:1.4; }
+
+.wake-status{
+  font-size:10px; letter-spacing:.5px; color:var(--cyan-dim);
+  border:1px solid var(--line); padding:6px 10px; display:flex; align-items:center; gap:8px;
+}
+.wake-status .wake-dot{
+  width:6px; height:6px; border-radius:50%; background:var(--cyan-dim); flex-shrink:0;
+}
+.wake-status.is-active{ color:var(--cyan-bright); border-color:var(--cyan-bright); }
+.wake-status.is-active .wake-dot{
+  background:#8fffb0; box-shadow:0 0 6px #8fffb0; animation:pulse 1.4s ease-in-out infinite;
+}
 .news-media img{ display:block; width:100%; max-height:220px; object-fit:cover; border:1px solid var(--line); }
 .news-media video, .news-media iframe{ display:block; width:100%; aspect-ratio:16/9; border:1px solid var(--line); }
 .news-foot{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }

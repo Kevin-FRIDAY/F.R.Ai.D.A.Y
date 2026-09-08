@@ -8,8 +8,12 @@ Ein JARVIS/F.R.I.D.A.Y-artiges HUD-Dashboard mit:
 - einer **Kommandozentrale mit rotierendem 3D-Weltlage-Globus**: per Text
   oder Sprachbefehl ("USA", "zeig mir Deutschland", …) recherchiert der
   Server die echte Top-Meldung des Landes bei einer direkten, seriösen
-  Nachrichtenquelle (kein Google-News-Redirect), zeigt Bild/Video aus dem
-  Originalartikel (falls vorhanden) und liest die Meldung im Browser laut vor.
+  Nachrichtenquelle (kein Google-News-Redirect), übersetzt sie ins Deutsche
+  (Original bleibt sichtbar), zeigt Bild/Video aus dem Originalartikel
+  (falls vorhanden) und liest die Meldung auf Deutsch vor;
+- **Dauerzuhören mit Weckwort**: Mikrofon einmal aktivieren, danach hört
+  F.R.Ai.D.A.Y permanent mit, reagiert aber nur auf Sätze, die "Friday"
+  enthalten (z.B. "Friday, zeig mir Japan").
 
 ## Starten
 
@@ -26,8 +30,8 @@ liefert das Frontend aus und stellt die Gehirn-API bereit:
   JS-Funktionen (im Browser über den "AUSFÜHREN"-Button testbar)
 - `GET /api/health` – Statusabfrage für das Gehirn-Panel
 - `GET /api/news?country=<Name>` – echte Top-Meldung für ein Land (Text,
-  Quelle, Bild/Video falls vorhanden), erkennt deutsche/englische
-  Landesnamen im Freitext
+  deutsche Übersetzung, Quelle, Bild/Video falls vorhanden), erkennt
+  deutsche/englische Landesnamen im Freitext
 - `GET /api/news/countries` – Liste der unterstützten Länder (für den Globus)
 
 Die Daten liegen in `server/data/brain.db` (SQLite, wird beim ersten

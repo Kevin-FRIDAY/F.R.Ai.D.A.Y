@@ -653,9 +653,19 @@ async function runGlobeCommand(rawText) {
 
   try {
     const data = await brainApi(`/api/news?country=${encodeURIComponent(text)}`);
+    const titleDe = data.titleDe || data.title;
+    const isTranslated = titleDe !== data.title;
+
     document.getElementById('newsCountry').textContent = data.country;
     document.getElementById('newsSource').textContent = data.source || '';
-    document.getElementById('newsTitle').textContent = data.title;
+    document.getElementById('newsTitle').textContent = titleDe;
+    const origEl = document.getElementById('newsTitleOrig');
+    if (isTranslated) {
+      origEl.textContent = `Original: „${data.title}“`;
+      origEl.hidden = false;
+    } else {
+      origEl.hidden = true;
+    }
     const link = document.getElementById('newsLink');
     link.href = data.link || '#';
     renderNewsMedia(document.getElementById('newsMedia'), data);
@@ -669,7 +679,7 @@ async function runGlobeCommand(rawText) {
     tag.textContent = 'ONLINE';
 
     focusGlobeOnCountry(data.code, data.lon);
-    speakText(data.title, data.lang);
+    speakText(titleDe, 'de-DE');
   } catch (err) {
     setGlobeStatus(err.message || 'Land nicht erkannt.', true);
     tag.textContent = 'FEHLER';
@@ -686,36 +696,91 @@ function initGlobeCommand() {
   });
 
   document.getElementById('newsSpeakBtn').addEventListener('click', () => {
-    speakText(document.getElementById('newsTitle').textContent);
+    speakText(document.getElementById('newsTitle').textContent, 'de-DE');
   });
 
+  initWakeWordListening(input);
+}
+
+// "Friday" hört permanent mit, reagiert aber nur auf Sätze, die das
+// Weckwort "Friday" (bzw. die Aussprache "Fraiday") enthalten — alles
+// danach wird als Befehl behandelt (z.B. "Friday, zeig mir Japan").
+const WAKE_WORD_RE = /\b(?:fr[ai]?day|f\.?r\.?a\.?i\.?d\.?a\.?y)\b[,:]?\s*(.*)$/i;
+
+function setWakeStatus(text, isActive) {
+  const el = document.getElementById('wakeStatus');
+  const textEl = document.getElementById('wakeStatusText');
+  if (!el || !textEl) return;
+  textEl.textContent = text;
+  el.classList.toggle('is-active', Boolean(isActive));
+}
+
+function initWakeWordListening(input) {
   const micBtn = document.getElementById('micButton');
   const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognitionImpl) {
     micBtn.disabled = true;
     micBtn.title = 'Spracheingabe wird von diesem Browser nicht unterstützt';
+    setWakeStatus('Dauerzuhören wird von diesem Browser nicht unterstützt.', false);
     return;
   }
 
   const recognition = new SpeechRecognitionImpl();
   recognition.lang = 'de-DE';
+  recognition.continuous = true;
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
-  micBtn.addEventListener('click', () => {
-    if (micBtn.classList.contains('is-listening')) {
-      recognition.stop();
+  let wantListening = false; // true = Nutzer hat Dauerzuhören aktiviert
+
+  recognition.addEventListener('start', () => {
+    micBtn.classList.add('is-listening');
+    setWakeStatus('Dauerzuhören aktiv — sag „Friday“, gefolgt von deinem Befehl.', true);
+  });
+
+  recognition.addEventListener('end', () => {
+    micBtn.classList.remove('is-listening');
+    if (wantListening) {
+      // Browser beendet Erkennung nach einer Weile automatisch — neu starten,
+      // solange der Nutzer Dauerzuhören nicht selbst ausgeschaltet hat.
+      try { recognition.start(); } catch (err) { /* läuft bereits */ }
+    } else {
+      setWakeStatus('Dauerzuhören aus — Mikrofon aktivieren, dann reagiert F.R.Ai.D.A.Y nur auf „Friday …“.', false);
+    }
+  });
+
+  recognition.addEventListener('error', (event) => {
+    micBtn.classList.remove('is-listening');
+    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+      wantListening = false;
+      setWakeStatus('Mikrofonzugriff verweigert.', false);
+    }
+    // andere Fehler (z.B. "no-speech") werden vom "end"-Handler abgefangen,
+    // der bei aktivem Dauerzuhören automatisch neu startet.
+  });
+
+  recognition.addEventListener('result', (event) => {
+    const last = event.results[event.results.length - 1];
+    const transcript = last[0].transcript.trim();
+    const match = transcript.match(WAKE_WORD_RE);
+    if (!match) return; // kein "Friday" gehört -> ignorieren
+
+    const command = match[1].trim();
+    if (!command) {
+      setWakeStatus('Ja, Sir? Sag z.B. „Friday, zeig mir Deutschland“.', true);
       return;
     }
-    try { recognition.start(); } catch (err) { /* läuft bereits */ }
+    input.value = command;
+    runGlobeCommand(command);
   });
-  recognition.addEventListener('start', () => micBtn.classList.add('is-listening'));
-  recognition.addEventListener('end', () => micBtn.classList.remove('is-listening'));
-  recognition.addEventListener('error', () => micBtn.classList.remove('is-listening'));
-  recognition.addEventListener('result', (event) => {
-    const text = event.results[0][0].transcript;
-    input.value = text;
-    runGlobeCommand(text);
+
+  micBtn.addEventListener('click', () => {
+    wantListening = !wantListening;
+    if (wantListening) {
+      try { recognition.start(); } catch (err) { /* läuft bereits */ }
+    } else {
+      recognition.stop();
+    }
   });
 }
 
