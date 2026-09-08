@@ -34,6 +34,45 @@
     </div>
   </header>
 
+  <!-- ===== KOMMANDOZENTRALE / WELTLAGE-GLOBUS ===== -->
+  <div class="grid grid-globe">
+    <section class="panel globe-panel">
+      <div class="panel-head">
+        <span>WELTLAGE-GLOBUS</span>
+        <span class="tag" id="globeTag">BEREIT</span>
+      </div>
+
+      <div class="globe-layout">
+        <div class="globe-stage">
+          <canvas id="globeCanvas"></canvas>
+        </div>
+
+        <div class="globe-news">
+          <form class="globe-command" id="globeCommandForm">
+            <span class="prompt">&gt;</span>
+            <input type="text" id="globeCommandInput" autocomplete="off"
+                   placeholder='Land nennen, z.B. &quot;USA&quot; oder &quot;zeig mir Deutschland&quot;'>
+            <button type="button" id="micButton" title="Spracheingabe">🎤</button>
+          </form>
+          <div class="globe-status" id="globeStatus">Sag oder tippe einen Landnamen, um die Weltlage abzufragen.</div>
+
+          <div class="news-card" id="newsCard" hidden>
+            <div class="news-head">
+              <span class="news-country" id="newsCountry"></span>
+              <span class="news-source" id="newsSource"></span>
+            </div>
+            <h3 class="news-title" id="newsTitle"></h3>
+            <div class="news-media" id="newsMedia"></div>
+            <div class="news-foot">
+              <a class="news-link" id="newsLink" href="#" target="_blank" rel="noopener">QUELLE ANSEHEN ↗</a>
+              <button type="button" class="news-speak" id="newsSpeakBtn">🔊 VORLESEN</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
   <div class="grid">
 
     <!-- ===== LEFT COLUMN ===== -->
@@ -237,6 +276,7 @@
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

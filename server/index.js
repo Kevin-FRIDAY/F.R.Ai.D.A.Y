@@ -3,6 +3,7 @@ const path = require('node:path');
 
 const entriesRouter = require('./routes/entries');
 const functionsRouter = require('./routes/functions');
+const newsRouter = require('./routes/news');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,6 +12,7 @@ app.use(express.json({ limit: '1mb' }));
 
 app.use('/api/memory', entriesRouter);
 app.use('/api/functions', functionsRouter);
+app.use('/api/news', newsRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ONLINE', time: new Date().toISOString() });

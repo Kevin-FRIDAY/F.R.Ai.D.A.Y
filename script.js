@@ -455,5 +455,273 @@ async function initBrain(){
   loadFunctions();
 }
 
+// ================== WELTLAGE-GLOBUS (Kommandozentrale) ==================
+const GLOBE_RADIUS = 1;
+const globeState = {
+  group: null,
+  markers: new Map(),
+  rotationY: 0.4,
+  focusing: false,
+  focusFrom: 0,
+  focusTo: 0,
+  focusStart: 0,
+  focusDuration: 1200,
+  activeCode: null,
+};
+
+function latLonToVector3(lat, lon, radius) {
+  const phi = (90 - lat) * (Math.PI / 180);
+  const theta = (lon + 180) * (Math.PI / 180);
+  return new THREE.Vector3(
+    -radius * Math.sin(phi) * Math.cos(theta),
+    radius * Math.cos(phi),
+    radius * Math.sin(phi) * Math.sin(theta)
+  );
+}
+
+function thetaFromLon(lon) {
+  return (lon + 180) * (Math.PI / 180);
+}
+
+function buildGraticule(group) {
+  const lineMat = new THREE.LineBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.32 });
+
+  for (let lat = -60; lat <= 60; lat += 30) {
+    const points = [];
+    for (let i = 0; i <= 64; i++) {
+      points.push(latLonToVector3(lat, (i / 64) * 360 - 180, GLOBE_RADIUS));
+    }
+    group.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), lineMat));
+  }
+
+  for (let lon = -180; lon < 180; lon += 30) {
+    const points = [];
+    for (let i = 0; i <= 64; i++) {
+      points.push(latLonToVector3((i / 64) * 180 - 90, lon, GLOBE_RADIUS));
+    }
+    group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), lineMat));
+  }
+
+  const coreGeom = new THREE.SphereGeometry(GLOBE_RADIUS * 0.985, 32, 32);
+  const coreMat = new THREE.MeshBasicMaterial({ color: 0x1a0d05, transparent: true, opacity: 0.55 });
+  group.add(new THREE.Mesh(coreGeom, coreMat));
+}
+
+async function initGlobe() {
+  if (typeof THREE === 'undefined') {
+    setGlobeStatus('3D-Bibliothek konnte nicht geladen werden.', true);
+    return;
+  }
+  const canvas = document.getElementById('globeCanvas');
+  const stage = canvas.parentElement;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10);
+  camera.position.set(0, 0, 2.6);
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+  const group = new THREE.Group();
+  scene.add(group);
+  buildGraticule(group);
+  globeState.group = group;
+
+  let countries = [];
+  try {
+    countries = await brainApi('/api/news/countries');
+  } catch (err) {
+    countries = [];
+  }
+
+  countries.forEach(c => {
+    const pos = latLonToVector3(c.lat, c.lon, GLOBE_RADIUS * 1.02);
+    const marker = new THREE.Mesh(
+      new THREE.SphereGeometry(0.018, 12, 12),
+      new THREE.MeshBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.45 })
+    );
+    marker.position.copy(pos);
+    group.add(marker);
+    globeState.markers.set(c.code, marker);
+  });
+
+  function resize() {
+    const size = stage.clientWidth;
+    if (!size) return;
+    renderer.setSize(size, size, false);
+    camera.aspect = 1;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function animate(time) {
+    requestAnimationFrame(animate);
+
+    if (globeState.focusing) {
+      const t = Math.min(1, (time - globeState.focusStart) / globeState.focusDuration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      globeState.rotationY = globeState.focusFrom + (globeState.focusTo - globeState.focusFrom) * eased;
+      if (t >= 1) globeState.focusing = false;
+    } else {
+      globeState.rotationY += 0.0015;
+    }
+    group.rotation.y = globeState.rotationY;
+
+    globeState.markers.forEach((marker, code) => {
+      const isActive = code === globeState.activeCode;
+      marker.scale.setScalar(isActive ? 1 + Math.sin(time / 200) * 0.25 : 1);
+      marker.material.opacity = isActive ? 1 : 0.45;
+      marker.material.color.set(isActive ? 0xffb347 : 0xff7a1a);
+    });
+
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(animate);
+}
+
+function focusGlobeOnCountry(code, lon) {
+  const marker = globeState.markers.get(code);
+  if (!marker) return;
+  globeState.activeCode = code;
+
+  const theta = thetaFromLon(lon);
+  let target = Math.PI / 2 - theta;
+  const current = globeState.rotationY;
+  while (target - current > Math.PI) target -= 2 * Math.PI;
+  while (target - current < -Math.PI) target += 2 * Math.PI;
+
+  globeState.focusFrom = current;
+  globeState.focusTo = target;
+  globeState.focusStart = performance.now();
+  globeState.focusing = true;
+}
+
+function setGlobeStatus(text, isError) {
+  const el = document.getElementById('globeStatus');
+  el.textContent = text;
+  el.classList.toggle('is-error', Boolean(isError));
+}
+
+function renderNewsMedia(container, item) {
+  container.innerHTML = '';
+  if (item.image) {
+    const img = document.createElement('img');
+    img.src = item.image;
+    img.alt = item.title || '';
+    img.loading = 'lazy';
+    img.addEventListener('error', () => img.remove());
+    container.appendChild(img);
+  }
+  if (item.video) {
+    const url = item.video;
+    const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]+)/);
+    if (ytMatch) {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${ytMatch[1]}`;
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      container.appendChild(iframe);
+    } else if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) {
+      const video = document.createElement('video');
+      video.src = url;
+      video.controls = true;
+      container.appendChild(video);
+    }
+  }
+}
+
+function speakText(text, lang) {
+  if (!('speechSynthesis' in window) || !text) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  if (lang) utter.lang = lang;
+  const speakBtn = document.getElementById('newsSpeakBtn');
+  utter.addEventListener('start', () => speakBtn.classList.add('is-speaking'));
+  utter.addEventListener('end', () => speakBtn.classList.remove('is-speaking'));
+  utter.addEventListener('error', () => speakBtn.classList.remove('is-speaking'));
+  window.speechSynthesis.speak(utter);
+}
+
+async function runGlobeCommand(rawText) {
+  const text = (rawText || '').trim();
+  if (!text) return;
+
+  const card = document.getElementById('newsCard');
+  const tag = document.getElementById('globeTag');
+  setGlobeStatus(`Suche Weltlage für "${text}" …`);
+  tag.textContent = 'SUCHE…';
+
+  try {
+    const data = await brainApi(`/api/news?country=${encodeURIComponent(text)}`);
+    document.getElementById('newsCountry').textContent = data.country;
+    document.getElementById('newsSource').textContent = data.source || '';
+    document.getElementById('newsTitle').textContent = data.title;
+    const link = document.getElementById('newsLink');
+    link.href = data.link || '#';
+    renderNewsMedia(document.getElementById('newsMedia'), data);
+    card.hidden = false;
+
+    setGlobeStatus(
+      data.stale
+        ? `${data.country}: Quelle gerade nicht erreichbar — letzter bekannter Stand.`
+        : `${data.country}: Top-Meldung von ${data.source}.`
+    );
+    tag.textContent = 'ONLINE';
+
+    focusGlobeOnCountry(data.code, data.lon);
+    speakText(data.title, data.lang);
+  } catch (err) {
+    setGlobeStatus(err.message || 'Land nicht erkannt.', true);
+    tag.textContent = 'FEHLER';
+  }
+}
+
+function initGlobeCommand() {
+  const form = document.getElementById('globeCommandForm');
+  const input = document.getElementById('globeCommandInput');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    runGlobeCommand(input.value);
+  });
+
+  document.getElementById('newsSpeakBtn').addEventListener('click', () => {
+    speakText(document.getElementById('newsTitle').textContent);
+  });
+
+  const micBtn = document.getElementById('micButton');
+  const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognitionImpl) {
+    micBtn.disabled = true;
+    micBtn.title = 'Spracheingabe wird von diesem Browser nicht unterstützt';
+    return;
+  }
+
+  const recognition = new SpeechRecognitionImpl();
+  recognition.lang = 'de-DE';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  micBtn.addEventListener('click', () => {
+    if (micBtn.classList.contains('is-listening')) {
+      recognition.stop();
+      return;
+    }
+    try { recognition.start(); } catch (err) { /* läuft bereits */ }
+  });
+  recognition.addEventListener('start', () => micBtn.classList.add('is-listening'));
+  recognition.addEventListener('end', () => micBtn.classList.remove('is-listening'));
+  recognition.addEventListener('error', () => micBtn.classList.remove('is-listening'));
+  recognition.addEventListener('result', (event) => {
+    const text = event.results[0][0].transcript;
+    input.value = text;
+    runGlobeCommand(text);
+  });
+}
+
 window.addEventListener('DOMContentLoaded', runBoot);
 window.addEventListener('DOMContentLoaded', initBrain);
+window.addEventListener('DOMContentLoaded', () => {
+  initGlobe();
+  initGlobeCommand();
+});

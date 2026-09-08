@@ -1,8 +1,15 @@
 # F.R.Ai.D.A.Y
 
-Ein JARVIS/F.R.I.D.A.Y-artiges HUD-Dashboard mit einem eingebauten
-**Neuronalen Gehirn** – einem echten Backend (Node.js/Express + SQLite),
-das beliebige Dateneinträge und eigene Funktionen dauerhaft speichert.
+Ein JARVIS/F.R.I.D.A.Y-artiges HUD-Dashboard mit:
+
+- einem **Neuronalen Gehirn** – einem echten Backend (Node.js/Express +
+  SQLite), das beliebige Dateneinträge und eigene Funktionen dauerhaft
+  speichert;
+- einer **Kommandozentrale mit rotierendem 3D-Weltlage-Globus**: per Text
+  oder Sprachbefehl ("USA", "zeig mir Deutschland", …) recherchiert der
+  Server die echte Top-Meldung des Landes bei einer direkten, seriösen
+  Nachrichtenquelle (kein Google-News-Redirect), zeigt Bild/Video aus dem
+  Originalartikel (falls vorhanden) und liest die Meldung im Browser laut vor.
 
 ## Starten
 
@@ -18,9 +25,16 @@ liefert das Frontend aus und stellt die Gehirn-API bereit:
 - `GET/POST /api/functions`, `PUT/DELETE /api/functions/:id` – eigene
   JS-Funktionen (im Browser über den "AUSFÜHREN"-Button testbar)
 - `GET /api/health` – Statusabfrage für das Gehirn-Panel
+- `GET /api/news?country=<Name>` – echte Top-Meldung für ein Land (Text,
+  Quelle, Bild/Video falls vorhanden), erkennt deutsche/englische
+  Landesnamen im Freitext
+- `GET /api/news/countries` – Liste der unterstützten Länder (für den Globus)
 
 Die Daten liegen in `server/data/brain.db` (SQLite, wird beim ersten
-Start automatisch angelegt und ist nicht Teil des Repos).
+Start automatisch angelegt und ist nicht Teil des Repos). Nachrichten
+werden serverseitig 10 Minuten gecacht, um die (kostenlosen, öffentlichen)
+Quellen zu schonen; ist eine Quelle kurzzeitig nicht erreichbar, wird die
+letzte bekannte echte Meldung mit Hinweis angezeigt statt eines Fehlers.
 
 ## Live-Deployment auf einem eigenen Server
 

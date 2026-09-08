@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Kevin-FRIDAY/F.R.Ai.D.A.Y#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "fast-xml-parser": "^5.11.1"
   }
 }
