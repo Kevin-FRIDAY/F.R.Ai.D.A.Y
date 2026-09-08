@@ -660,15 +660,17 @@ async function initBrain(){
   initBrainForms();
   initBrainIcon();
   initMemoryTab();
+  // Health-Check läuft parallel zum Laden der Daten/Funktionen statt davor —
+  // beide scheitern ohnehin gemeinsam, wenn der Server nicht erreichbar ist,
+  // das spart eine komplette Rundlaufzeit bis das Panel Inhalte zeigt.
+  loadEntries();
+  loadFunctions();
   try {
     await brainApi('/api/health');
     setBrainTag('ONLINE', true);
   } catch (err) {
     setBrainTag('OFFLINE', false);
-    return;
   }
-  loadEntries();
-  loadFunctions();
 }
 
 // ================== WELTLAGE-GLOBUS (Kommandozentrale) ==================

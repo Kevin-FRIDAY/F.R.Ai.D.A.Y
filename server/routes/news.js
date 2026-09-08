@@ -29,20 +29,27 @@ async function fetchWithTimeout(url, options = {}) {
   }
 }
 
+// Einmalig pro Meta-Namen kompiliert statt bei jedem Artikel-Abruf neu —
+// diese Funktion läuft bei jeder einzelnen Weltlage-Suche.
+const META_PATTERN_CACHE = new Map();
+function getMetaPatterns(name) {
+  let entry = META_PATTERN_CACHE.get(name);
+  if (!entry) {
+    entry = {
+      re: new RegExp(`<meta[^>]+(?:property|name)=["']${name}["'][^>]+content=["']([^"']+)["']`, 'i'),
+      // Manche Seiten schreiben content zuerst, property/name danach.
+      reReversed: new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${name}["']`, 'i'),
+    };
+    META_PATTERN_CACHE.set(name, entry);
+  }
+  return entry;
+}
+
 function extractMeta(html, names) {
   for (const name of names) {
-    const re = new RegExp(
-      `<meta[^>]+(?:property|name)=["']${name}["'][^>]+content=["']([^"']+)["']`,
-      'i'
-    );
+    const { re, reReversed } = getMetaPatterns(name);
     const match = html.match(re);
     if (match) return match[1].replace(/&amp;/g, '&');
-
-    // Manche Seiten schreiben content zuerst, property/name danach.
-    const reReversed = new RegExp(
-      `<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${name}["']`,
-      'i'
-    );
     const matchReversed = html.match(reReversed);
     if (matchReversed) return matchReversed[1].replace(/&amp;/g, '&');
   }
@@ -112,15 +119,13 @@ async function fetchAndCache(country) {
   const link = extractLink(topItem);
   const publishedAt = topItem.pubDate || topItem.published || topItem.updated || null;
 
-  let image = null;
-  let video = null;
-  if (link) {
-    const media = await fetchArticleMedia(link);
-    image = media.image;
-    video = media.video;
-  }
-
-  const titleDe = await translateToGerman(title, country.lang);
+  // Artikelbild/-video und Übersetzung sind voneinander unabhängig (brauchen
+  // nur link bzw. title) — parallel statt nacheinander spart eine komplette
+  // Netzwerk-Rundlaufzeit pro Suche.
+  const [media, titleDe] = await Promise.all([
+    link ? fetchArticleMedia(link) : Promise.resolve({ image: null, video: null }),
+    translateToGerman(title, country.lang),
+  ]);
 
   const data = {
     country: country.name,
@@ -133,8 +138,8 @@ async function fetchAndCache(country) {
     source: country.source,
     publishedAt,
     link,
-    image,
-    video,
+    image: media.image,
+    video: media.video,
   };
   const previous = cache.get(country.code);
   const changed = !previous || previous.data.title !== title;

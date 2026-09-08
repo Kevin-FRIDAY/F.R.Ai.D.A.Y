@@ -143,21 +143,76 @@ function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// Findet das erste Land, dessen Alias als ganzes Wort im Text vorkommt.
-// Längere Aliase zuerst prüfen, damit z.B. "südkorea" vor generischeren
-// Treffern gewinnt.
+// Einmalig beim Modulstart aufgebaut, sortiert und die Regex vorkompiliert —
+// vorher passierte das bei jedem einzelnen Text-/Sprachbefehl neu, was bei
+// ~50 Aliassen unnötige Arbeit auf dem heißen Pfad jeder Suche war.
+// Längere Aliase zuerst, damit z.B. "südkorea" vor generischeren Treffern gewinnt.
+const CANDIDATES = COUNTRIES
+  .flatMap(c => c.aliases.map(alias => ({ country: c, alias })))
+  .sort((a, b) => b.alias.length - a.alias.length)
+  .map(({ country, alias }) => ({
+    country,
+    alias,
+    re: new RegExp(`\\b${escapeRegex(alias)}\\b`, 'i'),
+  }));
+
+// Damerau-Levenshtein (optimal string alignment): zählt neben Einfügen/
+// Löschen/Ersetzen auch das Vertauschen zweier benachbarter Buchstaben als
+// einen einzigen Fehler — der häufigsten Tippfehler-Art (z.B. "Detuschland").
+function levenshtein(a, b) {
+  const rows = a.length + 1;
+  const cols = b.length + 1;
+  const dp = Array.from({ length: rows }, () => new Array(cols).fill(0));
+  for (let i = 0; i < rows; i++) dp[i][0] = i;
+  for (let j = 0; j < cols; j++) dp[0][j] = j;
+  for (let i = 1; i < rows; i++) {
+    for (let j = 1; j < cols; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + cost
+      );
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        dp[i][j] = Math.min(dp[i][j], dp[i - 2][j - 2] + 1);
+      }
+    }
+  }
+  return dp[rows - 1][cols - 1];
+}
+
+// Toleriert kleine Tippfehler (z.B. "Detuschland" statt "Deutschland") als
+// Fallback, wenn keine exakte Wortgrenzen-Übereinstimmung gefunden wurde.
+// Nur bei ausreichend langen Wörtern und Abstand 1, damit kurze/unähnliche
+// Wörter nicht versehentlich ein falsches Land treffen.
+function findCountryFuzzy(text) {
+  const words = text.toLowerCase().match(/[a-zà-öø-ÿ]+/gi) || [];
+  let best = null;
+  let bestDist = 2;
+  for (const word of words) {
+    if (word.length < 5) continue;
+    for (const { country, alias } of CANDIDATES) {
+      if (alias.includes(' ') || Math.abs(alias.length - word.length) > 1) continue;
+      const dist = levenshtein(word, alias);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = country;
+      }
+    }
+  }
+  return best;
+}
+
+// Findet das erste Land, dessen Alias als ganzes Wort im Text vorkommt;
+// erkennt als Fallback auch leicht vertippte Ländernamen.
 function findCountry(text) {
   if (!text) return null;
   const lower = text.toLowerCase();
-  const candidates = COUNTRIES
-    .flatMap(c => c.aliases.map(a => ({ country: c, alias: a })))
-    .sort((a, b) => b.alias.length - a.alias.length);
 
-  for (const { country, alias } of candidates) {
-    const re = new RegExp(`\\b${escapeRegex(alias)}\\b`, 'i');
+  for (const { country, re } of CANDIDATES) {
     if (re.test(lower)) return country;
   }
-  return null;
+  return findCountryFuzzy(text);
 }
 
 function listCountries() {
