@@ -712,11 +712,68 @@ function renderNewsMedia(container, item) {
   }
 }
 
-function speakText(text, lang) {
+// ---------- Automatische Stimmauswahl ----------
+// Sucht unter den vom Browser/Betriebssystem angebotenen (lizenzfreien)
+// Stimmen automatisch die beste deutsche aus — bevorzugt Cloud-/Premium-
+// Stimmen (Google, Neural, Enhanced, …) vor einfachen Kompakt-/eSpeak-Stimmen.
+let voicesPromise = null;
+function getVoicesAsync(){
+  if (voicesPromise) return voicesPromise;
+  voicesPromise = new Promise((resolve) => {
+    if (!('speechSynthesis' in window)) return resolve([]);
+    const existing = window.speechSynthesis.getVoices();
+    if (existing.length) return resolve(existing);
+    const onChange = () => {
+      window.speechSynthesis.removeEventListener('voiceschanged', onChange);
+      resolve(window.speechSynthesis.getVoices());
+    };
+    window.speechSynthesis.addEventListener('voiceschanged', onChange);
+    setTimeout(() => {
+      window.speechSynthesis.removeEventListener('voiceschanged', onChange);
+      resolve(window.speechSynthesis.getVoices());
+    }, 1200);
+  });
+  return voicesPromise;
+}
+
+function scoreGermanVoice(voice){
+  const lang = voice.lang.toLowerCase();
+  if (!lang.startsWith('de')) return -1;
+  let score = lang === 'de-de' ? 5 : 2;
+  if (voice.localService === false) score += 4; // meist Cloud-/Premiumstimmen
+  const name = voice.name.toLowerCase();
+  if (/google|neural|enhanced|premium|natural|online|wavenet/.test(name)) score += 5;
+  if (/compact|espeak/.test(name)) score -= 6;
+  if (voice.default) score += 1;
+  return score;
+}
+
+let cachedBestVoice; // undefined = noch nicht gesucht, null = keine deutsche Stimme gefunden
+async function getBestGermanVoice(){
+  if (cachedBestVoice !== undefined) return cachedBestVoice;
+  const voices = await getVoicesAsync();
+  const ranked = voices
+    .map(v => ({ v, s: scoreGermanVoice(v) }))
+    .filter(x => x.s >= 0)
+    .sort((a, b) => b.s - a.s);
+  cachedBestVoice = ranked.length ? ranked[0].v : null;
+
+  const speakBtn = document.getElementById('newsSpeakBtn');
+  if (speakBtn) {
+    speakBtn.title = cachedBestVoice
+      ? `Stimme: ${cachedBestVoice.name}`
+      : 'Keine deutsche Stimme gefunden — Systemstandard';
+  }
+  return cachedBestVoice;
+}
+
+async function speakText(text, lang) {
   if (!('speechSynthesis' in window) || !text) return;
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(text);
   if (lang) utter.lang = lang;
+  const bestVoice = await getBestGermanVoice();
+  if (bestVoice) utter.voice = bestVoice;
   const speakBtn = document.getElementById('newsSpeakBtn');
   utter.addEventListener('start', () => speakBtn.classList.add('is-speaking'));
   utter.addEventListener('end', () => speakBtn.classList.remove('is-speaking'));
