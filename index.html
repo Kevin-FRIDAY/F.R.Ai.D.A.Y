@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F.R.Ai.D.A.Y // System Interface</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="vignette"></div>
+<div class="noise"></div>
+
+<div class="boot-screen" id="bootScreen">
+  <div class="boot-log" id="bootLog"></div>
+</div>
+
+<div class="hud" id="hud">
+
+  <!-- ===== TOP BAR ===== -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <span class="brand-name">F.R.<span class="accent">A</span>I.D.A.Y</span>
+      <span class="brand-sub">FEMTOSCALE RECURSIVE ARTIFICIAL INTELLIGENCE&nbsp;·&nbsp;DAILY ASSISTANT</span>
+    </div>
+    <div class="status-pill" id="statusPill">
+      <span class="dot"></span> ALLE SYSTEME ONLINE
+    </div>
+    <div class="clock-block">
+      <div class="clock" id="clock">00:00:00</div>
+      <div class="date" id="dateline">--- -- ----</div>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- ===== LEFT COLUMN ===== -->
+    <section class="col col-left">
+
+      <div class="panel">
+        <div class="panel-head"><span>SYSTEMDIAGNOSE</span><span class="tag">LIVE</span></div>
+        <div class="meter-row">
+          <div class="meter-label">CPU LAST</div>
+          <div class="meter"><div class="meter-fill" id="m-cpu"></div></div>
+          <div class="meter-val" id="v-cpu">--%</div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-label">SPEICHER</div>
+          <div class="meter"><div class="meter-fill" id="m-mem"></div></div>
+          <div class="meter-val" id="v-mem">--%</div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-label">NETZWERK</div>
+          <div class="meter"><div class="meter-fill" id="m-net"></div></div>
+          <div class="meter-val" id="v-net">--%</div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-label">THERMISCH</div>
+          <div class="meter"><div class="meter-fill" id="m-therm"></div></div>
+          <div class="meter-val" id="v-therm">--%</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span>ENERGIEKERN</span><span class="tag">RT-49</span></div>
+        <div class="power-wrap">
+          <svg viewBox="0 0 120 120" class="power-ring">
+            <circle cx="60" cy="60" r="52" class="ring-track"/>
+            <circle cx="60" cy="60" r="52" class="ring-fill" id="powerRing"/>
+          </svg>
+          <div class="power-center">
+            <div class="power-pct" id="powerPct">100%</div>
+            <div class="power-lbl">OUTPUT</div>
+          </div>
+        </div>
+        <div class="power-caption">ARC-REAKTOR STABIL &middot; KEINE ANOMALIEN</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span>SENSOR-LOG</span><span class="tag" id="logTag">--</span></div>
+        <ul class="log" id="logList"></ul>
+      </div>
+
+    </section>
+
+    <!-- ===== CENTER COLUMN ===== -->
+    <section class="col col-center">
+
+      <div class="reactor-stage">
+        <svg viewBox="0 0 400 400" class="reactor">
+          <g class="ring ring-outer">
+            <circle cx="200" cy="200" r="180" class="ring-dash"/>
+          </g>
+          <g class="ring ring-mid">
+            <circle cx="200" cy="200" r="150" class="ring-dash-thin"/>
+          </g>
+          <g class="ring ring-inner-rot">
+            <circle cx="200" cy="200" r="118" class="ring-seg"/>
+          </g>
+          <g class="ring ring-inner-rot-rev">
+            <circle cx="200" cy="200" r="98" class="ring-seg-b"/>
+          </g>
+          <polygon points="200,120 232,160 220,214 180,214 168,160" class="triangle"/>
+          <circle cx="200" cy="200" r="46" class="core-glow"/>
+          <circle cx="200" cy="200" r="26" class="core-solid"/>
+          <g class="tick-ring">
+            <circle cx="200" cy="200" r="180" class="tick-circle"/>
+          </g>
+        </svg>
+        <div class="reactor-caption">
+          <span class="rc-line">FRAIDAY ONLINE</span>
+          <span class="rc-sub">GUTEN TAG, SIR</span>
+        </div>
+      </div>
+
+      <div class="panel command-panel">
+        <div class="panel-head"><span>SPRACHBEFEHL</span><span class="tag">MIC READY</span></div>
+        <div class="command-line">
+          <span class="prompt">&gt;</span>
+          <span id="typedCommand"></span><span class="cursor">▌</span>
+        </div>
+        <div class="wave" id="wave">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== RIGHT COLUMN ===== -->
+    <section class="col col-right">
+
+      <div class="panel">
+        <div class="panel-head"><span>PANZERUNG STATUS</span><span class="tag">MARK L</span></div>
+        <div class="suit">
+          <svg viewBox="0 0 160 220" class="suit-svg">
+            <path d="M80 8 C55 8 42 24 42 44 L42 70 C30 76 24 92 24 112 L24 172 C24 196 40 212 80 212 C120 212 136 196 136 172 L136 112 C136 92 130 76 118 70 L118 44 C118 24 105 8 80 8 Z" class="suit-outline"/>
+            <line x1="24" y1="130" x2="136" y2="130" class="suit-scan" id="suitScan"/>
+          </svg>
+          <div class="suit-stats">
+            <div><span>INTEGRITÄT</span><b id="suitInteg">100%</b></div>
+            <div><span>REPULSOREN</span><b id="suitRep">BEREIT</b></div>
+            <div><span>FLUG</span><b id="suitFlight">STANDBY</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span>UMGEBUNG</span><span class="tag" id="geoTag">--</span></div>
+        <div class="env-grid">
+          <div class="env-item"><span class="env-k">KOORDINATEN</span><span class="env-v" id="envCoord">ERFASSE…</span></div>
+          <div class="env-item"><span class="env-k">ZEITZONE</span><span class="env-v" id="envTz">--</span></div>
+          <div class="env-item"><span class="env-k">AUFLÖSUNG</span><span class="env-v" id="envRes">--</span></div>
+          <div class="env-item"><span class="env-k">VERBINDUNG</span><span class="env-v" id="envConn">--</span></div>
+          <div class="env-item"><span class="env-k">BATTERIE</span><span class="env-v" id="envBatt">--</span></div>
+          <div class="env-item"><span class="env-k">AGENT</span><span class="env-v" id="envAgent">--</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span>RADAR</span><span class="tag">360°</span></div>
+        <div class="radar">
+          <svg viewBox="0 0 200 200" class="radar-svg">
+            <circle cx="100" cy="100" r="90" class="radar-ring"/>
+            <circle cx="100" cy="100" r="60" class="radar-ring"/>
+            <circle cx="100" cy="100" r="30" class="radar-ring"/>
+            <line x1="10" y1="100" x2="190" y2="100" class="radar-cross"/>
+            <line x1="100" y1="10" x2="100" y2="190" class="radar-cross"/>
+            <g class="radar-sweep-group">
+              <path d="M100,100 L100,10 A90,90 0 0,1 178,55 Z" class="radar-sweep"/>
+            </g>
+            <circle cx="140" cy="70" r="3" class="blip blip-1"/>
+            <circle cx="60" cy="130" r="3" class="blip blip-2"/>
+            <circle cx="130" cy="140" r="3" class="blip blip-3"/>
+          </svg>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <footer class="footbar">
+    <span>STARK-KLASSE INTERFACE SIMULATION</span>
+    <span class="foot-sep">&middot;</span>
+    <span id="uptime">LAUFZEIT 00:00:00</span>
+    <span class="foot-sep">&middot;</span>
+    <span>BUILD MK-01</span>
+  </footer>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
