@@ -107,19 +107,45 @@
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-head"><span>ENERGIEKERN</span><span class="tag">RT-49</span></div>
-        <div class="power-wrap">
-          <svg viewBox="0 0 120 120" class="power-ring">
-            <circle cx="60" cy="60" r="52" class="ring-track"/>
-            <circle cx="60" cy="60" r="52" class="ring-fill" id="powerRing"/>
+      <div class="panel brain-icon-panel">
+        <div class="panel-head"><span>GEHIRN</span><span class="tag" id="brainIconTag">--</span></div>
+
+        <button type="button" class="brain-icon-toggle" id="brainIconToggle" aria-expanded="false">
+          <svg viewBox="0 0 120 100" class="brain-icon-svg">
+            <path class="brain-icon-outline" d="M60,8
+              C46,8 36,15 33,26
+              C20,27 12,38 16,49
+              C8,55 8,68 18,74
+              C18,86 30,94 43,91
+              C48,97 56,97 60,92
+              C64,97 72,97 77,91
+              C90,94 102,86 102,74
+              C112,68 112,55 104,49
+              C108,38 100,27 87,26
+              C84,15 74,8 60,8 Z"/>
+            <path class="brain-icon-fold" d="M60,12 C58,30 62,50 58,70 C56,80 58,88 60,91"/>
+            <path class="brain-icon-fold" d="M33,26 C42,34 40,46 46,54 C50,60 44,68 48,76"/>
+            <path class="brain-icon-fold" d="M87,26 C78,34 80,46 74,54 C70,60 76,68 72,76"/>
+            <circle class="brain-icon-node" cx="33" cy="26" r="2.4"/>
+            <circle class="brain-icon-node" cx="16" cy="49" r="2.4"/>
+            <circle class="brain-icon-node" cx="18" cy="74" r="2.4"/>
+            <circle class="brain-icon-node" cx="43" cy="91" r="2.4"/>
+            <circle class="brain-icon-node" cx="87" cy="26" r="2.4"/>
+            <circle class="brain-icon-node" cx="104" cy="49" r="2.4"/>
+            <circle class="brain-icon-node" cx="102" cy="74" r="2.4"/>
+            <circle class="brain-icon-node" cx="77" cy="91" r="2.4"/>
+            <circle class="brain-icon-core" cx="60" cy="50" r="5"/>
           </svg>
-          <div class="power-center">
-            <div class="power-pct" id="powerPct">100%</div>
-            <div class="power-lbl">OUTPUT</div>
+          <div class="brain-icon-caption">
+            <span id="brainIconStats">GEDÄCHTNIS WIRD GELADEN…</span>
+            <span class="brain-icon-hint">KLICKEN ZUM ÖFFNEN</span>
           </div>
+        </button>
+
+        <div class="brain-network" id="brainNetwork" hidden>
+          <svg viewBox="0 0 300 260" id="brainNetworkSvg"></svg>
+          <a href="#neuronalesGehirn" class="brain-network-link" id="brainNetworkLink">IM GEHIRN-PANEL BEARBEITEN ↓</a>
         </div>
-        <div class="power-caption">ARC-REAKTOR STABIL &middot; KEINE ANOMALIEN</div>
       </div>
 
       <div class="panel">
@@ -178,21 +204,6 @@
     <section class="col col-right">
 
       <div class="panel">
-        <div class="panel-head"><span>PANZERUNG STATUS</span><span class="tag">MARK L</span></div>
-        <div class="suit">
-          <svg viewBox="0 0 160 220" class="suit-svg">
-            <path d="M80 8 C55 8 42 24 42 44 L42 70 C30 76 24 92 24 112 L24 172 C24 196 40 212 80 212 C120 212 136 196 136 172 L136 112 C136 92 130 76 118 70 L118 44 C118 24 105 8 80 8 Z" class="suit-outline"/>
-            <line x1="24" y1="130" x2="136" y2="130" class="suit-scan" id="suitScan"/>
-          </svg>
-          <div class="suit-stats">
-            <div><span>INTEGRITÄT</span><b id="suitInteg">100%</b></div>
-            <div><span>REPULSOREN</span><b id="suitRep">BEREIT</b></div>
-            <div><span>FLUG</span><b id="suitFlight">STANDBY</b></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
         <div class="panel-head"><span>UMGEBUNG</span><span class="tag" id="geoTag">--</span></div>
         <div class="env-grid">
           <div class="env-item"><span class="env-k">KOORDINATEN</span><span class="env-v" id="envCoord">ERFASSE…</span></div>
@@ -227,7 +238,7 @@
   </div>
 
   <!-- ===== NEURONALES GEHIRN ===== -->
-  <div class="grid grid-brain">
+  <div class="grid grid-brain" id="neuronalesGehirn">
     <section class="panel brain-panel">
       <div class="panel-head">
         <span>NEURONALES GEHIRN</span>

@@ -74,16 +74,6 @@ function updateMeters(){
   setMeter('m-therm','v-therm', stats.therm);
 }
 
-// ---------- Power ring ----------
-const RING_CIRC = 2 * Math.PI * 52; // ≈ 327
-function setPower(pct){
-  const ring = document.getElementById('powerRing');
-  const offset = RING_CIRC - (RING_CIRC * pct / 100);
-  ring.style.strokeDasharray = RING_CIRC;
-  ring.style.strokeDashoffset = offset;
-  document.getElementById('powerPct').textContent = Math.round(pct) + '%';
-}
-
 // ---------- Sensor log ----------
 const logMessages = [
   "Perimeter-Scan abgeschlossen — keine Bedrohungen",
@@ -198,16 +188,6 @@ function initEnvironment(){
   }
 }
 
-// ---------- Suit stats flicker ----------
-function updateSuit(){
-  const integ = Math.round(randomWalk(98, 92, 100, 4));
-  document.getElementById('suitInteg').textContent = integ + '%';
-  const repStates = ['BEREIT','GELADEN','STANDBY'];
-  const flightStates = ['STANDBY','BEREIT','GESPERRT'];
-  document.getElementById('suitRep').textContent = repStates[Math.floor(Math.random()*repStates.length)];
-  document.getElementById('suitFlight').textContent = flightStates[Math.floor(Math.random()*flightStates.length)];
-}
-
 // ---------- Start ----------
 function startDashboard(){
   tickClock();
@@ -217,15 +197,10 @@ function startDashboard(){
   updateMeters();
   setInterval(updateMeters, 2200);
 
-  setPower(96 + Math.random()*4);
-  setInterval(() => setPower(94 + Math.random()*6), 4000);
-
   pushLog();
   setInterval(pushLog, 3400);
 
   initEnvironment();
-  updateSuit();
-  setInterval(updateSuit, 5000);
 
   typewriter();
 }
@@ -297,6 +272,8 @@ function renderEntries(){
 
     list.appendChild(card);
   });
+
+  updateBrainIconWidget();
 }
 
 function renderFunctions(){
@@ -342,6 +319,8 @@ function renderFunctions(){
 
     list.appendChild(card);
   });
+
+  updateBrainIconWidget();
 }
 
 async function loadEntries(query){
@@ -441,9 +420,111 @@ function initBrainForms(){
   });
 }
 
+// ---------- Gehirn-Icon-Widget (HUD-Kachel) ----------
+let brainNetworkExpanded = false;
+
+function updateBrainIconWidget(){
+  const stats = document.getElementById('brainIconStats');
+  const tag = document.getElementById('brainIconTag');
+  if (!stats || !tag) return;
+  const total = brain.entries.length + brain.functions.length;
+  stats.textContent = `${brain.entries.length} EINTRÄGE · ${brain.functions.length} FUNKTIONEN`;
+  tag.textContent = total > 0 ? 'AKTIV' : 'LEER';
+  if (brainNetworkExpanded) renderBrainNetwork();
+}
+
+function renderBrainNetwork(){
+  const svg = document.getElementById('brainNetworkSvg');
+  if (!svg) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  svg.innerHTML = '';
+
+  const items = [
+    ...brain.entries.map(e => ({ type: 'data', label: e.title })),
+    ...brain.functions.map(f => ({ type: 'func', label: f.name })),
+  ];
+
+  const cx = 150, cy = 130, radius = 95;
+
+  const core = document.createElementNS(NS, 'circle');
+  core.setAttribute('cx', cx); core.setAttribute('cy', cy); core.setAttribute('r', 20);
+  core.setAttribute('class', 'brain-net-core');
+  svg.appendChild(core);
+
+  const coreLabel = document.createElementNS(NS, 'text');
+  coreLabel.setAttribute('x', cx); coreLabel.setAttribute('y', cy + 4);
+  coreLabel.setAttribute('class', 'brain-net-core-label');
+  coreLabel.textContent = items.length;
+  svg.appendChild(coreLabel);
+
+  if (items.length === 0) {
+    const msg = document.createElementNS(NS, 'text');
+    msg.setAttribute('x', cx); msg.setAttribute('y', cy + 55);
+    msg.setAttribute('class', 'brain-net-label');
+    msg.setAttribute('text-anchor', 'middle');
+    msg.textContent = 'Noch keine gespeicherten Daten';
+    svg.appendChild(msg);
+    return;
+  }
+
+  const shown = items.slice(0, 12);
+  const extra = items.length - shown.length;
+
+  shown.forEach((item, i) => {
+    const angle = (-90 + (360 / shown.length) * i) * (Math.PI / 180);
+    const x = cx + radius * Math.cos(angle);
+    const y = cy + radius * Math.sin(angle);
+
+    const line = document.createElementNS(NS, 'line');
+    line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+    line.setAttribute('x2', x); line.setAttribute('y2', y);
+    line.setAttribute('class', 'brain-net-line');
+    svg.appendChild(line);
+
+    const node = document.createElementNS(NS, 'circle');
+    node.setAttribute('cx', x); node.setAttribute('cy', y); node.setAttribute('r', 5);
+    node.setAttribute('class', 'brain-net-node' + (item.type === 'func' ? ' is-func' : ''));
+    const title = document.createElementNS(NS, 'title');
+    title.textContent = item.label;
+    node.appendChild(title);
+    svg.appendChild(node);
+
+    const label = document.createElementNS(NS, 'text');
+    const ly = y + (Math.sin(angle) >= 0 ? 14 : -10);
+    label.setAttribute('x', x); label.setAttribute('y', ly);
+    label.setAttribute('class', 'brain-net-label');
+    label.setAttribute('text-anchor', 'middle');
+    label.textContent = item.label.length > 14 ? item.label.slice(0, 13) + '…' : item.label;
+    svg.appendChild(label);
+  });
+
+  if (extra > 0) {
+    const moreLabel = document.createElementNS(NS, 'text');
+    moreLabel.setAttribute('x', cx); moreLabel.setAttribute('y', cy + radius + 24);
+    moreLabel.setAttribute('class', 'brain-net-label');
+    moreLabel.setAttribute('text-anchor', 'middle');
+    moreLabel.textContent = `+${extra} weitere im Gehirn-Panel`;
+    svg.appendChild(moreLabel);
+  }
+}
+
+function toggleBrainNetwork(){
+  brainNetworkExpanded = !brainNetworkExpanded;
+  const toggle = document.getElementById('brainIconToggle');
+  const network = document.getElementById('brainNetwork');
+  toggle.setAttribute('aria-expanded', String(brainNetworkExpanded));
+  network.hidden = !brainNetworkExpanded;
+  if (brainNetworkExpanded) renderBrainNetwork();
+}
+
+function initBrainIcon(){
+  document.getElementById('brainIconToggle').addEventListener('click', toggleBrainNetwork);
+}
+
 async function initBrain(){
   initBrainTabs();
   initBrainForms();
+  initBrainIcon();
   try {
     await brainApi('/api/health');
     setBrainTag('ONLINE', true);
