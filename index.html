@@ -718,6 +718,8 @@
               <option value="youtube_wiedergabe">YOUTUBE-WIEDERGABE</option>
               <option value="spotify_suche">SPOTIFY-SUCHE</option>
               <option value="spotify_wiedergabe">SPOTIFY-WIEDERGABE</option>
+              <option value="gmail_suche">GMAIL-SUCHE</option>
+              <option value="kalender_termin">KALENDER-TERMIN</option>
             </select>
             <button type="button" class="delete-btn" id="memoryClearBtn">ALLES LÖSCHEN</button>
           </div>
@@ -773,6 +775,7 @@
             <button type="submit">SENDEN</button>
           </form>
           <div class="int-toolbar">
+            <input type="search" class="brain-search" id="mailSearch" placeholder="Gmail durchsuchen… (z.B. von:chef@firma.de, betreff:rechnung)">
             <button type="button" class="int-refresh" id="mailRefreshBtn">AKTUALISIEREN</button>
           </div>
           <p class="brain-empty" id="mailEmpty" hidden>Keine Mails geladen — Google verbinden und aktualisieren.</p>

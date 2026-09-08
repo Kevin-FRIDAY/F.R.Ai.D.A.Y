@@ -21,6 +21,8 @@ const PREFERENCE_TYPES = [
   'youtube_wiedergabe',
   'spotify_suche',
   'spotify_wiedergabe',
+  'gmail_suche',
+  'kalender_termin',
 ];
 
 function toEvent(row) {

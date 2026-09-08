@@ -545,6 +545,8 @@ const MEMORY_TYPE_LABELS = {
   youtube_wiedergabe: 'YOUTUBE-WIEDERGABE',
   spotify_suche: 'SPOTIFY-SUCHE',
   spotify_wiedergabe: 'SPOTIFY-WIEDERGABE',
+  gmail_suche: 'GMAIL-SUCHE',
+  kalender_termin: 'KALENDER-TERMIN',
 };
 
 function memoryTypeLabel(type){
@@ -1187,9 +1189,10 @@ function renderMailList(messages){
   });
 }
 
-async function loadMail(){
+async function loadMail(query){
   try {
-    const messages = await apiJson('/api/google/mail?max=15');
+    const q = query ? `&q=${encodeURIComponent(query)}` : '';
+    const messages = await apiJson(`/api/google/mail?max=15${q}`);
     renderMailList(messages);
   } catch (err) {
     document.getElementById('mailEmpty').hidden = false;
@@ -1215,7 +1218,20 @@ function initMail(){
       alert(`Senden fehlgeschlagen: ${err.message}`);
     }
   });
-  document.getElementById('mailRefreshBtn').addEventListener('click', loadMail);
+
+  let mailSearchTimer = null;
+  document.getElementById('mailSearch').addEventListener('input', (e) => {
+    clearTimeout(mailSearchTimer);
+    const query = e.target.value.trim();
+    mailSearchTimer = setTimeout(() => {
+      if (query) logMemory('gmail_suche', query);
+      loadMail(query);
+    }, 400);
+  });
+
+  document.getElementById('mailRefreshBtn').addEventListener('click', () => {
+    loadMail(document.getElementById('mailSearch').value.trim());
+  });
 }
 
 // ---------- Kalender ----------
@@ -1298,6 +1314,7 @@ function initCalendar(){
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ summary, start, end, location }),
       });
+      logMemory('kalender_termin', summary, { start, end, location: location || null });
       e.target.reset();
       document.getElementById('calStart').value = toDatetimeLocalValue(now);
       document.getElementById('calEnd').value = toDatetimeLocalValue(later);

@@ -379,6 +379,7 @@ html,body{
 .int-view{ display:grid; gap:12px; }
 .int-view[hidden]{ display:none; }
 .int-toolbar{ display:flex; gap:10px; align-items:center; }
+.int-toolbar .brain-search{ flex:1; min-width:160px; }
 .int-refresh{
   font-family:'Share Tech Mono', monospace; font-size:10px; letter-spacing:1px;
   background:transparent; border:1px solid var(--line); color:var(--cyan-dim);
