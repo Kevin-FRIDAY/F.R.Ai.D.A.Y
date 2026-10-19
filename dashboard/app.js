@@ -382,6 +382,56 @@
     });
   }
 
+
+  // ---------- Live-Kamera (deine eigene, mit Erlaubnis) ----------
+  let camStream = null;
+  let camFacing = "environment";
+
+  async function startCamera() {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      addMessage("friday", "Dieser Browser gibt mir keinen Kamerazugriff, Boss.");
+      return;
+    }
+    $("camera").classList.remove("hidden");
+    try {
+      stopCamera();
+      camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: camFacing }, audio: false });
+      $("camera-video").srcObject = camStream;
+      $("camera-hint").textContent = 'Richte die Kamera auf etwas und tippe auf "Friday, was siehst du?".';
+    } catch (err) {
+      $("camera-hint").innerHTML = `<span class="error">Kein Zugriff auf die Kamera (${escapeHtml(err.name || "Fehler")}). Erlaube den Zugriff in den Browser-Einstellungen.</span>`;
+    }
+  }
+
+  function stopCamera() {
+    if (camStream) { camStream.getTracks().forEach((t) => t.stop()); camStream = null; }
+    $("camera-video").srcObject = null;
+  }
+
+  function closeCamera() { stopCamera(); $("camera").classList.add("hidden"); }
+
+  function grabFrame() {
+    const v = $("camera-video");
+    if (!v.videoWidth) return null;
+    const scale = Math.min(1, 1280 / Math.max(v.videoWidth, v.videoHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(v.videoWidth * scale);
+    canvas.height = Math.round(v.videoHeight * scale);
+    canvas.getContext("2d").drawImage(v, 0, 0, canvas.width, canvas.height);
+    return { mediaType: "image/jpeg", data: canvas.toDataURL("image/jpeg", 0.85).split(",")[1] };
+  }
+
+  $("camera-live-btn").addEventListener("click", startCamera);
+  $("camera-x").addEventListener("click", closeCamera);
+  $("camera-switch").addEventListener("click", () => { camFacing = camFacing === "environment" ? "user" : "environment"; startCamera(); });
+  $("camera-shot").addEventListener("click", () => {
+    const frame = grabFrame();
+    if (!frame) { $("camera-hint").textContent = "Die Kamera ist noch nicht bereit, einen Moment."; return; }
+    pendingImage = frame;
+    closeCamera();
+    send("Was siehst du durch die Kamera?");
+  });
+
   // ---------- Spracherkennung ----------
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const WAKE = /\b(friday|freitag|fraidei|frei day)\b[,.!]?\s*/i;

@@ -107,6 +107,7 @@
           <button id="lage-btn" class="chip">Lagezentrum</button>
           <button id="briefing-btn" class="chip">Briefing</button>
           <button id="look-btn" class="chip">Bildschirm ansehen</button>
+          <button id="camera-live-btn" class="chip">Kamera</button>
           <button id="new-chat-btn" class="chip">Neues Gespräch</button>
           <button id="key-btn" class="chip">Kurzbefehl-Schlüssel</button>
         </div>
@@ -116,6 +117,22 @@
       </div>
     </aside>
   </main>
+
+  <!-- Kamera (deine eigene, mit Erlaubnis) -->
+  <section id="camera" class="camera hidden" aria-label="Kamera">
+    <div class="panel camera-box">
+      <header class="camera-top">
+        <h2>Fridays Auge</h2>
+        <button id="camera-x" class="ghost small" title="Schließen">✕</button>
+      </header>
+      <video id="camera-video" playsinline autoplay muted></video>
+      <p id="camera-hint" class="muted small-text">Richte die Kamera auf etwas und tippe auf "Friday, was siehst du?".</p>
+      <div class="chips camera-actions">
+        <button id="camera-switch" class="chip">Kamera wechseln</button>
+        <button id="camera-shot" class="chip primary">Friday, was siehst du?</button>
+      </div>
+    </div>
+  </section>
 
   <!-- Lagezentrum -->
   <section id="lage" class="lage hidden" aria-label="Lagezentrum">
@@ -130,8 +147,10 @@
         <svg id="lage-map" class="lage-map" viewBox="0 0 960 500" role="img" aria-label="Weltkarte"></svg>
         <div class="lage-legend">
           <span><i class="dot gut"></i>gut</span><span><i class="dot gemischt"></i>gemischt</span>
-          <span><i class="dot schlecht"></i>schlecht</span><span><i class="dot offen"></i>noch nicht bewertet</span>
+          <span><i class="dot schlecht"></i>schlecht</span><span><i class="dot aktiv"></i>Aktivität</span>
+          <label class="switch small-switch"><input type="checkbox" id="lage-quakes-on" checked><span>Erdbeben</span></label>
         </div>
+        <div id="lage-ticker" class="lage-ticker" aria-hidden="true"></div>
       </div>
       <aside class="lage-side">
         <div class="panel">

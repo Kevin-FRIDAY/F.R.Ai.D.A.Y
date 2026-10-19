@@ -230,7 +230,7 @@ export async function runTool(name, input = {}) {
   switch (name) {
     case "world_news": {
       if (!input.country) {
-        const list = await getOverview();
+        const list = getOverview().laender;
         return list.sort((a, b) => b.meldungen - a.meldungen).slice(0, 8).map((c) => ({ land: c.name, meldungen: c.meldungen, top: c.top }));
       }
       const country = findCountry(input.country);
