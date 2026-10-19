@@ -6,6 +6,7 @@ import * as store from "./store.js";
 import { sendToAgent, isAgentOnline } from "./agent-hub.js";
 import { sendPush } from "./notify.js";
 import { checkForUpdate, startUpdate } from "./updater.js";
+import { COUNTRIES, findCountry, getCountryNews, getOverview } from "./lagezentrum.js";
 
 const MAC_ACTIONS = [
   "open_app", "quit_app", "open_url", "volume_set", "volume_up", "volume_down", "mute",
@@ -14,6 +15,14 @@ const MAC_ACTIONS = [
 ];
 
 export const toolDefinitions = [
+  {
+    name: "world_news",
+    description: "Lagezentrum: aktuelle Schlagzeilen der letzten 24 Stunden zu einem Land (z. B. 'Was ist in Frankreich los?'). Ohne Land: Übersicht, wo gerade am meisten berichtet wird.",
+    input_schema: {
+      type: "object",
+      properties: { country: { type: "string", description: "Land auf Deutsch, z. B. Frankreich" } },
+    },
+  },
   {
     name: "get_weather",
     description: "Aktuelles Wetter und Vorhersage für die nächsten 3 Tage. Ohne Ort wird die Heimatstadt genommen.",
@@ -219,6 +228,16 @@ async function homeAssistant(action, entityId) {
 // Gibt entweder Text/JSON zurück oder (bei screenshot_look) Inhalt mit Bild.
 export async function runTool(name, input = {}) {
   switch (name) {
+    case "world_news": {
+      if (!input.country) {
+        const list = await getOverview();
+        return list.sort((a, b) => b.meldungen - a.meldungen).slice(0, 8).map((c) => ({ land: c.name, meldungen: c.meldungen, top: c.top }));
+      }
+      const country = findCountry(input.country);
+      if (!country) return { error: `Das Land ist nicht im Lagezentrum. Verfügbar: ${COUNTRIES.map((c) => c.name).join(", ")}. Nutze sonst die Websuche.` };
+      const news = await getCountryNews(country);
+      return { land: country.name, schlagzeilen: news.items.slice(0, 12).map((n) => `${n.title} (${n.source})`) };
+    }
     case "get_weather":
       return getWeather(input.city || config.city);
     case "remember":

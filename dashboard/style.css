@@ -238,3 +238,63 @@ button:hover { background: linear-gradient(145deg, rgba(160, 225, 255, 0.24), rg
 .upd-busy { opacity: 0.75; cursor: progress; }
 .upd-busy .upd-dot { background: #ffb84d; box-shadow: 0 0 10px #ffb84d; }
 @keyframes upd-pulse { 50% { box-shadow: 0 0 22px rgba(255, 80, 80, 0.55), inset 0 1px 0 rgba(255,255,255,0.16); } }
+
+/* ---------- Lagezentrum ---------- */
+body.lage-open { overflow: hidden; }
+.lage {
+  position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column; gap: 12px;
+  padding: calc(12px + env(safe-area-inset-top)) 16px calc(12px + env(safe-area-inset-bottom));
+  background: var(--bg); overflow-y: auto;
+}
+.lage-top { display: flex; align-items: center; gap: 12px; }
+.lage-top .brand span { color: var(--gold); }
+.lage-top #lage-stand { flex: 1; }
+.small-text { font-size: 12px; }
+.lage-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+.lage-map-wrap { padding: 8px; display: flex; flex-direction: column; min-width: 0; }
+.lage-map { width: 100%; height: auto; display: block; }
+.lage-sphere { fill: rgba(79, 216, 255, 0.03); stroke: var(--line); }
+.lage-grat, .lage-grat-fallback line { fill: none; stroke: rgba(79, 216, 255, 0.08); stroke-width: 0.5; }
+.land { fill: rgba(79, 216, 255, 0.07); stroke: rgba(79, 216, 255, 0.3); stroke-width: 0.4; }
+.land.watched { cursor: pointer; fill: rgba(79, 216, 255, 0.16); }
+.land.watched:hover { fill: rgba(79, 216, 255, 0.3); }
+.land.gut { fill: rgba(77, 255, 166, 0.28); }
+.land.schlecht { fill: rgba(255, 93, 108, 0.3); }
+.land.gemischt { fill: rgba(255, 184, 77, 0.28); }
+.land.selected { stroke: var(--text); stroke-width: 1.2; }
+.marker { cursor: pointer; --c: var(--cyan); }
+.marker.gut { --c: var(--ok); } .marker.schlecht { --c: var(--bad); } .marker.gemischt { --c: var(--gold); }
+.marker .core { fill: var(--c); fill-opacity: 0.85; stroke: var(--bg); stroke-width: 1; }
+.marker .pulse { fill: none; stroke: var(--c); stroke-opacity: 0.5; transform-box: fill-box; transform-origin: center; animation: lage-pulse 2.4s ease-out infinite; }
+.marker.selected .core { stroke: var(--text); stroke-width: 2; }
+.marker:focus { outline: none; } .marker:focus .core { stroke: var(--text); stroke-width: 2; }
+@keyframes lage-pulse { from { transform: scale(0.4); opacity: 1; } to { transform: scale(1); opacity: 0; } }
+.lage.scanning .lage-map { opacity: 0.6; transition: opacity .3s; }
+.lage-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 11px; color: var(--muted); padding: 6px 8px 2px; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; background: var(--cyan); vertical-align: middle; }
+.dot.gut { background: var(--ok); } .dot.schlecht { background: var(--bad); } .dot.gemischt { background: var(--gold); }
+.lage-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.lage-list { max-height: 320px; overflow-y: auto; }
+.lage-list li { padding: 0; border: 0; }
+.lage-row {
+  width: 100%; display: flex; align-items: center; gap: 4px; padding: 6px 4px; text-align: left;
+  background: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; color: var(--text); font: inherit; font-size: 13px; cursor: pointer;
+}
+.lage-row span { flex: 1; }
+.lage-row b { color: var(--muted); font-weight: normal; }
+.lage-row:hover, .lage-row.active { background: var(--cyan-soft); }
+.lage-news { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; max-height: 360px; overflow-y: auto; }
+.lage-news li { font-size: 13px; line-height: 1.4; }
+.lage-news a { color: var(--text); text-decoration: none; }
+.lage-news a:hover { color: var(--cyan); text-decoration: underline; }
+.lage-news small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+.lage-assess p { margin: 8px 0 0; font-size: 13px; line-height: 1.5; }
+.rating { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; letter-spacing: .1em; border: 1px solid; }
+.rating.gut { color: var(--ok); background: rgba(77, 255, 166, .12); }
+.rating.schlecht { color: var(--bad); background: rgba(255, 93, 108, .12); }
+.rating.gemischt { color: var(--gold); background: rgba(255, 176, 32, .14); }
+@media (max-width: 900px) {
+  .lage-body { grid-template-columns: 1fr; }
+  .lage-list { max-height: none; }
+}
+@media (prefers-reduced-motion: reduce) { .marker .pulse { animation: none; opacity: .4; } }

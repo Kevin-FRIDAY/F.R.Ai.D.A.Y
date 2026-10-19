@@ -266,6 +266,9 @@
     send(t);
   });
 
+  // Für das Lagezentrum (lagezentrum.js).
+  window.Friday = { api, say, escapeHtml };
+
   $("briefing-btn").addEventListener("click", () => send("Gib mir mein Briefing."));
   $("look-btn").addEventListener("click", () => send("Schau dir meinen Mac-Bildschirm an und sag mir kurz, was du siehst."));
   $("new-chat-btn").addEventListener("click", async () => {
