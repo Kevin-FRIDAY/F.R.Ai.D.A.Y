@@ -110,37 +110,99 @@ export async function getQuakes() {
   return list;
 }
 
+// --- Echte Nachrichtenbilder (GDELT, öffentlich, kein Schlüssel) ---
+// GDELT erlaubt nur ca. eine Anfrage alle 5 Sekunden -> globale Warteschlange + Zwischenspeicher.
+const newsImgCache = new Map(); // id -> { at, bilder }
+let gdeltQueue = Promise.resolve();
+let lastGdelt = 0;
+
+function queueGdelt(fn) {
+  const run = gdeltQueue.then(async () => {
+    const wait = 5200 - (Date.now() - lastGdelt);
+    if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+    lastGdelt = Date.now();
+    return fn();
+  });
+  gdeltQueue = run.catch(() => {});
+  return run;
+}
+
+export async function getNewsImages(country) {
+  const cached = newsImgCache.get(country.id);
+  if (cached && Date.now() - cached.at < 30 * 60 * 1000) return cached.bilder;
+  const bilder = await queueGdelt(async () => {
+    const q = encodeURIComponent(country.name);
+    const url = `https://api.gdeltproject.org/api/v2/doc/doc?query=${q}&mode=artlist&format=json&maxrecords=18&sort=datedesc`;
+    const res = await fetch(url, { headers: { "User-Agent": "F.R.Ai.D.A.Y/1.0" }, signal: AbortSignal.timeout(15000) });
+    if (!res.ok) throw new Error(`GDELT ${res.status}`);
+    const text = await res.text();
+    let data; try { data = JSON.parse(text); } catch { return []; }
+    return (data.articles || [])
+      .filter((a) => a.socialimage)
+      .map((a) => ({ bild: a.socialimage, titel: a.title || "", quelle: a.domain || "", seite: a.url || "", zeit: a.seendate || "" }))
+      .slice(0, 12);
+  }).catch(() => []);
+  newsImgCache.set(country.id, { at: Date.now(), bilder });
+  return bilder;
+}
+
 // --- Bilder und öffentliche Kameras pro Land (alles frei zugänglich) ---
 const mediaCache = new Map(); // id -> { at, fotos }
 
-export async function getMedia(country) {
-  const cached = mediaCache.get(country.id);
-  if (cached && Date.now() - cached.at < 6 * 60 * 60 * 1000) return withLinks(country, cached.fotos);
-  let fotos = [];
+async function fetchFotos(country) {
   try {
     const q = encodeURIComponent((country.en || country.name) + " landmark city");
     const res = await fetch(`https://api.openverse.org/v1/images/?q=${q}&page_size=9&mature=false&license_type=all`, {
       headers: { "User-Agent": "F.R.Ai.D.A.Y/1.0" }, signal: AbortSignal.timeout(12000),
     });
-    if (res.ok) {
-      const data = await res.json();
-      fotos = (data.results || []).map((r) => ({
-        bild: r.thumbnail || r.url,
-        quelle: r.source || r.provider || "",
-        autor: r.creator || "",
-        seite: r.foreign_landing_url || r.url || "",
-        titel: r.title || country.name,
-      })).filter((f) => f.bild).slice(0, 9);
-    }
-  } catch { /* Bilder optional */ }
-  mediaCache.set(country.id, { at: Date.now(), fotos });
-  return withLinks(country, fotos);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.results || []).map((r) => ({
+      bild: r.thumbnail || r.url,
+      quelle: r.source || r.provider || "",
+      autor: r.creator || "",
+      seite: r.foreign_landing_url || r.url || "",
+      titel: r.title || country.name,
+    })).filter((f) => f.bild).slice(0, 9);
+  } catch { return []; }
 }
 
-function withLinks(country, fotos) {
+export async function getMedia(country) {
+  const cached = mediaCache.get(country.id);
+  // Bilder und Video parallel holen, damit es schnell geht.
+  const [fotos, videoId] = await Promise.all([
+    cached && Date.now() - cached.at < 6 * 60 * 60 * 1000 ? cached.fotos : fetchFotos(country),
+    getVideoId(country),
+  ]);
+  mediaCache.set(country.id, { at: Date.now(), fotos });
+  return withLinks(country, fotos, videoId);
+}
+
+// Erstes passendes (Live-)Video von YouTube suchen – serverseitig, ohne Schlüssel.
+const videoCache = new Map();
+async function getVideoId(country) {
+  const cached = videoCache.get(country.id);
+  if (cached && Date.now() - cached.at < 60 * 60 * 1000) return cached.id;
+  let id = null;
+  try {
+    const q = encodeURIComponent((country.en || country.name) + " news live");
+    // sp=EgJAAQ%3D%3D = Filter "Live"
+    const url = `https://www.youtube.com/results?search_query=${q}&sp=EgJAAQ%253D%253D`;
+    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/537.36 Chrome/120 Safari/537.36", "Accept-Language": "de,en" }, signal: AbortSignal.timeout(12000) });
+    if (res.ok) {
+      const html = await res.text();
+      id = html.match(/"videoId":"([A-Za-z0-9_-]{11})"/)?.[1] || null;
+    }
+  } catch { /* Video optional */ }
+  videoCache.set(country.id, { at: Date.now(), id });
+  return id;
+}
+
+function withLinks(country, fotos, videoId) {
   const { lat, lon, name } = country;
   return {
     fotos,
+    video: videoId || null,
     // Öffentliche Live-Kameras und Videos: Links auf frei zugängliche Dienste.
     kameras: `https://www.windy.com/-Webcams/webcams?${lat},${lon},6`,
     videos: `https://www.youtube.com/results?search_query=${encodeURIComponent(name + " live cam")}`,

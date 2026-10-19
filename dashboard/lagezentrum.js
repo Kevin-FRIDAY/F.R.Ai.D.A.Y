@@ -337,7 +337,8 @@
         <div id="lage-assess" class="lage-assess">
           <button id="lage-assess-btn" class="chip">Friday, schätz die Lage ein</button>
         </div>
-        <div id="lage-media" class="lage-media"><p class="muted small-text">Lade Bilder...</p></div>
+        <div id="lage-video" class="lage-video-wrap"></div>
+        <div id="lage-media" class="lage-media"><div class="lage-fotos lage-skeleton"><span></span><span></span><span></span></div></div>
         <ul class="lage-news">${items}</ul>`;
       $("lage-assess-btn").addEventListener("click", () => assess(id));
       loadMedia(id);
@@ -346,23 +347,52 @@
     }
   }
 
-  // Bilder und öffentliche Kameras/Videos zum Land (alles frei zugänglich).
+  // Echte Bilder aus aktuellen Nachrichten (GDELT).
+  async function loadNewsImages(id) {
+    const wrap = $("lage-newsimg");
+    if (!wrap) return;
+    try {
+      const imgs = await (await api(`/api/lage/${id}/nachrichten-bilder`)).json();
+      if (selected !== id || !wrap.isConnected) return;
+      wrap.classList.remove("lage-skeleton");
+      if (!Array.isArray(imgs) || !imgs.length) { wrap.remove(); return; }
+      wrap.innerHTML = imgs.slice(0, 9).map((f) =>
+        `<a href="${escapeHtml(f.seite || f.bild)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(f.titel)}${f.quelle ? " · " + escapeHtml(f.quelle) : ""}">
+           <img loading="lazy" src="${escapeHtml(f.bild)}" alt="${escapeHtml(f.titel)}" onerror="this.closest('a').remove()"></a>`).join("");
+    } catch {
+      wrap.remove();
+    }
+  }
+
+  // Öffentliche Kameras/Videos als Links + Fotos als Rückfall, falls keine Nachrichtenbilder.
   async function loadMedia(id) {
     const wrap = $("lage-media");
     if (!wrap) return;
     try {
       const m = await (await api(`/api/lage/${id}/medien`)).json();
       if (selected !== id || !wrap.isConnected) return;
-      const fotos = (m.fotos || []).map((f) =>
-        `<a href="${escapeHtml(f.seite || f.bild)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(f.titel)}${f.autor ? " · " + escapeHtml(f.autor) : ""}">
-           <img loading="lazy" src="${escapeHtml(f.bild)}" alt="${escapeHtml(f.titel)}"></a>`).join("");
+      // Video als anklickbare Vorschau (öffnet das echte Video).
+      const vbox = $("lage-video");
+      if (vbox) {
+        if (m.video) {
+          vbox.innerHTML = `<a class="lage-video" href="https://www.youtube.com/watch?v=${encodeURIComponent(m.video)}" target="_blank" rel="noopener noreferrer" title="Live-Video ansehen">
+            <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(m.video)}/hqdefault.jpg" alt="Video">
+            <span class="play">▶</span><span class="vlabel">Live-Video ansehen</span></a>`;
+        } else {
+          vbox.innerHTML = "";
+        }
+      }
+      const fotos = (m.fotos || []).length
+        ? `<div class="lage-fotos">${m.fotos.map((f) =>
+            `<a href="${escapeHtml(f.seite || f.bild)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(f.titel)}">
+               <img loading="lazy" src="${escapeHtml(f.bild)}" alt="${escapeHtml(f.titel)}"></a>`).join("")}</div>`
+        : "";
       wrap.innerHTML = `
         <div class="lage-cams">
           <a class="chip" href="${escapeHtml(m.kameras)}" target="_blank" rel="noopener noreferrer">📹 Öffentliche Live-Kameras</a>
-          <a class="chip" href="${escapeHtml(m.videos)}" target="_blank" rel="noopener noreferrer">▶ Live-Cams (YouTube)</a>
-          <a class="chip" href="${escapeHtml(m.nachrichten_videos)}" target="_blank" rel="noopener noreferrer">📺 Nachrichten-Videos</a>
+          <a class="chip" href="${escapeHtml(m.nachrichten_videos)}" target="_blank" rel="noopener noreferrer">📺 Mehr Videos</a>
         </div>
-        ${fotos ? `<div class="lage-fotos">${fotos}</div><p class="lage-credit">Bilder aus öffentlichen Quellen (Openverse)</p>` : ""}`;
+        ${fotos}`;
     } catch {
       wrap.innerHTML = "";
     }
@@ -377,7 +407,9 @@
       if (!res.ok) throw new Error(data.error || "Fehler");
       if (selected !== id) return;
       const label = { gut: "GUT", schlecht: "SCHLECHT", gemischt: "GEMISCHT" }[data.bewertung];
-      box.innerHTML = `<span class="rating ${data.bewertung}">${label}</span><p>${escapeHtml(data.zusammenfassung)}</p>`;
+      // Nur vorlesen: Text nur zeigen, wenn Vorlesen aus ist.
+      const voiceOn = $("voice-toggle")?.checked;
+      box.innerHTML = `<span class="rating ${data.bewertung}">${label}</span>${voiceOn ? '<span class="speaking-note">🔊 Friday spricht</span>' : `<p>${escapeHtml(data.zusammenfassung)}</p>`}`;
       const c = countries.find((x) => x.id === id);
       if (c) { c.bewertung = data.bewertung; render(); }
       say(data.zusammenfassung);

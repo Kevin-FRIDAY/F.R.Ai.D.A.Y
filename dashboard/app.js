@@ -82,6 +82,26 @@
     $("transcript").scrollTop = $("transcript").scrollHeight;
   }
 
+  // "Nur vorlesen": statt Text ein Hinweis, dass Friday spricht.
+  function addSpeaking() {
+    clearSpeaking();
+    const div = document.createElement("div");
+    div.className = "msg friday speaking-msg";
+    div.id = "speaking-msg";
+    const label = document.createElement("small");
+    label.textContent = "F.R.AI.D.A.Y";
+    const note = document.createElement("span");
+    note.className = "speaking-note";
+    note.textContent = "🔊 Friday spricht";
+    div.append(label, note);
+    $("transcript").append(div);
+    $("transcript").scrollTop = $("transcript").scrollHeight;
+  }
+
+  function clearSpeaking() {
+    document.getElementById("speaking-msg")?.remove();
+  }
+
   function tick() {
     const now = new Date();
     $("clock").textContent = now.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
@@ -246,10 +266,14 @@
       const res = await api("/api/chat", { method: "POST", body: JSON.stringify(body) });
       const data = await res.json();
       const answer = data.answer || data.error || "Keine Antwort.";
-      addMessage("friday", answer);
+      // Nur vorlesen: Bei erfolgreicher Antwort und aktivem Vorlesen keinen Text zeigen.
+      const voiceOn = $("voice-toggle").checked && "speechSynthesis" in window;
+      if (data.answer && voiceOn) addSpeaking();
+      else addMessage("friday", answer);
       busy = false;
       if (data.actions?.some((a) => a === "set_reminder")) refreshReminders();
       await say(answer);
+      clearSpeaking();
     } catch (err) {
       addMessage("friday", `Verbindung gestört: ${err.message}`);
       setState("Fehler", "");

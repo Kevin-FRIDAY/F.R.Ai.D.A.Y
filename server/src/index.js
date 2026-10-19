@@ -9,7 +9,7 @@ import { getWeather, getProtocols, runTool } from "./tools.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
-import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getCountryNews, getSummary, friendlyError } from "./lagezentrum.js";
+import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getNewsImages, getCountryNews, getSummary, friendlyError } from "./lagezentrum.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus } from "./updater.js";
 
 const missing = checkConfig();
@@ -138,6 +138,11 @@ app.get("/api/lage/:id/medien", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id);
   if (!country) return res.status(404).json({ error: "Land nicht gefunden" });
   res.json(await getMedia(country));
+}));
+app.get("/api/lage/:id/nachrichten-bilder", asyncRoute(async (req, res) => {
+  const country = findCountry(req.params.id);
+  if (!country) return res.status(404).json({ error: "Land nicht gefunden" });
+  res.json(await getNewsImages(country));
 }));
 app.post("/api/lage/:id/einschaetzung", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id);
