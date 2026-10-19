@@ -14,11 +14,51 @@
   let project = null;
   let pollTimer = null;
   let maxCount = 1;
+  let viewAnim = null;
+
+  const ALIASES = {
+    "england": "826", "uk": "826", "großbritannien": "826", "vereinigtes königreich": "826",
+    "amerika": "840", "usa": "840", "vereinigte staaten": "840", "us": "840", "staaten": "840",
+    "korea": "410", "südkorea": "410", "nordkorea": "408", "holland": "528",
+    "türkei": "792", "türkiye": "792", "russland": "643", "tschechien": "203",
+  };
+
+  function findLocal(key) {
+    const k = String(key || "").trim().toLowerCase().replace(/[.!?,]+$/, "");
+    if (!k) return null;
+    let c = countries.find((x) => x.name.toLowerCase() === k);
+    if (!c && ALIASES[k]) c = countries.find((x) => x.id === ALIASES[k]);
+    if (!c) c = countries.find((x) => k.length >= 3 && x.name.toLowerCase().startsWith(k));
+    if (!c) c = countries.find((x) => k.length >= 4 && x.name.toLowerCase().includes(k));
+    return c;
+  }
 
   $("lage-btn").addEventListener("click", open);
   $("lage-close").addEventListener("click", close);
   $("lage-refresh").addEventListener("click", () => load(true));
+  $("lage-world").addEventListener("click", () => { selected = null; render(); flyToWorld(); $("lage-world").classList.add("hidden"); $("lage-land").textContent = "Land wählen"; $("lage-detail").innerHTML = 'Tippe auf der Karte oder in der Liste auf ein Land.'; });
+  $("lage-q").addEventListener("change", () => { const c = findLocal($("lage-q").value); if (c) { $("lage-q").value = c.name; select(c.id); } });
+  $("lage-mic").addEventListener("click", listenCountry);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("lage").classList.contains("hidden")) close(); });
+
+  // Land per Stimme sagen (nutzt die Spracherkennung des Browsers).
+  function listenCountry() {
+    const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!R) { $("lage-q").focus(); return; }
+    const rec = new R();
+    rec.lang = "de-DE"; rec.interimResults = false; rec.maxAlternatives = 3;
+    $("lage-mic").classList.add("listening");
+    rec.onresult = (e) => {
+      const alts = [...e.results[0]].map((a) => a.transcript);
+      let hit = null;
+      for (const a of alts) { hit = findLocal(a) || findLocal(a.replace(/^(zeig(e)? mir|geh(e)? (nach|in)|was ist (in|los in))\s+/i, "")); if (hit) break; }
+      if (hit) { $("lage-q").value = hit.name; select(hit.id); }
+      else $("lage-q").value = alts[0] || "";
+    };
+    rec.onend = () => $("lage-mic").classList.remove("listening");
+    rec.onerror = () => $("lage-mic").classList.remove("listening");
+    try { rec.start(); } catch { /* läuft schon */ }
+  }
 
   function open() {
     $("lage").classList.remove("hidden");
@@ -33,6 +73,9 @@
     document.body.classList.remove("lage-open");
     clearTimeout(pollTimer);
     pollTimer = null;
+    cancelAnimationFrame(viewAnim);
+    $("lage-map")?.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    $("lage-world")?.classList.add("hidden");
   }
 
   // ---------- Weltkarte ----------
@@ -89,6 +132,56 @@
     return node;
   }
 
+  // ---------- Hin- und Herfliegen auf der Karte ----------
+  function currentViewBox() {
+    const vb = $("lage-map").getAttribute("viewBox").split(/\s+/).map(Number);
+    return { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
+  }
+
+  function animateViewBox(to, ms = 900) {
+    const svg = $("lage-map");
+    const from = currentViewBox();
+    const start = performance.now();
+    cancelAnimationFrame(viewAnim);
+    const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+    const step = (now) => {
+      const p = Math.min(1, (now - start) / ms);
+      const e = ease(p);
+      const x = from.x + (to.x - from.x) * e;
+      const y = from.y + (to.y - from.y) * e;
+      const w = from.w + (to.w - from.w) * e;
+      const h = from.h + (to.h - from.h) * e;
+      svg.setAttribute("viewBox", `${x.toFixed(1)} ${y.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
+      if (p < 1) viewAnim = requestAnimationFrame(step);
+    };
+    viewAnim = requestAnimationFrame(step);
+  }
+
+  function flyToCountry(id) {
+    const path = document.querySelector(`#lage-map .land[data-id="${id}"]`);
+    let box;
+    if (path?.getBBox) {
+      try { const b = path.getBBox(); if (b.width > 1 && b.height > 1) box = b; } catch { /* ignore */ }
+    }
+    if (!box) {
+      const c = countries.find((x) => x.id === id);
+      const pos = c && project?.(c.lon, c.lat);
+      if (!pos) return;
+      box = { x: pos[0] - 60, y: pos[1] - 40, width: 120, height: 80 };
+    }
+    // Rahmen mit etwas Luft, Seitenverhältnis an die Karte angleichen.
+    const pad = Math.max(box.width, box.height) * 0.4 + 12;
+    let x = box.x - pad, y = box.y - pad, w = box.width + pad * 2, h = box.height + pad * 2;
+    const ratio = W / H;
+    if (w / h > ratio) h = w / ratio; else w = h * ratio;
+    x = box.x + box.width / 2 - w / 2;
+    y = box.y + box.height / 2 - h / 2;
+    animateViewBox({ x, y, w, h });
+    $("lage-world").classList.remove("hidden");
+  }
+
+  function flyToWorld() { animateViewBox({ x: 0, y: 0, w: W, h: H }); }
+
   // ---------- Daten laden ----------
   async function load(force) {
     $("lage").classList.add("scanning");
@@ -100,6 +193,7 @@
       maxCount = Math.max(1, ...countries.map((c) => c.meldungen));
       await mapReady;
       render();
+      fillDatalist();
       updateStand(data);
       // Solange der Scanner die Welt durchläuft, alle paar Sekunden nachladen.
       clearTimeout(pollTimer);
@@ -129,6 +223,17 @@
       await mapReady;
       renderQuakes();
     } catch { /* Erdbeben optional */ }
+  }
+
+  let datalistDone = false;
+  function fillDatalist() {
+    if (datalistDone) return;
+    const dl = $("lage-countries");
+    if (!dl) return;
+    dl.replaceChildren(...[...countries].sort((a, b) => a.name.localeCompare(b.name, "de")).map((c) => {
+      const o = document.createElement("option"); o.value = c.name; return o;
+    }));
+    datalistDone = true;
   }
 
   const ratingClass = (c) => c.bewertung || (c.meldungen ? "aktiv" : "offen");
@@ -214,6 +319,8 @@
     render();
     const c = countries.find((x) => x.id === id);
     $("lage-land").textContent = c ? c.name : "Land";
+    await mapReady;
+    flyToCountry(id);
     const box = $("lage-detail");
     box.className = "";
     box.innerHTML = `<p class="muted">Lade Meldungen...</p>`;
@@ -230,10 +337,34 @@
         <div id="lage-assess" class="lage-assess">
           <button id="lage-assess-btn" class="chip">Friday, schätz die Lage ein</button>
         </div>
+        <div id="lage-media" class="lage-media"><p class="muted small-text">Lade Bilder...</p></div>
         <ul class="lage-news">${items}</ul>`;
       $("lage-assess-btn").addEventListener("click", () => assess(id));
+      loadMedia(id);
     } catch (err) {
       box.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  // Bilder und öffentliche Kameras/Videos zum Land (alles frei zugänglich).
+  async function loadMedia(id) {
+    const wrap = $("lage-media");
+    if (!wrap) return;
+    try {
+      const m = await (await api(`/api/lage/${id}/medien`)).json();
+      if (selected !== id || !wrap.isConnected) return;
+      const fotos = (m.fotos || []).map((f) =>
+        `<a href="${escapeHtml(f.seite || f.bild)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(f.titel)}${f.autor ? " · " + escapeHtml(f.autor) : ""}">
+           <img loading="lazy" src="${escapeHtml(f.bild)}" alt="${escapeHtml(f.titel)}"></a>`).join("");
+      wrap.innerHTML = `
+        <div class="lage-cams">
+          <a class="chip" href="${escapeHtml(m.kameras)}" target="_blank" rel="noopener noreferrer">📹 Öffentliche Live-Kameras</a>
+          <a class="chip" href="${escapeHtml(m.videos)}" target="_blank" rel="noopener noreferrer">▶ Live-Cams (YouTube)</a>
+          <a class="chip" href="${escapeHtml(m.nachrichten_videos)}" target="_blank" rel="noopener noreferrer">📺 Nachrichten-Videos</a>
+        </div>
+        ${fotos ? `<div class="lage-fotos">${fotos}</div><p class="lage-credit">Bilder aus öffentlichen Quellen (Openverse)</p>` : ""}`;
+    } catch {
+      wrap.innerHTML = "";
     }
   }
 

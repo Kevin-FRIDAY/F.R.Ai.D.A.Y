@@ -142,6 +142,12 @@
       <button id="lage-refresh" class="ghost small" title="Neu laden">⟳</button>
       <button id="lage-close" class="ghost small" title="Schließen">✕</button>
     </header>
+    <div class="lage-search">
+      <button id="lage-mic" class="ghost small" title="Land sagen">🎙</button>
+      <input id="lage-q" type="text" placeholder="Land sagen oder tippen, z. B. USA" autocomplete="off" list="lage-countries">
+      <datalist id="lage-countries"></datalist>
+      <button id="lage-world" class="ghost small hidden" title="Zurück zur Weltkarte">🌍 Welt</button>
+    </div>
     <div class="lage-body">
       <div class="lage-map-wrap panel">
         <svg id="lage-map" class="lage-map" viewBox="0 0 960 500" role="img" aria-label="Weltkarte"></svg>
