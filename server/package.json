@@ -1,0 +1,19 @@
+{
+  "name": "friday-server",
+  "version": "1.0.0",
+  "description": "F.R.Ai.D.A.Y - das Gehirn (läuft auf dem VPS)",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "passwort": "node src/set-password.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
+    "express": "^5.1.0",
+    "ws": "^8.18.0"
+  }
+}

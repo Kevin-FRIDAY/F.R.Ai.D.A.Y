@@ -1,0 +1,35 @@
+{
+  "feierabend": {
+    "description": "Dunkles Design, Lautstärke runter, Musik an",
+    "steps": [
+      { "mac": { "action": "dark_mode_toggle" } },
+      { "mac": { "action": "volume_set", "value": "30" } },
+      { "mac": { "action": "music_play_pause" } },
+      { "mac": { "action": "say", "value": "Feierabend-Protokoll aktiv. Genieß den Abend, Boss." } }
+    ]
+  },
+  "hausparty": {
+    "description": "Musik laut, wie bei Tony Stark",
+    "steps": [
+      { "mac": { "action": "volume_set", "value": "80" } },
+      { "mac": { "action": "music_play_pause" } },
+      { "mac": { "action": "say", "value": "Hausparty-Protokoll aktiviert." } }
+    ]
+  },
+  "arbeit": {
+    "description": "Arbeitsmodus: Mail und Kalender öffnen, Musik leise",
+    "steps": [
+      { "mac": { "action": "open_app", "value": "Mail" } },
+      { "mac": { "action": "open_app", "value": "Calendar" } },
+      { "mac": { "action": "volume_set", "value": "20" } }
+    ]
+  },
+  "gute nacht": {
+    "description": "Mac sperren und Bildschirm aus",
+    "steps": [
+      { "mac": { "action": "say", "value": "Gute Nacht, Boss." } },
+      { "wait": 3 },
+      { "mac": { "action": "lock_screen" } }
+    ]
+  }
+}

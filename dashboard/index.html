@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>F.R.Ai.D.A.Y</title>
+  <meta name="theme-color" content="#02060d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FRIDAY">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="scanline" aria-hidden="true"></div>
+
+  <!-- Anmeldung -->
+  <section id="login" class="login hidden">
+    <form id="login-form" class="panel login-box">
+      <div class="mini-reactor" aria-hidden="true"></div>
+      <h1>F.R.Ai.D.A.Y</h1>
+      <p class="muted">Identifikation erforderlich</p>
+      <input id="password" type="password" autocomplete="current-password" placeholder="Passwort" required>
+      <button type="submit">Zugang anfordern</button>
+      <p id="login-error" class="error" role="alert"></p>
+    </form>
+  </section>
+
+  <main id="app" class="hud hidden">
+    <header class="topbar">
+      <div class="brand">F.R.<span>Ai</span>.D.A.Y</div>
+      <div id="clock" class="clock">--:--</div>
+      <button id="logout" class="ghost small" title="Abmelden">⏻</button>
+    </header>
+
+    <aside class="col left">
+      <div class="panel">
+        <h2>Datum</h2>
+        <div id="date" class="big-text">-</div>
+      </div>
+      <div class="panel">
+        <h2>Wetter</h2>
+        <div id="weather" class="muted">Lade...</div>
+      </div>
+      <div class="panel">
+        <h2>Erinnerungen</h2>
+        <ul id="reminders" class="list"><li class="muted">Keine</li></ul>
+      </div>
+    </aside>
+
+    <section class="center">
+      <button id="reactor" class="reactor" aria-label="Mit Friday sprechen">
+        <span class="ring r1"></span>
+        <span class="ring r2"></span>
+        <span class="ring r3"></span>
+        <span class="ring r4"></span>
+        <span class="core"></span>
+      </button>
+      <div id="state" class="state">Bereit, Boss.</div>
+      <div id="transcript" class="transcript" aria-live="polite"></div>
+
+      <form id="chat-form" class="chat-form">
+        <button type="button" id="camera-btn" class="ghost" title="Foto zeigen">◉</button>
+        <input id="photo" type="file" accept="image/*" capture="environment" hidden>
+        <input id="text" type="text" placeholder="Schreib Friday etwas..." autocomplete="off">
+        <button type="submit" title="Senden">➤</button>
+      </form>
+      <div id="photo-preview" class="photo-preview hidden"></div>
+
+      <div class="toggles">
+        <label class="switch"><input type="checkbox" id="wake-toggle"><span>"Friday" zuhören</span></label>
+        <label class="switch"><input type="checkbox" id="voice-toggle" checked><span>Vorlesen</span></label>
+        <label class="switch"><input type="checkbox" id="translate-toggle"><span>Übersetzer</span></label>
+        <select id="translate-lang" class="hidden" aria-label="Zielsprache">
+          <option>Englische</option><option>Spanische</option><option>Französische</option>
+          <option>Italienische</option><option>Türkische</option><option>Polnische</option>
+          <option>Japanische</option><option>Kroatische</option>
+        </select>
+      </div>
+    </section>
+
+    <aside class="col right">
+      <div class="panel">
+        <h2>Systeme</h2>
+        <ul class="list status-list">
+          <li><span>Gehirn</span><b id="st-server" class="ok">online</b></li>
+          <li><span>Mac</span><b id="st-mac">-</b></li>
+          <li><span>Stimme</span><b id="st-voice">-</b></li>
+          <li><span>Push</span><b id="st-push">-</b></li>
+          <li><span>Telegram</span><b id="st-telegram">-</b></li>
+          <li><span>Smart Home</span><b id="st-home">-</b></li>
+          <li><span>Akku</span><b id="st-battery">-</b></li>
+          <li><span>Version</span><b id="st-version">-</b></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>Protokolle</h2>
+        <div id="protocols" class="chips"></div>
+      </div>
+      <div class="panel">
+        <h2>Aktionen</h2>
+        <div class="chips">
+          <button id="briefing-btn" class="chip">Briefing</button>
+          <button id="look-btn" class="chip">Bildschirm ansehen</button>
+          <button id="new-chat-btn" class="chip">Neues Gespräch</button>
+          <button id="key-btn" class="chip">Kurzbefehl-Schlüssel</button>
+        </div>
+        <button id="update-btn" class="update-btn upd-unknown" title="Nach Updates suchen">
+          <span class="upd-dot" aria-hidden="true"></span><span id="update-label">Updates prüfen</span>
+        </button>
+      </div>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
