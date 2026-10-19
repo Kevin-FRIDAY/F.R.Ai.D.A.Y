@@ -64,6 +64,7 @@
     $("lage").classList.remove("hidden");
     document.body.classList.add("lage-open");
     mapReady ??= drawMap();
+    mapReady.then(() => { if (!selected && projection) startSpin(); });
     load(false);
     loadQuakes();
   }
@@ -73,12 +74,25 @@
     document.body.classList.remove("lage-open");
     clearTimeout(pollTimer);
     pollTimer = null;
+    spinning = false;
     cancelAnimationFrame(viewAnim);
-    $("lage-map")?.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    cancelAnimationFrame(autoRaf);
     $("lage-world")?.classList.add("hidden");
   }
 
-  // ---------- Weltkarte ----------
+  // ---------- Globus (runde Erde) ----------
+  let d3geo = null, geoPath = null, projection = null, landFeatures = [];
+  let sphereNode = null, gratNode = null, landGroup = null, graticuleObj = null;
+  let baseScale = 1, autoRaf = null, lastFrame = 0, spinning = true;
+  const CX = W / 2, CY = H / 2;
+
+  function visible(lon, lat) {
+    if (!d3geo || !projection) return true;
+    const r = projection.rotate();
+    const center = [-r[0], -r[1]];
+    return d3geo.geoDistance(center, [lon, lat]) < Math.PI / 2 - 0.02;
+  }
+
   async function drawMap() {
     const svg = $("lage-map");
     try {
@@ -87,37 +101,50 @@
         import("https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm"),
         fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json").then((r) => r.json()),
       ]);
-      const land = topo.feature(world, world.objects.countries);
-      const projection = geo.geoNaturalEarth1().fitExtent([[8, 8], [W - 8, H - 8]], { type: "Sphere" });
-      const path = geo.geoPath(projection);
+      d3geo = geo;
+      landFeatures = topo.feature(world, world.objects.countries).features;
+      projection = geo.geoOrthographic().fitExtent([[12, 12], [W - 12, H - 12]], { type: "Sphere" }).rotate([-10, -25, 0]).clipAngle(90);
+      baseScale = projection.scale();
+      geoPath = geo.geoPath(projection);
       project = (lon, lat) => projection([lon, lat]);
 
       const defs = el("defs");
       defs.innerHTML = `
-        <radialGradient id="lage-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#4fd8ff" stop-opacity="0.9"/>
+        <radialGradient id="lage-ocean" cx="38%" cy="35%" r="75%">
+          <stop offset="0%" stop-color="#0b3350"/>
+          <stop offset="60%" stop-color="#062033"/>
+          <stop offset="100%" stop-color="#020c16"/>
+        </radialGradient>
+        <radialGradient id="lage-atmo" cx="50%" cy="50%" r="50%">
+          <stop offset="78%" stop-color="#4fd8ff" stop-opacity="0"/>
+          <stop offset="95%" stop-color="#4fd8ff" stop-opacity="0.28"/>
           <stop offset="100%" stop-color="#4fd8ff" stop-opacity="0"/>
         </radialGradient>
-        <linearGradient id="lage-sweep" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#4fd8ff" stop-opacity="0"/>
-          <stop offset="85%" stop-color="#4fd8ff" stop-opacity="0"/>
-          <stop offset="100%" stop-color="#4fd8ff" stop-opacity="0.35"/>
-        </linearGradient>`;
-      const sphere = el("path", { d: path({ type: "Sphere" }), class: "lage-sphere" });
-      const grat = el("path", { d: path(geo.geoGraticule10()), class: "lage-grat" });
-      const g = el("g", { class: "lage-countries" });
-      for (const f of land.features) {
+        <radialGradient id="lage-shade" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#000" stop-opacity="0"/>
+          <stop offset="70%" stop-color="#000" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#000" stop-opacity="0.45"/>
+        </radialGradient>`;
+      const atmo = el("circle", { class: "lage-atmo", cx: CX, cy: CY, r: baseScale + 10, fill: "url(#lage-atmo)" });
+      sphereNode = el("path", { class: "lage-ocean", d: geoPath({ type: "Sphere" }) });
+      graticuleObj = geo.geoGraticule10();
+      gratNode = el("path", { class: "lage-grat", d: geoPath(graticuleObj) });
+      landGroup = el("g", { class: "lage-countries" });
+      for (const f of landFeatures) {
         const id = String(f.id).padStart(3, "0");
-        g.append(el("path", { d: path(f), class: "land", "data-id": id }));
+        landGroup.append(el("path", { d: geoPath(f) || "", class: "land", "data-id": id }));
       }
-      const sweep = el("rect", { class: "lage-sweep", x: 0, y: 0, width: 120, height: H, fill: "url(#lage-sweep)" });
-      svg.replaceChildren(defs, sphere, grat, g, el("g", { id: "lage-quakes" }), el("g", { id: "lage-markers" }), sweep);
-      g.addEventListener("click", (e) => {
+      const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-quakes" }), el("g", { id: "lage-markers" }), shade);
+      landGroup.addEventListener("click", (e) => {
         const id = e.target.getAttribute?.("data-id");
         if (id && countries.some((c) => c.id === id)) select(id);
       });
+      // Mit der Maus/Finger drehen.
+      enableDrag(svg);
+      startSpin();
     } catch (err) {
-      console.warn("Weltkarte nicht geladen:", err);
+      console.warn("Globus nicht geladen:", err);
       project = (lon, lat) => [((lon + 180) / 360) * W, ((90 - lat) / 180) * H];
       const g = el("g", { class: "lage-grat-fallback" });
       for (let x = 0; x <= W; x += 40) g.append(el("line", { x1: x, y1: 0, x2: x, y2: H }));
@@ -132,55 +159,96 @@
     return node;
   }
 
-  // ---------- Hin- und Herfliegen auf der Karte ----------
-  function currentViewBox() {
-    const vb = $("lage-map").getAttribute("viewBox").split(/\s+/).map(Number);
-    return { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
+  // Zeichnet Kugel, Gitter, Länder und setzt Marker/Erdbeben neu (für die aktuelle Drehung/Zoom).
+  function redrawGlobe() {
+    if (!geoPath) return;
+    sphereNode.setAttribute("d", geoPath({ type: "Sphere" }));
+    gratNode.setAttribute("d", geoPath(graticuleObj));
+    const paths = landGroup.children;
+    for (let i = 0; i < landFeatures.length; i++) paths[i].setAttribute("d", geoPath(landFeatures[i]) || "");
+    const atmo = document.querySelector(".lage-atmo");
+    const shade = document.querySelector(".lage-shade");
+    const s = projection.scale();
+    if (atmo) atmo.setAttribute("r", s + 10);
+    if (shade) shade.setAttribute("r", s);
+    placePoints();
   }
 
-  function animateViewBox(to, ms = 900) {
-    const svg = $("lage-map");
-    const from = currentViewBox();
+  function placePoints() {
+    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-quakes .quake")) {
+      const lon = +node.dataset.lon, lat = +node.dataset.lat;
+      if (!visible(lon, lat)) { node.style.display = "none"; continue; }
+      node.style.display = "";
+      const p = projection([lon, lat]);
+      if (node.classList.contains("marker")) node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)})`);
+      else { node.setAttribute("cx", p[0].toFixed(1)); node.setAttribute("cy", p[1].toFixed(1)); }
+    }
+  }
+
+  // ---------- Drehen ----------
+  function startSpin() {
+    spinning = true;
+    cancelAnimationFrame(autoRaf);
+    lastFrame = performance.now();
+    const tick = (now) => {
+      const dt = now - lastFrame;
+      if (spinning && !selected && dt >= 30) { // ~30 fps, schont ältere Geräte
+        lastFrame = now;
+        const r = projection.rotate();
+        projection.rotate([r[0] + Math.min(100, dt) * 0.004, r[1], r[2]]); // langsame Erddrehung
+        redrawGlobe();
+      }
+      autoRaf = requestAnimationFrame(tick);
+    };
+    autoRaf = requestAnimationFrame(tick);
+  }
+
+  function animateGlobe(toRotate, toScale, ms = 1000, done) {
+    const fromR = projection.rotate(), fromS = projection.scale();
     const start = performance.now();
     cancelAnimationFrame(viewAnim);
+    spinning = false;
+    const short = (a, b) => { let d = (b - a) % 360; if (d > 180) d -= 360; if (d < -180) d += 360; return a + d; };
+    const tgt = [short(fromR[0], toRotate[0]), toRotate[1], 0];
     const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
     const step = (now) => {
-      const p = Math.min(1, (now - start) / ms);
-      const e = ease(p);
-      const x = from.x + (to.x - from.x) * e;
-      const y = from.y + (to.y - from.y) * e;
-      const w = from.w + (to.w - from.w) * e;
-      const h = from.h + (to.h - from.h) * e;
-      svg.setAttribute("viewBox", `${x.toFixed(1)} ${y.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
-      if (p < 1) viewAnim = requestAnimationFrame(step);
+      const p = Math.min(1, (now - start) / ms), e = ease(p);
+      projection.rotate([fromR[0] + (tgt[0] - fromR[0]) * e, fromR[1] + (tgt[1] - fromR[1]) * e, 0]);
+      projection.scale(fromS + (toScale - fromS) * e);
+      redrawGlobe();
+      if (p < 1) viewAnim = requestAnimationFrame(step); else if (done) done();
     };
     viewAnim = requestAnimationFrame(step);
   }
 
   function flyToCountry(id) {
-    const path = document.querySelector(`#lage-map .land[data-id="${id}"]`);
-    let box;
-    if (path?.getBBox) {
-      try { const b = path.getBBox(); if (b.width > 1 && b.height > 1) box = b; } catch { /* ignore */ }
-    }
-    if (!box) {
-      const c = countries.find((x) => x.id === id);
-      const pos = c && project?.(c.lon, c.lat);
-      if (!pos) return;
-      box = { x: pos[0] - 60, y: pos[1] - 40, width: 120, height: 80 };
-    }
-    // Rahmen mit etwas Luft, Seitenverhältnis an die Karte angleichen.
-    const pad = Math.max(box.width, box.height) * 0.4 + 12;
-    let x = box.x - pad, y = box.y - pad, w = box.width + pad * 2, h = box.height + pad * 2;
-    const ratio = W / H;
-    if (w / h > ratio) h = w / ratio; else w = h * ratio;
-    x = box.x + box.width / 2 - w / 2;
-    y = box.y + box.height / 2 - h / 2;
-    animateViewBox({ x, y, w, h });
+    const c = countries.find((x) => x.id === id);
+    if (!c || !projection) return;
     $("lage-world").classList.remove("hidden");
+    animateGlobe([-c.lon, -c.lat, 0], baseScale * 2.1, 1000);
   }
 
-  function flyToWorld() { animateViewBox({ x: 0, y: 0, w: W, h: H }); }
+  function flyToWorld() {
+    if (!projection) return;
+    animateGlobe([-10, -25, 0], baseScale, 900, startSpin);
+  }
+
+  // Mit Maus oder Finger drehen.
+  function enableDrag(svg) {
+    let drag = null;
+    const toUser = (e) => { const r = svg.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * H }; };
+    svg.addEventListener("pointerdown", (e) => { drag = { ...toUser(e), r: projection.rotate() }; spinning = false; svg.setPointerCapture?.(e.pointerId); });
+    svg.addEventListener("pointermove", (e) => {
+      if (!drag) return;
+      const p = toUser(e);
+      const k = 0.3 * (baseScale / projection.scale());
+      projection.rotate([drag.r[0] + (p.x - drag.x) * k, Math.max(-85, Math.min(85, drag.r[1] - (p.y - drag.y) * k)), 0]);
+      redrawGlobe();
+    });
+    const end = () => { if (drag && !selected) spinning = true; drag = null; };
+    svg.addEventListener("pointerup", end);
+    svg.addEventListener("pointerleave", end);
+  }
 
   // ---------- Daten laden ----------
   async function load(force) {
@@ -263,6 +331,8 @@
       if (!pos) continue;
       const r = 3 + (c.meldungen / maxCount) * 8;
       const g = el("g", { class: `marker ${ratingClass(c)}${selected === c.id ? " selected" : ""}`, transform: `translate(${pos[0].toFixed(1)},${pos[1].toFixed(1)})`, tabindex: "0", role: "button", "aria-label": `${c.name}, ${countLabel(c)} Meldungen` });
+      g.dataset.lon = c.lon; g.dataset.lat = c.lat;
+      if (!visible(c.lon, c.lat)) g.style.display = "none";
       g.append(el("circle", { r: (r * 2.2).toFixed(1), class: "pulse" }), el("circle", { r: r.toFixed(1), class: "core" }));
       const title = el("title");
       title.textContent = `${c.name}: ${countLabel(c)} Meldungen`;
@@ -306,6 +376,8 @@
       if (!pos) continue;
       const r = Math.max(2, (q.staerke || 0) * 1.3);
       const node = el("circle", { cx: pos[0].toFixed(1), cy: pos[1].toFixed(1), r: r.toFixed(1), class: "quake" });
+      node.dataset.lon = q.lon; node.dataset.lat = q.lat;
+      if (!visible(q.lon, q.lat)) node.style.display = "none";
       const title = el("title");
       title.textContent = `Erdbeben M${q.staerke} · ${q.ort}`;
       node.append(title);

@@ -354,3 +354,14 @@ body.lage-open { overflow: hidden; }
 .speaking-note { color: var(--cyan); font-size: 13px; }
 .speaking-msg { opacity: 0.9; }
 @media (prefers-reduced-motion: reduce) { .lage-skeleton span { animation: none; } }
+
+/* ---------- Globus (runde Erde) ---------- */
+.lage-ocean { fill: url(#lage-ocean); stroke: rgba(79, 216, 255, 0.4); stroke-width: 1; }
+.lage-atmo, .lage-shade { pointer-events: none; }
+.lage-map { cursor: grab; touch-action: none; }
+.lage-map:active { cursor: grabbing; }
+.land { fill: #1f6f93; stroke: rgba(120, 225, 255, 0.5); stroke-width: 0.4; vector-effect: non-scaling-stroke; }
+.land.watched { fill: #4fd8ff; }
+.land.aktiv { fill: #4fd8ff; }
+.land.gut { fill: #4dffa6; } .land.schlecht { fill: #ff5d6c; } .land.gemischt { fill: #ffb84d; }
+.land.selected { stroke: #fff; stroke-width: 1; }
