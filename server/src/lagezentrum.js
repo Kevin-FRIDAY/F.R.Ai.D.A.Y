@@ -210,42 +210,50 @@ async function fetchFotos(country) {
 export async function getMedia(country) {
   const cached = mediaCache.get(country.id);
   // Bilder und Video parallel holen, damit es schnell geht.
-  const [fotos, videoId] = await Promise.all([
+  const [fotos, videoIds] = await Promise.all([
     cached && Date.now() - cached.at < 6 * 60 * 60 * 1000 ? cached.fotos : fetchFotos(country),
-    getVideoId(country),
+    getVideos(country),
   ]);
   mediaCache.set(country.id, { at: Date.now(), fotos });
-  return withLinks(country, fotos, videoId);
+  return withLinks(country, fotos, videoIds[0] || null, videoIds);
 }
 
 // Erstes passendes (Live-)Video von YouTube suchen – serverseitig, ohne Schlüssel.
 const videoCache = new Map();
-async function getVideoId(country) {
-  const cached = videoCache.get(country.id);
-  if (cached && Date.now() - cached.at < 60 * 60 * 1000) return cached.id;
-  let id = null;
-  try {
-    const q = encodeURIComponent((country.en || country.name) + " news live");
-    // sp=EgJAAQ%3D%3D = Filter "Live"
-    const url = `https://www.youtube.com/results?search_query=${q}&sp=EgJAAQ%253D%253D`;
-    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/537.36 Chrome/120 Safari/537.36", "Accept-Language": "de,en" }, signal: AbortSignal.timeout(12000) });
-    if (res.ok) {
-      const html = await res.text();
-      id = html.match(/"videoId":"([A-Za-z0-9_-]{11})"/)?.[1] || null;
-    }
-  } catch { /* Video optional */ }
-  videoCache.set(country.id, { at: Date.now(), id });
-  return id;
+async function ytSearch(query, live) {
+  const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}${live ? "&sp=EgJAAQ%253D%253D" : "&sp=CAISBAgCEAE%253D"}`;
+  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/537.36 Chrome/120 Safari/537.36", "Accept-Language": "de,en" }, signal: AbortSignal.timeout(12000) });
+  if (!res.ok) return [];
+  const html = await res.text();
+  const ids = [];
+  for (const m of html.matchAll(/"videoId":"([A-Za-z0-9_-]{11})"/g)) { if (!ids.includes(m[1])) ids.push(m[1]); if (ids.length >= 8) break; }
+  return ids;
 }
 
-function withLinks(country, fotos, videoId) {
+// Mehrere aktuelle Videos zum Land: Live-Streams und aktuelle Nachrichten-Videos.
+async function getVideos(country) {
+  const cached = videoCache.get(country.id);
+  if (cached && Date.now() - cached.at < 60 * 60 * 1000) return cached.ids;
+  let ids = [];
+  try {
+    const name = country.en || country.name;
+    const [live, news] = await Promise.all([ytSearch(name + " news live", true), ytSearch(country.name + " nachrichten", false)]);
+    ids = [...new Set([...live.slice(0, 2), ...news.slice(0, 4)])].slice(0, 5);
+  } catch { /* Video optional */ }
+  videoCache.set(country.id, { at: Date.now(), ids });
+  return ids;
+}
+async function getVideoId(country) { return (await getVideos(country))[0] || null; }
+
+function withLinks(country, fotos, videoId, videoIds) {
   const { lat, lon, name } = country;
   return {
     fotos,
     video: videoId || null,
+    videos: videoIds || (videoId ? [videoId] : []),
     // Öffentliche Live-Kameras und Videos: Links auf frei zugängliche Dienste.
     kameras: `https://www.windy.com/-Webcams/webcams?${lat},${lon},6`,
-    videos: `https://www.youtube.com/results?search_query=${encodeURIComponent(name + " live cam")}`,
+    live_cam: `https://www.youtube.com/results?search_query=${encodeURIComponent(name + " live cam")}`,
     nachrichten_videos: `https://www.youtube.com/results?search_query=${encodeURIComponent(name + " nachrichten heute")}`,
   };
 }

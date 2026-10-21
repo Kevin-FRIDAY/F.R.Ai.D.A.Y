@@ -661,22 +661,17 @@
     try {
       const m = await (await api(`/api/lage/${id}/medien`)).json();
       if (selected !== id || !wrap.isConnected) return;
-      // Video als anklickbare Vorschau (öffnet das echte Video).
+      // Mehrere aktuelle Videos als anklickbare Vorschau (öffnen das echte Video).
+      const vids = (m.videos && m.videos.length ? m.videos : (m.video ? [m.video] : []));
       const vbox = $("lage-video");
       if (vbox) {
-        if (m.video) {
-          vbox.innerHTML = `<a class="lage-video" href="https://www.youtube.com/watch?v=${encodeURIComponent(m.video)}" target="_blank" rel="noopener noreferrer" title="Live-Video ansehen">
-            <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(m.video)}/hqdefault.jpg" alt="Video">
-            <span class="play">▶</span><span class="vlabel">Live-Video ansehen</span></a>`;
-        } else {
-          vbox.innerHTML = "";
-        }
+        vbox.innerHTML = vids.length
+          ? `<div class="lage-videos">${vids.map((vid, i) =>
+              `<a class="lage-video" href="https://www.youtube.com/watch?v=${encodeURIComponent(vid)}" target="_blank" rel="noopener noreferrer" title="Video ansehen">
+                 <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg" alt="Video" onerror="this.closest('a').remove()">
+                 <span class="play">▶</span>${i === 0 ? '<span class="vlabel">Live / aktuell</span>' : ""}</a>`).join("")}</div>`
+          : "";
       }
-      const fotos = (m.fotos || []).length
-        ? `<div class="lage-fotos">${m.fotos.map((f) =>
-            `<a href="${escapeHtml(f.seite || f.bild)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(f.titel)}">
-               <img loading="lazy" src="${escapeHtml(f.bild)}" alt="${escapeHtml(f.titel)}"></a>`).join("")}</div>`
-        : "";
       const c = countries.find((x) => x.id === id);
       wrap.innerHTML = `
         <div class="lage-cams">
@@ -684,11 +679,34 @@
           <a class="chip" href="${escapeHtml(m.kameras)}" target="_blank" rel="noopener noreferrer">📹 Öffentliche Live-Kameras</a>
           <a class="chip" href="${escapeHtml(m.nachrichten_videos)}" target="_blank" rel="noopener noreferrer">📺 Mehr Videos</a>
         </div>
-        ${fotos}`;
+        <div id="lage-images" class="lage-fotos lage-skeleton"><span></span><span></span><span></span></div>`;
       if (c) $("lage-sat-btn")?.addEventListener("click", () => openSat(c.lon, c.lat, 6, c.name));
+      loadImages(id, m.fotos || []);
     } catch {
       wrap.innerHTML = "";
     }
+  }
+
+  // Aktuelle Bilder: zuerst Nachrichtenbilder (GDELT), sonst allgemeine Fotos (Openverse).
+  function imgHtml(list, news) {
+    return list.map((f) => {
+      const bild = news ? f.bild : (f.bild);
+      const seite = f.seite || f.bild;
+      const titel = f.titel || "";
+      return `<a href="${escapeHtml(seite)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(titel)}">
+        <img loading="lazy" src="${escapeHtml(bild)}" alt="${escapeHtml(titel)}" onerror="this.closest('a').remove()"></a>`;
+    }).join("");
+  }
+  async function loadImages(id, fallback) {
+    const wrap = $("lage-images");
+    if (!wrap) return;
+    let news = [];
+    try { news = await (await api(`/api/lage/${id}/nachrichten-bilder`)).json(); } catch { /* optional */ }
+    if (selected !== id || !wrap.isConnected) return;
+    wrap.classList.remove("lage-skeleton");
+    const list = Array.isArray(news) && news.length ? news.slice(0, 9) : fallback.slice(0, 9);
+    if (!list.length) { wrap.remove(); return; }
+    wrap.innerHTML = imgHtml(list, Array.isArray(news) && news.length);
   }
 
   async function assess(id) {

@@ -343,6 +343,8 @@ body.lage-open { overflow: hidden; }
 
 /* ---------- Lagezentrum: Video-Einbettung, Skeleton, Sprechhinweis ---------- */
 .lage-video-wrap { margin-top: 10px; }
+.lage-videos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+.lage-videos .lage-video:first-child { grid-column: 1 / -1; }
 .lage-video { position: relative; display: block; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); background: #000; }
 .lage-video img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; opacity: 0.85; }
 .lage-video:hover img { opacity: 1; }
