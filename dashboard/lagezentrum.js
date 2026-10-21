@@ -406,6 +406,7 @@
         return `<li>${title}<small>${escapeHtml(n.source)} · ${t}</small></li>`;
       }).join("") || `<li class="muted">Keine Meldungen in den letzten 24 Stunden.</li>`;
       box.innerHTML = `
+        <div id="lage-info" class="lage-info"></div>
         <div id="lage-assess" class="lage-assess">
           <button id="lage-assess-btn" class="chip">Friday, schätz die Lage ein</button>
         </div>
@@ -413,6 +414,7 @@
         <div id="lage-media" class="lage-media"><div class="lage-fotos lage-skeleton"><span></span><span></span><span></span></div></div>
         <ul class="lage-news">${items}</ul>`;
       $("lage-assess-btn").addEventListener("click", () => assess(id));
+      loadInfo(id);
       loadMedia(id);
     } catch (err) {
       box.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
@@ -434,6 +436,22 @@
     } catch {
       wrap.remove();
     }
+  }
+
+  // Steckbrief zum Land (Flagge, Hauptstadt, Einwohner, Währung, Luft) – alles kostenlos.
+  async function loadInfo(id) {
+    const wrap = $("lage-info");
+    if (!wrap) return;
+    try {
+      const i = await (await api(`/api/lage/${id}/info`)).json();
+      if (selected !== id || !wrap.isConnected || i.error) return;
+      const chips = [];
+      if (i.hauptstadt) chips.push(`<span title="Hauptstadt">🏛 ${escapeHtml(i.hauptstadt)}</span>`);
+      if (i.einwohner) chips.push(`<span title="Einwohner">👥 ${Number(i.einwohner).toLocaleString("de-DE")}</span>`);
+      if (i.waehrung) chips.push(`<span title="Währung">💶 ${escapeHtml(i.waehrung)}</span>`);
+      if (i.luft && i.luft.luftqualitaet_index != null) chips.push(`<span title="Luftqualität">🌫 Luft ${escapeHtml(i.luft.bewertung)} (${i.luft.luftqualitaet_index})</span>`);
+      wrap.innerHTML = `${i.flagge ? `<span class="lage-flag">${escapeHtml(i.flagge)}</span>` : ""}<div class="lage-info-chips">${chips.join("")}</div>`;
+    } catch { wrap.innerHTML = ""; }
   }
 
   // Öffentliche Kameras/Videos als Links + Fotos als Rückfall, falls keine Nachrichtenbilder.

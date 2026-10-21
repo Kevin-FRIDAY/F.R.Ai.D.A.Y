@@ -365,3 +365,9 @@ body.lage-open { overflow: hidden; }
 .land.aktiv { fill: #4fd8ff; }
 .land.gut { fill: #4dffa6; } .land.schlecht { fill: #ff5d6c; } .land.gemischt { fill: #ffb84d; }
 .land.selected { stroke: #fff; stroke-width: 1; }
+
+/* ---------- Länder-Steckbrief ---------- */
+.lage-info { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.lage-flag { font-size: 30px; line-height: 1; }
+.lage-info-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.lage-info-chips span { font-size: 12px; color: var(--text); background: var(--cyan-soft); border: 1px solid var(--line); border-radius: 4px; padding: 3px 7px; }

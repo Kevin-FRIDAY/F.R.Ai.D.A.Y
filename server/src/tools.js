@@ -6,7 +6,8 @@ import * as store from "./store.js";
 import { sendToAgent, isAgentOnline } from "./agent-hub.js";
 import { sendPush } from "./notify.js";
 import { checkForUpdate, startUpdate } from "./updater.js";
-import { COUNTRIES, findCountry, getCountryNews, getOverview } from "./lagezentrum.js";
+import { COUNTRIES, findCountry, getCountryNews, getOverview, getCountryInfo } from "./lagezentrum.js";
+import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
 const MAC_ACTIONS = [
   "open_app", "quit_app", "open_url", "volume_set", "volume_up", "volume_down", "mute",
@@ -22,6 +23,41 @@ export const toolDefinitions = [
       type: "object",
       properties: { country: { type: "string", description: "Land auf Deutsch, z. B. Frankreich" } },
     },
+  },
+  {
+    name: "air_quality",
+    description: "Aktuelle Luftqualität (Feinstaub, Ozon) für einen Ort. Ohne Ort die Heimatstadt.",
+    input_schema: { type: "object", properties: { city: { type: "string" } } },
+  },
+  {
+    name: "currency",
+    description: "Rechnet Geldbeträge in andere Währungen um (Tageskurs der EZB). Z. B. 100 Euro in Dollar.",
+    input_schema: { type: "object", properties: { amount: { type: "number" }, from: { type: "string", description: "Währungscode wie EUR" }, to: { type: "string", description: "Währungscode wie USD" } }, required: ["from", "to"] },
+  },
+  {
+    name: "crypto",
+    description: "Aktueller Preis einer Kryptowährung (z. B. Bitcoin, Ethereum) in Euro.",
+    input_schema: { type: "object", properties: { coin: { type: "string" }, currency: { type: "string", description: "z. B. eur oder usd" } }, required: ["coin"] },
+  },
+  {
+    name: "holidays",
+    description: "Nächste gesetzliche Feiertage in einem Land (Standard Deutschland).",
+    input_schema: { type: "object", properties: { country: { type: "string", description: "Ländercode wie DE, AT, CH" }, year: { type: "number" } } },
+  },
+  {
+    name: "iss",
+    description: "Wo sich die Internationale Raumstation ISS gerade über der Erde befindet.",
+    input_schema: { type: "object", properties: {} },
+  },
+  {
+    name: "lookup",
+    description: "Schlägt einen Begriff, eine Person oder einen Ort kurz bei Wikipedia nach (deutsche Zusammenfassung). Für Faktenfragen günstiger als die Websuche.",
+    input_schema: { type: "object", properties: { term: { type: "string" } }, required: ["term"] },
+  },
+  {
+    name: "country_info",
+    description: "Steckbrief zu einem Land: Hauptstadt, Einwohner, Währung, Region, Luftqualität.",
+    input_schema: { type: "object", properties: { country: { type: "string" } }, required: ["country"] },
   },
   {
     name: "get_weather",
@@ -277,6 +313,28 @@ export async function runTool(name, input = {}) {
       return input.action === "install" ? startUpdate() : checkForUpdate();
     case "send_push":
       return { gesendet: await sendPush("F.R.Ai.D.A.Y", String(input.message || "")) };
+    case "air_quality": {
+      const city = input.city || config.city;
+      const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?count=1&language=de&name=${encodeURIComponent(city)}`).then((r) => r.json());
+      const place = geo.results?.[0];
+      if (!place) return { error: `Ort "${city}" nicht gefunden` };
+      return { ort: place.name, ...(await getAirQuality(place.latitude, place.longitude)) };
+    }
+    case "currency":
+      return getExchange(input.amount ?? 1, input.from, input.to);
+    case "crypto":
+      return getCrypto(input.coin, input.currency || "eur");
+    case "holidays":
+      return getHolidays(input.country || "DE", input.year);
+    case "iss":
+      return getISS();
+    case "lookup":
+      return getWiki(input.term || "");
+    case "country_info": {
+      const country = findCountry(input.country);
+      if (!country) return { error: `Land "${input.country}" nicht gefunden.` };
+      return getCountryInfo(country);
+    }
     default:
       return { error: `Unbekanntes Werkzeug ${name}` };
   }
