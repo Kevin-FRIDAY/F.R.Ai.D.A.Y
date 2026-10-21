@@ -36,7 +36,10 @@
   <main id="app" class="hud hidden">
     <!-- Linke Seitenleiste -->
     <aside class="sidebar">
-      <div class="brand">F.R.<span>Ai</span>.D.A.Y</div>
+      <div class="side-head">
+        <span class="side-reactor" aria-hidden="true"></span>
+        <div class="side-brand">F.R.<span>Ai</span>.D.A.Y<small id="side-status">● online</small></div>
+      </div>
       <nav class="side-nav">
         <button id="lage-btn" class="side-item">🌍 <span>Lagezentrum</span></button>
         <button id="brain-btn" class="side-item">🧠 <span>Gehirn</span></button>
@@ -44,9 +47,9 @@
         <button id="look-btn" class="side-item">🖥 <span>Bildschirm</span></button>
         <button id="briefing-btn" class="side-item">📋 <span>Briefing</span></button>
         <button id="new-chat-btn" class="side-item">✨ <span>Neues Gespräch</span></button>
-        <button id="settings-btn" class="side-item">⚙ <span>Einstellungen</span></button>
       </nav>
       <div class="side-foot">
+        <button id="settings-btn" class="side-item accent">⚙ <span>Einstellungen</span></button>
         <button id="update-btn" class="update-btn upd-unknown" title="Nach Updates suchen"><span class="upd-dot" aria-hidden="true"></span><span id="update-label">Updates</span></button>
         <button id="logout" class="side-item small">⏻ <span>Abmelden</span></button>
       </div>
@@ -84,9 +87,33 @@
     <!-- Einstellungen -->
     <section id="settings" class="sheet hidden" aria-label="Einstellungen">
       <div class="panel sheet-box">
-        <header class="sheet-top"><h2>Einstellungen</h2><button id="settings-x" class="ghost small">✕</button></header>
-        <div class="toggles col-toggles">
+        <header class="sheet-top"><h2>⚙ Einstellungen</h2><button id="settings-x" class="ghost small">✕</button></header>
+
+        <h3>Farbe &amp; Design</h3>
+        <div id="theme-swatches" class="swatches">
+          <button class="swatch" data-theme="orange" style="--sw:#ff8a1e" title="Orange"></button>
+          <button class="swatch" data-theme="cyan" style="--sw:#4fd8ff" title="Cyan"></button>
+          <button class="swatch" data-theme="gruen" style="--sw:#46e0a0" title="Grün"></button>
+          <button class="swatch" data-theme="rot" style="--sw:#ff5d6c" title="Rot"></button>
+          <button class="swatch" data-theme="lila" style="--sw:#b57bff" title="Lila"></button>
+          <button class="swatch" data-theme="gold" style="--sw:#ffcc4d" title="Gold"></button>
+          <button class="swatch" data-theme="pink" style="--sw:#ff6ec7" title="Pink"></button>
+          <button class="swatch" data-theme="eis" style="--sw:#8fb6ff" title="Eisblau"></button>
+        </div>
+        <label class="switch"><input type="checkbox" id="amoled-toggle"><span>Tiefschwarz (AMOLED)</span></label>
+
+        <h3>Stimme</h3>
+        <div class="col-toggles">
           <label class="switch"><input type="checkbox" id="voice-toggle" checked><span>Vorlesen</span></label>
+          <label class="row-field"><span>Stimme</span><select id="voice-select"></select></label>
+          <label class="row-field"><span>Tempo</span><input type="range" id="voice-rate" min="0.6" max="1.6" step="0.05" value="1.05"></label>
+          <label class="row-field"><span>Tonhöhe</span><input type="range" id="voice-pitch" min="0.6" max="1.6" step="0.05" value="1"></label>
+          <button id="voice-test" class="chip">Stimme testen</button>
+        </div>
+
+        <h3>Allgemein</h3>
+        <div class="col-toggles">
+          <label class="switch"><input type="checkbox" id="wake-toggle"><span>"Friday" zuhören (Weckwort)</span></label>
           <label class="switch"><input type="checkbox" id="translate-toggle"><span>Übersetzer</span></label>
           <select id="translate-lang" class="hidden" aria-label="Zielsprache">
             <option>Englische</option><option>Spanische</option><option>Französische</option>
@@ -94,6 +121,7 @@
             <option>Japanische</option><option>Kroatische</option>
           </select>
         </div>
+
         <h3>Protokolle</h3>
         <div id="protocols" class="chips"></div>
         <h3>Mehr</h3>
@@ -122,7 +150,7 @@
           </div>
           <div class="brain-card">
             <h3>👂 Ohren</h3>
-            <label class="switch"><input type="checkbox" id="wake-toggle"><span>"Friday" zuhören</span></label>
+            <div class="muted small-text">Weckwort in den Einstellungen</div>
             <ul class="list status-list">
               <li><span>Stimme</span><b id="st-voice">-</b></li>
             </ul>

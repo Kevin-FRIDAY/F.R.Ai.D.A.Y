@@ -208,8 +208,11 @@
   // ---------- Stimme (Ausgabe) ----------
   let germanVoice = null;
   function pickVoice() {
-    const voices = speechSynthesis.getVoices().filter((v) => v.lang.startsWith("de"));
-    germanVoice = voices.find((v) => /anna|helena|petra|katja|marlene|vicki/i.test(v.name)) || voices[0] || null;
+    const all = speechSynthesis.getVoices();
+    const saved = storage.get("friday_voice");
+    const de = all.filter((v) => v.lang.startsWith("de"));
+    germanVoice = (saved && all.find((v) => v.name === saved))
+      || de.find((v) => /anna|helena|petra|katja|marlene|vicki/i.test(v.name)) || de[0] || all[0] || null;
   }
   if ("speechSynthesis" in window) {
     pickVoice();
@@ -238,7 +241,8 @@
           const u = new SpeechSynthesisUtterance(text);
           u.lang = "de-DE";
           if (germanVoice) u.voice = germanVoice;
-          u.rate = 1.05;
+          u.rate = Number(storage.get("friday_rate")) || 1.05;
+          u.pitch = Number(storage.get("friday_pitch")) || 1;
           u.onend = resolve;
           u.onerror = resolve;
           speechSynthesis.speak(u);
@@ -300,6 +304,47 @@
   const closeSheet = (id) => $(id)?.classList.add("hidden");
   $("settings-btn")?.addEventListener("click", () => openSheet("settings"));
   $("settings-x")?.addEventListener("click", () => closeSheet("settings"));
+
+  // ---------- Design: Farb-Themes + AMOLED ----------
+  const THEMES = { orange: "#ff8a1e", cyan: "#4fd8ff", gruen: "#46e0a0", rot: "#ff5d6c", lila: "#b57bff", gold: "#ffcc4d", pink: "#ff6ec7", eis: "#8fb6ff" };
+  const hexRgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+  function applyTheme(name) {
+    const hex = THEMES[name] || THEMES.orange;
+    const [r, g, b] = hexRgb(hex);
+    const root = document.documentElement.style;
+    root.setProperty("--cyan", hex);
+    root.setProperty("--cyan-soft", `rgba(${r},${g},${b},0.12)`);
+    root.setProperty("--line", `rgba(${r},${g},${b},0.24)`);
+    root.setProperty("--gold", hex);
+    storage.set("friday_theme", name);
+    document.querySelectorAll(".swatch").forEach((sw) => sw.classList.toggle("on", sw.dataset.theme === name));
+  }
+  $("theme-swatches")?.addEventListener("click", (e) => { const sw = e.target.closest(".swatch"); if (sw) applyTheme(sw.dataset.theme); });
+  function applyAmoled(on) {
+    document.documentElement.style.setProperty("--bg", on ? "#000000" : "#050403");
+    storage.set("friday_amoled", on ? "1" : "0");
+  }
+  $("amoled-toggle")?.addEventListener("change", (e) => applyAmoled(e.target.checked));
+  // Gespeicherte Vorlieben anwenden
+  applyTheme(storage.get("friday_theme") || "orange");
+  if (storage.get("friday_amoled") === "1") { applyAmoled(true); const a = $("amoled-toggle"); if (a) a.checked = true; }
+
+  // ---------- Stimme: Auswahl, Tempo, Tonhöhe ----------
+  function fillVoices() {
+    const sel = $("voice-select");
+    if (!sel || !("speechSynthesis" in window)) return;
+    const voices = speechSynthesis.getVoices();
+    const de = voices.filter((v) => v.lang.startsWith("de"));
+    const list = de.length ? de : voices.slice(0, 12);
+    const saved = storage.get("friday_voice");
+    sel.innerHTML = list.map((v) => `<option value="${escapeHtml(v.name)}"${v.name === saved ? " selected" : ""}>${escapeHtml(v.name)}</option>`).join("");
+  }
+  if ("speechSynthesis" in window) { fillVoices(); speechSynthesis.addEventListener?.("voiceschanged", fillVoices); }
+  $("voice-select")?.addEventListener("change", (e) => { storage.set("friday_voice", e.target.value); pickVoice(); });
+  $("voice-rate")?.addEventListener("input", (e) => storage.set("friday_rate", e.target.value));
+  $("voice-pitch")?.addEventListener("input", (e) => storage.set("friday_pitch", e.target.value));
+  { const r = storage.get("friday_rate"); if (r && $("voice-rate")) $("voice-rate").value = r; const p = storage.get("friday_pitch"); if (p && $("voice-pitch")) $("voice-pitch").value = p; }
+  $("voice-test")?.addEventListener("click", () => say("Hallo Boss, so klinge ich jetzt."));
   $("brain-btn")?.addEventListener("click", () => { openSheet("brain"); loadBrain(); });
   $("brain-x")?.addEventListener("click", () => closeSheet("brain"));
   $("apps-btn")?.addEventListener("click", () => { openSheet("apps"); buildApps(); });
