@@ -124,14 +124,14 @@
       const defs = el("defs");
       defs.innerHTML = `
         <radialGradient id="lage-ocean" cx="38%" cy="35%" r="75%">
-          <stop offset="0%" stop-color="#0b3350"/>
-          <stop offset="60%" stop-color="#062033"/>
-          <stop offset="100%" stop-color="#020c16"/>
+          <stop offset="0%" stop-color="#241403"/>
+          <stop offset="60%" stop-color="#120a02"/>
+          <stop offset="100%" stop-color="#040302"/>
         </radialGradient>
         <radialGradient id="lage-atmo" cx="50%" cy="50%" r="50%">
-          <stop offset="78%" stop-color="#4fd8ff" stop-opacity="0"/>
-          <stop offset="95%" stop-color="#4fd8ff" stop-opacity="0.28"/>
-          <stop offset="100%" stop-color="#4fd8ff" stop-opacity="0"/>
+          <stop offset="78%" stop-color="#ff8a1e" stop-opacity="0"/>
+          <stop offset="95%" stop-color="#ff8a1e" stop-opacity="0.30"/>
+          <stop offset="100%" stop-color="#ff8a1e" stop-opacity="0"/>
         </radialGradient>
         <radialGradient id="lage-shade" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#000" stop-opacity="0"/>
@@ -526,7 +526,7 @@
       satShipLayer = L.layerGroup().addTo(satMap);
       for (const s of data.schiffe) {
         if (s.lat == null) continue;
-        const m = L.circleMarker([s.lat, s.lon], { radius: 5, color: "#4fd8ff", weight: 1, fillColor: "#4fd8ff", fillOpacity: 0.8 });
+        const m = L.circleMarker([s.lat, s.lon], { radius: 5, color: "#ff8a1e", weight: 1, fillColor: "#ff8a1e", fillOpacity: 0.8 });
         m.bindPopup(`<b>🚢 ${escapeHtml(s.name)}</b><br>${escapeHtml(s.typ)}${s.tempo_kn != null ? " · " + s.tempo_kn + " kn" : ""}${s.kurs != null ? " · Kurs " + s.kurs + "°" : ""}${s.laenge_m ? "<br>Länge " + s.laenge_m + " m" : ""}${s.ziel ? "<br>Ziel: " + escapeHtml(s.ziel) : ""}`);
         satShipLayer.addLayer(m);
       }

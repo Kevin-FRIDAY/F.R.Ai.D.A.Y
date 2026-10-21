@@ -1,13 +1,13 @@
 :root {
-  --bg: #02060d;
-  --panel: rgba(8, 28, 48, 0.55);
-  --line: rgba(80, 200, 255, 0.28);
-  --cyan: #4fd8ff;
-  --cyan-soft: rgba(79, 216, 255, 0.15);
-  --gold: #ffb84d;
-  --text: #d9f4ff;
-  --muted: #7fa9bf;
-  --ok: #4dffa6;
+  --bg: #050403;
+  --panel: rgba(22, 13, 5, 0.42);
+  --line: rgba(255, 140, 30, 0.22);
+  --cyan: #ff8a1e;          /* Akzent: Neon-Orange */
+  --cyan-soft: rgba(255, 138, 30, 0.12);
+  --gold: #ffb066;
+  --text: #ffe9d6;
+  --muted: #b08a68;
+  --ok: #46e0a0;
   --bad: #ff5d6c;
   --font: "SF Mono", "Menlo", "Consolas", ui-monospace, monospace;
 }
@@ -39,15 +39,11 @@ body {
   background-image:
     linear-gradient(var(--cyan-soft) 1px, transparent 1px),
     linear-gradient(90deg, var(--cyan-soft) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
-  opacity: 0.35;
+  background-size: 54px 54px;
+  mask-image: radial-gradient(ellipse at center, #000 10%, transparent 70%);
+  opacity: 0.14;
 }
-.scanline {
-  position: fixed; left: 0; right: 0; height: 120px; z-index: 0; pointer-events: none;
-  background: linear-gradient(transparent, rgba(79, 216, 255, 0.06), transparent);
-  animation: scan 7s linear infinite;
-}
+.scanline { display: none; }
 @keyframes scan { from { top: -120px; } to { top: 100%; } }
 
 /* Panels */
@@ -55,9 +51,11 @@ body {
   position: relative;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: 14px;
   padding: 14px 16px;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 190, 120, 0.08), 0 8px 30px rgba(0, 0, 0, 0.5);
   clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
 }
 .panel h2 {
@@ -95,11 +93,11 @@ body {
 .r1 { inset: 0; border-style: dashed; opacity: 0.5; animation: spin 24s linear infinite; }
 .r2 { inset: 9%; border-width: 6px; border-color: var(--cyan) transparent var(--cyan) transparent; animation: spin 9s linear infinite reverse; filter: drop-shadow(0 0 8px var(--cyan)); }
 .r3 { inset: 21%; border-width: 1px; border-style: dotted; animation: spin 14s linear infinite; }
-.r4 { inset: 30%; border-width: 10px; border-color: rgba(79, 216, 255, 0.85) transparent rgba(79, 216, 255, 0.4) transparent; animation: spin 5s linear infinite; }
+.r4 { inset: 30%; border-width: 10px; border-color: rgba(255, 138, 30, 0.85) transparent rgba(255, 138, 30, 0.4) transparent; animation: spin 5s linear infinite; }
 .core {
   position: absolute; inset: 40%; border-radius: 50%;
-  background: radial-gradient(circle, #fff 0%, #bff3ff 25%, var(--cyan) 55%, transparent 72%);
-  box-shadow: 0 0 40px var(--cyan), 0 0 90px rgba(79, 216, 255, 0.5);
+  background: radial-gradient(circle, #fff 0%, #ffd9a8 22%, var(--cyan) 55%, transparent 72%);
+  box-shadow: 0 0 40px var(--cyan), 0 0 90px rgba(255, 138, 30, 0.5);
   animation: pulse 3s ease-in-out infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -130,10 +128,11 @@ input[type="text"], input[type="password"], select {
 }
 input:focus, select:focus { outline: 1px solid var(--cyan); }
 button {
-  background: var(--cyan-soft); color: var(--cyan); border: 1px solid var(--cyan);
-  padding: 10px 16px; font: inherit; cursor: pointer; border-radius: 3px;
+  background: var(--cyan-soft); color: var(--cyan); border: 1px solid var(--line);
+  padding: 10px 16px; font: inherit; cursor: pointer; border-radius: 10px;
+  backdrop-filter: blur(8px);
 }
-button:hover { background: rgba(79, 216, 255, 0.3); }
+button:hover { background: rgba(255, 138, 30, 0.3); }
 button.ghost { background: transparent; }
 button.small { padding: 6px 10px; }
 .photo-preview img { max-height: 90px; border: 1px solid var(--line); }
@@ -255,11 +254,11 @@ body.lage-open { overflow: hidden; }
 .lage-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
 .lage-map-wrap { padding: 8px; display: flex; flex-direction: column; min-width: 0; }
 .lage-map { width: 100%; height: auto; display: block; }
-.lage-sphere { fill: rgba(79, 216, 255, 0.03); stroke: var(--line); }
-.lage-grat, .lage-grat-fallback line { fill: none; stroke: rgba(79, 216, 255, 0.08); stroke-width: 0.5; }
-.land { fill: rgba(79, 216, 255, 0.07); stroke: rgba(79, 216, 255, 0.3); stroke-width: 0.4; }
-.land.watched { cursor: pointer; fill: rgba(79, 216, 255, 0.16); }
-.land.watched:hover { fill: rgba(79, 216, 255, 0.3); }
+.lage-sphere { fill: rgba(255, 138, 30, 0.03); stroke: var(--line); }
+.lage-grat, .lage-grat-fallback line { fill: none; stroke: rgba(255, 138, 30, 0.08); stroke-width: 0.5; }
+.land { fill: rgba(255, 138, 30, 0.07); stroke: rgba(255, 138, 30, 0.3); stroke-width: 0.4; }
+.land.watched { cursor: pointer; fill: rgba(255, 138, 30, 0.16); }
+.land.watched:hover { fill: rgba(255, 138, 30, 0.3); }
 .land.gut { fill: rgba(77, 255, 166, 0.28); }
 .land.schlecht { fill: rgba(255, 93, 108, 0.3); }
 .land.gemischt { fill: rgba(255, 184, 77, 0.28); }
@@ -360,13 +359,13 @@ body.lage-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) { .lage-skeleton span { animation: none; } }
 
 /* ---------- Globus (runde Erde) ---------- */
-.lage-ocean { fill: url(#lage-ocean); stroke: rgba(79, 216, 255, 0.4); stroke-width: 1; }
+.lage-ocean { fill: url(#lage-ocean); stroke: rgba(255, 138, 30, 0.4); stroke-width: 1; }
 .lage-atmo, .lage-shade { pointer-events: none; }
 .lage-map { cursor: grab; touch-action: none; }
 .lage-map:active { cursor: grabbing; }
-.land { fill: #1f6f93; stroke: rgba(120, 225, 255, 0.5); stroke-width: 0.4; vector-effect: non-scaling-stroke; }
-.land.watched { fill: #4fd8ff; }
-.land.aktiv { fill: #4fd8ff; }
+.land { fill: #3a2410; stroke: rgba(255, 170, 80, 0.45); stroke-width: 0.4; vector-effect: non-scaling-stroke; }
+.land.watched { fill: #ff8a1e; }
+.land.aktiv { fill: #ff8a1e; }
 .land.gut { fill: #4dffa6; } .land.schlecht { fill: #ff5d6c; } .land.gemischt { fill: #ffb84d; }
 .land.selected { stroke: #fff; stroke-width: 1; }
 
@@ -396,7 +395,7 @@ body.lage-open { overflow: hidden; }
 
 /* ---------- Schiffe ---------- */
 .ship { cursor: pointer; }
-.ship-tri { fill: #4fd8ff; stroke: #02060d; stroke-width: .4; }
+.ship-tri { fill: #ff8a1e; stroke: #02060d; stroke-width: .4; }
 .ship:hover .ship-tri { fill: #fff; }
 .lage-shipcard { position: absolute; right: 16px; bottom: 16px; z-index: 5; width: min(280px, 70vw); background: var(--panel); border: 1px solid var(--cyan); border-radius: 8px; padding: 12px 14px; backdrop-filter: blur(8px); }
 .lage-shipcard h3 { margin: 0 0 8px; font-size: 15px; color: var(--cyan); }
