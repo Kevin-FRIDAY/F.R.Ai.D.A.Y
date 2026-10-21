@@ -8,6 +8,7 @@ import { attachAgentHub, isAgentOnline, getAgentInfo } from "./agent-hub.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
+import { getISS } from "./extras.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getSummary, friendlyError } from "./lagezentrum.js";
@@ -151,6 +152,10 @@ app.get("/api/lage-schiffe", asyncRoute(async (req, res) => {
     return res.status(400).json({ error: "region oder near nötig" });
   }
   res.json({ aktiv: true, verbunden: st.verbunden, schiffe: getShips(box[0], box[1], box[2], box[3]) });
+}));
+app.get("/api/lage-iss", asyncRoute(async (req, res) => {
+  const i = await getISS();
+  res.json({ lat: i.breitengrad, lon: i.laengengrad, hoehe_km: i.hoehe_km, tempo_kmh: i.geschwindigkeit_kmh, ueber: i.ueber });
 }));
 app.get("/api/lage-beben", asyncRoute(async (req, res) => res.json(await getQuakes())));
 app.get("/api/lage/:id", asyncRoute(async (req, res) => {

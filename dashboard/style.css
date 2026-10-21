@@ -402,3 +402,13 @@ body.lage-open { overflow: hidden; }
 .lage-shipcard .ship-rows { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; }
 .lage-shipcard .ship-rows span { color: var(--muted); }
 .ship-x { position: absolute; top: 8px; right: 8px; background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 14px; }
+
+/* ---------- ISS (Raumstation) ---------- */
+.iss { cursor: pointer; }
+.iss-bar { stroke: #ffd9a8; stroke-width: 1.2; }
+.iss-panel { fill: var(--cyan); opacity: .9; }
+.iss-body { fill: #fff; stroke: var(--cyan); stroke-width: 1; }
+.iss-glow { fill: none; stroke: var(--cyan); stroke-opacity: .5; transform-box: fill-box; transform-origin: center; animation: lage-pulse 2.6s ease-out infinite; }
+.iss:hover .iss-body { fill: var(--cyan); }
+.iss-trail { fill: none; stroke: var(--cyan); stroke-width: 1.2; stroke-opacity: .55; stroke-dasharray: 2 4; filter: drop-shadow(0 0 3px rgba(255,138,30,.7)); }
+@media (prefers-reduced-motion: reduce) { .iss-glow { animation: none; opacity: .4; } }

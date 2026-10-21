@@ -18,6 +18,8 @@
   let routeGeo = [];
   let regions = [];
   let brennReady = false;
+  let issTrail = [];
+  let issTimer = null;
 
   const ALIASES = {
     "england": "826", "uk": "826", "großbritannien": "826", "vereinigtes königreich": "826",
@@ -80,6 +82,7 @@
     load(false);
     loadQuakes();
     loadBrennpunkte();
+    startISS();
   }
 
   function close() {
@@ -90,7 +93,65 @@
     spinning = false;
     cancelAnimationFrame(viewAnim);
     cancelAnimationFrame(autoRaf);
+    clearTimeout(issTimer); issTimer = null;
     $("lage-world")?.classList.add("hidden");
+  }
+
+  // ---------- ISS: schwebt live über der Erde ----------
+  async function startISS() {
+    await mapReady;
+    if (!projection) return;
+    const g = $("lage-iss");
+    if (g && !g.firstElementChild) {
+      const node = el("g", { class: "iss", role: "button", tabindex: "0" });
+      // kleines Satelliten-Symbol: Körper + zwei Solarflügel
+      node.append(
+        el("line", { x1: -9, y1: 0, x2: 9, y2: 0, class: "iss-bar" }),
+        el("rect", { x: -9, y: -2.6, width: 6, height: 5.2, class: "iss-panel" }),
+        el("rect", { x: 3, y: -2.6, width: 6, height: 5.2, class: "iss-panel" }),
+        el("circle", { r: 2.6, class: "iss-body" }),
+        el("circle", { r: 9, class: "iss-glow" }),
+      );
+      const t = el("title"); t.textContent = "Internationale Raumstation ISS"; node.append(t);
+      node.addEventListener("click", showISSCard);
+      g.append(node);
+    }
+    const tg = $("lage-isstrail");
+    if (tg && !tg.firstElementChild) tg.append(el("path", { class: "iss-trail" }));
+    tickISS();
+  }
+
+  async function tickISS() {
+    try {
+      const i = await (await api("/api/lage-iss")).json();
+      if ($("lage").classList.contains("hidden")) return;
+      if (Number.isFinite(i.lat)) {
+        issLast = i;
+        const node = $("lage-iss")?.firstElementChild;
+        if (node) { node.dataset.lon = i.lon; node.dataset.lat = i.lat; }
+        issTrail.push([i.lon, i.lat]);
+        if (issTrail.length > 25) issTrail.shift();
+        placeISS();
+      }
+    } catch { /* ISS optional */ }
+    clearTimeout(issTimer);
+    issTimer = setTimeout(tickISS, 4000);
+  }
+
+  let issLast = null;
+  function showISSCard() {
+    if (!issLast) return;
+    let card = $("lage-shipcard");
+    if (!card) { card = document.createElement("div"); card.id = "lage-shipcard"; card.className = "lage-shipcard"; $("lage").append(card); }
+    card.innerHTML = `<button class="ship-x" aria-label="Schließen">✕</button>
+      <h3>🛰 Raumstation ISS</h3>
+      <div class="ship-rows">
+        <span>Position</span><b>${issLast.lat.toFixed(1)}°, ${issLast.lon.toFixed(1)}°</b>
+        <span>Höhe</span><b>${issLast.hoehe_km} km</b>
+        <span>Tempo</span><b>${Number(issLast.tempo_kmh).toLocaleString("de-DE")} km/h</b>
+        <span>Über</span><b>${escapeHtml(issLast.ueber || "")}</b>
+      </div>`;
+    card.querySelector(".ship-x").addEventListener("click", () => card.remove());
   }
 
   // ---------- Globus (runde Erde) ----------
@@ -148,7 +209,7 @@
         landGroup.append(el("path", { d: geoPath(f) || "", class: "land", "data-id": id }));
       }
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-markers" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
       landGroup.addEventListener("click", (e) => {
         if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
@@ -189,6 +250,27 @@
     const rg = $("lage-routes");
     if (rg) for (const path of rg.children) { const geo = routeGeo[path.dataset.i]; if (geo) path.setAttribute("d", geoPath(geo) || ""); }
     placePoints();
+    placeISS();
+  }
+
+  // ISS schwebt leicht über der Oberfläche (nach außen versetzt), Bahn als Spur.
+  function placeISS() {
+    const g = $("lage-iss");
+    const node = g && g.firstElementChild;
+    if (node) {
+      const lon = +node.dataset.lon, lat = +node.dataset.lat;
+      if (Number.isFinite(lon) && visible(lon, lat)) {
+        node.style.display = "";
+        const p = projection([lon, lat]);
+        const dx = p[0] - CX, dy = p[1] - CY, d = Math.hypot(dx, dy) || 1;
+        const off = projection.scale() * 0.055; // etwas über der Kugel
+        node.setAttribute("transform", `translate(${(p[0] + dx / d * off).toFixed(1)},${(p[1] + dy / d * off).toFixed(1)})`);
+      } else node.style.display = "none";
+    }
+    const tg = $("lage-isstrail");
+    if (tg && tg.firstElementChild && d3geo) {
+      tg.firstElementChild.setAttribute("d", geoPath({ type: "LineString", coordinates: issTrail }) || "");
+    }
   }
 
   function placePoints() {
