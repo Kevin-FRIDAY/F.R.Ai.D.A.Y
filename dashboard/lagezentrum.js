@@ -828,19 +828,18 @@
       if (selected !== id || !wrap.isConnected) return;
       // Mehrere aktuelle Videos als anklickbare Vorschau (öffnen das echte Video).
       const vids = (m.videos && m.videos.length ? m.videos : (m.video ? [m.video] : []));
-      // Live-Kamera automatisch anzeigen (öffentlicher Livestream).
-      if (m.webcam) {
-        vids.unshift(m.webcam);
-      }
       const vbox = $("lage-video");
       if (vbox) {
-        if (!vids.length) { vbox.innerHTML = ""; }
-        else {
-          // Erstes Video spielt automatisch (stumm) ab, die übrigen als Vorschau.
-          const first = vids[0];
-          const rest = vids.slice(1);
-          vbox.innerHTML = `
-            <div class="lage-player">
+        // Echte Live-Kamera (Windy) automatisch, darunter aktuelle Videos (erstes spielt automatisch).
+        let html = "";
+        if (m.webcam && m.webcam.embed) {
+          html += `<div class="lage-player livecam">
+            <iframe src="${escapeHtml(m.webcam.embed)}" title="Live-Kamera" allow="autoplay; fullscreen" loading="lazy"></iframe>
+            <span class="vlabel">📹 Live-Kamera · ${escapeHtml(m.webcam.titel || "")}</span></div>`;
+        }
+        if (vids.length) {
+          const first = vids[0], rest = vids.slice(1);
+          html += `<div class="lage-player">
               <iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(first)}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>
             </div>
             ${rest.length ? `<div class="lage-videos">${rest.map((vid) =>
@@ -848,6 +847,7 @@
                  <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg" alt="Video" onerror="this.closest('a').remove()">
                  <span class="play">▶</span></a>`).join("")}</div>` : ""}`;
         }
+        vbox.innerHTML = html;
       }
       wrap.innerHTML = `
         <div class="lage-cams">

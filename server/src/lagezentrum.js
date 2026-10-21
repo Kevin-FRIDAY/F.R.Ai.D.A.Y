@@ -261,6 +261,17 @@ export async function getMedia(country) {
 
 // Erstes passendes (Live-)Video von YouTube suchen – serverseitig, ohne Schlüssel.
 const videoCache = new Map();
+// YouTube Data API: nur einbettbare Videos (damit Autoplay überall klappt).
+async function ytApiSearch(query, { live = false, max = 6 } = {}) {
+  if (!config.googleKey) return [];
+  const params = new URLSearchParams({ part: "snippet", q: query, type: "video", videoEmbeddable: "true", maxResults: String(max), key: config.googleKey, regionCode: "DE", relevanceLanguage: "de" });
+  if (live) params.set("eventType", "live"); else params.set("order", "date");
+  const res = await fetch(`https://www.googleapis.com/youtube/v3/search?${params}`, { signal: AbortSignal.timeout(12000) });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return (data.items || []).map((i) => i.id?.videoId).filter(Boolean);
+}
+
 async function ytSearch(query, live) {
   const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}${live ? "&sp=EgJAAQ%253D%253D" : "&sp=CAISBAgCEAE%253D"}`;
   const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/537.36 Chrome/120 Safari/537.36", "Accept-Language": "de,en" }, signal: AbortSignal.timeout(12000) });
@@ -278,23 +289,41 @@ async function getVideos(country) {
   let ids = [];
   try {
     const name = country.en || country.name;
-    const [live, news] = await Promise.all([ytSearch(name + " news live", true), ytSearch(country.name + " nachrichten", false)]);
-    ids = [...new Set([...live.slice(0, 2), ...news.slice(0, 4)])].slice(0, 5);
+    if (config.googleKey) {
+      const [live, news] = await Promise.all([
+        ytApiSearch(name + " news live", { live: true, max: 2 }),
+        ytApiSearch(country.name + " nachrichten", { max: 6 }),
+      ]);
+      ids = [...new Set([...live, ...news])].slice(0, 6);
+    }
+    if (!ids.length) {
+      const [live, news] = await Promise.all([ytSearch(name + " news live", true), ytSearch(country.name + " nachrichten", false)]);
+      ids = [...new Set([...live.slice(0, 2), ...news.slice(0, 4)])].slice(0, 5);
+    }
   } catch { /* Video optional */ }
   videoCache.set(country.id, { at: Date.now(), ids });
   return ids;
 }
 async function getVideoId(country) { return (await getVideos(country))[0] || null; }
 
-// Öffentliche Live-Webcam (YouTube-Livestream) für das Land.
+// Echte öffentliche Live-Webcam in der Nähe (Windy).
 const webcamCache = new Map();
 async function getWebcam(country) {
   const c = webcamCache.get(country.id);
-  if (c && Date.now() - c.at < 60 * 60 * 1000) return c.id;
-  let id = null;
-  try { id = (await ytSearch((country.en || country.name) + " live webcam", true))[0] || null; } catch { /* optional */ }
-  webcamCache.set(country.id, { at: Date.now(), id });
-  return id;
+  if (c && Date.now() - c.at < 30 * 60 * 1000) return c.cam;
+  let cam = null;
+  if (config.windyKey) {
+    try {
+      const url = `https://api.windy.com/webcams/api/v3/webcams?nearby=${country.lat},${country.lon},120&limit=1&include=urls,player,images`;
+      const res = await fetch(url, { headers: { "x-windy-api-key": config.windyKey }, signal: AbortSignal.timeout(12000) });
+      if (res.ok) {
+        const w = (await res.json()).webcams?.[0];
+        if (w) cam = { titel: w.title || "Live-Kamera", embed: w.player?.day || "", bild: w.images?.current?.preview || "", seite: w.urls?.detail || "" };
+      }
+    } catch { /* optional */ }
+  }
+  webcamCache.set(country.id, { at: Date.now(), cam });
+  return cam;
 }
 
 function withLinks(country, fotos, videoId, videoIds, webcam) {
