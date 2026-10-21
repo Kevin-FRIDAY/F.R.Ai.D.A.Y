@@ -305,6 +305,17 @@
   $("settings-btn")?.addEventListener("click", () => openSheet("settings"));
   $("settings-x")?.addEventListener("click", () => closeSheet("settings"));
 
+  // Schwebendes Menü: hält alle Funktionen ohne Seitenleiste erreichbar.
+  const menuPop = $("menu-pop");
+  $("menu-fab")?.addEventListener("click", (e) => { e.stopPropagation(); menuPop?.classList.toggle("hidden"); });
+  menuPop?.addEventListener("click", (e) => {
+    const row = e.target.closest(".menu-row");
+    if (!row) return;
+    menuPop.classList.add("hidden");
+    document.getElementById(row.dataset.target)?.click();
+  });
+  document.addEventListener("click", (e) => { if (menuPop && !menuPop.classList.contains("hidden") && !menuPop.contains(e.target) && e.target.id !== "menu-fab") menuPop.classList.add("hidden"); });
+
   // ---------- Design: Farb-Themes + AMOLED ----------
   const THEMES = { orange: "#ff8a1e", cyan: "#4fd8ff", gruen: "#46e0a0", rot: "#ff5d6c", lila: "#b57bff", gold: "#ffcc4d", pink: "#ff6ec7", eis: "#8fb6ff" };
   const hexRgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };

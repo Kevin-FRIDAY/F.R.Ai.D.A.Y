@@ -543,3 +543,25 @@ body::before {
 .row-field select, .row-field input[type="range"] { flex: 1; max-width: 260px; }
 .row-field select { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; font: inherit; }
 input[type="range"] { accent-color: var(--cyan); }
+
+/* ---------- Schwebendes Menü (ersetzt Seitenleiste vorübergehend) ---------- */
+.menu-fab {
+  position: fixed; top: 16px; left: 16px; z-index: 18; width: 46px; height: 46px; padding: 0;
+  display: flex; align-items: center; justify-content: center; border-radius: 14px;
+  background: var(--panel); border: 1px solid var(--line); color: var(--cyan);
+  backdrop-filter: blur(16px); box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 16px var(--cyan-soft);
+}
+.menu-fab:hover { border-color: var(--cyan); box-shadow: 0 0 20px var(--cyan-soft); }
+.menu-pop {
+  position: fixed; top: 70px; left: 16px; z-index: 18; width: 230px; padding: 8px;
+  display: flex; flex-direction: column; gap: 3px; border-radius: 16px;
+  background: color-mix(in srgb, var(--bg) 82%, #000); border: 1px solid var(--line);
+  backdrop-filter: blur(20px); box-shadow: 0 16px 40px rgba(0,0,0,.6);
+}
+.menu-row {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+  background: none; border: 0; border-radius: 10px; padding: 10px 12px;
+  color: var(--text); font-family: var(--font-ui); font-size: 14px; font-weight: 500; cursor: pointer;
+}
+.menu-row:hover { background: var(--cyan-soft); color: var(--cyan); }
+.menu-row .mi { width: 19px; height: 19px; flex: 0 0 auto; stroke: currentColor; stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
