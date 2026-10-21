@@ -62,6 +62,36 @@ export function updateReminders(reminders) {
   save("reminders", reminders);
 }
 
+// --- Aufgaben ---
+export function getTasks() { return load("tasks", []); }
+export function addTask(text) {
+  const tasks = getTasks();
+  const entry = { id: Date.now().toString(36), text: String(text).slice(0, 300), done: false, at: Date.now() };
+  tasks.push(entry); save("tasks", tasks); return entry;
+}
+export function toggleTask(id) {
+  const tasks = getTasks(); const t = tasks.find((x) => x.id === id);
+  if (t) { t.done = !t.done; save("tasks", tasks); } return t;
+}
+export function deleteTask(id) {
+  const tasks = getTasks().filter((x) => x.id !== id); save("tasks", tasks); return true;
+}
+
+// --- Einkaufsliste ---
+export function getShopping() { return load("shopping", []); }
+export function addShopping(text) {
+  const list = getShopping();
+  const entry = { id: Date.now().toString(36), text: String(text).slice(0, 120), done: false };
+  list.push(entry); save("shopping", list); return entry;
+}
+export function toggleShopping(id) {
+  const list = getShopping(); const i = list.find((x) => x.id === id);
+  if (i) { i.done = !i.done; save("shopping", list); } return i;
+}
+export function deleteShopping(id) {
+  save("shopping", getShopping().filter((x) => x.id !== id)); return true;
+}
+
 // --- Gesprächsverlauf (pro Kanal: web, telegram, siri) ---
 const MAX_TURNS = 20;
 

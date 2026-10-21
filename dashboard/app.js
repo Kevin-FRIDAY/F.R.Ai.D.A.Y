@@ -382,6 +382,38 @@
   $("brain-x")?.addEventListener("click", () => closeSheet("brain"));
   $("apps-btn")?.addEventListener("click", () => { openSheet("apps"); buildApps(); });
   $("apps-x")?.addEventListener("click", () => closeSheet("apps"));
+  $("organizer-btn")?.addEventListener("click", () => { openSheet("organizer"); loadOrganizer(); });
+  $("organizer-x")?.addEventListener("click", () => closeSheet("organizer"));
+
+  // ---------- Organizer: Aufgaben + Einkaufsliste ----------
+  async function loadOrganizer() { renderOrg("task", "/api/tasks"); renderOrg("shop", "/api/shopping"); }
+  async function renderOrg(kind, url) {
+    const list = $(kind + "-list");
+    if (!list) return;
+    try {
+      const items = await (await api(url)).json();
+      list.innerHTML = items.length ? items.map((i) =>
+        `<li class="org-item${i.done ? " done" : ""}" data-id="${i.id}"><button class="org-check" aria-label="Erledigt">${i.done ? "☑" : "☐"}</button><span>${escapeHtml(i.text)}</span><button class="org-del" aria-label="Löschen">✕</button></li>`).join("")
+        : '<li class="muted">Nichts hier.</li>';
+    } catch { list.innerHTML = '<li class="muted">Nicht erreichbar.</li>'; }
+  }
+  function orgHandlers(kind, base) {
+    $(kind + "-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const inp = $(kind + "-input"); const text = inp.value.trim(); if (!text) return;
+      inp.value = "";
+      await api(base, { method: "POST", body: JSON.stringify({ text }) });
+      renderOrg(kind, base);
+    });
+    $(kind + "-list")?.addEventListener("click", async (e) => {
+      const li = e.target.closest(".org-item"); if (!li) return;
+      const id = li.dataset.id;
+      if (e.target.closest(".org-check")) { await api(`${base}/${id}`, { method: "PATCH" }); renderOrg(kind, base); }
+      else if (e.target.closest(".org-del")) { await api(`${base}/${id}`, { method: "DELETE" }); renderOrg(kind, base); }
+    });
+  }
+  orgHandlers("task", "/api/tasks");
+  orgHandlers("shop", "/api/shopping");
 
   const APPS = [
     { n: "YouTube", d: "youtube.com", u: "https://www.youtube.com" },

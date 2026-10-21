@@ -572,3 +572,17 @@ input[type="range"] { accent-color: var(--cyan); }
 .sys-bar { display: block; height: 4px; border-radius: 3px; background: rgba(255,255,255,.08); margin: -2px 0 8px; overflow: hidden; }
 .sys-bar i { display: block; height: 100%; border-radius: 3px; }
 #system-body .bad { color: var(--bad); } #system-body .ok { color: var(--ok); }
+
+/* ---------- Organizer ---------- */
+.org-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.org-add { display: flex; gap: 8px; margin-bottom: 10px; }
+.org-add input { flex: 1; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; color: var(--text); font: inherit; font-size: 13px; padding: 8px 10px; }
+.org-add .chip { font-size: 16px; padding: 6px 12px; }
+.org-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.org-item { display: flex; align-items: center; gap: 9px; font-size: 13.5px; padding: 6px 8px; border-radius: 9px; background: var(--cyan-soft); }
+.org-item span { flex: 1; }
+.org-item.done span { text-decoration: line-through; color: var(--muted); }
+.org-check, .org-del { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 15px; padding: 2px 4px; }
+.org-check { color: var(--cyan); }
+.org-del:hover { color: var(--bad); }
+@media (max-width: 900px) { .org-grid { grid-template-columns: 1fr; } }

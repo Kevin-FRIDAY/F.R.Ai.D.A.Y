@@ -127,6 +127,15 @@ app.get("/api/system", asyncRoute(async (req, res) => {
   res.json({ online: true, ...info });
 }));
 app.get("/api/weather", asyncRoute(async (req, res) => res.json(await getWeather())));
+// --- Organizer: Aufgaben + Einkaufsliste ---
+app.get("/api/tasks", (req, res) => res.json(store.getTasks()));
+app.post("/api/tasks", (req, res) => res.json(store.addTask(String(req.body?.text || ""))));
+app.patch("/api/tasks/:id", (req, res) => res.json(store.toggleTask(req.params.id) || {}));
+app.delete("/api/tasks/:id", (req, res) => res.json({ ok: store.deleteTask(req.params.id) }));
+app.get("/api/shopping", (req, res) => res.json(store.getShopping()));
+app.post("/api/shopping", (req, res) => res.json(store.addShopping(String(req.body?.text || ""))));
+app.patch("/api/shopping/:id", (req, res) => res.json(store.toggleShopping(req.params.id) || {}));
+app.delete("/api/shopping/:id", (req, res) => res.json({ ok: store.deleteShopping(req.params.id) }));
 app.get("/api/reminders", (req, res) => res.json(store.getReminders().filter((r) => !r.done)));
 app.get("/api/memory", (req, res) => res.json(store.getMemories()));
 app.delete("/api/memory/:id", (req, res) => res.json({ geloescht: store.forgetMemory(req.params.id) }));

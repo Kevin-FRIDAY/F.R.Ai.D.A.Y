@@ -25,6 +25,21 @@ export const toolDefinitions = [
     },
   },
   {
+    name: "add_task",
+    description: "Fügt eine Aufgabe zur To-do-Liste hinzu. Z. B. 'Schreib auf: Steuer machen'.",
+    input_schema: { type: "object", properties: { text: { type: "string" } }, required: ["text"] },
+  },
+  {
+    name: "list_tasks",
+    description: "Zeigt die offenen Aufgaben.",
+    input_schema: { type: "object", properties: {} },
+  },
+  {
+    name: "add_shopping",
+    description: "Setzt etwas auf die Einkaufsliste. Z. B. 'Setz Milch auf die Einkaufsliste'.",
+    input_schema: { type: "object", properties: { text: { type: "string" } }, required: ["text"] },
+  },
+  {
     name: "open_app",
     description: "Öffnet eine App oder Website auf dem Mac, z. B. 'öffne YouTube', 'öffne Netflix', 'öffne Spotify'. Für bekannte Dienste wird die Website geöffnet, sonst die Mac-App mit dem Namen.",
     input_schema: { type: "object", properties: { name: { type: "string", description: "App- oder Dienstname, z. B. YouTube" } }, required: ["name"] },
@@ -318,6 +333,12 @@ export async function runTool(name, input = {}) {
       return input.action === "install" ? startUpdate() : checkForUpdate();
     case "send_push":
       return { gesendet: await sendPush("F.R.Ai.D.A.Y", String(input.message || "")) };
+    case "add_task":
+      return store.addTask(String(input.text || ""));
+    case "list_tasks":
+      return store.getTasks().filter((t) => !t.done);
+    case "add_shopping":
+      return store.addShopping(String(input.text || ""));
     case "open_app": {
       if (!isAgentOnline()) return { error: "Der Mac ist gerade nicht verbunden." };
       const APP_URLS = {
