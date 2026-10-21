@@ -209,7 +209,7 @@
         landGroup.append(el("path", { d: geoPath(f) || "", class: "land", "data-id": id }));
       }
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
       landGroup.addEventListener("click", (e) => {
         if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
@@ -274,13 +274,13 @@
   }
 
   function placePoints() {
-    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake, #lage-ships .ship")) {
+    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake, #lage-ships .ship, #lage-planes .plane")) {
       const lon = +node.dataset.lon, lat = +node.dataset.lat;
       if (!visible(lon, lat)) { node.style.display = "none"; continue; }
       node.style.display = "";
       const p = projection([lon, lat]);
       if (node.tagName === "circle") { node.setAttribute("cx", p[0].toFixed(1)); node.setAttribute("cy", p[1].toFixed(1)); }
-      else if (node.classList.contains("ship")) node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)}) rotate(${node.dataset.cog || 0})`);
+      else if (node.classList.contains("ship") || node.classList.contains("plane")) node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)}) rotate(${node.dataset.cog || 0})`);
       else node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)})`);
     }
   }
@@ -550,6 +550,7 @@
     await mapReady;
     animateGlobe([-r.lon, -r.lat, 0], baseScale * (r.zoom || 3), 1000);
     loadShipsFor({ region: id });
+    loadPlanesFor({ region: id });
     $("lage-land").textContent = r.name;
     const box = $("lage-detail"); box.className = "";
     box.innerHTML = `<p class="muted">Lade Lage in ${escapeHtml(r.name)}...</p>`;
@@ -560,8 +561,8 @@
         const title = n.link ? `<a href="${escapeHtml(n.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(n.title)}</a>` : escapeHtml(n.title);
         return `<li>${title}<small>${escapeHtml(n.source)} · ${t}</small></li>`;
       }).join("") || `<li class="muted">Keine Meldungen.</li>`;
-      box.innerHTML = `<div class="lage-cams"><button class="chip" data-sat="${r.lon},${r.lat}">🛰 Satellitenbild</button></div><ul class="lage-news">${items}</ul>`;
-      box.querySelector("[data-sat]")?.addEventListener("click", () => openSat(r.lon, r.lat, 6, r.name));
+      box.innerHTML = `${satBlock(r.lon, r.lat, r.name)}<ul class="lage-news">${items}</ul>`;
+      box.querySelector(".lage-satview")?.addEventListener("click", () => openSat(r.lon, r.lat, 6, r.name));
     } catch (err) {
       box.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
     }
@@ -595,6 +596,19 @@
     }
   }
   $("sat-x").addEventListener("click", () => $("sat").classList.add("hidden"));
+
+  // Satellitenbild direkt im Panel (automatisch), klick öffnet die große Karte.
+  function satBlock(lon, lat, name) {
+    const dLon = 9, dLat = 6;
+    const bbox = `${(lon - dLon).toFixed(2)},${(lat - dLat).toFixed(2)},${(lon + dLon).toFixed(2)},${(lat + dLat).toFixed(2)}`;
+    const url = `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=${bbox}&bboxSR=4326&imageSR=4326&size=560,300&format=jpg&f=image`;
+    const cam = `https://www.windy.com/-Webcams/webcams?${lat},${lon},6`;
+    return `<div class="lage-satview" title="Satellitenkarte öffnen">
+      <img loading="lazy" src="${encodeURI(url)}" alt="Satellit ${escapeHtml(name)}" onerror="this.closest('.lage-satview').remove()">
+      <span class="sat-label">🛰 Satellit · tippen für groß</span>
+      <a class="sat-cam" href="${cam}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📹 Live-Kameras</a>
+    </div>`;
+  }
 
   // Schiffe auf der Satellitenkarte (mit Detail-Popup).
   let satShipLayer = null;
@@ -667,10 +681,57 @@
     card.classList.remove("hidden");
   }
 
+  // ---------- Flugzeuge (adsb.lol) ----------
+  let planeParams = null;
+  async function loadPlanesFor(params) {
+    planeParams = params;
+    const g = $("lage-planes");
+    if (g) g.replaceChildren();
+    if (!$("lage-planes-on")?.checked) return;
+    const q = params.region ? `region=${params.region}` : `near=${encodeURIComponent(params.near)}`;
+    try {
+      const data = await (await api(`/api/lage-flug?${q}`)).json();
+      if (Array.isArray(data.flugzeuge)) renderPlanes(data.flugzeuge);
+    } catch { /* optional */ }
+  }
+  function renderPlanes(list) {
+    const g = $("lage-planes");
+    if (!g || !projection) return;
+    g.replaceChildren();
+    for (const f of list.slice(0, 80)) {
+      if (f.lat == null) continue;
+      const node = el("g", { class: "plane", role: "button", tabindex: "0" });
+      node.dataset.lon = f.lon; node.dataset.lat = f.lat; node.dataset.cog = f.kurs || 0;
+      if (!visible(f.lon, f.lat)) node.style.display = "none";
+      else { const p = projection([f.lon, f.lat]); node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)}) rotate(${f.kurs || 0})`); }
+      node.append(el("path", { d: "M0,-5 L1.5,-1 L5,1.5 L1.5,2 L1,4.5 L2.5,5.5 L0,5 L-2.5,5.5 L-1,4.5 L-1.5,2 L-5,1.5 L-1.5,-1 Z", class: "plane-glyph" }));
+      const t = el("title"); t.textContent = `${f.flug} · ${f.typ}${f.hoehe_ft ? " · " + f.hoehe_ft + " ft" : ""}`; node.append(t);
+      node.addEventListener("click", () => showPlaneCard(f));
+      g.append(node);
+    }
+  }
+  function showPlaneCard(f) {
+    let card = $("lage-shipcard");
+    if (!card) { card = document.createElement("div"); card.id = "lage-shipcard"; card.className = "lage-shipcard"; $("lage").append(card); }
+    card.innerHTML = `<button class="ship-x" aria-label="Schließen">✕</button>
+      <h3>✈ ${escapeHtml(f.flug)}</h3>
+      <div class="ship-rows">
+        ${f.typ ? `<span>Typ</span><b>${escapeHtml(f.typ)}</b>` : ""}
+        ${f.hoehe_ft != null ? `<span>Höhe</span><b>${Number(f.hoehe_ft).toLocaleString("de-DE")} ft</b>` : ""}
+        ${f.tempo_kn != null ? `<span>Tempo</span><b>${f.tempo_kn} kn</b>` : ""}
+        ${f.kurs != null ? `<span>Kurs</span><b>${f.kurs}°</b>` : ""}
+      </div>`;
+    card.querySelector(".ship-x").addEventListener("click", () => card.remove());
+  }
+
   document.addEventListener("change", (e) => {
     if (e.target?.id === "lage-ships-on") {
       if (!e.target.checked) { $("lage-ships")?.replaceChildren(); $("lage-shipcard")?.remove(); }
       else if (selected) loadShipsFor({ near: (() => { const c = countries.find((x) => x.id === selected); return c ? `${c.lon},${c.lat}` : ""; })() });
+    }
+    if (e.target?.id === "lage-planes-on") {
+      if (!e.target.checked) $("lage-planes")?.replaceChildren();
+      else if (planeParams) loadPlanesFor(planeParams);
     }
   });
 
@@ -700,13 +761,16 @@
         <div id="lage-assess" class="lage-assess">
           <button id="lage-assess-btn" class="chip">Friday, schätz die Lage ein</button>
         </div>
+        ${c ? satBlock(c.lon, c.lat, c.name) : ""}
         <div id="lage-video" class="lage-video-wrap"></div>
         <div id="lage-media" class="lage-media"><div class="lage-fotos lage-skeleton"><span></span><span></span><span></span></div></div>
         <ul class="lage-news">${items}</ul>`;
       $("lage-assess-btn").addEventListener("click", () => assess(id));
+      box.querySelector(".lage-satview")?.addEventListener("click", () => { if (c) openSat(c.lon, c.lat, 6, c.name); });
       loadInfo(id);
       loadMedia(id);
       loadShipsFor({ near: `${c?.lon},${c?.lat}` });
+      loadPlanesFor({ near: `${c?.lon},${c?.lat}` });
     } catch (err) {
       box.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
     }
@@ -767,15 +831,11 @@
                  <span class="play">▶</span>${i === 0 ? '<span class="vlabel">Live / aktuell</span>' : ""}</a>`).join("")}</div>`
           : "";
       }
-      const c = countries.find((x) => x.id === id);
       wrap.innerHTML = `
         <div class="lage-cams">
-          ${c ? `<button class="chip" id="lage-sat-btn">🛰 Satellitenbild</button>` : ""}
-          <a class="chip" href="${escapeHtml(m.kameras)}" target="_blank" rel="noopener noreferrer">📹 Öffentliche Live-Kameras</a>
           <a class="chip" href="${escapeHtml(m.nachrichten_videos)}" target="_blank" rel="noopener noreferrer">📺 Mehr Videos</a>
         </div>
         <div id="lage-images" class="lage-fotos lage-skeleton"><span></span><span></span><span></span></div>`;
-      if (c) $("lage-sat-btn")?.addEventListener("click", () => openSat(c.lon, c.lat, 6, c.name));
       loadImages(id, m.fotos || []);
     } catch {
       wrap.innerHTML = "";

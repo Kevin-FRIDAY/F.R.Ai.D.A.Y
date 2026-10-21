@@ -444,3 +444,19 @@ body.lage-open { overflow: hidden; }
 .iss:hover .iss-body { fill: var(--cyan); }
 .iss-trail { fill: none; stroke: var(--cyan); stroke-width: 1.2; stroke-opacity: .55; stroke-dasharray: 2 4; filter: drop-shadow(0 0 3px rgba(255,138,30,.7)); }
 @media (prefers-reduced-motion: reduce) { .iss-glow { animation: none; opacity: .4; } }
+
+/* ---------- Flugzeuge ---------- */
+.plane { cursor: pointer; }
+.plane-glyph { fill: #ffe0b0; stroke: #050403; stroke-width: .3; }
+.plane:hover .plane-glyph { fill: #fff; }
+
+/* ---------- Grenzen betonen ---------- */
+.land { stroke: rgba(255, 180, 90, 0.6); stroke-width: 0.5; }
+.land.selected { stroke: #fff; stroke-width: 1.3; }
+
+/* ---------- Satellit automatisch im Panel ---------- */
+.lage-satview { position: relative; margin: 8px 0 4px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); cursor: pointer; }
+.lage-satview img { width: 100%; display: block; aspect-ratio: 560/300; object-fit: cover; }
+.lage-satview .sat-label { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,.55); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; }
+.lage-satview .sat-cam { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,.6); color: var(--cyan); text-decoration: none; font-size: 12px; padding: 4px 9px; border-radius: 6px; border: 1px solid var(--cyan); }
+.lage-satview .sat-cam:hover { background: var(--cyan); color: #000; }

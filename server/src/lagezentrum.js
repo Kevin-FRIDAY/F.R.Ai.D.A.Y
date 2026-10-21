@@ -134,6 +134,32 @@ export function getOverview() {
   return { stand: lastScanDone ? new Date(lastScanDone).toISOString() : null, scannt: scanning, geladen, gesamt: COUNTRIES.length, laender: list };
 }
 
+// --- Flugzeuge (adsb.lol, öffentlich, kein Schlüssel) ---
+const planeCache = new Map(); // key -> { at, list }
+export async function getPlanes(lat, lon, distNm = 180) {
+  const key = `${lat.toFixed(1)},${lon.toFixed(1)}`;
+  const c = planeCache.get(key);
+  if (c && Date.now() - c.at < 15 * 1000) return c.list;
+  try {
+    const res = await fetch(`https://api.adsb.lol/v2/lat/${lat}/lon/${lon}/dist/${Math.min(250, distNm)}`,
+      { headers: { "User-Agent": "F.R.Ai.D.A.Y/1.0" }, signal: AbortSignal.timeout(12000) });
+    if (!res.ok) throw new Error(`adsb ${res.status}`);
+    const data = await res.json();
+    const list = (data.ac || data.aircraft || [])
+      .filter((a) => typeof a.lat === "number" && typeof a.lon === "number")
+      .map((a) => ({
+        flug: (a.flight || "").trim() || a.r || a.hex,
+        lat: a.lat, lon: a.lon, kurs: Math.round(a.track ?? a.true_heading ?? 0),
+        hoehe_ft: a.alt_baro === "ground" ? 0 : (a.alt_baro ?? null),
+        tempo_kn: a.gs != null ? Math.round(a.gs) : null,
+        typ: a.t || "", von_nach: "",
+      }))
+      .slice(0, 120);
+    planeCache.set(key, { at: Date.now(), list });
+    return list;
+  } catch { return []; }
+}
+
 // --- Erdbeben (USGS, öffentlich, kein Schlüssel) ---
 let quakeCache = null;
 export async function getQuakes() {

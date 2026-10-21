@@ -11,7 +11,7 @@ import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
-import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getSummary, friendlyError } from "./lagezentrum.js";
+import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, getSummary, friendlyError } from "./lagezentrum.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus } from "./updater.js";
 
 const missing = checkConfig();
@@ -152,6 +152,18 @@ app.get("/api/lage-schiffe", asyncRoute(async (req, res) => {
     return res.status(400).json({ error: "region oder near nötig" });
   }
   res.json({ aktiv: true, verbunden: st.verbunden, schiffe: getShips(box[0], box[1], box[2], box[3]) });
+}));
+app.get("/api/lage-flug", asyncRoute(async (req, res) => {
+  let lat, lon, dist = 180;
+  if (req.query.region) {
+    const r = REGIONS.find((x) => x.id === req.query.region);
+    if (!r) return res.status(404).json({ error: "Region nicht gefunden" });
+    lat = r.lat; lon = r.lon; dist = 230;
+  } else if (req.query.near) {
+    [lon, lat] = String(req.query.near).split(",").map(Number);
+    if (Number.isNaN(lon) || Number.isNaN(lat)) return res.status(400).json({ error: "near ungültig" });
+  } else return res.status(400).json({ error: "region oder near nötig" });
+  res.json({ flugzeuge: await getPlanes(lat, lon, dist) });
 }));
 app.get("/api/lage-iss", asyncRoute(async (req, res) => {
   const i = await getISS();
