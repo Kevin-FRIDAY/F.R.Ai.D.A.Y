@@ -834,12 +834,20 @@
       }
       const vbox = $("lage-video");
       if (vbox) {
-        vbox.innerHTML = vids.length
-          ? `<div class="lage-videos">${vids.map((vid, i) =>
+        if (!vids.length) { vbox.innerHTML = ""; }
+        else {
+          // Erstes Video spielt automatisch (stumm) ab, die übrigen als Vorschau.
+          const first = vids[0];
+          const rest = vids.slice(1);
+          vbox.innerHTML = `
+            <div class="lage-player">
+              <iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(first)}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            ${rest.length ? `<div class="lage-videos">${rest.map((vid) =>
               `<a class="lage-video" href="https://www.youtube.com/watch?v=${encodeURIComponent(vid)}" target="_blank" rel="noopener noreferrer" title="Video ansehen">
                  <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg" alt="Video" onerror="this.closest('a').remove()">
-                 <span class="play">▶</span>${i === 0 ? '<span class="vlabel">📹 Live</span>' : ""}</a>`).join("")}</div>`
-          : "";
+                 <span class="play">▶</span></a>`).join("")}</div>` : ""}`;
+        }
       }
       wrap.innerHTML = `
         <div class="lage-cams">
