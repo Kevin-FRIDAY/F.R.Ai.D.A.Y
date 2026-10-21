@@ -106,11 +106,11 @@
       const node = el("g", { class: "iss", role: "button", tabindex: "0" });
       // kleines Satelliten-Symbol: Körper + zwei Solarflügel
       node.append(
-        el("line", { x1: -9, y1: 0, x2: 9, y2: 0, class: "iss-bar" }),
-        el("rect", { x: -9, y: -2.6, width: 6, height: 5.2, class: "iss-panel" }),
-        el("rect", { x: 3, y: -2.6, width: 6, height: 5.2, class: "iss-panel" }),
-        el("circle", { r: 2.6, class: "iss-body" }),
-        el("circle", { r: 9, class: "iss-glow" }),
+        el("line", { x1: -17, y1: 0, x2: 17, y2: 0, class: "iss-bar" }),
+        el("rect", { x: -17, y: -5, width: 11, height: 10, class: "iss-panel" }),
+        el("rect", { x: 6, y: -5, width: 11, height: 10, class: "iss-panel" }),
+        el("circle", { r: 4.5, class: "iss-body" }),
+        el("circle", { r: 16, class: "iss-glow" }),
       );
       const t = el("title"); t.textContent = "Internationale Raumstation ISS"; node.append(t);
       node.addEventListener("click", showISSCard);
