@@ -302,6 +302,45 @@
   $("settings-x")?.addEventListener("click", () => closeSheet("settings"));
   $("brain-btn")?.addEventListener("click", () => { openSheet("brain"); loadBrain(); });
   $("brain-x")?.addEventListener("click", () => closeSheet("brain"));
+  $("apps-btn")?.addEventListener("click", () => { openSheet("apps"); buildApps(); });
+  $("apps-x")?.addEventListener("click", () => closeSheet("apps"));
+
+  const APPS = [
+    { n: "YouTube", d: "youtube.com", u: "https://www.youtube.com" },
+    { n: "Netflix", d: "netflix.com", u: "https://www.netflix.com" },
+    { n: "Amazon", d: "amazon.de", u: "https://www.amazon.de" },
+    { n: "Prime Video", d: "primevideo.com", u: "https://www.primevideo.com" },
+    { n: "Disney+", d: "disneyplus.com", u: "https://www.disneyplus.com" },
+    { n: "Spotify", d: "spotify.com", u: "https://open.spotify.com" },
+    { n: "Apple Music", d: "music.apple.com", u: "https://music.apple.com" },
+    { n: "YouTube Music", d: "music.youtube.com", u: "https://music.youtube.com" },
+    { n: "Twitch", d: "twitch.tv", u: "https://www.twitch.tv" },
+    { n: "TikTok", d: "tiktok.com", u: "https://www.tiktok.com" },
+    { n: "Instagram", d: "instagram.com", u: "https://www.instagram.com" },
+    { n: "WhatsApp", d: "whatsapp.com", u: "https://web.whatsapp.com" },
+    { n: "Telegram", d: "telegram.org", u: "https://web.telegram.org" },
+    { n: "Gmail", d: "gmail.com", u: "https://mail.google.com" },
+    { n: "Google", d: "google.com", u: "https://www.google.com" },
+    { n: "Maps", d: "google.com/maps", u: "https://maps.google.com" },
+    { n: "X", d: "x.com", u: "https://x.com" },
+    { n: "Facebook", d: "facebook.com", u: "https://www.facebook.com" },
+    { n: "Reddit", d: "reddit.com", u: "https://www.reddit.com" },
+    { n: "ChatGPT", d: "chatgpt.com", u: "https://chatgpt.com" },
+    { n: "eBay", d: "ebay.de", u: "https://www.ebay.de" },
+    { n: "PayPal", d: "paypal.com", u: "https://www.paypal.com" },
+    { n: "DAZN", d: "dazn.com", u: "https://www.dazn.com" },
+    { n: "Wetter", d: "wetter.com", u: "https://www.wetter.com" },
+  ];
+  let appsBuilt = false;
+  function buildApps() {
+    const grid = $("apps-grid");
+    if (!grid || appsBuilt) return;
+    grid.innerHTML = APPS.map((a) =>
+      `<a class="app-tile" href="${a.u}" target="_blank" rel="noopener noreferrer">
+        <img loading="lazy" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(a.d)}&sz=64" alt="" width="40" height="40">
+        <span>${escapeHtml(a.n)}</span></a>`).join("");
+    appsBuilt = true;
+  }
   $("briefing-btn2")?.addEventListener("click", () => { closeSheet("settings"); send("Gib mir mein Briefing."); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeSheet("settings"); closeSheet("brain"); } });
   document.querySelectorAll(".sheet").forEach((sh) => sh.addEventListener("click", (e) => { if (e.target === sh) sh.classList.add("hidden"); }));
