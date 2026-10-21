@@ -151,6 +151,7 @@
     try {
       const list = await (await api("/api/reminders")).json();
       const ul = $("reminders");
+      if (!ul) return;
       ul.innerHTML = "";
       if (!list.length) ul.innerHTML = '<li class="muted">Keine</li>';
       list.sort((a, b) => a.due.localeCompare(b.due)).slice(0, 6).forEach((r) => {
@@ -166,6 +167,7 @@
     try {
       const protocols = await (await api("/api/protocols")).json();
       const box = $("protocols");
+      if (!box) return;
       box.innerHTML = "";
       Object.entries(protocols).forEach(([name, p]) => {
         const b = document.createElement("button");
@@ -283,7 +285,7 @@
     }
   }
 
-  $("chat-form").addEventListener("submit", (e) => {
+  $("chat-form")?.addEventListener("submit", (e) => {
     e.preventDefault();
     const t = $("text").value;
     $("text").value = "";
@@ -292,6 +294,30 @@
 
   // Für das Lagezentrum (lagezentrum.js).
   window.Friday = { api, say, escapeHtml };
+
+  // ---------- Seitenleiste: Einstellungen & Gehirn ----------
+  const openSheet = (id) => $(id)?.classList.remove("hidden");
+  const closeSheet = (id) => $(id)?.classList.add("hidden");
+  $("settings-btn")?.addEventListener("click", () => openSheet("settings"));
+  $("settings-x")?.addEventListener("click", () => closeSheet("settings"));
+  $("brain-btn")?.addEventListener("click", () => { openSheet("brain"); loadBrain(); });
+  $("brain-x")?.addEventListener("click", () => closeSheet("brain"));
+  $("briefing-btn2")?.addEventListener("click", () => { closeSheet("settings"); send("Gib mir mein Briefing."); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeSheet("settings"); closeSheet("brain"); } });
+  document.querySelectorAll(".sheet").forEach((sh) => sh.addEventListener("click", (e) => { if (e.target === sh) sh.classList.add("hidden"); }));
+
+  async function loadBrain() {
+    const box = $("brain-memory");
+    if (box) {
+      try {
+        const mem = await (await api("/api/memory")).json();
+        if (!mem.length) box.innerHTML = '<span class="muted">Noch nichts gemerkt. Sag "Merk dir ..."</span>';
+        else box.innerHTML = `<div class="muted" style="margin-bottom:6px">${mem.length} Einträge</div>` +
+          mem.slice(-12).reverse().map((m) => `<div class="brain-mem-item">${escapeHtml(m.text)}</div>`).join("");
+      } catch { box.textContent = "Gedächtnis nicht erreichbar."; }
+    }
+    if ($("st-screen")) setBadge("st-screen", status.agent?.online, "verfügbar", "Mac aus");
+  }
 
   $("briefing-btn").addEventListener("click", () => send("Gib mir mein Briefing."));
   $("look-btn").addEventListener("click", () => send("Schau dir meinen Mac-Bildschirm an und sag mir kurz, was du siehst."));
@@ -369,8 +395,8 @@
   });
 
   // ---------- Foto ----------
-  $("camera-btn").addEventListener("click", () => $("photo").click());
-  $("photo").addEventListener("change", async (e) => {
+  $("camera-btn")?.addEventListener("click", () => $("photo")?.click());
+  $("photo")?.addEventListener("change", async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     pendingImage = await shrinkImage(file);
@@ -384,9 +410,9 @@
 
   function clearPhoto() {
     pendingImage = null;
-    $("photo").value = "";
-    $("photo-preview").classList.add("hidden");
-    $("text").placeholder = "Schreib Friday etwas...";
+    if ($("photo")) $("photo").value = "";
+    $("photo-preview")?.classList.add("hidden");
+    if ($("text")) $("text").placeholder = "Schreib Friday etwas...";
   }
 
   function shrinkImage(file) {

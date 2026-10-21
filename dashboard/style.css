@@ -67,25 +67,50 @@ body {
 .hud {
   position: relative; z-index: 1;
   display: grid;
-  grid-template-columns: 260px 1fr 260px;
-  grid-template-rows: auto 1fr;
-  grid-template-areas: "top top top" "left center right";
+  grid-template-columns: 220px 1fr 290px;
+  grid-template-areas: "side center topright";
   gap: 16px;
   padding: 16px;
   min-height: 100dvh;
 }
-.topbar { grid-area: top; display: flex; align-items: center; justify-content: space-between; }
 .brand { font-size: 18px; letter-spacing: 0.3em; color: var(--cyan); text-shadow: 0 0 12px var(--cyan); }
 .brand span { color: var(--gold); text-shadow: 0 0 12px var(--gold); }
-.clock { font-size: 22px; letter-spacing: 0.1em; }
-.col { display: flex; flex-direction: column; gap: 16px; }
-.left { grid-area: left; }
-.right { grid-area: right; }
-.center { grid-area: center; display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 0; }
+.clock { font-size: 40px; letter-spacing: 0.06em; font-weight: 500; text-align: right; }
+.date-line { text-align: right; color: var(--muted); font-size: 13px; margin-top: 4px; }
+.center { grid-area: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; min-width: 0; }
+.topright { grid-area: topright; display: flex; flex-direction: column; gap: 16px; align-self: start; }
+.clockcard { padding: 12px 16px; }
+
+/* Seitenleiste */
+.sidebar { grid-area: side; display: flex; flex-direction: column; gap: 10px; }
+.side-nav { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 6px; }
+.side-item {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 11px 14px; color: var(--text); font: inherit; font-size: 14px; cursor: pointer;
+  backdrop-filter: blur(14px);
+}
+.side-item:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-soft); }
+.side-item.small { font-size: 12px; padding: 8px 12px; color: var(--muted); }
+.version-corner { position: fixed; bottom: 10px; right: 16px; z-index: 2; font-size: 11px; color: var(--muted); letter-spacing: .1em; }
+.version-corner b { color: var(--cyan); }
+
+/* Sheets (Einstellungen, Gehirn) */
+.sheet { position: fixed; inset: 0; z-index: 25; display: flex; align-items: center; justify-content: center; background: rgba(5,4,3,.72); backdrop-filter: blur(4px); padding: 16px; }
+.sheet-box { width: min(680px, 100%); max-height: 86vh; overflow-y: auto; }
+.sheet-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.sheet-top h2 { margin: 0; }
+.sheet h3 { margin: 16px 0 8px; font-size: 13px; color: var(--muted); letter-spacing: .1em; }
+.col-toggles { flex-direction: column; align-items: flex-start; gap: 10px; }
+.brain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.brain-card { background: var(--cyan-soft); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.brain-card h3 { margin: 0 0 8px; color: var(--cyan); letter-spacing: 0; font-size: 14px; }
+.brain-mem-item { font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--line); }
 
 /* Arc Reactor */
 .reactor {
-  position: relative; width: min(300px, 70vw); aspect-ratio: 1; margin-top: 8px;
+  position: relative; width: min(380px, 58vh, 80vw); aspect-ratio: 1; margin-top: 0;
   border: none; background: none; cursor: pointer; padding: 0; border-radius: 50%;
   -webkit-tap-highlight-color: transparent;
 }
@@ -167,9 +192,16 @@ a.chip:hover { border-color: var(--cyan); color: var(--cyan); }
 @media (max-width: 900px) {
   .hud {
     grid-template-columns: 1fr;
-    grid-template-areas: "top" "center" "left" "right";
+    grid-template-areas: "topright" "center" "side";
     padding: 12px 16px;
   }
+  .side-nav { flex-direction: row; flex-wrap: wrap; }
+  .side-item span { display: none; }
+  .side-item { padding: 12px; font-size: 18px; border-radius: 12px; }
+  .side-item.small span, .side-foot .side-item span { display: inline; }
+  .side-item.small { font-size: 12px; }
+  .clock { font-size: 30px; }
+  .brain-grid { grid-template-columns: 1fr; }
   .reactor { width: min(220px, 60vw); }
   .brand { font-size: 14px; letter-spacing: 0.2em; }
   .clock { font-size: 16px; }
