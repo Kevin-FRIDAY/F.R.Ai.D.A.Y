@@ -283,8 +283,14 @@ body.lage-open { overflow: hidden; }
 .lage-top .brand span { color: var(--gold); }
 .lage-top #lage-stand { flex: 1; }
 .small-text { font-size: 12px; }
-.lage-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
-.lage-map-wrap { padding: 8px; display: flex; flex-direction: column; min-width: 0; }
+.lage-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+.lage-body.open { grid-template-columns: minmax(0, 1fr) 360px; }
+.lage-side { display: none; }
+.lage-body.open .lage-side { display: flex; }
+.lage-map-wrap { padding: 8px; display: flex; flex-direction: column; min-width: 0;
+  background-image: radial-gradient(1px 1px at 20% 30%, rgba(255,220,180,.5), transparent), radial-gradient(1px 1px at 70% 60%, rgba(255,200,150,.4), transparent), radial-gradient(1px 1px at 40% 80%, rgba(255,230,200,.35), transparent), radial-gradient(1px 1px at 85% 20%, rgba(255,210,160,.4), transparent), radial-gradient(1px 1px at 55% 15%, rgba(255,220,180,.3), transparent);
+  background-size: 100% 100%; }
+.lage-map { min-height: 56vh; }
 .lage-map { width: 100%; height: auto; display: block; }
 .lage-sphere { fill: rgba(255, 138, 30, 0.03); stroke: var(--line); }
 .lage-grat, .lage-grat-fallback line { fill: none; stroke: rgba(255, 138, 30, 0.08); stroke-width: 0.5; }
@@ -306,7 +312,7 @@ body.lage-open { overflow: hidden; }
 .lage-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 11px; color: var(--muted); padding: 6px 8px 2px; }
 .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; background: var(--cyan); vertical-align: middle; }
 .dot.gut { background: var(--ok); } .dot.schlecht { background: var(--bad); } .dot.gemischt { background: var(--gold); }
-.lage-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.lage-side { flex-direction: column; gap: 16px; min-width: 0; }
 .lage-list { max-height: 320px; overflow-y: auto; }
 .lage-list li { padding: 0; border: 0; }
 .lage-row {
@@ -327,7 +333,7 @@ body.lage-open { overflow: hidden; }
 .rating.schlecht { color: var(--bad); background: rgba(255, 93, 108, .12); }
 .rating.gemischt { color: var(--gold); background: rgba(255, 176, 32, .14); }
 @media (max-width: 900px) {
-  .lage-body { grid-template-columns: 1fr; }
+  .lage-body, .lage-body.open { grid-template-columns: 1fr; }
   .lage-list { max-height: none; }
 }
 @media (prefers-reduced-motion: reduce) { .marker .pulse { animation: none; opacity: .4; } }

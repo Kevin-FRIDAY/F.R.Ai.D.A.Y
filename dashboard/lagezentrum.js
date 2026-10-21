@@ -41,7 +41,7 @@
   $("lage-btn").addEventListener("click", open);
   $("lage-close").addEventListener("click", close);
   $("lage-refresh")?.addEventListener("click", () => load(true));
-  $("lage-world").addEventListener("click", () => { selected = null; render(); flyToWorld(); $("lage-world").classList.add("hidden"); $("lage-land").textContent = "Land wählen"; $("lage-detail").innerHTML = 'Tippe auf der Karte oder in der Liste auf ein Land.'; });
+  $("lage-world").addEventListener("click", () => { selected = null; showSide(false); render(); flyToWorld(); $("lage-world").classList.add("hidden"); $("lage-land").textContent = "Land wählen"; $("lage-detail").innerHTML = 'Tippe auf der Karte oder in der Liste auf ein Land.'; });
   const findRegion = (key) => { const k = String(key || "").trim().toLowerCase(); return regions.find((r) => r.id !== "welt" && (r.name.toLowerCase() === k || (k.length >= 4 && r.name.toLowerCase().includes(k)))); };
   $("lage-q").addEventListener("change", () => {
     const v = $("lage-q").value;
@@ -74,6 +74,8 @@
     try { rec.start(); } catch { /* läuft schon */ }
   }
 
+  const showSide = (on) => document.querySelector(".lage-body")?.classList.toggle("open", on);
+
   function open() {
     $("lage").classList.remove("hidden");
     document.body.classList.add("lage-open");
@@ -86,6 +88,7 @@
   }
 
   function close() {
+    showSide(false);
     $("lage").classList.add("hidden");
     document.body.classList.remove("lage-open");
     clearTimeout(pollTimer);
@@ -177,7 +180,7 @@
       ]);
       d3geo = geo;
       landFeatures = topo.feature(world, world.objects.countries).features;
-      projection = geo.geoOrthographic().fitExtent([[12, 12], [W - 12, H - 12]], { type: "Sphere" }).rotate([-10, -25, 0]).clipAngle(90);
+      projection = geo.geoOrthographic().fitExtent([[6, 6], [W - 6, H - 6]], { type: "Sphere" }).rotate([-10, -25, 0]).clipAngle(90);
       baseScale = projection.scale();
       geoPath = geo.geoPath(projection);
       project = (lon, lat) => projection([lon, lat]);
@@ -460,6 +463,7 @@
 
   function renderList() {
     const list = $("lage-list");
+    if (!list) return;
     list.replaceChildren();
     for (const c of [...countries].sort((a, b) => b.meldungen - a.meldungen || a.name.localeCompare(b.name, "de")).slice(0, 60)) {
       const li = document.createElement("li");
@@ -547,10 +551,11 @@
     document.querySelectorAll(".lage-region-tab").forEach((b) => b.classList.toggle("active", b.dataset.id === id));
     selected = null;
     document.querySelectorAll("#lage-map .land.selected, #lage-markers .selected").forEach((n) => n.classList.remove("selected"));
-    if (id === "welt") { $("lage-land").textContent = "Land wählen"; $("lage-detail").innerHTML = "Tippe auf der Karte, in der Liste oder oben auf einen Brennpunkt."; $("lage-world").classList.add("hidden"); flyToWorld(); return; }
+    if (id === "welt") { showSide(false); $("lage-land").textContent = "Land wählen"; $("lage-detail").innerHTML = "Tippe auf der Karte, in der Liste oder oben auf einen Brennpunkt."; $("lage-world").classList.add("hidden"); flyToWorld(); return; }
     $("lage-world").classList.remove("hidden");
     await mapReady;
     animateGlobe([-r.lon, -r.lat, 0], baseScale * (r.zoom || 3), 1000);
+    showSide(true);
     loadShipsFor({ region: id });
     loadPlanesFor({ region: id });
     $("lage-land").textContent = r.name;
@@ -738,6 +743,7 @@
   // ---------- Ein Land ----------
   async function select(id) {
     selected = id;
+    showSide(true);
     document.querySelectorAll(".lage-region-tab.active").forEach((b) => b.classList.remove("active"));
     render();
     const c = countries.find((x) => x.id === id);

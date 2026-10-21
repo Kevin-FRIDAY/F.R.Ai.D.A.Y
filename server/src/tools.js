@@ -25,6 +25,11 @@ export const toolDefinitions = [
     },
   },
   {
+    name: "open_app",
+    description: "Öffnet eine App oder Website auf dem Mac, z. B. 'öffne YouTube', 'öffne Netflix', 'öffne Spotify'. Für bekannte Dienste wird die Website geöffnet, sonst die Mac-App mit dem Namen.",
+    input_schema: { type: "object", properties: { name: { type: "string", description: "App- oder Dienstname, z. B. YouTube" } }, required: ["name"] },
+  },
+  {
     name: "air_quality",
     description: "Aktuelle Luftqualität (Feinstaub, Ozon) für einen Ort. Ohne Ort die Heimatstadt.",
     input_schema: { type: "object", properties: { city: { type: "string" } } },
@@ -313,6 +318,26 @@ export async function runTool(name, input = {}) {
       return input.action === "install" ? startUpdate() : checkForUpdate();
     case "send_push":
       return { gesendet: await sendPush("F.R.Ai.D.A.Y", String(input.message || "")) };
+    case "open_app": {
+      if (!isAgentOnline()) return { error: "Der Mac ist gerade nicht verbunden." };
+      const APP_URLS = {
+        youtube: "https://www.youtube.com", netflix: "https://www.netflix.com", amazon: "https://www.amazon.de",
+        "prime video": "https://www.primevideo.com", "amazon prime": "https://www.primevideo.com",
+        "disney": "https://www.disneyplus.com", "disney+": "https://www.disneyplus.com", "disney plus": "https://www.disneyplus.com",
+        spotify: "https://open.spotify.com", "apple music": "https://music.apple.com", "youtube music": "https://music.youtube.com",
+        twitch: "https://www.twitch.tv", tiktok: "https://www.tiktok.com", instagram: "https://www.instagram.com",
+        whatsapp: "https://web.whatsapp.com", telegram: "https://web.telegram.org", gmail: "https://mail.google.com",
+        google: "https://www.google.com", "google maps": "https://maps.google.com", maps: "https://maps.google.com",
+        x: "https://x.com", twitter: "https://x.com", facebook: "https://www.facebook.com", reddit: "https://www.reddit.com",
+        chatgpt: "https://chatgpt.com", ebay: "https://www.ebay.de", paypal: "https://www.paypal.com", dazn: "https://www.dazn.com",
+        wetter: "https://www.wetter.com", news: "https://news.google.com",
+      };
+      const key = String(input.name || "").trim().toLowerCase();
+      const url = APP_URLS[key];
+      if (url) return sendToAgent("open_url", { value: url });
+      // Unbekannt: als Mac-App mit diesem Namen öffnen.
+      return sendToAgent("open_app", { value: String(input.name || "").trim() });
+    }
     case "air_quality": {
       const city = input.city || config.city;
       const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?count=1&language=de&name=${encodeURIComponent(city)}`).then((r) => r.json());
