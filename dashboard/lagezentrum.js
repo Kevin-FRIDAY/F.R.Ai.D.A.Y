@@ -38,7 +38,7 @@
 
   $("lage-btn").addEventListener("click", open);
   $("lage-close").addEventListener("click", close);
-  $("lage-refresh").addEventListener("click", () => load(true));
+  $("lage-refresh")?.addEventListener("click", () => load(true));
   $("lage-world").addEventListener("click", () => { selected = null; render(); flyToWorld(); $("lage-world").classList.add("hidden"); $("lage-land").textContent = "Land wählen"; $("lage-detail").innerHTML = 'Tippe auf der Karte oder in der Liste auf ein Land.'; });
   const findRegion = (key) => { const k = String(key || "").trim().toLowerCase(); return regions.find((r) => r.id !== "welt" && (r.name.toLowerCase() === k || (k.length >= 4 && r.name.toLowerCase().includes(k)))); };
   $("lage-q").addEventListener("change", () => {
@@ -150,6 +150,7 @@
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
       svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-markers" }), shade);
       landGroup.addEventListener("click", (e) => {
+        if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
         if (id && countries.some((c) => c.id === id)) select(id);
       });
@@ -251,18 +252,26 @@
   }
 
   // Mit Maus oder Finger drehen.
+  let dragMoved = false;
   function enableDrag(svg) {
     let drag = null;
     const toUser = (e) => { const r = svg.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * H }; };
-    svg.addEventListener("pointerdown", (e) => { drag = { ...toUser(e), r: projection.rotate() }; spinning = false; svg.setPointerCapture?.(e.pointerId); });
+    svg.addEventListener("pointerdown", (e) => { drag = { ...toUser(e), r: projection.rotate(), moved: false }; spinning = false; });
     svg.addEventListener("pointermove", (e) => {
       if (!drag) return;
       const p = toUser(e);
+      if (Math.hypot(p.x - drag.x, p.y - drag.y) > 4) drag.moved = true; // erst ab echter Bewegung drehen
+      if (!drag.moved) return;
       const k = 0.3 * (baseScale / projection.scale());
       projection.rotate([drag.r[0] + (p.x - drag.x) * k, Math.max(-85, Math.min(85, drag.r[1] - (p.y - drag.y) * k)), 0]);
       redrawGlobe();
     });
-    const end = () => { if (drag && !selected) spinning = true; drag = null; };
+    const end = () => {
+      dragMoved = Boolean(drag && drag.moved);
+      if (dragMoved) setTimeout(() => { dragMoved = false; }, 0); // Klick nach echtem Ziehen unterdrücken
+      if (drag && !selected && !document.querySelector(".lage-region-tab.active")) spinning = true;
+      drag = null;
+    };
     svg.addEventListener("pointerup", end);
     svg.addEventListener("pointerleave", end);
   }
@@ -645,13 +654,17 @@
     try {
       const i = await (await api(`/api/lage/${id}/info`)).json();
       if (selected !== id || !wrap.isConnected || i.error) return;
-      const chips = [];
-      if (i.hauptstadt) chips.push(`<span title="Hauptstadt">🏛 ${escapeHtml(i.hauptstadt)}</span>`);
-      if (i.einwohner) chips.push(`<span title="Einwohner">👥 ${Number(i.einwohner).toLocaleString("de-DE")}</span>`);
-      if (i.waehrung) chips.push(`<span title="Währung">💶 ${escapeHtml(i.waehrung)}</span>`);
-      if (i.luft && i.luft.luftqualitaet_index != null) chips.push(`<span title="Luftqualität">🌫 Luft ${escapeHtml(i.luft.bewertung)} (${i.luft.luftqualitaet_index})</span>`);
-      wrap.innerHTML = `${i.flagge ? `<span class="lage-flag">${escapeHtml(i.flagge)}</span>` : ""}<div class="lage-info-chips">${chips.join("")}</div>`;
-    } catch { wrap.innerHTML = ""; }
+      // Flagge neben den Ländernamen in die Überschrift.
+      const h = $("lage-land");
+      if (h && i.flagge && !h.querySelector(".lage-flag")) h.insertAdjacentHTML("afterbegin", `<span class="lage-flag">${escapeHtml(i.flagge)}</span> `);
+      // Eine schlichte Zeile statt Kästchen.
+      const teile = [];
+      if (i.hauptstadt) teile.push(escapeHtml(i.hauptstadt));
+      if (i.einwohner) teile.push(`${(i.einwohner / 1e6).toFixed(1).replace(".", ",")} Mio.`);
+      if (i.waehrung) teile.push(escapeHtml(i.waehrung));
+      if (i.luft && i.luft.luftqualitaet_index != null) teile.push(`Luft ${escapeHtml(i.luft.bewertung)}`);
+      wrap.textContent = teile.join("  ·  ");
+    } catch { wrap.textContent = ""; }
   }
 
   // Öffentliche Kameras/Videos als Links + Fotos als Rückfall, falls keine Nachrichtenbilder.

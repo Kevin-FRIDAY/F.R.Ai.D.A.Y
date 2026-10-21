@@ -151,6 +151,8 @@ button.small { padding: 6px 10px; }
 .bad { color: var(--bad); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { padding: 6px 10px; font-size: 12px; }
+a.chip { display: inline-block; text-decoration: none; background: var(--cyan-soft); color: var(--text); border: 1px solid var(--line); border-radius: 3px; }
+a.chip:hover { border-color: var(--cyan); color: var(--cyan); }
 #protocols .chip { text-transform: capitalize; }
 
 .weather-now { font-size: 28px; color: var(--cyan); }
@@ -333,7 +335,7 @@ body.lage-open { overflow: hidden; }
 #lage-mic.listening { color: var(--bad); animation: lage-mic 1s ease-in-out infinite; }
 @keyframes lage-mic { 50% { opacity: 0.4; } }
 .lage-media { margin-top: 10px; }
-.lage-cams { display: flex; flex-wrap: wrap; gap: 8px; }
+.lage-cams { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .lage-cams .chip { text-decoration: none; }
 .lage-fotos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
 .lage-fotos img { width: 100%; height: 72px; object-fit: cover; border-radius: 4px; border: 1px solid var(--line); display: block; background: var(--panel); }
@@ -369,10 +371,8 @@ body.lage-open { overflow: hidden; }
 .land.selected { stroke: #fff; stroke-width: 1; }
 
 /* ---------- Länder-Steckbrief ---------- */
-.lage-info { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.lage-flag { font-size: 30px; line-height: 1; }
-.lage-info-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.lage-info-chips span { font-size: 12px; color: var(--text); background: var(--cyan-soft); border: 1px solid var(--line); border-radius: 4px; padding: 3px 7px; }
+.lage-info { font-size: 12px; color: var(--muted); letter-spacing: .04em; margin: 2px 0 10px; }
+.lage-flag { font-size: 22px; vertical-align: -2px; }
 
 /* ---------- Brennpunkte: Reiter, Routen, Krisenpunkte ---------- */
 .lage-regions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
