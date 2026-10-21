@@ -4,7 +4,7 @@ import express from "express";
 import { config, checkConfig, DASHBOARD_DIR } from "./config.js";
 import { requireAuth, requireShortcutOrAuth, verifyPassword, createToken, loginAllowed, recordFailure, clearFailures } from "./auth.js";
 import { ask } from "./brain.js";
-import { attachAgentHub, isAgentOnline, getAgentInfo } from "./agent-hub.js";
+import { attachAgentHub, isAgentOnline, getAgentInfo, sendToAgent } from "./agent-hub.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
@@ -119,6 +119,13 @@ app.get("/api/status", (req, res) => {
 app.get("/api/update", asyncRoute(async (req, res) => res.json({ ...(await checkForUpdate()), status: getUpdateStatus() })));
 app.post("/api/update", (req, res) => res.json(startUpdate()));
 
+app.get("/api/system", asyncRoute(async (req, res) => {
+  if (!isAgentOnline()) return res.json({ online: false });
+  const r = await sendToAgent("system_info", {}, 12000);
+  if (!r || r.ok === false) return res.json({ online: false });
+  const { ok, ...info } = r;
+  res.json({ online: true, ...info });
+}));
 app.get("/api/weather", asyncRoute(async (req, res) => res.json(await getWeather())));
 app.get("/api/reminders", (req, res) => res.json(store.getReminders().filter((r) => !r.done)));
 app.get("/api/memory", (req, res) => res.json(store.getMemories()));

@@ -186,7 +186,28 @@
     refreshWeather();
     refreshReminders();
     refreshProtocols();
+    refreshSystem();
   }
+
+  // System-Infos (vom Mac): Wärme, Akku, Prozessor, Netzwerk, Speicher, Leistung.
+  async function refreshSystem() {
+    const box = $("system-body");
+    if (!box) return;
+    try {
+      const s = await (await api("/api/system")).json();
+      if (!s.online) { box.innerHTML = '<span class="muted">Mac nicht verbunden</span>'; return; }
+      const bar = (p) => `<span class="sys-bar"><i style="width:${Math.max(3, Math.min(100, p || 0))}%;background:${p > 85 ? "var(--bad)" : "var(--cyan)"}"></i></span>`;
+      const rows = [];
+      rows.push(`<li><span>🌡 Wärme</span><b class="${s.temp === "heiß" ? "bad" : s.temp === "erhöht" ? "" : "ok"}">${escapeHtml(s.temp || "-")}</b></li>`);
+      if (s.akku != null) rows.push(`<li><span>🔋 Akku</span><b>${s.akku}%${s.akku_laedt ? " ⚡" : ""}</b></li>`);
+      if (s.cpu_prozent != null) rows.push(`<li><span>⚙ Prozessor</span><b>${s.cpu_prozent}%</b></li>${bar(s.cpu_prozent)}`);
+      if (s.ram_prozent != null) rows.push(`<li><span>🧠 Speicher</span><b>${s.ram_benutzt_gb}/${s.ram_gesamt_gb} GB</b></li>${bar(s.ram_prozent)}`);
+      if (s.disk_prozent != null) rows.push(`<li><span>💾 Festplatte</span><b>${s.disk_benutzt_gb}/${s.disk_gesamt_gb} GB</b></li>${bar(s.disk_prozent)}`);
+      if (s.netzwerk) rows.push(`<li><span>📶 Netzwerk</span><b>${escapeHtml(s.netzwerk)}</b></li>`);
+      box.innerHTML = `<ul class="list status-list sys-list">${rows.join("")}</ul>`;
+    } catch { box.innerHTML = '<span class="muted">nicht verfügbar</span>'; }
+  }
+  setInterval(() => { if (token) refreshSystem(); }, 8000);
 
   setInterval(() => token && refreshStatus(), 30000);
   setInterval(() => token && refreshReminders(), 60000);

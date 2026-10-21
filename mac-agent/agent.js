@@ -100,6 +100,52 @@ const actions = {
   async battery() {
     return await run("pmset", ["-g", "batt"]);
   },
+  async system_info() {
+    const info = {};
+    try {
+      const b = await run("pmset", ["-g", "batt"]);
+      info.akku = Number(b.match(/(\d+)%/)?.[1] ?? null);
+      info.akku_laedt = /AC Power|charging/i.test(b) && !/discharging/i.test(b);
+    } catch { /* egal */ }
+    try {
+      const cores = os.cpus().length || 1;
+      info.cpu_prozent = Math.min(100, Math.round((os.loadavg()[0] / cores) * 100));
+      info.kerne = cores;
+    } catch { /* egal */ }
+    try {
+      const pm = await run("top", ["-l", "1", "-n", "0"]);
+      const m = pm.match(/PhysMem:\s*([\d.]+)([MG])\s*used.*?([\d.]+)([MG])\s*unused/i);
+      const toGb = (n, u) => (u.toUpperCase() === "G" ? +n : +n / 1024);
+      const totalGb = os.totalmem() / 1e9;
+      const used = m ? toGb(m[1], m[2]) : (os.totalmem() - os.freemem()) / 1e9;
+      info.ram_benutzt_gb = Math.round(used * 10) / 10;
+      info.ram_gesamt_gb = Math.round(totalGb * 10) / 10;
+      info.ram_prozent = Math.round((used / totalGb) * 100);
+    } catch { /* egal */ }
+    try {
+      const d = await run("df", ["-k", "/"]);
+      const parts = d.split("\n")[1].split(/\s+/);
+      const totalGb = +parts[1] / 1048576, usedGb = +parts[2] / 1048576;
+      info.disk_benutzt_gb = Math.round(usedGb);
+      info.disk_gesamt_gb = Math.round(totalGb);
+      info.disk_prozent = Math.round((usedGb / totalGb) * 100);
+    } catch { /* egal */ }
+    try {
+      const ifs = os.networkInterfaces();
+      let ip = "";
+      for (const arr of Object.values(ifs)) for (const a of arr) if (a.family === "IPv4" && !a.internal) ip = a.address;
+      let ssid = "";
+      try { const w = await run("/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport", ["-I"]); ssid = w.match(/ SSID: (.+)/)?.[1]?.trim() || ""; } catch { /* egal */ }
+      info.netzwerk = ssid || (ip ? "Verbunden" : "Getrennt");
+      info.ip = ip;
+    } catch { /* egal */ }
+    try {
+      const t = await run("pmset", ["-g", "therm"]);
+      const limit = Number(t.match(/CPU_Speed_Limit\s*=\s*(\d+)/)?.[1] ?? 100);
+      info.temp = limit >= 100 ? "normal" : limit >= 60 ? "erhöht" : "heiß";
+    } catch { info.temp = "normal"; }
+    return info;
+  },
   async dark_mode_toggle() {
     await osa('tell application "System Events" to tell appearance preferences to set dark mode to not dark mode');
     return "Design umgeschaltet";

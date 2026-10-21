@@ -565,3 +565,9 @@ input[type="range"] { accent-color: var(--cyan); }
 }
 .menu-row:hover { background: var(--cyan-soft); color: var(--cyan); }
 .menu-row .mi { width: 19px; height: 19px; flex: 0 0 auto; stroke: currentColor; stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- System-Infos ---------- */
+.sys-list li { align-items: baseline; }
+.sys-bar { display: block; height: 4px; border-radius: 3px; background: rgba(255,255,255,.08); margin: -2px 0 8px; overflow: hidden; }
+.sys-bar i { display: block; height: 100%; border-radius: 3px; }
+#system-body .bad { color: var(--bad); } #system-body .ok { color: var(--ok); }
