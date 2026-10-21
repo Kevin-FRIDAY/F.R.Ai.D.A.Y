@@ -41,6 +41,8 @@ export const config = {
   // Woher Updates kommen (GitHub-Repo "Besitzer/Name" und Zweig).
   updateRepo: env("UPDATE_REPO", "Kevin-FRIDAY/F.R.Ai.D.A.Y"),
   updateBranch: env("UPDATE_BRANCH", "main"),
+  // Kostenloser Schlüssel von aisstream.io für die Live-Schiffsverfolgung (optional).
+  aisKey: env("AISSTREAM_API_KEY"),
 };
 
 export function checkConfig() {

@@ -148,7 +148,7 @@
         landGroup.append(el("path", { d: geoPath(f) || "", class: "land", "data-id": id }));
       }
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-markers" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-markers" }), shade);
       landGroup.addEventListener("click", (e) => {
         const id = e.target.getAttribute?.("data-id");
         if (id && countries.some((c) => c.id === id)) select(id);
@@ -191,12 +191,13 @@
   }
 
   function placePoints() {
-    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake")) {
+    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake, #lage-ships .ship")) {
       const lon = +node.dataset.lon, lat = +node.dataset.lat;
       if (!visible(lon, lat)) { node.style.display = "none"; continue; }
       node.style.display = "";
       const p = projection([lon, lat]);
       if (node.tagName === "circle") { node.setAttribute("cx", p[0].toFixed(1)); node.setAttribute("cy", p[1].toFixed(1)); }
+      else if (node.classList.contains("ship")) node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)}) rotate(${node.dataset.cog || 0})`);
       else node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)})`);
     }
   }
@@ -457,6 +458,7 @@
     $("lage-world").classList.remove("hidden");
     await mapReady;
     animateGlobe([-r.lon, -r.lat, 0], baseScale * (r.zoom || 3), 1000);
+    loadShipsFor({ region: id });
     $("lage-land").textContent = r.name;
     const box = $("lage-detail"); box.className = "";
     box.innerHTML = `<p class="muted">Lade Lage in ${escapeHtml(r.name)}...</p>`;
@@ -496,11 +498,90 @@
       }
       satMap.setView([lat, lon], zoom);
       setTimeout(() => satMap.invalidateSize(), 60);
+      addSatShips(lon, lat);
     } catch {
       $("sat-map").innerHTML = '<p class="error" style="padding:16px">Satellitenkarte konnte nicht geladen werden.</p>';
     }
   }
   $("sat-x").addEventListener("click", () => $("sat").classList.add("hidden"));
+
+  // Schiffe auf der Satellitenkarte (mit Detail-Popup).
+  let satShipLayer = null;
+  async function addSatShips(lon, lat) {
+    const L = window.L;
+    if (!L || !satMap) return;
+    if (satShipLayer) { satMap.removeLayer(satShipLayer); satShipLayer = null; }
+    try {
+      const data = await (await api(`/api/lage-schiffe?near=${encodeURIComponent(lon + "," + lat)}`)).json();
+      if (!data.aktiv || !data.schiffe?.length) return;
+      satShipLayer = L.layerGroup().addTo(satMap);
+      for (const s of data.schiffe) {
+        if (s.lat == null) continue;
+        const m = L.circleMarker([s.lat, s.lon], { radius: 5, color: "#4fd8ff", weight: 1, fillColor: "#4fd8ff", fillOpacity: 0.8 });
+        m.bindPopup(`<b>🚢 ${escapeHtml(s.name)}</b><br>${escapeHtml(s.typ)}${s.tempo_kn != null ? " · " + s.tempo_kn + " kn" : ""}${s.kurs != null ? " · Kurs " + s.kurs + "°" : ""}${s.laenge_m ? "<br>Länge " + s.laenge_m + " m" : ""}${s.ziel ? "<br>Ziel: " + escapeHtml(s.ziel) : ""}`);
+        satShipLayer.addLayer(m);
+      }
+    } catch { /* Schiffe optional */ }
+  }
+
+  // ---------- Schiffe (AIS, braucht Gratis-Schlüssel) ----------
+  let shipAktiv = true;
+  async function loadShipsFor(params) {
+    const g = $("lage-ships");
+    if (g) g.replaceChildren();
+    if (!$("lage-ships-on")?.checked) return;
+    const q = params.region ? `region=${params.region}` : `near=${encodeURIComponent(params.near)}`;
+    try {
+      const data = await (await api(`/api/lage-schiffe?${q}`)).json();
+      shipAktiv = data.aktiv;
+      if (!data.aktiv || !Array.isArray(data.schiffe)) return;
+      renderShips(data.schiffe);
+    } catch { /* Schiffe optional */ }
+  }
+
+  function renderShips(list) {
+    const g = $("lage-ships");
+    if (!g || !projection) return;
+    g.replaceChildren();
+    for (const s of list.slice(0, 60)) {
+      if (s.lat == null) continue;
+      const node = el("g", { class: "ship", role: "button", tabindex: "0" });
+      node.dataset.lon = s.lon; node.dataset.lat = s.lat; node.dataset.cog = s.kurs || 0;
+      if (!visible(s.lon, s.lat)) node.style.display = "none";
+      else { const p = projection([s.lon, s.lat]); node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)}) rotate(${s.kurs || 0})`); }
+      node.append(el("path", { d: "M0,-5 L3.2,5 L-3.2,5 Z", class: "ship-tri" }));
+      const t = el("title"); t.textContent = `${s.name} · ${s.typ}${s.tempo_kn != null ? " · " + s.tempo_kn + " kn" : ""}`; node.append(t);
+      node.addEventListener("click", () => showShipCard(s));
+      node.addEventListener("keydown", (e) => { if (e.key === "Enter") showShipCard(s); });
+      g.append(node);
+    }
+  }
+
+  function showShipCard(s) {
+    let card = $("lage-shipcard");
+    if (!card) {
+      card = document.createElement("div"); card.id = "lage-shipcard"; card.className = "lage-shipcard";
+      $("lage").append(card);
+    }
+    card.innerHTML = `<button class="ship-x" aria-label="Schließen">✕</button>
+      <h3>🚢 ${escapeHtml(s.name)}</h3>
+      <div class="ship-rows">
+        <span>Typ</span><b>${escapeHtml(s.typ)}</b>
+        ${s.tempo_kn != null ? `<span>Tempo</span><b>${s.tempo_kn} kn</b>` : ""}
+        ${s.kurs != null ? `<span>Kurs</span><b>${s.kurs}°</b>` : ""}
+        ${s.laenge_m ? `<span>Länge</span><b>${s.laenge_m} m</b>` : ""}
+        ${s.ziel ? `<span>Ziel</span><b>${escapeHtml(s.ziel)}</b>` : ""}
+      </div>`;
+    card.querySelector(".ship-x").addEventListener("click", () => card.remove());
+    card.classList.remove("hidden");
+  }
+
+  document.addEventListener("change", (e) => {
+    if (e.target?.id === "lage-ships-on") {
+      if (!e.target.checked) { $("lage-ships")?.replaceChildren(); $("lage-shipcard")?.remove(); }
+      else if (selected) loadShipsFor({ near: (() => { const c = countries.find((x) => x.id === selected); return c ? `${c.lon},${c.lat}` : ""; })() });
+    }
+  });
 
   // ---------- Ein Land ----------
   async function select(id) {
@@ -534,6 +615,7 @@
       $("lage-assess-btn").addEventListener("click", () => assess(id));
       loadInfo(id);
       loadMedia(id);
+      loadShipsFor({ near: `${c?.lon},${c?.lat}` });
     } catch (err) {
       box.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
     }

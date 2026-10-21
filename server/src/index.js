@@ -7,6 +7,7 @@ import { ask } from "./brain.js";
 import { attachAgentHub, isAgentOnline, getAgentInfo } from "./agent-hub.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
+import { startShips, getShips, shipsStatus } from "./ships.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getSummary, friendlyError } from "./lagezentrum.js";
@@ -106,6 +107,7 @@ app.get("/api/status", (req, res) => {
     telegram: Boolean(config.telegramToken),
     push: Boolean(config.ntfyTopic),
     smartHome: Boolean(config.haUrl),
+    schiffe: shipsStatus(),
     briefing: getLatestBriefing(),
     uptime: Math.round(process.uptime()),
     version: localVersion(),
@@ -132,6 +134,23 @@ app.get("/api/lage-region/:id", asyncRoute(async (req, res) => {
   const region = REGIONS.find((r) => r.id === req.params.id);
   if (!region) return res.status(404).json({ error: "Region nicht gefunden" });
   res.json({ ...region, meldungen: await getRegionNews(region) });
+}));
+app.get("/api/lage-schiffe", asyncRoute(async (req, res) => {
+  const st = shipsStatus();
+  if (!st.aktiv) return res.json({ aktiv: false, schiffe: [] });
+  let box;
+  if (req.query.region) {
+    const r = REGIONS.find((x) => x.id === req.query.region);
+    if (!r) return res.status(404).json({ error: "Region nicht gefunden" });
+    const d = 7; box = [r.lon - d, r.lat - d, r.lon + d, r.lat + d];
+  } else if (req.query.near) {
+    const [lon, lat] = String(req.query.near).split(",").map(Number);
+    if (Number.isNaN(lon) || Number.isNaN(lat)) return res.status(400).json({ error: "near ungültig" });
+    const d = 8; box = [lon - d, lat - d, lon + d, lat + d];
+  } else {
+    return res.status(400).json({ error: "region oder near nötig" });
+  }
+  res.json({ aktiv: true, verbunden: st.verbunden, schiffe: getShips(box[0], box[1], box[2], box[3]) });
 }));
 app.get("/api/lage-beben", asyncRoute(async (req, res) => res.json(await getQuakes())));
 app.get("/api/lage/:id", asyncRoute(async (req, res) => {
@@ -180,3 +199,4 @@ server.listen(config.port, config.host, () => {
 });
 startScheduler();
 startTelegram();
+startShips();

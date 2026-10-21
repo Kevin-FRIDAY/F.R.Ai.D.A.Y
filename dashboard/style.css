@@ -391,3 +391,13 @@ body.lage-open { overflow: hidden; }
 .sat-top h2 { margin: 0; }
 .sat-map { width: 100%; height: min(60vh, 460px); border-radius: 6px; overflow: hidden; border: 1px solid var(--line); background: #000; }
 .sat-map .leaflet-container { background: #000; font-family: var(--font); }
+
+/* ---------- Schiffe ---------- */
+.ship { cursor: pointer; }
+.ship-tri { fill: #4fd8ff; stroke: #02060d; stroke-width: .4; }
+.ship:hover .ship-tri { fill: #fff; }
+.lage-shipcard { position: absolute; right: 16px; bottom: 16px; z-index: 5; width: min(280px, 70vw); background: var(--panel); border: 1px solid var(--cyan); border-radius: 8px; padding: 12px 14px; backdrop-filter: blur(8px); }
+.lage-shipcard h3 { margin: 0 0 8px; font-size: 15px; color: var(--cyan); }
+.lage-shipcard .ship-rows { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; }
+.lage-shipcard .ship-rows span { color: var(--muted); }
+.ship-x { position: absolute; top: 8px; right: 8px; background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 14px; }
