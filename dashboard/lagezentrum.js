@@ -371,12 +371,14 @@
       render();
       fillDatalist();
       updateStand(data);
-      // Solange der Scanner die Welt durchläuft, alle paar Sekunden nachladen.
+      // Solange der Scanner die Welt durchläuft, alle paar Sekunden nachladen,
+      // danach laufend im Hintergrund frisch halten (immer aktuell).
       clearTimeout(pollTimer);
       if (data.scannt || data.geladen < data.gesamt) {
         pollTimer = setTimeout(() => load(false), 3000);
       } else {
         $("lage").classList.remove("scanning");
+        pollTimer = setTimeout(() => load(false), 90 * 1000);
       }
     } catch (err) {
       $("lage-stand").textContent = `Lage nicht verfügbar: ${err.message}`;
@@ -389,7 +391,7 @@
       $("lage-stand").textContent = `Scanne Welt... ${data.geladen}/${data.gesamt} Länder`;
     } else {
       const time = data.stand ? new Date(data.stand).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) : "jetzt";
-      $("lage-stand").textContent = `${data.gesamt} Länder überwacht · Stand ${time}`;
+      $("lage-stand").textContent = `● Live · ${data.gesamt} Länder · Stand ${time}`;
     }
   }
 
@@ -517,7 +519,7 @@
         rg.replaceChildren();
         (b.routen || []).forEach((r, i) => {
           routeGeo.push({ type: "LineString", coordinates: r.punkte });
-          rg.append(el("path", { class: "route", "data-i": i, d: geoPath(routeGeo[i]) || "" }));
+          rg.append(el("path", { class: `route route-${r.art || "gefahr"}`, "data-i": i, d: geoPath(routeGeo[i]) || "" }));
         });
       }
       // Krisenpunkte (pulsierend, rot)

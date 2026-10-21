@@ -76,11 +76,19 @@ export const REGIONS = [
 ];
 
 // Rote Linien (wichtige Seewege) und Brennpunkte für den Globus.
+// art: "gefahr" = rote Krisen-/Konfliktroute, "handel" = oranger Haupt-Handelsweg.
 export const ROUTES = [
-  { name: "Rotes Meer / Suez", punkte: [[32.3, 31.2], [32.5, 29.9], [38, 20], [43.3, 12.6], [48, 13], [56.3, 26.6]] },
-  { name: "Ostsee-Kabel", punkte: [[12.6, 55.6], [19, 59.3], [27, 59.8]] },
-  { name: "Taiwanstraße", punkte: [[118, 23], [120.5, 24.5], [122, 26]] },
-  { name: "Schwarzes Meer", punkte: [[29, 41], [31.5, 44.6], [36, 46]] },
+  { name: "Rotes Meer / Suez", art: "gefahr", punkte: [[32.3, 31.2], [32.5, 29.9], [38, 20], [43.3, 12.6], [48, 13], [56.3, 26.6]] },
+  { name: "Ostsee-Kabel", art: "gefahr", punkte: [[12.6, 55.6], [19, 59.3], [27, 59.8]] },
+  { name: "Taiwanstraße", art: "gefahr", punkte: [[118, 23], [120.5, 24.5], [122, 26]] },
+  { name: "Schwarzes Meer", art: "gefahr", punkte: [[29, 41], [31.5, 44.6], [36, 46]] },
+  // Große Handelsrouten (orange)
+  { name: "Suez → Europa", art: "handel", punkte: [[32.5, 31.5], [20, 36], [5, 38], [-5.5, 36], [-9, 39], [2, 51]] },
+  { name: "Asien → Suez", art: "handel", punkte: [[103.8, 1.2], [80, 6], [60, 12], [48, 13], [43.3, 12.6], [33, 28]] },
+  { name: "Malakka-Straße", art: "handel", punkte: [[98, 6], [100, 3], [103.8, 1.2], [106, 2]] },
+  { name: "Panamakanal", art: "handel", punkte: [[-79.9, 9.4], [-79.5, 8.9]] },
+  { name: "Transpazifik", art: "handel", punkte: [[121.8, 31], [140, 36], [-150, 40], [-122.4, 37.8]] },
+  { name: "Nordatlantik", art: "handel", punkte: [[-74, 40.6], [-40, 48], [-9, 51], [4, 52]] },
 ];
 export const HOTSPOTS = [
   { name: "Gaza", lon: 34.45, lat: 31.5 },
@@ -119,6 +127,12 @@ async function scanWorld() {
   } finally {
     scanning = false;
   }
+}
+
+// Friday recherchiert laufend im Hintergrund, damit die Lage immer aktuell ist.
+export function startAutoScan() {
+  scanWorld();
+  setInterval(() => { if (!scanning) scanWorld(); }, 12 * 60 * 1000);
 }
 
 // Übersicht für die Weltkarte: aus dem Zwischenspeicher, plus Anstoß zum Nachladen.

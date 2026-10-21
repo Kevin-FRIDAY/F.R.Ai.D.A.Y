@@ -11,7 +11,7 @@ import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
-import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, getSummary, friendlyError } from "./lagezentrum.js";
+import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError } from "./lagezentrum.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus } from "./updater.js";
 
 const missing = checkConfig();
@@ -217,3 +217,4 @@ server.listen(config.port, config.host, () => {
 startScheduler();
 startTelegram();
 startShips();
+startAutoScan();
