@@ -41,12 +41,7 @@
         <div class="side-brand">F.R.<span>Ai</span>.D.A.Y<small id="side-status">● online</small></div>
       </div>
       <nav class="side-nav">
-        <button id="lage-btn" class="side-item">🌍 <span>Lagezentrum</span></button>
-        <button id="brain-btn" class="side-item">🧠 <span>Gehirn</span></button>
-        <button id="camera-live-btn" class="side-item">📷 <span>Kamera</span></button>
-        <button id="look-btn" class="side-item">🖥 <span>Bildschirm</span></button>
-        <button id="briefing-btn" class="side-item">📋 <span>Briefing</span></button>
-        <button id="new-chat-btn" class="side-item">✨ <span>Neues Gespräch</span></button>
+        <button id="menu-side" class="side-item"><svg viewBox="0 0 24 24" class="mi" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="5" cy="6" r="1.4"/><circle cx="5" cy="12" r="1.4"/><circle cx="5" cy="18" r="1.4"/><path d="M10 6h9M10 12h9M10 18h9"/></svg><span>Menü</span></button>
       </nav>
       <div class="side-foot">
         <button id="settings-btn" class="side-item accent">⚙ <span>Einstellungen</span></button>
@@ -54,6 +49,16 @@
         <button id="logout" class="side-item small">⏻ <span>Abmelden</span></button>
       </div>
     </aside>
+
+    <!-- Echte Funktions-Knöpfe (versteckt): Handler + Ziele für das Menü -->
+    <div class="hidden" aria-hidden="true">
+      <button id="lage-btn"></button>
+      <button id="brain-btn"></button>
+      <button id="camera-live-btn"></button>
+      <button id="look-btn"></button>
+      <button id="briefing-btn"></button>
+      <button id="new-chat-btn"></button>
+    </div>
 
     <!-- Schwebender Menü-Knopf: alle Funktionen bleiben erreichbar -->
     <button id="menu-fab" class="menu-fab" title="Menü" aria-label="Menü">

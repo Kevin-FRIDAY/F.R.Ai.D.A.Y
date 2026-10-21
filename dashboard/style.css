@@ -67,8 +67,8 @@ body {
 .hud {
   position: relative; z-index: 1;
   display: grid;
-  grid-template-columns: 1fr 300px;
-  grid-template-areas: "center topright";
+  grid-template-columns: 220px 1fr 290px;
+  grid-template-areas: "side center topright";
   gap: 16px;
   padding: 16px;
   min-height: 100dvh;
@@ -82,7 +82,7 @@ body {
 .clockcard { padding: 12px 16px; }
 
 /* Seitenleiste */
-.sidebar { display: none; }
+.sidebar { grid-area: side; display: flex; flex-direction: column; gap: 10px; }
 .side-nav { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
 .side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 6px; }
 .side-item {
@@ -545,7 +545,8 @@ body::before {
 input[type="range"] { accent-color: var(--cyan); }
 
 /* ---------- Schwebendes Menü (ersetzt Seitenleiste vorübergehend) ---------- */
-.menu-fab {
+.menu-fab { display: none; }
+.menu-fab-off {
   position: fixed; top: 16px; left: 16px; z-index: 18; width: 46px; height: 46px; padding: 0;
   display: flex; align-items: center; justify-content: center; border-radius: 14px;
   background: var(--panel); border: 1px solid var(--line); color: var(--cyan);
@@ -553,7 +554,7 @@ input[type="range"] { accent-color: var(--cyan); }
 }
 .menu-fab:hover { border-color: var(--cyan); box-shadow: 0 0 20px var(--cyan-soft); }
 .menu-pop {
-  position: fixed; top: 70px; left: 16px; z-index: 18; width: 230px; padding: 8px;
+  position: fixed; top: 150px; left: 16px; z-index: 18; width: 230px; padding: 8px;
   display: flex; flex-direction: column; gap: 3px; border-radius: 16px;
   background: color-mix(in srgb, var(--bg) 82%, #000); border: 1px solid var(--line);
   backdrop-filter: blur(20px); box-shadow: 0 16px 40px rgba(0,0,0,.6);

@@ -329,13 +329,14 @@
   // Schwebendes Menü: hält alle Funktionen ohne Seitenleiste erreichbar.
   const menuPop = $("menu-pop");
   $("menu-fab")?.addEventListener("click", (e) => { e.stopPropagation(); menuPop?.classList.toggle("hidden"); });
+  $("menu-side")?.addEventListener("click", (e) => { e.stopPropagation(); menuPop?.classList.toggle("hidden"); });
   menuPop?.addEventListener("click", (e) => {
     const row = e.target.closest(".menu-row");
     if (!row) return;
     menuPop.classList.add("hidden");
     document.getElementById(row.dataset.target)?.click();
   });
-  document.addEventListener("click", (e) => { if (menuPop && !menuPop.classList.contains("hidden") && !menuPop.contains(e.target) && e.target.id !== "menu-fab") menuPop.classList.add("hidden"); });
+  document.addEventListener("click", (e) => { if (menuPop && !menuPop.classList.contains("hidden") && !menuPop.contains(e.target) && e.target.id !== "menu-fab" && !e.target.closest("#menu-side")) menuPop.classList.add("hidden"); });
 
   // ---------- Design: Farb-Themes + AMOLED ----------
   const THEMES = { orange: "#ff8a1e", cyan: "#4fd8ff", gruen: "#46e0a0", rot: "#ff5d6c", lila: "#b57bff", gold: "#ffcc4d", pink: "#ff6ec7", eis: "#8fb6ff" };
