@@ -64,6 +64,45 @@ export async function getCountryNews(country) {
   return entry;
 }
 
+// --- Brennpunkte / Regionen (Seewege und Krisengebiete) ---
+export const REGIONS = [
+  { id: "welt", name: "Welt", lon: 10, lat: 20, zoom: 1 },
+  { id: "rotes-meer", name: "Rotes Meer", lon: 43, lat: 16, zoom: 3.4, query: "Rotes Meer OR Suezkanal OR Huthi OR Bab el-Mandeb" },
+  { id: "gaza", name: "Gaza", lon: 34.5, lat: 31.4, zoom: 4, query: "Gaza OR Israel OR Nahost" },
+  { id: "ostsee", name: "Ostsee", lon: 19, lat: 58, zoom: 3.4, query: "Ostsee OR Unterseekabel OR Pipeline" },
+  { id: "hormus", name: "Straße von Hormus", lon: 56, lat: 26.5, zoom: 4, query: "Straße von Hormus OR Iran Golf OR Tanker" },
+  { id: "taiwan", name: "Taiwan", lon: 120.5, lat: 24, zoom: 4, query: "Taiwan OR China Taiwan OR Taiwanstraße" },
+  { id: "ukraine", name: "Ukraine", lon: 32, lat: 49, zoom: 3, query: "Ukraine OR Russland Krieg" },
+];
+
+// Rote Linien (wichtige Seewege) und Brennpunkte für den Globus.
+export const ROUTES = [
+  { name: "Rotes Meer / Suez", punkte: [[32.3, 31.2], [32.5, 29.9], [38, 20], [43.3, 12.6], [48, 13], [56.3, 26.6]] },
+  { name: "Ostsee-Kabel", punkte: [[12.6, 55.6], [19, 59.3], [27, 59.8]] },
+  { name: "Taiwanstraße", punkte: [[118, 23], [120.5, 24.5], [122, 26]] },
+  { name: "Schwarzes Meer", punkte: [[29, 41], [31.5, 44.6], [36, 46]] },
+];
+export const HOTSPOTS = [
+  { name: "Gaza", lon: 34.45, lat: 31.5 },
+  { name: "Rotes Meer", lon: 43.3, lat: 13 },
+  { name: "Straße von Hormus", lon: 56.3, lat: 26.6 },
+  { name: "Taiwan", lon: 120.5, lat: 24 },
+  { name: "Ukraine", lon: 37, lat: 48 },
+];
+
+const regionCache = new Map();
+export async function getRegionNews(region) {
+  if (!region.query) return [];
+  const cached = regionCache.get(region.id);
+  if (cached && Date.now() - cached.at < 15 * 60 * 1000) return cached.items;
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(region.query)}+when:2d&hl=de&gl=DE&ceid=DE:de`;
+  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 F.R.Ai.D.A.Y" }, signal: AbortSignal.timeout(15000) });
+  if (!res.ok) throw new Error(`Google News ${res.status}`);
+  const items = parseRss(await res.text()).slice(0, 15);
+  regionCache.set(region.id, { at: Date.now(), items });
+  return items;
+}
+
 // --- Hintergrund-Scanner: füllt nach und nach die Nachrichtenlage aller Länder ---
 let scanning = false;
 let lastScanDone = 0;

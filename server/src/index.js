@@ -9,7 +9,7 @@ import { getWeather, getProtocols, runTool } from "./tools.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
-import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getNewsImages, getCountryInfo, getCountryNews, getSummary, friendlyError } from "./lagezentrum.js";
+import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getSummary, friendlyError } from "./lagezentrum.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus } from "./updater.js";
 
 const missing = checkConfig();
@@ -127,6 +127,12 @@ app.post("/api/history/clear", (req, res) => {
 
 // --- Lagezentrum ---
 app.get("/api/lage", (req, res) => res.json(getOverview()));
+app.get("/api/lage-brennpunkte", (req, res) => res.json({ regionen: REGIONS, routen: ROUTES, hotspots: HOTSPOTS }));
+app.get("/api/lage-region/:id", asyncRoute(async (req, res) => {
+  const region = REGIONS.find((r) => r.id === req.params.id);
+  if (!region) return res.status(404).json({ error: "Region nicht gefunden" });
+  res.json({ ...region, meldungen: await getRegionNews(region) });
+}));
 app.get("/api/lage-beben", asyncRoute(async (req, res) => res.json(await getQuakes())));
 app.get("/api/lage/:id", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id);

@@ -118,6 +118,18 @@
     </aside>
   </main>
 
+  <!-- Satellitenansicht (Esri, öffentlich) -->
+  <section id="sat" class="sat hidden" aria-label="Satellit">
+    <div class="sat-box">
+      <header class="sat-top">
+        <h2 id="sat-title">Satellit</h2>
+        <button id="sat-x" class="ghost small" title="Schließen">✕</button>
+      </header>
+      <div id="sat-map" class="sat-map"></div>
+      <p class="muted small-text">Satellitenbilder: Esri World Imagery (öffentlich)</p>
+    </div>
+  </section>
+
   <!-- Kamera (deine eigene, mit Erlaubnis) -->
   <section id="camera" class="camera hidden" aria-label="Kamera">
     <div class="panel camera-box">
@@ -148,6 +160,7 @@
       <datalist id="lage-countries"></datalist>
       <button id="lage-world" class="ghost small hidden" title="Zurück zur Weltkarte">🌍 Welt</button>
     </div>
+    <div id="lage-regions" class="lage-regions"></div>
     <div class="lage-body">
       <div class="lage-map-wrap panel">
         <svg id="lage-map" class="lage-map" viewBox="0 0 960 500" role="img" aria-label="Weltkarte"></svg>

@@ -15,6 +15,9 @@
   let pollTimer = null;
   let maxCount = 1;
   let viewAnim = null;
+  let routeGeo = [];
+  let regions = [];
+  let brennReady = false;
 
   const ALIASES = {
     "england": "826", "uk": "826", "großbritannien": "826", "vereinigtes königreich": "826",
@@ -37,7 +40,13 @@
   $("lage-close").addEventListener("click", close);
   $("lage-refresh").addEventListener("click", () => load(true));
   $("lage-world").addEventListener("click", () => { selected = null; render(); flyToWorld(); $("lage-world").classList.add("hidden"); $("lage-land").textContent = "Land wählen"; $("lage-detail").innerHTML = 'Tippe auf der Karte oder in der Liste auf ein Land.'; });
-  $("lage-q").addEventListener("change", () => { const c = findLocal($("lage-q").value); if (c) { $("lage-q").value = c.name; select(c.id); } });
+  const findRegion = (key) => { const k = String(key || "").trim().toLowerCase(); return regions.find((r) => r.id !== "welt" && (r.name.toLowerCase() === k || (k.length >= 4 && r.name.toLowerCase().includes(k)))); };
+  $("lage-q").addEventListener("change", () => {
+    const v = $("lage-q").value;
+    const reg = findRegion(v);
+    if (reg) { $("lage-q").value = reg.name; selectRegion(reg.id); return; }
+    const c = findLocal(v); if (c) { $("lage-q").value = c.name; select(c.id); }
+  });
   $("lage-mic").addEventListener("click", listenCountry);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("lage").classList.contains("hidden")) close(); });
 
@@ -51,6 +60,9 @@
     rec.onresult = (e) => {
       const alts = [...e.results[0]].map((a) => a.transcript);
       let hit = null;
+      let reg = null;
+      for (const a of alts) { reg = findRegion(a) || findRegion(a.replace(/^(zeig(e)? mir|geh(e)? (nach|in)|was ist (in|los in))\s+/i, "")); if (reg) break; }
+      if (reg) { $("lage-q").value = reg.name; selectRegion(reg.id); $("lage-mic").classList.remove("listening"); return; }
       for (const a of alts) { hit = findLocal(a) || findLocal(a.replace(/^(zeig(e)? mir|geh(e)? (nach|in)|was ist (in|los in))\s+/i, "")); if (hit) break; }
       if (hit) { $("lage-q").value = hit.name; select(hit.id); }
       else $("lage-q").value = alts[0] || "";
@@ -67,6 +79,7 @@
     mapReady.then(() => { if (!selected && projection) startSpin(); });
     load(false);
     loadQuakes();
+    loadBrennpunkte();
   }
 
   function close() {
@@ -135,7 +148,7 @@
         landGroup.append(el("path", { d: geoPath(f) || "", class: "land", "data-id": id }));
       }
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-quakes" }), el("g", { id: "lage-markers" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-markers" }), shade);
       landGroup.addEventListener("click", (e) => {
         const id = e.target.getAttribute?.("data-id");
         if (id && countries.some((c) => c.id === id)) select(id);
@@ -171,17 +184,20 @@
     const s = projection.scale();
     if (atmo) atmo.setAttribute("r", s + 10);
     if (shade) shade.setAttribute("r", s);
+    // Rote Routen (nur Vorderseite sichtbar durch clipAngle).
+    const rg = $("lage-routes");
+    if (rg) for (const path of rg.children) { const geo = routeGeo[path.dataset.i]; if (geo) path.setAttribute("d", geoPath(geo) || ""); }
     placePoints();
   }
 
   function placePoints() {
-    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-quakes .quake")) {
+    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake")) {
       const lon = +node.dataset.lon, lat = +node.dataset.lat;
       if (!visible(lon, lat)) { node.style.display = "none"; continue; }
       node.style.display = "";
       const p = projection([lon, lat]);
-      if (node.classList.contains("marker")) node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)})`);
-      else { node.setAttribute("cx", p[0].toFixed(1)); node.setAttribute("cy", p[1].toFixed(1)); }
+      if (node.tagName === "circle") { node.setAttribute("cx", p[0].toFixed(1)); node.setAttribute("cy", p[1].toFixed(1)); }
+      else node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)})`);
     }
   }
 
@@ -385,9 +401,111 @@
     }
   }
 
+  // ---------- Brennpunkte: Reiter, rote Routen, Krisenpunkte ----------
+  async function loadBrennpunkte() {
+    if (brennReady) return;
+    try {
+      const b = await (await api("/api/lage-brennpunkte")).json();
+      regions = b.regionen || [];
+      await mapReady;
+      // Reiter oben
+      const bar = $("lage-regions");
+      if (bar) {
+        bar.replaceChildren(...regions.map((r) => {
+          const btn = document.createElement("button");
+          btn.className = "lage-region-tab"; btn.textContent = r.name; btn.dataset.id = r.id;
+          btn.addEventListener("click", () => selectRegion(r.id));
+          return btn;
+        }));
+      }
+      // Rote Routen auf dem Globus
+      const rg = $("lage-routes");
+      routeGeo = [];
+      if (rg && projection) {
+        rg.replaceChildren();
+        (b.routen || []).forEach((r, i) => {
+          routeGeo.push({ type: "LineString", coordinates: r.punkte });
+          rg.append(el("path", { class: "route", "data-i": i, d: geoPath(routeGeo[i]) || "" }));
+        });
+      }
+      // Krisenpunkte (pulsierend, rot)
+      const hg = $("lage-hotspots");
+      if (hg && projection) {
+        hg.replaceChildren();
+        for (const h of b.hotspots || []) {
+          const pos = projection([h.lon, h.lat]);
+          const g2 = el("g", { class: "hotspot", transform: `translate(${pos[0].toFixed(1)},${pos[1].toFixed(1)})` });
+          g2.dataset.lon = h.lon; g2.dataset.lat = h.lat;
+          if (!visible(h.lon, h.lat)) g2.style.display = "none";
+          g2.append(el("circle", { r: 14, class: "pulse" }), el("circle", { r: 4, class: "core" }));
+          const t = el("title"); t.textContent = `Brennpunkt: ${h.name}`; g2.append(t);
+          hg.append(g2);
+        }
+      }
+      brennReady = true;
+      redrawGlobe();
+    } catch { /* Brennpunkte optional */ }
+  }
+
+  async function selectRegion(id) {
+    const r = regions.find((x) => x.id === id);
+    if (!r) return;
+    document.querySelectorAll(".lage-region-tab").forEach((b) => b.classList.toggle("active", b.dataset.id === id));
+    selected = null;
+    document.querySelectorAll("#lage-map .land.selected, #lage-markers .selected").forEach((n) => n.classList.remove("selected"));
+    if (id === "welt") { $("lage-land").textContent = "Land wählen"; $("lage-detail").innerHTML = "Tippe auf der Karte, in der Liste oder oben auf einen Brennpunkt."; $("lage-world").classList.add("hidden"); flyToWorld(); return; }
+    $("lage-world").classList.remove("hidden");
+    await mapReady;
+    animateGlobe([-r.lon, -r.lat, 0], baseScale * (r.zoom || 3), 1000);
+    $("lage-land").textContent = r.name;
+    const box = $("lage-detail"); box.className = "";
+    box.innerHTML = `<p class="muted">Lade Lage in ${escapeHtml(r.name)}...</p>`;
+    try {
+      const data = await (await api(`/api/lage-region/${id}`)).json();
+      const items = (data.meldungen || []).slice(0, 12).map((n) => {
+        const t = new Date(n.date).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+        const title = n.link ? `<a href="${escapeHtml(n.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(n.title)}</a>` : escapeHtml(n.title);
+        return `<li>${title}<small>${escapeHtml(n.source)} · ${t}</small></li>`;
+      }).join("") || `<li class="muted">Keine Meldungen.</li>`;
+      box.innerHTML = `<div class="lage-cams"><button class="chip" data-sat="${r.lon},${r.lat}">🛰 Satellitenbild</button></div><ul class="lage-news">${items}</ul>`;
+      box.querySelector("[data-sat]")?.addEventListener("click", () => openSat(r.lon, r.lat, 6, r.name));
+    } catch (err) {
+      box.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  // ---------- Satellitenansicht (Esri, öffentlich, kein Schlüssel) ----------
+  let leafletReady = null, satMap = null;
+  async function openSat(lon, lat, zoom, title) {
+    $("sat-title").textContent = `Satellit: ${title}`;
+    $("sat").classList.remove("hidden");
+    leafletReady ??= (async () => {
+      if (!document.getElementById("leaflet-css")) {
+        const l = document.createElement("link"); l.id = "leaflet-css"; l.rel = "stylesheet";
+        l.href = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"; document.head.append(l);
+      }
+      await import("https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet-src.esm.js").then((m) => { window.L = m; });
+    })();
+    try {
+      await leafletReady;
+      const L = window.L;
+      if (!satMap) {
+        satMap = L.map("sat-map", { attributionControl: false, zoomControl: true });
+        L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 18 }).addTo(satMap);
+        L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { maxZoom: 18, opacity: 0.7 }).addTo(satMap);
+      }
+      satMap.setView([lat, lon], zoom);
+      setTimeout(() => satMap.invalidateSize(), 60);
+    } catch {
+      $("sat-map").innerHTML = '<p class="error" style="padding:16px">Satellitenkarte konnte nicht geladen werden.</p>';
+    }
+  }
+  $("sat-x").addEventListener("click", () => $("sat").classList.add("hidden"));
+
   // ---------- Ein Land ----------
   async function select(id) {
     selected = id;
+    document.querySelectorAll(".lage-region-tab.active").forEach((b) => b.classList.remove("active"));
     render();
     const c = countries.find((x) => x.id === id);
     $("lage-land").textContent = c ? c.name : "Land";
@@ -477,12 +595,15 @@
             `<a href="${escapeHtml(f.seite || f.bild)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(f.titel)}">
                <img loading="lazy" src="${escapeHtml(f.bild)}" alt="${escapeHtml(f.titel)}"></a>`).join("")}</div>`
         : "";
+      const c = countries.find((x) => x.id === id);
       wrap.innerHTML = `
         <div class="lage-cams">
+          ${c ? `<button class="chip" id="lage-sat-btn">🛰 Satellitenbild</button>` : ""}
           <a class="chip" href="${escapeHtml(m.kameras)}" target="_blank" rel="noopener noreferrer">📹 Öffentliche Live-Kameras</a>
           <a class="chip" href="${escapeHtml(m.nachrichten_videos)}" target="_blank" rel="noopener noreferrer">📺 Mehr Videos</a>
         </div>
         ${fotos}`;
+      if (c) $("lage-sat-btn")?.addEventListener("click", () => openSat(c.lon, c.lat, 6, c.name));
     } catch {
       wrap.innerHTML = "";
     }
