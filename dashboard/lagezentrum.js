@@ -49,7 +49,7 @@
     if (reg) { $("lage-q").value = reg.name; selectRegion(reg.id); return; }
     const c = findLocal(v); if (c) { $("lage-q").value = c.name; select(c.id); }
   });
-  $("lage-mic").addEventListener("click", listenCountry);
+  $("lage-mic")?.addEventListener("click", listenCountry);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("lage").classList.contains("hidden")) close(); });
 
   // Land per Stimme sagen (nutzt die Spracherkennung des Browsers).
@@ -58,19 +58,19 @@
     if (!R) { $("lage-q").focus(); return; }
     const rec = new R();
     rec.lang = "de-DE"; rec.interimResults = false; rec.maxAlternatives = 3;
-    $("lage-mic").classList.add("listening");
+    $("lage-mic")?.classList.add("listening");
     rec.onresult = (e) => {
       const alts = [...e.results[0]].map((a) => a.transcript);
       let hit = null;
       let reg = null;
       for (const a of alts) { reg = findRegion(a) || findRegion(a.replace(/^(zeig(e)? mir|geh(e)? (nach|in)|was ist (in|los in))\s+/i, "")); if (reg) break; }
-      if (reg) { $("lage-q").value = reg.name; selectRegion(reg.id); $("lage-mic").classList.remove("listening"); return; }
+      if (reg) { $("lage-q").value = reg.name; selectRegion(reg.id); $("lage-mic")?.classList.remove("listening"); return; }
       for (const a of alts) { hit = findLocal(a) || findLocal(a.replace(/^(zeig(e)? mir|geh(e)? (nach|in)|was ist (in|los in))\s+/i, "")); if (hit) break; }
       if (hit) { $("lage-q").value = hit.name; select(hit.id); }
       else $("lage-q").value = alts[0] || "";
     };
-    rec.onend = () => $("lage-mic").classList.remove("listening");
-    rec.onerror = () => $("lage-mic").classList.remove("listening");
+    rec.onend = () => $("lage-mic")?.classList.remove("listening");
+    rec.onerror = () => $("lage-mic")?.classList.remove("listening");
     try { rec.start(); } catch { /* läuft schon */ }
   }
 
@@ -602,11 +602,9 @@
     const dLon = 9, dLat = 6;
     const bbox = `${(lon - dLon).toFixed(2)},${(lat - dLat).toFixed(2)},${(lon + dLon).toFixed(2)},${(lat + dLat).toFixed(2)}`;
     const url = `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=${bbox}&bboxSR=4326&imageSR=4326&size=560,300&format=jpg&f=image`;
-    const cam = `https://www.windy.com/-Webcams/webcams?${lat},${lon},6`;
     return `<div class="lage-satview" title="Satellitenkarte öffnen">
       <img loading="lazy" src="${encodeURI(url)}" alt="Satellit ${escapeHtml(name)}" onerror="this.closest('.lage-satview').remove()">
       <span class="sat-label">🛰 Satellit · tippen für groß</span>
-      <a class="sat-cam" href="${cam}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📹 Live-Kameras</a>
     </div>`;
   }
 
@@ -822,13 +820,17 @@
       if (selected !== id || !wrap.isConnected) return;
       // Mehrere aktuelle Videos als anklickbare Vorschau (öffnen das echte Video).
       const vids = (m.videos && m.videos.length ? m.videos : (m.video ? [m.video] : []));
+      // Live-Kamera automatisch anzeigen (öffentlicher Livestream).
+      if (m.webcam) {
+        vids.unshift(m.webcam);
+      }
       const vbox = $("lage-video");
       if (vbox) {
         vbox.innerHTML = vids.length
           ? `<div class="lage-videos">${vids.map((vid, i) =>
               `<a class="lage-video" href="https://www.youtube.com/watch?v=${encodeURIComponent(vid)}" target="_blank" rel="noopener noreferrer" title="Video ansehen">
                  <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg" alt="Video" onerror="this.closest('a').remove()">
-                 <span class="play">▶</span>${i === 0 ? '<span class="vlabel">Live / aktuell</span>' : ""}</a>`).join("")}</div>`
+                 <span class="play">▶</span>${i === 0 ? '<span class="vlabel">📹 Live</span>' : ""}</a>`).join("")}</div>`
           : "";
       }
       wrap.innerHTML = `

@@ -236,12 +236,13 @@ async function fetchFotos(country) {
 export async function getMedia(country) {
   const cached = mediaCache.get(country.id);
   // Bilder und Video parallel holen, damit es schnell geht.
-  const [fotos, videoIds] = await Promise.all([
+  const [fotos, videoIds, webcam] = await Promise.all([
     cached && Date.now() - cached.at < 6 * 60 * 60 * 1000 ? cached.fotos : fetchFotos(country),
     getVideos(country),
+    getWebcam(country),
   ]);
   mediaCache.set(country.id, { at: Date.now(), fotos });
-  return withLinks(country, fotos, videoIds[0] || null, videoIds);
+  return withLinks(country, fotos, videoIds[0] || null, videoIds, webcam);
 }
 
 // Erstes passendes (Live-)Video von YouTube suchen – serverseitig, ohne Schlüssel.
@@ -271,12 +272,24 @@ async function getVideos(country) {
 }
 async function getVideoId(country) { return (await getVideos(country))[0] || null; }
 
-function withLinks(country, fotos, videoId, videoIds) {
+// Öffentliche Live-Webcam (YouTube-Livestream) für das Land.
+const webcamCache = new Map();
+async function getWebcam(country) {
+  const c = webcamCache.get(country.id);
+  if (c && Date.now() - c.at < 60 * 60 * 1000) return c.id;
+  let id = null;
+  try { id = (await ytSearch((country.en || country.name) + " live webcam", true))[0] || null; } catch { /* optional */ }
+  webcamCache.set(country.id, { at: Date.now(), id });
+  return id;
+}
+
+function withLinks(country, fotos, videoId, videoIds, webcam) {
   const { lat, lon, name } = country;
   return {
     fotos,
     video: videoId || null,
     videos: videoIds || (videoId ? [videoId] : []),
+    webcam: webcam || null,
     // Öffentliche Live-Kameras und Videos: Links auf frei zugängliche Dienste.
     kameras: `https://www.windy.com/-Webcams/webcams?${lat},${lon},6`,
     live_cam: `https://www.youtube.com/results?search_query=${encodeURIComponent(name + " live cam")}`,
