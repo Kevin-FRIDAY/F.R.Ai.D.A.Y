@@ -252,6 +252,7 @@
         const res = await api("/api/tts", { method: "POST", body: JSON.stringify({ text }) });
         if (res.ok) {
           audio.src = URL.createObjectURL(await res.blob());
+          window.FridayFace?.talkWithAudio(audio);
           await audio.play();
           await new Promise((r) => { audio.onended = r; audio.onerror = r; });
           return;
@@ -264,6 +265,7 @@
           if (germanVoice) u.voice = germanVoice;
           u.rate = Number(storage.get("friday_rate")) || 1.05;
           u.pitch = Number(storage.get("friday_pitch")) || 1;
+          u.onstart = () => window.FridayFace?.talk(true);
           u.onend = resolve;
           u.onerror = resolve;
           speechSynthesis.speak(u);
@@ -271,6 +273,7 @@
       }
     } catch { /* still */ } finally {
       speaking = false;
+      window.FridayFace?.stop();
       setState("Bereit, Boss.");
       resumeWake();
     }
