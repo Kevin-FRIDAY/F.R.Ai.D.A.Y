@@ -144,6 +144,22 @@ const actions = {
       const limit = Number(t.match(/CPU_Speed_Limit\s*=\s*(\d+)/)?.[1] ?? 100);
       info.temp = limit >= 100 ? "normal" : limit >= 60 ? "erhöht" : "heiß";
     } catch { info.temp = "normal"; }
+    // Aktive Programme (nach CPU)
+    try {
+      const ps = await run("ps", ["-arcwwwxo", "comm,%cpu"]);
+      const seen = new Set(); const apps = [];
+      for (const line of ps.split("\n").slice(1)) {
+        const m = line.trim().match(/^(.+?)\s+([\d.]+)$/);
+        if (!m) continue;
+        let name = m[1].trim(); const cpu = Math.round(+m[2]);
+        if (/^(kernel_task|WindowServer|launchd|ps|top|loginwindow|coreaudiod|hidd)$/i.test(name)) continue;
+        name = name.replace(/\.app$/i, "");
+        if (seen.has(name)) continue; seen.add(name);
+        apps.push({ name, cpu });
+        if (apps.length >= 5) break;
+      }
+      info.prozesse = apps;
+    } catch { /* egal */ }
     return info;
   },
   async dark_mode_toggle() {

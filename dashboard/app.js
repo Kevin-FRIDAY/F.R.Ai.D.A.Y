@@ -187,24 +187,30 @@
     refreshReminders();
     refreshProtocols();
     refreshSystem();
+    loadToday();
+    setGreeting();
   }
 
   // System-Infos (vom Mac): Wärme, Akku, Prozessor, Netzwerk, Speicher, Leistung.
   async function refreshSystem() {
-    const box = $("system-body");
+    const box = $("system-body"); const proc = $("proc-list");
     if (!box) return;
     try {
       const s = await (await api("/api/system")).json();
-      if (!s.online) { box.innerHTML = '<span class="muted">Mac nicht verbunden</span>'; return; }
-      const bar = (p) => `<span class="sys-bar"><i style="width:${Math.max(3, Math.min(100, p || 0))}%;background:${p > 85 ? "var(--bad)" : "var(--cyan)"}"></i></span>`;
+      if (!s.online) { box.innerHTML = '<span class="muted">Mac nicht verbunden</span>'; if (proc) proc.innerHTML = '<li class="muted">–</li>'; return; }
+      const stat = (label, p, val) => `<li class="sysrow"><span>${label}</span><b>${val}</b></li><span class="sys-bar"><i style="width:${Math.max(3, Math.min(100, p || 0))}%;background:${p > 85 ? "var(--bad)" : "var(--cyan)"}"></i></span>`;
       const rows = [];
-      rows.push(`<li><span>🌡 Wärme</span><b class="${s.temp === "heiß" ? "bad" : s.temp === "erhöht" ? "" : "ok"}">${escapeHtml(s.temp || "-")}</b></li>`);
-      if (s.akku != null) rows.push(`<li><span>🔋 Akku</span><b>${s.akku}%${s.akku_laedt ? " ⚡" : ""}</b></li>`);
-      if (s.cpu_prozent != null) rows.push(`<li><span>⚙ Prozessor</span><b>${s.cpu_prozent}%</b></li>${bar(s.cpu_prozent)}`);
-      if (s.ram_prozent != null) rows.push(`<li><span>🧠 Speicher</span><b>${s.ram_benutzt_gb}/${s.ram_gesamt_gb} GB</b></li>${bar(s.ram_prozent)}`);
-      if (s.disk_prozent != null) rows.push(`<li><span>💾 Festplatte</span><b>${s.disk_benutzt_gb}/${s.disk_gesamt_gb} GB</b></li>${bar(s.disk_prozent)}`);
-      if (s.netzwerk) rows.push(`<li><span>📶 Netzwerk</span><b>${escapeHtml(s.netzwerk)}</b></li>`);
-      box.innerHTML = `<ul class="list status-list sys-list">${rows.join("")}</ul>`;
+      if (s.cpu_prozent != null) rows.push(stat("CPU", s.cpu_prozent, s.cpu_prozent + "%"));
+      if (s.ram_prozent != null) rows.push(stat("RAM", s.ram_prozent, s.ram_prozent + "%"));
+      if (s.disk_prozent != null) rows.push(stat("Speicher", s.disk_prozent, s.disk_prozent + "%"));
+      const extra = [];
+      if (s.akku != null) extra.push(`Akku ${s.akku}%${s.akku_laedt ? " ⚡" : ""}`);
+      extra.push(`Wärme ${s.temp || "-"}`);
+      if (s.netzwerk) extra.push(escapeHtml(s.netzwerk));
+      box.innerHTML = `<ul class="list sys-list">${rows.join("")}</ul><div class="sys-extra muted">${extra.join(" · ")}</div>`;
+      if (proc) proc.innerHTML = (s.prozesse || []).length
+        ? s.prozesse.map((a) => `<li class="procrow"><span>${escapeHtml(a.name)}</span><b>${a.cpu}%</b></li>`).join("")
+        : '<li class="muted">–</li>';
     } catch { box.innerHTML = '<span class="muted">nicht verfügbar</span>'; }
   }
   setInterval(() => { if (token) refreshSystem(); }, 8000);
@@ -417,6 +423,87 @@
   }
   orgHandlers("task", "/api/tasks");
   orgHandlers("shop", "/api/shopping");
+
+  // ---------- Navigation (Seitenleiste + Schnellzugriff) ----------
+  function navTo(where, el) {
+    document.querySelectorAll(".nav-item").forEach((n) => n.classList.toggle("active", n.dataset.nav === where));
+    switch (where) {
+      case "home": break;
+      case "chat": $("text")?.focus(); break;
+      case "kalender": openSheet("kalender"); loadKalender(); break;
+      case "aufgaben": openSheet("organizer"); loadOrganizer(); break;
+      case "dateien": openSheet("dateien"); break;
+      case "wissen": openSheet("brain"); loadBrain(); break;
+      case "system": openSheet("brain"); loadBrain(); break;
+      case "einstellungen": openSheet("settings"); break;
+      case "websuche": { const t = $("text"); if (t) { t.value = ""; t.placeholder = "Was soll Friday im Web suchen?"; t.focus(); } break; }
+    }
+  }
+  document.querySelectorAll("[data-nav]").forEach((b) => b.addEventListener("click", () => navTo(b.dataset.nav, b)));
+
+  // ---------- Begrüßung nach Tageszeit ----------
+  function setGreeting() {
+    const g = $("greeting"); if (!g) return;
+    const h = new Date().getHours();
+    const teil = h < 5 ? "Gute Nacht" : h < 11 ? "Guten Morgen" : h < 18 ? "Guten Tag" : "Guten Abend";
+    g.textContent = `${teil}, ${status.name || "Boss"}.`;
+  }
+  setGreeting(); setInterval(setGreeting, 10 * 60000);
+
+  // ---------- "Heute" + Schnellzugriff-Zähler ----------
+  async function loadToday() {
+    try {
+      const [rem, tasks] = await Promise.all([
+        (await api("/api/reminders")).json(),
+        (await api("/api/tasks")).json(),
+      ]);
+      const today = new Date().toDateString();
+      const items = rem.filter((r) => new Date(r.due).toDateString() === today)
+        .sort((a, b) => a.due.localeCompare(b.due))
+        .map((r) => ({ t: r.text, z: new Date(r.due).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) }));
+      const tl = $("today-list");
+      if (tl) tl.innerHTML = items.length
+        ? items.map((i) => `<li class="todayrow"><span>${escapeHtml(i.t)}</span><small>${i.z}</small></li>`).join("")
+        : '<li class="muted">Nichts geplant</li>';
+      const open = tasks.filter((t) => !t.done).length;
+      if ($("q-auf")) $("q-auf").textContent = `${open} offen`;
+      const next = rem.filter((r) => new Date(r.due) >= new Date()).sort((a, b) => a.due.localeCompare(b.due))[0];
+      if ($("q-kal")) $("q-kal").textContent = next ? new Date(next.due).toLocaleString("de-DE", { weekday: "short", hour: "2-digit", minute: "2-digit" }) : "Kein Termin";
+    } catch { /* still */ }
+  }
+  setInterval(() => token && loadToday(), 60000);
+
+  // ---------- Kalender-Sheet ----------
+  $("kalender-x")?.addEventListener("click", () => closeSheet("kalender"));
+  async function loadKalender() {
+    const list = $("kal-list"); if (!list) return;
+    try {
+      const rem = await (await api("/api/reminders")).json();
+      list.innerHTML = rem.length ? rem.sort((a, b) => a.due.localeCompare(b.due)).map((r) =>
+        `<li class="org-item" data-id="${r.id}"><span>${escapeHtml(r.text)}</span><small class="muted" style="margin:0 8px">${new Date(r.due).toLocaleString("de-DE", { weekday: "short", hour: "2-digit", minute: "2-digit" })}</small><button class="org-del">✕</button></li>`).join("")
+        : '<li class="muted">Keine Termine.</li>';
+    } catch { list.innerHTML = '<li class="muted">Nicht erreichbar.</li>'; }
+  }
+  $("kal-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault(); const inp = $("kal-input"); const text = inp.value.trim(); if (!text) return;
+    inp.value = ""; await api("/api/reminders", { method: "POST", body: JSON.stringify({ text }) }); loadKalender(); loadToday();
+  });
+  $("kal-list")?.addEventListener("click", async (e) => {
+    const li = e.target.closest(".org-item"); if (!li || !e.target.closest(".org-del")) return;
+    await api(`/api/reminders/${li.dataset.id}`, { method: "DELETE" }); loadKalender(); loadToday();
+  });
+
+  // ---------- Dateien-Sheet ----------
+  $("dateien-x")?.addEventListener("click", () => closeSheet("dateien"));
+  $("file-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault(); const q = $("file-input").value.trim(); const list = $("file-list"); if (!q || !list) return;
+    list.innerHTML = '<li class="muted">Suche...</li>';
+    try {
+      const r = await (await api(`/api/find?q=${encodeURIComponent(q)}`)).json();
+      if (!r.online) { list.innerHTML = '<li class="muted">Mac nicht verbunden.</li>'; return; }
+      list.innerHTML = r.dateien.length ? r.dateien.map((f) => `<li class="filerow">${escapeHtml(f.split("/").pop())}<small class="muted">${escapeHtml(f)}</small></li>`).join("") : '<li class="muted">Nichts gefunden.</li>';
+    } catch { list.innerHTML = '<li class="muted">Fehler.</li>'; }
+  });
 
   const APPS = [
     { n: "YouTube", d: "youtube.com", u: "https://www.youtube.com" },

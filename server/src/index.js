@@ -137,6 +137,21 @@ app.post("/api/shopping", (req, res) => res.json(store.addShopping(String(req.bo
 app.patch("/api/shopping/:id", (req, res) => res.json(store.toggleShopping(req.params.id) || {}));
 app.delete("/api/shopping/:id", (req, res) => res.json({ ok: store.deleteShopping(req.params.id) }));
 app.get("/api/reminders", (req, res) => res.json(store.getReminders().filter((r) => !r.done)));
+app.post("/api/reminders", (req, res) => {
+  const text = String(req.body?.text || "").slice(0, 300);
+  const due = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+  res.json(store.addReminder(text, due));
+});
+app.delete("/api/reminders/:id", (req, res) => {
+  const list = store.getReminders().filter((r) => r.id !== req.params.id);
+  store.updateReminders(list); res.json({ ok: true });
+});
+app.get("/api/find", asyncRoute(async (req, res) => {
+  if (!isAgentOnline()) return res.json({ online: false, dateien: [] });
+  const r = await sendToAgent("find_file", { value: String(req.query.q || "") }, 25000);
+  const text = r && r.result ? String(r.result) : "";
+  res.json({ online: true, dateien: text && text !== "Nichts gefunden" ? text.split("\n").filter(Boolean).slice(0, 15) : [] });
+}));
 app.get("/api/memory", (req, res) => res.json(store.getMemories()));
 app.delete("/api/memory/:id", (req, res) => res.json({ geloescht: store.forgetMemory(req.params.id) }));
 app.post("/api/history/clear", (req, res) => {
