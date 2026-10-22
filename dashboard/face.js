@@ -52,7 +52,7 @@
   ];
 
   const ROWS = PROFILE.length;
-  const COLS = 30;
+  const COLS = 36;
   const bump = (y, c, w) => { const t = (y - c) / w; return t > -1 && t < 1 ? (1 - t * t) : 0; };
 
   // Netz-Punkte bauen (mit Gesichts-Verformungen vorn)
@@ -139,25 +139,30 @@
     const open = 1 - blinkV;
     ctx.save();
     ctx.translate(pc.sx, pc.sy);
-    // Lidspalte (Mandelform)
-    ctx.strokeStyle = col(0.9); ctx.lineWidth = 1.4; ctx.shadowColor = col(0.9); ctx.shadowBlur = 6;
+    // Lidspalte (Mandelform) + Oberlidfalte
+    ctx.strokeStyle = col(0.95); ctx.lineWidth = 1.5; ctx.shadowColor = col(0.9); ctx.shadowBlur = 6;
     ctx.beginPath();
     ctx.moveTo(-w, 0);
     ctx.quadraticCurveTo(0, -h * open, w, 0);
-    ctx.quadraticCurveTo(0, h * open * 0.8, -w, 0);
+    ctx.quadraticCurveTo(0, h * open * 0.75, -w, 0);
     ctx.stroke();
+    // Oberlidfalte
+    ctx.strokeStyle = col(0.4); ctx.lineWidth = 1; ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.moveTo(-w * 0.85, -h * 0.5 * open - 2); ctx.quadraticCurveTo(0, -h * open - 3, w * 0.85, -h * 0.5 * open - 2); ctx.stroke();
     if (open > 0.3) {
-      // Iris + Pupille, folgt dem Blick
-      const ir = h * 0.9 * open;
-      ctx.beginPath();
-      ctx.fillStyle = col(0.18);
-      ctx.arc(gazeX * w * 0.4, gazeY * h * 0.5, ir, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath();
-      ctx.fillStyle = col(1); ctx.shadowBlur = 8;
-      ctx.arc(gazeX * w * 0.4, gazeY * h * 0.5, ir * 0.45, 0, Math.PI * 2); ctx.fill();
+      // Iris + Pupille, Blick meist nach vorn (nur leichte Drift)
+      const gx = gazeX * w * 0.22, gy = gazeY * h * 0.35;
+      const ir = h * 0.82 * open;
+      ctx.shadowColor = col(0.9);
+      ctx.beginPath(); ctx.fillStyle = col(0.2); ctx.shadowBlur = 4;
+      ctx.arc(gx, gy, ir, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.strokeStyle = col(0.7); ctx.lineWidth = 1; ctx.shadowBlur = 0;
+      ctx.arc(gx, gy, ir, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.fillStyle = col(1); ctx.shadowBlur = 8; ctx.shadowColor = col(1);
+      ctx.arc(gx, gy, ir * 0.42, 0, Math.PI * 2); ctx.fill();
       // Glanzpunkt
-      ctx.beginPath(); ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.shadowBlur = 0;
-      ctx.arc(gazeX * w * 0.4 - ir * 0.3, gazeY * h * 0.5 - ir * 0.3, ir * 0.18, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.shadowBlur = 0;
+      ctx.arc(gx - ir * 0.32, gy - ir * 0.32, ir * 0.18, 0, Math.PI * 2); ctx.fill();
     }
     ctx.restore();
   }
@@ -212,9 +217,9 @@
   function render(now) {
     const dt = Math.min(50, now - t0); t0 = now;
     const tsec = now / 1000;
-    // Kopf wiegt/dreht sich sanft in 3D
-    const yaw = Math.sin(tsec * 0.35) * 0.42 + Math.sin(tsec * 0.13) * 0.12;
-    const pitch = Math.sin(tsec * 0.27) * 0.10 - 0.04;
+    // Fester, leicht gedrehter Blick nach vorn wie im Mockup, nur sanftes Atmen
+    const yaw = -0.22 + Math.sin(tsec * 0.45) * 0.055 + Math.sin(tsec * 0.17) * 0.02;
+    const pitch = -0.05 + Math.sin(tsec * 0.3) * 0.045;
 
     // Blinzeln
     nextBlink -= dt;
@@ -248,15 +253,19 @@
       for (let c = 0; c < COLS; c++) row.push(project(verts[r][c], yaw, pitch, S, CX, CY));
       P.push(row);
     }
-    const depthA = (z) => Math.max(0.05, Math.min(0.82, (z + 1.0) / 1.8 * 0.82));
+    // Tiefen-Helligkeit: vorn hell (Rim-Glow), hinten blass
+    const depthA = (z) => Math.max(0.04, Math.min(0.95, Math.pow((z + 1.0) / 1.9, 1.5) * 0.95));
+    // Schultern/Büste nach unten ausblenden (löst sich auf wie im Mockup)
+    const rowFade = (r) => r <= 14 ? 1 : Math.max(0.08, 1 - (r - 14) / 4.2);
 
-    ctx.lineWidth = 1; ctx.shadowColor = col(0.8); ctx.shadowBlur = 2;
+    ctx.lineWidth = 1; ctx.shadowColor = col(0.85); ctx.shadowBlur = 3;
     // Breitenlinien (Ringe)
     for (let r = 0; r < ROWS; r++) {
+      const fade = rowFade(r);
       for (let c = 0; c < COLS; c++) {
         const a = P[r][c], b = P[r][(c + 1) % COLS];
         const za = (a.z + b.z) / 2;
-        ctx.strokeStyle = col(depthA(za) * 0.75);
+        ctx.strokeStyle = col(depthA(za) * 0.8 * fade);
         ctx.beginPath(); ctx.moveTo(a.sx, a.sy); ctx.lineTo(b.sx, b.sy); ctx.stroke();
       }
     }
@@ -265,7 +274,8 @@
       for (let r = 0; r < ROWS - 1; r++) {
         const a = P[r][c], b = P[r + 1][c];
         const za = (a.z + b.z) / 2;
-        ctx.strokeStyle = col(depthA(za) * 0.7);
+        const fade = (rowFade(r) + rowFade(r + 1)) / 2;
+        ctx.strokeStyle = col(depthA(za) * 0.74 * fade);
         ctx.beginPath(); ctx.moveTo(a.sx, a.sy); ctx.lineTo(b.sx, b.sy); ctx.stroke();
       }
     }
