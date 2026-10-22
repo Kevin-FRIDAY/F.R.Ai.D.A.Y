@@ -70,8 +70,14 @@ body {
   grid-template-columns: 210px 1fr 300px;
   grid-template-areas: "side center rightcol";
   gap: 16px;
-  padding: 16px;
+  padding: 20px;
   min-height: 100dvh;
+}
+/* Feiner Teal-Rahmen wie im Mockup */
+.hud::before {
+  content: ""; position: fixed; inset: 10px; z-index: 0; pointer-events: none;
+  border: 1px solid rgba(90, 200, 230, 0.22); border-radius: 18px;
+  box-shadow: inset 0 0 40px rgba(60, 180, 220, 0.06), 0 0 24px rgba(60, 180, 220, 0.05);
 }
 .brand { font-size: 18px; letter-spacing: 0.3em; color: var(--cyan); text-shadow: 0 0 12px var(--cyan); }
 .brand span { color: var(--gold); text-shadow: 0 0 12px var(--gold); }
@@ -587,21 +593,28 @@ input[type="range"] { accent-color: var(--cyan); }
 .org-del:hover { color: var(--bad); }
 @media (max-width: 900px) { .org-grid { grid-template-columns: 1fr; } }
 
-/* ---------- Animiertes Friday-Gesicht ---------- */
-.core-dim { opacity: 0.28 !important; filter: blur(6px); }
-.face-host { position: absolute; left: 50%; top: 50%; width: 66%; height: 66%; transform: translate(-50%, -50%); pointer-events: none; }
+/* ---------- Menschlicher Hologramm-Kopf (wie Mockup) ---------- */
+/* Orbit-Ringe/Core ausblenden – im Mockup steht der Kopf frei */
+.reactor .ring, .reactor .core { display: none !important; }
+.reactor { width: min(400px, 60vh, 84vw); }
+.core-dim { display: none !important; }
+.face-host { position: absolute; left: 50%; top: 50%; width: 100%; height: 100%; transform: translate(-50%, -50%); pointer-events: none; }
 #ff-svg { width: 100%; height: 100%; overflow: visible; }
-.ff-line { animation: ff-sway 7s ease-in-out infinite; transform-origin: 100px 115px; }
-.ff-line path, .ff-eyerim { fill: none; stroke: var(--cyan); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 3px var(--cyan)); }
-.ff-faint { stroke-opacity: 0.35; stroke-width: 1.3 !important; filter: none !important; }
-.ff-eyerim { stroke-width: 1.6; fill: rgba(0,0,0,0.25); }
+.ff-line { animation: ff-sway 8s ease-in-out infinite; transform-origin: 140px 150px; }
+.ff-line path, .ff-eyerim { fill: none; stroke: var(--cyan); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 2.5px var(--cyan)); }
+.ff-strong { stroke-width: 2 !important; stroke-opacity: 0.95; }
+.ff-mesh { stroke-opacity: 0.5; stroke-width: 1.2 !important; filter: none !important; }
+.ff-faint { stroke-opacity: 0.22; stroke-width: 1 !important; filter: none !important; }
+.ff-eyerim { stroke-width: 1.5; fill: rgba(0,0,0,0.28); }
+.ff-iris { fill: var(--cyan-soft); stroke: var(--cyan); stroke-width: 1; filter: drop-shadow(0 0 3px var(--cyan)); }
 .ff-pupil { fill: var(--cyan); stroke: none; filter: drop-shadow(0 0 5px var(--cyan)); }
+.ff-catch { fill: #fff; stroke: none; opacity: 0.85; }
 .ff-lid { fill: var(--bg); stroke: none; transform-box: fill-box; transform-origin: top; transform: scaleY(0); transition: transform .09s ease; }
 .ff-lid.shut { transform: scaleY(1); }
-.ff-lips { fill: none; stroke: var(--cyan); stroke-width: 2.2; filter: drop-shadow(0 0 3px var(--cyan)); transition: d .06s; }
-.ff-open { fill: rgba(255,138,30,0.22); stroke: var(--cyan); stroke-width: 1.4; }
-.talking #ff-svg { filter: drop-shadow(0 0 6px var(--cyan)); }
-@keyframes ff-sway { 0%,100% { transform: rotate(-1.5deg) translateY(0); } 50% { transform: rotate(1.5deg) translateY(-3px); } }
+.ff-lips { fill: none; stroke: var(--cyan); stroke-width: 2; filter: drop-shadow(0 0 3px var(--cyan)); transition: d .06s; }
+.ff-open { fill: rgba(255,138,30,0.22); stroke: var(--cyan); stroke-width: 1.2; }
+.talking #ff-svg { filter: drop-shadow(0 0 7px var(--cyan)); }
+@keyframes ff-sway { 0%,100% { transform: rotate(-1.4deg) translateY(0); } 50% { transform: rotate(1.4deg) translateY(-3px); } }
 @media (prefers-reduced-motion: reduce) { .ff-line { animation: none; } }
 
 /* ======== Dashboard-Layout nach Vorlage ======== */

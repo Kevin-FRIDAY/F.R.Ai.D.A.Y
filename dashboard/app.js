@@ -367,8 +367,10 @@
     storage.set("friday_amoled", on ? "1" : "0");
   }
   $("amoled-toggle")?.addEventListener("change", (e) => applyAmoled(e.target.checked));
-  // Gespeicherte Vorlieben anwenden
-  applyTheme(storage.get("friday_theme") || "orange");
+  // Gespeicherte Vorlieben anwenden.
+  // Einmalige Umstellung auf Mockup-Orange (falls noch ein altes Theme gespeichert war).
+  if (!storage.get("friday_theme_mockup")) { applyTheme("orange"); storage.set("friday_theme_mockup", "1"); }
+  else applyTheme(storage.get("friday_theme") || "orange");
   if (storage.get("friday_amoled") === "1") { applyAmoled(true); const a = $("amoled-toggle"); if (a) a.checked = true; }
 
   // ---------- Stimme: Auswahl, Tempo, Tonhöhe ----------
