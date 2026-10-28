@@ -357,6 +357,7 @@ export async function runTool(name, input = {}) {
         wetter: "https://www.wetter.com", news: "https://news.google.com",
         osiris: OSIRIS_URL, "osiris ai": OSIRIS_URL, "osiris karte": OSIRIS_URL,
         "live karte": OSIRIS_URL, "weltkarte": OSIRIS_URL, "lagekarte": OSIRIS_URL,
+        lagezentrum: OSIRIS_URL, "lage zentrum": OSIRIS_URL,
       };
       const key = String(input.name || "").trim().toLowerCase();
       const url = APP_URLS[key];
