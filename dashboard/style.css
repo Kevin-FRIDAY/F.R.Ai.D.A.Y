@@ -360,6 +360,16 @@ body.lage-open { overflow: hidden; }
 .lage-night { fill: #000018; fill-opacity: 0.5; stroke: rgba(120, 170, 255, 0.4); stroke-width: 1; pointer-events: none; }
 /* Satelliten */
 .sat { fill: #9fe0ff; fill-opacity: 0.95; stroke: none; filter: drop-shadow(0 0 2px #9fe0ff); pointer-events: auto; }
+/* Weitere Ereignisse (Erdrutsch/Staub/Dürre/Eis) */
+.eevent { fill: #ffd24d; fill-opacity: 0.8; stroke: #fff2cc; stroke-width: 0.4; filter: drop-shadow(0 0 2px #ffd24d); pointer-events: auto; }
+/* Infrastruktur */
+.airport { fill: #7ef0d0; fill-opacity: 0.9; stroke: none; filter: drop-shadow(0 0 1.5px #7ef0d0); pointer-events: auto; }
+.plant { fill: #c79bff; fill-opacity: 0.9; stroke: none; filter: drop-shadow(0 0 1.5px #c79bff); pointer-events: auto; }
+/* Legenden-Anzahl */
+.lage-legend i[id^="cnt-"] { color: var(--muted); font-style: normal; font-size: 10px; }
+/* Info-Karte beim Antippen */
+#lage-markercard .mc-title { font-size: 13px; line-height: 1.35; margin-right: 18px; }
+#lage-markercard .chip { display: inline-block; margin-top: 8px; }
 .marker.aktiv { --c: var(--cyan); }
 .dot.aktiv { background: var(--cyan); } .dot.offen { background: var(--muted); }
 

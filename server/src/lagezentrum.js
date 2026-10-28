@@ -1,7 +1,9 @@
 // Lagezentrum: weltweite Lage aus öffentlichen Quellen (Nachrichten pro Land + Erdbeben).
 // Alle Daten sind frei zugänglich. Keine privaten oder nicht-öffentlichen Informationen.
+import fs from "node:fs";
+import path from "node:path";
 import Anthropic from "@anthropic-ai/sdk";
-import { config } from "./config.js";
+import { config, ROOT } from "./config.js";
 import { getPopulation, getAirQuality } from "./extras.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
@@ -193,10 +195,13 @@ export async function getQuakes() {
 // --- NASA EONET: weltweite Naturereignisse (Feuer, Vulkane, Unwetter, Fluten) ---
 // Kostenlos, kein Schlüssel. https://eonet.gsfc.nasa.gov/
 let eonetCache = null;
-const EONET_CATS = { feuer: "wildfires", vulkane: "volcanoes", stuerme: "severeStorms", fluten: "floods" };
+const EONET_CATS = {
+  feuer: "wildfires", vulkane: "volcanoes", stuerme: "severeStorms", fluten: "floods",
+  erdrutsch: "landslides", staub: "dustHaze", duerre: "drought", eis: "seaLakeIce",
+};
 export async function getEonet() {
   if (eonetCache && Date.now() - eonetCache.at < 15 * 60 * 1000) return eonetCache.data;
-  const out = { feuer: [], vulkane: [], stuerme: [], fluten: [] };
+  const out = { feuer: [], vulkane: [], stuerme: [], fluten: [], erdrutsch: [], staub: [], duerre: [], eis: [] };
   await Promise.all(Object.entries(EONET_CATS).map(async ([key, cat]) => {
     try {
       const res = await fetch(`https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=${cat}&limit=400`, { signal: AbortSignal.timeout(15000) });
@@ -234,6 +239,19 @@ export async function getSatellites() {
   }
   satCache = { at: Date.now(), list: list.slice(0, 140) };
   return satCache.list;
+}
+
+// --- Infrastruktur: große Flughäfen (OurAirports) + Kraftwerke (WRI). Gebündelte Dateien. ---
+const infraCache = {};
+export function getInfra(typ) {
+  const files = { flughaefen: "airports.json", kraftwerke: "powerplants.json" };
+  const file = files[typ];
+  if (!file) return [];
+  if (infraCache[typ]) return infraCache[typ];
+  try {
+    infraCache[typ] = JSON.parse(fs.readFileSync(path.join(ROOT, "data", file), "utf8"));
+  } catch { infraCache[typ] = []; }
+  return infraCache[typ];
 }
 
 // --- Echte Nachrichtenbilder (GDELT, öffentlich, kein Schlüssel) ---

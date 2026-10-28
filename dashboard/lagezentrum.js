@@ -88,6 +88,8 @@
     clearInterval(eventsTimer);
     eventsTimer = setInterval(loadEvents, 5 * 60 * 1000);
     loadSats();
+    loadInfra("flughaefen", "lage-airports", "airport", "lage-air-on");
+    loadInfra("kraftwerke", "lage-powerplants", "plant", "lage-kw-on");
     loadBrennpunkte();
     startISS();
   }
@@ -219,7 +221,7 @@
         landGroup.append(el("path", { d: geoPath(f) || "", class: "land", "data-id": id }));
       }
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
       landGroup.addEventListener("click", (e) => {
         if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
@@ -286,7 +288,7 @@
   }
 
   function placePoints() {
-    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake, #lage-fires .fire, #lage-volcanoes .volcano, #lage-storms .storm, #lage-ships .ship, #lage-planes .plane")) {
+    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake, #lage-fires .fire, #lage-volcanoes .volcano, #lage-storms .storm, #lage-weitere .eevent, #lage-airports .airport, #lage-powerplants .plant, #lage-ships .ship, #lage-planes .plane")) {
       const lon = +node.dataset.lon, lat = +node.dataset.lat;
       if (!visible(lon, lat)) { node.style.display = "none"; continue; }
       node.style.display = "";
@@ -542,21 +544,57 @@
     const g = $(gid);
     if (!g) return;
     g.replaceChildren();
-    if (!$(toggleId)?.checked) return;
+    if (!$(toggleId)?.checked) return 0;
+    let n = 0;
     for (const ev of list || []) {
       const pos = project?.(ev.lon, ev.lat);
       if (!pos) continue;
       const node = el("circle", { cx: pos[0].toFixed(1), cy: pos[1].toFixed(1), r: cls === "fire" ? 2.6 : 3.6, class: cls });
       node.dataset.lon = ev.lon; node.dataset.lat = ev.lat;
+      node.dataset.titel = ev.titel || ""; node.dataset.link = ev.link || "";
       if (!visible(ev.lon, ev.lat)) node.style.display = "none";
       const t = el("title"); t.textContent = ev.titel || ""; node.append(t);
-      g.append(node);
+      g.append(node); n++;
     }
+    return n;
   }
+  const setCount = (id, n) => { const e = $(id); if (e) e.textContent = n ? ` (${n})` : ""; };
   function renderEvents() {
     renderEventGroup("lage-fires", "fire", events.feuer, "lage-fires-on");
     renderEventGroup("lage-volcanoes", "volcano", events.vulkane, "lage-volc-on");
     renderEventGroup("lage-storms", "storm", [...(events.stuerme || []), ...(events.fluten || [])], "lage-storms-on");
+    renderEventGroup("lage-weitere", "eevent", [...(events.erdrutsch || []), ...(events.staub || []), ...(events.duerre || []), ...(events.eis || [])], "lage-weitere-on");
+    setCount("cnt-fires", (events.feuer || []).length);
+    setCount("cnt-volc", (events.vulkane || []).length);
+    setCount("cnt-storms", (events.stuerme || []).length + (events.fluten || []).length);
+    setCount("cnt-weitere", (events.erdrutsch || []).length + (events.staub || []).length + (events.duerre || []).length + (events.eis || []).length);
+  }
+
+  // ---------- Infrastruktur: große Flughäfen + Kraftwerke ----------
+  let infra = { flughaefen: null, kraftwerke: null };
+  async function loadInfra(typ, gid, cls, toggleId) {
+    if (!$(toggleId)?.checked) { $(gid)?.replaceChildren(); return; }
+    try {
+      if (!infra[typ]) infra[typ] = await (await api("/api/lage-infra?typ=" + typ)).json();
+      await mapReady;
+      renderInfra(typ, gid, cls, toggleId);
+    } catch { /* optional */ }
+  }
+  function renderInfra(typ, gid, cls, toggleId) {
+    const g = $(gid);
+    if (!g) return;
+    g.replaceChildren();
+    if (!$(toggleId)?.checked || !infra[typ]) return;
+    for (const o of infra[typ]) {
+      const pos = project?.(o.lon, o.lat);
+      if (!pos) continue;
+      const node = el("circle", { cx: pos[0].toFixed(1), cy: pos[1].toFixed(1), r: 1.7, class: cls });
+      node.dataset.lon = o.lon; node.dataset.lat = o.lat;
+      node.dataset.titel = typ === "flughaefen" ? `✈ ${o.n}${o.iata ? " (" + o.iata + ")" : ""}` : `⚡ ${o.n} · ${o.mw} MW · ${o.f}`;
+      if (!visible(o.lon, o.lat)) node.style.display = "none";
+      const t = el("title"); t.textContent = node.dataset.titel; node.append(t);
+      g.append(node);
+    }
   }
 
   // ---------- Satelliten (Celestrak-Bahndaten, Positionen mit satellite.js) ----------
@@ -856,13 +894,33 @@
       if (!e.target.checked) $("lage-planes")?.replaceChildren();
       else if (planeParams) loadPlanesFor(planeParams);
     }
-    if (["lage-fires-on", "lage-volc-on", "lage-storms-on"].includes(e.target?.id)) renderEvents();
+    if (["lage-fires-on", "lage-volc-on", "lage-storms-on", "lage-weitere-on"].includes(e.target?.id)) renderEvents();
     if (e.target?.id === "lage-night-on") drawNight();
     if (e.target?.id === "lage-sats-on") {
       if (!e.target.checked) { clearTimeout(satTimer); satTimer = null; $("lage-sats")?.replaceChildren(); }
       else loadSats();
     }
+    if (e.target?.id === "lage-air-on") loadInfra("flughaefen", "lage-airports", "airport", "lage-air-on");
+    if (e.target?.id === "lage-kw-on") loadInfra("kraftwerke", "lage-powerplants", "plant", "lage-kw-on");
   });
+
+  // Info-Karte beim Antippen eines Markers (Ereignis/Satellit/Infrastruktur)
+  $("lage-map")?.addEventListener("click", (e) => {
+    if (dragMoved) return;
+    const n = e.target.closest(".fire, .volcano, .storm, .eevent, .sat, .airport, .plant");
+    if (!n) return;
+    const titel = n.dataset.titel || (n.querySelector("title")?.textContent) || "";
+    if (!titel) return;
+    const link = n.dataset.link || "";
+    showMarkerCard(titel, link);
+  });
+  function showMarkerCard(titel, link) {
+    $("lage-markercard")?.remove();
+    const card = el("div", { id: "lage-markercard", class: "lage-shipcard panel" });
+    card.innerHTML = `<button class="ship-x" title="Schließen">✕</button><div class="mc-title">${escapeHtml(titel)}</div>${link ? `<a class="chip" href="${encodeURI(link)}" target="_blank" rel="noopener">Mehr dazu</a>` : ""}`;
+    $("lage")?.append(card);
+    card.querySelector(".ship-x").addEventListener("click", () => card.remove());
+  }
 
   // ---------- Ein Land ----------
   async function select(id) {
