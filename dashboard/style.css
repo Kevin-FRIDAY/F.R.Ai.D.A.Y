@@ -368,8 +368,15 @@ body.lage-open { overflow: hidden; }
 /* Legenden-Anzahl */
 .lage-legend i[id^="cnt-"] { color: var(--muted); font-style: normal; font-size: 10px; }
 /* Info-Karte beim Antippen */
-#lage-markercard .mc-title { font-size: 13px; line-height: 1.35; margin-right: 18px; }
-#lage-markercard .chip { display: inline-block; margin-top: 8px; }
+#lage-markercard { position: absolute; right: 16px; bottom: 16px; z-index: 6; min-width: 220px; max-width: 300px; border: 1px solid var(--cyan); border-radius: 10px; padding: 12px 14px; background: var(--panel); backdrop-filter: blur(10px); }
+#lage-markercard .mc-type { font-size: 11px; color: var(--muted); letter-spacing: .04em; margin-right: 18px; }
+#lage-markercard .mc-dot { color: var(--ok); }
+#lage-markercard .mc-title { font-size: 14px; font-weight: 600; line-height: 1.3; margin: 3px 18px 8px 0; color: var(--text); }
+#lage-markercard .mc-rows { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 12px; }
+#lage-markercard .mc-rows span { color: var(--muted); }
+#lage-markercard .mc-rows b { text-align: right; font-weight: 600; }
+#lage-markercard .mc-live { margin-top: 2px; }
+#lage-markercard .chip { display: inline-block; margin-top: 10px; }
 .marker.aktiv { --c: var(--cyan); }
 .dot.aktiv { background: var(--cyan); } .dot.offen { background: var(--muted); }
 

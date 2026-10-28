@@ -502,9 +502,10 @@
       const r = Math.max(2, (q.staerke || 0) * 1.3);
       const node = el("circle", { cx: pos[0].toFixed(1), cy: pos[1].toFixed(1), r: r.toFixed(1), class: "quake" });
       node.dataset.lon = q.lon; node.dataset.lat = q.lat;
+      node.dataset.titel = `Erdbeben M${q.staerke} · ${q.ort}`; node.dataset.mag = q.staerke;
       if (!visible(q.lon, q.lat)) node.style.display = "none";
       const title = el("title");
-      title.textContent = `Erdbeben M${q.staerke} · ${q.ort}`;
+      title.textContent = node.dataset.titel;
       node.append(title);
       g.append(node);
     }
@@ -551,7 +552,7 @@
       if (!pos) continue;
       const node = el("circle", { cx: pos[0].toFixed(1), cy: pos[1].toFixed(1), r: cls === "fire" ? 2.6 : 3.6, class: cls });
       node.dataset.lon = ev.lon; node.dataset.lat = ev.lat;
-      node.dataset.titel = ev.titel || ""; node.dataset.link = ev.link || "";
+      node.dataset.titel = ev.titel || ""; node.dataset.link = ev.link || ""; node.dataset.zeit = ev.zeit || "";
       if (!visible(ev.lon, ev.lat)) node.style.display = "none";
       const t = el("title"); t.textContent = ev.titel || ""; node.append(t);
       g.append(node); n++;
@@ -634,6 +635,9 @@
         nodes[i].dataset.lon = satlib.degreesLong(gd.longitude);
         nodes[i].dataset.lat = satlib.degreesLat(gd.latitude);
         nodes[i].dataset.alt = Math.round(gd.height);
+        nodes[i].dataset.titel = satrecs[i].name;
+        const v = pv.velocity;
+        if (v) nodes[i].dataset.spd = Math.round(Math.hypot(v.x, v.y, v.z) * 3600);
       } catch { /* ein Satellit egal */ }
     });
     placeSats();
@@ -904,22 +908,69 @@
     if (e.target?.id === "lage-kw-on") loadInfra("kraftwerke", "lage-powerplants", "plant", "lage-kw-on");
   });
 
-  // Info-Karte beim Antippen eines Markers (Ereignis/Satellit/Infrastruktur)
+  // Info-Karte beim Antippen eines Markers: Was, Wo (Ort + Koordinaten), Live-Daten
+  const MARKER_KINDS = [
+    ["sat", "🛰️ Satellit"], ["fire", "🔥 Feuer / Brand"], ["volcano", "🌋 Vulkan"],
+    ["storm", "🌪️ Unwetter"], ["eevent", "🌊 Naturereignis"], ["quake", "💥 Erdbeben"],
+    ["airport", "✈️ Flughafen"], ["plant", "⚡ Kraftwerk"],
+  ];
+  const kindOf = (node) => MARKER_KINDS.find(([c]) => node.classList.contains(c)) || ["", "Objekt"];
+  const fmtCoord = (lat, lon) => `${Math.abs(lat).toFixed(2)}° ${lat >= 0 ? "N" : "S"}, ${Math.abs(lon).toFixed(2)}° ${lon >= 0 ? "O" : "W"}`;
+  function nearestCountry(lon, lat) {
+    let best = null, bd = Infinity;
+    for (const c of countries) { const d = (c.lat - lat) ** 2 + (c.lon - lon) ** 2; if (d < bd) { bd = d; best = c; } }
+    return best ? best.name : "";
+  }
+  async function reverseGeo(lat, lon) {
+    try {
+      const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=de`);
+      const d = await r.json();
+      const parts = [d.city || d.locality, d.principalSubdivision, d.countryName].filter(Boolean);
+      return [...new Set(parts)].join(", ");
+    } catch { return ""; }
+  }
+  let markerCardTimer = null;
   $("lage-map")?.addEventListener("click", (e) => {
     if (dragMoved) return;
-    const n = e.target.closest(".fire, .volcano, .storm, .eevent, .sat, .airport, .plant");
-    if (!n) return;
-    const titel = n.dataset.titel || (n.querySelector("title")?.textContent) || "";
-    if (!titel) return;
-    const link = n.dataset.link || "";
-    showMarkerCard(titel, link);
+    const n = e.target.closest(".sat, .fire, .volcano, .storm, .eevent, .quake, .airport, .plant");
+    if (n) showMarkerCard(n);
   });
-  function showMarkerCard(titel, link) {
+  function fillLive(card, node) {
+    const lat = +node.dataset.lat, lon = +node.dataset.lon;
+    const live = card.querySelector(".mc-live");
+    if (!live) return;
+    let html = `<span>Koordinaten</span><b>${fmtCoord(lat, lon)}</b>`;
+    if (node.classList.contains("sat")) {
+      if (node.dataset.alt) html += `<span>Höhe</span><b>${Number(node.dataset.alt).toLocaleString("de-DE")} km</b>`;
+      if (node.dataset.spd) html += `<span>Tempo</span><b>${Number(node.dataset.spd).toLocaleString("de-DE")} km/h</b>`;
+    }
+    if (node.dataset.mag) html += `<span>Stärke</span><b>M ${node.dataset.mag}</b>`;
+    if (node.dataset.zeit) { const d = new Date(node.dataset.zeit); if (!isNaN(d)) html += `<span>Stand</span><b>${d.toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</b>`; }
+    live.innerHTML = html;
+  }
+  function showMarkerCard(node) {
+    clearInterval(markerCardTimer); markerCardTimer = null;
     $("lage-markercard")?.remove();
-    const card = el("div", { id: "lage-markercard", class: "lage-shipcard panel" });
-    card.innerHTML = `<button class="ship-x" title="Schließen">✕</button><div class="mc-title">${escapeHtml(titel)}</div>${link ? `<a class="chip" href="${encodeURI(link)}" target="_blank" rel="noopener">Mehr dazu</a>` : ""}`;
+    const [, label] = kindOf(node);
+    const titel = node.dataset.titel || node.querySelector("title")?.textContent || label;
+    const link = node.dataset.link || "";
+    const lat = +node.dataset.lat, lon = +node.dataset.lon;
+    const isSat = node.classList.contains("sat");
+    const card = document.createElement("div");
+    card.id = "lage-markercard"; card.className = "lage-shipcard";
+    card.innerHTML = `<button class="ship-x" title="Schließen">✕</button>
+      <div class="mc-type">${label}${isSat ? ' · <span class="mc-dot">● live</span>' : ""}</div>
+      <div class="mc-title">${escapeHtml(titel)}</div>
+      <div class="mc-rows"><span>Ort</span><b class="mc-ort">${escapeHtml(nearestCountry(lon, lat) || "wird ermittelt…")}</b></div>
+      <div class="mc-rows mc-live"></div>
+      ${link ? `<a class="chip" href="${encodeURI(link)}" target="_blank" rel="noopener">Mehr dazu</a>` : ""}`;
     $("lage")?.append(card);
-    card.querySelector(".ship-x").addEventListener("click", () => card.remove());
+    fillLive(card, node);
+    card.querySelector(".ship-x").addEventListener("click", () => { clearInterval(markerCardTimer); markerCardTimer = null; card.remove(); });
+    // Genauen Ort (Stadt/Land) live nachladen
+    reverseGeo(lat, lon).then((ort) => { const b = card.querySelector(".mc-ort"); if (b && ort) b.textContent = ort; });
+    // Satelliten: Position/Höhe/Tempo laufend aktualisieren
+    if (isSat) markerCardTimer = setInterval(() => { if (!document.body.contains(card)) { clearInterval(markerCardTimer); return; } fillLive(card, node); }, 2000);
   }
 
   // ---------- Ein Land ----------
