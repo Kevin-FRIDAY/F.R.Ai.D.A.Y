@@ -339,10 +339,14 @@
   const menuPop = $("menu-pop");
   $("menu-fab")?.addEventListener("click", (e) => { e.stopPropagation(); menuPop?.classList.toggle("hidden"); });
   $("menu-side")?.addEventListener("click", (e) => { e.stopPropagation(); menuPop?.classList.toggle("hidden"); });
+  const OSIRIS_URL = "https://osirisai.live/?layers=flights,private,jets,military,maritime,transit,satellites,cctv,cctv_previews,live_news,earthquakes,fires,weather,infrastructure,global_incidents,alert_pins,day_night,cables,sdk_sea,sdk_air,sdk_naval,live_clouds,wind,rain,wind_controls,rain_controls,wind_particles,terrain_3d,terrain_elevation,malware,cyber_attacks,gdelt_events";
+  window.openOsiris = () => { try { window.open(OSIRIS_URL, "_blank", "noopener"); } catch { location.href = OSIRIS_URL; } };
+  $("osiris-btn")?.addEventListener("click", () => window.openOsiris());
   menuPop?.addEventListener("click", (e) => {
     const row = e.target.closest(".menu-row");
     if (!row) return;
     menuPop.classList.add("hidden");
+    if (row.hasAttribute("data-osiris")) { window.openOsiris(); return; }
     document.getElementById(row.dataset.target)?.click();
   });
   document.addEventListener("click", (e) => { if (menuPop && !menuPop.classList.contains("hidden") && !menuPop.contains(e.target) && e.target.id !== "menu-fab" && !e.target.closest("#menu-side")) menuPop.classList.add("hidden"); });
