@@ -20,6 +20,7 @@
   let brennReady = false;
   let issTrail = [];
   let issTimer = null;
+  let eventsTimer = null;
 
   const ALIASES = {
     "england": "826", "uk": "826", "großbritannien": "826", "vereinigtes königreich": "826",
@@ -83,6 +84,9 @@
     mapReady.then(() => { if (!selected && projection) startSpin(); });
     load(false);
     loadQuakes();
+    loadEvents();
+    clearInterval(eventsTimer);
+    eventsTimer = setInterval(loadEvents, 5 * 60 * 1000);
     loadBrennpunkte();
     startISS();
   }
@@ -97,6 +101,7 @@
     cancelAnimationFrame(viewAnim);
     cancelAnimationFrame(autoRaf);
     clearTimeout(issTimer); issTimer = null;
+    clearInterval(eventsTimer); eventsTimer = null;
     $("lage-world")?.classList.add("hidden");
   }
 
@@ -212,7 +217,7 @@
         landGroup.append(el("path", { d: geoPath(f) || "", class: "land", "data-id": id }));
       }
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
       landGroup.addEventListener("click", (e) => {
         if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
@@ -252,6 +257,7 @@
     // Rote Routen (nur Vorderseite sichtbar durch clipAngle).
     const rg = $("lage-routes");
     if (rg) for (const path of rg.children) { const geo = routeGeo[path.dataset.i]; if (geo) path.setAttribute("d", geoPath(geo) || ""); }
+    drawNight();
     placePoints();
     placeISS();
   }
@@ -277,7 +283,7 @@
   }
 
   function placePoints() {
-    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake, #lage-ships .ship, #lage-planes .plane")) {
+    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake, #lage-fires .fire, #lage-volcanoes .volcano, #lage-storms .storm, #lage-ships .ship, #lage-planes .plane")) {
       const lon = +node.dataset.lon, lat = +node.dataset.lat;
       if (!visible(lon, lat)) { node.style.display = "none"; continue; }
       node.style.display = "";
@@ -497,6 +503,57 @@
       node.append(title);
       g.append(node);
     }
+  }
+
+  // ---------- Tag/Nacht-Grenze (Terminator) ----------
+  function subsolar() {
+    const now = new Date();
+    const start = Date.UTC(now.getUTCFullYear(), 0, 0);
+    const day = (now.getTime() - start) / 86400000;
+    const decl = 23.44 * Math.sin((2 * Math.PI * (day - 81)) / 365.25); // Sonnen-Deklination grob
+    const utcH = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600;
+    const lon = -15 * (utcH - 12);
+    return [lon, decl];
+  }
+  function drawNight() {
+    const g = $("lage-night");
+    if (!g || !d3geo || !geoPath) return;
+    if (!$("lage-night-on")?.checked) { g.replaceChildren(); return; }
+    const [slon, slat] = subsolar();
+    const circle = d3geo.geoCircle().center([slon + 180, -slat]).radius(90)();
+    let p = g.firstElementChild;
+    if (!p) { p = el("path", { class: "lage-night" }); g.append(p); }
+    p.setAttribute("d", geoPath(circle) || "");
+  }
+
+  // ---------- Naturereignisse (NASA EONET): Feuer, Vulkane, Unwetter, Fluten ----------
+  let events = { feuer: [], vulkane: [], stuerme: [], fluten: [] };
+  async function loadEvents() {
+    try {
+      events = await (await api("/api/lage-ereignisse")).json();
+      await mapReady;
+      renderEvents();
+    } catch { /* Ereignisse optional */ }
+  }
+  function renderEventGroup(gid, cls, list, toggleId) {
+    const g = $(gid);
+    if (!g) return;
+    g.replaceChildren();
+    if (!$(toggleId)?.checked) return;
+    for (const ev of list || []) {
+      const pos = project?.(ev.lon, ev.lat);
+      if (!pos) continue;
+      const node = el("circle", { cx: pos[0].toFixed(1), cy: pos[1].toFixed(1), r: cls === "fire" ? 2.6 : 3.6, class: cls });
+      node.dataset.lon = ev.lon; node.dataset.lat = ev.lat;
+      if (!visible(ev.lon, ev.lat)) node.style.display = "none";
+      const t = el("title"); t.textContent = ev.titel || ""; node.append(t);
+      g.append(node);
+    }
+  }
+  function renderEvents() {
+    renderEventGroup("lage-fires", "fire", events.feuer, "lage-fires-on");
+    renderEventGroup("lage-volcanoes", "volcano", events.vulkane, "lage-volc-on");
+    renderEventGroup("lage-storms", "storm", [...(events.stuerme || []), ...(events.fluten || [])], "lage-storms-on");
   }
 
   // ---------- Brennpunkte: Reiter, rote Routen, Krisenpunkte ----------
@@ -738,6 +795,8 @@
       if (!e.target.checked) $("lage-planes")?.replaceChildren();
       else if (planeParams) loadPlanesFor(planeParams);
     }
+    if (["lage-fires-on", "lage-volc-on", "lage-storms-on"].includes(e.target?.id)) renderEvents();
+    if (e.target?.id === "lage-night-on") drawNight();
   });
 
   // ---------- Ein Land ----------

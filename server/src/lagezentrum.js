@@ -190,6 +190,35 @@ export async function getQuakes() {
   return list;
 }
 
+// --- NASA EONET: weltweite Naturereignisse (Feuer, Vulkane, Unwetter, Fluten) ---
+// Kostenlos, kein Schlüssel. https://eonet.gsfc.nasa.gov/
+let eonetCache = null;
+const EONET_CATS = { feuer: "wildfires", vulkane: "volcanoes", stuerme: "severeStorms", fluten: "floods" };
+export async function getEonet() {
+  if (eonetCache && Date.now() - eonetCache.at < 15 * 60 * 1000) return eonetCache.data;
+  const out = { feuer: [], vulkane: [], stuerme: [], fluten: [] };
+  await Promise.all(Object.entries(EONET_CATS).map(async ([key, cat]) => {
+    try {
+      const res = await fetch(`https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=${cat}&limit=400`, { signal: AbortSignal.timeout(15000) });
+      if (!res.ok) return;
+      const data = await res.json();
+      const list = [];
+      for (const ev of data.events || []) {
+        const g = ev.geometry?.[ev.geometry.length - 1];
+        if (!g) continue;
+        let lon, lat;
+        if (g.type === "Point") { [lon, lat] = g.coordinates; }
+        else if (g.type === "Polygon") { const c = g.coordinates?.[0]?.[0]; if (c) [lon, lat] = c; }
+        if (!Number.isFinite(lon) || !Number.isFinite(lat)) continue;
+        list.push({ titel: ev.title || "", lon, lat, zeit: g.date || "", link: ev.sources?.[0]?.url || "" });
+      }
+      out[key] = list.slice(0, key === "feuer" ? 300 : 120);
+    } catch { /* Kategorie optional */ }
+  }));
+  eonetCache = { at: Date.now(), data: out };
+  return out;
+}
+
 // --- Echte Nachrichtenbilder (GDELT, öffentlich, kein Schlüssel) ---
 // GDELT erlaubt nur ca. eine Anfrage alle 5 Sekunden -> globale Warteschlange + Zwischenspeicher.
 const newsImgCache = new Map(); // id -> { at, bilder }

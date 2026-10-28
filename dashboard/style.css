@@ -352,6 +352,12 @@ body.lage-open { overflow: hidden; }
 .lage.scanning .lage-sweep { opacity: 1; }
 @keyframes lage-sweepmove { from { transform: translateX(-120px); } to { transform: translateX(960px); } }
 .quake { fill: var(--gold); fill-opacity: 0.5; stroke: var(--gold); stroke-width: 0.6; pointer-events: auto; }
+/* Naturereignisse (EONET) */
+.fire { fill: #ff6a00; fill-opacity: 0.85; stroke: #ffd27f; stroke-width: 0.4; filter: drop-shadow(0 0 3px #ff6a00); pointer-events: auto; }
+.volcano { fill: #ff2d2d; fill-opacity: 0.85; stroke: #ffb0b0; stroke-width: 0.5; filter: drop-shadow(0 0 3px #ff2d2d); pointer-events: auto; }
+.storm { fill: #5ad2ff; fill-opacity: 0.8; stroke: #cfefff; stroke-width: 0.5; filter: drop-shadow(0 0 3px #5ad2ff); pointer-events: auto; }
+/* Tag/Nacht-Grenze */
+.lage-night { fill: #000018; fill-opacity: 0.5; stroke: rgba(120, 170, 255, 0.4); stroke-width: 1; pointer-events: none; }
 .marker.aktiv { --c: var(--cyan); }
 .dot.aktiv { background: var(--cyan); } .dot.offen { background: var(--muted); }
 

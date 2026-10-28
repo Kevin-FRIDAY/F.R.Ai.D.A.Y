@@ -11,7 +11,7 @@ import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
-import { COUNTRIES, findCountry, getOverview, getQuakes, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError } from "./lagezentrum.js";
+import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError } from "./lagezentrum.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus } from "./updater.js";
 
 const missing = checkConfig();
@@ -201,6 +201,7 @@ app.get("/api/lage-iss", asyncRoute(async (req, res) => {
   res.json({ lat: i.breitengrad, lon: i.laengengrad, hoehe_km: i.hoehe_km, tempo_kmh: i.geschwindigkeit_kmh, ueber: i.ueber });
 }));
 app.get("/api/lage-beben", asyncRoute(async (req, res) => res.json(await getQuakes())));
+app.get("/api/lage-ereignisse", asyncRoute(async (req, res) => res.json(await getEonet())));
 app.get("/api/lage/:id", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id);
   if (!country) return res.status(404).json({ error: "Land nicht gefunden" });
