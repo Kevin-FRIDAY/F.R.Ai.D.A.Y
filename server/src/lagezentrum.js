@@ -219,6 +219,23 @@ export async function getEonet() {
   return out;
 }
 
+// --- Satelliten: TLE-Bahndaten (Celestrak, kostenlos). Client rechnet Positionen. ---
+let satCache = null;
+export async function getSatellites() {
+  if (satCache && Date.now() - satCache.at < 6 * 3600 * 1000) return satCache.list;
+  const res = await fetch("https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=tle", { signal: AbortSignal.timeout(15000) });
+  if (!res.ok) throw new Error(`Celestrak ${res.status}`);
+  const text = await res.text();
+  const lines = text.split(/\r?\n/).filter((l) => l.trim().length);
+  const list = [];
+  for (let i = 0; i + 2 < lines.length; i += 3) {
+    const name = lines[i].trim(), l1 = lines[i + 1], l2 = lines[i + 2];
+    if (l1.startsWith("1 ") && l2.startsWith("2 ")) list.push({ name, l1, l2 });
+  }
+  satCache = { at: Date.now(), list: list.slice(0, 140) };
+  return satCache.list;
+}
+
 // --- Echte Nachrichtenbilder (GDELT, öffentlich, kein Schlüssel) ---
 // GDELT erlaubt nur ca. eine Anfrage alle 5 Sekunden -> globale Warteschlange + Zwischenspeicher.
 const newsImgCache = new Map(); // id -> { at, bilder }

@@ -87,6 +87,7 @@
     loadEvents();
     clearInterval(eventsTimer);
     eventsTimer = setInterval(loadEvents, 5 * 60 * 1000);
+    loadSats();
     loadBrennpunkte();
     startISS();
   }
@@ -102,6 +103,7 @@
     cancelAnimationFrame(autoRaf);
     clearTimeout(issTimer); issTimer = null;
     clearInterval(eventsTimer); eventsTimer = null;
+    clearTimeout(satTimer); satTimer = null;
     $("lage-world")?.classList.add("hidden");
   }
 
@@ -217,7 +219,7 @@
         landGroup.append(el("path", { d: geoPath(f) || "", class: "land", "data-id": id }));
       }
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
       landGroup.addEventListener("click", (e) => {
         if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
@@ -259,6 +261,7 @@
     if (rg) for (const path of rg.children) { const geo = routeGeo[path.dataset.i]; if (geo) path.setAttribute("d", geoPath(geo) || ""); }
     drawNight();
     placePoints();
+    placeSats();
     placeISS();
   }
 
@@ -556,6 +559,64 @@
     renderEventGroup("lage-storms", "storm", [...(events.stuerme || []), ...(events.fluten || [])], "lage-storms-on");
   }
 
+  // ---------- Satelliten (Celestrak-Bahndaten, Positionen mit satellite.js) ----------
+  let satlib = null, satrecs = [], satTimer = null;
+  async function loadSats() {
+    if (!$("lage-sats-on")?.checked) return;
+    try {
+      satlib = satlib || await import("https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/+esm");
+      if (!satrecs.length) {
+        const list = await (await api("/api/lage-satelliten")).json();
+        satrecs = (list || []).map((s) => { try { return { name: s.name, rec: satlib.twoline2satrec(s.l1, s.l2) }; } catch { return null; } }).filter(Boolean);
+      }
+      await mapReady;
+      tickSats();
+    } catch { /* Satelliten optional */ }
+  }
+  function tickSats() {
+    if (!satlib || !$("lage-sats-on")?.checked || !projection) return;
+    const g = $("lage-sats");
+    if (!g) return;
+    if (g.childElementCount !== satrecs.length) {
+      g.replaceChildren();
+      for (const s of satrecs) {
+        const node = el("circle", { r: 1.5, class: "sat" });
+        const t = el("title"); t.textContent = s.name; node.append(t);
+        g.append(node);
+      }
+    }
+    const now = new Date();
+    const gmst = satlib.gstime(now);
+    const nodes = g.children;
+    satrecs.forEach((s, i) => {
+      try {
+        const pv = satlib.propagate(s.rec, now);
+        if (!pv?.position) return;
+        const gd = satlib.eciToGeodetic(pv.position, gmst);
+        nodes[i].dataset.lon = satlib.degreesLong(gd.longitude);
+        nodes[i].dataset.lat = satlib.degreesLat(gd.latitude);
+        nodes[i].dataset.alt = Math.round(gd.height);
+      } catch { /* ein Satellit egal */ }
+    });
+    placeSats();
+    clearTimeout(satTimer);
+    satTimer = setTimeout(tickSats, 5000);
+  }
+  function placeSats() {
+    const g = $("lage-sats");
+    if (!g || !projection) return;
+    const off = projection.scale() * 0.02;
+    for (const node of g.children) {
+      const lon = +node.dataset.lon, lat = +node.dataset.lat;
+      if (!Number.isFinite(lon) || !visible(lon, lat)) { node.style.display = "none"; continue; }
+      node.style.display = "";
+      const p = projection([lon, lat]);
+      const dx = p[0] - CX, dy = p[1] - CY, d = Math.hypot(dx, dy) || 1;
+      node.setAttribute("cx", (p[0] + dx / d * off).toFixed(1));
+      node.setAttribute("cy", (p[1] + dy / d * off).toFixed(1));
+    }
+  }
+
   // ---------- Brennpunkte: Reiter, rote Routen, Krisenpunkte ----------
   async function loadBrennpunkte() {
     if (brennReady) return;
@@ -797,6 +858,10 @@
     }
     if (["lage-fires-on", "lage-volc-on", "lage-storms-on"].includes(e.target?.id)) renderEvents();
     if (e.target?.id === "lage-night-on") drawNight();
+    if (e.target?.id === "lage-sats-on") {
+      if (!e.target.checked) { clearTimeout(satTimer); satTimer = null; $("lage-sats")?.replaceChildren(); }
+      else loadSats();
+    }
   });
 
   // ---------- Ein Land ----------

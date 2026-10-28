@@ -358,6 +358,8 @@ body.lage-open { overflow: hidden; }
 .storm { fill: #5ad2ff; fill-opacity: 0.8; stroke: #cfefff; stroke-width: 0.5; filter: drop-shadow(0 0 3px #5ad2ff); pointer-events: auto; }
 /* Tag/Nacht-Grenze */
 .lage-night { fill: #000018; fill-opacity: 0.5; stroke: rgba(120, 170, 255, 0.4); stroke-width: 1; pointer-events: none; }
+/* Satelliten */
+.sat { fill: #9fe0ff; fill-opacity: 0.95; stroke: none; filter: drop-shadow(0 0 2px #9fe0ff); pointer-events: auto; }
 .marker.aktiv { --c: var(--cyan); }
 .dot.aktiv { background: var(--cyan); } .dot.offen { background: var(--muted); }
 
