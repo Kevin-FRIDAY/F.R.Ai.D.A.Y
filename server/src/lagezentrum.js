@@ -244,7 +244,7 @@ export async function getSatellites() {
 // --- Infrastruktur: große Flughäfen (OurAirports) + Kraftwerke (WRI). Gebündelte Dateien. ---
 const infraCache = {};
 export function getInfra(typ) {
-  const files = { flughaefen: "airports.json", kraftwerke: "powerplants.json" };
+  const files = { flughaefen: "airports.json", kraftwerke: "powerplants.json", staedte: "cities.json" };
   const file = files[typ];
   if (!file) return [];
   if (infraCache[typ]) return infraCache[typ];

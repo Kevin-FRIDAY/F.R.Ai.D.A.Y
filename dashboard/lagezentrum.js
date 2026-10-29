@@ -88,6 +88,7 @@
     clearInterval(eventsTimer);
     eventsTimer = setInterval(loadEvents, 5 * 60 * 1000);
     loadSats();
+    loadInfra("staedte", "lage-cities", "city", "lage-city-on");
     loadInfra("flughaefen", "lage-airports", "airport", "lage-air-on");
     loadInfra("kraftwerke", "lage-powerplants", "plant", "lage-kw-on");
     loadBrennpunkte();
@@ -221,7 +222,7 @@
         landGroup.append(el("path", { d: geoPath(f) || "", class: "land", "data-id": id }));
       }
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-cities" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
       landGroup.addEventListener("click", (e) => {
         if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
@@ -288,7 +289,7 @@
   }
 
   function placePoints() {
-    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake, #lage-fires .fire, #lage-volcanoes .volcano, #lage-storms .storm, #lage-weitere .eevent, #lage-airports .airport, #lage-powerplants .plant, #lage-ships .ship, #lage-planes .plane")) {
+    for (const node of document.querySelectorAll("#lage-markers .marker, #lage-hotspots .hotspot, #lage-quakes .quake, #lage-fires .fire, #lage-volcanoes .volcano, #lage-storms .storm, #lage-weitere .eevent, #lage-cities .city, #lage-airports .airport, #lage-powerplants .plant, #lage-ships .ship, #lage-planes .plane")) {
       const lon = +node.dataset.lon, lat = +node.dataset.lat;
       if (!visible(lon, lat)) { node.style.display = "none"; continue; }
       node.style.display = "";
@@ -592,7 +593,9 @@
       if (!pos) continue;
       const node = el("circle", { cx: pos[0].toFixed(1), cy: pos[1].toFixed(1), r: 1.7, class: cls });
       node.dataset.lon = o.lon; node.dataset.lat = o.lat;
-      node.dataset.titel = typ === "flughaefen" ? `✈ ${o.n}${o.iata ? " (" + o.iata + ")" : ""}` : `⚡ ${o.n} · ${o.mw} MW · ${o.f}`;
+      node.dataset.titel = typ === "flughaefen" ? `✈ ${o.n}${o.iata ? " (" + o.iata + ")" : ""}`
+        : typ === "staedte" ? `🏙️ ${o.n} · ${Number(o.pop).toLocaleString("de-DE")} Einw.`
+        : `⚡ ${o.n} · ${o.mw} MW · ${o.f}`;
       if (!visible(o.lon, o.lat)) node.style.display = "none";
       const t = el("title"); t.textContent = node.dataset.titel; node.append(t);
       g.append(node);
@@ -905,6 +908,7 @@
       if (!e.target.checked) { clearTimeout(satTimer); satTimer = null; $("lage-sats")?.replaceChildren(); }
       else loadSats();
     }
+    if (e.target?.id === "lage-city-on") loadInfra("staedte", "lage-cities", "city", "lage-city-on");
     if (e.target?.id === "lage-air-on") loadInfra("flughaefen", "lage-airports", "airport", "lage-air-on");
     if (e.target?.id === "lage-kw-on") loadInfra("kraftwerke", "lage-powerplants", "plant", "lage-kw-on");
   });
@@ -913,7 +917,7 @@
   const MARKER_KINDS = [
     ["sat", "🛰️ Satellit"], ["fire", "🔥 Feuer / Brand"], ["volcano", "🌋 Vulkan"],
     ["storm", "🌪️ Unwetter"], ["eevent", "🌊 Naturereignis"], ["quake", "💥 Erdbeben"],
-    ["airport", "✈️ Flughafen"], ["plant", "⚡ Kraftwerk"],
+    ["city", "🏙️ Stadt"], ["airport", "✈️ Flughafen"], ["plant", "⚡ Kraftwerk"],
   ];
   const kindOf = (node) => MARKER_KINDS.find(([c]) => node.classList.contains(c)) || ["", "Objekt"];
   const fmtCoord = (lat, lon) => `${Math.abs(lat).toFixed(2)}° ${lat >= 0 ? "N" : "S"}, ${Math.abs(lon).toFixed(2)}° ${lon >= 0 ? "O" : "W"}`;
@@ -933,7 +937,7 @@
   let markerCardTimer = null;
   $("lage-map")?.addEventListener("click", (e) => {
     if (dragMoved) return;
-    const n = e.target.closest(".sat, .fire, .volcano, .storm, .eevent, .quake, .airport, .plant");
+    const n = e.target.closest(".sat, .fire, .volcano, .storm, .eevent, .quake, .city, .airport, .plant");
     if (n) showMarkerCard(n);
   });
   function fillLive(card, node) {
