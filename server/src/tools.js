@@ -10,8 +10,8 @@ import { checkForUpdate, startUpdate } from "./updater.js";
 import { COUNTRIES, findCountry, getCountryNews, getOverview, getCountryInfo } from "./lagezentrum.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
-// Osiris Live-Lagekarte (externe Seite, öffnet im Browser)
-const OSIRIS_URL = "https://osirisai.live/?layers=flights,private,jets,military,maritime,transit,satellites,cctv,cctv_previews,live_news,earthquakes,fires,weather,infrastructure,global_incidents,alert_pins,day_night,cables,sdk_sea,sdk_air,sdk_naval,live_clouds,wind,rain,wind_controls,rain_controls,wind_particles,terrain_3d,terrain_elevation,malware,cyber_attacks,gdelt_events";
+// Osiris Live-Lagekarte: selbst gehostet auf dem Mac (Port 3100). Der Mac-Agent öffnet lokal.
+const OSIRIS_URL = "http://localhost:3100/?layers=flights,private,jets,military,maritime,transit,satellites,cctv,cctv_previews,live_news,earthquakes,fires,weather,infrastructure,global_incidents,alert_pins,day_night,cables,sdk_sea,sdk_air,sdk_naval,live_clouds,wind,rain,wind_controls,rain_controls,wind_particles,terrain_3d,terrain_elevation,malware,cyber_attacks,gdelt_events";
 
 const MAC_ACTIONS = [
   "open_app", "quit_app", "open_url", "volume_set", "volume_up", "volume_down", "mute",

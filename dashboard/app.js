@@ -339,8 +339,15 @@
   const menuPop = $("menu-pop");
   $("menu-fab")?.addEventListener("click", (e) => { e.stopPropagation(); menuPop?.classList.toggle("hidden"); });
   $("menu-side")?.addEventListener("click", (e) => { e.stopPropagation(); menuPop?.classList.toggle("hidden"); });
-  const OSIRIS_URL = "https://osirisai.live/?layers=flights,private,jets,military,maritime,transit,satellites,cctv,cctv_previews,live_news,earthquakes,fires,weather,infrastructure,global_incidents,alert_pins,day_night,cables,sdk_sea,sdk_air,sdk_naval,live_clouds,wind,rain,wind_controls,rain_controls,wind_particles,terrain_3d,terrain_elevation,malware,cyber_attacks,gdelt_events";
-  window.openOsiris = () => { try { window.open(OSIRIS_URL, "_blank", "noopener"); } catch { location.href = OSIRIS_URL; } };
+  // Osiris läuft selbst gehostet auf dem Mac (Port 3100). Lokal direkt, von unterwegs über Tailscale (HTTPS, Port 8443).
+  const OSIRIS_LAYERS = "flights,private,jets,military,maritime,transit,satellites,cctv,cctv_previews,live_news,earthquakes,fires,weather,infrastructure,global_incidents,alert_pins,day_night,cables,sdk_sea,sdk_air,sdk_naval,live_clouds,wind,rain,wind_controls,rain_controls,wind_particles,terrain_3d,terrain_elevation,malware,cyber_attacks,gdelt_events";
+  function osirisBase() {
+    const h = location.hostname;
+    if (h === "localhost" || h === "127.0.0.1") return "http://localhost:3100";
+    return "https://" + h + ":8443"; // Tailscale stellt Osiris hier bereit
+  }
+  const OSIRIS_URL = () => osirisBase() + "/?layers=" + OSIRIS_LAYERS;
+  window.openOsiris = () => { const u = OSIRIS_URL(); try { window.open(u, "_blank", "noopener"); } catch { location.href = u; } };
   $("osiris-btn")?.addEventListener("click", () => window.openOsiris());
   menuPop?.addEventListener("click", (e) => {
     const row = e.target.closest(".menu-row");
