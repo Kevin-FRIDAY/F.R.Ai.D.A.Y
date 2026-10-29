@@ -556,13 +556,33 @@
     if (box) {
       try {
         const mem = await (await api("/api/memory")).json();
-        if (!mem.length) box.innerHTML = '<span class="muted">Noch nichts gemerkt. Sag "Merk dir ..."</span>';
-        else box.innerHTML = `<div class="muted" style="margin-bottom:6px">${mem.length} Einträge</div>` +
-          mem.slice(-12).reverse().map((m) => `<div class="brain-mem-item">${escapeHtml(m.text)}</div>`).join("");
+        const addRow = `<div class="mem-add"><input id="mem-add-input" type="text" placeholder="Etwas dauerhaft merken..." maxlength="300"><button id="mem-add-btn" class="chip">Merken</button></div>`;
+        const head = `<div class="muted" style="margin-bottom:6px">${mem.length} ${mem.length === 1 ? "Eintrag" : "Einträge"} · bleiben dauerhaft gespeichert</div>`;
+        const list = mem.length
+          ? mem.slice().reverse().map((m) => {
+              const d = m.created ? new Date(m.created).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit" }) : "";
+              return `<div class="brain-mem-item"><span>${escapeHtml(m.text)}${d ? ` <small class="muted">· ${d}</small>` : ""}</span><button class="mem-del" data-id="${escapeHtml(m.id)}" title="Löschen">✕</button></div>`;
+            }).join("")
+          : '<span class="muted">Noch nichts gemerkt. Trag hier etwas ein oder sag "Merk dir ...".</span>';
+        box.innerHTML = addRow + head + list;
       } catch { box.textContent = "Gedächtnis nicht erreichbar."; }
     }
     if ($("st-screen")) setBadge("st-screen", status.agent?.online, "verfügbar", "Mac aus");
   }
+  async function addMemoryFromUI() {
+    const inp = $("mem-add-input");
+    const text = inp?.value.trim();
+    if (!text) return;
+    try { await api("/api/memory", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) }); } catch {}
+    if (inp) inp.value = "";
+    loadBrain();
+  }
+  $("brain-memory")?.addEventListener("click", async (e) => {
+    const del = e.target.closest(".mem-del");
+    if (del) { try { await api("/api/memory/" + encodeURIComponent(del.dataset.id), { method: "DELETE" }); } catch {} loadBrain(); return; }
+    if (e.target.id === "mem-add-btn") addMemoryFromUI();
+  });
+  $("brain-memory")?.addEventListener("keydown", (e) => { if (e.target.id === "mem-add-input" && e.key === "Enter") addMemoryFromUI(); });
 
   $("briefing-btn").addEventListener("click", () => send("Gib mir mein Briefing."));
   $("look-btn").addEventListener("click", () => send("Schau dir meinen Mac-Bildschirm an und sag mir kurz, was du siehst."));

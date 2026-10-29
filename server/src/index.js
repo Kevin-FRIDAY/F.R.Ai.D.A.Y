@@ -153,6 +153,11 @@ app.get("/api/find", asyncRoute(async (req, res) => {
   res.json({ online: true, dateien: text && text !== "Nichts gefunden" ? text.split("\n").filter(Boolean).slice(0, 15) : [] });
 }));
 app.get("/api/memory", (req, res) => res.json(store.getMemories()));
+app.post("/api/memory", (req, res) => {
+  const text = String(req.body?.text || "").trim();
+  if (!text) return res.status(400).json({ error: "Kein Text" });
+  return res.json(store.addMemory(text));
+});
 app.delete("/api/memory/:id", (req, res) => res.json({ geloescht: store.forgetMemory(req.params.id) }));
 app.post("/api/history/clear", (req, res) => {
   store.clearHistory("web");

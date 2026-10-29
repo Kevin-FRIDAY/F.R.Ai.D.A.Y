@@ -63,7 +63,29 @@
   scene.add(group);
 
   let wireMat, solidMat, ready = false;
+  let headGeo = null, basePos = null, jaw = null, lastJaw = -1;
   const col = themeColor();
+
+  // Öffnet den Mund, indem der Kiefer-Bereich um die Gelenkachse nach unten rotiert.
+  function deformJaw(a) {
+    if (!headGeo || !basePos || !jaw) return;
+    const pos = headGeo.attributes.position.array;
+    const angle = a * 0.55; // max ~0.55 rad Kieferöffnung
+    const ca = Math.cos(angle), sa = Math.sin(angle);
+    for (let i = 0; i < pos.length; i += 3) {
+      const bx = basePos[i], by = basePos[i + 1], bz = basePos[i + 2];
+      if (by < jaw.pivotY && bz > jaw.frontZ) {
+        let w = (jaw.pivotY - by) / jaw.band; if (w > 1) w = 1;
+        const aa = angle * w, c = Math.cos(aa), s2 = Math.sin(aa);
+        const dy = by - jaw.pivotY, dz = bz - jaw.pivotZ;
+        pos[i + 1] = jaw.pivotY + dy * c - dz * s2;
+        pos[i + 2] = jaw.pivotZ + dy * s2 + dz * c;
+        pos[i] = bx;
+      } else { pos[i] = bx; pos[i + 1] = by; pos[i + 2] = bz; }
+    }
+    headGeo.attributes.position.needsUpdate = true;
+    void ca; void sa;
+  }
 
   const loader = new THREE.GLTFLoader();
   loader.load("vendor/head.glb", (gltf) => {
@@ -74,7 +96,20 @@
     geo.computeVertexNormals();
     geo.center();
     geo.computeBoundingSphere();
+    geo.computeBoundingBox();
     const s = 2.1 / (geo.boundingSphere.radius || 1);
+
+    // Für Mundbewegung: Ausgangspositionen + Kiefer-Bereich merken
+    headGeo = geo;
+    basePos = geo.attributes.position.array.slice();
+    const bb = geo.boundingBox;
+    const hY = bb.max.y - bb.min.y, hZ = bb.max.z - bb.min.z;
+    jaw = {
+      pivotY: bb.min.y + hY * 0.46,   // Kiefergelenk-Höhe
+      pivotZ: bb.min.z,               // Drehachse hinten
+      frontZ: bb.min.z + hZ * 0.42,   // nur vordere Hälfte (Kinn/Mund)
+      band: hY * 0.34,                // weiche Übergangszone
+    };
 
     // Dunkler Füllkörper verdeckt die Rückseite -> nur vorderes Netz leuchtet
     solidMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0x0a0603) });
@@ -113,9 +148,9 @@
       if (talkMode === "rand") { randPhase += dt / 1000 * 10; ampTarget = (Math.sin(randPhase) * 0.5 + 0.5); }
       else if (talkMode !== "amp") ampTarget = 0;
       amp += (ampTarget - amp) * Math.min(1, dt / 90);
-      if (wireMat) wireMat.opacity = 0.6 + amp * 0.35;
-      const sc = 1 + amp * 0.012;
-      group.scale.setScalar(sc);
+      if (wireMat) wireMat.opacity = 0.6 + amp * 0.3;
+      // Mund bewegen (Kiefer öffnen) passend zur Lautstärke
+      if (Math.abs(amp - lastJaw) > 0.008) { deformJaw(amp); lastJaw = amp; }
     }
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
