@@ -5,6 +5,7 @@ import { config, checkConfig, DASHBOARD_DIR } from "./config.js";
 import { requireAuth, requireShortcutOrAuth, verifyPassword, createToken, loginAllowed, recordFailure, clearFailures } from "./auth.js";
 import { ask } from "./brain.js";
 import { attachAgentHub, isAgentOnline, getAgentInfo, sendToAgent } from "./agent-hub.js";
+import { mailConfigured, getMailOverview, sortMail } from "./mail.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
@@ -129,6 +130,8 @@ app.get("/api/system", asyncRoute(async (req, res) => {
 app.get("/api/weather", asyncRoute(async (req, res) => res.json(await getWeather())));
 // --- Organizer: Aufgaben + Einkaufsliste ---
 app.get("/api/activity", (req, res) => res.json(store.getActivity()));
+app.get("/api/mail", asyncRoute(async (req, res) => res.json(await getMailOverview(req.query.force === "1"))));
+app.post("/api/mail/sort", asyncRoute(async (req, res) => res.json(await sortMail())));
 app.get("/api/tasks", (req, res) => res.json(store.getTasks()));
 app.post("/api/tasks", (req, res) => { const t = store.addTask(String(req.body?.text || "")); store.logActivity("aufgabe", `Aufgabe erstellt: ${t?.text || ""}`); res.json(t); });
 app.patch("/api/tasks/:id", (req, res) => { const t = store.toggleTask(req.params.id) || {}; if (t.done) store.logActivity("aufgabe", `Aufgabe erledigt: ${t.text || ""}`); res.json(t); });

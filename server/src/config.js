@@ -45,6 +45,8 @@ export const config = {
   aisKey: env("AISSTREAM_API_KEY"),
   googleKey: env("GOOGLE_API_KEY"),
   windyKey: env("WINDY_API_KEY"),
+  icloudMail: env("ICLOUD_EMAIL"),
+  icloudPass: env("ICLOUD_APP_PASSWORD"),
 };
 
 export function checkConfig() {

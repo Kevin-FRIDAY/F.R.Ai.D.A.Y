@@ -1,6 +1,6 @@
 // Speichert die Oberfläche, damit die App schnell startet. Antworten von Friday kommen immer frisch vom Server.
-const CACHE = "friday-v53";
-const SHELL = ["/", "/index.html", "/style.css", "/app.js", "/lagezentrum.js", "/aktiv.js", "/face.js", "/face2d.js", "/vendor/three.min.js", "/vendor/GLTFLoader.js", "/vendor/head.glb", "/manifest.webmanifest", "/icon.svg"];
+const CACHE = "friday-v54";
+const SHELL = ["/", "/index.html", "/style.css", "/app.js", "/lagezentrum.js", "/aktiv.js", "/postfach.js", "/face.js", "/face2d.js", "/vendor/three.min.js", "/vendor/GLTFLoader.js", "/vendor/head.glb", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

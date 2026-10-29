@@ -376,6 +376,21 @@ body.lage-open { overflow: hidden; }
 .plant { fill: #c79bff; fill-opacity: 0.9; stroke: none; filter: drop-shadow(0 0 1.5px #c79bff); pointer-events: auto; }
 /* Legenden-Anzahl */
 .lage-legend i[id^="cnt-"] { color: var(--muted); font-style: normal; font-size: 10px; }
+/* ---------- Postfach ---------- */
+.mail-head { font-size: 13px; margin-bottom: 10px; }
+.mail-head b { font-family: var(--font-head); color: var(--cyan); font-size: 16px; }
+.mail-list { display: flex; flex-direction: column; }
+.mail-row { display: grid; grid-template-columns: 10px 150px 1fr auto; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.mail-dot { width: 7px; height: 7px; border-radius: 50%; background: transparent; }
+.mail-row.unread .mail-dot { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.mail-row.unread .mail-betreff, .mail-row.unread .mail-von { color: var(--text); font-weight: 600; }
+.mail-von { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mail-betreff { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.mail-datum { color: var(--muted); font-size: 11px; white-space: nowrap; }
+.mail-setup { padding: 8px 2px; }
+.mail-steps { margin: 8px 0 0; padding-left: 20px; font-size: 13px; line-height: 1.7; }
+#mail-sort { margin-left: auto; margin-right: 10px; cursor: pointer; }
+
 /* ---------- Tagesbericht ---------- */
 .akt-range { display: flex; gap: 6px; margin-left: auto; margin-right: 10px; }
 .akt-range .chip { cursor: pointer; opacity: .6; }
