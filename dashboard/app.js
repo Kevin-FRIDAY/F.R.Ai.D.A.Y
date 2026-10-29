@@ -372,6 +372,25 @@
   });
   document.addEventListener("click", (e) => { if (menuPop && !menuPop.classList.contains("hidden") && !menuPop.contains(e.target) && e.target.id !== "menu-fab" && !e.target.closest("#menu-side")) menuPop.classList.add("hidden"); });
 
+  // ---------- Schriftart ----------
+  const FONTS = {
+    "1": { head: "Orbitron", ui: "Rajdhani" },
+    "2": { head: "'Exo 2'", ui: "'Exo 2'" },
+    "3": { head: "Audiowide", ui: "'Chakra Petch'" },
+    "4": { head: "Oxanium", ui: "Oxanium" },
+    "5": { head: "Michroma", ui: "Saira" },
+  };
+  function applyFont(key) {
+    const f = FONTS[key] || FONTS["1"];
+    const root = document.documentElement.style;
+    root.setProperty("--font-head", `${f.head}, ui-monospace, monospace`);
+    root.setProperty("--font-ui", `${f.ui}, system-ui, sans-serif`);
+    storage.set("friday_font", key);
+    const sel = $("font-select"); if (sel) sel.value = key;
+  }
+  $("font-select")?.addEventListener("change", (e) => applyFont(e.target.value));
+  applyFont(storage.get("friday_font") || "1");
+
   // ---------- Design: Farb-Themes + AMOLED ----------
   const THEMES = { orange: "#ff8a1e", cyan: "#4fd8ff", gruen: "#46e0a0", rot: "#ff5d6c", lila: "#b57bff", gold: "#ffcc4d", pink: "#ff6ec7", eis: "#8fb6ff" };
   const hexRgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
