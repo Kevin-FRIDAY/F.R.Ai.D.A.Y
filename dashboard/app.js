@@ -407,6 +407,13 @@
   const applyReduce = () => document.body.classList.toggle("reduce-anim", storage.get("friday_reduce") === "1");
   applyReduce();
   window.addEventListener("friday-settings", applyReduce);
+  bindFlag("set-osiris-default", "friday_osiris_default", false);
+  bindFlag("set-ticker", "friday_ticker", true);
+  const applyTicker = () => { const t = document.getElementById("lage-ticker"); if (t) t.style.display = storage.get("friday_ticker") === "0" ? "none" : ""; };
+  applyTicker();
+  window.addEventListener("friday-settings", applyTicker);
+  // Lagezentrum optional direkt mit Osiris öffnen
+  document.getElementById("lage-btn")?.addEventListener("click", () => { if (storage.get("friday_osiris_default") === "1") setTimeout(() => window.showOsirisEmbed && window.showOsirisEmbed(true), 90); });
 
   // Gespeicherte Vorlieben anwenden.
   // Einmalige Umstellung auf Mockup-Orange (falls noch ein altes Theme gespeichert war).

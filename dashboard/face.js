@@ -61,6 +61,8 @@
 
   const group = new THREE.Group();
   scene.add(group);
+  const rings = new THREE.Group();
+  let ringMats = [];
 
   let wireMat, solidMat, ready = false;
   let headGeo = null, basePos = null, jaw = null, lastJaw = -1;
@@ -126,13 +128,29 @@
     // Modell blickt nach vorn, leicht gedreht wie im Mockup
     group.add(inner);
     group.rotation.y = -0.18;
+
+    // Futuristische HUD-Orbitringe um den Kopf
+    try {
+      ringMats = [];
+      const mkRing = (rad, tube, rx, ry, rz) => {
+        const g = new THREE.TorusGeometry(rad, tube, 8, 90);
+        const m = new THREE.MeshBasicMaterial({ color: col.clone(), transparent: true, opacity: 0.32 });
+        const r = new THREE.Mesh(g, m); r.rotation.set(rx, ry, rz);
+        ringMats.push(m); rings.add(r);
+      };
+      mkRing(2.35, 0.012, Math.PI / 2.1, 0, 0.3);
+      mkRing(2.65, 0.008, Math.PI / 2.6, 0.6, -0.2);
+      mkRing(2.9, 0.006, Math.PI / 1.9, -0.4, 0.5);
+      scene.add(rings);
+    } catch { /* Ringe optional */ }
+
     ready = true;
   }, undefined, () => { fallback2d(); });
 
   resize();
   if (window.ResizeObserver) { try { new ResizeObserver(resize).observe(host); } catch {} }
   window.addEventListener("resize", resize);
-  setInterval(() => { if (wireMat) { const c = themeColor(); wireMat.color.copy(c); } }, 1500);
+  setInterval(() => { if (wireMat) { const c = themeColor(); wireMat.color.copy(c); ringMats.forEach((m) => m.color.copy(c)); } }, 1500);
 
   // ---- Einstellungen (localStorage) ----
   const flag = (k, def) => { try { const v = localStorage.getItem(k); return v === null ? def : v === "1"; } catch { return def; } };
@@ -160,6 +178,15 @@
       // Mund bewegen (Kiefer öffnen) passend zur Lautstärke (abschaltbar)
       const jawAmp = optMouth ? amp : 0;
       if (Math.abs(jawAmp - lastJaw) > 0.008) { deformJaw(jawAmp); lastJaw = jawAmp; }
+      // HUD-Orbitringe drehen + beim Sprechen heller
+      if (rings.children.length) {
+        const spd = optHead ? 1 : 0.15;
+        rings.children[0].rotation.z += dt * 0.00035 * spd;
+        rings.children[1].rotation.y += dt * 0.00045 * spd;
+        rings.children[2].rotation.x += dt * 0.0003 * spd;
+        const op = 0.3 + amp * 0.4;
+        ringMats.forEach((m) => { m.opacity = op; });
+      }
     }
     renderer.render(scene, camera);
     requestAnimationFrame(animate);

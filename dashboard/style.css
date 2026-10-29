@@ -825,3 +825,45 @@ body::after {
 /* "Weniger Animationen"-Schalter schaltet den Sci-Fi-Bewegungslook ab */
 body.reduce-anim *, body.reduce-anim *::before, body.reduce-anim *::after { animation: none !important; }
 body.reduce-anim::after, body.reduce-anim .hud::after { display: none; }
+
+/* ===================== Dashboard-Überarbeitung v2 (Sidebars, Avatar, Schnellzugriff) ===================== */
+/* AI-Logo im Profil-Kreis */
+.side-ava { width: 40px; height: 40px; border: 1px solid var(--cyan); border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: radial-gradient(circle at 50% 38%, rgba(255,160,70,.18), transparent 70%); box-shadow: 0 0 14px var(--cyan-soft), inset 0 0 10px rgba(255,160,70,.12); }
+.ava-ai { width: 100%; height: 100%; }
+.ava-ring { fill: none; stroke: var(--cyan); stroke-opacity: .30; stroke-width: 1; }
+.ava-ring2 { fill: none; stroke: var(--cyan); stroke-width: 1.5; stroke-dasharray: 18 95; stroke-linecap: round; transform-origin: 20px 20px; animation: ava-spin 3.6s linear infinite; filter: drop-shadow(0 0 2px var(--cyan)); }
+.ava-orbit { transform-origin: 20px 20px; animation: ava-spin 6s linear infinite; }
+.ava-orbit ellipse { fill: none; stroke: var(--cyan); stroke-opacity: .45; stroke-width: 1; }
+.ava-e { fill: #fff; filter: drop-shadow(0 0 3px var(--cyan)); }
+.ava-core { display: none; }
+.ava-tx { font-family: var(--font-head); font-weight: 700; font-size: 11px; fill: var(--cyan); letter-spacing: .5px; filter: drop-shadow(0 0 3px var(--cyan-soft)); }
+@keyframes ava-spin { to { transform: rotate(360deg); } }
+.side-user { position: relative; border-radius: 12px; padding: 10px 8px; }
+.side-user:hover { background: var(--cyan-soft); }
+
+/* Linke Sidebar: aktiver Punkt-Balken, weicher Hover, leuchtende Icons */
+.side-logo-ic { animation: hud-glow 4s ease-in-out infinite; }
+.nav-item { position: relative; overflow: hidden; transition: color .15s, background .15s, padding-left .15s; }
+.nav-item::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 0; background: var(--cyan); border-radius: 0 3px 3px 0; box-shadow: 0 0 8px var(--cyan); transition: height .2s; }
+.nav-item:hover { color: var(--text); background: var(--cyan-soft); padding-left: 15px; }
+.nav-item.active { color: var(--cyan); background: linear-gradient(90deg, var(--cyan-soft), transparent 80%); border-color: transparent; box-shadow: none; }
+.nav-item.active::before { height: 58%; }
+.nav-item.active .ni { filter: drop-shadow(0 0 5px var(--cyan)); }
+
+/* Schnellzugriff: Icon in getöntem Feld, kräftigerer Look */
+.quick-card { gap: 10px; }
+.quick-card .qi { width: 34px; height: 34px; padding: 6px; box-sizing: border-box; border-radius: 10px; background: var(--cyan-soft); border: 1px solid var(--line); margin-bottom: 2px; }
+.quick-card:hover .qi { border-color: var(--cyan); box-shadow: 0 0 12px var(--cyan-soft); }
+.quick-card b { letter-spacing: .02em; }
+
+/* Rechte Spalte: Panel-Titel als HUD-Label */
+.rightcol .panel > .muted:first-child, .rightcol .panel h3 { position: relative; }
+
+/* Globus-Zoom-Knöpfe */
+.lage-zoom { position: absolute; right: 12px; top: 12px; z-index: 5; display: flex; flex-direction: column; gap: 6px; }
+.lage-zoom button { width: 34px; height: 34px; border-radius: 10px; background: rgba(10,6,3,.62); border: 1px solid var(--line); color: var(--cyan); font-size: 18px; line-height: 1; cursor: pointer; backdrop-filter: blur(10px); display: grid; place-items: center; transition: border-color .15s, box-shadow .15s; }
+.lage-zoom button:hover { border-color: var(--cyan); box-shadow: 0 0 12px var(--cyan-soft); }
+/* Schärfere Grenzen + leuchtendes Gitter für mehr Tiefe */
+.lage-ocean { stroke: rgba(255,150,60,.5); }
+.land { stroke-width: 0.5; }
+.lage-grat { stroke-opacity: .5; }

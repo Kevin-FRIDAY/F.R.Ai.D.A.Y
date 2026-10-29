@@ -230,6 +230,7 @@
       });
       // Mit der Maus/Finger drehen.
       enableDrag(svg);
+      enableZoom(svg);
       startSpin();
     } catch (err) {
       console.warn("Globus nicht geladen:", err);
@@ -351,6 +352,20 @@
 
   // Mit Maus oder Finger drehen.
   let dragMoved = false;
+  // Zoomen (Mausrad + Knöpfe)
+  function zoomBy(factor) {
+    if (!projection) return;
+    const min = baseScale * 0.85, max = baseScale * 9;
+    projection.scale(Math.max(min, Math.min(max, projection.scale() * factor)));
+    redrawGlobe();
+  }
+  function enableZoom(svg) {
+    svg.addEventListener("wheel", (e) => { e.preventDefault(); spinning = false; zoomBy(e.deltaY < 0 ? 1.12 : 0.89); }, { passive: false });
+    $("lage-zoom-in")?.addEventListener("click", () => { spinning = false; zoomBy(1.3); });
+    $("lage-zoom-out")?.addEventListener("click", () => { spinning = false; zoomBy(0.75); });
+    $("lage-zoom-reset")?.addEventListener("click", () => flyToWorld());
+  }
+
   function enableDrag(svg) {
     let drag = null;
     const toUser = (e) => { const r = svg.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * H }; };
