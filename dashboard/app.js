@@ -371,6 +371,19 @@
     storage.set("friday_amoled", on ? "1" : "0");
   }
   $("amoled-toggle")?.addEventListener("change", (e) => applyAmoled(e.target.checked));
+  // Gesicht- & Globus-Schalter (von face.js/lagezentrum.js via localStorage gelesen)
+  function bindFlag(id, key, def) {
+    const el = $(id);
+    if (!el) return;
+    const saved = storage.get(key);
+    el.checked = saved === null || saved === undefined ? def : saved === "1";
+    el.addEventListener("change", () => { storage.set(key, el.checked ? "1" : "0"); window.dispatchEvent(new Event("friday-settings")); });
+  }
+  bindFlag("set-mouth", "friday_mouth", true);
+  bindFlag("set-headmove", "friday_headmove", true);
+  bindFlag("set-globespin", "friday_globespin", true);
+  bindFlag("set-reduce", "friday_reduce", false);
+
   // Gespeicherte Vorlieben anwenden.
   // Einmalige Umstellung auf Mockup-Orange (falls noch ein altes Theme gespeichert war).
   if (!storage.get("friday_theme_mockup")) { applyTheme("orange"); storage.set("friday_theme_mockup", "1"); }

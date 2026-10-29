@@ -321,7 +321,9 @@ body.lage-open { overflow: hidden; }
 .marker:focus { outline: none; } .marker:focus .core { stroke: var(--text); stroke-width: 2; }
 @keyframes lage-pulse { from { transform: scale(0.4); opacity: 1; } to { transform: scale(1); opacity: 0; } }
 .lage.scanning .lage-map { opacity: 0.6; transition: opacity .3s; }
-.lage-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 11px; color: var(--muted); padding: 6px 8px 2px; }
+.lage-legend { position: absolute; left: 12px; bottom: 12px; z-index: 4; display: flex; flex-wrap: wrap; gap: 8px 12px; max-width: 54%; font-size: 11px; color: var(--muted); padding: 10px 12px; background: rgba(10, 6, 3, 0.62); border: 1px solid var(--line); border-radius: 12px; backdrop-filter: blur(12px); box-shadow: 0 8px 24px rgba(0,0,0,.45); }
+.lage-legend .small-switch { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 20px; padding: 2px 8px 2px 6px; transition: border-color .15s; }
+.lage-legend .small-switch:hover { border-color: var(--cyan); }
 .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; background: var(--cyan); vertical-align: middle; }
 .dot.gut { background: var(--ok); } .dot.schlecht { background: var(--bad); } .dot.gemischt { background: var(--gold); }
 .lage-side { flex-direction: column; gap: 16px; min-width: 0; }

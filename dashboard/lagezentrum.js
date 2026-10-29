@@ -306,7 +306,8 @@
     lastFrame = performance.now();
     const tick = (now) => {
       const dt = now - lastFrame;
-      if (spinning && !selected && dt >= 30) { // ~30 fps, schont ältere Geräte
+      const spinOn = (() => { try { return localStorage.getItem("friday_globespin") !== "0"; } catch { return true; } })();
+      if (spinning && spinOn && !selected && dt >= 30) { // ~30 fps, schont ältere Geräte
         lastFrame = now;
         const r = projection.rotate();
         projection.rotate([r[0] + Math.min(100, dt) * 0.004, r[1], r[2]]); // langsame Erddrehung

@@ -134,23 +134,32 @@
   window.addEventListener("resize", resize);
   setInterval(() => { if (wireMat) { const c = themeColor(); wireMat.color.copy(c); } }, 1500);
 
+  // ---- Einstellungen (localStorage) ----
+  const flag = (k, def) => { try { const v = localStorage.getItem(k); return v === null ? def : v === "1"; } catch { return def; } };
+  let optMouth = flag("friday_mouth", true), optHead = flag("friday_headmove", true), optReduce = flag("friday_reduce", false);
+  function readOpts() { optMouth = flag("friday_mouth", true); optHead = flag("friday_headmove", true); optReduce = flag("friday_reduce", false); }
+  window.addEventListener("friday-settings", readOpts);
+
   // ---- Animation + Sprech-Puls ----
   let talkMode = null, amp = 0, ampTarget = 0, randPhase = 0, t0 = performance.now();
   function animate(now) {
     const dt = Math.min(60, now - t0); t0 = now;
     const t = now / 1000;
     if (ready) {
-      // sanftes Wiegen/Atmen, Blick nach vorn
-      group.rotation.y = -0.18 + Math.sin(t * 0.4) * 0.11 + Math.sin(t * 0.15) * 0.04;
-      group.rotation.x = Math.sin(t * 0.3) * 0.05 - 0.02;
-      group.position.y = Math.sin(t * 0.6) * 0.03;
+      // sanftes Wiegen/Atmen, Blick nach vorn (abschaltbar)
+      if (optHead) {
+        group.rotation.y = -0.18 + Math.sin(t * 0.4) * 0.11 + Math.sin(t * 0.15) * 0.04;
+        group.rotation.x = Math.sin(t * 0.3) * 0.05 - 0.02;
+        group.position.y = Math.sin(t * 0.6) * 0.03;
+      } else { group.rotation.y = -0.18; group.rotation.x = -0.02; group.position.y = 0; }
       // Sprechen -> Netz pulsiert heller
       if (talkMode === "rand") { randPhase += dt / 1000 * 10; ampTarget = (Math.sin(randPhase) * 0.5 + 0.5); }
       else if (talkMode !== "amp") ampTarget = 0;
       amp += (ampTarget - amp) * Math.min(1, dt / 90);
       if (wireMat) wireMat.opacity = 0.6 + amp * 0.3;
-      // Mund bewegen (Kiefer öffnen) passend zur Lautstärke
-      if (Math.abs(amp - lastJaw) > 0.008) { deformJaw(amp); lastJaw = amp; }
+      // Mund bewegen (Kiefer öffnen) passend zur Lautstärke (abschaltbar)
+      const jawAmp = optMouth ? amp : 0;
+      if (Math.abs(jawAmp - lastJaw) > 0.008) { deformJaw(jawAmp); lastJaw = jawAmp; }
     }
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
