@@ -763,3 +763,60 @@ input[type="range"] { accent-color: var(--cyan); }
 .menu-fab { display: flex !important; position: fixed; top: 14px; left: 224px; z-index: 19; width: 42px; height: 42px; padding: 0; align-items: center; justify-content: center; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); color: var(--cyan); backdrop-filter: blur(16px); box-shadow: 0 6px 20px rgba(0,0,0,.5); }
 .menu-pop { top: 64px; left: 224px; }
 @media (max-width: 1000px) { .menu-fab { left: auto; right: 14px; top: 14px; } .menu-pop { left: auto; right: 14px; } }
+
+/* ======================= Futuristischer HUD-Look (2050, +200%) ======================= */
+/* Animiertes Raster + driftender Hintergrund-Glow */
+.grid-bg { animation: hud-gridpan 36s linear infinite; }
+@keyframes hud-gridpan { to { background-position: 60px 60px, 60px 60px; } }
+body::before { animation: hud-glow 9s ease-in-out infinite; }
+@keyframes hud-glow { 0%,100% { opacity: 1; } 50% { opacity: .78; } }
+
+/* Feine Scanlinien über den ganzen Schirm */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(255,160,70,0.030) 0 1px, transparent 1px 3px);
+  mix-blend-mode: screen; opacity: .45;
+}
+/* Langsame Scan-Linie, die über das HUD wandert */
+.hud::after {
+  content: ""; position: fixed; left: 12px; right: 12px; top: 0; height: 160px; z-index: 0; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(255,160,70,0.10), rgba(255,160,70,0.02) 60%, transparent);
+  animation: hud-sweep 11s linear infinite;
+}
+@keyframes hud-sweep { 0% { transform: translateY(-180px); opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { transform: translateY(102vh); opacity: 0; } }
+
+/* HUD-Eckklammern an allen Panels */
+.panel::before {
+  content: ""; position: absolute; inset: -1px; pointer-events: none; border-radius: inherit; z-index: 1;
+  background:
+    linear-gradient(var(--cyan), var(--cyan)) left top / 18px 2px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) left top / 2px 18px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) right top / 18px 2px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) right top / 2px 18px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) left bottom / 18px 2px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) left bottom / 2px 18px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) right bottom / 18px 2px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) right bottom / 2px 18px no-repeat;
+  opacity: .40; filter: drop-shadow(0 0 3px var(--cyan)); transition: opacity .2s;
+}
+.panel:hover::before { opacity: .9; }
+
+/* Stärkere Neon-Schrift + Laufschrift-Glow */
+.brand, .clock, h2, .sheet-top h2, #greeting, .side-logo b { text-shadow: 0 0 16px var(--cyan-soft), 0 0 2px rgba(255,160,70,.3); }
+.akt-h, .brain-card h3, .card-h { letter-spacing: .08em; }
+
+/* Pulsierende Online-/Status-Punkte */
+.side-ustat { position: relative; }
+.side-ustat::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); margin-right: 6px; box-shadow: 0 0 6px var(--ok); animation: hud-blip 2.4s ease-in-out infinite; vertical-align: middle; }
+@keyframes hud-blip { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.75); } }
+
+/* Reaktor/Gesicht noch holografischer */
+#face-host { filter: drop-shadow(0 0 18px var(--cyan-soft)); }
+
+/* Eingabefeld-Rand mit sanftem Puls */
+.hero-input { box-shadow: 0 0 0 1px var(--cyan-soft), 0 8px 30px rgba(0,0,0,.45); }
+.hero-input:focus-within { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan), 0 0 22px var(--cyan-soft); }
+
+/* "Weniger Animationen"-Schalter schaltet den Sci-Fi-Bewegungslook ab */
+body.reduce-anim *, body.reduce-anim *::before, body.reduce-anim *::after { animation: none !important; }
+body.reduce-anim::after, body.reduce-anim .hud::after { display: none; }

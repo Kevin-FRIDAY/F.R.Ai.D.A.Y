@@ -383,6 +383,9 @@
   bindFlag("set-headmove", "friday_headmove", true);
   bindFlag("set-globespin", "friday_globespin", true);
   bindFlag("set-reduce", "friday_reduce", false);
+  const applyReduce = () => document.body.classList.toggle("reduce-anim", storage.get("friday_reduce") === "1");
+  applyReduce();
+  window.addEventListener("friday-settings", applyReduce);
 
   // Gespeicherte Vorlieben anwenden.
   // Einmalige Umstellung auf Mockup-Orange (falls noch ein altes Theme gespeichert war).
