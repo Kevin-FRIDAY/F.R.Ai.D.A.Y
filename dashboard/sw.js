@@ -1,5 +1,5 @@
 // Speichert die Oberfläche, damit die App schnell startet. Antworten von Friday kommen immer frisch vom Server.
-const CACHE = "friday-v51";
+const CACHE = "friday-v52";
 const SHELL = ["/", "/index.html", "/style.css", "/app.js", "/lagezentrum.js", "/face.js", "/face2d.js", "/vendor/three.min.js", "/vendor/GLTFLoader.js", "/vendor/head.glb", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (e) => {
