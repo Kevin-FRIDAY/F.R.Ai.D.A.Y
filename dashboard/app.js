@@ -348,12 +348,26 @@
   }
   const OSIRIS_URL = () => osirisBase() + "/?layers=" + OSIRIS_LAYERS;
   window.openOsiris = () => { const u = OSIRIS_URL(); try { window.open(u, "_blank", "noopener"); } catch { location.href = u; } };
-  $("osiris-btn")?.addEventListener("click", () => window.openOsiris());
+  // Osiris direkt im Lagezentrum als eingebettete Vollkarte ein-/ausblenden.
+  function showOsirisEmbed(on) {
+    const box = $("lage-osiris"); if (!box) return;
+    if (on) {
+      const f = $("lage-osiris-frame"); if (f && !f.getAttribute("src")) f.setAttribute("src", OSIRIS_URL());
+      const open = $("lage-osiris-open"); if (open) open.href = OSIRIS_URL();
+      box.classList.remove("hidden");
+      const b = $("osiris-btn"); if (b) b.textContent = "◎ Globus";
+    } else {
+      box.classList.add("hidden");
+      const b = $("osiris-btn"); if (b) b.textContent = "◎ Osiris";
+    }
+  }
+  window.showOsirisEmbed = showOsirisEmbed;
+  $("osiris-btn")?.addEventListener("click", () => showOsirisEmbed($("lage-osiris")?.classList.contains("hidden")));
   menuPop?.addEventListener("click", (e) => {
     const row = e.target.closest(".menu-row");
     if (!row) return;
     menuPop.classList.add("hidden");
-    if (row.hasAttribute("data-osiris")) { window.openOsiris(); return; }
+    if (row.hasAttribute("data-osiris")) { document.getElementById("lage-btn")?.click(); setTimeout(() => showOsirisEmbed(true), 60); return; }
     document.getElementById(row.dataset.target)?.click();
   });
   document.addEventListener("click", (e) => { if (menuPop && !menuPop.classList.contains("hidden") && !menuPop.contains(e.target) && e.target.id !== "menu-fab" && !e.target.closest("#menu-side")) menuPop.classList.add("hidden"); });
