@@ -376,6 +376,36 @@ body.lage-open { overflow: hidden; }
 .plant { fill: #c79bff; fill-opacity: 0.9; stroke: none; filter: drop-shadow(0 0 1.5px #c79bff); pointer-events: auto; }
 /* Legenden-Anzahl */
 .lage-legend i[id^="cnt-"] { color: var(--muted); font-style: normal; font-size: 10px; }
+/* ---------- Tagesbericht ---------- */
+.akt-range { display: flex; gap: 6px; margin-left: auto; margin-right: 10px; }
+.akt-range .chip { cursor: pointer; opacity: .6; }
+.akt-range .chip.on { opacity: 1; border-color: var(--cyan); color: var(--cyan); }
+.akt-sum { font-size: 12px; margin-bottom: 10px; }
+.akt-h { font-size: 13px; color: var(--cyan); margin: 18px 0 8px; }
+.akt-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+.akt-tile { background: var(--cyan-soft); border: 1px solid var(--line); border-radius: 12px; padding: 12px 10px; text-align: center; }
+.akt-tile-ic { font-size: 18px; }
+.akt-tile-n { font-family: var(--font-head); font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.1; }
+.akt-tile-l { font-size: 11px; color: var(--muted); }
+.akt-bars { display: flex; flex-direction: column; gap: 7px; }
+.akt-bar-row { display: grid; grid-template-columns: 140px 1fr 32px; align-items: center; gap: 10px; font-size: 12px; }
+.akt-bar-label { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.akt-bar-track { height: 10px; background: rgba(255,255,255,.05); border-radius: 6px; overflow: hidden; }
+.akt-bar-fill { display: block; height: 100%; border-radius: 6px; min-width: 3px; transition: width .4s ease; }
+.akt-bar-n { text-align: right; font-weight: 600; }
+.akt-days { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding-top: 6px; }
+.akt-day { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 3px; }
+.akt-day-bar { width: 70%; max-width: 26px; background: linear-gradient(var(--cyan), var(--cyan-soft)); border-radius: 4px 4px 0 0; min-height: 2px; transition: height .4s ease; }
+.akt-day small { font-size: 10px; color: var(--muted); }
+.akt-day b { font-size: 10px; color: var(--text); }
+.akt-list { display: flex; flex-direction: column; }
+.akt-item { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.akt-item-ic { flex: 0 0 auto; }
+.akt-item-l { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.akt-item-t { color: var(--muted); font-size: 11px; flex: 0 0 auto; }
+.akt-empty { text-align: center; padding: 30px 10px; }
+.akt-empty-ic { font-size: 40px; opacity: .6; margin-bottom: 10px; }
+
 /* Info-Karte beim Antippen */
 #lage-markercard { position: absolute; right: 16px; bottom: 16px; z-index: 6; min-width: 220px; max-width: 300px; border: 1px solid var(--cyan); border-radius: 10px; padding: 12px 14px; background: var(--panel); backdrop-filter: blur(10px); }
 #lage-markercard .mc-type { font-size: 11px; color: var(--muted); letter-spacing: .04em; margin-right: 18px; }

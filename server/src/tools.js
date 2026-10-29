@@ -285,7 +285,23 @@ async function homeAssistant(action, entityId) {
 
 // --- Ausführen ---
 // Gibt entweder Text/JSON zurück oder (bei screenshot_look) Inhalt mit Bild.
+const ACTLOG = {
+  add_task: ["aufgabe", (i) => `Aufgabe erstellt: ${i.text || ""}`],
+  add_shopping: ["einkauf", (i) => `Einkauf notiert: ${i.item || i.text || ""}`],
+  set_reminder: ["erinnerung", (i) => `Erinnerung gesetzt: ${i.text || ""}`],
+  remember: ["gedaechtnis", (i) => `Gemerkt: ${i.text || ""}`],
+  open_app: ["mac", (i) => `Geöffnet: ${i.name || ""}`],
+  mac: ["mac", (i) => `Mac gesteuert: ${i.action || ""}`],
+  run_protocol: ["mac", (i) => `Protokoll ausgeführt: ${i.name || ""}`],
+  send_push: ["mitteilung", () => "Mitteilung gesendet"],
+  world_news: ["suche", (i) => `Nachrichten geprüft: ${i.country || i.topic || "Welt"}`],
+  lookup: ["suche", (i) => `Nachgeschlagen: ${i.query || ""}`],
+  country_info: ["suche", (i) => `Länder-Info: ${i.country || ""}`],
+  air_quality: ["suche", (i) => `Luftqualität: ${i.city || ""}`],
+};
+
 export async function runTool(name, input = {}) {
+  if (ACTLOG[name]) { try { store.logActivity(ACTLOG[name][0], ACTLOG[name][1](input)); } catch { /* egal */ } }
   switch (name) {
     case "world_news": {
       if (!input.country) {

@@ -24,6 +24,18 @@ export function save(name, value) {
   fs.renameSync(tmp, target);
 }
 
+// --- Aktivität / Tagesbericht ---
+export function getActivity() {
+  return load("activity", []);
+}
+export function logActivity(cat, label) {
+  try {
+    const list = getActivity();
+    list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), cat, label: String(label || "").slice(0, 120), at: new Date().toISOString() });
+    save("activity", list.slice(-1000));
+  } catch { /* egal */ }
+}
+
 // --- Gedächtnis ---
 export function getMemories() {
   return load("memory", []);
