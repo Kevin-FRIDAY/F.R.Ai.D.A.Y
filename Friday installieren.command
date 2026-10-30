@@ -47,7 +47,7 @@ fi
 mkdir -p "$DEST/server/data"
 # Deine eigenen Protokolle: diese Datei fasst kein Update an.
 [ -f "$DEST/server/eigene-protokolle.json" ] || echo "{}" > "$DEST/server/eigene-protokolle.json"
-chmod +x "$DEST"/*.command "$DEST/update.sh"
+chmod +x "$DEST"/*.command "$DEST"/*.sh
 echo "✓ Dateien liegen in $DEST"
 
 # --- 3. Pakete installieren ---

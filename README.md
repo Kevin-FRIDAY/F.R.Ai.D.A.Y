@@ -28,6 +28,7 @@ Danach startet Friday jedes Mal automatisch, wenn du dich am Mac anmeldest.
 | Stimme | Echte Friday-Stimme über ElevenLabs | [Stimme](anleitungen/7-stimme.md) |
 | Smart Home | Licht und Geräte über Home Assistant | [Smart Home](anleitungen/8-protokolle-smart-home.md) |
 | Updates | Roter Knopf = neue Version, grüner Knopf = aktuell | [Updates](anleitungen/10-updates.md) |
+| Sicherung | Tägliches Backup + vor jedem Update, Zurückholen per Klick | [Sicherung](anleitungen/11-sicherung.md) |
 
 ## Ordner
 
@@ -37,6 +38,8 @@ Friday/
 ├── Friday starten.command        ← Neustart nach Änderungen
 ├── Friday stoppen.command
 ├── Friday aktualisieren.command  ← neue Version holen (wie der Update-Knopf)
+├── Friday sichern.command        ← sofort ein Backup machen
+├── Friday wiederherstellen.command ← ein Backup zurückholen
 ├── Friday deinstallieren.command
 ├── server/       Fridays Gehirn (Einstellungen in server/.env, eigene Protokolle in server/eigene-protokolle.json)
 ├── dashboard/    Die App für Mac und iPhone

@@ -44,5 +44,6 @@ Wenn ich Friday verbessere, bekommst du ein neues Paket mit höherer Nummer in `
 ## Wenn ein Update schiefgeht
 
 - Lassen sich die Bausteine nicht installieren, stellt Friday die alte Version automatisch wieder her.
+- Vor jedem Update legt Friday eine Sicherung in `~/Friday-Backups` an, mit Daten, Schlüsseln und der alten Programmversion. Zurückholen geht im Dashboard unter **Sicherungen** oder mit **Friday wiederherstellen.command**. Siehe [Sicherung](11-sicherung.md).
 - Die komplette alte Version liegt zusätzlich in `~/Friday-Sicherung`.
 - Was beim Update passiert ist, steht in `~/Library/Logs/Friday/update.log`.

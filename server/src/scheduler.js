@@ -5,6 +5,7 @@ import { notifyAll } from "./notify.js";
 import { sendToAgent, isAgentOnline } from "./agent-hub.js";
 import { ask } from "./brain.js";
 import { checkForUpdate } from "./updater.js";
+import { autoBackup } from "./backup.js";
 
 let lastBriefingDay = null;
 let latestBriefing = null;
@@ -68,7 +69,18 @@ async function checkUpdates() {
   await notifyAll("Update verfügbar", `Version ${u.latest} ist da, Boss. Tippe im Dashboard auf den roten Update-Knopf.`);
 }
 
+async function checkBackup() {
+  try {
+    const b = await autoBackup();
+    if (b) console.log("Automatische Sicherung:", b.name);
+  } catch (err) {
+    console.error("Automatische Sicherung fehlgeschlagen:", err.message);
+  }
+}
+
 export function startScheduler() {
+  setTimeout(() => checkBackup(), 2 * 60 * 1000);
+  setInterval(() => checkBackup(), 3600 * 1000);
   setTimeout(() => checkUpdates().catch(() => {}), 60 * 1000);
   setInterval(() => checkUpdates().catch(() => {}), 12 * 3600 * 1000);
   setInterval(() => checkReminders().catch((e) => console.error("Erinnerungen:", e.message)), 30 * 1000);

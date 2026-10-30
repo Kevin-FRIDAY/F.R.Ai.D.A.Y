@@ -15,6 +15,7 @@ import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError } from "./lagezentrum.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus } from "./updater.js";
+import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
 const missing = checkConfig();
 if (missing.length) {
@@ -114,12 +115,25 @@ app.get("/api/status", (req, res) => {
     briefing: getLatestBriefing(),
     uptime: Math.round(process.uptime()),
     version: localVersion(),
+    sicherung: (() => { const all = listBackups(); return { letzte: all[0]?.zeit || null, anzahl: all.length }; })(),
   });
 });
 
 // --- Updates ---
 app.get("/api/update", asyncRoute(async (req, res) => res.json({ ...(await checkForUpdate()), status: getUpdateStatus() })));
 app.post("/api/update", (req, res) => res.json(startUpdate()));
+
+// --- Sicherungen ---
+app.get("/api/backups", (req, res) => res.json({ ordner: backupDir(), sicherungen: listBackups(), status: getRestoreStatus() }));
+app.post("/api/backups", asyncRoute(async (req, res) => {
+  try {
+    const b = await createBackup("manuell", { programm: true });
+    res.json({ ok: true, sicherung: b });
+  } catch (err) {
+    res.status(500).json({ error: err.message || "Sicherung hat nicht geklappt." });
+  }
+}));
+app.post("/api/backups/:name/restore", (req, res) => res.json(startRestore(req.params.name, { programm: req.body?.programm === true })));
 
 app.get("/api/system", asyncRoute(async (req, res) => {
   if (!isAgentOnline()) return res.json({ online: false });

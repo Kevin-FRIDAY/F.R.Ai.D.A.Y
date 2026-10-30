@@ -50,13 +50,18 @@ VERSION="$(head -1 "$NEW/VERSION" | tr -cd '0-9.')"
 
 # 2. Alte Version sichern (für den Notfall)
 status laeuft "Sichere die alte Version..."
+# Versionierte Sicherung in ~/Friday-Backups (Daten, Schlüssel und Programm), lässt sich später zurückholen.
+if [ -f "$DEST/sicherung.sh" ]; then
+  /bin/bash "$DEST/sicherung.sh" "vor-update-$(head -1 "$DEST/VERSION" 2>/dev/null | tr -cd '0-9.')" --programm >/dev/null \
+    || fail "Sicherung vor dem Update hat nicht geklappt. Ich habe nichts verändert."
+fi
 rm -rf "$BACKUP" && mkdir -p "$BACKUP" && chmod 700 "$BACKUP"
 rsync -a --exclude node_modules "$DEST/" "$BACKUP/" || fail "Sicherung hat nicht geklappt."
 
 # 3. Neue Version einspielen
 status laeuft "Installiere Version $VERSION..."
 rsync -a "${KEEP[@]}" "$NEW/" "$DEST/" || fail "Kopieren hat nicht geklappt."
-chmod +x "$DEST"/*.command "$DEST/update.sh" 2>/dev/null
+chmod +x "$DEST"/*.command "$DEST"/*.sh 2>/dev/null
 if ! install_packages; then
   # Zurück zur alten Version, damit Friday weiterläuft
   rsync -a --delete "${KEEP[@]}" "$BACKUP/" "$DEST/"
