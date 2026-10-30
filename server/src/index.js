@@ -6,6 +6,7 @@ import { requireAuth, requireShortcutOrAuth, verifyPassword, createToken, loginA
 import { ask } from "./brain.js";
 import { attachAgentHub, isAgentOnline, getAgentInfo, sendToAgent } from "./agent-hub.js";
 import { mailConfigured, getMailOverview, sortMail } from "./mail.js";
+import { runSystemCheck } from "./syscheck.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
@@ -130,6 +131,7 @@ app.get("/api/system", asyncRoute(async (req, res) => {
 app.get("/api/weather", asyncRoute(async (req, res) => res.json(await getWeather())));
 // --- Organizer: Aufgaben + Einkaufsliste ---
 app.get("/api/activity", (req, res) => res.json(store.getActivity()));
+app.get("/api/systemcheck", asyncRoute(async (req, res) => res.json(await runSystemCheck())));
 app.get("/api/mail", asyncRoute(async (req, res) => res.json(await getMailOverview(req.query.force === "1"))));
 app.post("/api/mail/sort", asyncRoute(async (req, res) => res.json(await sortMail())));
 app.get("/api/tasks", (req, res) => res.json(store.getTasks()));

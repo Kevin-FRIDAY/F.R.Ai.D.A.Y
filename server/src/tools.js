@@ -4,6 +4,7 @@ import path from "node:path";
 import { config, ROOT } from "./config.js";
 import * as store from "./store.js";
 import { mailConfigured, getMailOverview, sortMail } from "./mail.js";
+import { runSystemCheck } from "./syscheck.js";
 import { sendToAgent, isAgentOnline } from "./agent-hub.js";
 import { sendPush } from "./notify.js";
 import { checkForUpdate, startUpdate } from "./updater.js";
@@ -36,6 +37,11 @@ export const toolDefinitions = [
   {
     name: "list_tasks",
     description: "Zeigt die offenen Aufgaben.",
+    input_schema: { type: "object", properties: {} },
+  },
+  {
+    name: "system_check",
+    description: "Prüft alle Dienste (Internet, Osiris, Lagezentrum-Quellen, Mac, Mail usw.) und sagt, was läuft. Bei 'System Check' / 'System Status'.",
     input_schema: { type: "object", properties: {} },
   },
   {
@@ -365,6 +371,11 @@ export async function runTool(name, input = {}) {
       return { gesendet: await sendPush("F.R.Ai.D.A.Y", String(input.message || "")) };
     case "add_task":
       return store.addTask(String(input.text || ""));
+    case "system_check": {
+      const r = await runSystemCheck();
+      const liste = r.checks.map((c) => `${c.ok ? "✓" : "✗"} ${c.label}${c.detail ? " – " + c.detail : ""}`).join("\n");
+      return { result: `System-Check: ${r.ok}/${r.gesamt} Dienste laufen.\n${liste}` };
+    }
     case "check_mail": {
       if (!mailConfigured()) return { error: "iCloud-Mail ist noch nicht verbunden." };
       const o = await getMailOverview();

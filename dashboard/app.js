@@ -289,6 +289,14 @@
   async function send(text) {
     text = (text || "").trim();
     if ((!text && !pendingImage) || busy) return;
+    // "System Check" / "System Status": lokal prüfen (ohne Guthaben)
+    if (/^system\s*[- ]?\s*(check|status|pr[üu]fung|test)$/i.test(text)) {
+      addMessage("user", text);
+      clearPhoto();
+      if (window.openSysCheck) window.openSysCheck();
+      const t = $("text"); if (t) t.value = "";
+      return;
+    }
     busy = true;
     addMessage("user", pendingImage ? `📷 ${text}` : text);
     setState("Denkt nach", "thinking");

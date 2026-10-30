@@ -867,3 +867,16 @@ body.reduce-anim::after, body.reduce-anim .hud::after { display: none; }
 .lage-ocean { stroke: rgba(255,150,60,.5); }
 .land { stroke-width: 0.5; }
 .lage-grat { stroke-opacity: .5; }
+
+/* ---------- System-Check ---------- */
+.sc-head { font-size: 14px; font-weight: 600; margin-bottom: 12px; padding: 8px 12px; border-radius: 10px; }
+.sc-head.ok { color: var(--ok); background: rgba(70,224,160,.1); border: 1px solid rgba(70,224,160,.3); }
+.sc-head.warn { color: var(--gold); background: var(--cyan-soft); border: 1px solid var(--line); }
+.sc-list { display: flex; flex-direction: column; }
+.sc-row { display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.sc-ic { font-weight: 700; text-align: center; }
+.sc-row.ok .sc-ic { color: var(--ok); }
+.sc-row.bad .sc-ic { color: var(--bad); }
+.sc-label { color: var(--text); }
+.sc-detail { color: var(--muted); font-size: 11px; white-space: nowrap; }
+#syscheck-run { margin-left: auto; margin-right: 10px; cursor: pointer; }
