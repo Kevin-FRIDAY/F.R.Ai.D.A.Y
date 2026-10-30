@@ -1115,3 +1115,7 @@ a.lz-n-link:hover { border-color: var(--cyan); background: var(--cyan-soft); tra
 .side-sep { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 12px 12px 4px; margin-top: 4px; border-top: 1px solid var(--line); }
 .nav-svc .ni { width: 20px; height: 20px; }
 .nav-svc:hover { background: var(--cyan-soft); }
+
+/* Globus: Flüsse + Seen (mehr Details) */
+.lage-rivers { fill: none; stroke: rgba(90,180,230,.55); stroke-width: 0.5; vector-effect: non-scaling-stroke; }
+.lage-lakes { fill: rgba(40,90,130,.55); stroke: rgba(120,190,235,.6); stroke-width: 0.4; vector-effect: non-scaling-stroke; }

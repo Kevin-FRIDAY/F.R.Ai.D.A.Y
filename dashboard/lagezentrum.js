@@ -173,6 +173,7 @@
   let sphereNode = null, gratNode = null, landGroup = null, graticuleObj = null;
   // Grenzen: Linien zwischen Ländern + Küsten. Beim Hineinzoomen feinere Karte (50m statt 110m).
   let topoApi = null, bordersNode = null, coastNode = null;
+  let riversGeo = null, lakesGeo = null, riversNode = null, lakesNode = null;
   const geoSets = { lo: null, hi: null };
   let geoMode = "lo";
   function makeGeoSet(world) {
@@ -200,11 +201,15 @@
   async function drawMap() {
     const svg = $("lage-map");
     try {
-      const [geo, topo, world] = await Promise.all([
+      const NE = "https://cdn.jsdelivr.net/gh/martynafford/natural-earth-geojson@master/110m/physical/";
+      const [geo, topo, world, rivers, lakes] = await Promise.all([
         import("https://cdn.jsdelivr.net/npm/d3-geo@3.1.1/+esm"),
         import("https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm"),
         fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json").then((r) => r.json()),
+        fetch(NE + "ne_110m_rivers_lake_centerlines.json").then((r) => r.json()).catch(() => null),
+        fetch(NE + "ne_110m_lakes.json").then((r) => r.json()).catch(() => null),
       ]);
+      riversGeo = rivers; lakesGeo = lakes;
       d3geo = geo;
       topoApi = topo;
       geoSets.lo = makeGeoSet(world);
@@ -239,8 +244,10 @@
       buildLand(geoSets.lo);
       coastNode = el("path", { class: "lage-coast", d: geoPath(geoSets.lo.coast) || "", "pointer-events": "none" });
       bordersNode = el("path", { class: "lage-borders", d: geoPath(geoSets.lo.borders) || "", "pointer-events": "none" });
+      lakesNode = el("path", { class: "lage-lakes", d: lakesGeo ? geoPath(lakesGeo) || "" : "", "pointer-events": "none" });
+      riversNode = el("path", { class: "lage-rivers", d: riversGeo ? geoPath(riversGeo) || "" : "", "pointer-events": "none" });
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, coastNode, bordersNode, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-cities" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, lakesNode, riversNode, coastNode, bordersNode, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-cities" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
       landGroup.addEventListener("click", (e) => {
         if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
@@ -285,6 +292,8 @@
     const set = geoSets[geoMode];
     coastNode?.setAttribute("d", geoPath(set.coast) || "");
     bordersNode?.setAttribute("d", geoPath(set.borders) || "");
+    if (riversNode && riversGeo) riversNode.setAttribute("d", geoPath(riversGeo) || "");
+    if (lakesNode && lakesGeo) lakesNode.setAttribute("d", geoPath(lakesGeo) || "");
     const atmo = document.querySelector(".lage-atmo");
     const shade = document.querySelector(".lage-shade");
     const s = projection.scale();
