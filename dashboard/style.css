@@ -1110,3 +1110,8 @@ a.lz-n-link:hover { border-color: var(--cyan); background: var(--cyan-soft); tra
 .lz-lb-nav { width: 44px; height: 44px; font-size: 26px; line-height: 1; cursor: pointer; flex: 0 0 auto; }
 @media (max-width: 700px) { .lz-lb-nav { position: absolute; bottom: 20px; } .lz-lb-nav.prev { left: 20px; } .lz-lb-nav.next { right: 20px; } }
 @media (max-width: 900px) { .lage-side > .panel { max-height: none; } #lage-detail { overflow: visible; } }
+
+/* Sidebar: Trenner "Meine Dienste" + Dienste-Icons in Markenfarben */
+.side-sep { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 12px 12px 4px; margin-top: 4px; border-top: 1px solid var(--line); }
+.nav-svc .ni { width: 20px; height: 20px; }
+.nav-svc:hover { background: var(--cyan-soft); }

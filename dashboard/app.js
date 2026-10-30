@@ -549,6 +549,10 @@
     }
   }
   document.querySelectorAll("[data-nav]").forEach((b) => b.addEventListener("click", () => navTo(b.dataset.nav, b)));
+  // Dienste in der Sidebar (Amazon/Netflix/YouTube) öffnen
+  document.querySelectorAll(".nav-svc[data-url]").forEach((b) => b.addEventListener("click", () => {
+    const u = b.dataset.url; try { window.open(u, "_blank", "noopener"); } catch { location.href = u; }
+  }));
 
   // ---------- Begrüßung nach Tageszeit ----------
   function setGreeting() {
