@@ -126,10 +126,38 @@
       setBadge("st-telegram", status.telegram);
       setBadge("st-home", status.smartHome);
       $("st-version").textContent = status.version || "-";
+      updateHudBar(true);
+      window.dispatchEvent(new CustomEvent("friday-status", { detail: status }));
     } catch {
+      updateHudBar(false);
       $("st-server").textContent = "offline";
       $("st-server").className = "bad";
     }
+  }
+
+  // Obere HUD-Leiste: Kern, Mac, Sicherung, Version auf einen Blick.
+  function updateHudBar(online) {
+    const chip = (id, state, text) => {
+      const el = $(id); if (!el) return;
+      el.querySelector(".hb-dot").className = `hb-dot ${state}`;
+      el.querySelector("b").textContent = text;
+    };
+    chip("hb-core", online ? "ok" : "bad", online ? "online" : "offline");
+    chip("hb-mac", status.agent?.online ? "ok" : "warn", status.agent?.online ? "verbunden" : "getrennt");
+    const last = status.sicherung?.letzte ? new Date(status.sicherung.letzte) : null;
+    const age = last ? Date.now() - last.getTime() : Infinity;
+    chip("hb-backup", age < 36 * 3600000 ? "ok" : age < 7 * 86400000 ? "warn" : "bad", last ? relTime(last) : "keine");
+    if ($("hb-version")) $("hb-version").textContent = status.version || "-";
+  }
+
+  function relTime(d) {
+    const min = Math.round((Date.now() - d.getTime()) / 60000);
+    if (min < 1) return "gerade eben";
+    if (min < 60) return `vor ${min} Min.`;
+    const h = Math.round(min / 60);
+    if (h < 24) return `vor ${h} Std.`;
+    const t = Math.round(h / 24);
+    return t === 1 ? "gestern" : `vor ${t} Tagen`;
   }
 
   async function refreshWeather() {
@@ -197,8 +225,12 @@
     if (!box) return;
     try {
       const s = await (await api("/api/system")).json();
-      if (!s.online) { box.innerHTML = '<span class="muted">Mac nicht verbunden</span>'; if (proc) proc.innerHTML = '<li class="muted">–</li>'; return; }
-      const stat = (label, p, val) => `<li class="sysrow"><span>${label}</span><b>${val}</b></li><span class="sys-bar"><i style="width:${Math.max(3, Math.min(100, p || 0))}%;background:${p > 85 ? "var(--bad)" : "var(--cyan)"}"></i></span>`;
+      if (!s.online) { box.innerHTML = '<div class="sys-off"><i class="hb-dot warn"></i><span>Mac nicht verbunden</span></div>'; if (proc) proc.innerHTML = '<li class="muted">–</li>'; return; }
+      // Runde Anzeige je Wert; ab 85 % rot.
+      const stat = (label, p, val) => {
+        const v = Math.max(0, Math.min(100, Number(p) || 0));
+        return `<div class="gauge${v > 85 ? " hot" : ""}" style="--p:${v}"><svg viewBox="0 0 40 40"><circle class="g-bg" cx="20" cy="20" r="16"/><circle class="g-val" cx="20" cy="20" r="16" pathLength="100"/></svg><b>${val}</b><span>${label}</span></div>`;
+      };
       const rows = [];
       if (s.cpu_prozent != null) rows.push(stat("CPU", s.cpu_prozent, s.cpu_prozent + "%"));
       if (s.ram_prozent != null) rows.push(stat("RAM", s.ram_prozent, s.ram_prozent + "%"));
@@ -207,7 +239,7 @@
       if (s.akku != null) extra.push(`Akku ${s.akku}%${s.akku_laedt ? " ⚡" : ""}`);
       extra.push(`Wärme ${s.temp || "-"}`);
       if (s.netzwerk) extra.push(escapeHtml(s.netzwerk));
-      box.innerHTML = `<ul class="list sys-list">${rows.join("")}</ul><div class="sys-extra muted">${extra.join(" · ")}</div>`;
+      box.innerHTML = `<div class="gauges">${rows.join("")}</div><div class="sys-extra muted">${extra.join(" · ")}</div>`;
       if (proc) proc.innerHTML = (s.prozesse || []).length
         ? s.prozesse.map((a) => `<li class="procrow"><span>${escapeHtml(a.name)}</span><b>${a.cpu}%</b></li>`).join("")
         : '<li class="muted">–</li>';
@@ -335,7 +367,7 @@
   });
 
   // Für das Lagezentrum (lagezentrum.js).
-  window.Friday = { api, say, escapeHtml };
+  window.Friday = { api, say, escapeHtml, relTime, refreshStatus: () => refreshStatus() };
 
   // ---------- Seitenleiste: Einstellungen & Gehirn ----------
   const openSheet = (id) => $(id)?.classList.remove("hidden");

@@ -47,6 +47,8 @@ export const config = {
   windyKey: env("WINDY_API_KEY"),
   icloudMail: env("ICLOUD_EMAIL"),
   icloudPass: env("ICLOUD_APP_PASSWORD"),
+  // Wohin Sicherungen gehen (Standard: ~/Friday-Backups) und wie viele behalten werden.
+  backupDir: env("BACKUP_DIR"),
 };
 
 export function checkConfig() {
