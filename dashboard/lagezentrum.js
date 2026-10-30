@@ -4,6 +4,7 @@
 
   const $ = (id) => document.getElementById(id);
   const { api, say, escapeHtml } = window.Friday;
+  const relTime = window.Friday.relTime || ((d) => d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }));
   const SVG_NS = "http://www.w3.org/2000/svg";
   const W = 960, H = 500;
 
@@ -170,6 +171,22 @@
   // ---------- Globus (runde Erde) ----------
   let d3geo = null, geoPath = null, projection = null, landFeatures = [];
   let sphereNode = null, gratNode = null, landGroup = null, graticuleObj = null;
+  // Grenzen: Linien zwischen Ländern + Küsten. Beim Hineinzoomen feinere Karte (50m statt 110m).
+  let topoApi = null, bordersNode = null, coastNode = null;
+  const geoSets = { lo: null, hi: null };
+  let geoMode = "lo";
+  function makeGeoSet(world) {
+    const obj = world.objects.countries;
+    return {
+      features: topoApi.feature(world, obj).features,
+      borders: topoApi.mesh(world, obj, (a, b) => a !== b),
+      coast: topoApi.mesh(world, obj, (a, b) => a === b),
+    };
+  }
+  function buildLand(set) {
+    landFeatures = set.features;
+    landGroup.replaceChildren(...landFeatures.map((f) => el("path", { d: geoPath(f) || "", class: "land", "data-id": String(f.id).padStart(3, "0") })));
+  }
   let baseScale = 1, autoRaf = null, lastFrame = 0, spinning = true;
   const CX = W / 2, CY = H / 2;
 
@@ -189,7 +206,9 @@
         fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json").then((r) => r.json()),
       ]);
       d3geo = geo;
-      landFeatures = topo.feature(world, world.objects.countries).features;
+      topoApi = topo;
+      geoSets.lo = makeGeoSet(world);
+      landFeatures = geoSets.lo.features;
       projection = geo.geoOrthographic().fitExtent([[6, 6], [W - 6, H - 6]], { type: "Sphere" }).rotate([-10, -25, 0]).clipAngle(90);
       baseScale = projection.scale();
       geoPath = geo.geoPath(projection);
@@ -217,12 +236,11 @@
       graticuleObj = geo.geoGraticule10();
       gratNode = el("path", { class: "lage-grat", d: geoPath(graticuleObj) });
       landGroup = el("g", { class: "lage-countries" });
-      for (const f of landFeatures) {
-        const id = String(f.id).padStart(3, "0");
-        landGroup.append(el("path", { d: geoPath(f) || "", class: "land", "data-id": id }));
-      }
+      buildLand(geoSets.lo);
+      coastNode = el("path", { class: "lage-coast", d: geoPath(geoSets.lo.coast) || "", "pointer-events": "none" });
+      bordersNode = el("path", { class: "lage-borders", d: geoPath(geoSets.lo.borders) || "", "pointer-events": "none" });
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-cities" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, coastNode, bordersNode, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-cities" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
       landGroup.addEventListener("click", (e) => {
         if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
@@ -232,6 +250,10 @@
       enableDrag(svg);
       enableZoom(svg);
       startSpin();
+      // Feinere Grenzen im Hintergrund nachladen (für die Nahansicht).
+      fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json").then((r) => r.json())
+        .then((hi) => { geoSets.hi = makeGeoSet(hi); redrawGlobe(); })
+        .catch(() => { /* bleibt bei der groben Karte */ });
     } catch (err) {
       console.warn("Globus nicht geladen:", err);
       project = (lon, lat) => [((lon + 180) / 360) * W, ((90 - lat) / 180) * H];
@@ -253,8 +275,16 @@
     if (!geoPath) return;
     sphereNode.setAttribute("d", geoPath({ type: "Sphere" }));
     gratNode.setAttribute("d", geoPath(graticuleObj));
-    const paths = landGroup.children;
-    for (let i = 0; i < landFeatures.length; i++) paths[i].setAttribute("d", geoPath(landFeatures[i]) || "");
+    // Nah dran: feine Karte, weit weg: grobe (schneller beim Drehen).
+    const want = geoSets.hi && projection.scale() > baseScale * 1.6 ? "hi" : "lo";
+    if (want !== geoMode) { geoMode = want; buildLand(geoSets[want]); render(); }
+    else {
+      const paths = landGroup.children;
+      for (let i = 0; i < landFeatures.length; i++) paths[i].setAttribute("d", geoPath(landFeatures[i]) || "");
+    }
+    const set = geoSets[geoMode];
+    coastNode?.setAttribute("d", geoPath(set.coast) || "");
+    bordersNode?.setAttribute("d", geoPath(set.borders) || "");
     const atmo = document.querySelector(".lage-atmo");
     const shade = document.querySelector(".lage-shade");
     const s = projection.scale();
@@ -742,12 +772,8 @@
     box.innerHTML = `<p class="muted">Lade Lage in ${escapeHtml(r.name)}...</p>`;
     try {
       const data = await (await api(`/api/lage-region/${id}`)).json();
-      const items = (data.meldungen || []).slice(0, 12).map((n) => {
-        const t = new Date(n.date).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
-        const title = n.link ? `<a href="${escapeHtml(n.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(n.title)}</a>` : escapeHtml(n.title);
-        return `<li>${title}<small>${escapeHtml(n.source)} · ${t}</small></li>`;
-      }).join("") || `<li class="muted">Keine Meldungen.</li>`;
-      box.innerHTML = `${satBlock(r.lon, r.lat, r.name)}<ul class="lage-news">${items}</ul>`;
+      const news = (data.meldungen || []).slice(0, 14);
+      box.innerHTML = `${lzSection("Live-Bild", "🛰", satBlock(r.lon, r.lat, r.name))}${lzSection(`Meldungen <b class="lz-count">${news.length}</b>`, "≡", newsHtml(news))}`;
       box.querySelector(".lage-satview")?.addEventListener("click", () => openSat(r.lon, r.lat, 6, r.name));
     } catch (err) {
       box.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
@@ -994,6 +1020,57 @@
   }
 
   // ---------- Ein Land ----------
+  // ---------- Bausteine für das Länder-Panel ----------
+  function lzSection(title, icon, body, cls = "") {
+    return `<section class="lz-sec ${cls}"><h3 class="lz-h"><i>${icon}</i>${title}</h3>${body}</section>`;
+  }
+
+  // Meldungen als Karten: erste groß (Top-Meldung), Quelle als Etikett, Zeit relativ.
+  function newsHtml(list) {
+    if (!list.length) return `<p class="muted lz-empty">Keine Meldungen in den letzten 24 Stunden.</p>`;
+    return `<ol class="lz-news">${list.map((n, i) => {
+      const d = new Date(n.date);
+      const when = Number.isNaN(d.getTime()) ? "" : relTime(d);
+      const title = escapeHtml(n.title);
+      const inner = `<span class="lz-n-meta"><span class="lz-src">${escapeHtml(n.source || "Quelle")}</span>${when ? `<time>${escapeHtml(when)}</time>` : ""}</span><span class="lz-n-title">${title}</span>`;
+      const tag = n.link ? `a href="${escapeHtml(n.link)}" target="_blank" rel="noopener noreferrer"` : "div";
+      return `<li class="lz-n${i === 0 ? " top" : ""}"><${tag} class="lz-n-link">${i === 0 ? '<span class="lz-n-img"></span><span class="lz-top-tag">Top-Meldung</span>' : ""}${inner}</${tag.split(" ")[0]}></li>`;
+    }).join("")}</ol>`;
+  }
+
+  // Großansicht für Bilder (mit Blättern und Link zur Quelle).
+  let lbList = [], lbIdx = 0;
+  const lightbox = document.createElement("div");
+  lightbox.className = "lz-lightbox hidden";
+  lightbox.innerHTML = `<button class="lz-lb-x" aria-label="Schließen">✕</button>
+    <button class="lz-lb-nav prev" aria-label="Zurück">‹</button>
+    <figure><img alt=""><figcaption><span class="lz-lb-title"></span><a class="lz-lb-src" target="_blank" rel="noopener noreferrer">Quelle öffnen ↗</a></figcaption></figure>
+    <button class="lz-lb-nav next" aria-label="Weiter">›</button>`;
+  document.body.append(lightbox);
+  function showLightbox(i) {
+    if (!lbList.length) return;
+    lbIdx = (i + lbList.length) % lbList.length;
+    const f = lbList[lbIdx];
+    lightbox.querySelector("img").src = f.bild;
+    lightbox.querySelector("img").alt = f.titel || "";
+    lightbox.querySelector(".lz-lb-title").textContent = [f.titel, f.quelle].filter(Boolean).join(" · ");
+    lightbox.querySelector(".lz-lb-src").href = f.seite || f.bild;
+    lightbox.classList.remove("hidden");
+  }
+  lightbox.addEventListener("click", (e) => {
+    if (e.target.closest(".prev")) showLightbox(lbIdx - 1);
+    else if (e.target.closest(".next")) showLightbox(lbIdx + 1);
+    else if (e.target === lightbox || e.target.closest(".lz-lb-x")) lightbox.classList.add("hidden");
+  });
+  document.addEventListener("keydown", (e) => {
+    if (lightbox.classList.contains("hidden")) return;
+    if (e.key === "Escape") lightbox.classList.add("hidden");
+    if (e.key === "ArrowLeft") showLightbox(lbIdx - 1);
+    if (e.key === "ArrowRight") showLightbox(lbIdx + 1);
+  });
+
+  const ytEmbed = (vid, muted) => `https://www.youtube-nocookie.com/embed/${encodeURIComponent(vid)}?autoplay=1&mute=${muted ? 1 : 0}&playsinline=1&rel=0&modestbranding=1`;
+
   async function select(id) {
     selected = id;
     showSide(true);
@@ -1010,20 +1087,16 @@
       const data = await (await api(`/api/lage/${id}`)).json();
       if (data.error) throw new Error(data.error);
       if (selected !== id) return;
-      const items = data.meldungen.slice(0, 12).map((n) => {
-        const t = new Date(n.date).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
-        const title = n.link ? `<a href="${escapeHtml(n.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(n.title)}</a>` : escapeHtml(n.title);
-        return `<li>${title}<small>${escapeHtml(n.source)} · ${t}</small></li>`;
-      }).join("") || `<li class="muted">Keine Meldungen in den letzten 24 Stunden.</li>`;
+      const news = data.meldungen.slice(0, 14);
       box.innerHTML = `
-        <div id="lage-info" class="lage-info"></div>
+        <div id="lage-info" class="lz-stats"><span class="lz-stat skel"></span><span class="lz-stat skel"></span><span class="lz-stat skel"></span></div>
         <div id="lage-assess" class="lage-assess">
-          <button id="lage-assess-btn" class="chip">Friday, schätz die Lage ein</button>
+          <button id="lage-assess-btn" class="lz-assess-btn"><span class="lz-pulse"></span>Friday, schätz die Lage ein</button>
         </div>
-        ${c ? satBlock(c.lon, c.lat, c.name) : ""}
-        <div id="lage-video" class="lage-video-wrap"></div>
-        <div id="lage-media" class="lage-media"><div class="lage-fotos lage-skeleton"><span></span><span></span><span></span></div></div>
-        <ul class="lage-news">${items}</ul>`;
+        ${c ? lzSection("Live-Bild", "🛰", satBlock(c.lon, c.lat, c.name)) : ""}
+        ${lzSection("Videos", "▶", `<div id="lage-video" class="lage-video-wrap"><div class="lz-skel-video"></div></div>`, "lz-sec-video")}
+        ${lzSection("Bilder", "◧", `<div id="lage-media" class="lage-media"><div class="lage-fotos lage-skeleton"><span></span><span></span><span></span></div></div>`, "lz-sec-media")}
+        ${lzSection(`Meldungen <b class="lz-count">${news.length}</b>`, "≡", newsHtml(news))}`;
       $("lage-assess-btn").addEventListener("click", () => assess(id));
       box.querySelector(".lage-satview")?.addEventListener("click", () => { if (c) openSat(c.lon, c.lat, 6, c.name); });
       loadInfo(id);
@@ -1062,14 +1135,20 @@
       // Flagge neben den Ländernamen in die Überschrift.
       const h = $("lage-land");
       if (h && i.flagge && !h.querySelector(".lage-flag")) h.insertAdjacentHTML("afterbegin", `<span class="lage-flag">${escapeHtml(i.flagge)}</span> `);
-      // Eine schlichte Zeile statt Kästchen.
-      const teile = [];
-      if (i.hauptstadt) teile.push(escapeHtml(i.hauptstadt));
-      if (i.einwohner) teile.push(`${(i.einwohner / 1e6).toFixed(1).replace(".", ",")} Mio.`);
-      if (i.waehrung) teile.push(escapeHtml(i.waehrung));
-      if (i.luft && i.luft.luftqualitaet_index != null) teile.push(`Luft ${escapeHtml(i.luft.bewertung)}`);
-      wrap.textContent = teile.join("  ·  ");
-    } catch { wrap.textContent = ""; }
+      // Steckbrief als kleine Kacheln.
+      const tiles = [];
+      const tile = (label, value, cls = "") => tiles.push(`<div class="lz-stat ${cls}"><small>${label}</small><b>${escapeHtml(value)}</b></div>`);
+      if (i.hauptstadt) tile("Hauptstadt", i.hauptstadt);
+      if (i.einwohner) tile("Einwohner", i.einwohner >= 1e6 ? `${(i.einwohner / 1e6).toFixed(1).replace(".", ",")} Mio.` : Math.round(i.einwohner).toLocaleString("de-DE"));
+      if (i.waehrung) tile("Währung", i.waehrung);
+      if (i.region) tile("Region", i.region);
+      if (i.luft && i.luft.luftqualitaet_index != null) {
+        const b = String(i.luft.bewertung || "");
+        tile("Luft", b, /schlecht|ungesund|sehr/i.test(b) ? "bad" : /gut/i.test(b) ? "good" : "");
+      }
+      wrap.innerHTML = tiles.join("");
+      if (!tiles.length) wrap.remove();
+    } catch { wrap.remove(); }
   }
 
   // Öffentliche Kameras/Videos als Links + Fotos als Rückfall, falls keine Nachrichtenbilder.
@@ -1091,37 +1170,33 @@
             <span class="vlabel">📹 Live-Kamera · ${escapeHtml(m.webcam.titel || "")}</span></div>`;
         }
         if (vids.length) {
-          const first = vids[0], rest = vids.slice(1);
-          html += `<div class="lage-player">
-              <iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(first)}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-            </div>
-            ${rest.length ? `<div class="lage-videos">${rest.map((vid) =>
-              `<a class="lage-video" href="https://www.youtube.com/watch?v=${encodeURIComponent(vid)}" target="_blank" rel="noopener noreferrer" title="Video ansehen">
-                 <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg" alt="Video" onerror="this.closest('a').remove()">
-                 <span class="play">▶</span></a>`).join("")}</div>` : ""}`;
+          html += `<div class="lage-player lz-main"><iframe src="${ytEmbed(vids[0], true)}" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+            ${vids.length > 1 ? `<div class="lz-thumbs">${vids.slice(0, 8).map((vid, k) =>
+              `<button type="button" class="lz-thumb${k === 0 ? " on" : ""}" data-vid="${escapeHtml(vid)}" title="Dieses Video abspielen">
+                 <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/mqdefault.jpg" alt="Video ${k + 1}" onerror="this.closest('button').remove()">
+                 <span class="play">▶</span></button>`).join("")}</div>` : ""}`;
         }
-        vbox.innerHTML = html;
+        if (!html) vbox.innerHTML = `<p class="muted lz-empty">Gerade keine Videos gefunden.</p>`;
+        else vbox.innerHTML = html;
+        vbox.querySelectorAll(".lz-thumb").forEach((b) => b.addEventListener("click", () => {
+          const frame = vbox.querySelector(".lz-main iframe");
+          if (frame) frame.src = ytEmbed(b.dataset.vid, false);
+          vbox.querySelectorAll(".lz-thumb").forEach((x) => x.classList.toggle("on", x === b));
+        }));
       }
-      wrap.innerHTML = `
-        <div class="lage-cams">
-          <a class="chip" href="${escapeHtml(m.nachrichten_videos)}" target="_blank" rel="noopener noreferrer">📺 Mehr Videos</a>
-        </div>
-        <div id="lage-images" class="lage-fotos lage-skeleton"><span></span><span></span><span></span></div>`;
+      if (m.nachrichten_videos && vbox) vbox.insertAdjacentHTML("beforeend", `<a class="lz-more" href="${escapeHtml(m.nachrichten_videos)}" target="_blank" rel="noopener noreferrer">Mehr Videos ansehen ↗</a>`);
+      wrap.innerHTML = `<div id="lage-images" class="lage-fotos lz-gallery lage-skeleton"><span></span><span></span><span></span></div>`;
       loadImages(id, m.fotos || []);
     } catch {
-      wrap.innerHTML = "";
+      document.querySelectorAll("#lage-detail .lz-sec-video, #lage-detail .lz-sec-media").forEach((n) => n.remove());
     }
   }
 
   // Aktuelle Bilder: zuerst Nachrichtenbilder (GDELT), sonst allgemeine Fotos (Openverse).
-  function imgHtml(list, news) {
-    return list.map((f) => {
-      const bild = news ? f.bild : (f.bild);
-      const seite = f.seite || f.bild;
-      const titel = f.titel || "";
-      return `<a href="${escapeHtml(seite)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(titel)}">
-        <img loading="lazy" src="${escapeHtml(bild)}" alt="${escapeHtml(titel)}" onerror="this.closest('a').remove()"></a>`;
-    }).join("");
+  function imgHtml(list) {
+    return list.map((f, k) => `<button type="button" class="lz-ph${k === 0 ? " big" : ""}" data-k="${k}" title="${escapeHtml(f.titel || "")}">
+        <img loading="lazy" src="${escapeHtml(f.bild)}" alt="${escapeHtml(f.titel || "")}" onerror="this.closest('button').remove()">
+        ${f.quelle ? `<span class="lz-ph-src">${escapeHtml(f.quelle)}</span>` : ""}</button>`).join("");
   }
   async function loadImages(id, fallback) {
     const wrap = $("lage-images");
@@ -1130,9 +1205,17 @@
     try { news = await (await api(`/api/lage/${id}/nachrichten-bilder`)).json(); } catch { /* optional */ }
     if (selected !== id || !wrap.isConnected) return;
     wrap.classList.remove("lage-skeleton");
-    const list = Array.isArray(news) && news.length ? news.slice(0, 9) : fallback.slice(0, 9);
-    if (!list.length) { wrap.remove(); return; }
-    wrap.innerHTML = imgHtml(list, Array.isArray(news) && news.length);
+    const list = (Array.isArray(news) && news.length ? news : fallback).filter((f) => f && f.bild).slice(0, 9);
+    if (!list.length) { wrap.closest(".lz-sec")?.remove(); return; }
+    wrap.innerHTML = imgHtml(list);
+    wrap.querySelectorAll(".lz-ph").forEach((b) => b.addEventListener("click", () => { lbList = list; showLightbox(Number(b.dataset.k)); }));
+    // Top-Meldung mit dem ersten Nachrichtenbild schmücken.
+    const top = document.querySelector("#lage-detail .lz-n.top .lz-n-img");
+    if (top && Array.isArray(news) && news.length) {
+      const img = new Image();
+      img.onload = () => { top.style.backgroundImage = `url("${encodeURI(news[0].bild)}")`; top.closest(".lz-n").classList.add("has-img"); };
+      img.src = news[0].bild;
+    }
   }
 
   async function assess(id) {
