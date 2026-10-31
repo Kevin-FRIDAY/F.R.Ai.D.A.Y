@@ -471,6 +471,28 @@
   const applyTicker = () => { const t = document.getElementById("lage-ticker"); if (t) t.style.display = storage.get("friday_ticker") === "0" ? "none" : ""; };
   applyTicker();
   window.addEventListener("friday-settings", applyTicker);
+  // Länder-Namen auf dem Globus (von lagezentrum.js gelesen)
+  bindFlag("set-globelabels", "friday_globelabels", true);
+
+  // ---------- Textgröße ----------
+  function applyTextSize(v) {
+    const map = { s: "0.92", m: "1", l: "1.1", xl: "1.2" };
+    document.documentElement.style.zoom = map[v] || map.m;
+    storage.set("friday_textsize", v);
+    const s = $("text-size"); if (s) s.value = v;
+  }
+  $("text-size")?.addEventListener("change", (e) => applyTextSize(e.target.value));
+  applyTextSize(storage.get("friday_textsize") || "m");
+
+  // ---------- Globus-Stil: Echt / Hologramm ----------
+  function applyGlobeStyle(v) {
+    document.body.classList.toggle("globe-holo", v === "holo");
+    storage.set("friday_globestyle", v);
+    const s = $("globe-style"); if (s) s.value = v;
+    window.dispatchEvent(new Event("friday-settings"));
+  }
+  $("globe-style")?.addEventListener("change", (e) => applyGlobeStyle(e.target.value));
+  applyGlobeStyle(storage.get("friday_globestyle") || "echt");
   // Lagezentrum optional direkt mit Osiris öffnen
   document.getElementById("lage-btn")?.addEventListener("click", () => { if (storage.get("friday_osiris_default") === "1") setTimeout(() => window.showOsirisEmbed && window.showOsirisEmbed(true), 90); });
 

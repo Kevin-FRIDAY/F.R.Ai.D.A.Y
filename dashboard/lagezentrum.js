@@ -52,6 +52,10 @@
     const c = findLocal(v); if (c) { $("lage-q").value = c.name; select(c.id); }
   });
   $("lage-mic")?.addEventListener("click", listenCountry);
+  // Ebenen-Legende: klein, beim Tippen groß (zusätzlich zu Hover).
+  $("lage-legend")?.querySelector(".legend-toggle")?.addEventListener("click", () => $("lage-legend").classList.toggle("open"));
+  // Einstellungen (Länder-Namen, Stil) sofort übernehmen.
+  window.addEventListener("friday-settings", () => { if (projection) redrawGlobe(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("lage").classList.contains("hidden")) close(); });
 
   // Land per Stimme sagen (nutzt die Spracherkennung des Browsers).
@@ -184,9 +188,24 @@
       coast: topoApi.mesh(world, obj, (a, b) => a === b),
     };
   }
+  // Natürliche Farbe je Klimazone (nach Breitengrad) – gibt dem Globus Höhen/Tiefen-Optik.
+  function biomeColor(lat) {
+    const a = Math.abs(lat);
+    if (a > 66) return "#dde6ec"; // Eis / Polar
+    if (a > 55) return "#67794f"; // Tundra / Taiga
+    if (a > 42) return "#5f7a46"; // gemäßigt
+    if (a > 30) return "#9c8b52"; // trocken / Steppe
+    if (a > 20) return "#b09a57"; // Wüste / Savanne
+    if (a > 10) return "#6f8a40"; // Savanne / Subtropen
+    return "#4e7a35"; // Tropen
+  }
   function buildLand(set) {
     landFeatures = set.features;
-    landGroup.replaceChildren(...landFeatures.map((f) => el("path", { d: geoPath(f) || "", class: "land", "data-id": String(f.id).padStart(3, "0") })));
+    landGroup.replaceChildren(...landFeatures.map((f) => {
+      const p = el("path", { d: geoPath(f) || "", class: "land", "data-id": String(f.id).padStart(3, "0") });
+      try { p.style.setProperty("--biome", biomeColor(d3geo.geoCentroid(f)[1])); } catch { /* ohne Tönung */ }
+      return p;
+    }));
   }
   let baseScale = 1, autoRaf = null, lastFrame = 0, spinning = true;
   const CX = W / 2, CY = H / 2;
@@ -221,20 +240,20 @@
 
       const defs = el("defs");
       defs.innerHTML = `
-        <radialGradient id="lage-ocean" cx="38%" cy="35%" r="75%">
-          <stop offset="0%" stop-color="#241403"/>
-          <stop offset="60%" stop-color="#120a02"/>
-          <stop offset="100%" stop-color="#040302"/>
+        <radialGradient id="lage-ocean" cx="50%" cy="50%" r="72%">
+          <stop offset="0%" stop-color="#1d4a74"/>
+          <stop offset="55%" stop-color="#113354"/>
+          <stop offset="100%" stop-color="#081d33"/>
         </radialGradient>
         <radialGradient id="lage-atmo" cx="50%" cy="50%" r="50%">
-          <stop offset="78%" stop-color="#ff8a1e" stop-opacity="0"/>
-          <stop offset="95%" stop-color="#ff8a1e" stop-opacity="0.30"/>
-          <stop offset="100%" stop-color="#ff8a1e" stop-opacity="0"/>
+          <stop offset="78%" stop-color="#8ec5ff" stop-opacity="0"/>
+          <stop offset="95%" stop-color="#8ec5ff" stop-opacity="0.34"/>
+          <stop offset="100%" stop-color="#8ec5ff" stop-opacity="0"/>
         </radialGradient>
         <radialGradient id="lage-shade" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#000" stop-opacity="0"/>
-          <stop offset="70%" stop-color="#000" stop-opacity="0"/>
-          <stop offset="100%" stop-color="#000" stop-opacity="0.45"/>
+          <stop offset="72%" stop-color="#000" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#000" stop-opacity="0.32"/>
         </radialGradient>`;
       const atmo = el("circle", { class: "lage-atmo", cx: CX, cy: CY, r: baseScale + 10, fill: "url(#lage-atmo)" });
       sphereNode = el("path", { class: "lage-ocean", d: geoPath({ type: "Sphere" }) });
@@ -247,7 +266,7 @@
       lakesNode = el("path", { class: "lage-lakes", d: lakesGeo ? geoPath(lakesGeo) || "" : "", "pointer-events": "none" });
       riversNode = el("path", { class: "lage-rivers", d: riversGeo ? geoPath(riversGeo) || "" : "", "pointer-events": "none" });
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, lakesNode, riversNode, coastNode, bordersNode, el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-cities" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, lakesNode, riversNode, coastNode, bordersNode, el("g", { id: "lage-labels" }), el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-cities" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
       landGroup.addEventListener("click", (e) => {
         if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
@@ -303,6 +322,7 @@
     const rg = $("lage-routes");
     if (rg) for (const path of rg.children) { const geo = routeGeo[path.dataset.i]; if (geo) path.setAttribute("d", geoPath(geo) || ""); }
     drawNight();
+    placeLabels();
     placePoints();
     placeSats();
     placeISS();
@@ -337,6 +357,38 @@
       if (node.tagName === "circle") { node.setAttribute("cx", p[0].toFixed(1)); node.setAttribute("cy", p[1].toFixed(1)); }
       else if (node.classList.contains("ship") || node.classList.contains("plane")) node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)}) rotate(${node.dataset.cog || 0})`);
       else node.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)})`);
+    }
+  }
+
+  // ---------- Länder-Namen ----------
+  // Große/bekannte Länder: schon in der Weltansicht beschriftet (ISO-Nummern).
+  const MAJORS = new Set(["840","124","076","032","484","643","156","356","036","276","250","724","380","826","804","792","818","682","364","392","360","710","566","180","012","434","398","729","496","586","004","616","752","578","246","170","604","152","764","704","231","404","504","887","887"]);
+  let labelsBuilt = false;
+  const labelsOn = () => { try { return localStorage.getItem("friday_globelabels") !== "0"; } catch { return true; } };
+  function buildLabels() {
+    const g = $("lage-labels");
+    if (!g || labelsBuilt || !countries.length) return;
+    g.replaceChildren(...countries.map((c) => {
+      const big = MAJORS.has(String(c.id).padStart(3, "0"));
+      const t = el("text", { class: "lage-label" + (big ? " big" : "") });
+      t.dataset.lon = c.lon; t.dataset.lat = c.lat; t.dataset.big = big ? "1" : "";
+      t.textContent = c.name;
+      return t;
+    }));
+    labelsBuilt = true;
+  }
+  function placeLabels() {
+    const g = $("lage-labels");
+    if (!g || !projection) return;
+    if (!labelsOn()) { g.style.display = "none"; return; }
+    g.style.display = "";
+    const zoomed = projection.scale() > baseScale * 1.35; // erst beim Heranzoomen alle Namen
+    for (const t of g.children) {
+      const lon = +t.dataset.lon, lat = +t.dataset.lat;
+      if (!visible(lon, lat) || (!zoomed && !t.dataset.big)) { t.style.display = "none"; continue; }
+      t.style.display = "";
+      const p = projection([lon, lat]);
+      t.setAttribute("x", p[0].toFixed(1)); t.setAttribute("y", p[1].toFixed(1));
     }
   }
 
@@ -522,6 +574,7 @@
       markers.append(g);
     }
 
+    buildLabels();
     renderList();
     renderTicker(hot);
   }

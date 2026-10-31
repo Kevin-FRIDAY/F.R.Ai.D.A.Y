@@ -1119,3 +1119,76 @@ a.lz-n-link:hover { border-color: var(--cyan); background: var(--cyan-soft); tra
 /* Globus: Flüsse + Seen (mehr Details) */
 .lage-rivers { fill: none; stroke: rgba(90,180,230,.55); stroke-width: 0.5; vector-effect: non-scaling-stroke; }
 .lage-lakes { fill: rgba(40,90,130,.55); stroke: rgba(120,190,235,.6); stroke-width: 0.4; vector-effect: non-scaling-stroke; }
+
+/* ===== v1.55: Realistischer Globus, kompakte Legende, aufgeräumte Einstellungen ===== */
+
+/* --- Globus echter: natürliche Farben, gleichmäßige Beleuchtung --- */
+.lage-ocean { stroke: rgba(130,185,235,.5); stroke-width: 1; filter: drop-shadow(0 0 8px rgba(90,155,225,.35)); }
+.lage-countries .land { fill: var(--biome, #4e7a35); stroke: rgba(25,35,20,.35); stroke-width: .3; vector-effect: non-scaling-stroke; }
+.land.watched { cursor: pointer; }
+.land.watched:hover { filter: brightness(1.22); }
+.land.aktiv { fill: #e8a24d; }
+.land.gut { fill: #5ad18a; }
+.land.schlecht { fill: #e8606f; }
+.land.gemischt { fill: #e8b94d; }
+.land.selected { stroke: #fff !important; stroke-width: 1.4 !important; filter: drop-shadow(0 0 5px #fff); }
+.lage-coast { stroke: rgba(228,238,248,.5); stroke-width: .55; filter: none; opacity: .72; }
+.lage-borders { stroke: rgba(255,255,255,.3); stroke-width: .5; stroke-dasharray: none; }
+.lage-rivers { stroke: rgba(135,195,235,.65); stroke-width: .5; }
+.lage-lakes { fill: rgba(45,110,160,.78); stroke: rgba(150,205,240,.6); stroke-width: .4; }
+.lage-grat { stroke: rgba(255,255,255,.07); stroke-width: .4; stroke-dasharray: 2 4; }
+.lage-night { fill: #00040c; fill-opacity: .34; stroke: rgba(120,170,255,.22); stroke-width: .8; }
+
+/* Länder-Namen */
+.lage-label {
+  fill: #f3f8ff; font-family: var(--font-ui, system-ui), sans-serif; font-size: 8px; font-weight: 600;
+  text-anchor: middle; dominant-baseline: middle; letter-spacing: .3px; pointer-events: none;
+  paint-order: stroke; stroke: rgba(2,10,24,.85); stroke-width: 2.2px; stroke-linejoin: round;
+}
+.lage-label.big { font-size: 10px; }
+
+/* --- Hologramm-Stil (optional, wie früher) --- */
+.globe-holo .lage-ocean { fill: #0a0602; stroke: var(--cyan); stroke-width: 1.2; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cyan) 45%, transparent)); }
+.globe-holo .lage-countries .land { fill: #3a2410; stroke: none; }
+.globe-holo .land.watched, .globe-holo .land.aktiv { fill: #ff8a1e; }
+.globe-holo .land.gut { fill: #4dffa6; }
+.globe-holo .land.schlecht { fill: #ff5d6c; }
+.globe-holo .land.gemischt { fill: #ffb84d; }
+.globe-holo .lage-coast { stroke: color-mix(in srgb, var(--cyan) 85%, #fff); stroke-width: .9; filter: drop-shadow(0 0 2px var(--cyan)); opacity: .9; }
+.globe-holo .lage-label { fill: var(--cyan); stroke: rgba(0,0,0,.8); }
+
+/* --- Kompakte Ebenen-Legende (groß nur bei Hover/Tippen) --- */
+.lage-legend {
+  left: 12px; bottom: 12px; padding: 0; background: none; border: none;
+  box-shadow: none; backdrop-filter: none; display: block; max-width: none; overflow: visible;
+}
+.lage-legend .legend-toggle {
+  display: inline-flex; align-items: center; gap: 6px; font: 600 11px/1 var(--font-ui, system-ui);
+  color: var(--text); background: rgba(10,6,3,.72); border: 1px solid var(--line); border-radius: 20px;
+  padding: 7px 12px; cursor: pointer; backdrop-filter: blur(12px); box-shadow: 0 6px 18px rgba(0,0,0,.45);
+  transition: border-color .15s, background .15s;
+}
+.lage-legend .legend-toggle:hover { border-color: var(--cyan); background: rgba(16,10,5,.85); }
+.lage-legend .legend-body {
+  position: absolute; left: 0; bottom: calc(100% + 8px); display: flex; flex-direction: column; gap: 10px;
+  padding: 12px; width: max-content; max-width: min(78vw, 560px);
+  background: rgba(10,6,3,.78); border: 1px solid var(--line); border-radius: 14px;
+  backdrop-filter: blur(14px); box-shadow: 0 12px 30px rgba(0,0,0,.5);
+  opacity: 0; transform: translateY(8px) scale(.98); transform-origin: bottom left; pointer-events: none;
+  transition: opacity .16s ease, transform .16s ease;
+}
+.lage-legend:hover .legend-body,
+.lage-legend:focus-within .legend-body,
+.lage-legend.open .legend-body { opacity: 1; transform: none; pointer-events: auto; }
+.lage-legend .legend-keys { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 11px; color: var(--muted); }
+.lage-legend .legend-switches { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* --- Einstellungen: aufgeräumte Karten --- */
+.set-group { background: rgba(255,255,255,.028); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin: 0 0 14px; }
+.set-g-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.set-g-ico { font-size: 22px; line-height: 1; width: 40px; height: 40px; display: grid; place-items: center; background: var(--cyan-soft); border: 1px solid var(--line); border-radius: 12px; }
+.set-g-txt h3 { margin: 0; font-size: 15px; }
+.set-g-txt small { color: var(--muted); font-size: 11px; }
+.set-g-body { display: flex; flex-direction: column; gap: 10px; }
+.set-field { display: flex; flex-direction: column; gap: 8px; }
+.set-label { font-size: 12px; color: var(--muted); }
