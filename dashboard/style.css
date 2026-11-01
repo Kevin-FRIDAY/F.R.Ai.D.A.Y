@@ -782,13 +782,8 @@ body::after {
   background: repeating-linear-gradient(to bottom, rgba(255,160,70,0.030) 0 1px, transparent 1px 3px);
   mix-blend-mode: screen; opacity: .45;
 }
-/* Langsame Scan-Linie, die über das HUD wandert */
-.hud::after {
-  content: ""; position: fixed; left: 12px; right: 12px; top: 0; height: 160px; z-index: 0; pointer-events: none;
-  background: linear-gradient(to bottom, rgba(255,160,70,0.10), rgba(255,160,70,0.02) 60%, transparent);
-  animation: hud-sweep 11s linear infinite;
-}
-@keyframes hud-sweep { 0% { transform: translateY(-180px); opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { transform: translateY(102vh); opacity: 0; } }
+/* Wandernde HUD-Scan-Linie entfernt (auf Wunsch) */
+.hud::after { content: none; }
 
 /* HUD-Eckklammern an allen Panels */
 .panel::before {
