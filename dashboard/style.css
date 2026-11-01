@@ -1192,3 +1192,40 @@ a.lz-n-link:hover { border-color: var(--cyan); background: var(--cyan-soft); tra
 .set-g-body { display: flex; flex-direction: column; gap: 10px; }
 .set-field { display: flex; flex-direction: column; gap: 8px; }
 .set-label { font-size: 12px; color: var(--muted); }
+
+/* ===== v1.56: Friday anrufen (freihändiger Sprach-Anruf) ===== */
+.call { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 38%, rgba(20,12,4,.92), rgba(2,2,4,.98));
+  backdrop-filter: blur(10px); animation: call-in .25s ease; }
+.call.hidden { display: none; }
+@keyframes call-in { from { opacity: 0; } to { opacity: 1; } }
+.call-inner { display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; padding: 24px; }
+.call-orb { position: relative; width: 190px; height: 190px; display: grid; place-items: center; }
+.call-core { font-size: 52px; color: var(--cyan); filter: drop-shadow(0 0 16px var(--cyan)); transition: transform .2s; }
+.call-ring { position: absolute; inset: 0; margin: auto; width: 100%; height: 100%; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--cyan) 55%, transparent); opacity: 0; }
+/* Zuhören: ruhige Pulse nach außen */
+.call-orb.listening .call-ring { animation: call-pulse 2.4s ease-out infinite; }
+.call-orb.listening .call-ring:nth-child(2) { animation-delay: .8s; }
+.call-orb.listening .call-ring:nth-child(3) { animation-delay: 1.6s; }
+/* Friday spricht: schnelleres, helleres Pochen */
+.call-orb.speaking .call-ring { animation: call-pulse 1.1s ease-out infinite; border-color: var(--cyan); }
+.call-orb.speaking .call-ring:nth-child(2) { animation-delay: .35s; }
+.call-orb.speaking .call-ring:nth-child(3) { animation-delay: .7s; }
+.call-orb.speaking .call-core { transform: scale(1.12); }
+/* Denkt nach: langsames Glimmen */
+.call-orb.thinking .call-core { animation: call-think 1.1s ease-in-out infinite; }
+@keyframes call-pulse { 0% { transform: scale(.62); opacity: .85; } 100% { transform: scale(1.15); opacity: 0; } }
+@keyframes call-think { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
+.call-name { font-family: var(--font-head, sans-serif); letter-spacing: .18em; color: var(--text); font-size: 20px; }
+.call-status { color: var(--cyan); font-size: 14px; min-height: 18px; letter-spacing: .04em; }
+.call-transcript { color: var(--muted); font-size: 14px; max-width: 460px; min-height: 20px; line-height: 1.4; }
+.call-actions { display: flex; gap: 14px; margin-top: 6px; }
+.call-btn { font: 600 14px/1 var(--font-ui, sans-serif); color: var(--text); background: rgba(255,255,255,.05);
+  border: 1px solid var(--line); border-radius: 26px; padding: 12px 18px; cursor: pointer; transition: all .15s; }
+.call-btn.mute { width: 52px; height: 52px; border-radius: 50%; font-size: 20px; padding: 0; }
+.call-btn.mute.off { background: rgba(255,93,108,.18); border-color: #ff5d6c; }
+.call-btn.hang { background: #ff5d6c; border-color: #ff5d6c; color: #180202; font-weight: 700; }
+.call-btn.hang:hover { filter: brightness(1.1); }
+.call-btn:hover { border-color: var(--cyan); }
+.call-hint { margin: 2px 0 0; }

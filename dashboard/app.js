@@ -953,6 +953,79 @@
     }
   });
 
+  // ---------- Friday anrufen (freihändiges Gespräch: zuhören ↔ antworten) ----------
+  let callActive = false, callRec = null, callMuted = false, callVoicePrev = null;
+  const callStatus = (t) => { const e = $("call-status"); if (e) e.textContent = t; };
+  const callOrb = (state) => { const o = $("call-orb"); if (o) o.className = "call-orb" + (state ? " " + state : ""); };
+  const callText = (t) => { const e = $("call-transcript"); if (e) e.textContent = t; };
+
+  function openCall() {
+    if (!Recognition) { addMessage("friday", "Für den Anruf brauche ich Spracherkennung – nutze Chrome/Safari oder die App."); return; }
+    if (callActive) return;
+    callActive = true; callMuted = false;
+    $("call")?.classList.remove("hidden");
+    $("call-mute")?.classList.remove("off");
+    callText("");
+    const vt = $("voice-toggle"); callVoicePrev = vt ? vt.checked : null; if (vt) vt.checked = true; // Vorlesen fürs Gespräch an
+    pauseWake();
+    callOrb("listening"); callStatus("Verbunden – ich höre");
+    callListen();
+  }
+
+  function closeCall() {
+    callActive = false;
+    if (callRec) { try { callRec.abort(); } catch { /* egal */ } callRec = null; }
+    try { speechSynthesis?.cancel(); } catch { /* egal */ }
+    try { audio.pause(); } catch { /* egal */ }
+    $("call")?.classList.add("hidden");
+    const vt = $("voice-toggle"); if (vt && callVoicePrev !== null) vt.checked = callVoicePrev;
+    if (!busy && !speaking) setState("Bereit, Boss.");
+    resumeWake();
+  }
+
+  function callListen() {
+    if (!callActive || callMuted || speaking || busy) return;
+    const rec = new Recognition();
+    rec.lang = "de-DE"; rec.interimResults = true; rec.maxAlternatives = 1;
+    callRec = rec;
+    callOrb("listening"); callStatus("Ich höre…");
+    let finalText = "";
+    rec.onresult = (e) => {
+      let interim = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i];
+        if (r.isFinal) finalText += r[0].transcript; else interim += r[0].transcript;
+      }
+      callText((finalText + " " + interim).trim());
+    };
+    rec.onerror = (e) => {
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        addMessage("friday", "Ich brauche die Mikrofon-Erlaubnis für den Anruf.");
+        closeCall();
+      }
+    };
+    rec.onend = async () => {
+      callRec = null;
+      if (!callActive) return;
+      const text = finalText.trim();
+      if (!text) { if (callActive && !callMuted) setTimeout(callListen, 250); return; } // nichts gehört → weiter zuhören
+      callOrb("speaking"); callStatus("Friday antwortet…"); callText(text);
+      try { await send(text); } catch { /* Fehler zeigt send selbst */ }
+      if (callActive) { callText(""); callListen(); }
+    };
+    try { rec.start(); } catch { setTimeout(() => { if (callActive) callListen(); }, 400); }
+  }
+
+  $("call-btn")?.addEventListener("click", openCall);
+  $("call-hang")?.addEventListener("click", closeCall);
+  $("call-mute")?.addEventListener("click", () => {
+    callMuted = !callMuted;
+    $("call-mute")?.classList.toggle("off", callMuted);
+    if (callMuted) { callStatus("Stumm – tipp aufs Mikro zum Weitersprechen"); callOrb(""); if (callRec) { try { callRec.abort(); } catch { /* egal */ } } }
+    else { callStatus("Ich höre…"); callListen(); }
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && callActive) closeCall(); });
+
   // ---------- Start ----------
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
   if (token) showApp();
