@@ -1144,11 +1144,21 @@
     if (!box) return;
     box.classList.remove("hidden");
     const player = $("lage-vids-player"), thumbs = $("lage-vids-thumbs");
+    const titleEl = box.querySelector(".lage-vids-top h2");
     if (player) player.innerHTML = `<div class="lz-skel-video"></div>`;
     if (thumbs) thumbs.innerHTML = "";
+    // Ist ein Land gewählt? Dann dessen Videos, sonst Welt-Videos.
+    const c = selected ? countries.find((x) => x.id === selected) : null;
+    if (titleEl) titleEl.textContent = c ? `📺 Videos: ${c.name}` : "📺 Welt-Videos";
     try {
-      if (!worldVids) worldVids = await (await api("/api/lage-videos")).json();
-      const ids = worldVids.videos || [];
+      let ids = [];
+      if (c) {
+        const m = await (await api(`/api/lage/${c.id}/medien`)).json();
+        ids = m.videos && m.videos.length ? m.videos : (m.video ? [m.video] : []);
+      } else {
+        if (!worldVids) worldVids = await (await api("/api/lage-videos")).json();
+        ids = worldVids.videos || [];
+      }
       if (!ids.length) { if (player) player.innerHTML = `<p class="muted" style="padding:16px">Gerade keine Videos gefunden.</p>`; return; }
       playWorldVid(ids[0], true);
       if (thumbs) {
