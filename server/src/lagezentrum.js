@@ -353,16 +353,17 @@ async function getVideos(country) {
   let ids = [];
   try {
     const name = country.en || country.name;
+    // Aktuelle Nachrichten-Videos zuerst (laufen zuverlässiger), Live-Streams danach.
     if (config.googleKey) {
-      const [live, news] = await Promise.all([
-        ytApiSearch(name + " news live", { live: true, max: 2 }),
+      const [news, live] = await Promise.all([
         ytApiSearch(country.name + " nachrichten", { max: 6 }),
+        ytApiSearch(name + " news live", { live: true, max: 2 }),
       ]);
-      ids = [...new Set([...live, ...news])].slice(0, 6);
+      ids = [...new Set([...news, ...live])].slice(0, 6);
     }
     if (!ids.length) {
-      const [live, news] = await Promise.all([ytSearch(name + " news live", true), ytSearch(country.name + " nachrichten", false)]);
-      ids = [...new Set([...live.slice(0, 2), ...news.slice(0, 4)])].slice(0, 5);
+      const [news, live] = await Promise.all([ytSearch(country.name + " nachrichten", false), ytSearch(name + " news live", true)]);
+      ids = [...new Set([...news.slice(0, 5), ...live.slice(0, 2)])].slice(0, 6);
     }
   } catch { /* Video optional */ }
   videoCache.set(country.id, { at: Date.now(), ids });
@@ -389,7 +390,7 @@ export async function getWorldVideos() {
       ]);
     }
   } catch { /* Videos optional */ }
-  const data = { live: [...new Set(live)].slice(0, 3), videos: [...new Set([...live, ...news])].slice(0, 12) };
+  const data = { live: [...new Set(live)].slice(0, 3), videos: [...new Set([...news, ...live])].slice(0, 12) };
   if (data.videos.length) worldVidCache = { at: Date.now(), data };
   return data;
 }

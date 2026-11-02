@@ -1133,12 +1133,55 @@
 
   const ytEmbed = (vid, muted) => `https://www.youtube-nocookie.com/embed/${encodeURIComponent(vid)}?autoplay=1&mute=${muted ? 1 : 0}&playsinline=1&rel=0&modestbranding=1`;
 
-  // ---------- Welt-Videos: aktuelle Nachrichten-Videos direkt im Weltgeschehen ----------
-  let worldVids = null;
-  function playWorldVid(vid, muted) {
-    const player = $("lage-vids-player");
-    if (player) player.innerHTML = `<iframe src="${ytEmbed(vid, muted)}" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+  // ---------- Robuster YouTube-Player ----------
+  // Lädt die YouTube-IFrame-API einmal; der Player überspringt nicht einbettbare
+  // Videos (Fehler 150/153/100/101) automatisch, damit immer direkt etwas läuft.
+  let ytApiReady = null;
+  function loadYtApi() {
+    if (window.YT && window.YT.Player) return Promise.resolve();
+    if (ytApiReady) return ytApiReady;
+    ytApiReady = new Promise((resolve) => {
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => { if (prev) prev(); resolve(); };
+      if (!document.getElementById("yt-iframe-api")) {
+        const s = document.createElement("script");
+        s.id = "yt-iframe-api"; s.src = "https://www.youtube.com/iframe_api";
+        document.head.append(s);
+      }
+    });
+    return ytApiReady;
   }
+  // Baut einen Player in container, spielt ids der Reihe nach, überspringt kaputte.
+  // Gibt ein Handle mit play(vid) und onActive-Callback (für aktive Miniatur).
+  async function mountYtPlayer(container, ids, { muted = true, onActive } = {}) {
+    if (!container || !ids || !ids.length) return null;
+    try { await Promise.race([loadYtApi(), new Promise((r) => setTimeout(r, 3500))]); } catch { /* API nicht erreichbar */ }
+    if (!window.YT || !window.YT.Player) {
+      container.innerHTML = `<iframe src="${ytEmbed(ids[0], muted)}" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+      return { play: (vid) => { const f = container.querySelector("iframe"); if (f) f.src = ytEmbed(vid, false); } };
+    }
+    container.innerHTML = '<div class="yt-mount"></div>';
+    let list = ids.slice();
+    let idx = 0;
+    const player = new window.YT.Player(container.firstElementChild, {
+      width: "100%", height: "100%", videoId: list[0],
+      playerVars: { autoplay: 1, mute: muted ? 1 : 0, playsinline: 1, rel: 0, modestbranding: 1, origin: location.origin },
+      events: {
+        onReady: (e) => { try { if (muted) e.target.mute(); e.target.playVideo(); } catch { /* egal */ } if (onActive) onActive(list[idx]); },
+        onError: () => { // nicht einbettbar -> nächstes Video versuchen
+          idx++;
+          if (idx < list.length) { try { player.loadVideoById(list[idx]); } catch { /* egal */ } if (onActive) onActive(list[idx]); }
+          else container.innerHTML = `<p class="muted" style="padding:16px">Diese Videos lassen sich nicht direkt einbetten.</p>`;
+        },
+      },
+    });
+    return {
+      play: (vid) => { idx = Math.max(0, list.indexOf(vid)); try { player.loadVideoById(vid); } catch { /* egal */ } if (onActive) onActive(vid); },
+    };
+  }
+
+  // ---------- Welt-Videos: aktuelle Nachrichten-Videos direkt im Weltgeschehen ----------
+  let worldVids = null, worldPlayer = null;
   async function openWorldVideos() {
     const box = $("lage-vids");
     if (!box) return;
@@ -1160,22 +1203,21 @@
         ids = worldVids.videos || [];
       }
       if (!ids.length) { if (player) player.innerHTML = `<p class="muted" style="padding:16px">Gerade keine Videos gefunden.</p>`; return; }
-      playWorldVid(ids[0], true);
+      const markActive = (vid) => thumbs?.querySelectorAll(".lz-thumb").forEach((x) => x.classList.toggle("on", x.dataset.vid === vid));
+      worldPlayer = await mountYtPlayer(player, ids, { muted: true, onActive: markActive });
       if (thumbs) {
         thumbs.innerHTML = ids.map((vid, k) =>
           `<button type="button" class="lz-thumb${k === 0 ? " on" : ""}" data-vid="${escapeHtml(vid)}" title="Dieses Video abspielen">
              <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/mqdefault.jpg" alt="Video ${k + 1}" onerror="this.closest('button').remove()">
              <span class="play">▶</span></button>`).join("");
-        thumbs.querySelectorAll(".lz-thumb").forEach((b) => b.addEventListener("click", () => {
-          playWorldVid(b.dataset.vid, false);
-          thumbs.querySelectorAll(".lz-thumb").forEach((x) => x.classList.toggle("on", x === b));
-        }));
+        thumbs.querySelectorAll(".lz-thumb").forEach((b) => b.addEventListener("click", () => worldPlayer?.play(b.dataset.vid)));
       }
     } catch { if (player) player.innerHTML = `<p class="error" style="padding:16px">Videos konnten nicht geladen werden.</p>`; }
   }
   function closeWorldVideos() {
     $("lage-vids")?.classList.add("hidden");
     const p = $("lage-vids-player"); if (p) p.innerHTML = ""; // stoppt das Video
+    worldPlayer = null;
   }
   $("lage-videos-btn")?.addEventListener("click", openWorldVideos);
   $("lage-vids-x")?.addEventListener("click", closeWorldVideos);
@@ -1279,7 +1321,7 @@
             <span class="vlabel">📹 Live-Kamera · ${escapeHtml(m.webcam.titel || "")}</span></div>`;
         }
         if (vids.length) {
-          html += `<div class="lage-player lz-main"><iframe src="${ytEmbed(vids[0], true)}" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+          html += `<div class="lage-player lz-main" id="lage-mainvid"></div>
             ${vids.length > 1 ? `<div class="lz-thumbs">${vids.slice(0, 8).map((vid, k) =>
               `<button type="button" class="lz-thumb${k === 0 ? " on" : ""}" data-vid="${escapeHtml(vid)}" title="Dieses Video abspielen">
                  <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/mqdefault.jpg" alt="Video ${k + 1}" onerror="this.closest('button').remove()">
@@ -1287,11 +1329,12 @@
         }
         if (!html) vbox.innerHTML = `<p class="muted lz-empty">Gerade keine Videos gefunden.</p>`;
         else vbox.innerHTML = html;
-        vbox.querySelectorAll(".lz-thumb").forEach((b) => b.addEventListener("click", () => {
-          const frame = vbox.querySelector(".lz-main iframe");
-          if (frame) frame.src = ytEmbed(b.dataset.vid, false);
-          vbox.querySelectorAll(".lz-thumb").forEach((x) => x.classList.toggle("on", x === b));
-        }));
+        if (vids.length) {
+          // Robuster Player: überspringt nicht einbettbare Videos automatisch (Fehler 153).
+          const markActive = (vid) => vbox.querySelectorAll(".lz-thumb").forEach((x) => x.classList.toggle("on", x.dataset.vid === vid));
+          const cvp = await mountYtPlayer($("lage-mainvid"), vids, { muted: true, onActive: markActive });
+          vbox.querySelectorAll(".lz-thumb").forEach((b) => b.addEventListener("click", () => cvp?.play(b.dataset.vid)));
+        }
       }
       if (m.nachrichten_videos && vbox) vbox.insertAdjacentHTML("beforeend", `<a class="lz-more" href="${escapeHtml(m.nachrichten_videos)}" target="_blank" rel="noopener noreferrer">Mehr Videos ansehen ↗</a>`);
       wrap.innerHTML = `<div id="lage-images" class="lage-fotos lz-gallery lage-skeleton"><span></span><span></span><span></span></div>`;
