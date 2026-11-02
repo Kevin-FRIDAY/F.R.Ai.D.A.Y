@@ -1224,3 +1224,22 @@ a.lz-n-link:hover { border-color: var(--cyan); background: var(--cyan-soft); tra
 .call-btn.hang:hover { filter: brightness(1.1); }
 .call-btn:hover { border-color: var(--cyan); }
 .call-hint { margin: 2px 0 0; }
+
+/* ===== v1.57: Welt-Videos (Player direkt im Weltgeschehen) ===== */
+.lage-vids { position: absolute; inset: 0; z-index: 30; display: grid; place-items: center;
+  background: rgba(2,2,4,.72); backdrop-filter: blur(8px); animation: call-in .2s ease; }
+.lage-vids.hidden { display: none; }
+.lage-vids-box { width: min(92%, 820px); max-height: 88%; overflow: auto; display: flex; flex-direction: column; gap: 12px;
+  background: rgba(12,8,4,.92); border: 1px solid var(--line); border-radius: 16px; padding: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.6); }
+.lage-vids-top { display: flex; align-items: center; justify-content: space-between; }
+.lage-vids-top h2 { margin: 0; font-size: 18px; }
+.lage-vids-player { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+.lage-vids-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.lage-vids-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.lage-vids-thumbs .lz-thumb { position: relative; flex: 0 0 auto; width: 128px; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden;
+  border: 1px solid var(--line); background: #000; cursor: pointer; padding: 0; }
+.lage-vids-thumbs .lz-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: .82; transition: opacity .15s; }
+.lage-vids-thumbs .lz-thumb:hover img { opacity: 1; }
+.lage-vids-thumbs .lz-thumb.on { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan); }
+.lage-vids-thumbs .lz-thumb .play { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 20px; text-shadow: 0 1px 4px #000; }

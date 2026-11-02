@@ -370,6 +370,30 @@ async function getVideos(country) {
 }
 async function getVideoId(country) { return (await getVideos(country))[0] || null; }
 
+// Aktuelle Welt-Nachrichten-Videos (Live-Streams + neueste Clips) fürs Weltgeschehen.
+let worldVidCache = null;
+export async function getWorldVideos() {
+  if (worldVidCache && Date.now() - worldVidCache.at < 30 * 60 * 1000) return worldVidCache.data;
+  let live = [], news = [];
+  try {
+    if (config.googleKey) {
+      [live, news] = await Promise.all([
+        ytApiSearch("Weltnachrichten live", { live: true, max: 3 }),
+        ytApiSearch("Nachrichten heute aktuell", { max: 9 }),
+      ]);
+    }
+    if (!live.length && !news.length) {
+      [live, news] = await Promise.all([
+        ytSearch("Weltnachrichten live", true),
+        ytSearch("Nachrichten heute aktuell", false),
+      ]);
+    }
+  } catch { /* Videos optional */ }
+  const data = { live: [...new Set(live)].slice(0, 3), videos: [...new Set([...live, ...news])].slice(0, 12) };
+  if (data.videos.length) worldVidCache = { at: Date.now(), data };
+  return data;
+}
+
 // Echte öffentliche Live-Webcam in der Nähe (Windy).
 const webcamCache = new Map();
 async function getWebcam(country) {

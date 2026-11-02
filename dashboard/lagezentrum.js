@@ -1133,6 +1133,43 @@
 
   const ytEmbed = (vid, muted) => `https://www.youtube-nocookie.com/embed/${encodeURIComponent(vid)}?autoplay=1&mute=${muted ? 1 : 0}&playsinline=1&rel=0&modestbranding=1`;
 
+  // ---------- Welt-Videos: aktuelle Nachrichten-Videos direkt im Weltgeschehen ----------
+  let worldVids = null;
+  function playWorldVid(vid, muted) {
+    const player = $("lage-vids-player");
+    if (player) player.innerHTML = `<iframe src="${ytEmbed(vid, muted)}" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+  }
+  async function openWorldVideos() {
+    const box = $("lage-vids");
+    if (!box) return;
+    box.classList.remove("hidden");
+    const player = $("lage-vids-player"), thumbs = $("lage-vids-thumbs");
+    if (player) player.innerHTML = `<div class="lz-skel-video"></div>`;
+    if (thumbs) thumbs.innerHTML = "";
+    try {
+      if (!worldVids) worldVids = await (await api("/api/lage-videos")).json();
+      const ids = worldVids.videos || [];
+      if (!ids.length) { if (player) player.innerHTML = `<p class="muted" style="padding:16px">Gerade keine Videos gefunden.</p>`; return; }
+      playWorldVid(ids[0], true);
+      if (thumbs) {
+        thumbs.innerHTML = ids.map((vid, k) =>
+          `<button type="button" class="lz-thumb${k === 0 ? " on" : ""}" data-vid="${escapeHtml(vid)}" title="Dieses Video abspielen">
+             <img loading="lazy" src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/mqdefault.jpg" alt="Video ${k + 1}" onerror="this.closest('button').remove()">
+             <span class="play">▶</span></button>`).join("");
+        thumbs.querySelectorAll(".lz-thumb").forEach((b) => b.addEventListener("click", () => {
+          playWorldVid(b.dataset.vid, false);
+          thumbs.querySelectorAll(".lz-thumb").forEach((x) => x.classList.toggle("on", x === b));
+        }));
+      }
+    } catch { if (player) player.innerHTML = `<p class="error" style="padding:16px">Videos konnten nicht geladen werden.</p>`; }
+  }
+  function closeWorldVideos() {
+    $("lage-vids")?.classList.add("hidden");
+    const p = $("lage-vids-player"); if (p) p.innerHTML = ""; // stoppt das Video
+  }
+  $("lage-videos-btn")?.addEventListener("click", openWorldVideos);
+  $("lage-vids-x")?.addEventListener("click", closeWorldVideos);
+
   async function select(id) {
     selected = id;
     showSide(true);

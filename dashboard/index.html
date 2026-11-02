@@ -443,9 +443,21 @@
     <header class="lage-top">
       <div class="brand">LAGE<span>ZENTRUM</span></div>
       <div id="lage-stand" class="muted small-text">Lade Weltlage...</div>
+      <button id="lage-videos-btn" class="ghost small" title="Welt-Videos ansehen">📺 Videos</button>
       <button id="osiris-btn" class="ghost small" title="Osiris Live-Karte öffnen">◎ Osiris Live</button>
       <button id="lage-close" class="ghost small" title="Schließen">✕</button>
     </header>
+    <div id="lage-vids" class="lage-vids hidden" aria-label="Welt-Videos">
+      <div class="lage-vids-box">
+        <header class="lage-vids-top">
+          <h2>📺 Welt-Videos</h2>
+          <button id="lage-vids-x" class="ghost small" title="Schließen">✕</button>
+        </header>
+        <div id="lage-vids-player" class="lage-vids-player"></div>
+        <div id="lage-vids-thumbs" class="lage-vids-thumbs"></div>
+        <p class="muted small-text">Aktuelle Nachrichten-Videos – spielen direkt hier, ohne YouTube zu öffnen.</p>
+      </div>
+    </div>
     <div class="lage-search">
       <input id="lage-q" type="text" placeholder="Land sagen oder tippen, z. B. USA" autocomplete="off" list="lage-countries">
       <datalist id="lage-countries"></datalist>
