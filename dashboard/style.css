@@ -1243,3 +1243,14 @@ a.lz-n-link:hover { border-color: var(--cyan); background: var(--cyan-soft); tra
 .lage-vids-thumbs .lz-thumb:hover img { opacity: 1; }
 .lage-vids-thumbs .lz-thumb.on { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan); }
 .lage-vids-thumbs .lz-thumb .play { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 20px; text-shadow: 0 1px 4px #000; }
+
+/* ===== v1.58.1: Video-Fallback (nicht einbettbar -> Vorschau + YouTube-Link) ===== */
+.yt-mount, .lage-player.lz-main, .lage-vids-player { position: relative; }
+.yt-fallback { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  text-decoration: none; background: #0a0a0f; overflow: hidden; }
+.yt-fallback.hidden { display: none; }
+.yt-fallback img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .5; }
+.yt-fb-play { position: relative; z-index: 1; width: 54px; height: 54px; display: grid; place-items: center; border-radius: 50%;
+  background: rgba(255,0,0,.85); color: #fff; font-size: 22px; box-shadow: 0 4px 16px rgba(0,0,0,.5); }
+.yt-fb-note { position: relative; z-index: 1; color: #fff; font-size: 12px; text-align: center; max-width: 80%;
+  background: rgba(0,0,0,.6); padding: 4px 10px; border-radius: 8px; }

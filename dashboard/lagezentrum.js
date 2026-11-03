@@ -1160,23 +1160,34 @@
       container.innerHTML = `<iframe src="${ytEmbed(ids[0], muted)}" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
       return { play: (vid) => { const f = container.querySelector("iframe"); if (f) f.src = ytEmbed(vid, false); } };
     }
-    container.innerHTML = '<div class="yt-mount"></div>';
+    container.innerHTML = '<div class="yt-mount"></div><a class="yt-fallback hidden" target="_blank" rel="noopener noreferrer"></a>';
+    const fb = container.lastElementChild;
     let list = ids.slice();
     let idx = 0;
+    let autoSkip = true; // beim ersten Laden kaputte Videos überspringen; nach Klick nicht
+    const showFallback = (vid) => {
+      fb.href = `https://www.youtube.com/watch?v=${encodeURIComponent(vid)}`;
+      fb.innerHTML = `<img src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg" alt="" onerror="this.style.display='none'">
+        <span class="yt-fb-play">▶</span>
+        <span class="yt-fb-note">Dieses Video erlaubt kein Einbetten · auf YouTube ansehen</span>`;
+      fb.classList.remove("hidden");
+      if (onActive) onActive(vid);
+    };
+    const hideFallback = () => fb.classList.add("hidden");
     const player = new window.YT.Player(container.firstElementChild, {
       width: "100%", height: "100%", videoId: list[0],
       playerVars: { autoplay: 1, mute: muted ? 1 : 0, playsinline: 1, rel: 0, modestbranding: 1, origin: location.origin },
       events: {
         onReady: (e) => { try { if (muted) e.target.mute(); e.target.playVideo(); } catch { /* egal */ } if (onActive) onActive(list[idx]); },
-        onError: () => { // nicht einbettbar -> nächstes Video versuchen
-          idx++;
-          if (idx < list.length) { try { player.loadVideoById(list[idx]); } catch { /* egal */ } if (onActive) onActive(list[idx]); }
-          else container.innerHTML = `<p class="muted" style="padding:16px">Diese Videos lassen sich nicht direkt einbetten.</p>`;
+        onStateChange: (e) => { if (e.data === 1 || e.data === 3) hideFallback(); }, // läuft -> Hinweis weg
+        onError: () => { // nicht einbettbar
+          if (autoSkip && idx < list.length - 1) { idx++; try { player.loadVideoById(list[idx]); } catch { /* egal */ } if (onActive) onActive(list[idx]); }
+          else showFallback(list[idx]); // nichts mehr/Klick -> Vorschau + YouTube-Link statt Fehler
         },
       },
     });
     return {
-      play: (vid) => { idx = Math.max(0, list.indexOf(vid)); try { player.loadVideoById(vid); } catch { /* egal */ } if (onActive) onActive(vid); },
+      play: (vid) => { autoSkip = false; hideFallback(); idx = Math.max(0, list.indexOf(vid)); try { player.loadVideoById(vid); } catch { /* egal */ } if (onActive) onActive(vid); },
     };
   }
 
