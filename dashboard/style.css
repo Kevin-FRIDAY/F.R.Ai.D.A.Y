@@ -1276,3 +1276,20 @@ a.lz-n-link:hover { border-color: var(--cyan); background: var(--cyan-soft); tra
 
 /* Menü-Link (Kern fürs Zweitgerät) */
 a.menu-row { text-decoration: none; }
+
+/* ===== v1.61: Friday Vision ===== */
+.vision { position: fixed; inset: 0; z-index: 58; display: flex; flex-direction: column; gap: 10px; padding: 14px; background: #030405; }
+.vision.hidden { display: none; }
+.vision-top { display: flex; align-items: center; gap: 14px; }
+.vision-title { font-family: ui-monospace, Menlo, monospace; letter-spacing: .22em; color: #4dffa6; text-shadow: 0 0 10px #4dffa6; font-size: 14px; }
+.vision-live { font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .12em; color: #ff5d6c; animation: call-think 1.4s ease-in-out infinite; }
+.vision-live.hidden { display: none; }
+.vision-count { flex: 1; text-align: right; font: 11px ui-monospace, Menlo, monospace; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+.vision-stage { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; border: 1px solid rgba(77,255,166,.35); border-radius: 12px; overflow: hidden; background: #000; }
+.vision-stage video, .vision-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.vision-gesture { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); font: 700 20px ui-monospace, Menlo, monospace; letter-spacing: .14em; color: #fff; text-shadow: 0 0 12px #4fd8ff; }
+.vision-hint { position: relative; z-index: 1; margin: 0; padding: 10px 14px; background: rgba(0,0,0,.7); border-radius: 10px; color: var(--text); max-width: 80%; text-align: center; }
+.vision-hint.hidden { display: none; }
+.vision-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.vision-phone { flex: 1; font: 12px ui-monospace, Menlo, monospace; color: var(--muted); letter-spacing: .06em; }
+.vision-note { margin: 0; }

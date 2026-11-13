@@ -91,6 +91,7 @@
       <button class="menu-row" data-target="lage-btn"><svg viewBox="0 0 24 24" class="mi"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>Weltgeschehen</button>
       <button class="menu-row" data-target="call-btn"><svg viewBox="0 0 24 24" class="mi"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Friday anrufen</button>
       <button class="menu-row" data-target="agents-open"><svg viewBox="0 0 24 24" class="mi"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 19c0-2.8 2.2-5 5-5M21 19c0-2.8-2.2-5-5-5M9.5 19h5"/></svg>Agenten-Team</button>
+      <button class="menu-row" data-target="vision-open"><svg viewBox="0 0 24 24" class="mi"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Friday Vision</button>
       <a class="menu-row" href="/core.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" class="mi"><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="8.5"/></svg>Kern (Zweitgerät)</a>
       <button class="menu-row" data-target="camera-live-btn"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.2"/><path d="M8 7l1.5-3h5L16 7"/></svg>Kamera</button>
       <button class="menu-row" data-target="look-btn"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M9 20h6M12 16v4"/></svg>Bildschirm</button>
@@ -450,6 +451,30 @@
     </div>
   </section>
 
+  <!-- Friday Vision: Objekte + Hand-Gesten vor der eigenen Kamera (alles lokal im Browser) -->
+  <button id="vision-open" class="hidden" aria-hidden="true"></button>
+  <section id="vision" class="vision hidden" aria-label="Friday Vision">
+    <header class="vision-top">
+      <div class="vision-title">FRIDAY VISION · CAM 01</div>
+      <span id="vision-live" class="vision-live hidden">● KAMERA LÄUFT</span>
+      <span id="vision-count" class="vision-count"></span>
+      <button id="vision-x" class="ghost small" title="Schließen">✕</button>
+    </header>
+    <div class="vision-stage">
+      <video id="vision-video" playsinline autoplay muted></video>
+      <canvas id="vision-canvas"></canvas>
+      <div id="vision-gesture" class="vision-gesture"></div>
+      <p id="vision-hint" class="vision-hint hidden"></p>
+    </div>
+    <footer class="vision-bar">
+      <label class="switch"><input type="checkbox" id="vision-focus"><span>Fokus-Modus</span></label>
+      <span id="vision-phone" class="vision-phone">Handy heute: 0 Sek.</span>
+      <button id="vision-summary" class="chip">Tagesbilanz</button>
+      <button id="vision-ask" class="chip primary">Friday, was siehst du?</button>
+    </footer>
+    <p class="muted small-text vision-note">Läuft nur auf diesem Gerät. Nichts wird gespeichert, keine Gesichtserkennung. ✋ offene Hand stoppt Fridays Stimme.</p>
+  </section>
+
   <!-- Lagezentrum -->
   <section id="lage" class="lage hidden" aria-label="Lagezentrum">
     <header class="lage-top">
@@ -528,6 +553,7 @@
   <script src="app.js"></script>
   <script src="lagezentrum.js"></script>
   <script src="agenten.js"></script>
+  <script src="vision.js"></script>
   <script src="aktiv.js"></script>
   <script src="postfach.js"></script>
   <script src="syscheck.js"></script>

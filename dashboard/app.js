@@ -881,6 +881,9 @@
     closeCamera();
     send("Was siehst du durch die Kamera?");
   });
+  // Für Friday Vision (vision.js): Standbild fragen, Stimme stoppen.
+  window.Friday.askAboutImage = (frame, text) => { pendingImage = frame; return send(text); };
+  window.Friday.stopSpeaking = () => { try { speechSynthesis?.cancel(); } catch { /* egal */ } try { audio.pause(); } catch { /* egal */ } };
 
   // ---------- Spracherkennung ----------
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
