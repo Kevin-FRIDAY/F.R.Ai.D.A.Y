@@ -1273,3 +1273,6 @@ a.lz-n-link:hover { border-color: var(--cyan); background: var(--cyan-soft); tra
 .agent-chip { font: 500 11px/1.2 var(--font-ui, sans-serif); color: var(--text); background: var(--cyan-soft); border: 1px solid var(--line); border-radius: 12px; padding: 5px 8px; cursor: pointer; text-align: left; }
 .agent-chip:hover { border-color: var(--cyan); }
 .agent-hint { font-size: 10px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+
+/* Menü-Link (Kern fürs Zweitgerät) */
+a.menu-row { text-decoration: none; }

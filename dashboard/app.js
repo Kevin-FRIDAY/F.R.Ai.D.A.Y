@@ -67,9 +67,15 @@
   $("logout").addEventListener("click", showLogin);
 
   // ---------- Anzeige ----------
+  let coreMode = null;
   function setState(text, mode = "") {
     $("state").textContent = text;
     $("reactor").className = `reactor ${mode}`;
+    // Zustand an Fridays Kern (Orb auf dem Zweitgerät) melden.
+    if (token && mode !== coreMode) {
+      coreMode = mode;
+      fetch("/api/core-state", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ mode }) }).catch(() => {});
+    }
   }
 
   function addMessage(who, text) {

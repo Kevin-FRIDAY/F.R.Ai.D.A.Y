@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <title>Friday Kern</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #000; overflow: hidden; color: #ff8fd0; font-family: ui-monospace, Menlo, monospace; }
+    canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+    .hud { position: fixed; left: 0; right: 0; text-align: center; letter-spacing: .28em; text-transform: uppercase; font-size: 12px; pointer-events: none; text-shadow: 0 0 10px #ff4fb0; }
+    #name { top: max(22px, env(safe-area-inset-top)); opacity: .8; }
+    #state { bottom: max(34px, env(safe-area-inset-bottom)); font-size: 14px; }
+    #clock { bottom: max(14px, env(safe-area-inset-bottom)); font-size: 10px; opacity: .5; }
+    #login { position: fixed; inset: 0; display: none; place-items: center; text-align: center; padding: 24px; line-height: 1.6; }
+    #login a { color: #fff; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="name" class="hud">F.R.Ai.D.A.Y · Kern</div>
+  <div id="state" class="hud">Bereit</div>
+  <div id="clock" class="hud"></div>
+  <div id="login"><p>Bitte zuerst auf diesem Gerät in Friday anmelden.<br><a href="/">Zur Anmeldung</a><br>Danach diese Seite wieder öffnen.</p></div>
+  <script src="vendor/three.min.js"></script>
+  <script>
+  // Fridays Kern fürs Zweitgerät: leuchtender Orb, der zeigt, was Friday gerade tut.
+  (() => {
+    "use strict";
+    let token = null;
+    try { token = localStorage.getItem("friday_token"); } catch { /* kein Speicher */ }
+    const LABEL = { "": "Bereit", listening: "Ich höre", thinking: "Denke nach", speaking: "Spricht" };
+    let mode = "", seq = -1;
+
+    // ---------- Orb ----------
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("c"), antialias: true });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+    camera.position.z = 6;
+    const PINK = 0xff3fa8;
+    const core = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 48), new THREE.MeshBasicMaterial({ color: PINK }));
+    const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(1.35, 2), new THREE.MeshBasicMaterial({ color: 0xff8fd0, wireframe: true, transparent: true, opacity: 0.35 }));
+    // Weiches Leuchten: Verlauf als Textur, additiv überblendet.
+    const gc = document.createElement("canvas"); gc.width = gc.height = 256;
+    const gx = gc.getContext("2d"), grad = gx.createRadialGradient(128, 128, 0, 128, 128, 128);
+    grad.addColorStop(0, "rgba(255,120,200,1)"); grad.addColorStop(0.25, "rgba(255,63,168,.55)"); grad.addColorStop(0.6, "rgba(255,63,168,.12)"); grad.addColorStop(1, "rgba(255,63,168,0)");
+    gx.fillStyle = grad; gx.fillRect(0, 0, 256, 256);
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(gc), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false }));
+    glow.renderOrder = -1;
+    scene.add(glow, core, shell);
+    const rings = [2.1, 2.5, 2.95].map((r, i) => {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.012, 8, 120), new THREE.MeshBasicMaterial({ color: i === 1 ? 0xffffff : 0xff8fd0, transparent: true, opacity: 0.55 - i * 0.12 }));
+      ring.rotation.x = 1.1 + i * 0.5; ring.rotation.y = i * 0.8;
+      scene.add(ring);
+      return ring;
+    });
+    const N = 500, pos = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) {
+      const r = 2.2 + Math.random() * 2.2, a = Math.random() * Math.PI * 2, b = Math.acos(2 * Math.random() - 1);
+      pos[i * 3] = r * Math.sin(b) * Math.cos(a); pos[i * 3 + 1] = r * Math.sin(b) * Math.sin(a); pos[i * 3 + 2] = r * Math.cos(b);
+    }
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    const particles = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xffb3e0, size: 0.035, transparent: true, opacity: 0.8 }));
+    scene.add(particles);
+
+    function resize() {
+      const w = window.innerWidth, h = window.innerHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.position.z = w < h ? 11 : 8; // hochkant: weiter weg, damit die Ringe passen
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    let level = 0;
+    function frame(ms) {
+      const t = ms / 1000;
+      // Zielpegel je Zustand; beim Sprechen ein silbenartiges Flackern.
+      let target = 0.08 + Math.sin(t * 1.2) * 0.04;
+      if (mode === "listening") target = 0.22 + Math.sin(t * 5) * 0.06;
+      if (mode === "thinking") target = 0.16 + Math.sin(t * 9) * 0.05;
+      if (mode === "speaking") target = 0.3 + Math.abs(Math.sin(t * 11) * Math.sin(t * 3.7)) * 0.55;
+      level += (target - level) * 0.25;
+      core.scale.setScalar(0.8 + level * 0.45);
+      glow.scale.setScalar(5 + level * 5);
+      glow.material.opacity = 0.55 + level * 0.45;
+      shell.rotation.y = t * 0.3; shell.rotation.x = t * 0.17;
+      shell.scale.setScalar(1 + level * 0.3);
+      const speed = mode === "thinking" ? 2.4 : mode === "speaking" ? 1.2 : 0.4;
+      rings.forEach((ring, i) => { ring.rotation.z += 0.004 * speed * (i % 2 ? -1 : 1); ring.rotation.y += 0.002 * speed; });
+      particles.rotation.y = t * 0.05 * (1 + speed);
+      renderer.render(scene, camera);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    // ---------- Uhr ----------
+    const tick = () => { document.getElementById("clock").textContent = new Date().toLocaleString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); };
+    tick(); setInterval(tick, 20000);
+
+    // ---------- Bildschirm anlassen ----------
+    async function keepAwake() { try { await navigator.wakeLock?.request("screen"); } catch { /* nicht unterstützt */ } }
+    keepAwake();
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") keepAwake(); });
+    document.addEventListener("click", () => { keepAwake(); document.documentElement.requestFullscreen?.().catch(() => {}); });
+
+    // ---------- Zustand von Friday holen (wartet auf Änderungen) ----------
+    async function poll() {
+      if (!token) { document.getElementById("login").style.display = "grid"; return; }
+      try {
+        const res = await fetch(`/api/core-state?since=${seq}`, { headers: { Authorization: `Bearer ${token}` } });
+        if (res.status === 401) { document.getElementById("login").style.display = "grid"; return; }
+        const s = await res.json();
+        seq = s.seq; mode = LABEL[s.mode] !== undefined ? s.mode : "";
+        document.getElementById("state").textContent = LABEL[mode];
+        setTimeout(poll, 50);
+      } catch { setTimeout(poll, 3000); } // Verbindung weg: später erneut
+    }
+    poll();
+  })();
+  </script>
+</body>
+</html>

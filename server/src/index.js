@@ -234,6 +234,26 @@ app.get("/api/lage-satelliten", asyncRoute(async (req, res) => res.json(await ge
 app.get("/api/lage-infra", asyncRoute(async (req, res) => res.json(getInfra(String(req.query.typ || "")))));
 app.get("/api/lage-videos", asyncRoute(async (req, res) => res.json(await getWorldVideos())));
 app.get("/api/agents", (req, res) => res.json(agentsWithStatus()));
+
+// Fridays Kern (Orb auf dem Zweitgerät, /core.html): das Dashboard meldet den Zustand,
+// der Kern wartet per Long-Poll auf Änderungen.
+let coreState = { mode: "", seq: 0 };
+const coreWaiters = new Set();
+app.post("/api/core-state", (req, res) => {
+  const mode = String(req.body?.mode || "").slice(0, 20);
+  if (mode !== coreState.mode) {
+    coreState = { mode, seq: coreState.seq + 1 };
+    for (const wake of [...coreWaiters]) wake();
+  }
+  res.json({ ok: true });
+});
+app.get("/api/core-state", (req, res) => {
+  if (Number(req.query.since) !== coreState.seq) return res.json(coreState);
+  const done = () => { clearTimeout(timer); coreWaiters.delete(done); if (!res.headersSent) res.json(coreState); };
+  const timer = setTimeout(done, 25000);
+  coreWaiters.add(done);
+  req.on("close", () => { clearTimeout(timer); coreWaiters.delete(done); });
+});
 app.get("/api/lage/:id", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id);
   if (!country) return res.status(404).json({ error: "Land nicht gefunden" });
