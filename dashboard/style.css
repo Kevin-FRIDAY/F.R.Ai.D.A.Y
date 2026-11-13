@@ -1254,3 +1254,22 @@ a.lz-n-link:hover { border-color: var(--cyan); background: var(--cyan-soft); tra
   background: rgba(255,0,0,.85); color: #fff; font-size: 22px; box-shadow: 0 4px 16px rgba(0,0,0,.5); }
 .yt-fb-note { position: relative; z-index: 1; color: #fff; font-size: 12px; text-align: center; max-width: 80%;
   background: rgba(0,0,0,.6); padding: 4px 10px; border-radius: 8px; }
+
+/* ===== v1.59: Agenten-Team ===== */
+.agents-count { font-size: 12px; color: var(--muted); font-family: var(--font-ui, sans-serif); letter-spacing: 0; margin-left: 8px; }
+.agents-cat { margin: 14px 0 0; }
+.agents-cat h3 { margin: 0 0 8px; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--cyan); }
+.agents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.agent-card { display: flex; flex-direction: column; gap: 6px; background: rgba(255,255,255,.028); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+.agent-card.setup { opacity: .62; }
+.agent-top { display: flex; align-items: center; gap: 8px; }
+.agent-top b { flex: 1; font-size: 14px; }
+.agent-emoji { font-size: 20px; line-height: 1; }
+.agent-dot { width: 9px; height: 9px; border-radius: 50%; background: #777; flex: 0 0 auto; }
+.agent-dot.ok { background: #4dffa6; box-shadow: 0 0 8px #4dffa6; }
+.agent-dot.warn { background: #ffcc4d; box-shadow: 0 0 8px #ffcc4d; }
+.agent-purpose { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.35; }
+.agent-ex { display: flex; flex-wrap: wrap; gap: 6px; }
+.agent-chip { font: 500 11px/1.2 var(--font-ui, sans-serif); color: var(--text); background: var(--cyan-soft); border: 1px solid var(--line); border-radius: 12px; padding: 5px 8px; cursor: pointer; text-align: left; }
+.agent-chip:hover { border-color: var(--cyan); }
+.agent-hint { font-size: 10px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }

@@ -4,6 +4,7 @@ import { config } from "./config.js";
 import { toolDefinitions, runTool } from "./tools.js";
 import * as store from "./store.js";
 import { isAgentOnline } from "./agent-hub.js";
+import { agentsBrief } from "./agents.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
 
@@ -39,7 +40,11 @@ Mac verbunden: ${isoAgentText()}.
 Kanal: ${extra.channel || "web"}.
 
 Was du über ${config.userName} weißt:
-${memories}`;
+${memories}
+
+Dein Agenten-Team (du koordinierst es; nenne den passenden Agenten, wenn es hilft):
+${agentsBrief()}
+Agenten, die "noch nicht aktiv" sind, brauchen erst eine Einrichtung – sag das kurz, statt so zu tun, als ginge es schon.`;
   if (extra.mode === "translate") {
     text += `\n\nÜBERSETZER-MODUS: Übersetze jede Nachricht des Nutzers. Ist sie Deutsch, übersetze ins ${extra.targetLang || "Englische"}; ist sie in einer anderen Sprache, übersetze ins Deutsche. Antworte nur mit der Übersetzung.`;
   }

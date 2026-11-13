@@ -8,6 +8,7 @@ import { attachAgentHub, isAgentOnline, getAgentInfo, sendToAgent } from "./agen
 import { mailConfigured, getMailOverview, sortMail } from "./mail.js";
 import { runSystemCheck } from "./syscheck.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
+import { agentsWithStatus } from "./agents.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
@@ -232,6 +233,7 @@ app.get("/api/lage-ereignisse", asyncRoute(async (req, res) => res.json(await ge
 app.get("/api/lage-satelliten", asyncRoute(async (req, res) => res.json(await getSatellites())));
 app.get("/api/lage-infra", asyncRoute(async (req, res) => res.json(getInfra(String(req.query.typ || "")))));
 app.get("/api/lage-videos", asyncRoute(async (req, res) => res.json(await getWorldVideos())));
+app.get("/api/agents", (req, res) => res.json(agentsWithStatus()));
 app.get("/api/lage/:id", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id);
   if (!country) return res.status(404).json({ error: "Land nicht gefunden" });
