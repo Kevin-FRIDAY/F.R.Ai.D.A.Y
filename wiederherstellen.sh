@@ -59,7 +59,7 @@ fi
 # 2. Programm zurücksetzen (optional)
 if [ "$PROGRAMM" = 1 ]; then
   status laeuft "Spiele die alte Programmversion ein..."
-  rsync -a --delete --exclude node_modules --exclude .env --exclude server/data --exclude server/eigene-protokolle.json --exclude .git \
+  rsync -a --delete --exclude node_modules --exclude .venv --exclude kronos --exclude .env --exclude server/data --exclude server/eigene-protokolle.json --exclude .git \
     --exclude sicherung.sh --exclude wiederherstellen.sh --exclude "Friday sichern.command" --exclude "Friday wiederherstellen.command" \
     "$SRC/programm/" "$DEST/" || fail "Das Programm ließ sich nicht zurückkopieren."
   chmod +x "$DEST"/*.command "$DEST"/*.sh 2>/dev/null

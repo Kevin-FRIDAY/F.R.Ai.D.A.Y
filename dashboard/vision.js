@@ -124,7 +124,10 @@
   // ---------- Start / Stopp ----------
   const hint = (text, error) => { const h = $("vision-hint"); h.textContent = text; h.classList.toggle("error", Boolean(error)); h.classList.toggle("hidden", !text); };
 
+  let openRun = 0;
   async function open() {
+    if (stream) return; // läuft schon
+    const run = ++openRun;
     box.classList.remove("hidden");
     showPhoneTime();
     hint("Lade Erkennung …");
@@ -134,6 +137,7 @@
       hint(`Kein Zugriff auf die Kamera (${err.name || "Fehler"}). Erlaube den Zugriff in den Browser-Einstellungen.`, true);
       return;
     }
+    if (run !== openRun) { stream.getTracks().forEach((t) => t.stop()); stream = null; return; } // inzwischen geschlossen
     video.srcObject = stream;
     $("vision-live").classList.remove("hidden");
     try { await loadModels(); } catch { hint("Die Erkennung konnte nicht geladen werden (Internet nötig beim ersten Start).", true); return; }
@@ -144,6 +148,7 @@
   }
 
   function close() {
+    openRun++;
     running = false;
     cancelAnimationFrame(raf);
     stream?.getTracks().forEach((t) => t.stop());

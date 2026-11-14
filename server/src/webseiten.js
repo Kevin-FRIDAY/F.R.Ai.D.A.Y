@@ -69,7 +69,7 @@ export async function buildSite(auftrag, basisId = null) {
   if (!text) return { ok: false, error: "Beschreib mir den Kunden und was die Seite können soll." };
   let user = `Auftrag: ${text}`;
   const basis = basisId ? safeId(basisId) : null;
-  if (basis) user = `Überarbeite diese bestehende Webseite nach dem Wunsch unten und gib die komplette neue Datei zurück.\n\nBestehende Seite:\n${getSiteHtml(basis).slice(0, 60000)}\n\nWunsch: ${text}`;
+  if (basis) user = `Überarbeite diese bestehende Webseite nach dem Wunsch unten und gib die komplette neue Datei zurück.\n\nBestehende Seite:\n${getSiteHtml(basis)}\n\nWunsch: ${text}`;
   const model = brainModel(config.model);
   const sparen = model === SPAR_MODELL;
   let res;
@@ -97,6 +97,8 @@ export async function buildSite(auftrag, basisId = null) {
   const id = basis || `${new Date().toISOString().slice(0, 10)}-${slug(w.titel)}-${Date.now().toString(36).slice(-4)}`;
   const dir = path.join(WEB_DIR, id);
   fs.mkdirSync(dir, { recursive: true });
+  // Vorige Fassung behalten, falls die Überarbeitung schlechter ist.
+  if (basis && fs.existsSync(path.join(dir, "index.html"))) fs.copyFileSync(path.join(dir, "index.html"), path.join(dir, `index.vorher-${Date.now().toString(36)}.html`));
   fs.writeFileSync(path.join(dir, "index.html"), html);
   fs.writeFileSync(path.join(dir, "angebot.txt"), `${w.angebot}\n\nPreisvorschlag: ${w.preis_eur} €\n`);
   const alt = basis ? readMeta(basis) : {};
@@ -122,9 +124,19 @@ async function eurToUsd(eur) {
 }
 
 // Der Nutzer hat die Seite verkauft: Status setzen und als Einnahme verbuchen.
+const selling = new Set();
 export async function markSold(id, betragEur) {
   const ok = safeId(id);
   if (!ok) return { ok: false, error: "Projekt nicht gefunden." };
+  if (selling.has(ok)) return { ok: false, error: "Der Verkauf wird gerade schon eingetragen." };
+  selling.add(ok);
+  try {
+    return await markSoldOnce(ok, betragEur);
+  } finally {
+    selling.delete(ok);
+  }
+}
+async function markSoldOnce(ok, betragEur) {
   const eur = Number(betragEur);
   if (!Number.isFinite(eur) || eur <= 0 || eur > 100000) return { ok: false, error: "Bitte den Verkaufspreis in Euro eingeben." };
   const meta = readMeta(ok);

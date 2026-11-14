@@ -72,9 +72,12 @@
   $("ws-download")?.addEventListener("click", download);
   $("ws-ordner")?.addEventListener("click", () => current && api(`/api/webseite/${encodeURIComponent(current.id)}/ordner`, { method: "POST" }));
   $("ws-copy")?.addEventListener("click", async () => { try { await navigator.clipboard.writeText(`${current.angebot}\n\nPreis: ${eur(current.preis_eur)}`); msg("Angebot kopiert."); } catch { msg("Kopieren ging nicht.", true); } });
+  let selling = false;
   $("ws-sold-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    if (!current) return;
+    if (!current || selling) return;
+    selling = true;
+    setTimeout(() => { selling = false; }, 3000);
     const betrag = String($("ws-sold-betrag").value || current.preis_eur || "").replace(",", ".");
     const r = await (await api(`/api/webseite/${encodeURIComponent(current.id)}/verkauft`, { method: "POST", body: JSON.stringify({ betrag }) })).json();
     if (!r.ok) { msg(r.error, true); return; }

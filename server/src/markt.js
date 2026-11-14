@@ -30,18 +30,22 @@ export function signalOf(d) {
 function runForecast(asset) {
   return new Promise((resolve) => {
     const proc = spawn(PYTHON, [SCRIPT, asset, "100", "24"], { env: { ...process.env, FRIDAY_KRONOS_DIR: KRONOS } });
-    let out = "", err = "";
+    let out = "", err = "", done = false;
+    const finish = (r) => { if (!done) { done = true; clearTimeout(timer); resolve(r); } };
+    // Hängt der Download oder die Rechnung, nach 10 Minuten abbrechen.
+    const timer = setTimeout(() => { proc.kill("SIGKILL"); finish({ error: "Die Rechnung hat zu lange gedauert." }); }, 10 * 60 * 1000);
+    proc.on("error", (e) => finish({ error: `Kronos ließ sich nicht starten (${e.code || e.message}).` }));
     proc.stdout.on("data", (c) => { out += c.toString(); });
     proc.stderr.on("data", (c) => { err = (err + c.toString()).slice(-1500); });
     proc.on("close", (code) => {
       const line = out.trim().split("\n").pop() || "";
       try {
         const data = JSON.parse(line);
-        if (data.error) return resolve({ error: data.error });
-        if (code !== 0) return resolve({ error: `Abbruch (Code ${code})` });
-        resolve({ data });
+        if (data.error) return finish({ error: data.error });
+        if (code !== 0) return finish({ error: `Abbruch (Code ${code})` });
+        finish({ data });
       } catch {
-        resolve({ error: (err.trim().split("\n").pop() || `Abbruch (Code ${code})`).slice(0, 300) });
+        finish({ error: (err.trim().split("\n").pop() || `Abbruch (Code ${code})`).slice(0, 300) });
       }
     });
   });
@@ -64,7 +68,7 @@ export function getForecast(asset, { force = false } = {}) {
         state[asset] = { status: "fertig" };
         logPrognose(r.data);
       } else state[asset] = { status: "fehler", error: r.error };
-    });
+    }).catch((e) => { state[asset] = { status: "fehler", error: String(e?.message || e).slice(0, 200) }; }); // Warteschlange nie blockieren
   }
   const s = state[asset];
   // Ältere Prognose weiter zeigen, während eine neue rechnet.
@@ -83,6 +87,7 @@ function saveDepot(d) {
 function logPrognose(data) {
   const d = loadDepot();
   const faellig = new Date(new Date(data.zeit_jetzt).getTime() + data.stunden * 3600 * 1000).toISOString();
+  d.preise = { ...(d.preise || {}), [data.asset]: { preis: data.jetzt, zeit: data.zeit_jetzt } };
   d.prognosen.push({ asset: data.asset, zeit: data.zeit_jetzt, jetzt: data.jetzt, hoeher: data.hoeher, anzahl: data.anzahl, median: data.median, faellig });
   if (d.prognosen.length > 300) d.prognosen.shift();
   bewerten(d);
@@ -106,7 +111,7 @@ export function getDepot() {
   const d = loadDepot();
   bewerten(d);
   const positionen = Object.entries(d.bestand).filter(([, m]) => m > 0).map(([asset, menge]) => {
-    const preis = cache[asset]?.data?.jetzt;
+    const preis = cache[asset]?.data?.jetzt ?? d.preise?.[asset]?.preis; // nach Neustart: letzter bekannter Kurs
     return { asset, name: MAERKTE[asset], menge, preis: preis ?? null, wert: preis ? menge * preis : null };
   });
   const wert = d.cash + positionen.reduce((s, p) => s + (p.wert || 0), 0);

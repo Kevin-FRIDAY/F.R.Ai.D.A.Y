@@ -1487,3 +1487,8 @@ body.friday-spar #reactor, body.friday-spar #face-host { filter: saturate(.6) br
 .ws-preis { font: 600 13px ui-monospace, Menlo, monospace; color: #4dffa6; }
 .ws-actions { display: flex; flex-direction: column; gap: 8px; }
 .ws-row { display: flex; align-items: center; gap: 8px; } .ws-row.hidden { display: none; }
+
+/* ===== v1.68: Menü in Gruppen ===== */
+.menu-sep { font: 600 10px ui-monospace, Menlo, monospace; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); padding: 10px 12px 4px; }
+.menu-sep:first-child { padding-top: 4px; }
+.menu-pop { max-height: calc(100vh - 90px); overflow-y: auto; }

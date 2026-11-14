@@ -89,6 +89,7 @@ export function startVideoJob({ look } = {}) {
   });
   let errTail = "";
   proc.stderr.on("data", (chunk) => { errTail = (errTail + chunk.toString()).slice(-2000); });
+  proc.on("error", (e) => { current.status = "fehler"; current.error = `Das Schnitt-Team ließ sich nicht starten (${e.code || e.message}).`; });
   proc.on("close", async (code) => {
     if (current.status === "läuft") {
       current.status = code === 0 && current.result ? "fertig" : "fehler";

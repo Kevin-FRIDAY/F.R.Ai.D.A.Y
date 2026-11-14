@@ -3,6 +3,9 @@ import { config } from "./config.js";
 import { isAgentOnline } from "./agent-hub.js";
 import { mailConfigured } from "./mail.js";
 import { shipsStatus } from "./ships.js";
+import { getEnergie } from "./energie.js";
+import { videoTeamReady } from "./videoteam.js";
+import { marktReady } from "./markt.js";
 
 async function timed(label, fn) {
   const t0 = Date.now();
@@ -32,7 +35,16 @@ export async function runSystemCheck() {
     // Grundlagen
     timed("Internet", async () => { await ping("https://www.cloudflare.com/cdn-cgi/trace", { timeout: 6000 }); return { ok: true, detail: "online" }; }),
     timed("Mac verbunden", async () => ({ ok: isAgentOnline(), detail: isAgentOnline() ? "verbunden" : "nicht verbunden" })),
-    timed("Fridays Denken (Claude)", async () => ({ ok: Boolean(config.anthropicKey), detail: config.anthropicKey ? "Schlüssel vorhanden (Guthaben separat)" : "kein Schlüssel" })),
+    timed("Fridays Denken (Claude)", async () => ({ ok: Boolean(config.anthropicKey), detail: config.anthropicKey ? "Schlüssel vorhanden" : "kein Schlüssel" })),
+    timed("Energie (Claude-Guthaben)", async () => {
+      const e = getEnergie();
+      if (e.zustand === "tot") return { ok: false, detail: "leer – Notstrom, bitte aufladen" };
+      if (e.rest == null) return { ok: true, detail: "Betrag noch nicht eingetragen" };
+      return { ok: e.zustand === "voll", detail: `${e.prozent} % (ca. ${e.rest.toFixed(2)} $)${e.zustand === "spar" ? " – Sparmodus" : ""}` };
+    }),
+    timed("Schnitt-Team (Whisper + ffmpeg)", async () => ({ ok: videoTeamReady(), detail: videoTeamReady() ? "installiert" : "Python-Umgebung fehlt" })),
+    timed("Markt-Radar (Kronos)", async () => ({ ok: marktReady(), detail: marktReady() ? "installiert" : "Kronos fehlt" })),
+    timed("Welt-Alarm (GDACS)", async () => { await ping("https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP", { timeout: 9000 }); return { ok: true, detail: "erreichbar" }; }),
     // Osiris
     timed("Osiris", async () => { await ping("http://127.0.0.1:3100/", { timeout: 6000 }); return { ok: true, detail: "läuft (Port 3100)" }; }),
     // Lagezentrum-Quellen

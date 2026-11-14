@@ -101,5 +101,5 @@ export function getEnergie() {
 
 // Welches Modell das Gehirn gerade nehmen soll.
 export function brainModel(standard) {
-  return getEnergie().zustand === "spar" ? SPAR_MODELL : standard;
+  return getEnergie().zustand === "voll" ? standard : SPAR_MODELL; // knapp oder leer: sparen
 }

@@ -1198,10 +1198,11 @@
     const dataP = api("/api/lage-alarm").then((r) => r.json());
     await speakLine("Oh nein, Chef. Da ist was.");
     let data;
-    try { data = await dataP; } catch { data = null; }
+    try { data = await dataP; } catch { data = null; } // Fehler = keine Daten, nicht "Entwarnung"
     wrap.classList.remove("alarm-sweeping");
     if (run !== alarmRun) return;
-    if (!data || !data.ereignisse?.length) { $("alarm-titel").textContent = "KEINE GROSSE LAGE"; await speakLine("Entwarnung, Chef. Gerade gibt es keine große Katastrophe."); return stopAlarm(); }
+    if (!data || !Array.isArray(data.ereignisse)) { $("alarm-titel").textContent = "DATEN NICHT ERREICHBAR"; await speakLine("Chef, ich komme gerade nicht an die Katastrophen-Daten. Ich versuche es später noch einmal."); return stopAlarm(); }
+    if (!data.ereignisse.length) { $("alarm-titel").textContent = "KEINE GROSSE LAGE"; await speakLine("Entwarnung, Chef. Gerade gibt es keine große Katastrophe."); return stopAlarm(); }
     for (const ev of data.ereignisse) {
       if (run !== alarmRun) return;
       alarmEv = ev;

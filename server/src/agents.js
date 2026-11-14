@@ -24,7 +24,7 @@ export const AGENTS = [
   { id: "musik", name: "Musik-Agent", emoji: "🎵", cat: "Stimme & Medien", purpose: "Musik, Playlists, 'was läuft gerade'.", examples: ["Spiel entspannte Musik", "Was läuft gerade?"], need: { type: "setup", label: "Spotify" } },
 
   // --- Lagezentrum ---
-  { id: "lage", name: "Lage-Agent", emoji: "🌍", cat: "Lagezentrum", purpose: "Weltlage und aktuelle Nachrichten im Weltgeschehen.", examples: ["Was ist in der Ukraine los?", "Zeig die Weltlage"], need: { type: "frei" } },
+  { id: "lage", name: "Lage-Agent", emoji: "🌍", cat: "Lagezentrum", purpose: "Weltlage und aktuelle Nachrichten im Weltgeschehen.", examples: ["Was ist auf der Welt los?", "Welt-Alarm", "Was ist in der Ukraine los?"], need: { type: "frei" } },
   { id: "wetter", name: "Wetter-Agent", emoji: "⛅", cat: "Lagezentrum", purpose: "Wetter und Unwetterwarnungen.", examples: ["Wie wird das Wetter morgen?", "Brauche ich einen Schirm?"], need: { type: "frei" } },
   { id: "karten", name: "Karten-Agent", emoji: "🗺️", cat: "Lagezentrum", purpose: "Orte, Routen und Karten.", examples: ["Wie weit ist es nach München?", "Zeig mir die Route"], need: { type: "setup", label: "Mapbox" } },
   { id: "krypto", name: "Krypto-Agent", emoji: "🪙", cat: "Lagezentrum", purpose: "Krypto-Kurse und Charts – nur Daten, kein Handel.", examples: ["Was kostet Bitcoin?", "Wie steht Ethereum heute?"], need: { type: "frei" } },
@@ -35,7 +35,7 @@ export const AGENTS = [
   { id: "video", name: "Video-Team", emoji: "🎬", cat: "Kreativ", purpose: "Schneidet Clips lokal zu einem 9:16-Video: Regie, Transkript, Schnitt, Farbe, Untertitel, Audio.", examples: ["Friday, schneide das Video", "Schneide das Video im Kino-Look"], need: { type: "check", ok: () => videoTeamReady(), label: "Python-Umgebung" } },
   { id: "webseiten", name: "Webseiten-Agent", emoji: "🌐", cat: "Kreativ", purpose: "Baut verkaufsfertige Webseiten mit Angebot und Preisvorschlag – du verkaufst sie.", examples: ["Bau eine Webseite für einen Friseur in Berlin", "Mach die Farben der letzten Seite wärmer"], need: { type: "key", key: "anthropicKey", label: "Claude-Schlüssel" } },
   { id: "design", name: "Design-Agent", emoji: "🎨", cat: "Kreativ", purpose: "Skizzen, Grundrisse und Oberflächen-Design (HUD).", examples: ["Entwirf ein neues HUD", "Skizzier den Grundriss"], need: { type: "setup", label: "Figma" } },
-  { id: "dreid", name: "3D-Agent", emoji: "🧊", cat: "Kreativ", purpose: "3D-Modelle lokal in Blender (per Python).", examples: ["Bau ein 3D-Modell von einem Würfel", "Rendere die Szene"], need: { type: "mac" } },
+  { id: "dreid", name: "3D-Werkstatt", emoji: "🧊", cat: "Kreativ", purpose: "Entwirft 3D-Hologramme Schritt für Schritt: Autos, Häuser, Geräte – mit echten Maßen.", examples: ["Bau mir einen Porsche Taycan", "Ein Wohnhaus mit 12 Etagen"], need: { type: "key", key: "anthropicKey", label: "Claude-Schlüssel" } },
 
   // --- Entwicklung & Steuerung ---
   { id: "code", name: "Code-Agent", emoji: "💻", cat: "Entwicklung & Steuerung", purpose: "Sichert und erweitert Fridays Code (GitHub).", examples: ["Gibt es ein Update?", "Was wurde zuletzt geändert?"], need: { type: "frei" } },

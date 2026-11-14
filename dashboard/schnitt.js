@@ -18,8 +18,11 @@
     $("schnitt-clips").innerHTML = d.clips.length
       ? d.clips.map((c, i) => `<li><i style="background:${COLORS[i % COLORS.length]}"></i>${escapeHtml(c)}</li>`).join("")
       : `<li class="muted">Noch keine Clips. Leg Videos in den Ordner „Eingang".</li>`;
-    $("schnitt-look").innerHTML = d.looks.map((l) => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join("");
-    if (j) $("schnitt-look").value = j.look;
+    const sel = $("schnitt-look");
+    if (!sel.options.length) {
+      sel.innerHTML = d.looks.map((l) => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join("");
+      if (j) sel.value = j.look;
+    }
     const running = j && j.status === "läuft";
     $("schnitt-start").disabled = running || !d.clips.length || !d.ready;
     $("schnitt-start").textContent = running ? "Team arbeitet …" : "▶ Schneide das Video";
@@ -89,7 +92,7 @@
   }
 
   async function refresh() {
-    if (!loggedIn()) return;
+    if (!loggedIn()) { schedule(false); return; }
     try {
       const d = await (await api("/api/video-job")).json();
       announce(d);
