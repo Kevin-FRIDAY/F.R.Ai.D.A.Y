@@ -7,7 +7,7 @@ set -uo pipefail
 DEST="$(cd "$(dirname "$0")" && pwd)"
 STATUS="$DEST/server/data/update.json"
 BACKUP="$HOME/Friday-Sicherung"
-KEEP=(--exclude node_modules --exclude .env --exclude server/data --exclude server/eigene-protokolle.json --exclude .git)
+KEEP=(--exclude node_modules --exclude .env --exclude server/data --exclude server/eigene-protokolle.json --exclude .git --exclude .venv --exclude kronos)
 mkdir -p "$DEST/server/data"
 
 status() { # status ZUSTAND TEXT
@@ -56,7 +56,7 @@ if [ -f "$DEST/sicherung.sh" ]; then
     || fail "Sicherung vor dem Update hat nicht geklappt. Ich habe nichts verändert."
 fi
 rm -rf "$BACKUP" && mkdir -p "$BACKUP" && chmod 700 "$BACKUP"
-rsync -a --exclude node_modules "$DEST/" "$BACKUP/" || fail "Sicherung hat nicht geklappt."
+rsync -a --exclude node_modules --exclude .venv --exclude kronos "$DEST/" "$BACKUP/" || fail "Sicherung hat nicht geklappt."
 
 # 3. Neue Version einspielen
 status laeuft "Installiere Version $VERSION..."

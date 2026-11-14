@@ -4,6 +4,7 @@
 import { config } from "./config.js";
 import { isAgentOnline } from "./agent-hub.js";
 import { videoTeamReady } from "./videoteam.js";
+import { marktReady } from "./markt.js";
 
 // need beschreibt, was ein Agent braucht:
 //  {type:"frei"}                      -> immer einsatzbereit (kostenlose Quelle)
@@ -27,6 +28,7 @@ export const AGENTS = [
   { id: "wetter", name: "Wetter-Agent", emoji: "⛅", cat: "Lagezentrum", purpose: "Wetter und Unwetterwarnungen.", examples: ["Wie wird das Wetter morgen?", "Brauche ich einen Schirm?"], need: { type: "frei" } },
   { id: "karten", name: "Karten-Agent", emoji: "🗺️", cat: "Lagezentrum", purpose: "Orte, Routen und Karten.", examples: ["Wie weit ist es nach München?", "Zeig mir die Route"], need: { type: "setup", label: "Mapbox" } },
   { id: "krypto", name: "Krypto-Agent", emoji: "🪙", cat: "Lagezentrum", purpose: "Krypto-Kurse und Charts – nur Daten, kein Handel.", examples: ["Was kostet Bitcoin?", "Wie steht Ethereum heute?"], need: { type: "frei" } },
+  { id: "markt", name: "Markt-Radar", emoji: "📈", cat: "Lagezentrum", purpose: "100 mögliche Kursverläufe mit Kronos, Papierdepot mit Spielgeld – keine echten Orders.", examples: ["Friday, wie sieht Gold aus?", "Wie läuft mein Papierdepot?"], need: { type: "check", ok: () => marktReady(), label: "Kronos" } },
   { id: "weltdaten", name: "Welt-Daten-Agent", emoji: "🛰️", cat: "Lagezentrum", purpose: "Flüge, Schiffe, ISS, Webcams und Ereignisse.", examples: ["Wo ist die ISS gerade?", "Welche Flüge sind über mir?"], need: { type: "frei" } },
 
   // --- Kreativ ---

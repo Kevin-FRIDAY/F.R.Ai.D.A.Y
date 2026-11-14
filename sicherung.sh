@@ -45,7 +45,7 @@ if [ -d "$DEST/server/data" ]; then
   rsync -a --exclude '*.tmp' "$DEST/server/data/" "$WORK/server/data/" || { rm -rf "$WORK"; echo "Daten ließen sich nicht kopieren." >&2; exit 1; }
 fi
 if [ "$PROGRAMM" = 1 ]; then
-  rsync -a --exclude node_modules --exclude .env --exclude server/data --exclude .git "$DEST/" "$WORK/programm/" \
+  rsync -a --exclude node_modules --exclude .venv --exclude kronos --exclude .env --exclude server/data --exclude .git "$DEST/" "$WORK/programm/" \
     || { rm -rf "$WORK"; echo "Programm ließ sich nicht kopieren." >&2; exit 1; }
 fi
 

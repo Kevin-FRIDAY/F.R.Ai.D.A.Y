@@ -1339,3 +1339,36 @@ a.menu-row { text-decoration: none; }
 .sa-text { font-size: 11px; color: var(--muted); margin: 4px 0 6px; min-height: 14px; }
 .sa-bar { height: 3px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden; }
 .sa-bar s { display: block; height: 100%; background: #ff3fa8; transition: width .4s; text-decoration: none; }
+
+/* ===== v1.63: Markt-Radar ===== */
+.markt { position: fixed; inset: 0; z-index: 58; display: flex; flex-direction: column; gap: 10px; padding: 14px; background: #050302; overflow: auto; }
+.markt.hidden { display: none; }
+.markt-top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.markt-title { font-family: ui-monospace, Menlo, monospace; letter-spacing: .22em; color: #ff8a1e; text-shadow: 0 0 10px #ff8a1e; font-size: 14px; flex: 1; }
+.markt-tabs { display: flex; gap: 6px; }
+.markt-tabs button { font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .12em; padding: 7px 12px; border-radius: 16px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
+.markt-tabs button.on { color: #120a02; background: #ff8a1e; border-color: #ff8a1e; }
+.markt-warn { margin: 0; font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .06em; color: #ffcc4d; border: 1px solid rgba(255,204,77,.4); background: rgba(255,204,77,.07); border-radius: 10px; padding: 8px 12px; }
+.markt-grid { display: grid; grid-template-columns: 1fr 320px; gap: 12px; flex: 1; min-height: 0; }
+@media (max-width: 900px) { .markt-grid { grid-template-columns: 1fr; } }
+.markt-panel { display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(255,138,30,.3); border-radius: 12px; padding: 12px; background: rgba(255,255,255,.02); min-width: 0; }
+.markt-panel h3 { margin: 0; font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .16em; color: var(--muted); }
+.markt-status { font: 11px ui-monospace, Menlo, monospace; color: var(--muted); letter-spacing: .06em; min-height: 14px; }
+.markt-status.busy { color: #ffcc4d; animation: call-think 1.4s ease-in-out infinite; }
+.markt-status.error { color: #ff5d6c; }
+.markt-chart { width: 100%; height: 360px; display: block; }
+.markt-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (max-width: 700px) { .markt-stats { grid-template-columns: repeat(2, 1fr); } }
+.markt-stats div { position: relative; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; overflow: hidden; }
+.markt-stats small, .markt-depot small, #markt-depot small { display: block; font: 10px ui-monospace, Menlo, monospace; letter-spacing: .1em; color: var(--muted); }
+.markt-stats b { font: 600 16px ui-monospace, Menlo, monospace; color: var(--text); }
+.markt-stats em { font: 11px ui-monospace, Menlo, monospace; color: #ffcc4d; margin-left: 6px; font-style: normal; }
+.markt-stats i { position: absolute; left: 0; bottom: 0; height: 3px; background: #ff8a1e; }
+.markt-signal { display: flex; align-items: center; gap: 12px; font: 12px ui-monospace, Menlo, monospace; letter-spacing: .06em; }
+.md-sum { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.md-sum b, .md-hit b { font: 600 14px ui-monospace, Menlo, monospace; }
+.md-sum b.pos { color: #4dffa6; } .md-sum b.neg { color: #ff5d6c; }
+.md-hit { margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.md-hit span { display: block; font-size: 11px; color: var(--muted); }
+.md-list, .md-trades { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; font: 11px ui-monospace, Menlo, monospace; color: var(--text); }
+.md-list li { display: flex; align-items: center; justify-content: space-between; gap: 6px; }

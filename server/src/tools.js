@@ -10,6 +10,7 @@ import { sendPush } from "./notify.js";
 import { checkForUpdate, startUpdate } from "./updater.js";
 import { COUNTRIES, findCountry, getCountryNews, getOverview, getCountryInfo } from "./lagezentrum.js";
 import { getVideoJob, startVideoJob, openVideoDir, LOOKS } from "./videoteam.js";
+import { getForecast, getDepot, MAERKTE } from "./markt.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
 // Osiris Live-Lagekarte: selbst gehostet auf dem Mac (Port 3100). Der Mac-Agent öffnet lokal.
@@ -209,6 +210,15 @@ export const toolDefinitions = [
     },
   },
   {
+    name: "markt_radar",
+    description: "Markt-Radar: Kronos rechnet lokal 100 mögliche Kursverläufe für die nächsten 24 Stunden (Gold, Bitcoin, Ethereum). action=prognose liefert Anteil steigender Verläufe, Median und Spanne (5.–95. Perzentil); eine neue Rechnung dauert 1–2 Minuten. action=depot zeigt das Papierdepot mit Spielgeld und die Trefferquote. Sag immer dazu, dass es eine Prognose ist und keine Gewissheit, und dass das Modell in Tests stark nach oben geneigt hat. Keine Anlageberatung. Handeln kann nur der Nutzer selbst per Klick auf Freigeben im Markt-Radar, und nur mit Spielgeld.",
+    input_schema: {
+      type: "object",
+      properties: { action: { type: "string", enum: ["prognose", "depot"] }, asset: { type: "string", enum: Object.keys(MAERKTE) } },
+      required: ["action"],
+    },
+  },
+  {
     name: "send_push",
     description: "Schickt dem Nutzer eine Push-Nachricht aufs Handy.",
     input_schema: {
@@ -340,6 +350,13 @@ export async function runTool(name, input = {}) {
       if (!country) return { error: `Das Land ist nicht im Lagezentrum. Verfügbar: ${COUNTRIES.map((c) => c.name).join(", ")}. Nutze sonst die Websuche.` };
       const news = await getCountryNews(country);
       return { land: country.name, schlagzeilen: news.items.slice(0, 12).map((n) => `${n.title} (${n.source})`) };
+    }
+    case "markt_radar": {
+      if (input.action === "depot") return getDepot();
+      const r = getForecast(input.asset || "gold");
+      if (!r.data) return { status: r.status, hinweis: r.status === "fehler" ? r.error : "Kronos rechnet gerade (1–2 Minuten). Das Ergebnis erscheint im Markt-Radar." };
+      const d = r.data;
+      return { markt: d.name, status: r.status, kurs_jetzt: d.jetzt, stunden: d.stunden, verlaeufe_hoeher: `${d.hoeher} von ${d.anzahl}`, median: d.median, spanne: [d.p5, d.p95], modell_signal: r.signal, warnung: "Prognose, keine Gewissheit. Im Backtest lag das Modell oft daneben und neigte stark nach oben." };
     }
     case "video_schnitt": {
       if (input.action === "start") return startVideoJob({ look: input.look });

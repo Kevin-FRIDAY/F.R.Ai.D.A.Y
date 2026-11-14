@@ -10,6 +10,7 @@ import { runSystemCheck } from "./syscheck.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
 import { agentsWithStatus } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
+import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
@@ -238,6 +239,11 @@ app.get("/api/agents", (req, res) => res.json(agentsWithStatus()));
 app.get("/api/video-job", (req, res) => res.json(getVideoJob()));
 app.post("/api/video-job", (req, res) => { const r = startVideoJob({ look: req.body?.look }); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/api/video-open", (req, res) => res.json(openVideoDir(String(req.body?.which || ""))));
+app.get("/api/markt/:asset", (req, res) => res.json(getForecast(req.params.asset)));
+app.post("/api/markt/:asset/neu", (req, res) => res.json(getForecast(req.params.asset, { force: true })));
+app.get("/api/papierdepot", (req, res) => res.json(getDepot()));
+app.post("/api/papierdepot/freigeben", (req, res) => { const r = paperTrade(String(req.body?.asset || ""), String(req.body?.richtung || "")); res.status(r.ok ? 200 : 400).json(r); });
+app.post("/api/papierdepot/zuruecksetzen", (req, res) => res.json(resetDepot()));
 
 // Fridays Kern (Orb auf dem Zweitgerät, /core.html): das Dashboard meldet den Zustand,
 // der Kern wartet per Long-Poll auf Änderungen.
