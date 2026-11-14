@@ -11,6 +11,7 @@ import { checkForUpdate, startUpdate } from "./updater.js";
 import { COUNTRIES, findCountry, getCountryNews, getOverview, getCountryInfo } from "./lagezentrum.js";
 import { getVideoJob, startVideoJob, openVideoDir, LOOKS } from "./videoteam.js";
 import { getForecast, getDepot, MAERKTE } from "./markt.js";
+import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
 // Osiris Live-Lagekarte: selbst gehostet auf dem Mac (Port 3100). Der Mac-Agent öffnet lokal.
@@ -210,6 +211,15 @@ export const toolDefinitions = [
     },
   },
   {
+    name: "werkstatt",
+    description: "Fridays 3D-Werkstatt: entwirft aus einem Wunsch (z. B. 'ein Porsche Taycan', 'ein Wohnhaus mit 12 Etagen', 'eine Gartenhütte') ein 3D-Hologramm, das im Dashboard Schritt für Schritt aufgebaut und erklärt wird. erweitern=true ergänzt das zuletzt gebaute Modell (z. B. 'mach eine Fußbodenheizung rein'). Die Werkstatt spricht die Schritte selbst; antworte danach nur mit einem kurzen Satz wie 'Sehr gern, Chef.'",
+    input_schema: {
+      type: "object",
+      properties: { wunsch: { type: "string" }, erweitern: { type: "boolean" } },
+      required: ["wunsch"],
+    },
+  },
+  {
     name: "markt_radar",
     description: "Markt-Radar: Kronos rechnet lokal 100 mögliche Kursverläufe für die nächsten 24 Stunden (Gold, Bitcoin, Ethereum). action=prognose liefert Anteil steigender Verläufe, Median und Spanne (5.–95. Perzentil); eine neue Rechnung dauert 1–2 Minuten. action=depot zeigt das Papierdepot mit Spielgeld und die Trefferquote. Sag immer dazu, dass es eine Prognose ist und keine Gewissheit, und dass das Modell in Tests stark nach oben geneigt hat. Keine Anlageberatung. Handeln kann nur der Nutzer selbst per Klick auf Freigeben im Markt-Radar, und nur mit Spielgeld.",
     input_schema: {
@@ -332,6 +342,7 @@ const ACTLOG = {
   run_protocol: ["mac", (i) => `Protokoll ausgeführt: ${i.name || ""}`],
   send_push: ["mitteilung", () => "Mitteilung gesendet"],
   video_schnitt: ["mac", (i) => `Videoschnitt: ${i.action || ""}`],
+  werkstatt: ["mac", (i) => `Werkstatt: ${i.wunsch || ""}`],
   world_news: ["suche", (i) => `Nachrichten geprüft: ${i.country || i.topic || "Welt"}`],
   lookup: ["suche", (i) => `Nachgeschlagen: ${i.query || ""}`],
   country_info: ["suche", (i) => `Länder-Info: ${i.country || ""}`],
@@ -350,6 +361,12 @@ export async function runTool(name, input = {}) {
       if (!country) return { error: `Das Land ist nicht im Lagezentrum. Verfügbar: ${COUNTRIES.map((c) => c.name).join(", ")}. Nutze sonst die Websuche.` };
       const news = await getCountryNews(country);
       return { land: country.name, schlagzeilen: news.items.slice(0, 12).map((n) => `${n.title} (${n.source})`) };
+    }
+    case "werkstatt": {
+      const basis = input.erweitern ? getLatestBuild()?.plan : null;
+      const r = await planBuild(input.wunsch, basis);
+      if (!r.ok) return { error: r.error };
+      return { gebaut: r.plan.titel, schritte: r.plan.schritte.length, hinweis: "Die Werkstatt zeigt und erklärt das Modell gerade selbst. Antworte nur kurz." };
     }
     case "markt_radar": {
       if (input.action === "depot") return getDepot();

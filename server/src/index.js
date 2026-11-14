@@ -11,6 +11,7 @@ import { getWeather, getProtocols, runTool } from "./tools.js";
 import { agentsWithStatus } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
 import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
+import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
@@ -242,6 +243,11 @@ app.post("/api/video-open", (req, res) => res.json(openVideoDir(String(req.body?
 app.get("/api/markt/:asset", (req, res) => res.json(getForecast(req.params.asset)));
 app.post("/api/markt/:asset/neu", (req, res) => res.json(getForecast(req.params.asset, { force: true })));
 app.get("/api/papierdepot", (req, res) => res.json(getDepot()));
+app.post("/api/werkstatt", asyncRoute(async (req, res) => {
+  const r = await planBuild(req.body?.wunsch, req.body?.basis || null);
+  res.status(r.ok ? 200 : 400).json(r);
+}));
+app.get("/api/werkstatt/latest", (req, res) => res.json(getLatestBuild() || {}));
 app.post("/api/papierdepot/freigeben", (req, res) => { const r = paperTrade(String(req.body?.asset || ""), String(req.body?.richtung || "")); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/api/papierdepot/zuruecksetzen", (req, res) => res.json(resetDepot()));
 

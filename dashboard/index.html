@@ -94,6 +94,7 @@
       <button class="menu-row" data-target="vision-open"><svg viewBox="0 0 24 24" class="mi"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Friday Vision</button>
       <button class="menu-row" data-target="schnitt-open"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 5v4M16 5v4M10 12.5l4 2.5-4 2.5z"/></svg>Schnitt-Team</button>
       <button class="menu-row" data-target="markt-open"><svg viewBox="0 0 24 24" class="mi"><path d="M4 19h16M5 15l4-5 3 3 4-6 3 3"/></svg>Markt-Radar</button>
+      <button class="menu-row" data-target="werkstatt-open"><svg viewBox="0 0 24 24" class="mi"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>Werkstatt (3D)</button>
       <a class="menu-row" href="/core.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" class="mi"><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="8.5"/></svg>Kern (Zweitgerät)</a>
       <button class="menu-row" data-target="camera-live-btn"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.2"/><path d="M8 7l1.5-3h5L16 7"/></svg>Kamera</button>
       <button class="menu-row" data-target="look-btn"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M9 20h6M12 16v4"/></svg>Bildschirm</button>
@@ -536,6 +537,29 @@
     </div>
   </section>
 
+  <!-- Werkstatt: Friday entwirft 3D-Hologramme Schritt für Schritt -->
+  <button id="werkstatt-open" class="hidden" aria-hidden="true"></button>
+  <section id="werkstatt" class="werkstatt hidden" aria-label="Werkstatt">
+    <canvas id="werkstatt-canvas" class="werkstatt-canvas"></canvas>
+    <header class="werkstatt-top">
+      <div class="werkstatt-brand">FRIDAY · WERKSTATT</div>
+      <div id="werkstatt-title" class="werkstatt-title"></div>
+      <span id="werkstatt-state" class="werkstatt-state">BEREIT</span>
+      <button id="werkstatt-x" class="ghost small" title="Schließen">✕</button>
+    </header>
+    <aside class="werkstatt-side">
+      <div id="werkstatt-step" class="werkstatt-step"></div>
+      <ul id="werkstatt-facts" class="werkstatt-facts"></ul>
+      <label class="switch"><input type="checkbox" id="werkstatt-solid"><span>Massiv statt Hologramm</span></label>
+    </aside>
+    <div id="werkstatt-caption" class="werkstatt-caption">Sag mir, was ich bauen soll, Chef.</div>
+    <form id="werkstatt-form" class="werkstatt-form">
+      <input id="werkstatt-input" type="text" placeholder="z. B. Ein Wohnhaus mit 12 Etagen" autocomplete="off">
+      <label class="werkstatt-extend" title="Das aktuelle Modell ergänzen statt neu bauen"><input type="checkbox" id="werkstatt-extend"> ergänzen</label>
+      <button type="submit" class="werkstatt-go">Bauen</button>
+    </form>
+  </section>
+
   <!-- Lagezentrum -->
   <section id="lage" class="lage hidden" aria-label="Lagezentrum">
     <header class="lage-top">
@@ -624,5 +648,6 @@
   <script src="vendor/three.min.js"></script>
   <script src="vendor/GLTFLoader.js"></script>
   <script src="face.js"></script>
+  <script src="werkstatt.js"></script>
 </body>
 </html>

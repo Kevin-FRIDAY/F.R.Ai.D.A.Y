@@ -354,6 +354,7 @@
       else addMessage("friday", answer);
       busy = false;
       if (data.actions?.some((a) => a === "set_reminder")) refreshReminders();
+      if (data.actions?.includes("werkstatt")) window.FridayWerkstatt?.showLatest();
       await say(answer);
       clearSpeaking();
     } catch (err) {
