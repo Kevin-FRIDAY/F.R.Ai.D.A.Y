@@ -3,6 +3,7 @@
 // (aktiv / braucht Mac / braucht Einrichtung), der aus der .env berechnet wird.
 import { config } from "./config.js";
 import { isAgentOnline } from "./agent-hub.js";
+import { videoTeamReady } from "./videoteam.js";
 
 // need beschreibt, was ein Agent braucht:
 //  {type:"frei"}                      -> immer einsatzbereit (kostenlose Quelle)
@@ -29,7 +30,7 @@ export const AGENTS = [
   { id: "weltdaten", name: "Welt-Daten-Agent", emoji: "🛰️", cat: "Lagezentrum", purpose: "Flüge, Schiffe, ISS, Webcams und Ereignisse.", examples: ["Wo ist die ISS gerade?", "Welche Flüge sind über mir?"], need: { type: "frei" } },
 
   // --- Kreativ ---
-  { id: "video", name: "Video-Agent", emoji: "🎬", cat: "Kreativ", purpose: "Videos und Fotos erstellen und bearbeiten.", examples: ["Mach ein kurzes Video aus den Clips", "Schneide das zusammen"], need: { type: "setup", label: "Adobe / Picsart" } },
+  { id: "video", name: "Video-Team", emoji: "🎬", cat: "Kreativ", purpose: "Schneidet Clips lokal zu einem 9:16-Video: Regie, Transkript, Schnitt, Farbe, Untertitel, Audio.", examples: ["Friday, schneide das Video", "Schneide das Video im Kino-Look"], need: { type: "check", ok: () => videoTeamReady(), label: "Python-Umgebung" } },
   { id: "design", name: "Design-Agent", emoji: "🎨", cat: "Kreativ", purpose: "Skizzen, Grundrisse und Oberflächen-Design (HUD).", examples: ["Entwirf ein neues HUD", "Skizzier den Grundriss"], need: { type: "setup", label: "Figma" } },
   { id: "dreid", name: "3D-Agent", emoji: "🧊", cat: "Kreativ", purpose: "3D-Modelle lokal in Blender (per Python).", examples: ["Bau ein 3D-Modell von einem Würfel", "Rendere die Szene"], need: { type: "mac" } },
 
@@ -47,6 +48,7 @@ function statusOf(agent, macOnline) {
   const n = agent.need;
   if (n.type === "frei") return { status: "aktiv", hint: "Einsatzbereit" };
   if (n.type === "key") return config[n.key] ? { status: "aktiv", hint: "Einsatzbereit" } : { status: "setup", hint: `Braucht ${n.label}` };
+  if (n.type === "check") return n.ok() ? { status: "aktiv", hint: "Einsatzbereit" } : { status: "setup", hint: `Braucht ${n.label}` };
   if (n.type === "mac") return macOnline ? { status: "aktiv", hint: "Mac verbunden" } : { status: "mac", hint: "Braucht verbundenen Mac" };
   return { status: "setup", hint: `Braucht ${n.label}` };
 }

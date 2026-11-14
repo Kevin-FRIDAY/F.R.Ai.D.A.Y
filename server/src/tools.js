@@ -9,6 +9,7 @@ import { sendToAgent, isAgentOnline } from "./agent-hub.js";
 import { sendPush } from "./notify.js";
 import { checkForUpdate, startUpdate } from "./updater.js";
 import { COUNTRIES, findCountry, getCountryNews, getOverview, getCountryInfo } from "./lagezentrum.js";
+import { getVideoJob, startVideoJob, openVideoDir, LOOKS } from "./videoteam.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
 // Osiris Live-Lagekarte: selbst gehostet auf dem Mac (Port 3100). Der Mac-Agent öffnet lokal.
@@ -199,6 +200,15 @@ export const toolDefinitions = [
     },
   },
   {
+    name: "video_schnitt",
+    description: "Fridays Videoschnitt-Team (Regie, Transkript, Schnitt, Farbe, Untertitel, Audio) auf dem Mac. action=start schneidet alle Clips aus dem Ordner ~/Friday-Video/Eingang zu einem 9:16-Video mit Untertiteln (dauert ein paar Minuten, das Ergebnis meldet das Dashboard). action=status zeigt den Stand. action=open_eingang / open_fertig öffnet den Ordner im Finder. look: natürlich, warm, kühl oder kino.",
+    input_schema: {
+      type: "object",
+      properties: { action: { type: "string", enum: ["start", "status", "open_eingang", "open_fertig"] }, look: { type: "string", enum: LOOKS } },
+      required: ["action"],
+    },
+  },
+  {
     name: "send_push",
     description: "Schickt dem Nutzer eine Push-Nachricht aufs Handy.",
     input_schema: {
@@ -311,6 +321,7 @@ const ACTLOG = {
   mac: ["mac", (i) => `Mac gesteuert: ${i.action || ""}`],
   run_protocol: ["mac", (i) => `Protokoll ausgeführt: ${i.name || ""}`],
   send_push: ["mitteilung", () => "Mitteilung gesendet"],
+  video_schnitt: ["mac", (i) => `Videoschnitt: ${i.action || ""}`],
   world_news: ["suche", (i) => `Nachrichten geprüft: ${i.country || i.topic || "Welt"}`],
   lookup: ["suche", (i) => `Nachgeschlagen: ${i.query || ""}`],
   country_info: ["suche", (i) => `Länder-Info: ${i.country || ""}`],
@@ -329,6 +340,14 @@ export async function runTool(name, input = {}) {
       if (!country) return { error: `Das Land ist nicht im Lagezentrum. Verfügbar: ${COUNTRIES.map((c) => c.name).join(", ")}. Nutze sonst die Websuche.` };
       const news = await getCountryNews(country);
       return { land: country.name, schlagzeilen: news.items.slice(0, 12).map((n) => `${n.title} (${n.source})`) };
+    }
+    case "video_schnitt": {
+      if (input.action === "start") return startVideoJob({ look: input.look });
+      if (input.action === "open_eingang") return openVideoDir("eingang");
+      if (input.action === "open_fertig") return openVideoDir("fertig");
+      const v = getVideoJob();
+      if (!v.job) return { status: "frei", clips_im_eingang: v.clips.length, ordner: v.dirs.eingang };
+      return { status: v.job.status, agenten: Object.fromEntries(Object.entries(v.job.agents).map(([k, a]) => [k, `${a.status}: ${a.text}`])), ergebnis: v.job.result?.name, fehler: v.job.error };
     }
     case "get_weather":
       return getWeather(input.city || config.city);

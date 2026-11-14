@@ -9,6 +9,7 @@ import { mailConfigured, getMailOverview, sortMail } from "./mail.js";
 import { runSystemCheck } from "./syscheck.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
 import { agentsWithStatus } from "./agents.js";
+import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
@@ -234,6 +235,9 @@ app.get("/api/lage-satelliten", asyncRoute(async (req, res) => res.json(await ge
 app.get("/api/lage-infra", asyncRoute(async (req, res) => res.json(getInfra(String(req.query.typ || "")))));
 app.get("/api/lage-videos", asyncRoute(async (req, res) => res.json(await getWorldVideos())));
 app.get("/api/agents", (req, res) => res.json(agentsWithStatus()));
+app.get("/api/video-job", (req, res) => res.json(getVideoJob()));
+app.post("/api/video-job", (req, res) => { const r = startVideoJob({ look: req.body?.look }); res.status(r.ok ? 200 : 400).json(r); });
+app.post("/api/video-open", (req, res) => res.json(openVideoDir(String(req.body?.which || ""))));
 
 // Fridays Kern (Orb auf dem Zweitgerät, /core.html): das Dashboard meldet den Zustand,
 // der Kern wartet per Long-Poll auf Änderungen.

@@ -92,6 +92,7 @@
       <button class="menu-row" data-target="call-btn"><svg viewBox="0 0 24 24" class="mi"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Friday anrufen</button>
       <button class="menu-row" data-target="agents-open"><svg viewBox="0 0 24 24" class="mi"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 19c0-2.8 2.2-5 5-5M21 19c0-2.8-2.2-5-5-5M9.5 19h5"/></svg>Agenten-Team</button>
       <button class="menu-row" data-target="vision-open"><svg viewBox="0 0 24 24" class="mi"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Friday Vision</button>
+      <button class="menu-row" data-target="schnitt-open"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 5v4M16 5v4M10 12.5l4 2.5-4 2.5z"/></svg>Schnitt-Team</button>
       <a class="menu-row" href="/core.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" class="mi"><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="8.5"/></svg>Kern (Zweitgerät)</a>
       <button class="menu-row" data-target="camera-live-btn"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.2"/><path d="M8 7l1.5-3h5L16 7"/></svg>Kamera</button>
       <button class="menu-row" data-target="look-btn"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M9 20h6M12 16v4"/></svg>Bildschirm</button>
@@ -475,6 +476,39 @@
     <p class="muted small-text vision-note">Läuft nur auf diesem Gerät. Nichts wird gespeichert, keine Gesichtserkennung. ✋ offene Hand stoppt Fridays Stimme.</p>
   </section>
 
+  <!-- Schnitt-Team: Videoschnitt mit 6 Agenten, live angezeigt -->
+  <button id="schnitt-open" class="hidden" aria-hidden="true"></button>
+  <section id="schnitt" class="schnitt hidden" aria-label="Schnitt-Team">
+    <header class="schnitt-top">
+      <div class="schnitt-title">FRIDAY · SCHNITT-TEAM</div>
+      <span id="schnitt-state" class="schnitt-state">Bereit</span>
+      <button id="schnitt-x" class="ghost small" title="Schließen">✕</button>
+    </header>
+    <div class="schnitt-grid">
+      <aside class="schnitt-panel">
+        <h3>CLIPS · EINGANG</h3>
+        <ul id="schnitt-clips" class="schnitt-clips"></ul>
+        <div class="chips"><button class="chip" data-open="eingang">Eingang öffnen</button><button class="chip" data-open="fertig">Fertig öffnen</button></div>
+        <label class="row-field"><span>Look</span><select id="schnitt-look"></select></label>
+        <button id="schnitt-start" class="schnitt-go">▶ Schneide das Video</button>
+        <p class="muted small-text">Tipp: Eine .cube-Datei im Ordner „LUTs" ersetzt den Look, eine Musikdatei im Ordner „Musik" läuft leise unter der Sprache. Alles bleibt auf deinem Mac.</p>
+      </aside>
+      <div class="schnitt-panel schnitt-main">
+        <h3>ZEITLEISTE</h3>
+        <div id="schnitt-timeline" class="schnitt-timeline"></div>
+        <h3>PEGEL · LUFS JE CLIP</h3>
+        <div id="schnitt-levels" class="schnitt-levels"></div>
+        <div id="schnitt-result" class="schnitt-result hidden"></div>
+        <h3>AKTIVITÄT</h3>
+        <ul id="schnitt-log" class="schnitt-log"></ul>
+      </div>
+      <aside class="schnitt-panel">
+        <h3>AGENTEN</h3>
+        <ul id="schnitt-agents" class="schnitt-agents"></ul>
+      </aside>
+    </div>
+  </section>
+
   <!-- Lagezentrum -->
   <section id="lage" class="lage hidden" aria-label="Lagezentrum">
     <header class="lage-top">
@@ -554,6 +588,7 @@
   <script src="lagezentrum.js"></script>
   <script src="agenten.js"></script>
   <script src="vision.js"></script>
+  <script src="schnitt.js"></script>
   <script src="aktiv.js"></script>
   <script src="postfach.js"></script>
   <script src="syscheck.js"></script>
