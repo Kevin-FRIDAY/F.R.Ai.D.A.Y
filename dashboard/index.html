@@ -95,6 +95,7 @@
       <button class="menu-row" data-target="schnitt-open"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 5v4M16 5v4M10 12.5l4 2.5-4 2.5z"/></svg>Schnitt-Team</button>
       <button class="menu-row" data-target="markt-open"><svg viewBox="0 0 24 24" class="mi"><path d="M4 19h16M5 15l4-5 3 3 4-6 3 3"/></svg>Markt-Radar</button>
       <button class="menu-row" data-target="werkstatt-open"><svg viewBox="0 0 24 24" class="mi"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>Werkstatt (3D)</button>
+      <button class="menu-row" data-target="webseiten-open"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01M8 13l-2 2 2 2M16 13l2 2-2 2M13 12l-2 6"/></svg>Webseiten-Werkstatt</button>
       <a class="menu-row" href="/core.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" class="mi"><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="8.5"/></svg>Kern (Zweitgerät)</a>
       <button class="menu-row" data-target="camera-live-btn"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.2"/><path d="M8 7l1.5-3h5L16 7"/></svg>Kamera</button>
       <button class="menu-row" data-target="look-btn"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M9 20h6M12 16v4"/></svg>Bildschirm</button>
@@ -588,6 +589,45 @@
     </form>
   </section>
 
+  <!-- Webseiten-Werkstatt: Friday baut Webseiten, du verkaufst sie -->
+  <button id="webseiten-open" class="hidden" aria-hidden="true"></button>
+  <section id="webseiten" class="webseiten hidden" aria-label="Webseiten-Werkstatt">
+    <header class="ws-top">
+      <div class="ws-brand">FRIDAY · WEBSEITEN-WERKSTATT</div>
+      <span id="ws-sum" class="ws-sum"></span>
+      <span id="ws-state" class="ws-state"></span>
+      <button id="webseiten-x" class="ghost small" title="Schließen">✕</button>
+    </header>
+    <div class="ws-grid">
+      <aside class="ws-side">
+        <form id="ws-form" class="ws-form">
+          <label for="ws-auftrag">Neuer Auftrag</label>
+          <textarea id="ws-auftrag" rows="4" placeholder="z. B. Friseursalon „Mira“ in Berlin-Neukölln, modern und hell, Leistungen mit Preisen, Online-Termin per Mail, Öffnungszeiten"></textarea>
+          <button id="ws-go" class="ws-go">Webseite bauen</button>
+        </form>
+        <p id="ws-msg" class="ws-msg"></p>
+        <h3>PROJEKTE</h3>
+        <ul id="ws-list" class="ws-list"></ul>
+        <p class="muted small-text">Verkaufen und kassieren tust du über dein eigenes Konto. Trag einen Verkauf hier ein, dann zählt er für Fridays Überlebens-Bilanz.</p>
+      </aside>
+      <div id="ws-detail" class="ws-detail hidden">
+        <div class="ws-bar">
+          <b id="ws-titel"></b>
+          <button id="ws-download" class="chip primary">Herunterladen</button>
+          <button id="ws-ordner" class="chip">Im Finder</button>
+        </div>
+        <iframe id="ws-frame" class="ws-frame" sandbox="allow-scripts allow-forms" title="Vorschau"></iframe>
+        <div class="ws-bottom">
+          <div class="ws-angebot"><h3>ANGEBOT</h3><p id="ws-angebot"></p><span id="ws-preis" class="ws-preis"></span> <button id="ws-copy" class="chip">Angebot kopieren</button></div>
+          <div class="ws-actions">
+            <form id="ws-change-form" class="ws-row"><input id="ws-change" placeholder="Ändern, z. B. „Farben wärmer, Preisliste größer“" autocomplete="off"><button id="ws-change-go" class="chip">Überarbeiten</button></form>
+            <form id="ws-sold-form" class="ws-row"><input id="ws-sold-betrag" inputmode="decimal" placeholder="Verkaufspreis"><span>€</span><button class="chip primary">Als verkauft eintragen</button></form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Lagezentrum -->
   <section id="lage" class="lage hidden" aria-label="Lagezentrum">
     <header class="lage-top">
@@ -679,6 +719,7 @@
   <script src="lagezentrum.js"></script>
   <script src="agenten.js"></script>
   <script src="energie.js"></script>
+  <script src="webseiten.js"></script>
   <script src="vision.js"></script>
   <script src="schnitt.js"></script>
   <script src="markt.js"></script>

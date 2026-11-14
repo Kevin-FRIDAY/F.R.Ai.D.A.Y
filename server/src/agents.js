@@ -33,6 +33,7 @@ export const AGENTS = [
 
   // --- Kreativ ---
   { id: "video", name: "Video-Team", emoji: "🎬", cat: "Kreativ", purpose: "Schneidet Clips lokal zu einem 9:16-Video: Regie, Transkript, Schnitt, Farbe, Untertitel, Audio.", examples: ["Friday, schneide das Video", "Schneide das Video im Kino-Look"], need: { type: "check", ok: () => videoTeamReady(), label: "Python-Umgebung" } },
+  { id: "webseiten", name: "Webseiten-Agent", emoji: "🌐", cat: "Kreativ", purpose: "Baut verkaufsfertige Webseiten mit Angebot und Preisvorschlag – du verkaufst sie.", examples: ["Bau eine Webseite für einen Friseur in Berlin", "Mach die Farben der letzten Seite wärmer"], need: { type: "key", key: "anthropicKey", label: "Claude-Schlüssel" } },
   { id: "design", name: "Design-Agent", emoji: "🎨", cat: "Kreativ", purpose: "Skizzen, Grundrisse und Oberflächen-Design (HUD).", examples: ["Entwirf ein neues HUD", "Skizzier den Grundriss"], need: { type: "setup", label: "Figma" } },
   { id: "dreid", name: "3D-Agent", emoji: "🧊", cat: "Kreativ", purpose: "3D-Modelle lokal in Blender (per Python).", examples: ["Bau ein 3D-Modell von einem Würfel", "Rendere die Szene"], need: { type: "mac" } },
 

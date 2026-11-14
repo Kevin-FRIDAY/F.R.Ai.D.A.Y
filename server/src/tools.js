@@ -13,6 +13,7 @@ import { getVideoJob, startVideoJob, openVideoDir, LOOKS } from "./videoteam.js"
 import { getForecast, getDepot, MAERKTE } from "./markt.js";
 import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { getAlarm } from "./lagezentrum.js";
+import { buildSite, listSites } from "./webseiten.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
 // Osiris Live-Lagekarte: selbst gehostet auf dem Mac (Port 3100). Der Mac-Agent öffnet lokal.
@@ -212,6 +213,15 @@ export const toolDefinitions = [
     },
   },
   {
+    name: "webseite_bauen",
+    description: "Webseiten-Werkstatt: baut aus einem Kundenauftrag eine komplette, verkaufsfertige Webseite (eine HTML-Datei) mit Angebotstext und Preisvorschlag, gespeichert in ~/Friday-Webseiten. aendern_id überarbeitet ein bestehendes Projekt. Dauert 1–2 Minuten; das Dashboard zeigt die Seite danach. Verkaufen und kassieren tut der Nutzer selbst.",
+    input_schema: {
+      type: "object",
+      properties: { auftrag: { type: "string" }, aendern_id: { type: "string", description: "optional: id eines bestehenden Projekts" } },
+      required: ["auftrag"],
+    },
+  },
+  {
     name: "welt_alarm",
     description: "Welt-Alarm: holt die 3 größten aktuellen Katastrophen weltweit (Wirbelstürme, Erdbeben, Fluten, Vulkane) von GDACS und startet im Lagezentrum ein Briefing mit Zoom, Zahlen und Ansage. Nutzen bei 'Was ist auf der Welt los?', 'Gibt es Katastrophen?', 'Welt-Alarm'. Das Dashboard spricht das Briefing selbst; antworte danach nur kurz.",
     input_schema: { type: "object", properties: {} },
@@ -349,6 +359,7 @@ const ACTLOG = {
   send_push: ["mitteilung", () => "Mitteilung gesendet"],
   video_schnitt: ["mac", (i) => `Videoschnitt: ${i.action || ""}`],
   werkstatt: ["mac", (i) => `Werkstatt: ${i.wunsch || ""}`],
+  webseite_bauen: ["mac", (i) => `Webseite: ${i.auftrag || ""}`],
   world_news: ["suche", (i) => `Nachrichten geprüft: ${i.country || i.topic || "Welt"}`],
   lookup: ["suche", (i) => `Nachgeschlagen: ${i.query || ""}`],
   country_info: ["suche", (i) => `Länder-Info: ${i.country || ""}`],
@@ -367,6 +378,11 @@ export async function runTool(name, input = {}) {
       if (!country) return { error: `Das Land ist nicht im Lagezentrum. Verfügbar: ${COUNTRIES.map((c) => c.name).join(", ")}. Nutze sonst die Websuche.` };
       const news = await getCountryNews(country);
       return { land: country.name, schlagzeilen: news.items.slice(0, 12).map((n) => `${n.title} (${n.source})`) };
+    }
+    case "webseite_bauen": {
+      const r = await buildSite(input.auftrag, input.aendern_id || null);
+      if (!r.ok) return { error: r.error };
+      return { gebaut: r.titel, id: r.id, preisvorschlag_eur: r.preis_eur, projekte_gesamt: listSites().length, hinweis: "Das Dashboard zeigt die Seite gleich. Sag kurz, was du gebaut hast, und den Preisvorschlag." };
     }
     case "welt_alarm": {
       const d = await getAlarm();

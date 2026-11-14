@@ -1456,3 +1456,34 @@ body.friday-tot .hero-greet, body.friday-tot #state { opacity: .45; transition: 
 body.friday-tot::before { content: "NOTSTROM · GUTHABEN LEER · NUR KOSTENLOSE FUNKTIONEN"; position: fixed; inset: 0 0 auto 0; height: auto; width: auto; z-index: 40; text-align: center;
   font: 700 11px ui-monospace, Menlo, monospace; letter-spacing: .18em; color: #fff; background: rgba(214,31,51,.85); background-image: none; padding: 5px; mix-blend-mode: normal; opacity: 1; pointer-events: none; animation: none; }
 body.friday-spar #reactor, body.friday-spar #face-host { filter: saturate(.6) brightness(.8); transition: filter 2s; }
+
+/* ===== v1.67: Webseiten-Werkstatt ===== */
+.webseiten { position: fixed; inset: 0; z-index: 58; display: flex; flex-direction: column; gap: 10px; padding: 14px; background: #04060a; overflow: auto; }
+.webseiten.hidden { display: none; }
+.ws-top { display: flex; align-items: center; gap: 14px; }
+.ws-brand { font: 600 13px ui-monospace, Menlo, monospace; letter-spacing: .22em; color: #4dffa6; text-shadow: 0 0 10px #4dffa6; }
+.ws-sum { flex: 1; text-align: right; font: 11px ui-monospace, Menlo, monospace; color: var(--muted); letter-spacing: .06em; }
+.ws-state.busy { font: 700 11px ui-monospace, Menlo, monospace; color: #ffcc4d; letter-spacing: .14em; animation: call-think 1.2s ease-in-out infinite; }
+.ws-grid { display: grid; grid-template-columns: 300px 1fr; gap: 12px; flex: 1; min-height: 0; }
+@media (max-width: 900px) { .ws-grid { grid-template-columns: 1fr; } }
+.ws-side, .ws-detail { border: 1px solid rgba(77,255,166,.25); border-radius: 12px; padding: 12px; background: rgba(255,255,255,.02); display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ws-detail.hidden { display: none; }
+.ws-side h3, .ws-angebot h3 { margin: 0; font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .16em; color: var(--muted); }
+.ws-form { display: flex; flex-direction: column; gap: 8px; }
+.ws-form label { font-size: 12px; color: var(--muted); }
+.ws-form textarea, .ws-row input { width: 100%; box-sizing: border-box; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0,0,0,.35); color: var(--text); font: 14px var(--font-ui, sans-serif); resize: vertical; }
+.ws-go { padding: 11px; border-radius: 10px; border: 1px solid #4dffa6; background: rgba(77,255,166,.15); color: #fff; font: 700 14px var(--font-ui, sans-serif); cursor: pointer; }
+.ws-go:disabled { opacity: .5; }
+.ws-msg { margin: 0; font-size: 12px; color: var(--muted); min-height: 16px; } .ws-msg.error { color: #ff5d6c; }
+.ws-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; overflow: auto; max-height: 40vh; }
+.ws-list button { width: 100%; text-align: left; display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--text); cursor: pointer; }
+.ws-list button.on { border-color: #4dffa6; background: rgba(77,255,166,.08); }
+.ws-list span { font-size: 11px; color: var(--muted); }
+.ws-bar { display: flex; align-items: center; gap: 8px; } .ws-bar b { flex: 1; font-size: 15px; }
+.ws-frame { width: 100%; flex: 1; min-height: 420px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.ws-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 900px) { .ws-bottom { grid-template-columns: 1fr; } }
+.ws-angebot p { margin: 6px 0; font-size: 13px; line-height: 1.45; color: var(--text); white-space: pre-line; }
+.ws-preis { font: 600 13px ui-monospace, Menlo, monospace; color: #4dffa6; }
+.ws-actions { display: flex; flex-direction: column; gap: 8px; }
+.ws-row { display: flex; align-items: center; gap: 8px; } .ws-row.hidden { display: none; }

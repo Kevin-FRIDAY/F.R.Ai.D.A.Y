@@ -356,6 +356,7 @@
       if (data.actions?.some((a) => a === "set_reminder")) refreshReminders();
       if (data.actions?.includes("werkstatt")) window.FridayWerkstatt?.showLatest();
       if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
+      if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       window.FridayEnergie?.refresh();
       await say(answer);
       clearSpeaking();
