@@ -17,7 +17,7 @@ import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
-import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos } from "./lagezentrum.js";
+import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus } from "./updater.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
@@ -236,6 +236,7 @@ app.get("/api/lage-ereignisse", asyncRoute(async (req, res) => res.json(await ge
 app.get("/api/lage-satelliten", asyncRoute(async (req, res) => res.json(await getSatellites())));
 app.get("/api/lage-infra", asyncRoute(async (req, res) => res.json(getInfra(String(req.query.typ || "")))));
 app.get("/api/lage-videos", asyncRoute(async (req, res) => res.json(await getWorldVideos())));
+app.get("/api/lage-alarm", asyncRoute(async (req, res) => res.json(await getAlarm())));
 app.get("/api/agents", (req, res) => res.json(agentsWithStatus()));
 app.get("/api/video-job", (req, res) => res.json(getVideoJob()));
 app.post("/api/video-job", (req, res) => { const r = startVideoJob({ look: req.body?.look }); res.status(r.ok ? 200 : 400).json(r); });

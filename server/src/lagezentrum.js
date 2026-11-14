@@ -199,6 +199,72 @@ const EONET_CATS = {
   feuer: "wildfires", vulkane: "volcanoes", stuerme: "severeStorms", fluten: "floods",
   erdrutsch: "landslides", staub: "dustHaze", duerre: "drought", eis: "seaLakeIce",
 };
+// ---------- Welt-Alarm: die größten aktuellen Katastrophen (GDACS, UN/EU, kostenlos) ----------
+let alarmCache = null;
+const GDACS = "https://www.gdacs.org/gdacsapi/api";
+const gdacsGet = async (url) => {
+  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 F.R.Ai.D.A.Y" }, signal: AbortSignal.timeout(20000) });
+  if (!res.ok) throw new Error(`GDACS ${res.status}`);
+  return res;
+};
+function alarmTitle(type, lon, lat, sev) {
+  if (type === "TC") {
+    const art = lon >= 100 && lat >= 0 ? "TAIFUN" : lon >= 40 && lon < 100 ? "ZYKLON" : lat < 0 ? "ZYKLON" : "HURRIKAN";
+    return (sev >= 240 ? "SUPER-" : "") + art;
+  }
+  return { EQ: "ERDBEBEN", FL: "ÜBERSCHWEMMUNG", VO: "VULKANAUSBRUCH", WF: "WALDBRAND", DR: "DÜRRE" }[type] || "KATASTROPHE";
+}
+export async function getAlarm() {
+  if (alarmCache && Date.now() - alarmCache.at < 30 * 60 * 1000) return alarmCache.data;
+  const day = (d) => new Date(Date.now() - d * 86400000).toISOString().slice(0, 10);
+  const list = async (types, levels) => {
+    const r = await gdacsGet(`${GDACS}/events/geteventlist/SEARCH?eventlist=${types}&alertlevel=${levels}&fromdate=${day(21)}&todate=${day(-1)}`);
+    return (await r.json()).features || [];
+  };
+  const [ernst, beben] = await Promise.all([list("EQ;TC;FL;VO;WF", "Orange;Red"), list("EQ", "Green;Orange;Red").catch(() => [])]);
+  const seen = new Set();
+  let kandidaten = [...ernst, ...beben.filter((f) => (f.properties.severitydata?.severity || 0) >= 6)]
+    .filter((f) => { const id = `${f.properties.eventtype}-${f.properties.eventid}`; if (seen.has(id)) return false; seen.add(id); return true; });
+  if (kandidaten.length < 3) kandidaten = kandidaten.concat((await list("DR", "Orange;Red").catch(() => [])).slice(0, 3 - kandidaten.length));
+  kandidaten.sort((a, b) => (b.properties.alertscore || 0) - (a.properties.alertscore || 0) || new Date(b.properties.fromdate) - new Date(a.properties.fromdate));
+  const events = await Promise.all(kandidaten.slice(0, 3).map(async (f) => {
+    const p = f.properties;
+    const [lon, lat] = f.geometry?.type === "Point" ? f.geometry.coordinates : [0, 0];
+    const sev = p.severitydata?.severity || 0;
+    const ev = {
+      typ: p.eventtype, titel: alarmTitle(p.eventtype, lon, lat, sev), name: p.eventname || p.name, beschreibung: p.name,
+      stufe: p.alertlevel, lon, lat, wert: sev, einheit: p.severitydata?.severityunit || "", text: p.severitydata?.severitytext || "",
+      laender: p.country || "", von: p.fromdate, bericht: p.url?.report || "", menschen: null, bild: null, spur: [],
+    };
+    try {
+      const det = await (await gdacsGet(`${GDACS}/events/geteventdata?eventtype=${p.eventtype}&eventid=${p.eventid}`)).json();
+      const dp = det.properties || det;
+      // Bild direkt mitliefern: GDACS lässt Bilder nicht von fremden Seiten einbinden.
+      const bildUrl = dp.images?.overviewmap || null;
+      if (bildUrl && /^https:\/\/www\.gdacs\.org\//.test(bildUrl)) {
+        const r = await gdacsGet(bildUrl);
+        const type = r.headers.get("content-type") || "";
+        const buf = Buffer.from(await r.arrayBuffer());
+        if (type.startsWith("image/") && buf.length < 600000) ev.bild = `data:${type};base64,${buf.toString("base64")}`;
+      }
+      const impact = (dp.impacts || []).map((i) => i.resource?.buffer74 || i.resource?.buffer39 || Object.values(i.resource || {}).find((u) => /getimpact/.test(u))).find(Boolean);
+      if (impact) {
+        const m = (await (await gdacsGet(impact)).text()).match(/"name":"SUMPOP[^"]*","value":"(\d+)"/);
+        if (m) ev.menschen = Number(m[1]);
+      }
+      if (p.eventtype === "TC" && p.url?.geometry) {
+        const geo = await (await gdacsGet(p.url.geometry)).json();
+        const line = (geo.features || []).filter((g) => g.geometry?.type === "LineString").flatMap((g) => g.geometry.coordinates);
+        ev.spur = line.slice(0, 400).map(([x, y]) => [Math.round(x * 100) / 100, Math.round(y * 100) / 100]);
+      }
+    } catch { /* Details sind optional */ }
+    return ev;
+  }));
+  const data = { stand: new Date().toISOString(), quelle: "GDACS (UN/EU)", ereignisse: events };
+  alarmCache = { at: Date.now(), data };
+  return data;
+}
+
 export async function getEonet() {
   if (eonetCache && Date.now() - eonetCache.at < 15 * 60 * 1000) return eonetCache.data;
   const out = { feuer: [], vulkane: [], stuerme: [], fluten: [], erdrutsch: [], staub: [], duerre: [], eis: [] };

@@ -355,6 +355,7 @@
       busy = false;
       if (data.actions?.some((a) => a === "set_reminder")) refreshReminders();
       if (data.actions?.includes("werkstatt")) window.FridayWerkstatt?.showLatest();
+      if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
       await say(answer);
       clearSpeaking();
     } catch (err) {

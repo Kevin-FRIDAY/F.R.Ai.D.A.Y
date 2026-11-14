@@ -113,6 +113,7 @@
     clearInterval(eventsTimer); eventsTimer = null;
     clearTimeout(satTimer); satTimer = null;
     $("lage-world")?.classList.add("hidden");
+    stopAlarm();
   }
 
   // ---------- ISS: schwebt live über der Erde ----------
@@ -266,7 +267,7 @@
       lakesNode = el("path", { class: "lage-lakes", d: lakesGeo ? geoPath(lakesGeo) || "" : "", "pointer-events": "none" });
       riversNode = el("path", { class: "lage-rivers", d: riversGeo ? geoPath(riversGeo) || "" : "", "pointer-events": "none" });
       const shade = el("circle", { class: "lage-shade", cx: CX, cy: CY, r: baseScale, fill: "url(#lage-shade)", "pointer-events": "none" });
-      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, lakesNode, riversNode, coastNode, bordersNode, el("g", { id: "lage-labels" }), el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-cities" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
+      svg.replaceChildren(defs, atmo, sphereNode, gratNode, landGroup, lakesNode, riversNode, coastNode, bordersNode, el("g", { id: "lage-labels" }), el("g", { id: "lage-night" }), el("g", { id: "lage-routes" }), el("g", { id: "lage-alarm" }), el("g", { id: "lage-hotspots" }), el("g", { id: "lage-quakes" }), el("g", { id: "lage-cities" }), el("g", { id: "lage-airports" }), el("g", { id: "lage-powerplants" }), el("g", { id: "lage-fires" }), el("g", { id: "lage-volcanoes" }), el("g", { id: "lage-storms" }), el("g", { id: "lage-weitere" }), el("g", { id: "lage-ships" }), el("g", { id: "lage-planes" }), el("g", { id: "lage-sats" }), el("g", { id: "lage-markers" }), el("g", { id: "lage-isstrail" }), el("g", { id: "lage-iss" }), shade);
       landGroup.addEventListener("click", (e) => {
         if (dragMoved) return; // echter Ziehvorgang, kein Klick
         const id = e.target.getAttribute?.("data-id");
@@ -322,6 +323,7 @@
     const rg = $("lage-routes");
     if (rg) for (const path of rg.children) { const geo = routeGeo[path.dataset.i]; if (geo) path.setAttribute("d", geoPath(geo) || ""); }
     drawNight();
+    placeAlarm();
     placeLabels();
     placePoints();
     placeSats();
@@ -1132,6 +1134,107 @@
   });
 
   const ytEmbed = (vid, muted) => `https://www.youtube-nocookie.com/embed/${encodeURIComponent(vid)}?autoplay=1&mute=${muted ? 1 : 0}&playsinline=1&rel=0&modestbranding=1`;
+
+  // ---------- Welt-Alarm: die größten aktuellen Katastrophen als Lage-Briefing ----------
+  let alarmRun = 0, alarmEv = null;
+  const pauseMs = (ms) => new Promise((r) => setTimeout(r, ms));
+  const nf = (v, d = 0) => Number(v).toLocaleString("de-DE", { maximumFractionDigits: d });
+  const people = (n) => (n >= 1e6 ? `${nf(n / 1e6, 1)} Millionen` : nf(n));
+  const prettyName = (n) => String(n || "").replace(/-\d+$/, "").toLowerCase().replace(/(^|\s)\S/g, (c) => c.toUpperCase());
+
+  function placeAlarm() {
+    const g = $("lage-alarm");
+    if (!g || !projection) return;
+    if (!alarmEv) { g.replaceChildren(); return; }
+    let track = g.querySelector(".alarm-track"), ring = g.querySelector(".alarm-ring"), core = g.querySelector(".alarm-core");
+    if (!track) { track = el("path", { class: "alarm-track" }); ring = el("circle", { class: "alarm-ring", r: 26 }); core = el("circle", { class: "alarm-core", r: 6 }); g.replaceChildren(track, ring, core); }
+    track.setAttribute("d", alarmEv.spur.length > 1 ? geoPath({ type: "LineString", coordinates: alarmEv.spur }) || "" : "");
+    const show = visible(alarmEv.lon, alarmEv.lat);
+    const [x, y] = projection([alarmEv.lon, alarmEv.lat]);
+    for (const c of [ring, core]) { c.style.display = show ? "" : "none"; c.setAttribute("cx", x.toFixed(1)); c.setAttribute("cy", y.toFixed(1)); }
+  }
+
+  function countUp(node, to, decimals, ms = 1400) {
+    const start = performance.now();
+    const step = (now) => {
+      if (!node.isConnected) return;
+      const k = Math.min(1, (now - start) / ms), e = 1 - Math.pow(1 - k, 3);
+      node.textContent = nf(to * e, decimals);
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  async function speakLine(text) {
+    $("alarm-sub2").textContent = text;
+    if ($("voice-toggle")?.checked) await say(text); else await pauseMs(Math.min(7000, 1500 + text.length * 50));
+  }
+
+  function sentence(ev) {
+    const land = ev.laender.split(",").slice(0, 2).join(" und ").trim();
+    const stufe = ev.stufe === "Red" ? "Höchste Warnstufe. " : "";
+    if (ev.typ === "TC") return `${ev.titel === ev.titel.toUpperCase() ? ev.titel.charAt(0) + ev.titel.slice(1).toLowerCase() : ev.titel} ${prettyName(ev.name)}, ${land}. ${stufe}Wind bis ${nf(ev.wert)} Kilometer pro Stunde.${ev.menschen ? ` ${people(ev.menschen)} Menschen im Sturmgebiet.` : ""}`;
+    if (ev.typ === "EQ") return `Erdbeben, ${land}. Stärke ${nf(ev.wert, 1)}. ${stufe}${ev.menschen ? `${people(ev.menschen)} Menschen im betroffenen Gebiet.` : ""}`;
+    return `${ev.titel.charAt(0) + ev.titel.slice(1).toLowerCase()}, ${land}. ${stufe}${ev.text}`;
+  }
+
+  function stopAlarm() {
+    alarmRun++;
+    alarmEv = null;
+    $("lage-alarm-hud")?.classList.add("hidden");
+    document.querySelector(".lage-map-wrap")?.classList.remove("alarm-sweeping");
+    placeAlarm();
+  }
+
+  async function playAlarm() {
+    const run = ++alarmRun;
+    if ($("lage").classList.contains("hidden")) open();
+    await mapReady;
+    const hud = $("lage-alarm-hud"), wrap = document.querySelector(".lage-map-wrap");
+    spinning = false;
+    hud.classList.remove("hidden");
+    $("alarm-titel").textContent = "SCANNE ERDE …"; $("alarm-zahl").textContent = ""; $("alarm-einheit").textContent = ""; $("alarm-stufe").textContent = ""; $("alarm-sub").textContent = ""; $("alarm-bild").removeAttribute("src");
+    wrap.classList.add("alarm-sweeping");
+    const dataP = api("/api/lage-alarm").then((r) => r.json());
+    await speakLine("Oh nein, Chef. Da ist was.");
+    let data;
+    try { data = await dataP; } catch { data = null; }
+    wrap.classList.remove("alarm-sweeping");
+    if (run !== alarmRun) return;
+    if (!data || !data.ereignisse?.length) { $("alarm-titel").textContent = "KEINE GROSSE LAGE"; await speakLine("Entwarnung, Chef. Gerade gibt es keine große Katastrophe."); return stopAlarm(); }
+    for (const ev of data.ereignisse) {
+      if (run !== alarmRun) return;
+      alarmEv = ev;
+      animateGlobe([-ev.lon, -ev.lat, 0], baseScale * 2.6, 1600);
+      $("alarm-stufe").textContent = ev.stufe === "Red" ? "HÖCHSTE WARNSTUFE" : ev.stufe === "Orange" ? "WARNSTUFE ORANGE" : "BEOBACHTUNG";
+      $("alarm-stufe").className = `alarm-stufe ${String(ev.stufe).toLowerCase()}`;
+      $("alarm-titel").textContent = ev.titel;
+      $("alarm-sub").textContent = `${prettyName(ev.name)} · ${ev.laender.split(",").slice(0, 3).join(",")}`;
+      const unit = ev.typ === "EQ" ? "MAGNITUDE" : ev.einheit === "km/h" ? "KM/H" : (ev.einheit || "").toUpperCase();
+      $("alarm-einheit").textContent = unit;
+      countUp($("alarm-zahl"), ev.wert, ev.typ === "EQ" ? 1 : 0);
+      const img = $("alarm-bild");
+      if (ev.bild) { img.src = ev.bild; img.onerror = () => img.removeAttribute("src"); } else img.removeAttribute("src");
+      const talk = speakLine(sentence(ev));
+      if (ev.menschen) {
+        await pauseMs(2600);
+        if (run !== alarmRun) return;
+        $("alarm-einheit").textContent = "MENSCHEN IM GEBIET";
+        countUp($("alarm-zahl"), ev.menschen, 0, 1800);
+      }
+      await talk;
+      await pauseMs(900);
+    }
+    if (run !== alarmRun) return;
+    alarmEv = null; placeAlarm();
+    $("alarm-titel").textContent = `${data.ereignisse.length} KATASTROPHEN`; $("alarm-zahl").textContent = ""; $("alarm-einheit").textContent = ""; $("alarm-stufe").textContent = ""; $("alarm-sub").textContent = `Quelle: ${data.quelle}`; $("alarm-bild").removeAttribute("src");
+    flyToWorld();
+    await speakLine(`${data.ereignisse.length} Katastrophen in wenigen Wochen, Chef. Und hier merkt keiner was davon.`);
+    if (run === alarmRun) setTimeout(() => { if (run === alarmRun) stopAlarm(); }, 2500);
+  }
+  $("lage-alarm-btn")?.addEventListener("click", () => playAlarm());
+  $("alarm-x")?.addEventListener("click", () => stopAlarm());
+  window.FridayAlarm = { play: playAlarm, stop: stopAlarm };
 
   // ---------- Robuster YouTube-Player ----------
   // Lädt die YouTube-IFrame-API einmal; der Player überspringt nicht einbettbare

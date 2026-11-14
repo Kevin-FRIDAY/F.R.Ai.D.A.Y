@@ -1398,3 +1398,29 @@ a.menu-row { text-decoration: none; }
 .werkstatt-extend { font: 11px ui-monospace, Menlo, monospace; color: #8fc7de; white-space: nowrap; }
 .werkstatt-go { padding: 12px 18px; border-radius: 12px; border: 1px solid #4fd8ff; background: rgba(79,216,255,.18); color: #fff; font: 700 14px var(--font-ui, sans-serif); cursor: pointer; }
 @media (max-width: 700px) { .werkstatt-side { width: 160px; } .werkstatt-caption { bottom: 128px; font-size: 14px; } .werkstatt-form { flex-wrap: wrap; } }
+
+/* ===== v1.65: Welt-Alarm ===== */
+.alarm-btn { color: #ff5d6c !important; border-color: rgba(255,93,108,.5) !important; }
+.lage-alarm .alarm-track, #lage-alarm .alarm-track { fill: none; stroke: #ff3b4e; stroke-width: 2.4; stroke-dasharray: 6 4; filter: drop-shadow(0 0 4px #ff3b4e); }
+#lage-alarm .alarm-ring { fill: rgba(255,59,78,.12); stroke: #ff3b4e; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: alarm-pulse 1.4s ease-out infinite; }
+#lage-alarm .alarm-core { fill: #ff3b4e; filter: drop-shadow(0 0 6px #ff3b4e); }
+@keyframes alarm-pulse { 0% { transform: scale(.4); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
+.alarm-sweep { position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 3; border-radius: inherit;
+  background: repeating-linear-gradient(to bottom, rgba(255,40,60,0) 0 18px, rgba(255,40,60,.28) 18px 26px, rgba(255,40,60,0) 26px 60px); }
+.lage-map-wrap.alarm-sweeping .alarm-sweep { opacity: 1; animation: alarm-scan 0.9s linear infinite; }
+.lage-map-wrap.alarm-sweeping { box-shadow: inset 0 0 80px rgba(255,40,60,.55); }
+@keyframes alarm-scan { from { background-position: 0 0; } to { background-position: 0 60px; } }
+.alarm-hud { position: absolute; inset: 0; z-index: 5; pointer-events: none; display: flex; flex-direction: column; align-items: center; padding-top: 18px; }
+.alarm-hud.hidden { display: none; }
+.alarm-x { pointer-events: auto; position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,.5); color: #fff; border: 1px solid #ff5d6c; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; }
+.alarm-stufe { font: 700 11px ui-monospace, Menlo, monospace; letter-spacing: .2em; padding: 3px 10px; border-radius: 4px; color: #fff; }
+.alarm-stufe.red { background: #d61f33; } .alarm-stufe.orange { background: #e07a10; } .alarm-stufe:empty { display: none; }
+.alarm-titel { margin-top: 6px; font: 800 34px var(--font-head, sans-serif); letter-spacing: .06em; color: #fff; text-shadow: 0 0 18px rgba(255,59,78,.9), 0 2px 0 #000; }
+.alarm-zahl { font: 800 46px ui-monospace, Menlo, monospace; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,.5); line-height: 1.05; }
+.alarm-einheit { font: 700 12px ui-monospace, Menlo, monospace; letter-spacing: .2em; color: #ff9aa6; }
+.alarm-sub { margin-top: 6px; font: 600 13px ui-monospace, Menlo, monospace; color: #ffd0d6; letter-spacing: .06em; }
+.alarm-bild { position: absolute; right: 14px; top: 56px; width: min(32%, 260px); border: 1px solid #ff5d6c; border-radius: 8px; box-shadow: 0 0 24px rgba(255,59,78,.5); background: #000; }
+.alarm-bild:not([src]) { display: none; }
+.alarm-sub2 { position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); width: min(90%, 640px); text-align: center; font: 600 14px var(--font-ui, sans-serif); color: #fff; background: rgba(20,2,6,.75); border: 1px solid rgba(255,93,108,.5); border-radius: 8px; padding: 6px 12px; }
+.alarm-sub2:empty { display: none; }
+@media (max-width: 700px) { .alarm-titel { font-size: 22px; } .alarm-zahl { font-size: 30px; } .alarm-bild { width: 34%; top: 110px; } }

@@ -12,6 +12,7 @@ import { COUNTRIES, findCountry, getCountryNews, getOverview, getCountryInfo } f
 import { getVideoJob, startVideoJob, openVideoDir, LOOKS } from "./videoteam.js";
 import { getForecast, getDepot, MAERKTE } from "./markt.js";
 import { planBuild, getLatestBuild } from "./werkstatt.js";
+import { getAlarm } from "./lagezentrum.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
 // Osiris Live-Lagekarte: selbst gehostet auf dem Mac (Port 3100). Der Mac-Agent öffnet lokal.
@@ -211,6 +212,11 @@ export const toolDefinitions = [
     },
   },
   {
+    name: "welt_alarm",
+    description: "Welt-Alarm: holt die 3 größten aktuellen Katastrophen weltweit (Wirbelstürme, Erdbeben, Fluten, Vulkane) von GDACS und startet im Lagezentrum ein Briefing mit Zoom, Zahlen und Ansage. Nutzen bei 'Was ist auf der Welt los?', 'Gibt es Katastrophen?', 'Welt-Alarm'. Das Dashboard spricht das Briefing selbst; antworte danach nur kurz.",
+    input_schema: { type: "object", properties: {} },
+  },
+  {
     name: "werkstatt",
     description: "Fridays 3D-Werkstatt: entwirft aus einem Wunsch (z. B. 'ein Porsche Taycan', 'ein Wohnhaus mit 12 Etagen', 'eine Gartenhütte') ein 3D-Hologramm, das im Dashboard Schritt für Schritt aufgebaut und erklärt wird. erweitern=true ergänzt das zuletzt gebaute Modell (z. B. 'mach eine Fußbodenheizung rein'). Die Werkstatt spricht die Schritte selbst; antworte danach nur mit einem kurzen Satz wie 'Sehr gern, Chef.'",
     input_schema: {
@@ -361,6 +367,10 @@ export async function runTool(name, input = {}) {
       if (!country) return { error: `Das Land ist nicht im Lagezentrum. Verfügbar: ${COUNTRIES.map((c) => c.name).join(", ")}. Nutze sonst die Websuche.` };
       const news = await getCountryNews(country);
       return { land: country.name, schlagzeilen: news.items.slice(0, 12).map((n) => `${n.title} (${n.source})`) };
+    }
+    case "welt_alarm": {
+      const d = await getAlarm();
+      return { ereignisse: d.ereignisse.map((e) => ({ was: e.titel, name: e.name, laender: e.laender, stufe: e.stufe, wert: `${Math.round(e.wert * 10) / 10} ${e.einheit}`, menschen: e.menschen })), hinweis: "Das Lagezentrum zeigt und spricht das Briefing gerade selbst. Antworte nur kurz." };
     }
     case "werkstatt": {
       const basis = input.erweitern ? getLatestBuild()?.plan : null;
