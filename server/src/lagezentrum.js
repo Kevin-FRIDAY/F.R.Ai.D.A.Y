@@ -5,6 +5,7 @@ import path from "node:path";
 import Anthropic from "@anthropic-ai/sdk";
 import { config, ROOT } from "./config.js";
 import { getPopulation, getAirQuality } from "./extras.js";
+import { recordUsage, isCreditError, markEmpty } from "./energie.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
 
@@ -529,14 +530,21 @@ export async function getSummary(country) {
   if (!news.items.length) return { bewertung: "gemischt", zusammenfassung: `Zu ${country.name} gibt es in den letzten 24 Stunden keine Meldungen.` };
 
   const headlines = news.items.slice(0, 25).map((n, i) => `${i + 1}. ${n.title} (${n.source})`).join("\n");
-  const response = await client.messages.create({
-    model: config.model,
-    max_tokens: 1500,
-    tool_choice: { type: "tool", name: "lagebericht" },
-    tools: [RATING_TOOL],
-    system: "Du bist F.R.Ai.D.A.Y und erstellst kurze Lageberichte. Stütze dich ausschließlich auf die gelieferten Schlagzeilen, erfinde nichts dazu. Sachlich, ohne Markdown.",
-    messages: [{ role: "user", content: `Schlagzeilen der letzten 24 Stunden zu ${country.name}:\n${headlines}\n\nWie ist die Lage?` }],
-  });
+  let response;
+  try {
+    response = await client.messages.create({
+      model: config.model,
+      max_tokens: 1500,
+      tool_choice: { type: "auto" }, // Opus 5.5 erlaubt kein erzwungenes Werkzeug
+      tools: [RATING_TOOL],
+      system: "Du bist F.R.Ai.D.A.Y und erstellst kurze Lageberichte. Stütze dich ausschließlich auf die gelieferten Schlagzeilen, erfinde nichts dazu. Sachlich, ohne Markdown. Antworte immer, indem du das Werkzeug lagebericht genau einmal aufrufst.",
+      messages: [{ role: "user", content: `Schlagzeilen der letzten 24 Stunden zu ${country.name}:\n${headlines}\n\nWie ist die Lage?` }],
+    });
+  } catch (err) {
+    if (isCreditError(err)) markEmpty();
+    throw err;
+  }
+  recordUsage(response.model || config.model, response.usage, "lagebericht");
   const tool = response.content.find((b) => b.type === "tool_use");
   if (!tool) throw new Error("Keine Einschätzung erhalten");
   const result = {

@@ -6,6 +6,7 @@ import path from "node:path";
 import { spawn, execFile } from "node:child_process";
 import Anthropic from "@anthropic-ai/sdk";
 import { config, ROOT } from "./config.js";
+import { recordUsage } from "./energie.js";
 
 const BASE = process.env.FRIDAY_VIDEO_DIR || path.join(os.homedir(), "Friday-Video");
 export const VIDEO_DIRS = {
@@ -124,6 +125,7 @@ async function writeCaption(j) {
       max_tokens: 300,
       messages: [{ role: "user", content: `Schreib zu diesem Kurzvideo eine knackige TikTok-Bildunterschrift auf Deutsch (höchstens 2 Sätze) und danach 4 passende Hashtags. Nur der Text, keine Erklärung.\n\nGesprochener Text im Video:\n${j.result.transcript}` }],
     });
+    recordUsage(res.model || config.model, res.usage, "schnitt");
     const caption = (res.content || []).filter((b) => b.type === "text").map((b) => b.text).join("").trim();
     if (caption) {
       j.result.caption = caption;

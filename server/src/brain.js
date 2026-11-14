@@ -5,6 +5,7 @@ import { toolDefinitions, runTool } from "./tools.js";
 import * as store from "./store.js";
 import { isAgentOnline } from "./agent-hub.js";
 import { agentsBrief } from "./agents.js";
+import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
 
@@ -76,21 +77,31 @@ export async function ask({ text, channel = "web", image, mode = "normal", targe
   const messages = [...history, { role: "user", content: userContent }];
   const actions = [];
 
+  // Sparmodus bei knappem Guthaben: günstiges Modell, wenig Aufwand, keine Websuche.
+  const model = brainModel(config.model);
+  const sparen = model === SPAR_MODELL;
   for (let round = 0; round < 8; round++) {
     const params = {
-      model: config.model,
-      max_tokens: 16000,
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-      output_config: { effort: config.effort },
+      model,
+      max_tokens: sparen ? 4000 : 16000,
+      ...(sparen ? {} : { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" }),
+      output_config: { effort: sparen ? "low" : config.effort },
       system: [
         { type: "text", text: PERSONA, cache_control: { type: "ephemeral" } },
         { type: "text", text: contextBlock({ channel, mode, targetLang }) },
       ],
       messages,
     };
-    if (mode !== "translate") params.tools = [...toolDefinitions, WEB_SEARCH];
-    const response = await client.beta.messages.create(params);
+    if (mode !== "translate") params.tools = sparen ? [...toolDefinitions] : [...toolDefinitions, WEB_SEARCH];
+    let response;
+    try {
+      response = sparen ? await client.messages.create(params) : await client.beta.messages.create(params);
+    } catch (err) {
+      if (!isCreditError(err)) throw err;
+      markEmpty();
+      return finish(`Mir geht die Energie aus, ${config.userName}. Mein Guthaben ist leer. Lade es auf console.anthropic.com auf und sag mir dann im Energie-Fenster, wie viel. Bis dahin laufen nur meine kostenlosen Funktionen.`);
+    }
+    recordUsage(response.model || model, response.usage, "chat");
 
     if (response.stop_reason === "refusal") {
       return finish("Dabei kann ich dir leider nicht helfen, Boss.");

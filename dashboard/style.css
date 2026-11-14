@@ -1424,3 +1424,35 @@ a.menu-row { text-decoration: none; }
 .alarm-sub2 { position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); width: min(90%, 640px); text-align: center; font: 600 14px var(--font-ui, sans-serif); color: #fff; background: rgba(20,2,6,.75); border: 1px solid rgba(255,93,108,.5); border-radius: 8px; padding: 6px 12px; }
 .alarm-sub2:empty { display: none; }
 @media (max-width: 700px) { .alarm-titel { font-size: 22px; } .alarm-zahl { font-size: 30px; } .alarm-bild { width: 34%; top: 110px; } }
+
+/* ===== v1.66: Energie / Überlebens-Modus ===== */
+.en-zustand { font: 700 13px ui-monospace, Menlo, monospace; letter-spacing: .18em; margin-bottom: 6px; }
+.en-zustand.ok { color: var(--ok); } .en-zustand.warn { color: var(--gold); } .en-zustand.bad { color: var(--bad); }
+.en-track { height: 14px; border-radius: 7px; background: rgba(255,255,255,.06); border: 1px solid var(--line); overflow: hidden; }
+.en-bar { height: 100%; width: 0; transition: width .6s; border-radius: 7px; }
+.en-bar.ok { background: linear-gradient(90deg, #2bd98a, #4dffa6); box-shadow: 0 0 12px #4dffa6; }
+.en-bar.warn { background: linear-gradient(90deg, #e0a020, #ffcc4d); box-shadow: 0 0 12px #ffcc4d; }
+.en-bar.bad { background: #ff5d6c; }
+.en-zahlen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
+.en-zahlen small, .en-bilanz small { display: block; font: 10px ui-monospace, Menlo, monospace; letter-spacing: .1em; color: var(--muted); }
+.en-zahlen b { font: 600 15px ui-monospace, Menlo, monospace; }
+.en-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; }
+.en-form label { font-size: 12px; color: var(--muted); min-width: 120px; }
+.en-form input { flex: 1; min-width: 80px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0,0,0,.35); color: var(--text); }
+.en-bilanz { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 12px 0; }
+.en-bilanz b { font: 700 18px ui-monospace, Menlo, monospace; } .en-bilanz b.pos { color: var(--ok); } .en-bilanz b.neg { color: var(--bad); }
+.en-bilanz span { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.en-ideen { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+.en-ideen button { text-align: left; display: flex; flex-direction: column; gap: 3px; padding: 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--cyan-soft); color: var(--text); cursor: pointer; }
+.en-ideen button:hover { border-color: var(--cyan); }
+.en-ideen span { font-size: 11px; color: var(--muted); }
+.en-listen { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .en-listen, .en-zahlen { grid-template-columns: 1fr; } }
+.en-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font: 11px ui-monospace, Menlo, monospace; }
+.en-list li { display: flex; justify-content: space-between; gap: 8px; }
+/* Sterbe-Szene: Friday fährt herunter */
+body.friday-tot #reactor, body.friday-tot #face-host { filter: grayscale(1) brightness(.35); transition: filter 2s; }
+body.friday-tot .hero-greet, body.friday-tot #state { opacity: .45; transition: opacity 2s; }
+body.friday-tot::before { content: "NOTSTROM · GUTHABEN LEER · NUR KOSTENLOSE FUNKTIONEN"; position: fixed; inset: 0 0 auto 0; height: auto; width: auto; z-index: 40; text-align: center;
+  font: 700 11px ui-monospace, Menlo, monospace; letter-spacing: .18em; color: #fff; background: rgba(214,31,51,.85); background-image: none; padding: 5px; mix-blend-mode: normal; opacity: 1; pointer-events: none; animation: none; }
+body.friday-spar #reactor, body.friday-spar #face-host { filter: saturate(.6) brightness(.8); transition: filter 2s; }

@@ -2,6 +2,7 @@
 // einen 3D-Bauplan aus einfachen Teilen, den das Dashboard Schritt für Schritt als Hologramm aufbaut.
 import Anthropic from "@anthropic-ai/sdk";
 import { config } from "./config.js";
+import { recordUsage, isCreditError, markEmpty } from "./energie.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
 
@@ -60,6 +61,8 @@ Regeln für das Modell:
 - Pro Schritt 1 bis 3 Beschriftungen (form text) direkt an den wichtigen Stellen, mit echten Werten.
 - Echte Eckdaten und Zahlen aus deinem Wissen; wenn es ein reales Produkt ist, dessen echte Maße. Rechne nachvollziehbar.
 
+Antworte immer, indem du das Werkzeug "bauplan" genau einmal aufrufst; schreib keinen Text daneben.
+
 Ton: Deutsch, knapp, trocken-souverän wie JARVIS, sprich den Nutzer mit "Chef" an. Nichts Gefährliches: keine Waffen, Sprengstoffe oder Anleitungen zum Schaden anderer – dann baust du stattdessen etwas Harmloses und sagst das.`;
 
 let latest = null;
@@ -87,15 +90,17 @@ export async function planBuild(wunsch, basis = null) {
     fallbacks: "default",
     system: SYSTEM,
     tools: [BAUPLAN_TOOL],
-    tool_choice: { type: "tool", name: "bauplan" },
+    tool_choice: { type: "auto" }, // Opus 5.5 erlaubt kein erzwungenes Werkzeug; der Auftrag steht im System-Prompt
     messages: [{ role: "user", content: user }],
     });
   } catch (err) {
     const msg = String(err?.message || err);
+    if (isCreditError(err)) markEmpty();
     if (/credit balance/i.test(msg)) return { ok: false, error: "Dein Claude-Guthaben ist leer, Chef. Lade es auf console.anthropic.com auf, dann baue ich wieder." };
     if (/authentication|api[_ -]?key|401/i.test(msg)) return { ok: false, error: "Der Claude-Schlüssel wird nicht angenommen." };
     return { ok: false, error: "Der Bauplan hat gerade nicht geklappt. Versuch es gleich noch einmal." };
   }
+  recordUsage(res.model || config.model, res.usage, "werkstatt");
   const block = (res.content || []).find((b) => b.type === "tool_use" && b.name === "bauplan");
   if (!block) return { ok: false, error: res.stop_reason === "refusal" ? "Das baue ich nicht, Chef." : "Der Bauplan kam nicht zustande." };
   const plan = block.input;

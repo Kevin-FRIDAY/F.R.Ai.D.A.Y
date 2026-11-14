@@ -111,6 +111,7 @@
       <div class="hud-bar" aria-label="Systemübersicht">
         <span class="hb-chip" id="hb-mac"><i class="hb-dot"></i>Mac <b>–</b></span>
         <button type="button" class="hb-chip hb-btn" id="hb-backup" title="Sicherungen öffnen"><i class="hb-dot"></i>Sicherung <b>–</b></button>
+        <button type="button" class="hb-chip hb-btn" id="hb-energie" title="Fridays Energie"><i class="hb-dot"></i>Energie <b>–</b></button>
         <span class="hb-chip hb-ver">v<b id="hb-version">-</b></span>
       </div>
       <div class="hero">
@@ -353,6 +354,33 @@
               <button id="backups-btn2" class="chip">Sicherungen</button>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Energie: Guthaben, Sparmodus, Notstrom, Einnahmen -->
+    <section id="energie" class="sheet hidden" aria-label="Fridays Energie">
+      <div class="panel sheet-box">
+        <header class="sheet-top"><h2>⚡ Fridays Energie</h2><button id="energie-x" class="ghost small">✕</button></header>
+        <div id="en-zustand" class="en-zustand">–</div>
+        <div class="en-track"><div id="en-bar" class="en-bar"></div></div>
+        <div id="en-zahlen" class="en-zahlen"></div>
+        <p class="muted small-text">Friday rechnet jede Antwort mit (geschätzt nach Anthropic-Preisen). Unter 20 % schaltet sie in den Sparmodus (günstigeres Modell, kürzere Antworten, keine Websuche). Bei leerem Guthaben läuft nur noch, was nichts kostet.</p>
+        <form id="en-auf-form" class="en-form"><label>Ich habe aufgeladen</label><input id="en-auf" inputmode="decimal" placeholder="z. B. 10"><span>$</span><button class="chip primary">Füttern</button></form>
+        <div id="en-bilanz" class="en-bilanz"></div>
+        <h3>So kann Friday sich verdienen</h3>
+        <p class="muted small-text">Geld bewegt Friday nie selbst. Sie macht die Arbeit, du verkaufst sie und trägst die Einnahme hier ein. Das zählt für ihre Überlebens-Bilanz.</p>
+        <div class="en-ideen">
+          <button data-go="schnitt-open"><b>🎬 Kurzvideos schneiden</b><span>Clips mit Untertiteln für Social Media, für dich oder Kunden</span></button>
+          <button data-go="werkstatt-open"><b>🧊 3D-Entwürfe</b><span>Grundrisse und Modelle als Bild oder Video</span></button>
+          <button data-go="lage-btn"><b>🌍 Lage-Briefings</b><span>Welt-Alarm und Länderlagen als Video für einen Kanal</span></button>
+          <button data-go="vision-open"><b>👁 Fokus-Coach</b><span>Weniger Handyzeit, mehr erledigt</span></button>
+        </div>
+        <form id="en-ein-form" class="en-form"><label>Einnahme eintragen</label><input id="en-ein" inputmode="decimal" placeholder="Betrag"><input id="en-ein-wofuer" placeholder="wofür, z. B. Video für Kunde"><button class="chip">Eintragen</button></form>
+        <p id="en-msg" class="muted small-text"></p>
+        <div class="en-listen">
+          <div><h3>Letzte Kosten</h3><ul id="en-kosten" class="en-list"></ul></div>
+          <div><h3>Einnahmen</h3><ul id="en-einnahmen" class="en-list"></ul></div>
         </div>
       </div>
     </section>
@@ -650,6 +678,7 @@
   <script src="app.js"></script>
   <script src="lagezentrum.js"></script>
   <script src="agenten.js"></script>
+  <script src="energie.js"></script>
   <script src="vision.js"></script>
   <script src="schnitt.js"></script>
   <script src="markt.js"></script>

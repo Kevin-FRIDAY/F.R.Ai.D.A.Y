@@ -12,6 +12,7 @@ import { agentsWithStatus } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
 import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
 import { planBuild, getLatestBuild } from "./werkstatt.js";
+import { getEnergie, aufladen, einnahme } from "./energie.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
@@ -249,6 +250,9 @@ app.post("/api/werkstatt", asyncRoute(async (req, res) => {
   res.status(r.ok ? 200 : 400).json(r);
 }));
 app.get("/api/werkstatt/latest", (req, res) => res.json(getLatestBuild() || {}));
+app.get("/api/energie", (req, res) => res.json(getEnergie()));
+app.post("/api/energie/aufgeladen", (req, res) => { const r = aufladen(req.body?.betrag); res.status(r.ok ? 200 : 400).json(r); });
+app.post("/api/energie/einnahme", (req, res) => { const r = einnahme(req.body?.betrag, req.body?.wofuer); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/api/papierdepot/freigeben", (req, res) => { const r = paperTrade(String(req.body?.asset || ""), String(req.body?.richtung || "")); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/api/papierdepot/zuruecksetzen", (req, res) => res.json(resetDepot()));
 
