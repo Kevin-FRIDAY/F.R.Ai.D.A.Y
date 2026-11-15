@@ -42,9 +42,25 @@ echo "✓ Node.js $("$NODE" -v) gefunden"
 # --- 2. Dateien nach ~/Friday kopieren (Einstellungen bleiben erhalten) ---
 mkdir -p "$DEST" "$LOGS" "$AGENTS"
 if [ "$SRC" != "$DEST" ]; then
-  rsync -a --exclude node_modules --exclude '.env' --exclude 'server/data' --exclude 'server/eigene-protokolle.json' "$SRC/" "$DEST/"
+  rsync -a --exclude node_modules --exclude '.env' --exclude 'server/data' --exclude 'server/eigene-protokolle.json' \
+    --exclude umzug --exclude 'LIES MICH - Umzug.txt' "$SRC/" "$DEST/"
 fi
 mkdir -p "$DEST/server/data"
+
+# --- 2b. Umzug: Gedächtnis, Einstellungen, Schlüssel und Inhalte vom Stick übernehmen ---
+UMZUG="$SRC/umzug"
+if [ -d "$UMZUG" ] && [ "$SRC" != "$DEST" ]; then
+  if [ -d "$UMZUG/server-data" ] && [ -z "$(ls -A "$DEST/server/data" 2>/dev/null)" ]; then
+    rsync -a "$UMZUG/server-data/" "$DEST/server/data/" && echo "✓ Gedächtnis und Einstellungen übernommen"
+  fi
+  [ -f "$UMZUG/eigene-protokolle.json" ] && [ ! -f "$DEST/server/eigene-protokolle.json" ] && cp "$UMZUG/eigene-protokolle.json" "$DEST/server/"
+  if [ -f "$UMZUG/server.env" ] && [ ! -f "$DEST/server/.env" ]; then
+    cp "$UMZUG/server.env" "$DEST/server/.env" && chmod 600 "$DEST/server/.env" && echo "✓ Schlüssel und Passwort übernommen"
+  fi
+  for d in Friday-Webseiten Friday-Video; do
+    [ -d "$UMZUG/$d" ] && rsync -a --ignore-existing "$UMZUG/$d/" "$HOME/$d/" && echo "✓ $d übernommen"
+  done
+fi
 # Deine eigenen Protokolle: diese Datei fasst kein Update an.
 [ -f "$DEST/server/eigene-protokolle.json" ] || echo "{}" > "$DEST/server/eigene-protokolle.json"
 chmod +x "$DEST"/*.command "$DEST"/*.sh
@@ -103,6 +119,15 @@ fi
 AGENT_ENV="$DEST/mac-agent/.env"
 [ -f "$AGENT_ENV" ] || cp "$DEST/mac-agent/.env.example" "$AGENT_ENV"
 PORT="$(getval PORT)"; PORT="${PORT:-3000}"
+# Läuft auf diesem Mac schon ein anderes Friday (z. B. beim alten Benutzer)? Dann einen freien Port nehmen.
+if ! launchctl print "gui/$(id -u)/com.friday.server" >/dev/null 2>&1 && nc -z 127.0.0.1 "$PORT" 2>/dev/null; then
+  for p in $(seq $((PORT + 1)) $((PORT + 20))); do
+    [ "$p" = 3100 ] && continue
+    nc -z 127.0.0.1 "$p" 2>/dev/null || { PORT="$p"; break; }
+  done
+  setval PORT "$PORT"
+  gold "Ein anderes Friday läuft schon auf diesem Mac – ich nehme Port $PORT."
+fi
 "$NODE" -e '
   const fs=require("fs"); const [f,t,p]=process.argv.slice(1);
   let s=fs.readFileSync(f,"utf8");
@@ -152,6 +177,17 @@ for i in $(seq 1 20); do
 done
 [ -z "$OK" ] && fail "Ich bin nicht hochgefahren. Schau in $LOGS/com.friday.server.log"
 echo "✓ Friday ist online"
+
+# --- 6b. Profi-Werkzeuge (Videoschnitt, Markt-Radar) ---
+if [ ! -x "$DEST/.venv/bin/python" ] || [ ! -d "$DEST/kronos/model" ]; then
+  echo
+  gold "Soll ich die Profi-Werkzeuge installieren (Videoschnitt und Markt-Radar)?"
+  echo "Das lädt etwa 2 GB und dauert ein paar Minuten. Geht auch später: $DEST/extras-installieren.sh"
+  read -r -p "Jetzt installieren? (j/n) [j]: " PX
+  if [ "${PX:-j}" = "j" ]; then
+    /bin/bash "$DEST/extras-installieren.sh" || gold "Die Profi-Werkzeuge haben nicht geklappt – Friday läuft trotzdem."
+  fi
+fi
 
 # --- 7. Tailscale (für iPhone, Watch und unterwegs) ---
 TS=""
