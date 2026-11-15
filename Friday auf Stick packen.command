@@ -75,7 +75,17 @@ for d in Friday-Webseiten Friday-Video; do
   fi
 done
 
-# --- 6. Anleitung ---
+# --- 6. Für die Entwicklung: Claudes Gedächtnis zu Friday und git-Name ---
+for MEMDIR in "$HOME"/.claude/projects/*/memory; do
+  [ -f "$MEMDIR/MEMORY.md" ] && grep -qi "friday" "$MEMDIR/MEMORY.md" || continue
+  mkdir -p "$OUT/umzug/claude-gedaechtnis"
+  rsync -rlt "$MEMDIR/" "$OUT/umzug/claude-gedaechtnis/"
+done
+[ -d "$OUT/umzug/claude-gedaechtnis" ] && echo "✓ Claudes Gedächtnis zu Friday"
+GIT_NAME="$(git config --global user.name 2>/dev/null)"; GIT_MAIL="$(git config --global user.email 2>/dev/null)"
+printf 'GIT_NAME=%q\nGIT_MAIL=%q\n' "$GIT_NAME" "$GIT_MAIL" > "$OUT/umzug/git-identitaet"
+
+# --- 7. Anleitung ---
 cat > "$OUT/LIES MICH - Umzug.txt" <<'TXT'
 F.R.Ai.D.A.Y auf einem neuen Benutzer oder Mac einrichten
 =========================================================
@@ -86,6 +96,10 @@ F.R.Ai.D.A.Y auf einem neuen Benutzer oder Mac einrichten
 3. Der Installer übernimmt automatisch dein Gedächtnis, deine Einstellungen,
    deine Schlüssel (falls mitgenommen) und deine Webseiten/Videos.
 4. Er fragt, ob er die Profi-Werkzeuge (Videoschnitt, Markt-Radar, ca. 2 GB) installieren soll.
+5. Danach "Entwickler einrichten.command" doppelklicken: Es richtet git, die GitHub-Anmeldung,
+   Fridays Code (Friday-Repo), Claude Code und Claudes Gedächtnis zu Friday ein.
+6. Die Claude-App öffnen, mit deinem Claude-Konto anmelden und beim Projekt den Mac-Zugriff
+   (Remote Control) für den neuen Benutzer einschalten. Dann kann Claude dort weiterbauen.
 
 Gut zu wissen:
 - Node.js muss auf dem Mac installiert sein (nodejs.org), für die Profi-Werkzeuge auch Python 3 (python.org).
