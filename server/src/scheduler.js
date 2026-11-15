@@ -4,7 +4,11 @@ import * as store from "./store.js";
 import { notifyAll } from "./notify.js";
 import { sendToAgent, isAgentOnline } from "./agent-hub.js";
 import { ask } from "./brain.js";
-import { checkForUpdate } from "./updater.js";
+import { checkForUpdate, startUpdate, getUpdateStatus } from "./updater.js";
+import { getSettings, idleFor } from "./einstellungen.js";
+import { getAlarm, getWorldVideos } from "./lagezentrum.js";
+import { warmForecast, marktBusy, MAERKTE } from "./markt.js";
+import { getVideoJob } from "./videoteam.js";
 import { autoBackup } from "./backup.js";
 
 let lastBriefingDay = null;
@@ -62,11 +66,43 @@ async function checkBriefing() {
 
 // Zweimal am Tag nach Updates schauen und einmal pro neuer Version Bescheid geben.
 let notifiedVersion = null;
+const autoTries = new Map(); // Version -> Anzahl automatischer Versuche
 async function checkUpdates() {
   const u = await checkForUpdate();
-  if (!u.available || u.latest === notifiedVersion) return;
+  if (!u.available) return;
+  if (getSettings().autoUpdate) {
+    // Nur in ruhigen Momenten: 5 Minuten niemand aktiv, kein Videoschnitt, keine Markt-Rechnung.
+    const job = getVideoJob().job;
+    const st = getUpdateStatus();
+    const laeuftSchon = st?.state === "laeuft" && Date.now() - new Date(st.time).getTime() < 10 * 60 * 1000;
+    const tries = autoTries.get(u.latest) || 0;
+    if (!laeuftSchon && tries < 2 && idleFor(5 * 60 * 1000) && !marktBusy() && !(job && job.status === "läuft")) {
+      autoTries.set(u.latest, tries + 1);
+      console.log(`Automatisches Update auf ${u.latest}`);
+      startUpdate();
+      return;
+    }
+    if (tries < 2) return; // später noch einmal versuchen
+  }
+  if (u.latest === notifiedVersion) return;
   notifiedVersion = u.latest;
   await notifyAll("Update verfügbar", `Version ${u.latest} ist da, Boss. Tippe im Dashboard auf den roten Update-Knopf.`);
+}
+
+// Im Hintergrund frisch halten, damit beim Öffnen nichts mehr laden muss.
+async function vorladen() {
+  if (!getSettings().vorladen) return;
+  await getAlarm().catch(() => {});
+  await getWorldVideos().catch(() => {});
+}
+let marktIdx = 0;
+function marktVorrechnen() {
+  if (!getSettings().marktVorrechnen || !idleFor(2 * 60 * 1000)) return;
+  const assets = Object.keys(MAERKTE);
+  for (let i = 0; i < assets.length; i++) {
+    const a = assets[(marktIdx + i) % assets.length];
+    if (warmForecast(a, 90 * 60 * 1000)) { marktIdx = (marktIdx + i + 1) % assets.length; return; } // eine Rechnung pro Runde
+  }
 }
 
 async function checkBackup() {
@@ -82,7 +118,11 @@ export function startScheduler() {
   setTimeout(() => checkBackup(), 2 * 60 * 1000);
   setInterval(() => checkBackup(), 3600 * 1000);
   setTimeout(() => checkUpdates().catch(() => {}), 60 * 1000);
-  setInterval(() => checkUpdates().catch(() => {}), 12 * 3600 * 1000);
+  setInterval(() => checkUpdates().catch(() => {}), 30 * 60 * 1000);
+  setTimeout(() => vorladen(), 90 * 1000);
+  setInterval(() => vorladen(), 20 * 60 * 1000);
+  setTimeout(() => marktVorrechnen(), 5 * 60 * 1000);
+  setInterval(() => marktVorrechnen(), 15 * 60 * 1000);
   setInterval(() => checkReminders().catch((e) => console.error("Erinnerungen:", e.message)), 30 * 1000);
   setInterval(() => checkBriefing(), 30 * 1000);
 }

@@ -122,9 +122,28 @@
     el.className = on ? "ok" : "off";
   }
 
+  // Friday aktualisiert sich selbst: Wechselt die Version auf dem Server, lädt das Dashboard neu,
+  // sobald gerade nichts läuft (kein Gespräch, kein offenes Werkzeug).
+  let bootVersion = null, reloadPending = false;
+  function reloadWhenIdle(v) {
+    if (reloadPending) return;
+    reloadPending = true;
+    setState(`Update auf ${v} – lade neu …`);
+    const tryReload = () => {
+      const openTool = document.querySelector("#call:not(.hidden), #werkstatt:not(.hidden), #schnitt:not(.hidden), #vision:not(.hidden), #webseiten:not(.hidden), #markt:not(.hidden)");
+      if (busy || speaking || openTool) { setTimeout(tryReload, 15000); return; }
+      location.reload();
+    };
+    setTimeout(tryReload, 3000);
+  }
+
   async function refreshStatus() {
     try {
       status = await (await api("/api/status")).json();
+      if (status.version) {
+        if (!bootVersion) bootVersion = status.version;
+        else if (status.version !== bootVersion) reloadWhenIdle(status.version);
+      }
       setBadge("st-server", true, "online");
       setBadge("st-mac", status.agent?.online, status.agent?.name || "verbunden", "getrennt");
       setBadge("st-voice", status.voice, "ElevenLabs", "Gerät");
@@ -253,7 +272,7 @@
   }
   setInterval(() => { if (token) refreshSystem(); }, 8000);
 
-  setInterval(() => token && refreshStatus(), 30000);
+  setInterval(() => token && refreshStatus(), 20000);
   setInterval(() => token && refreshReminders(), 60000);
   setInterval(() => token && refreshWeather(), 15 * 60000);
 
@@ -483,6 +502,52 @@
   window.addEventListener("friday-settings", applyTicker);
   // Länder-Namen auf dem Globus (von lagezentrum.js gelesen)
   bindFlag("set-globelabels", "friday_globelabels", true);
+  bindFlag("set-alarmauto", "friday_alarm_auto", false);
+  bindFlag("set-marktspeak", "friday_markt_speak", true);
+  bindFlag("set-visiongesten", "friday_vision_gesten", true);
+  bindFlag("set-werkstattmassiv", "friday_werkstatt_massiv", false);
+  // Auswahlfelder und Regler, die einfach gespeichert werden
+  const bindValue = (id, key, def) => {
+    const el = $(id); if (!el) return;
+    el.value = storage.get(key) ?? def;
+    el.addEventListener("input", () => { storage.set(key, el.value); window.dispatchEvent(new Event("friday-settings")); });
+  };
+  bindValue("set-marktdefault", "friday_markt_default", "gold");
+  bindValue("set-visionschwelle", "friday_vision_schwelle", "45");
+  bindValue("set-schnittlook", "friday_schnitt_look", "natürlich");
+
+  // ---------- Glow ----------
+  const applyGlow = () => {
+    document.documentElement.style.setProperty("--glow", storage.get("friday_glow") ?? "1");
+    document.body.classList.toggle("glow-breathe", storage.get("friday_glowbreathe") === "1");
+  };
+  bindValue("set-glow", "friday_glow", "1");
+  bindFlag("set-glowbreathe", "friday_glowbreathe", false);
+  applyGlow();
+  window.addEventListener("friday-settings", applyGlow);
+
+  // ---------- Immer aktuell (Server-Einstellungen + Update-Stand) ----------
+  async function loadServerSettings() {
+    try {
+      const s = await (await api("/api/einstellungen")).json();
+      for (const k of ["autoUpdate", "vorladen", "marktVorrechnen"]) { const el = $(`srv-${k}`); if (el) el.checked = Boolean(s[k]); }
+    } catch { /* später */ }
+  }
+  for (const k of ["autoUpdate", "vorladen", "marktVorrechnen"]) {
+    $(`srv-${k}`)?.addEventListener("change", (e) => api("/api/einstellungen", { method: "POST", body: JSON.stringify({ [k]: e.target.checked }) }));
+  }
+  async function checkUpdateInfo() {
+    const info = $("upd-info"); if (!info) return;
+    info.textContent = "Prüfe GitHub …";
+    try {
+      const u = await (await api("/api/update")).json();
+      info.textContent = u.error ? `Version ${u.installed} · ${u.error}` : u.available ? `Version ${u.installed} · neu: ${u.latest} (wird automatisch installiert)` : `Version ${u.installed} · aktuell`;
+    } catch { info.textContent = "Konnte nicht prüfen."; }
+  }
+  $("upd-check")?.addEventListener("click", checkUpdateInfo);
+  // Sobald die Einstellungen sichtbar werden: Server-Werte und Update-Stand holen.
+  const settingsSheet = $("settings");
+  if (settingsSheet) new MutationObserver(() => { if (!settingsSheet.classList.contains("hidden")) { loadServerSettings(); checkUpdateInfo(); } }).observe(settingsSheet, { attributes: true, attributeFilter: ["class"] });
 
   // ---------- Textgröße ----------
   function applyTextSize(v) {

@@ -98,6 +98,13 @@
     loadInfra("kraftwerke", "lage-powerplants", "plant", "lage-kw-on");
     loadBrennpunkte();
     startISS();
+    // Optional: Welt-Alarm direkt abspielen (höchstens alle 30 Minuten).
+    try {
+      if (localStorage.getItem("friday_alarm_auto") === "1" && Date.now() - Number(localStorage.getItem("friday_alarm_last") || 0) > 30 * 60 * 1000) {
+        localStorage.setItem("friday_alarm_last", String(Date.now()));
+        setTimeout(() => window.FridayAlarm?.play(), 1200);
+      }
+    } catch { /* egal */ }
   }
 
   function close() {

@@ -9,7 +9,8 @@
   const THREE = window.THREE;
 
   const COLORS = { cyan: 0x4fd8ff, weiss: 0xf2f6ff, rot: 0xff4d5e, orange: 0xff8a1e, gelb: 0xffd84d, gruen: 0x4dffa6, blau: 0x3d7dff, lila: 0xb57bff, grau: 0x9aa4b2, schwarz: 0x2a2f38, glas: 0x9fe8ff };
-  let renderer, scene, camera, root, grid, raf = 0, plan = null, built = [], running = 0, solid = false;
+  let renderer, scene, camera, root, grid, raf = 0, plan = null, built = [], running = 0;
+  let solid = (() => { try { return localStorage.getItem("friday_werkstatt_massiv") === "1"; } catch { return false; } })();
   let yaw = 0.7, pitch = 0.42, dist = 9, target = new THREE.Vector3(0, 0.8, 0), autoSpin = true;
 
   // ---------- Szene ----------
@@ -239,6 +240,7 @@
   let lastId = 0;
   function open() {
     box.classList.remove("hidden");
+    const sw = $("werkstatt-solid"); if (sw) sw.checked = solid;
     init();
     resize();
     cancelAnimationFrame(raf);

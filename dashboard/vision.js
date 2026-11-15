@@ -29,7 +29,7 @@
       const files = await v.FilesetResolver.forVisionTasks(`${LIB}/wasm`);
       detector = await v.ObjectDetector.createFromOptions(files, {
         baseOptions: { modelAssetPath: `${MODELS}object_detector/efficientdet_lite0/float16/1/efficientdet_lite0.tflite` },
-        runningMode: "VIDEO", scoreThreshold: 0.45, maxResults: 8,
+        runningMode: "VIDEO", scoreThreshold: 0.3, maxResults: 10,
       });
       gestures = await v.GestureRecognizer.createFromOptions(files, {
         baseOptions: { modelAssetPath: `${MODELS}gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task` },
@@ -95,12 +95,15 @@
   }
 
   // Wertet ein Bild aus (Video oder Standbild) und gibt Objekte + Hände zurück.
+  const minScore = () => { try { return (Number(localStorage.getItem("friday_vision_schwelle")) || 45) / 100; } catch { return 0.45; } };
+  const gesturesOn = () => { try { return localStorage.getItem("friday_vision_gesten") !== "0"; } catch { return true; } };
   function analyse(source, ts) {
     const det = detector.detectForVideo(source, ts);
-    const objects = (det.detections || []).map((d) => ({
+    const objects = (det.detections || []).filter((d) => (d.categories[0]?.score || 0) >= minScore()).map((d) => ({
       name: d.categories[0]?.categoryName || "?", score: d.categories[0]?.score || 0,
       x: d.boundingBox.originX, y: d.boundingBox.originY, w: d.boundingBox.width, h: d.boundingBox.height,
     }));
+    if (!gesturesOn()) return { objects, hands: [], gesture: "" };
     const g = gestures.recognizeForVideo(source, ts);
     return { objects, hands: g.landmarks || [], gesture: g.gestures?.[0]?.[0]?.categoryName || "" };
   }
@@ -174,6 +177,19 @@
     const frame = { mediaType: "image/jpeg", data: c.toDataURL("image/jpeg", 0.85).split(",")[1] };
     close();
     window.Friday.askAboutImage?.(frame, "Was siehst du durch die Kamera?");
+  });
+
+  // Foto nur auf Knopfdruck: Kamerabild mit den Rahmen als Datei herunterladen.
+  $("vision-foto")?.addEventListener("click", () => {
+    if (!video.videoWidth) return;
+    const c = document.createElement("canvas");
+    c.width = video.videoWidth; c.height = video.videoHeight;
+    const g = c.getContext("2d");
+    g.drawImage(video, 0, 0); g.drawImage(canvas, 0, 0);
+    const a = document.createElement("a");
+    a.href = c.toDataURL("image/jpeg", 0.9);
+    a.download = `friday-vision-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.jpg`;
+    a.click();
   });
 
   $("vision-summary")?.addEventListener("click", () => {

@@ -351,6 +351,31 @@
         </div>
 
         <div class="set-group">
+          <div class="set-g-head"><span class="set-g-ico">⚡</span><div class="set-g-txt"><h3>Immer aktuell</h3><small>Updates und Vorladen im Hintergrund</small></div></div>
+          <div class="set-g-body">
+            <label class="switch"><input type="checkbox" id="srv-autoUpdate"><span>Updates automatisch installieren (wenn gerade nichts los ist)</span></label>
+            <label class="switch"><input type="checkbox" id="srv-vorladen"><span>Welt-Alarm und Videos im Hintergrund vorladen</span></label>
+            <label class="switch"><input type="checkbox" id="srv-marktVorrechnen"><span>Markt-Radar im Hintergrund vorrechnen (braucht Rechenleistung)</span></label>
+            <div class="set-row"><span id="upd-info" class="muted small-text">Version wird geprüft …</span><button id="upd-check" class="chip">Jetzt prüfen</button></div>
+          </div>
+        </div>
+
+        <div class="set-group">
+          <div class="set-g-head"><span class="set-g-ico">✨</span><div class="set-g-txt"><h3>Glow & Werkzeuge</h3><small>Leuchten, Kamera, Märkte, Welt, Schnitt</small></div></div>
+          <div class="set-g-body">
+            <label class="row-field"><span>Glow-Stärke</span><input type="range" id="set-glow" min="0" max="2" step="0.1" value="1"></label>
+            <label class="switch"><input type="checkbox" id="set-glowbreathe"><span>Neon atmet (Panels pulsieren sanft)</span></label>
+            <label class="switch"><input type="checkbox" id="set-alarmauto"><span>Welt-Alarm beim Öffnen des Weltgeschehens abspielen (max. alle 30 Min.)</span></label>
+            <label class="row-field"><span>Markt beim Öffnen</span><select id="set-marktdefault"><option value="gold">Gold</option><option value="bitcoin">Bitcoin</option><option value="ethereum">Ethereum</option></select></label>
+            <label class="switch"><input type="checkbox" id="set-marktspeak" checked><span>Markt-Ergebnis ansagen</span></label>
+            <label class="row-field"><span>Vision: Erkennen ab</span><input type="range" id="set-visionschwelle" min="30" max="80" step="5" value="45"></label>
+            <label class="switch"><input type="checkbox" id="set-visiongesten" checked><span>Vision: Hand-Gesten</span></label>
+            <label class="row-field"><span>Schnitt: Standard-Look</span><select id="set-schnittlook"><option value="natürlich">natürlich</option><option value="warm">warm</option><option value="kühl">kühl</option><option value="kino">kino</option></select></label>
+            <label class="switch"><input type="checkbox" id="set-werkstattmassiv"><span>Werkstatt startet massiv statt Hologramm</span></label>
+          </div>
+        </div>
+
+        <div class="set-group">
           <div class="set-g-head"><span class="set-g-ico">🗂</span><div class="set-g-txt"><h3>Protokolle & Mehr</h3><small>Routinen und Werkzeuge</small></div></div>
           <div class="set-g-body">
             <div id="protocols" class="chips"></div>
@@ -507,6 +532,7 @@
       <label class="switch"><input type="checkbox" id="vision-focus"><span>Fokus-Modus</span></label>
       <span id="vision-phone" class="vision-phone">Handy heute: 0 Sek.</span>
       <button id="vision-summary" class="chip">Tagesbilanz</button>
+      <button id="vision-foto" class="chip">📸 Foto</button>
       <button id="vision-ask" class="chip primary">Friday, was siehst du?</button>
     </footer>
     <p class="muted small-text vision-note">Läuft nur auf diesem Gerät. Nichts wird gespeichert, keine Gesichtserkennung. ✋ offene Hand stoppt Fridays Stimme.</p>

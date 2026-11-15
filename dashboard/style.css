@@ -1492,3 +1492,22 @@ body.friday-spar #reactor, body.friday-spar #face-host { filter: saturate(.6) br
 .menu-sep { font: 600 10px ui-monospace, Menlo, monospace; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); padding: 10px 12px 4px; }
 .menu-sep:first-child { padding-top: 4px; }
 .menu-pop { max-height: calc(100vh - 90px); overflow-y: auto; }
+
+/* ===== v1.69: Glow regelbar (--glow 0–2) und "Neon atmet" ===== */
+:root { --glow: 1; }
+.panel, .sheet-box, .menu-pop {
+  box-shadow: 0 0 calc(26px * var(--glow)) color-mix(in srgb, var(--cyan) calc(18% * var(--glow)), transparent),
+              inset 0 0 calc(18px * var(--glow)) color-mix(in srgb, var(--cyan) calc(6% * var(--glow)), transparent),
+              0 10px 30px rgba(0,0,0,.45);
+}
+.hb-chip { box-shadow: 0 0 calc(12px * var(--glow)) color-mix(in srgb, var(--cyan) calc(14% * var(--glow)), transparent); }
+#greeting, .brand, .sheet-top h2, .set-g-txt h3 { text-shadow: 0 0 calc(16px * var(--glow)) color-mix(in srgb, var(--cyan) calc(55% * var(--glow)), transparent); }
+#face-host { filter: drop-shadow(0 0 calc(20px * var(--glow)) color-mix(in srgb, var(--cyan) calc(40% * var(--glow)), transparent)); }
+.chip.primary, .ws-go, .schnitt-go, .werkstatt-go { box-shadow: 0 0 calc(14px * var(--glow)) color-mix(in srgb, var(--cyan) calc(35% * var(--glow)), transparent); }
+@keyframes glow-breathe {
+  0%, 100% { box-shadow: 0 0 calc(22px * var(--glow)) color-mix(in srgb, var(--cyan) calc(14% * var(--glow)), transparent), 0 10px 30px rgba(0,0,0,.45); }
+  50% { box-shadow: 0 0 calc(42px * var(--glow)) color-mix(in srgb, var(--cyan) calc(30% * var(--glow)), transparent), 0 10px 30px rgba(0,0,0,.45); }
+}
+body.glow-breathe .panel { animation: glow-breathe 5.5s ease-in-out infinite; }
+body.reduce-anim.glow-breathe .panel { animation: none; }
+.set-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }

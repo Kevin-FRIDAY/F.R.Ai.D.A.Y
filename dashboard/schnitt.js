@@ -21,7 +21,7 @@
     const sel = $("schnitt-look");
     if (!sel.options.length) {
       sel.innerHTML = d.looks.map((l) => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join("");
-      if (j) sel.value = j.look;
+      sel.value = (() => { try { return localStorage.getItem("friday_schnitt_look") || "natürlich"; } catch { return "natürlich"; } })();
     }
     const running = j && j.status === "läuft";
     $("schnitt-start").disabled = running || !d.clips.length || !d.ready;

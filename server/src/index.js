@@ -13,6 +13,7 @@ import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
 import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
 import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { getEnergie, aufladen, einnahme } from "./energie.js";
+import { getSettings, setSettings, markActive } from "./einstellungen.js";
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webseiten.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
@@ -77,6 +78,8 @@ app.post("/api/health", requireShortcutOrAuth, (req, res) => {
 
 // Alles ab hier braucht eine Anmeldung.
 app.use("/api", requireAuth);
+// Aktivität merken (für automatische Updates nur in ruhigen Momenten).
+app.use("/api", (req, res, next) => { if (req.method !== "GET") markActive(); next(); });
 
 app.get("/api/shortcut-token", (req, res) => res.json({ token: config.shortcutToken }));
 
@@ -252,6 +255,8 @@ app.post("/api/werkstatt", asyncRoute(async (req, res) => {
 }));
 app.get("/api/werkstatt/latest", (req, res) => res.json(getLatestBuild() || {}));
 app.get("/api/energie", (req, res) => res.json(getEnergie()));
+app.get("/api/einstellungen", (req, res) => res.json(getSettings()));
+app.post("/api/einstellungen", (req, res) => res.json(setSettings(req.body || {})));
 app.get("/api/webseiten", (req, res) => res.json(listSites()));
 app.post("/api/webseite", asyncRoute(async (req, res) => { const r = await buildSite(req.body?.auftrag, req.body?.basis || null); res.status(r.ok ? 200 : 400).json(r); }));
 app.get("/api/webseite/:id/html", (req, res) => { const html = getSiteHtml(req.params.id); if (html == null) return res.status(404).json({ error: "Nicht gefunden" }); res.json({ html }); });

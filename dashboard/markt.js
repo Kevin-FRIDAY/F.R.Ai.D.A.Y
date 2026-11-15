@@ -8,7 +8,7 @@
   const box = $("markt");
   if (!box) return;
 
-  let asset = "gold", timer = null, spokenAt = {}, current = null;
+  let asset = (() => { try { return localStorage.getItem("friday_markt_default") || "gold"; } catch { return "gold"; } })(), timer = null, spokenAt = {}, current = null;
   const fmt = (v) => (v >= 1000 ? Math.round(v).toLocaleString("de-DE") : v.toLocaleString("de-DE", { maximumFractionDigits: 2 }));
   const money = (v) => `${v.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $`;
 
@@ -89,7 +89,11 @@
       st.textContent = r.status === "rechnet" ? "Kronos rechnet 100 Verläufe … (1–2 Minuten)" : "Wartet auf freie Rechenzeit …";
       st.className = "markt-status busy";
     } else if (r.status === "fehler") { st.textContent = `Fehler: ${r.error || "unbekannt"}`; st.className = "markt-status error"; }
-    else { st.textContent = d ? `Stand ${new Date(r.at).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })} · Daten: ${d.quelle} · gerechnet in ${Math.round(d.sekunden)} s` : ""; st.className = "markt-status"; }
+    else {
+      const stand = d ? new Date(r.at).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
+      st.textContent = !d ? "" : r.aktualisiert ? `Stand ${stand} · rechne gerade im Hintergrund neu …` : `Stand ${stand} · Daten: ${d.quelle} · gerechnet in ${Math.round(d.sekunden)} s`;
+      st.className = r.aktualisiert ? "markt-status busy" : "markt-status";
+    }
     draw(d);
     if (!d) { $("markt-stats").innerHTML = ""; $("markt-signal").innerHTML = ""; return; }
     const share = Math.round((d.hoeher / d.anzahl) * 100);
@@ -103,7 +107,7 @@
       ? `<span>Modell-Signal: <b>ABWARTEN</b></span>`
       : `<span>Modell-Signal: <b>${sig.toUpperCase()}</b> (Spielgeld)</span><button class="chip primary" data-trade="${sig}">Freigeben</button>`;
     // Ergebnis einmal pro neuer Rechnung ansagen.
-    if (r.status === "fertig" && spokenAt[d.asset] !== r.at && !box.classList.contains("hidden")) {
+    if (r.status === "fertig" && !r.aktualisiert && spokenAt[d.asset] !== r.at && !box.classList.contains("hidden") && (localStorage.getItem("friday_markt_speak") !== "0")) {
       spokenAt[d.asset] = r.at;
       say(`${d.name}: ${d.hoeher} von ${d.anzahl} Verläufen enden höher, Spanne ${fmt(d.p5)} bis ${fmt(d.p95)}. Prognose, keine Gewissheit.`);
     }
@@ -126,8 +130,8 @@
     try {
       const r = await (await api(`/api/markt/${asset}${force ? "/neu" : ""}`, force ? { method: "POST" } : {})).json();
       show(r);
-      if (r.status === "rechnet" || r.status === "wartet") timer = setTimeout(() => load(false), 4000);
-      else loadDepot();
+      if (r.status === "rechnet" || r.status === "wartet" || r.aktualisiert) timer = setTimeout(() => load(false), 5000);
+      loadDepot();
     } catch { $("markt-status").textContent = "Markt-Radar nicht erreichbar."; }
   }
 
@@ -156,7 +160,11 @@
     await api("/api/papierdepot/zuruecksetzen", { method: "POST" });
     loadDepot();
   });
-  $("markt-open")?.addEventListener("click", () => { box.classList.remove("hidden"); pick(asset); });
+  $("markt-open")?.addEventListener("click", () => {
+    box.classList.remove("hidden");
+    try { asset = localStorage.getItem("friday_markt_default") || asset; } catch { /* egal */ } // Standard aus den Einstellungen
+    pick(asset);
+  });
   $("markt-x")?.addEventListener("click", () => { box.classList.add("hidden"); clearTimeout(timer); });
   window.addEventListener("resize", () => { if (!box.classList.contains("hidden") && current) draw(current.data); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.classList.contains("hidden")) { box.classList.add("hidden"); clearTimeout(timer); } });
