@@ -561,9 +561,32 @@
     try {
       const u = await (await api("/api/update")).json();
       info.textContent = u.error ? `Version ${u.installed} · ${u.error}` : u.available ? `Version ${u.installed} · neu: ${u.latest} (wird automatisch installiert)` : `Version ${u.installed} · aktuell`;
+      showGhKey(u.githubSchluessel);
     } catch { info.textContent = "Konnte nicht prüfen."; }
   }
   $("upd-check")?.addEventListener("click", checkUpdateInfo);
+  // GitHub-Schlüssel (nur nötig, wenn das Repo privat ist). Der Schlüssel selbst kommt nie zurück.
+  function showGhKey(k) {
+    const el = $("gh-info"); if (!el || !k) return;
+    el.textContent = k.set ? `GitHub-Schlüssel: ✓ eingetragen${k.source === "env" ? " (in der .env)" : ""}` : "GitHub-Schlüssel: keiner (reicht, solange das Repo öffentlich ist)";
+    $("gh-forget")?.classList.toggle("hidden", k.source !== "dashboard");
+  }
+  $("gh-save")?.addEventListener("click", async () => {
+    const inp = $("gh-token"), btn = $("gh-save");
+    const token = inp.value.trim(); if (!token) return;
+    btn.disabled = true; btn.textContent = "Prüfe …";
+    let r;
+    try { r = await (await api("/api/update/schluessel", { method: "POST", body: JSON.stringify({ token }) })).json(); } catch { r = { error: "Friday ist nicht erreichbar." }; }
+    btn.disabled = false; btn.textContent = "Speichern";
+    if (!r.ok) { alert(r.error || "Das hat nicht geklappt."); return; }
+    inp.value = "";
+    showGhKey(r);
+    checkUpdateInfo();
+  });
+  $("gh-forget")?.addEventListener("click", async () => {
+    if (!confirm("GitHub-Schlüssel entfernen? Bei einem privaten Repo klappen Updates dann nicht mehr.")) return;
+    try { showGhKey(await (await api("/api/update/schluessel/vergessen", { method: "POST" })).json()); checkUpdateInfo(); } catch { /* später */ }
+  });
   // Sobald die Einstellungen sichtbar werden: Server-Werte und Update-Stand holen.
   const settingsSheet = $("settings");
   if (settingsSheet) new MutationObserver(() => { if (!settingsSheet.classList.contains("hidden")) { loadServerSettings(); checkUpdateInfo(); } }).observe(settingsSheet, { attributes: true, attributeFilter: ["class"] });

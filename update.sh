@@ -37,10 +37,35 @@ install_packages() {
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
+# GitHub-Schlüssel (nur für ein privates Repo): von Friday übergeben, aus dem Dashboard
+# (server/data/github.json) oder aus der .env (FRIDAY_GITHUB_TOKEN). Ohne Schlüssel wie bisher.
+TOKEN="${FRIDAY_GITHUB_TOKEN:-}"
+if [ -z "$TOKEN" ] && [ -f "$DEST/server/data/github.json" ]; then
+  TOKEN="$("$NODE" -e 'try{process.stdout.write(String(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).token||""))}catch{}' "$DEST/server/data/github.json" 2>/dev/null)"
+fi
+[ -z "$TOKEN" ] && TOKEN="$(getval FRIDAY_GITHUB_TOKEN)"
+TOKEN="$(printf '%s' "$TOKEN" | tr -cd 'A-Za-z0-9_')"
+GH_API="${FRIDAY_GITHUB_API:-https://api.github.com}"
+GH_CODELOAD="${FRIDAY_GITHUB_CODELOAD:-https://codeload.github.com}"
+
 # 1. Neue Version laden und prüfen
 status laeuft "Lade die neue Version von GitHub..."
-curl -fsSL --max-time 180 "https://codeload.github.com/$REPO/tar.gz/refs/heads/$BRANCH" -o "$TMP/friday.tar.gz" \
-  || fail "Download von GitHub hat nicht geklappt."
+if [ -n "$TOKEN" ]; then
+  # Schlüssel steht in einer Datei, nicht in der Befehlszeile (sonst wäre er in der Prozessliste sichtbar).
+  ( umask 077; printf 'Authorization: Bearer %s\n' "$TOKEN" > "$TMP/auth.txt" )
+  HTTP="$(curl -sSL --max-time 180 -H @"$TMP/auth.txt" -H "Accept: application/vnd.github+json" -H "User-Agent: Friday-Updater" \
+    -w '%{http_code}' "$GH_API/repos/$REPO/tarball/$BRANCH" -o "$TMP/friday.tar.gz")" || HTTP=000
+  rm -f "$TMP/auth.txt"
+  case "$HTTP" in
+    200) ;;
+    401) fail "Der GitHub-Schlüssel stimmt nicht oder ist abgelaufen. Trag in den Einstellungen einen neuen ein." ;;
+    403|404) fail "Der GitHub-Schlüssel darf das Friday-Repo nicht lesen (Contents: Read-only nötig)." ;;
+    *) fail "Download von GitHub hat nicht geklappt." ;;
+  esac
+else
+  curl -fsSL --max-time 180 "$GH_CODELOAD/$REPO/tar.gz/refs/heads/$BRANCH" -o "$TMP/friday.tar.gz" \
+    || fail "Download von GitHub hat nicht geklappt. Ist das Repo privat? Dann trag in den Einstellungen deinen GitHub-Schlüssel ein."
+fi
 mkdir "$TMP/neu"
 tar -xzf "$TMP/friday.tar.gz" -C "$TMP/neu" --strip-components 1 || fail "Der Download ist beschädigt."
 NEW="$TMP/neu"

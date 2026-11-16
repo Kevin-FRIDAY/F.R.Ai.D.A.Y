@@ -23,7 +23,7 @@ import * as fernseher from "./fernseher.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
-import { localVersion, checkForUpdate, startUpdate, getUpdateStatus } from "./updater.js";
+import { localVersion, checkForUpdate, startUpdate, getUpdateStatus, githubTokenStatus, setGithubToken, forgetGithubToken } from "./updater.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
 const missing = checkConfig();
@@ -131,7 +131,10 @@ app.get("/api/status", (req, res) => {
 });
 
 // --- Updates ---
-app.get("/api/update", asyncRoute(async (req, res) => res.json({ ...(await checkForUpdate()), status: getUpdateStatus() })));
+app.get("/api/update", asyncRoute(async (req, res) => res.json({ ...(await checkForUpdate()), status: getUpdateStatus(), githubSchluessel: githubTokenStatus() })));
+// GitHub-Schlüssel für ein privates Repo. Wird nie zurückgegeben, nur ob einer da ist.
+app.post("/api/update/schluessel", asyncRoute(async (req, res) => { const r = await setGithubToken(req.body?.token); res.status(r.ok ? 200 : 400).json(r); }));
+app.post("/api/update/schluessel/vergessen", (req, res) => res.json(forgetGithubToken()));
 app.post("/api/update", (req, res) => res.json(startUpdate()));
 
 // --- Sicherungen ---
