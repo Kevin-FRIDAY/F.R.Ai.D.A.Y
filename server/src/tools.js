@@ -16,6 +16,9 @@ import { getAlarm } from "./lagezentrum.js";
 import { buildSite, listSites } from "./webseiten.js";
 import { command as tvCommand } from "./fernseher.js";
 import { command as alexaCommand } from "./alexa.js";
+import { toolDefinitions as dienstTools, smartHomeTool } from "./dienste-werkzeuge.js";
+import { istDienstTool, runDienstTool } from "./dienste.js";
+import { command as haCommand } from "./homeassistant.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
 // Osiris Live-Lagekarte: selbst gehostet auf dem Mac (Port 3100). Der Mac-Agent öffnet lokal.
@@ -180,18 +183,6 @@ export const toolDefinitions = [
     input_schema: { type: "object", properties: {} },
   },
   {
-    name: "smart_home",
-    description: "Steuert Smart-Home-Geräte über Home Assistant. action=list zeigt Geräte; turn_on/turn_off/toggle brauchen entity_id (z. B. light.wohnzimmer).",
-    input_schema: {
-      type: "object",
-      properties: {
-        action: { type: "string", enum: ["list", "turn_on", "turn_off", "toggle"] },
-        entity_id: { type: "string" },
-      },
-      required: ["action"],
-    },
-  },
-  {
     name: "fernseher",
     description:
       "Steuert den Samsung-Fernseher im WLAN. Aktionen: an, aus, lauter/leiser (anzahl = Stufen, Standard 3), stumm, " +
@@ -288,6 +279,8 @@ export const toolDefinitions = [
       required: ["message"],
     },
   },
+  smartHomeTool,
+  ...dienstTools,
 ];
 
 // --- Wetter (Open-Meteo, kostenlos, kein Schlüssel nötig) ---
@@ -359,26 +352,10 @@ async function runProtocol(name) {
   return { protokoll: key, beschreibung: protocols[key].description, schritte: results };
 }
 
-// --- Home Assistant ---
+// --- Home Assistant (für Protokolle; die eigentliche Anbindung steckt in homeassistant.js) ---
 async function homeAssistant(action, entityId) {
-  if (!config.haUrl || !config.haToken) return { error: "Home Assistant ist nicht eingerichtet." };
-  const headers = { Authorization: `Bearer ${config.haToken}`, "Content-Type": "application/json" };
-  if (action === "list") {
-    const states = await fetch(`${config.haUrl}/api/states`, { headers }).then((r) => r.json());
-    return states
-      .filter((s) => /^(light|switch|scene|cover|climate|fan|media_player)\./.test(s.entity_id))
-      .slice(0, 80)
-      .map((s) => ({ id: s.entity_id, name: s.attributes.friendly_name, status: s.state }));
-  }
-  if (!/^[a-z_]+\.[a-z0-9_]+$/.test(entityId || "")) return { error: "Ungültige entity_id" };
-  const domain = entityId.startsWith("scene.") ? "scene" : "homeassistant";
-  const service = entityId.startsWith("scene.") ? "turn_on" : action;
-  const res = await fetch(`${config.haUrl}/api/services/${domain}/${service}`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({ entity_id: entityId }),
-  });
-  return res.ok ? { ok: true } : { error: `Home Assistant antwortet mit ${res.status}` };
+  const r = await haCommand({ action, value: entityId });
+  return r.ok ? { ok: true, ...(r.text ? { text: r.text } : {}) } : { error: r.error };
 }
 
 // --- Ausführen ---
@@ -401,10 +378,17 @@ const ACTLOG = {
   air_quality: ["suche", (i) => `Luftqualität: ${i.city || ""}`],
   alexa: ["mac", (i) => `Alexa: ${i.action === "ansage" ? "Ansage" : i.action || ""}${i.action === "routine" && i.value ? " " + i.value : ""}`],
   fernseher: ["mac", (i) => `Fernseher: ${i.action || ""}${i.value ? " " + i.value : ""}`],
+  kalender: ["erinnerung", (i) => `Kalender: ${i.action || ""}${i.value && i.action !== "termine" ? " " + i.value : ""}`],
+  spotify: ["mac", (i) => `Spotify: ${i.action || ""}${i.value ? " " + i.value : ""}`],
+  hue: ["mac", (i) => `Licht: ${i.action || ""}${i.wo ? " " + i.wo : ""}`],
+  smart_home: ["mac", (i) => `Zuhause: ${i.action || ""}${i.value || i.entity_id ? " " + (i.value || i.entity_id) : ""}`],
+  todoist: ["aufgabe", (i) => `Todoist: ${i.action || ""}${i.value ? " " + i.value : ""}`],
+  notion: ["gedaechtnis", (i) => `Notion: ${i.action || ""}`],
 };
 
 export async function runTool(name, input = {}) {
   if (ACTLOG[name]) { try { store.logActivity(ACTLOG[name][0], ACTLOG[name][1](input)); } catch { /* egal */ } }
+  if (istDienstTool(name)) return runDienstTool(name, input);
   switch (name) {
     case "world_news": {
       if (!input.country) {
@@ -477,8 +461,6 @@ export async function runTool(name, input = {}) {
       return runProtocol(input.name);
     case "list_protocols":
       return Object.fromEntries(Object.entries(getProtocols()).map(([k, v]) => [k, v.description]));
-    case "smart_home":
-      return homeAssistant(input.action, input.entity_id);
     case "fernseher": {
       const r = await tvCommand(input);
       return r.ok ? r : { error: r.error };

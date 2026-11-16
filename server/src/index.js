@@ -20,6 +20,11 @@ import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
 import * as alexa from "./alexa.js";
 import * as fernseher from "./fernseher.js";
+import { DIENSTE, alleStatus } from "./dienste.js";
+import { sprich, stimmeAktiv } from "./stimme.js";
+import { callback as spotifyCallback } from "./spotify.js";
+import { hueSprechenAn, sprechen as hueSprechen } from "./hue.js";
+import { haBereit } from "./homeassistant.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
@@ -78,6 +83,20 @@ app.post("/api/health", requireShortcutOrAuth, (req, res) => {
   res.json({ ok: true });
 });
 
+// Spotify schickt den Browser nach der Anmeldung hierher zurück. Öffentlich, aber nur mit dem einmaligen "state" gültig.
+app.get("/api/spotify/callback", asyncRoute(async (req, res) => {
+  const q = req.query || {};
+  const r = await spotifyCallback({ code: typeof q.code === "string" ? q.code : "", state: typeof q.state === "string" ? q.state : "", error: typeof q.error === "string" ? q.error : "" });
+  const titel = r.ok ? "Spotify ist verbunden" : "Das hat nicht geklappt";
+  const text = r.ok ? "Du kannst dieses Fenster schließen. Sag einfach: „Friday, spiel meine Lieblingssongs.“" : r.error;
+  const esc = (x) => String(x).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  res.status(r.ok ? 200 : 400).type("html").send(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(titel)}</title>
+<body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#050505;color:#f5e9dc;font-family:-apple-system,system-ui,sans-serif">
+<div style="max-width:420px;padding:28px;border:1px solid rgba(255,138,30,.45);border-radius:18px;background:rgba(255,138,30,.06);box-shadow:0 0 40px rgba(255,138,30,.18);text-align:center">
+<div style="font-size:42px">${r.ok ? "🎵" : "⚠️"}</div><h1 style="color:#ff8a1e;font-size:20px;letter-spacing:.08em">${esc(titel)}</h1><p style="line-height:1.5">${esc(text)}</p>
+<p><a href="/" style="color:#ff8a1e">Zurück zu Friday</a></p></div></body>`);
+}));
+
 // Alles ab hier braucht eine Anmeldung.
 app.use("/api", requireAuth);
 // Aktivität merken (für automatische Updates nur in ruhigen Momenten).
@@ -101,27 +120,23 @@ app.post("/api/chat", asyncRoute(async (req, res) => {
   res.json(result);
 }));
 
-// Fridays Stimme über ElevenLabs (wenn eingerichtet).
+// Fridays Stimme über ElevenLabs (wenn eingerichtet). Bei Fehler 404/503 nimmt das Dashboard die Gerätestimme.
 app.post("/api/tts", asyncRoute(async (req, res) => {
-  if (!config.elevenKey || !config.elevenVoice) return res.status(404).json({ error: "Keine ElevenLabs-Stimme eingerichtet" });
-  const text = String(req.body?.text || "").slice(0, 1500);
-  const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(config.elevenVoice)}?output_format=mp3_44100_128`, {
-    method: "POST",
-    headers: { "xi-api-key": config.elevenKey, "Content-Type": "application/json", Accept: "audio/mpeg" },
-    body: JSON.stringify({ text, model_id: "eleven_multilingual_v2" }),
-  });
-  if (!r.ok) return res.status(502).json({ error: `ElevenLabs: ${r.status}` });
-  res.type("audio/mpeg").send(Buffer.from(await r.arrayBuffer()));
+  if (!stimmeAktiv()) return res.status(404).json({ error: "Keine ElevenLabs-Stimme eingerichtet" });
+  const r = await sprich(String(req.body?.text || ""));
+  if (!r.ok) return res.status(503).json({ error: r.error });
+  res.type("audio/mpeg").send(r.audio);
 }));
 
 app.get("/api/status", (req, res) => {
   res.json({
     name: config.userName,
     agent: { online: isAgentOnline(), ...getAgentInfo() },
-    voice: Boolean(config.elevenKey && config.elevenVoice),
+    voice: stimmeAktiv(),
+    hueSprechen: hueSprechenAn(),
     telegram: Boolean(config.telegramToken),
     push: Boolean(config.ntfyTopic),
-    smartHome: Boolean(config.haUrl),
+    smartHome: haBereit(),
     schiffe: shipsStatus(),
     briefing: getLatestBriefing(),
     uptime: Math.round(process.uptime()),
@@ -268,6 +283,35 @@ app.post("/api/alexa/befehl", asyncRoute(async (req, res) => {
   const { action, value, lautsprecher } = req.body || {};
   const r = await alexa.command({ action: String(action || ""), value: value == null ? undefined : String(value).slice(0, 900), lautsprecher: lautsprecher ? String(lautsprecher).slice(0, 60) : undefined });
   if (r.ok && action !== "liste") store.logActivity("mac", action === "ansage" ? "Alexa: Ansage" : `Alexa: ${r.routine || action}`);
+  res.status(r.ok ? 200 : 400).json(r);
+}));
+// Verbindungen (Kalender, Stimme, Spotify, Home Assistant, Hue, Todoist, Notion)
+const dienstVon = (req) => (Object.hasOwn(DIENSTE, req.params.id) ? DIENSTE[req.params.id] : null);
+const nurText = (body, max = 1000) => Object.fromEntries(Object.entries(body || {}).filter(([, v]) => ["string", "number", "boolean"].includes(typeof v)).map(([k, v]) => [k, typeof v === "string" ? v.slice(0, max) : v]));
+app.get("/api/dienste", asyncRoute(async (req, res) => res.json(await alleStatus())));
+app.post("/api/dienste/hue/sprechen", asyncRoute(async (req, res) => res.json(await hueSprechen(Boolean(req.body?.an)))));
+app.post("/api/dienste/:id/einrichten", asyncRoute(async (req, res) => {
+  const m = dienstVon(req);
+  if (!m) return res.status(404).json({ ok: false, error: "Unbekannter Dienst" });
+  const r = await m.einrichten(nurText(req.body));
+  if (r.ok) store.logActivity("system", `Verbunden: ${m.info.name}`);
+  res.status(r.ok ? 200 : 400).json(r);
+}));
+app.post("/api/dienste/:id/einstellen", asyncRoute(async (req, res) => {
+  const m = dienstVon(req);
+  if (!m) return res.status(404).json({ ok: false, error: "Unbekannter Dienst" });
+  const r = await m.einstellen(nurText(req.body, 200));
+  res.status(r.ok ? 200 : 400).json(r);
+}));
+app.post("/api/dienste/:id/vergessen", asyncRoute(async (req, res) => {
+  const m = dienstVon(req);
+  if (!m) return res.status(404).json({ ok: false, error: "Unbekannter Dienst" });
+  res.json(m.vergessen());
+}));
+app.post("/api/dienste/:id/befehl", asyncRoute(async (req, res) => {
+  const m = dienstVon(req);
+  if (!m) return res.status(404).json({ ok: false, error: "Unbekannter Dienst" });
+  const r = await m.command(nurText(req.body));
   res.status(r.ok ? 200 : 400).json(r);
 }));
 app.get("/api/agents", (req, res) => res.json(agentsWithStatus()));

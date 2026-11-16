@@ -7,6 +7,13 @@ import { videoTeamReady } from "./videoteam.js";
 import { marktReady } from "./markt.js";
 import { alexaConfigured } from "./alexa.js";
 import { tvPaired } from "./fernseher.js";
+import { kalenderBereit } from "./kalender.js";
+import { stimmeAktiv } from "./stimme.js";
+import { spotifyVerbunden } from "./spotify.js";
+import { haBereit } from "./homeassistant.js";
+import { hueBereit } from "./hue.js";
+import { todoistBereit } from "./todoist.js";
+import { notionBereit } from "./notion.js";
 
 // need beschreibt, was ein Agent braucht:
 //  {type:"frei"}                      -> immer einsatzbereit (kostenlose Quelle)
@@ -17,13 +24,13 @@ export const AGENTS = [
   // --- Organisation ---
   { id: "mail", name: "Mail-Agent", emoji: "📧", cat: "Organisation", purpose: "Liest und fasst E-Mails zusammen, schreibt Entwürfe.", examples: ["Lies mir meine neuen Mails vor", "Fass die letzte Mail zusammen"], need: { type: "key", key: "icloudMail", label: "iCloud-Mail" } },
   { id: "dateien", name: "Datei-Agent", emoji: "📁", cat: "Organisation", purpose: "Findet und verwaltet Dateien und Dokumente.", examples: ["Such die Rechnung von gestern", "Öffne mein Konzept"], need: { type: "setup", label: "Google Drive" } },
-  { id: "kalender", name: "Kalender-Agent", emoji: "📅", cat: "Organisation", purpose: "Termine, Erinnerungen und freie Zeiten.", examples: ["Wann bin ich morgen frei?", "Trag Zahnarzt am Freitag ein"], need: { type: "setup", label: "Google Kalender" } },
-  { id: "aufgaben", name: "Aufgaben-Agent", emoji: "✅", cat: "Organisation", purpose: "Aufgaben und Einkaufslisten.", examples: ["Setz Milch auf die Einkaufsliste", "Was steht heute an?"], need: { type: "setup", label: "Todoist" } },
-  { id: "wissen", name: "Wissens-Agent", emoji: "🧠", cat: "Organisation", purpose: "Notizen, Projekte und Wissen – Fridays Gedächtnis.", examples: ["Merk dir das Projekt-Passwort", "Was weißt du über Projekt X?"], need: { type: "setup", label: "Notion" } },
+  { id: "kalender", name: "Kalender-Agent", emoji: "📅", cat: "Organisation", purpose: "Apple Kalender und Erinnerungen: Termine, freie Zeiten, neue Einträge.", examples: ["Was steht morgen an?", "Wann bin ich morgen frei?", "Trag Zahnarzt am Freitag um 10 ein"], need: { type: "check", ok: () => kalenderBereit(), label: "verbundenen Mac (Apple Kalender)" } },
+  { id: "aufgaben", name: "Aufgaben-Agent", emoji: "✅", cat: "Organisation", purpose: "Aufgaben in Todoist: eintragen, vorlesen, abhaken.", examples: ["Füg Steuererklärung bis Freitag zu Todoist hinzu", "Was steht heute in Todoist?"], need: { type: "check", ok: () => todoistBereit(), label: "Todoist (Werkzeug-Menü → Verbindungen)" } },
+  { id: "wissen", name: "Wissens-Agent", emoji: "🧠", cat: "Organisation", purpose: "Notizen und Wissen in Notion.", examples: ["Notiz: Idee für das neue HUD", "Such in Notion nach Projekt X", "Lies meine letzten Notizen"], need: { type: "check", ok: () => notionBereit(), label: "Notion (Werkzeug-Menü → Verbindungen)" } },
 
   // --- Stimme & Medien ---
-  { id: "stimme", name: "Stimm-Agent", emoji: "🗣️", cat: "Stimme & Medien", purpose: "Gibt Friday ihre Stimme (ElevenLabs).", examples: ["Lies das vor", "Sprich natürlicher"], need: { type: "key", key: "elevenKey", label: "ElevenLabs" } },
-  { id: "musik", name: "Musik-Agent", emoji: "🎵", cat: "Stimme & Medien", purpose: "Musik, Playlists, 'was läuft gerade'.", examples: ["Spiel entspannte Musik", "Was läuft gerade?"], need: { type: "setup", label: "Spotify" } },
+  { id: "stimme", name: "Stimm-Agent", emoji: "🗣️", cat: "Stimme & Medien", purpose: "Gibt Friday ihre echte Stimme (ElevenLabs), sonst Gerätestimme.", examples: ["Wie viele Zeichen habe ich noch?", "Wechsel die Stimme zu Lily"], need: { type: "check", ok: () => stimmeAktiv(), label: "ElevenLabs (Werkzeug-Menü → Verbindungen)" } },
+  { id: "musik", name: "Musik-Agent", emoji: "🎵", cat: "Stimme & Medien", purpose: "Spotify: Playlists, Songs, Künstler, Pause, Lautstärke.", examples: ["Spiel meine Playlist Workout", "Spiel Musik von Adele", "Was läuft gerade?"], need: { type: "check", ok: () => spotifyVerbunden(), label: "Spotify (Werkzeug-Menü → Verbindungen)" } },
 
   // --- Lagezentrum ---
   { id: "lage", name: "Lage-Agent", emoji: "🌍", cat: "Lagezentrum", purpose: "Weltlage und aktuelle Nachrichten im Weltgeschehen.", examples: ["Was ist auf der Welt los?", "Welt-Alarm", "Was ist in der Ukraine los?"], need: { type: "frei" } },
@@ -41,7 +48,8 @@ export const AGENTS = [
 
   // --- Entwicklung & Steuerung ---
   { id: "code", name: "Code-Agent", emoji: "💻", cat: "Entwicklung & Steuerung", purpose: "Sichert und erweitert Fridays Code (GitHub).", examples: ["Gibt es ein Update?", "Was wurde zuletzt geändert?"], need: { type: "frei" } },
-  { id: "smarthome", name: "SmartHome-Agent", emoji: "🏠", cat: "Entwicklung & Steuerung", purpose: "Licht und Geräte über Home Assistant.", examples: ["Mach das Licht an", "Schalt alles aus"], need: { type: "key", key: "haToken", label: "Home Assistant" } },
+  { id: "smarthome", name: "SmartHome-Agent", emoji: "🏠", cat: "Entwicklung & Steuerung", purpose: "Licht, Steckdosen, Heizung, Rollos und Sensoren über Home Assistant.", examples: ["Schalte die Kaffeemaschine an", "Heizung im Bad auf 22 Grad", "Wie warm ist es im Wohnzimmer?"], need: { type: "check", ok: () => haBereit(), label: "Home Assistant (Werkzeug-Menü → Verbindungen)" } },
+  { id: "licht", name: "Licht-Agent", emoji: "💡", cat: "Entwicklung & Steuerung", purpose: "Philips-Hue-Lampen – und Neon-Orange, wenn Friday spricht.", examples: ["Licht im Wohnzimmer an", "Licht auf 30 Prozent", "Neon-Modus"], need: { type: "check", ok: () => hueBereit(), label: "Philips Hue (Werkzeug-Menü → Verbindungen)" } },
   { id: "fernseher", name: "Fernseher-Agent", emoji: "📺", cat: "Entwicklung & Steuerung", purpose: "Steuert deinen Samsung-Fernseher im WLAN: an/aus, Lautstärke, Sender, Apps wie Netflix und YouTube.", examples: ["Friday, mach Netflix an", "Fernseher leiser", "Fernseher aus"], need: { type: "check", ok: () => tvPaired(), label: "Fernseher koppeln (Werkzeug-Menü → Fernbedienung)" } },
   { id: "alexa", name: "Alexa-Agent", emoji: "🔵", cat: "Entwicklung & Steuerung", purpose: "Startet deine Alexa-Routinen und lässt Alexa etwas ansagen – damit steuert Friday alles, was an Alexa hängt.", examples: ["Friday, Alexa Licht an", "Alexa, sag Essen ist fertig", "Alexa Gute Nacht"], need: { type: "check", ok: () => alexaConfigured(), label: "Voice-Monkey-Schlüssel (Werkzeug-Menü → Alexa)" } },
   { id: "mac", name: "Mac-Agent", emoji: "🖥️", cat: "Entwicklung & Steuerung", purpose: "Steuert deinen Mac (Apps öffnen, suchen, Screenshot).", examples: ["Öffne YouTube", "Mach einen Screenshot"], need: { type: "mac" } },

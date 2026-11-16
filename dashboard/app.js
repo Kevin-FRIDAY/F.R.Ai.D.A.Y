@@ -324,9 +324,13 @@
 
   const audio = new Audio();
 
+  // Philips Hue: Lampen leuchten Neon-Orange, solange Friday spricht (wenn in Verbindungen eingeschaltet).
+  const hueSprechen = (an) => { if (status.hueSprechen) api("/api/dienste/hue/sprechen", { method: "POST", body: JSON.stringify({ an }) }).catch(() => {}); };
+
   async function say(text) {
     if (!$("voice-toggle").checked || !text) return;
     speaking = true;
+    hueSprechen(true);
     pauseWake();
     setState("Spricht", "speaking");
     try {
@@ -355,6 +359,7 @@
       }
     } catch { /* still */ } finally {
       speaking = false;
+      hueSprechen(false);
       window.FridayFace?.stop();
       setState("Bereit, Boss.");
       resumeWake();
