@@ -8,6 +8,7 @@ import { videoTeamReady } from "./videoteam.js";
 import { marktReady } from "./markt.js";
 import { status as alexaStatus } from "./alexa.js";
 import { status as tvStatus } from "./fernseher.js";
+import { alleStatus } from "./dienste.js";
 
 async function timed(label, fn) {
   const t0 = Date.now();
@@ -75,8 +76,15 @@ export async function runSystemCheck() {
       return { ok: true, detail: `${s.routinen.length} Routinen, ${s.lautsprecher.length} Lautsprecher` };
     }),
     // Stimme
-    timed("Stimme (ElevenLabs)", async () => ({ ok: Boolean(config.elevenKey), detail: config.elevenKey ? "Schlüssel vorhanden" : "Gerätestimme" })),
   ]);
+  // Verbindungen (Kalender, Stimme, Spotify, Home Assistant, Hue, Todoist, Notion)
+  try {
+    const t0 = Date.now();
+    const v = await Promise.race([alleStatus(), new Promise((_, no) => setTimeout(() => no(new Error("timeout")), 9000))]);
+    for (const x of v.dienste) checks.push({ label: x.name, ok: Boolean(x.eingerichtet), detail: String(x.text || "").slice(0, 90), ms: Date.now() - t0 });
+  } catch (err) {
+    checks.push({ label: "Verbindungen", ok: false, detail: friendly(err), ms: 0 });
+  }
   const ok = checks.filter((c) => c.ok).length;
   return { stand: new Date().toISOString(), gesamt: checks.length, ok, checks };
 }

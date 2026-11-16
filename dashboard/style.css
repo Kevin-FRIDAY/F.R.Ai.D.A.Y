@@ -1650,3 +1650,32 @@ body.reduce-anim.glow-breathe .panel { animation: none; }
 }
 /* Werkzeug-Knopf sitzt auf kleinen Bildschirmen oben rechts: Wetter nicht darunter verstecken */
 @media (max-width: 1000px) { .weather-top, .weather-off { padding-right: 52px; } }
+
+/* ---------- Verbindungen ---------- */
+.dienste-box { width: min(560px, 100%); }
+.dienste-box .sheet-top { gap: 10px; }
+.dienste-box .sheet-top #dienste-zahl { margin-left: auto; }
+.dv-intro { font-size: 12px; margin: 0 0 12px; }
+.dv-liste { display: grid; gap: 10px; }
+.dv-karte { border: 1px solid rgba(255,138,30,.22); border-radius: 14px; background: rgba(255,138,30,.035); transition: border-color .2s, box-shadow .2s; overflow: hidden; }
+.dv-karte.an { border-color: rgba(70,224,160,.35); }
+.dv-karte.auf { border-color: rgba(255,138,30,.6); box-shadow: 0 0 22px rgba(255,138,30,.16); }
+.dv-kopf { all: unset; background: transparent !important; box-sizing: border-box; width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; }
+.dv-kopf:focus-visible { outline: 1px solid var(--accent, #ff8a1e); }
+.dv-ico { font-size: 22px; width: 30px; text-align: center; flex: none; filter: drop-shadow(0 0 6px rgba(255,138,30,.35)); }
+.dv-titel { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.dv-titel b { color: var(--text); font-size: 14px; letter-spacing: .02em; }
+.dv-titel small { color: var(--muted); font-size: 11px; line-height: 1.35; }
+.dv-pill { flex: none; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; border: 1px solid rgba(255,138,30,.35); color: var(--muted); }
+.dv-karte.an .dv-pill { color: var(--ok); border-color: rgba(70,224,160,.45); box-shadow: 0 0 10px rgba(70,224,160,.18); }
+.dv-body { display: none; padding: 0 14px 14px 56px; }
+.dv-karte.auf .dv-body { display: block; }
+.dv-status { margin: 0 0 8px; font-size: 13px; color: var(--text); }
+.dv-hinweis { font-size: 11px; overflow-wrap: anywhere; margin: 0 0 8px; }
+.dv-feld { display: grid; gap: 4px; margin: 8px 0; font-size: 11px; color: var(--muted); }
+.dv-feld input, .dv-feld select { width: 100%; box-sizing: border-box; }
+.dv-knoepfe { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.dv-knoepfe .busy { box-shadow: 0 0 14px rgba(255,138,30,.55); }
+.dv-msg { min-height: 1.1em; margin: 8px 0 0; font-size: 12px; }
+.dv-msg.bad { color: var(--bad); }
+@media (max-width: 520px) { .dv-body { padding-left: 14px; } }

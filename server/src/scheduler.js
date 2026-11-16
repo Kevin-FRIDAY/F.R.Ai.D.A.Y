@@ -42,7 +42,7 @@ export async function makeBriefing() {
     channel: "briefing",
     keepHistory: false,
     text:
-      "Erstelle mein Morgenbriefing. Hol dir das Wetter, meine offenen Erinnerungen für heute, " +
+      "Erstelle mein Morgenbriefing. Hol dir das Wetter, meine offenen Erinnerungen für heute, meine Termine von heute (kalender, falls verbunden), meine fälligen Todoist-Aufgaben (falls verbunden), " +
       "meine Gesundheitsdaten (falls vorhanden) und suche zwei bis drei wichtige Nachrichten von heute. " +
       "Fasse alles in höchstens sechs gesprochenen Sätzen zusammen und beginne mit einem Guten Morgen.",
   });

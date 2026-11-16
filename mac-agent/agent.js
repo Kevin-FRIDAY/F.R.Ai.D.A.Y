@@ -39,6 +39,190 @@ function osa(script, ...args) {
 
 const clampVolume = (v) => Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
 
+// ---------- Apple Kalender & Erinnerungen ----------
+// Der Server schickt die Wünsche als JSON im Feld "value". Texte gehen als argv an AppleScript, nie in den Code.
+// Zeiten kommen als Sekunden ab heute 0:00 Uhr (Ortszeit des Macs) zurück, so gibt es keine Probleme mit Datumsformaten.
+const RS = String.fromCharCode(30), US = String.fromCharCode(31);
+const jsonVal = (v) => { try { return JSON.parse(v || "{}") || {}; } catch { return {}; } };
+const zahl = (v, min, max, std) => { const n = Math.round(Number(v)); return Number.isFinite(n) ? Math.max(min, Math.min(max, n)) : std; };
+const zeilen = (out) => String(out || "").split(RS).filter((z) => z.length).map((z) => z.split(US));
+
+// Liefert ein AppleScript-Datum aus Jahr/Monat/Tag/Stunde/Minute (argv-Positionen ab "start").
+const AS_DATUM = `
+on machDatum(y, mo, dd, h, mi)
+  set d to current date
+  set day of d to 1
+  set year of d to y
+  set month of d to mo
+  set day of d to dd
+  set time of d to (h * 3600 + mi * 60)
+  return d
+end machDatum`;
+
+const KALENDER_TERMINE = `
+on run argv
+  set vonTag to (item 1 of argv) as integer
+  set anzTage to (item 2 of argv) as integer
+  set nurKal to item 3 of argv
+  set basis to current date
+  set time of basis to 0
+  set d1 to basis + vonTag * days
+  set d2 to d1 + anzTage * days
+  set RS to character id 30
+  set US to character id 31
+  set out to ""
+  tell application "Calendar"
+    repeat with c in calendars
+      set cn to name of c
+      if nurKal is "" or nurKal is cn then
+        try
+          set ns to summary of every event of c
+          set ss to start date of every event of c
+          set es to end date of every event of c
+          set ads to allday event of every event of c
+          set rcs to recurrence of every event of c
+          repeat with i from 1 to count of ns
+            set s to item i of ss
+            set rc to item i of rcs
+            if rc is missing value then set rc to ""
+            if s < d2 and ((item i of es) > d1 or rc is not "") then
+              set n to item i of ns
+              if n is missing value then set n to ""
+              set out to out & n & US & ((s - basis) as integer as text) & US & (((item i of es) - basis) as integer as text) & US & ((item i of ads) as text) & US & cn & US & rc & RS
+            end if
+          end repeat
+        end try
+      end if
+    end repeat
+  end tell
+  return out
+end run`;
+
+const KALENDER_NEU = `${AS_DATUM}
+on run argv
+  set t to item 1 of argv
+  set d to machDatum((item 2 of argv) as integer, (item 3 of argv) as integer, (item 4 of argv) as integer, (item 5 of argv) as integer, (item 6 of argv) as integer)
+  set dauer to (item 7 of argv) as integer
+  set ganz to ((item 8 of argv) is "1")
+  set kn to item 9 of argv
+  set ort to item 10 of argv
+  tell application "Calendar"
+    set k to missing value
+    if kn is not "" then
+      try
+        set k to first calendar whose name is kn
+      end try
+    end if
+    if k is missing value then
+      repeat with c in calendars
+        try
+          if writable of c then
+            set k to c
+            exit repeat
+          end if
+        end try
+      end repeat
+    end if
+    if k is missing value then error "Kein beschreibbarer Kalender gefunden."
+    if ganz then
+      set e2 to d + 1 * days
+    else
+      set e2 to d + dauer * minutes
+    end if
+    set ev to make new event at end of events of k with properties {summary:t, start date:d, end date:e2, allday event:ganz}
+    if ort is not "" then set location of ev to ort
+    return name of k
+  end tell
+end run`;
+
+const KALENDER_NAMEN = `
+on run argv
+  set RS to character id 30
+  set out to ""
+  tell application "Calendar"
+    repeat with c in calendars
+      set w to false
+      try
+        set w to writable of c
+      end try
+      if w then set out to out & (name of c) & RS
+    end repeat
+  end tell
+  return out
+end run`;
+
+const ERINNERUNGEN_LISTE = `
+on run argv
+  set basis to current date
+  set time of basis to 0
+  set RS to character id 30
+  set US to character id 31
+  set out to ""
+  tell application "Reminders"
+    repeat with l in lists
+      set ln to name of l
+      try
+        set ns to name of (every reminder of l whose completed is false)
+        set ds to due date of (every reminder of l whose completed is false)
+        repeat with i from 1 to count of ns
+          set dd to item i of ds
+          if dd is missing value then
+            set dt to ""
+          else
+            set dt to ((dd - basis) as integer as text)
+          end if
+          set out to out & (item i of ns) & US & dt & US & ln & RS
+        end repeat
+      end try
+    end repeat
+  end tell
+  return out
+end run`;
+
+const ERINNERUNGEN_NEU = `${AS_DATUM}
+on run argv
+  set t to item 1 of argv
+  set mitZeit to ((item 2 of argv) is "1")
+  set ln to item 8 of argv
+  tell application "Reminders"
+    set l to missing value
+    if ln is not "" then
+      try
+        set l to first list whose name is ln
+      end try
+    end if
+    if l is missing value then
+      try
+        set l to default list
+      on error
+        set l to first list
+      end try
+    end if
+    if mitZeit then
+      set d to my machDatum((item 3 of argv) as integer, (item 4 of argv) as integer, (item 5 of argv) as integer, (item 6 of argv) as integer, (item 7 of argv) as integer)
+      make new reminder at end of reminders of l with properties {name:t, due date:d}
+    else
+      make new reminder at end of reminders of l with properties {name:t}
+    end if
+    return name of l
+  end tell
+end run`;
+
+const ERINNERUNG_ERLEDIGT = `
+on run argv
+  set t to item 1 of argv
+  tell application "Reminders"
+    set r to first reminder whose name is t and completed is false
+    set completed of r to true
+  end tell
+  return "ok"
+end run`;
+
+function osaFile(script, args, timeout) {
+  return run("osascript", ["-e", script, ...args.map(String)], timeout);
+}
+const zeitArgs = (z) => (z = z || {}, [zahl(z.y, 2000, 2100, 2026), zahl(z.m, 1, 12, 1), zahl(z.d, 1, 31, 1), zahl(z.h, 0, 23, 9), zahl(z.mi, 0, 59, 0)]);
+
 const actions = {
   async open_app({ value }) {
     await run("open", ["-a", value]);
@@ -170,6 +354,39 @@ const actions = {
     const out = await run("mdfind", ["-name", String(value)], 25000);
     const files = out.split("\n").filter(Boolean).slice(0, 10);
     return files.length ? files.join("\n") : "Nichts gefunden";
+  },
+  async kalender_termine({ value }) {
+    const v = jsonVal(value);
+    const out = await osaFile(KALENDER_TERMINE, [zahl(v.von, -400, 400, 0), zahl(v.tage, 1, 62, 1), String(v.kalender || "").slice(0, 80)], 45000);
+    return { termine: zeilen(out).map(([titel, s, e, ganz, kal, rrule]) => ({ titel, s: Number(s), e: Number(e), ganz: ganz === "true", kal, rrule: rrule || "" })) };
+  },
+  async kalender_neu({ value }) {
+    const v = jsonVal(value);
+    const titel = String(v.titel || "").trim().slice(0, 200);
+    if (!titel) throw new Error("Termin ohne Titel");
+    const kal = await osaFile(KALENDER_NEU, [titel, ...zeitArgs(v.zeit), zahl(v.dauer, 5, 1440, 60), v.ganztag ? "1" : "0", String(v.kalender || "").slice(0, 80), String(v.ort || "").slice(0, 120)], 30000);
+    return { kalender: kal };
+  },
+  async kalender_namen() {
+    const out = await osaFile(KALENDER_NAMEN, [], 20000);
+    return { kalender: zeilen(out).map((z) => z[0]) };
+  },
+  async erinnerungen_liste() {
+    const out = await osaFile(ERINNERUNGEN_LISTE, [], 45000);
+    return { erinnerungen: zeilen(out).map(([titel, faellig, liste]) => ({ titel, faellig: faellig === "" || faellig == null ? null : Number(faellig), liste })) };
+  },
+  async erinnerungen_neu({ value }) {
+    const v = jsonVal(value);
+    const titel = String(v.titel || "").trim().slice(0, 200);
+    if (!titel) throw new Error("Erinnerung ohne Text");
+    const liste = await osaFile(ERINNERUNGEN_NEU, [titel, v.zeit ? "1" : "0", ...zeitArgs(v.zeit), String(v.liste || "").slice(0, 80)], 30000);
+    return { liste };
+  },
+  async erinnerungen_erledigt({ value }) {
+    const titel = String(jsonVal(value).titel || "").slice(0, 200);
+    if (!titel) throw new Error("Welche Erinnerung?");
+    await osaFile(ERINNERUNG_ERLEDIGT, [titel], 30000);
+    return "Erledigt";
   },
   async screenshot_look() {
     const file = path.join(os.tmpdir(), `friday-${Date.now()}.jpg`);

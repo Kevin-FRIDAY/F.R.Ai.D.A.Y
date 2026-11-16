@@ -7,6 +7,7 @@ import { isAgentOnline } from "./agent-hub.js";
 import { agentsBrief } from "./agents.js";
 import { quickCommand as alexaQuick } from "./alexa.js";
 import { quickCommand as tvQuick } from "./fernseher.js";
+import { quickCommand as dienstQuick, dienstKurzinfo } from "./dienste.js";
 import { offlineAnswer, notfallText } from "./offline.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 
@@ -32,6 +33,7 @@ Werkzeuge:
 - Erinnerungen: Rechne relative Angaben ("in 20 Minuten", "morgen um 8") anhand der aktuellen Zeit in eine genaue Zeit um.
 - Für den Fernseher (Samsung-TV im WLAN) nutze fernseher. "Öffne YouTube" heißt Mac (open_app); "mach Netflix an", "auf dem Fernseher" oder "TV" heißt Fernseher.
 - Für Alexa (Routinen wie "Licht an", Ansagen auf dem Echo) nutze alexa. Geräte, die nur an Alexa hängen, steuerst du über deren Alexa-Routinen. Sätze, die mit "Alexa" beginnen, gehen an Alexa, nicht an den Fernseher.
+- Termine und Apple-Erinnerungen: kalender (Fridays eigene Erinnerungen mit Wecker: set_reminder). Musik: spotify, wenn verbunden, sonst mac. Lampen: hue für Philips Hue, smart_home für Home Assistant (Heizung, Steckdosen, Rollos, Sensoren). Aufgaben: todoist, wenn verbunden. Notizen und Wissen: notion.
 - Mac-Aktionen gehen nur, wenn der Mac verbunden ist. Wenn nicht, sag es kurz.
 - Lösche, kaufe oder verschicke nie etwas an andere Personen ohne ausdrückliche Bestätigung.`;
 
@@ -43,6 +45,7 @@ function contextBlock(extra = {}) {
   const memories = store.getMemories().map((m) => `- ${m.text}`).join("\n") || "(noch nichts)";
   let text = `Aktuelle Zeit: ${now} (${isoLocal}, Zeitzone ${config.timezone}). Heimatstadt: ${config.city}.
 Mac verbunden: ${isoAgentText()}.
+${dienstKurzinfo()}
 Kanal: ${extra.channel || "web"}.
 
 Was du über ${config.userName} weißt:
@@ -100,6 +103,16 @@ export async function ask({ text, channel = "web", image, mode = "normal", targe
       if (tvAnswer) { actions.push("fernseher"); return finish(tvAnswer); }
     } catch (err) {
       console.error("Fernseher-Schnellbefehl:", err.message);
+    }
+  }
+
+  // Verbindungen (Kalender, Spotify, Hue, Home Assistant, Todoist, Notion, Stimme) – ebenfalls ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const d = await dienstQuick(text);
+      if (d) { actions.push(...d.actions); return finish(d.answer); }
+    } catch (err) {
+      console.error("Verbindungs-Schnellbefehl:", err.message);
     }
   }
 

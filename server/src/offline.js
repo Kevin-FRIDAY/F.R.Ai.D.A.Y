@@ -220,7 +220,7 @@ function hilfeText() {
   return `Auch ohne Guthaben kann ich dir sagen, wie spät es ist, wie das Wetter wird und welcher Feiertag kommt. ` +
     `Ich stelle Timer und Erinnerungen, führe deine Aufgaben- und Einkaufsliste, merke mir Dinge, rechne, ` +
     `nenne Bitcoin- und Wechselkurse, schlage Begriffe bei Wikipedia nach und lese dir die Schlagzeilen zu jedem Land vor. ` +
-    `Und ich steuere Mac, Fernseher und Alexa.`;
+    `Und ich steuere Mac, Fernseher und Alexa. Sobald sie verbunden sind, auch Kalender, Spotify, Hue-Lampen, Home Assistant, Todoist und Notion.`;
 }
 
 // Mini-Briefing ohne Claude: Wetter, Termine, Aufgaben, eine Schlagzeile.
@@ -231,6 +231,16 @@ export async function offlineBriefing() {
   const wochentag = new Date().toLocaleDateString("de-DE", { timeZone: config.timezone, weekday: "long", day: "numeric", month: "long" });
   teil.push(`Heute ist ${wochentag}.`);
   try { teil.push(wetterSatz(await getWeather(config.city), 0)); } catch { /* ohne Wetter */ }
+  // Kalender und Todoist (wenn verbunden). Dynamisch geladen, damit sich die Module nicht im Kreis laden.
+  try {
+    const { heuteSatz } = await import("./kalender.js");
+    const k = await heuteSatz(0);
+    if (k) teil.push(k);
+  } catch { /* ohne Kalender */ }
+  try {
+    const td = await (await import("./todoist.js")).heuteSatz();
+    if (td) teil.push(td);
+  } catch { /* ohne Todoist */ }
   const ende = Date.now() + 24 * 3600 * 1000;
   const termine = store.getReminders()
     .filter((r) => !r.done && !/^Timer:/.test(r.text) && new Date(r.due).getTime() < ende)

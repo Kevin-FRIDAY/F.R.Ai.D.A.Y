@@ -1,0 +1,213 @@
+// Fridays echte Stimme über ElevenLabs (elevenlabs.io).
+// Schlüssel im Dashboard (Verbindungen → ElevenLabs) oder in der .env (ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID).
+// Ist das Gratis-Kontingent aufgebraucht oder ElevenLabs nicht erreichbar, spricht Friday automatisch mit der Gerätestimme.
+import { config } from "./config.js";
+import * as V from "./verbindungen.js";
+
+const API = () => String(process.env.ELEVENLABS_API || "https://api.elevenlabs.io").replace(/\/$/, "");
+// "Sarah": weibliche Standard-Stimme, die jedes ElevenLabs-Konto hat. Spricht mit dem Multilingual-Modell Deutsch.
+const STANDARD_STIMME = "EXAVITQu4vr4xnSDxMaL";
+const MODELLE = {
+  schnell: { id: "eleven_flash_v2_5", name: "Schnell (spart Zeichen)" },
+  beste: { id: "eleven_multilingual_v2", name: "Beste Qualität" },
+};
+
+const d = () => V.get("stimme");
+const key = () => String(d().key || config.elevenKey || "").trim();
+const stimmeId = () => String(d().stimme || config.elevenVoice || STANDARD_STIMME);
+const modell = () => MODELLE[d().modell] || MODELLE.schnell;
+
+export function stimmeAktiv() {
+  return Boolean(key()) && d().aus !== true;
+}
+
+// Wenn das Kontingent leer ist, ein paar Stunden lang gar nicht erst fragen (spart Wartezeit).
+let pauseBis = 0;
+let pauseGrund = "";
+
+const cache = new Map(); // Text -> MP3 (kurze, oft wiederholte Sätze wie "Erledigt.")
+function merken(k, buf) {
+  if (buf.length > 400_000) return;
+  cache.set(k, buf);
+  if (cache.size > 40) cache.delete(cache.keys().next().value);
+}
+
+/**
+ * Wandelt Text in Sprache um.
+ * @returns {Promise<{ok:true, audio:Buffer} | {ok:false, error:string}>}
+ */
+export async function sprich(text) {
+  const t = String(text || "").trim().slice(0, 1500);
+  if (!t) return { ok: false, error: "Kein Text" };
+  if (!stimmeAktiv()) return { ok: false, error: "Keine ElevenLabs-Stimme eingerichtet" };
+  if (Date.now() < pauseBis) return { ok: false, error: pauseGrund };
+  const k = `${stimmeId()}|${modell().id}|${t}`;
+  if (cache.has(k)) return { ok: true, audio: cache.get(k) };
+  let res;
+  try {
+    res = await fetch(`${API()}/v1/text-to-speech/${encodeURIComponent(stimmeId())}?output_format=mp3_44100_128`, {
+      method: "POST",
+      headers: { "xi-api-key": key(), "Content-Type": "application/json", Accept: "audio/mpeg" },
+      body: JSON.stringify({ text: t, model_id: modell().id, language_code: modell().id === "eleven_flash_v2_5" ? "de" : undefined }),
+      signal: AbortSignal.timeout(20000),
+    });
+  } catch (err) {
+    return { ok: false, error: "ElevenLabs ist nicht erreichbar." };
+  }
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    const status = String(body?.detail?.status || body?.detail?.code || "");
+    if (/quota_exceeded/.test(status)) {
+      pauseBis = Date.now() + 6 * 3600 * 1000;
+      pauseGrund = "Das ElevenLabs-Kontingent für diesen Monat ist aufgebraucht. Ich spreche mit der Gerätestimme weiter.";
+    } else if (res.status === 401) {
+      pauseBis = Date.now() + 10 * 60 * 1000;
+      pauseGrund = "Der ElevenLabs-Schlüssel wird abgelehnt.";
+    } else if (res.status === 429) {
+      pauseBis = Date.now() + 60 * 1000;
+      pauseGrund = "ElevenLabs bremst gerade.";
+    }
+    return { ok: false, error: pauseGrund || `ElevenLabs: ${res.status}` };
+  }
+  const audio = Buffer.from(await res.arrayBuffer());
+  if (t.length <= 120) merken(k, audio);
+  return { ok: true, audio };
+}
+
+// --- Kontingent (wie viele Zeichen noch übrig sind) ---
+let abo = null, aboZeit = 0;
+async function kontingent(frisch = false) {
+  if (!key()) return null;
+  if (!frisch && abo && Date.now() - aboZeit < 10 * 60 * 1000) return abo;
+  const r = await V.holeJson(`${API()}/v1/user/subscription`, { headers: { "xi-api-key": key() }, timeout: 8000 });
+  if (!r.ok) return abo;
+  const x = r.data || {};
+  abo = {
+    plan: x.tier || "",
+    benutzt: Number(x.character_count) || 0,
+    limit: Number(x.character_limit) || 0,
+    neuAm: x.next_character_count_reset_unix ? new Date(x.next_character_count_reset_unix * 1000).toISOString() : null,
+  };
+  aboZeit = Date.now();
+  return abo;
+}
+
+async function stimmenListe(k = key()) {
+  const r = await V.holeJson(`${API()}/v1/voices`, { headers: { "xi-api-key": k } });
+  if (!r.ok) return r;
+  const list = Array.isArray(r.data?.voices) ? r.data.voices : [];
+  return {
+    ok: true,
+    stimmen: list.map((v) => ({
+      id: String(v.voice_id),
+      name: String(v.name || v.voice_id),
+      art: [v.labels?.gender === "female" ? "weiblich" : v.labels?.gender === "male" ? "männlich" : "", v.labels?.accent || ""].filter(Boolean).join(", "),
+    })),
+  };
+}
+
+// ---------- Für das Fenster "Verbindungen" ----------
+export const info = { id: "stimme", name: "ElevenLabs-Stimme", emoji: "🗣️", kurz: "Echte, natürliche Friday-Stimme statt Gerätestimme." };
+
+export async function status() {
+  const x = d();
+  const ein = Boolean(key());
+  const k = ein ? await kontingent().catch(() => null) : null;
+  const rest = k && k.limit ? Math.max(0, k.limit - k.benutzt) : null;
+  return {
+    ...info,
+    eingerichtet: ein,
+    text: !ein
+      ? "Nicht eingerichtet – Friday spricht mit der Gerätestimme."
+      : x.aus
+        ? "Verbunden, aber ausgeschaltet – Friday nutzt die Gerätestimme."
+        : `Aktiv${x.stimmeName ? ` mit „${x.stimmeName}“` : ""}${rest != null ? ` · noch ${rest.toLocaleString("de-DE")} von ${k.limit.toLocaleString("de-DE")} Zeichen` : ""}${Date.now() < pauseBis ? ` · Pause: ${pauseGrund}` : ""}`,
+    quelle: x.key ? "dashboard" : config.elevenKey ? "env" : null,
+    felder: ein ? [] : [{ name: "key", label: "ElevenLabs-API-Schlüssel", typ: "password", platzhalter: "sk_…" }],
+    auswahl: ein
+      ? [
+          { name: "stimme", label: "Stimme", wert: stimmeId(), optionen: (x.stimmen || []).map((s) => ({ wert: s.id, text: s.art ? `${s.name} (${s.art})` : s.name })) },
+          { name: "modell", label: "Tempo", wert: x.modell || "schnell", optionen: Object.entries(MODELLE).map(([w, m]) => ({ wert: w, text: m.name })) },
+          { name: "aus", label: "Stimme benutzen", wert: x.aus ? "aus" : "an", optionen: [{ wert: "an", text: "An" }, { wert: "aus", text: "Aus (Gerätestimme)" }] },
+        ]
+      : [],
+    aktionen: ein ? [{ action: "probe", text: "▶ Probe hören" }, { action: "aktualisieren", text: "↻ Stimmen laden" }] : [],
+  };
+}
+
+export async function einrichten({ key: k } = {}) {
+  const t = String(k || "").trim();
+  if (!V.schluesselOk(t, 20)) return { ok: false, error: "Das sieht nicht wie ein ElevenLabs-Schlüssel aus." };
+  const r = await stimmenListe(t);
+  if (!r.ok) {
+    if (r.netz) return { ok: false, error: "ElevenLabs ist gerade nicht erreichbar. Ist der Mac online?" };
+    if (r.status === 401) return { ok: false, error: "ElevenLabs lehnt den Schlüssel ab. Kopier ihn nochmal von elevenlabs.io → Profil → API Keys." };
+    return { ok: false, error: `ElevenLabs meldet einen Fehler (${r.status}).` };
+  }
+  const wahl = r.stimmen.find((s) => s.id === STANDARD_STIMME) || r.stimmen.find((s) => /weiblich/.test(s.art)) || r.stimmen[0];
+  V.set("stimme", { key: t, stimmen: r.stimmen.slice(0, 80), stimme: wahl?.id || STANDARD_STIMME, stimmeName: wahl?.name || "Sarah", aus: undefined });
+  pauseBis = 0;
+  abo = null;
+  return { ok: true, text: `ElevenLabs ist verbunden. Ich spreche jetzt mit der Stimme ${wahl?.name || "Sarah"}.` };
+}
+
+export async function einstellen({ name, wert } = {}) {
+  const x = d();
+  if (name === "stimme") {
+    const s = (x.stimmen || []).find((v) => v.id === wert);
+    if (!s) return { ok: false, error: "Diese Stimme kenne ich nicht." };
+    V.set("stimme", { stimme: s.id, stimmeName: s.name });
+    return { ok: true, text: `Stimme gewechselt: ${s.name}.` };
+  }
+  if (name === "modell" && MODELLE[wert]) { V.set("stimme", { modell: wert }); return { ok: true }; }
+  if (name === "aus") { V.set("stimme", { aus: wert === "aus" ? true : undefined }); return { ok: true }; }
+  return { ok: false, error: "Unbekannte Einstellung." };
+}
+
+export function vergessen() {
+  V.clear("stimme");
+  abo = null;
+  pauseBis = 0;
+  cache.clear();
+  return { ok: true };
+}
+
+export async function command({ action, value } = {}) {
+  if (!key()) return { ok: false, error: "ElevenLabs ist noch nicht eingerichtet. Trag den Schlüssel im Werkzeug-Menü unter Verbindungen ein." };
+  if (action === "aktualisieren") {
+    const r = await stimmenListe();
+    if (!r.ok) return { ok: false, error: "Konnte die Stimmen nicht laden." };
+    V.set("stimme", { stimmen: r.stimmen.slice(0, 80) });
+    return { ok: true, text: `${r.stimmen.length} Stimmen geladen.` };
+  }
+  if (action === "probe") return { ok: true, text: `Hallo ${config.userName}. So klinge ich mit ElevenLabs.`, sprechen: true };
+  if (action === "kontingent") {
+    const k = await kontingent(true);
+    if (!k || !k.limit) return { ok: false, error: "Das Kontingent konnte ich nicht abfragen." };
+    const rest = Math.max(0, k.limit - k.benutzt);
+    const neu = k.neuAm ? ` Es füllt sich am ${new Date(k.neuAm).toLocaleDateString("de-DE", { timeZone: config.timezone, day: "numeric", month: "long" })} wieder auf.` : "";
+    return { ok: true, text: `Du hast noch ${rest.toLocaleString("de-DE")} von ${k.limit.toLocaleString("de-DE")} Zeichen bei ElevenLabs.${neu}` };
+  }
+  if (action === "wechseln") {
+    const s = V.bester(value, d().stimmen || []);
+    if (!s) return { ok: false, error: `Eine Stimme „${value}“ finde ich nicht.` };
+    V.set("stimme", { stimme: s.id, stimmeName: s.name });
+    return { ok: true, text: `Okay, ich spreche jetzt als ${s.name}.` };
+  }
+  return { ok: false, error: "Unbekannte Stimm-Aktion." };
+}
+
+// "Wie viel Stimme habe ich noch?", "Wechsel die Stimme zu Lily"
+export async function quick(t) {
+  if (/^(wie ?viel|wieviele?|wie viele) (zeichen|stimme|elevenlabs)( guthaben| kontingent)?( habe ich| hab ich)?( noch)?( übrig| uebrig)?$|^elevenlabs (guthaben|kontingent|zeichen)$|^(stimmen|elevenlabs)[ -]?(kontingent|guthaben)$/.test(t)) {
+    if (!key()) return "ElevenLabs ist noch nicht eingerichtet. Ich spreche mit der Gerätestimme.";
+    const r = await command({ action: "kontingent" });
+    return r.ok ? r.text : r.error;
+  }
+  const m = t.match(/^(?:wechsel|wechsle|ändere|aendere) (?:deine |die )?stimme (?:zu|auf|in) (.{2,40})$|^(?:sprich|rede) (?:ab jetzt |jetzt )?(?:als|mit der stimme(?: von)?) (.{2,40})$/);
+  if (m && key()) {
+    const r = await command({ action: "wechseln", value: m[1] || m[2] });
+    return r.ok ? r.text : r.error;
+  }
+  return null;
+}
