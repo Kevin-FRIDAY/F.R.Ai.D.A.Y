@@ -1766,3 +1766,17 @@ body.reduce-anim.glow-breathe .panel { animation: none; }
 .upd-bar.ub-rot .ub-prozent { color: var(--bad); text-shadow: none; font-size: 15px; }
 @media (max-width: 420px) { .ub-schritte { grid-template-columns: repeat(2, 1fr); } }
 @media (prefers-reduced-motion: reduce) { .ub-ring, .ub-fuell::after, .ub-glanz, .ub-punkt { animation: none !important; } }
+
+/* ===== v1.79: Linke Seitenleiste als Karten wie rechts (◆ TITEL ———) ===== */
+.sidebar .side-nav { gap: 12px; margin-top: 4px; }
+.side-panel { padding: 12px 10px 10px; display: flex; flex-direction: column; gap: 2px; }
+.side-panel h2 { margin: 0 4px 8px; }
+.side-panel .nav-item { padding: 8px 10px; border-radius: 9px; font-size: 13.5px; }
+.side-user-panel { margin-top: auto; }
+.side-user-panel .side-user { margin-top: 0; border-top: 0; padding: 4px 6px; }
+.sidebar .side-sep { display: none; }
+@media (max-width: 900px) {
+  .side-panel h2 { display: none; }
+  .side-panel { flex-direction: row; flex-wrap: wrap; padding: 6px; }
+  .side-user-panel { display: none; }
+}
