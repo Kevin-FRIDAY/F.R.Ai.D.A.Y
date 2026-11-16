@@ -185,18 +185,37 @@
     return t === 1 ? "gestern" : `vor ${t} Tagen`;
   }
 
+  // Wetter-Symbole (eigene Linien-Icons im Neon-Stil)
+  function weatherIcon(text = "") {
+    const t = text.toLowerCase();
+    const sun = '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>';
+    const cloud = '<path d="M7 18h10a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7.1 9.2 4.4 4.4 0 0 0 7 18z"/>';
+    let body = cloud, cls = "wi-cloud";
+    if (/gewitter/.test(t)) { body = cloud + '<path d="M12.5 13.5l-2 3.2h3l-2 3.3"/>'; cls = "wi-storm"; }
+    else if (/schnee/.test(t)) { body = cloud + '<path d="M9 20.5h.01M12 21.5h.01M15 20.5h.01"/>'; cls = "wi-snow"; }
+    else if (/regen|niesel|schauer/.test(t)) { body = '<path d="M7 15h10a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7.1 6.2 4.4 4.4 0 0 0 7 15z"/><path d="M9 18l-1 2.5M13 18l-1 2.5M17 18l-1 2.5"/>'; cls = "wi-rain"; }
+    else if (/nebel/.test(t)) { body = '<path d="M4 9h16M6 13h12M4 17h16"/>'; cls = "wi-fog"; }
+    else if (/klar|sonnig|heiter/.test(t)) { body = sun; cls = "wi-sun"; }
+    else if (/bewölkt|wolkig/.test(t)) { body = '<path d="M8.5 6.5a3.5 3.5 0 0 1 6.4 1"/><path d="M7 19h10a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7.1 10.2 4.4 4.4 0 0 0 7 19z"/>'; cls = "wi-cloud"; }
+    return `<svg class="wi ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+  }
+  let weatherRetry = null;
   async function refreshWeather() {
+    clearTimeout(weatherRetry);
     try {
       const w = await (await api("/api/weather")).json();
       if (w.error) throw new Error(w.error);
       const days = w.tage.slice(1).map((d) => {
-        const name = new Date(d.tag).toLocaleDateString("de-DE", { weekday: "short" });
-        return `<div>${escapeHtml(name)}: ${Math.round(d.min)}° / ${Math.round(d.max)}° · ${escapeHtml(d.wetter)}</div>`;
+        const name = new Date(d.tag).toLocaleDateString("de-DE", { weekday: "short" }).replace(".", "");
+        return `<div class="wd" title="${escapeHtml(d.wetter)}"><span>${escapeHtml(name)}</span>${weatherIcon(d.wetter)}<b>${Math.round(d.max)}°</b><small>${Math.round(d.min)}°</small></div>`;
       }).join("");
-      $("weather").innerHTML = `<div class="weather-now">${Math.round(w.jetzt.temperatur)}°</div>
-        <div>${escapeHtml(w.ort)} · ${escapeHtml(w.jetzt.wetter)}</div><div class="weather-days">${days}</div>`;
+      $("weather").classList.remove("muted");
+      $("weather").innerHTML = `<div class="weather-top">${weatherIcon(w.jetzt.wetter)}<div class="weather-now">${Math.round(w.jetzt.temperatur)}°</div></div>
+        <div class="weather-place">${escapeHtml(w.ort)} · ${escapeHtml(w.jetzt.wetter)}</div><div class="weather-days">${days}</div>`;
     } catch {
-      $("weather").textContent = "Wetter nicht verfügbar";
+      $("weather").classList.add("muted");
+      $("weather").innerHTML = `<div class="weather-off">${weatherIcon("bewölkt")}<span>Wetter offline</span><small>neuer Versuch gleich</small></div>`;
+      weatherRetry = setTimeout(() => token && refreshWeather(), 60000);
     }
   }
 
@@ -372,7 +391,7 @@
       if (data.answer && voiceOn) addSpeaking();
       else addMessage("friday", answer);
       busy = false;
-      if (data.actions?.some((a) => a === "set_reminder")) refreshReminders();
+      if (data.actions?.some((a) => a === "set_reminder")) { refreshReminders(); window.FridayHud?.refresh(); }
       if (data.actions?.includes("werkstatt")) window.FridayWerkstatt?.showLatest();
       if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
@@ -396,7 +415,7 @@
   });
 
   // Für das Lagezentrum (lagezentrum.js).
-  window.Friday = { api, say, escapeHtml, relTime, refreshStatus: () => refreshStatus() };
+  window.Friday = { api, say, send, escapeHtml, relTime, refreshStatus: () => refreshStatus() };
 
   // ---------- Seitenleiste: Einstellungen & Gehirn ----------
   const openSheet = (id) => $(id)?.classList.remove("hidden");

@@ -1451,9 +1451,9 @@ a.menu-row { text-decoration: none; }
 .en-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font: 11px ui-monospace, Menlo, monospace; }
 .en-list li { display: flex; justify-content: space-between; gap: 8px; }
 /* Sterbe-Szene: Friday fährt herunter */
-body.friday-tot #reactor, body.friday-tot #face-host { filter: grayscale(1) brightness(.35); transition: filter 2s; }
+body.friday-tot #reactor, body.friday-tot #face-host { filter: grayscale(.75) brightness(.55); transition: filter 2s; }
 body.friday-tot .hero-greet, body.friday-tot #state { opacity: .45; transition: opacity 2s; }
-body.friday-tot::before { content: "NOTSTROM · GUTHABEN LEER · NUR KOSTENLOSE FUNKTIONEN"; position: fixed; inset: 0 0 auto 0; height: auto; width: auto; z-index: 40; text-align: center;
+body.friday-tot::before { content: "NOTSTROM · GUTHABEN LEER · OFFLINE-GEHIRN AKTIV"; position: fixed; inset: 0 0 auto 0; height: auto; width: auto; z-index: 40; text-align: center;
   font: 700 11px ui-monospace, Menlo, monospace; letter-spacing: .18em; color: #fff; background: rgba(214,31,51,.85); background-image: none; padding: 5px; mix-blend-mode: normal; opacity: 1; pointer-events: none; animation: none; }
 body.friday-spar #reactor, body.friday-spar #face-host { filter: saturate(.6) brightness(.8); transition: filter 2s; }
 
@@ -1550,3 +1550,103 @@ body.reduce-anim.glow-breathe .panel { animation: none; }
 .tv-app { padding: 12px 6px; font-size: 12px; color: var(--text); }
 .tv-msg { min-height: 1.2em; margin: 10px 0 4px; font-size: 12px; }
 .tv-hint { font-size: 11px; }
+
+/* ===== v1.75: Offline-Gehirn, Vorschläge, Countdowns, Start-Sequenz, Wetter-Symbole ===== */
+/* Befehls-Vorschläge */
+.cmd-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 12px auto 0; max-width: 640px; }
+.cmd-chip { font: 500 12.5px var(--font-ui); letter-spacing: .03em; color: var(--text); padding: 6px 13px; border-radius: 999px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--cyan) 30%, transparent); background: linear-gradient(180deg, rgba(255,138,30,.10), rgba(255,138,30,.03));
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: border-color .2s, box-shadow .2s, transform .12s;
+  opacity: 0; animation: chipIn .5s ease-out forwards; animation-delay: calc(var(--i) * 70ms + .2s); }
+.cmd-chip:hover, .cmd-chip:focus-visible { border-color: var(--cyan); box-shadow: 0 0 14px rgba(255,138,30,.35); outline: none; }
+.cmd-chip:active { transform: scale(.96); }
+@keyframes chipIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* Live-Countdowns */
+.countdowns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 12px; }
+.countdowns:empty { display: none; }
+.cd { display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 6px; border-radius: 14px; min-width: 0; max-width: 300px;
+  border: 1px solid color-mix(in srgb, var(--cyan) 45%, transparent); background: rgba(20,10,3,.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 0 16px rgba(255,138,30,.18), inset 0 0 12px rgba(255,138,30,.06); animation: chipIn .4s ease-out both; }
+.cd-ring { width: 36px; height: 36px; flex: none; transform: rotate(-90deg); }
+.cd-ring circle { fill: none; stroke-width: 3; }
+.cd-bg { stroke: rgba(255,138,30,.15); }
+.cd-fg { stroke: var(--cyan); stroke-dasharray: 97.4; stroke-linecap: round; filter: drop-shadow(0 0 4px var(--cyan)); transition: stroke-dashoffset 1s linear; }
+.cd-txt { display: flex; flex-direction: column; text-align: left; min-width: 0; line-height: 1.15; }
+.cd-txt b { font: 700 16px var(--font-head); color: var(--text); letter-spacing: .04em; text-shadow: 0 0 10px rgba(255,138,30,.45); font-variant-numeric: tabular-nums; }
+.cd-txt small { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+.cd-x { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 0; }
+.cd-x:hover { color: var(--text); border-color: var(--cyan); }
+
+/* Alarm, wenn ein Timer abläuft */
+.alarm-pop { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 16px; background: rgba(5,3,1,.62); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: fadeIn .3s ease-out; }
+.alarm-pop.out { opacity: 0; transition: opacity .35s; }
+.alarm-box { width: min(380px, 100%); text-align: center; padding: 26px 22px 20px; border-radius: 22px; border: 1px solid var(--cyan);
+  background: linear-gradient(180deg, rgba(40,20,6,.85), rgba(14,8,3,.9)); box-shadow: 0 0 40px rgba(255,138,30,.35), inset 0 0 26px rgba(255,138,30,.1); }
+.alarm-box h3 { margin: 14px 0 6px; font: 700 18px var(--font-head); letter-spacing: .12em; text-transform: uppercase; color: var(--cyan); text-shadow: 0 0 14px rgba(255,138,30,.6); }
+.alarm-box p { margin: 0 0 16px; font-size: 16px; color: var(--text); overflow-wrap: anywhere; }
+.alarm-ring { position: relative; width: 96px; height: 96px; margin: 0 auto; display: grid; place-items: center; color: var(--cyan); }
+.alarm-ring svg { width: 40px; height: 40px; filter: drop-shadow(0 0 8px var(--cyan)); animation: alarmWackel .5s ease-in-out infinite alternate; }
+.alarm-ring span { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--cyan); opacity: 0; animation: alarmPuls 1.8s ease-out infinite; }
+.alarm-ring span:nth-child(2) { animation-delay: .6s; } .alarm-ring span:nth-child(3) { animation-delay: 1.2s; }
+.alarm-ok { min-width: 120px; }
+@keyframes alarmPuls { from { transform: scale(.55); opacity: .9; } to { transform: scale(1.35); opacity: 0; } }
+@keyframes alarmWackel { from { transform: rotate(-9deg); } to { transform: rotate(9deg); } }
+@keyframes fadeIn { from { opacity: 0; } }
+
+/* Sprach-Wellen am Gesicht */
+.voice-wave { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); display: flex; align-items: center; gap: 3px; height: 34px; pointer-events: none; opacity: 0; transition: opacity .35s; z-index: 3; }
+.voice-wave i { display: block; width: 3px; height: 100%; border-radius: 2px; background: linear-gradient(180deg, #ffd29a, var(--cyan)); box-shadow: 0 0 8px var(--cyan);
+  transform: scaleY(.15); transform-origin: center; }
+.reactor.speaking .voice-wave, .reactor.listening .voice-wave { opacity: 1; }
+.reactor.speaking .voice-wave i { animation: welle calc(.55s + var(--k) * .5s) ease-in-out infinite alternate; animation-delay: calc(var(--n) * -73ms); }
+.reactor.listening .voice-wave i { animation: welle 1.4s ease-in-out infinite alternate; animation-delay: calc(var(--n) * -90ms); opacity: .6; }
+@keyframes welle { from { transform: scaleY(.12); } to { transform: scaleY(calc(.35 + var(--k) * .65)); } }
+
+/* Wetter mit Symbolen */
+.wi { width: 22px; height: 22px; color: var(--cyan); filter: drop-shadow(0 0 5px rgba(255,138,30,.55)); flex: none; }
+.wi-sun { color: #ffc56b; } .wi-rain, .wi-snow { color: #ffb066; } .wi-storm { color: #ffd23f; }
+.weather-top { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.weather-top .wi { width: 30px; height: 30px; }
+.weather-now { font: 700 28px var(--font-head); color: var(--text); text-shadow: 0 0 14px rgba(255,138,30,.5); line-height: 1; }
+.weather-place { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.weather-days { display: flex; justify-content: flex-end; gap: 6px; margin-top: 8px; }
+.wd { display: grid; grid-template-columns: auto; justify-items: center; gap: 1px; padding: 4px 6px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,138,30,.04); font-size: 11px; min-width: 44px; }
+.wd span { color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+.wd .wi { width: 18px; height: 18px; }
+.wd b { color: var(--text); font-weight: 600; } .wd small { color: var(--muted); font-size: 10px; }
+.weather-off { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 12px; }
+.weather-off .wi { opacity: .5; } .weather-off small { font-size: 10px; opacity: .7; }
+
+/* Start-Sequenz */
+.boot { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: radial-gradient(circle at 50% 42%, #1a0d03 0%, #050302 60%); cursor: pointer; }
+.boot.out { opacity: 0; transform: scale(1.04); transition: opacity .55s ease, transform .55s ease; }
+.boot-core { position: relative; width: min(190px, 46vw); aspect-ratio: 1; }
+.boot-core svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.b-ring { fill: none; stroke: var(--cyan); stroke-linecap: round; filter: drop-shadow(0 0 6px var(--cyan)); }
+.b1 { stroke-width: 2; stroke-dasharray: 578; stroke-dashoffset: 578; animation: bootDraw 1.6s cubic-bezier(.6,.1,.2,1) forwards; }
+.b2 { stroke-width: 1.2; stroke-dasharray: 60 20; opacity: .7; transform-origin: center; animation: bootSpin 3s linear infinite; }
+.b3 { stroke-width: 6; stroke-dasharray: 352; stroke-dashoffset: 352; opacity: .85; animation: bootDraw 1.3s .4s ease-out forwards; }
+.b-tick { fill: none; stroke: rgba(255,138,30,.35); stroke-width: 6; stroke-dasharray: 1 7.8; }
+.boot-logo { position: absolute; inset: 0; display: grid; place-items: center; font: 800 clamp(34px, 9vw, 52px) var(--font-head); color: #ffe2c2; text-shadow: 0 0 18px var(--cyan), 0 0 40px var(--cyan); opacity: 0; animation: bootLogo .6s .9s ease-out forwards; }
+.boot-name { font: 700 clamp(16px, 4vw, 22px) var(--font-head); letter-spacing: .4em; padding-left: .4em; color: var(--cyan); text-shadow: 0 0 14px rgba(255,138,30,.7); opacity: 0; animation: bootLogo .5s .5s ease-out forwards; }
+.boot-lines { list-style: none; margin: 0; padding: 0; width: min(300px, 80vw); font: 12px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.boot-lines li { display: flex; justify-content: space-between; padding: 2px 0; opacity: 0; animation: bootLine .3s var(--d) ease-out forwards; }
+.boot-lines b { color: var(--ok, #4dffa6); font-weight: 600; text-shadow: 0 0 8px currentColor; }
+.boot-bar { width: min(300px, 80vw); height: 3px; border-radius: 2px; background: rgba(255,138,30,.15); overflow: hidden; }
+.boot-bar i { display: block; height: 100%; width: 0; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); animation: bootBar 1.9s .2s ease-in-out forwards; }
+@keyframes bootDraw { to { stroke-dashoffset: 0; } }
+@keyframes bootSpin { to { transform: rotate(360deg); } }
+@keyframes bootLogo { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+@keyframes bootLine { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+@keyframes bootBar { to { width: 100%; } }
+@media (prefers-reduced-motion: reduce) {
+  .cmd-chip, .cd { animation: none; opacity: 1; }
+  .reactor.speaking .voice-wave i, .reactor.listening .voice-wave i, .alarm-ring span, .alarm-ring svg { animation: none; }
+}
+@media (max-width: 600px) {
+  .cmd-chips { gap: 6px; } .cmd-chip { font-size: 12px; padding: 5px 11px; }
+  .weather-days { justify-content: flex-start; }
+}
+/* Werkzeug-Knopf sitzt auf kleinen Bildschirmen oben rechts: Wetter nicht darunter verstecken */
+@media (max-width: 1000px) { .weather-top, .weather-off { padding-right: 52px; } }
