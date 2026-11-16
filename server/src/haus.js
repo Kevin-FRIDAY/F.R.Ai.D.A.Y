@@ -621,6 +621,7 @@ export function buildHouse(p) {
   // ---- Kennzahlen ----
   const H = E * GH + (efh ? (T / 2 + 0.5) * Math.tan((35 * Math.PI) / 180) : 0.7);
   const bgf = B * T * E;
+  const kosten = schaetzeKosten({ efh, B, T, E, keller: p.keller, wohnflaeche, heizlast, pvKwp, laenge, anzahlWhg, kerne: kerne.length, etagen: hausEtagen });
   const kennzahlen = [
     { label: efh ? "Haustyp" : "Wohnungen", wert: efh ? "Einfamilienhaus" : `${anzahlWhg} (${p.whgProEtage} pro Etage)` },
     { label: "Wohnfläche", wert: `ca. ${fmt(wohnflaeche, 0)} m²` },
@@ -630,6 +631,7 @@ export function buildHouse(p) {
     { label: "Wasserleitungen", wert: `ca. ${fmt(laenge.kaltwasser + laenge.warmwasser, 0)} m` },
     { label: "Fußbodenheizung", wert: `ca. ${fmt(laenge.heizung, 0)} m Rohr` },
     { label: "Photovoltaik", wert: `ca. ${fmt(pvKwp, 1)} kWp` },
+    { label: "Baukosten (grob)", wert: `ca. ${euroKurz(kosten.summe)}` },
   ];
 
   // ---- Bauabschnitte mit Ansage ----
@@ -657,7 +659,7 @@ export function buildHouse(p) {
     einleitung: efh ? `Sehr gern, Chef. Ein Einfamilienhaus mit rund ${fmt(wohnflaeche, 0)} Quadratmetern.${n0}` : `Sehr gern, Chef. Ein Mehrfamilienhaus mit ${zt(anzahlWhg)} Wohnungen auf ${zt(E)} Etagen.${n0}`,
     kennzahlen,
     schritte: schritte.filter((s) => s.teile.length),
-    fazit: "Fertig, Chef. Unten kannst du Etagen, Leitungen und den Schnitt umschalten. Wichtig: Das ist ein schematischer Entwurf, kein genehmigungsfähiger Bauplan. Für einen echten Bau brauchst du Architekt, Statiker und Haustechnik-Planer.",
+    fazit: `Grob geschätzt kostet das Haus rund ${euroSprache(kosten.summe)}, ohne Grundstück, das sind etwa ${fmt(Math.round(kosten.proM2 / 50) * 50, 0)} Euro pro Quadratmeter Wohnfläche. ` + "Fertig, Chef. Unten kannst du Etagen, Leitungen und den Schnitt umschalten. Wichtig: Das ist ein schematischer Entwurf, kein genehmigungsfähiger Bauplan. Für einen echten Bau brauchst du Architekt, Statiker und Haustechnik-Planer.",
     haus: {
       typ: p.typ,
       etagen: hausEtagen.sort((a, b) => a.nr - b.nr),
@@ -666,6 +668,7 @@ export function buildHouse(p) {
       masse: { breite: r1(B), tiefe: r1(T), hoehe: r1(H) },
       leitungen_m: Object.fromEntries(Object.entries(laenge).map(([k, v]) => [k, Math.round(v)])),
       hinweis: HINWEIS,
+      kosten,
     },
   };
   return plan;
@@ -679,4 +682,75 @@ function wandBoxPlain(pos, e, [breite, hoehe, tiefe], farbe, etage) {
 
 export function planHouse(wunsch) {
   return buildHouse(parseHaus(wunsch));
+}
+
+// ---------- Grobe Kostenschätzung (Deutschland, Neubau, Stand 2026) ----------
+// Typische Durchschnittswerte je Einheit, angelehnt an übliche Baukosten-Kennwerte.
+// Keine Angebote: echte Preise schwanken je nach Region, Ausstattung und Firma stark.
+const PREISE = {
+  bodenplatte: 450, // € je m² Grundfläche (Baugrube, Fundament, Bodenplatte)
+  keller: 1100, // € je m² Kellerfläche (WU-Beton, Wände, Decke)
+  rohbau: 900, // € je m² Geschossfläche (Wände, Decken, Treppen)
+  flachdach: 320, // € je m² Dachfläche (Abdichtung, Dämmung, Attika)
+  steildach: 360, // € je m² Dachfläche (Dachstuhl, Ziegel, Dämmung)
+  fassade: 290, // € je m² Außenwand (Dämmung, Putz) – Fenster extra
+  fenster: 750, // € je m² Fensterfläche (3-fach verglast)
+  ausbau: 650, // € je m² Wohnfläche (Estrich, Putz, Böden, Türen, Fliesen, Maler)
+  bad: 16000, // € je Bad (Wanne/Dusche, WC, Waschtisch, Fliesen, Installation)
+  wc: 5000, // € je Gäste-WC
+  kueche: 2000, // € je Küchenanschluss (ohne Küchenmöbel)
+  leitung: 60, // € je Meter Wasser- und Abwasserleitung
+  hausanschluss: 9000, // € Hausanschluss Wasser/Abwasser
+  waermepumpe: 1700, // € je kW Wärmepumpe inkl. Einbau
+  fbh: 60, // € je m² Fußbodenheizung
+  heizzentrale: 6000, // € Pufferspeicher, Warmwasserspeicher, Verteiler
+  elektro: 110, // € je m² Wohnfläche (Leitungen, Dosen, Unterverteilungen)
+  zaehler: 600, // € je Zählerplatz
+  zaehlerschrank: 3500,
+  pv: 1400, // € je kWp Photovoltaik
+  aufzug: 70000, // € je Aufzug
+  haltestelle: 8000, // € je Haltestelle
+  nebenkosten: 0.18, // Architekt, Statik, Fachplaner, Genehmigung, Gutachten (Anteil)
+};
+
+function schaetzeKosten({ efh, B, T, E, keller, wohnflaeche, heizlast, pvKwp, laenge, anzahlWhg, kerne, etagen }) {
+  const grund = B * T;
+  const raeume = etagen.filter((e) => e.nr >= 0).flatMap((e) => e.raeume);
+  const n = (typ) => raeume.filter((r) => r.typ === typ).length;
+  const fensterFl = raeume.filter((r) => !["abstell", "garderobe", "treppenhaus"].includes(r.typ)).length * 2.2 + (efh ? 0 : kerne * E * 3.5);
+  const fassadeFl = Math.max(0, 2 * (B + T) * E * GH - fensterFl);
+  const dachFl = efh ? 2 * (B + 0.8) * ((T / 2 + 0.5) / Math.cos((35 * Math.PI) / 180)) : grund;
+  const P = PREISE;
+  const posten = [
+    { bereich: "Baugrube & Bodenplatte", betrag: grund * P.bodenplatte },
+    ...(keller ? [{ bereich: "Keller", betrag: grund * P.keller }] : []),
+    { bereich: "Rohbau (Wände, Decken, Treppen)", betrag: grund * E * P.rohbau },
+    { bereich: efh ? "Dach (Satteldach)" : "Dach (Flachdach)", betrag: dachFl * (efh ? P.steildach : P.flachdach) },
+    { bereich: "Fassade & Fenster", betrag: fassadeFl * P.fassade + fensterFl * P.fenster },
+    { bereich: "Innenausbau", betrag: wohnflaeche * P.ausbau },
+    { bereich: "Wasser & Abwasser (Sanitär)", betrag: n("bad") * P.bad + n("wc") * P.wc + n("kueche") * P.kueche + (laenge.kaltwasser + laenge.warmwasser + laenge.abwasser) * P.leitung + P.hausanschluss },
+    { bereich: "Heizung (Wärmepumpe + Fußbodenheizung)", betrag: heizlast * P.waermepumpe + wohnflaeche * P.fbh + P.heizzentrale },
+    { bereich: "Strom", betrag: wohnflaeche * P.elektro + P.zaehlerschrank + (anzahlWhg + (efh ? 0 : 1)) * P.zaehler },
+    { bereich: "Photovoltaik", betrag: pvKwp * P.pv },
+    ...(!efh && kerne ? [{ bereich: kerne > 1 ? `Aufzüge (${kerne})` : "Aufzug", betrag: kerne * (P.aufzug + (E + (keller ? 1 : 0)) * P.haltestelle) }] : []),
+  ];
+  const bau = posten.reduce((s, x) => s + x.betrag, 0);
+  posten.push({ bereich: "Planung & Genehmigung (ca. 18 %)", betrag: bau * P.nebenkosten });
+  const summe = bau * (1 + P.nebenkosten);
+  const rund = (v) => Math.round(v / 1000) * 1000;
+  return {
+    posten: posten.map((x) => ({ bereich: x.bereich, betrag: rund(x.betrag) })),
+    summe: rund(summe),
+    spanne: [rund(summe * 0.8), rund(summe * 1.25)],
+    proM2: Math.round(summe / Math.max(1, wohnflaeche)),
+    hinweis: "Grobe Schätzung mit deutschen Durchschnittswerten (Neubau, mittlere Ausstattung, Stand 2026). Ohne Grundstück, Erschließung, Außenanlagen, Küchenmöbel und Finanzierung. Ersetzt kein Angebot – echte Preise können deutlich abweichen.",
+  };
+}
+
+function euroKurz(v) {
+  return v >= 1e6 ? `${fmt(v / 1e6, 2)} Mio. €` : `${fmt(Math.round(v / 1000), 0)} Tsd. €`;
+}
+function euroSprache(v) {
+  if (v >= 1e6) return `${fmt(Math.round(v / 1e5) / 10, 1)} Millionen Euro`;
+  return `${fmt(Math.round(v / 10000) * 10, 0)} tausend Euro`;
 }

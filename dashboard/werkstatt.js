@@ -297,7 +297,22 @@
     const nrs = ["alle", ...h.etagen.map((e) => e.nr), h.dach];
     $("wh-etagen").innerHTML = nrs.map((nr) => `<button type="button" data-etage="${nr}">${escapeHtml(etagenLabel(nr))}</button>`).join("");
     markEtage();
+    zeigeKosten(h.kosten);
     panel.classList.remove("hidden");
+  }
+  // Grobe Kostenschätzung (kommt fertig vom Server).
+  function zeigeKosten(k) {
+    const el = $("wh-kosten");
+    if (!el) return;
+    if (!k) { el.classList.add("hidden"); return; }
+    const euro = (v) => `${Number(v).toLocaleString("de-DE")} €`;
+    const kurz = (v) => (v >= 1e6 ? `${(v / 1e6).toLocaleString("de-DE", { maximumFractionDigits: 2 })} Mio. €` : `${Math.round(v / 1000).toLocaleString("de-DE")} Tsd. €`);
+    $("wh-kosten-summe").textContent = `ca. ${kurz(k.summe)}`;
+    $("wh-kosten-liste").innerHTML = k.posten.map((p) => `<li><span>${escapeHtml(p.bereich)}</span><b>${euro(p.betrag)}</b></li>`).join("")
+      + `<li class="summe"><span>Gesamt (ca. ${k.proM2.toLocaleString("de-DE")} €/m²)</span><b>${euro(k.summe)}</b></li>`
+      + `<li><span>Spanne</span><b>${kurz(k.spanne[0])} – ${kurz(k.spanne[1])}</b></li>`;
+    $("wh-kosten-hinweis").textContent = `⚠︎ ${k.hinweis}`;
+    el.classList.remove("hidden");
   }
   function markEtage() {
     $("wh-etagen")?.querySelectorAll("button").forEach((b) => b.classList.toggle("on", String(etageSel) === b.dataset.etage));

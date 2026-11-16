@@ -36,6 +36,12 @@ Friday baut das Haus Schritt für Schritt auf und erklärt jeden Abschnitt:
 - **Von oben / 3D:** Blickwinkel umschalten.
 - **Grundriss:** zeigt die gewählte Etage als Plan mit allen Räumen, m² und Wohnungen.
 
+## Kosten (grobe Schätzung)
+
+Unten im Kasten "Haus-Steuerung" steht **KOSTEN (GROB)**. Antippen zeigt die Aufteilung: Bodenplatte, Keller, Rohbau, Dach, Fassade & Fenster, Innenausbau, Wasser & Abwasser, Heizung, Strom, Solar, Aufzug und Planung. Dazu der Preis pro m² und eine Spanne (−20 % bis +25 %). Friday sagt die Summe am Ende auch an.
+
+Gerechnet wird mit deutschen Durchschnittswerten (Neubau, mittlere Ausstattung, Stand 2026). **Nicht enthalten:** Grundstück, Erschließung, Garten/Außenanlagen, Küchenmöbel, Finanzierung. Das ersetzt kein Angebot, echte Preise können deutlich abweichen.
+
 ## Wichtig
 
 Das ist ein **schematischer Entwurf zum Anschauen**. Es ist **kein genehmigungsfähiger Bauplan**, es gibt **keine Statik** und **keine Haustechnik-Planung (TGA)**. Leitungswege, Heizlast und Solarleistung sind grobe Schätzungen. Für einen echten Bau brauchst du Architekt, Statiker und Fachplaner.

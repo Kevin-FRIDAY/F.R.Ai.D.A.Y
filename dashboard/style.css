@@ -1425,6 +1425,15 @@ a.menu-row { text-decoration: none; }
 .wp-liste { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 5px; font: 11px ui-monospace, Menlo, monospace; color: #cfeaf5; max-height: 30%; overflow: auto; }
 .wp-liste li { border-left: 2px solid #4fd8ff; padding: 3px 7px; background: rgba(79,216,255,.06); }
 .wp-liste b { color: #fff; }
+.wh-kosten { margin-top: 12px; border-top: 1px solid rgba(79,216,255,.25); padding-top: 8px; }
+.wh-kosten.hidden { display: none; }
+.wh-kosten summary { cursor: pointer; display: flex; justify-content: space-between; gap: 8px; letter-spacing: .14em; color: #8fc7de; font-size: 10px; }
+.wh-kosten summary b { color: #4dffa6; font-size: 13px; letter-spacing: 0; }
+.wh-kosten ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.wh-kosten li { display: flex; justify-content: space-between; gap: 8px; }
+.wh-kosten li b { color: #fff; white-space: nowrap; }
+.wh-kosten li.summe { border-top: 1px solid rgba(255,255,255,.2); padding-top: 4px; margin-top: 3px; color: #4dffa6; }
+.wh-kosten-hinweis { margin: 6px 0 0; color: #ffcc4d; font-size: 10px; line-height: 1.4; }
 .werkstatt-bsp { background: rgba(255,138,30,.18); border-color: #ff8a1e; white-space: nowrap; }
 @media (max-width: 700px) {
   .werkstatt.ist-haus .werkstatt-facts { display: none; }
