@@ -299,14 +299,14 @@ const WEATHER_CODES = {
 };
 
 export async function getWeather(city = config.city) {
-  const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?count=1&language=de&name=${encodeURIComponent(city)}`).then((r) => r.json());
+  const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?count=1&language=de&name=${encodeURIComponent(city)}`, { signal: AbortSignal.timeout(12000) }).then((r) => r.json());
   const place = geo.results?.[0];
   if (!place) return { error: `Ort "${city}" nicht gefunden` };
   const url =
     `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}` +
     `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m` +
     `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=3&timezone=auto`;
-  const w = await fetch(url).then((r) => r.json());
+  const w = await fetch(url, { signal: AbortSignal.timeout(12000) }).then((r) => r.json());
   return {
     ort: place.name,
     jetzt: {

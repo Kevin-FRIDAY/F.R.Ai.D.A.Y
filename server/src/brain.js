@@ -7,6 +7,7 @@ import { isAgentOnline } from "./agent-hub.js";
 import { agentsBrief } from "./agents.js";
 import { quickCommand as alexaQuick } from "./alexa.js";
 import { quickCommand as tvQuick } from "./fernseher.js";
+import { offlineAnswer, notfallText } from "./offline.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
@@ -102,6 +103,16 @@ export async function ask({ text, channel = "web", image, mode = "normal", targe
     }
   }
 
+  // Offline-Gehirn: Uhrzeit, Wetter, Timer, Listen, Kurse, Nachrichten ... sofort und ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const off = await offlineAnswer(text);
+      if (off) { actions.push(...off.actions); return finish(off.answer); }
+    } catch (err) {
+      console.error("Offline-Gehirn:", err.message);
+    }
+  }
+
   // Sparmodus bei knappem Guthaben: günstiges Modell, wenig Aufwand, keine Websuche.
   const model = brainModel(config.model);
   const sparen = model === SPAR_MODELL;
@@ -122,9 +133,11 @@ export async function ask({ text, channel = "web", image, mode = "normal", targe
     try {
       response = sparen ? await client.messages.create(params) : await client.beta.messages.create(params);
     } catch (err) {
-      if (!isCreditError(err)) throw err;
-      markEmpty();
-      return finish(`Mir geht die Energie aus, ${config.userName}. Mein Guthaben ist leer. Lade es auf console.anthropic.com auf und sag mir dann im Energie-Fenster, wie viel. Bis dahin laufen nur meine kostenlosen Funktionen.`);
+      // Claude nicht erreichbar (Guthaben leer, falscher Schlüssel, kein Netz): Offline-Gehirn springt ein.
+      const leer = isCreditError(err);
+      if (leer) markEmpty();
+      else console.error("Claude nicht erreichbar:", err.message);
+      return notfall(leer);
     }
     recordUsage(response.model || model, response.usage, "chat");
 
@@ -164,6 +177,19 @@ export async function ask({ text, channel = "web", image, mode = "normal", targe
   }
 
   return finish("Das hat zu viele Schritte gebraucht, Boss. Versuch es bitte etwas einfacher.");
+
+  async function notfall(leer) {
+    if (mode !== "translate" && !image && text) {
+      try {
+        const off = await offlineAnswer(text, { notfall: true });
+        if (off && off.answer !== notfallText()) { actions.push(...off.actions); return finish(off.answer); }
+      } catch (err) {
+        console.error("Offline-Gehirn (Notfall):", err.message);
+      }
+    }
+    if (leer) return finish(`Mir geht die Energie aus, ${config.userName}. Mein Guthaben ist leer. Lade es auf console.anthropic.com auf und sag mir dann im Energie-Fenster, wie viel. Bis dahin laufen meine Offline-Befehle – sag einfach: Was kannst du?`);
+    return finish(notfallText());
+  }
 
   function finish(answer) {
     if (keepHistory) {
