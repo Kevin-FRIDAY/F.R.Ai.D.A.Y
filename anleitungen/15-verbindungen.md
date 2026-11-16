@@ -31,9 +31,18 @@ Gut zu wissen: Wiederkehrende Termine (jede Woche, jedes Jahr) werden mitgezähl
 ## 🗣️ ElevenLabs-Stimme (Gratis-Kontingent)
 
 1. Konto auf **elevenlabs.io** anlegen (kostenlos, ca. 10.000 Zeichen im Monat).
-2. Unten links auf dein Profil → **API Keys** → neuen Schlüssel erstellen und kopieren.
+2. Unten links auf dein Profil → **API Keys** → neuen Schlüssel erstellen.
+   Bei den Rechten: **Text to Speech → Zugriff**, **Voices → Lesen**, **User → Lesen** (am einfachsten: alle Rechte an lassen).
+   Den Schlüssel sofort kopieren – ElevenLabs zeigt ihn nur einmal.
 3. Verbindungen → ElevenLabs → Schlüssel einfügen → **Verbinden**.
 4. Stimme auswählen, **▶ Probe hören**.
+
+> Den Schlüssel nur in Friday eintragen, nie in einen Chat oder eine Nachricht schreiben.
+
+**Rote Fehlermeldung?**
+- „Dem Schlüssel fehlen Rechte“ → neuen Schlüssel mit den Rechten oben erstellen.
+- „ElevenLabs kennt diesen Schlüssel nicht“ → Schlüssel wurde gelöscht oder nicht ganz kopiert. Neu erstellen und komplett einfügen.
+- „Gratis-Konto vorübergehend gesperrt“ → ElevenLabs blockt Gratis-Konten bei VPN/ungewöhnlicher Nutzung. VPN aus, später nochmal.
 
 „Tempo: Schnell“ spart Zeichen und antwortet schneller, „Beste Qualität“ klingt noch etwas natürlicher.
 Ist das Monatskontingent aufgebraucht, spricht Friday automatisch mit der Gerätestimme weiter.

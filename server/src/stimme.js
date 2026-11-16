@@ -60,6 +60,9 @@ export async function sprich(text) {
     if (/quota_exceeded/.test(status)) {
       pauseBis = Date.now() + 6 * 3600 * 1000;
       pauseGrund = "Das ElevenLabs-Kontingent für diesen Monat ist aufgebraucht. Ich spreche mit der Gerätestimme weiter.";
+    } else if (/missing_permissions/.test(status)) {
+      pauseBis = Date.now() + 10 * 60 * 1000;
+      pauseGrund = "Dem ElevenLabs-Schlüssel fehlt das Recht „Text to Speech“. Ich spreche mit der Gerätestimme.";
     } else if (res.status === 401) {
       pauseBis = Date.now() + 10 * 60 * 1000;
       pauseGrund = "Der ElevenLabs-Schlüssel wird abgelehnt.";
@@ -135,15 +138,49 @@ export async function status() {
   };
 }
 
-export async function einrichten({ key: k } = {}) {
-  const t = String(k || "").trim();
-  if (!V.schluesselOk(t, 20)) return { ok: false, error: "Das sieht nicht wie ein ElevenLabs-Schlüssel aus." };
-  const r = await stimmenListe(t);
-  if (!r.ok) {
-    if (r.netz) return { ok: false, error: "ElevenLabs ist gerade nicht erreichbar. Ist der Mac online?" };
-    if (r.status === 401) return { ok: false, error: "ElevenLabs lehnt den Schlüssel ab. Kopier ihn nochmal von elevenlabs.io → Profil → API Keys." };
-    return { ok: false, error: `ElevenLabs meldet einen Fehler (${r.status}).` };
+// ElevenLabs schickt bei Fehlern {detail: {status, message}}. Daraus einen verständlichen deutschen Satz machen.
+function fehlerText(r) {
+  if (r.netz) return "ElevenLabs ist gerade nicht erreichbar. Ist der Mac online?";
+  const det = r.data?.detail;
+  const code = String((typeof det === "object" && (det?.status || det?.code)) || "");
+  const msg = String((typeof det === "object" ? det?.message : det) || r.data?.message || "");
+  if (/missing_permissions/.test(code) || /missing.*permission/i.test(msg)) {
+    const recht = (msg.match(/permission[s]?\s+([a-z_]+)/i) || [])[1];
+    return `Dem Schlüssel fehlen Rechte${recht ? ` (${recht})` : ""}. Erstelle bei elevenlabs.io → API Keys einen neuen Schlüssel und stell dort „Text to Speech“ auf Zugriff und „Voices“ auf Lesen (oder lass alle Rechte an).`;
   }
+  if (/detected_unusual_activity|unusual/i.test(code + msg)) return "ElevenLabs hat das Gratis-Konto vorübergehend gesperrt (ungewöhnliche Aktivität, z. B. VPN). Ohne VPN nochmal versuchen oder bei ElevenLabs den Support fragen.";
+  if (/quota_exceeded/.test(code)) return "Das ElevenLabs-Kontingent ist aufgebraucht. Es füllt sich nächsten Monat wieder auf.";
+  if (/invalid_api_key|invalid.*key/i.test(code + msg) || r.status === 401) return "ElevenLabs kennt diesen Schlüssel nicht. Vielleicht wurde er gelöscht oder nicht ganz kopiert. Erstelle bei elevenlabs.io → API Keys einen neuen und füg ihn komplett ein.";
+  if (r.status === 429) return "ElevenLabs bremst gerade. In einer Minute nochmal versuchen.";
+  return `ElevenLabs meldet einen Fehler (${r.status}${msg ? `: ${msg.slice(0, 120)}` : ""}).`;
+}
+const fehltRecht = (r) => /missing_permissions/.test(String(r.data?.detail?.status || "")) || /missing.*permission/i.test(String(r.data?.detail?.message || ""));
+
+// Kurzer Sprechtest – damit klappt die Einrichtung auch mit Schlüsseln, die nur "Text to Speech" dürfen.
+async function sprechTest(k) {
+  return V.holeJson(`${API()}/v1/text-to-speech/${STANDARD_STIMME}?output_format=mp3_22050_32`, {
+    method: "POST",
+    headers: { "xi-api-key": k, Accept: "audio/mpeg" },
+    body: { text: "Hallo.", model_id: MODELLE.schnell.id, language_code: "de" },
+    timeout: 15000,
+  });
+}
+
+export async function einrichten({ key: k } = {}) {
+  // Beim Kopieren rutschen manchmal Anführungszeichen oder "xi-api-key:" mit rein.
+  const t = String(k || "").trim().replace(/^xi-api-key:\s*/i, "").replace(/^["'„“]+|["'„“]+$/g, "").trim();
+  if (!V.schluesselOk(t, 20)) return { ok: false, error: "Das sieht nicht wie ein ElevenLabs-Schlüssel aus. Er beginnt mit sk_ und hat keine Leerzeichen." };
+  let r = await stimmenListe(t);
+  if (!r.ok && fehltRecht(r)) {
+    // Schlüssel darf keine Stimmen auflisten → prüfen, ob er wenigstens sprechen darf.
+    const p = await sprechTest(t);
+    if (!p.ok) return { ok: false, error: fehlerText(p) };
+    V.set("stimme", { key: t, stimmen: [{ id: STANDARD_STIMME, name: "Sarah", art: "weiblich" }], stimme: STANDARD_STIMME, stimmeName: "Sarah", aus: undefined });
+    pauseBis = 0;
+    abo = null;
+    return { ok: true, text: "ElevenLabs ist verbunden, ich spreche mit der Stimme Sarah. Dein Schlüssel darf keine Stimmen auflisten, deshalb gibt es nur Sarah. Für mehr Stimmen beim Schlüssel „Voices: Lesen“ erlauben." };
+  }
+  if (!r.ok) return { ok: false, error: fehlerText(r) };
   const wahl = r.stimmen.find((s) => s.id === STANDARD_STIMME) || r.stimmen.find((s) => /weiblich/.test(s.art)) || r.stimmen[0];
   V.set("stimme", { key: t, stimmen: r.stimmen.slice(0, 80), stimme: wahl?.id || STANDARD_STIMME, stimmeName: wahl?.name || "Sarah", aus: undefined });
   pauseBis = 0;
@@ -176,14 +213,14 @@ export async function command({ action, value } = {}) {
   if (!key()) return { ok: false, error: "ElevenLabs ist noch nicht eingerichtet. Trag den Schlüssel im Werkzeug-Menü unter Verbindungen ein." };
   if (action === "aktualisieren") {
     const r = await stimmenListe();
-    if (!r.ok) return { ok: false, error: "Konnte die Stimmen nicht laden." };
+    if (!r.ok) return { ok: false, error: `Konnte die Stimmen nicht laden. ${fehlerText(r)}` };
     V.set("stimme", { stimmen: r.stimmen.slice(0, 80) });
     return { ok: true, text: `${r.stimmen.length} Stimmen geladen.` };
   }
   if (action === "probe") return { ok: true, text: `Hallo ${config.userName}. So klinge ich mit ElevenLabs.`, sprechen: true };
   if (action === "kontingent") {
     const k = await kontingent(true);
-    if (!k || !k.limit) return { ok: false, error: "Das Kontingent konnte ich nicht abfragen." };
+    if (!k || !k.limit) return { ok: false, error: "Das Kontingent konnte ich nicht abfragen. Vielleicht darf dein Schlüssel das nicht (Recht „User: Lesen“)." };
     const rest = Math.max(0, k.limit - k.benutzt);
     const neu = k.neuAm ? ` Es füllt sich am ${new Date(k.neuAm).toLocaleDateString("de-DE", { timeZone: config.timezone, day: "numeric", month: "long" })} wieder auf.` : "";
     return { ok: true, text: `Du hast noch ${rest.toLocaleString("de-DE")} von ${k.limit.toLocaleString("de-DE")} Zeichen bei ElevenLabs.${neu}` };
