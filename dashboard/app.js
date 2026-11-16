@@ -887,27 +887,11 @@
     if (res.error) return addMessage("sys", res.error);
     showUpdate("busy", "Update läuft...");
     addMessage("friday", `Ich spiele Version ${update.latest} ein und starte gleich neu, Boss.`);
-    const target = update.latest;
-    const started = Date.now();
-    const poll = setInterval(async () => {
-      try {
-        const st = await (await api("/api/status")).json();
-        const u = await (await api("/api/update")).json();
-        if (u.status?.state === "fehler") {
-          clearInterval(poll);
-          addMessage("sys", u.status.message);
-          checkUpdate();
-        } else if (st.version === target) {
-          clearInterval(poll);
-          location.reload();
-        }
-      } catch { /* Friday startet gerade neu */ }
-      if (Date.now() - started > 5 * 60000) {
-        clearInterval(poll);
-        addMessage("sys", "Das Update dauert ungewöhnlich lange. Schau in ~/Library/Logs/Friday/update.log nach.");
-        checkUpdate();
-      }
-    }, 3000);
+    // Ladebalken zeigt Herunterladen → Sicherung → Installieren → Neustart und lädt am Ende neu.
+    window.FridayUpdate?.start({ ziel: update.latest, von: update.installed });
+  });
+  window.addEventListener("friday-update-ende", (e) => {
+    if (e.detail?.ok === false) { if (e.detail.text) addMessage("sys", e.detail.text); checkUpdate(); }
   });
 
   // ---------- Foto ----------

@@ -14,6 +14,16 @@ Im Dashboard unter **Aktionen** sitzt der Update-Knopf:
 
 Nach dem Antippen lädt Friday die neue Version, sichert die alte, installiert die neue und startet neu. Das Dashboard lädt sich danach von selbst neu.
 
+### Der Ladebalken (ab 1.78.0)
+
+Während des Updates erscheint oben in der Mitte ein Ladebalken in Neon-Orange. Er zeigt die Prozente und die vier Schritte **Herunterladen → Sicherung → Installieren → Neustart**, darunter steht, was Friday gerade tut.
+
+- Am Ende wird der Balken grün und das Dashboard lädt neu.
+- Klappt etwas nicht, wird er rot und zeigt den Grund. Deine alte Version läuft dann weiter.
+- Auch beim **automatischen Update** erscheint der Balken. Du kannst dabei weiterarbeiten oder ihn mit **×** ausblenden, das Update läuft trotzdem weiter.
+
+Hinweis: Der Balken kommt mit Version 1.78.0. Das Update *auf* 1.78.0 läuft noch ohne Balken, ab dem nächsten Update ist er da.
+
 Friday schaut außerdem zweimal am Tag selbst nach und schickt dir eine Push- oder Telegram-Nachricht, wenn es etwas Neues gibt. Du kannst sie auch einfach fragen: **"Friday, gibt es ein Update?"**
 
 Ohne Dashboard geht es mit Doppelklick auf **Friday aktualisieren.command** im Ordner `~/Friday`.
