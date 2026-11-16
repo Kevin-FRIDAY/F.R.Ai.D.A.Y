@@ -1399,6 +1399,40 @@ a.menu-row { text-decoration: none; }
 .werkstatt-go { padding: 12px 18px; border-radius: 12px; border: 1px solid #4fd8ff; background: rgba(79,216,255,.18); color: #fff; font: 700 14px var(--font-ui, sans-serif); cursor: pointer; }
 @media (max-width: 700px) { .werkstatt-side { width: 160px; } .werkstatt-caption { bottom: 128px; font-size: 14px; } .werkstatt-form { flex-wrap: wrap; } }
 
+/* ===== v1.77: Werkstatt-Hausmodus (Etagen, Leitungen, Schnitt, Grundriss) ===== */
+.werkstatt-haus { position: absolute; top: 64px; right: 16px; width: 250px; max-height: calc(100% - 180px); overflow: auto; background: rgba(2,10,20,.82); border: 1px solid rgba(79,216,255,.35); border-radius: 12px; padding: 8px 12px 12px; font: 11px ui-monospace, Menlo, monospace; color: #cfeaf5; }
+.werkstatt-haus.hidden { display: none; }
+.werkstatt-haus summary { cursor: pointer; font-weight: 700; letter-spacing: .18em; color: #4fd8ff; padding: 4px 0; }
+.wh-hinweis { margin: 6px 0 8px; color: #ffcc4d; line-height: 1.4; font-size: 10.5px; }
+.wh-label { margin: 8px 0 5px; letter-spacing: .16em; color: #8fc7de; font-size: 10px; }
+.wh-etagen, .wh-ebenen { display: flex; flex-wrap: wrap; gap: 5px; }
+.wh-etagen button, .wh-btn { padding: 5px 8px; border-radius: 7px; border: 1px solid rgba(79,216,255,.4); background: rgba(79,216,255,.08); color: #fff; font: 600 11px ui-monospace, Menlo, monospace; cursor: pointer; }
+.wh-etagen button.on, .wh-btn.on { background: rgba(79,216,255,.35); border-color: #4fd8ff; }
+.wh-ebenen label { display: flex; align-items: center; gap: 5px; padding: 4px 7px; border-radius: 7px; border: 1px solid rgba(255,255,255,.15); cursor: pointer; user-select: none; }
+.wh-ebenen label i { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 6px currentColor; background: currentColor; }
+.wh-ebenen input { display: none; }
+.wh-ebenen label:has(input:not(:checked)) { opacity: .4; }
+.wh-row { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+.wh-check { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.wh-row input[type=range] { flex: 1; accent-color: #ff4d5e; }
+.werkstatt-plan { position: absolute; left: 16px; top: 64px; bottom: 175px; width: min(560px, calc(100% - 32px)); display: flex; flex-direction: column; background: rgba(2,10,20,.94); border: 1px solid rgba(79,216,255,.45); border-radius: 12px; padding: 10px 12px; z-index: 2; }
+.werkstatt-plan.hidden { display: none; }
+.werkstatt-plan header { display: flex; justify-content: space-between; align-items: center; font: 700 12px ui-monospace, Menlo, monospace; letter-spacing: .16em; color: #4fd8ff; }
+.wp-svg { flex: 1; min-height: 160px; margin-top: 8px; }
+.wp-svg svg { width: 100%; height: 100%; }
+.wp-svg rect.raum { stroke: #4fd8ff; stroke-width: .08; }
+.wp-svg text { font-family: ui-monospace, Menlo, monospace; fill: #fff; text-anchor: middle; dominant-baseline: middle; }
+.wp-liste { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 5px; font: 11px ui-monospace, Menlo, monospace; color: #cfeaf5; max-height: 30%; overflow: auto; }
+.wp-liste li { border-left: 2px solid #4fd8ff; padding: 3px 7px; background: rgba(79,216,255,.06); }
+.wp-liste b { color: #fff; }
+.werkstatt-bsp { background: rgba(255,138,30,.18); border-color: #ff8a1e; white-space: nowrap; }
+@media (max-width: 700px) {
+  .werkstatt.ist-haus .werkstatt-facts { display: none; }
+  .werkstatt-haus { top: 92px; left: auto; right: 8px; width: min(250px, calc(100% - 16px)); max-height: calc(100% - 300px); padding: 4px 10px 8px; }
+  .werkstatt-plan { left: 8px; width: calc(100% - 16px); top: 92px; bottom: 200px; }
+  .werkstatt-form input[type=text] { flex-basis: 100%; }
+}
+
 /* ===== v1.65: Welt-Alarm ===== */
 .alarm-btn { color: #ff5d6c !important; border-color: rgba(255,93,108,.5) !important; }
 .lage-alarm .alarm-track, #lage-alarm .alarm-track { fill: none; stroke: #ff3b4e; stroke-width: 2.4; stroke-dasharray: 6 4; filter: drop-shadow(0 0 4px #ff3b4e); }

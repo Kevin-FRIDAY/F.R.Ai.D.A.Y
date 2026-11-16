@@ -753,11 +753,35 @@
       <ul id="werkstatt-facts" class="werkstatt-facts"></ul>
       <label class="switch"><input type="checkbox" id="werkstatt-solid"><span>Massiv statt Hologramm</span></label>
     </aside>
+    <!-- Hausmodus: Etagen, Leitungsebenen, Schnitt, Grundriss -->
+    <details id="werkstatt-haus" class="werkstatt-haus hidden" open>
+      <summary>HAUS-STEUERUNG</summary>
+      <p class="wh-hinweis">⚠︎ Schematischer Entwurf zum Anschauen – kein genehmigungsfähiger Bauplan, keine Statik, keine Haustechnik-Planung.</p>
+      <div class="wh-label">ETAGE</div>
+      <div id="wh-etagen" class="wh-etagen"></div>
+      <div class="wh-label">EBENEN</div>
+      <div id="wh-ebenen" class="wh-ebenen"></div>
+      <div class="wh-row">
+        <label class="wh-check"><input type="checkbox" id="wh-schnitt"> Schnitt</label>
+        <input type="range" id="wh-schnitt-pos" min="0" max="100" value="50" disabled aria-label="Schnitt-Position">
+      </div>
+      <div class="wh-row">
+        <button type="button" id="wh-oben" class="wh-btn">Von oben</button>
+        <button type="button" id="wh-3d" class="wh-btn">3D</button>
+        <button type="button" id="wh-plan" class="wh-btn">Grundriss</button>
+      </div>
+    </details>
+    <section id="werkstatt-plan" class="werkstatt-plan hidden" aria-label="Grundriss">
+      <header><b id="wp-titel">GRUNDRISS</b><button type="button" id="wp-x" class="ghost small" title="Schließen">✕</button></header>
+      <div id="wp-svg" class="wp-svg"></div>
+      <ul id="wp-liste" class="wp-liste"></ul>
+    </section>
     <div id="werkstatt-caption" class="werkstatt-caption">Sag mir, was ich bauen soll, Chef.</div>
     <form id="werkstatt-form" class="werkstatt-form">
-      <input id="werkstatt-input" type="text" placeholder="z. B. Ein Wohnhaus mit 12 Etagen" autocomplete="off">
+      <input id="werkstatt-input" type="text" placeholder="z. B. Mehrfamilienhaus mit 4 Etagen und 8 Wohnungen" autocomplete="off">
       <label class="werkstatt-extend" title="Das aktuelle Modell ergänzen statt neu bauen"><input type="checkbox" id="werkstatt-extend"> ergänzen</label>
       <button type="submit" class="werkstatt-go">Bauen</button>
+      <button type="button" id="werkstatt-beispiel" class="werkstatt-go werkstatt-bsp" title="Beispielhaus ohne Claude-Guthaben">🏠 Beispielhaus</button>
     </form>
   </section>
 
