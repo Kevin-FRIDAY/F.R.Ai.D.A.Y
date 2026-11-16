@@ -6,6 +6,7 @@ import { shipsStatus } from "./ships.js";
 import { getEnergie } from "./energie.js";
 import { videoTeamReady } from "./videoteam.js";
 import { marktReady } from "./markt.js";
+import { status as alexaStatus } from "./alexa.js";
 
 async function timed(label, fn) {
   const t0 = Date.now();
@@ -59,6 +60,12 @@ export async function runSystemCheck() {
     timed("iCloud-Postfach", async () => ({ ok: mailConfigured(), detail: mailConfigured() ? "verbunden" : "nicht verbunden" })),
     // Telegram
     timed("Telegram", async () => ({ ok: Boolean(config.telegramToken), detail: config.telegramToken ? "eingerichtet" : "nicht eingerichtet" })),
+    // Alexa (Voice Monkey)
+    timed("Alexa (Voice Monkey)", async () => {
+      const s = await alexaStatus();
+      if (!s.eingerichtet) return { ok: false, detail: "nicht eingerichtet" };
+      return { ok: true, detail: `${s.routinen.length} Routinen, ${s.lautsprecher.length} Lautsprecher` };
+    }),
     // Stimme
     timed("Stimme (ElevenLabs)", async () => ({ ok: Boolean(config.elevenKey), detail: config.elevenKey ? "Schlüssel vorhanden" : "Gerätestimme" })),
   ]);

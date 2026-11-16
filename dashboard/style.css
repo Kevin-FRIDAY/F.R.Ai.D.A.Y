@@ -1511,3 +1511,15 @@ body.friday-spar #reactor, body.friday-spar #face-host { filter: saturate(.6) br
 body.glow-breathe .panel { animation: glow-breathe 5.5s ease-in-out infinite; }
 body.reduce-anim.glow-breathe .panel { animation: none; }
 .set-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+/* ---------- Alexa (Voice Monkey) ---------- */
+.alexa-box { width: min(440px, 100%); }
+.alexa-row { display: flex; gap: 8px; align-items: center; margin: 10px 0; flex-wrap: wrap; }
+.alexa-row input, .alexa-row select { flex: 1 1 160px; min-width: 0; }
+.alexa-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 8px 0 14px; }
+.alexa-btn { padding: 12px 8px; font-size: 13px; color: var(--text); border-radius: 12px; transition: transform .08s, box-shadow .15s; overflow-wrap: anywhere; }
+.alexa-btn:active, .alexa-btn.busy { transform: scale(.95); box-shadow: 0 0 14px rgba(255,138,30,.55); }
+.alexa-btn.done { border-color: var(--ok); box-shadow: 0 0 12px rgba(70,224,160,.35); }
+.alexa-msg { min-height: 1.2em; margin: 10px 0 4px; font-size: 12px; }
+.alexa-msg.bad { color: var(--bad); }
+.alexa-hint { font-size: 11px; }

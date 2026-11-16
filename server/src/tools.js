@@ -14,6 +14,7 @@ import { getForecast, getDepot, MAERKTE } from "./markt.js";
 import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { getAlarm } from "./lagezentrum.js";
 import { buildSite, listSites } from "./webseiten.js";
+import { command as alexaCommand } from "./alexa.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
 // Osiris Live-Lagekarte: selbst gehostet auf dem Mac (Port 3100). Der Mac-Agent öffnet lokal.
@@ -185,6 +186,22 @@ export const toolDefinitions = [
       properties: {
         action: { type: "string", enum: ["list", "turn_on", "turn_off", "toggle"] },
         entity_id: { type: "string" },
+      },
+      required: ["action"],
+    },
+  },
+  {
+    name: "alexa",
+    description:
+      "Steuert Alexa über Voice Monkey. Aktionen: routine (value = Name der Alexa-Routine, z. B. 'Licht an', 'Gute Nacht'), " +
+      "ansage (value = Satz, den Alexa laut sagt; lautsprecher = optional Echo-Name wie 'Wohnzimmer' oder 'überall'), " +
+      "liste (zeigt alle Routinen und Lautsprecher). Nutze es, wenn Alexa, ein Echo oder Geräte genannt werden, die an Alexa hängen.",
+    input_schema: {
+      type: "object",
+      properties: {
+        action: { type: "string", enum: ["routine", "ansage", "liste"] },
+        value: { type: "string" },
+        lautsprecher: { type: "string" },
       },
       required: ["action"],
     },
@@ -364,6 +381,7 @@ const ACTLOG = {
   lookup: ["suche", (i) => `Nachgeschlagen: ${i.query || ""}`],
   country_info: ["suche", (i) => `Länder-Info: ${i.country || ""}`],
   air_quality: ["suche", (i) => `Luftqualität: ${i.city || ""}`],
+  alexa: ["mac", (i) => `Alexa: ${i.action === "ansage" ? "Ansage" : i.action || ""}${i.action === "routine" && i.value ? " " + i.value : ""}`],
 };
 
 export async function runTool(name, input = {}) {
@@ -442,6 +460,10 @@ export async function runTool(name, input = {}) {
       return Object.fromEntries(Object.entries(getProtocols()).map(([k, v]) => [k, v.description]));
     case "smart_home":
       return homeAssistant(input.action, input.entity_id);
+    case "alexa": {
+      const r = await alexaCommand(input);
+      return r.ok ? r : { error: r.error };
+    }
     case "get_health":
       return store.getHealth() ?? { info: "Noch keine Gesundheitsdaten vom iPhone empfangen." };
     case "update":
