@@ -19,6 +19,7 @@ import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js"
 import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
 import * as alexa from "./alexa.js";
+import * as fernseher from "./fernseher.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
@@ -243,6 +244,17 @@ app.get("/api/lage-satelliten", asyncRoute(async (req, res) => res.json(await ge
 app.get("/api/lage-infra", asyncRoute(async (req, res) => res.json(getInfra(String(req.query.typ || "")))));
 app.get("/api/lage-videos", asyncRoute(async (req, res) => res.json(await getWorldVideos())));
 app.get("/api/lage-alarm", asyncRoute(async (req, res) => res.json(await getAlarm())));
+// Fernseher (Samsung-TV im WLAN)
+app.get("/api/fernseher", asyncRoute(async (req, res) => res.json(await fernseher.status())));
+app.post("/api/fernseher/suchen", asyncRoute(async (req, res) => res.json({ gefunden: await fernseher.discover() })));
+app.post("/api/fernseher/koppeln", asyncRoute(async (req, res) => { const r = await fernseher.pair(req.body?.ip); res.status(r.ok ? 200 : 400).json(r); }));
+app.post("/api/fernseher/vergessen", (req, res) => res.json(fernseher.forget()));
+app.post("/api/fernseher/befehl", asyncRoute(async (req, res) => {
+  const { action, value, anzahl } = req.body || {};
+  const r = await fernseher.command({ action: String(action || ""), value: value == null ? undefined : String(value).slice(0, 60), anzahl });
+  if (r.ok && action !== "status") store.logActivity("mac", `Fernseher: ${action}${value ? " " + value : ""}`);
+  res.status(r.ok ? 200 : 400).json(r);
+}));
 // Alexa (über Voice Monkey)
 app.get("/api/alexa", asyncRoute(async (req, res) => res.json(await alexa.status())));
 app.post("/api/alexa/schluessel", asyncRoute(async (req, res) => { const r = await alexa.setToken(req.body?.token); res.status(r.ok ? 200 : 400).json(r); }));

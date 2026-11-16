@@ -14,6 +14,7 @@ import { getForecast, getDepot, MAERKTE } from "./markt.js";
 import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { getAlarm } from "./lagezentrum.js";
 import { buildSite, listSites } from "./webseiten.js";
+import { command as tvCommand } from "./fernseher.js";
 import { command as alexaCommand } from "./alexa.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
@@ -186,6 +187,23 @@ export const toolDefinitions = [
       properties: {
         action: { type: "string", enum: ["list", "turn_on", "turn_off", "toggle"] },
         entity_id: { type: "string" },
+      },
+      required: ["action"],
+    },
+  },
+  {
+    name: "fernseher",
+    description:
+      "Steuert den Samsung-Fernseher im WLAN. Aktionen: an, aus, lauter/leiser (anzahl = Stufen, Standard 3), stumm, " +
+      "sender_hoch/sender_runter, sender (value = Sendernummer), app (value = App-Name wie Netflix, YouTube, Prime Video, Disney+), " +
+      "taste (value = home, zurueck, ok, hoch, runter, links, rechts, play, pause, quelle, hdmi1-4, info), status. " +
+      "Nutze es bei 'Fernseher', 'TV' oder wenn etwas auf dem Fernseher laufen soll ('mach Netflix an').",
+    input_schema: {
+      type: "object",
+      properties: {
+        action: { type: "string", enum: ["an", "aus", "lauter", "leiser", "stumm", "sender_hoch", "sender_runter", "sender", "app", "taste", "status"] },
+        value: { type: "string" },
+        anzahl: { type: "number" },
       },
       required: ["action"],
     },
@@ -382,6 +400,7 @@ const ACTLOG = {
   country_info: ["suche", (i) => `Länder-Info: ${i.country || ""}`],
   air_quality: ["suche", (i) => `Luftqualität: ${i.city || ""}`],
   alexa: ["mac", (i) => `Alexa: ${i.action === "ansage" ? "Ansage" : i.action || ""}${i.action === "routine" && i.value ? " " + i.value : ""}`],
+  fernseher: ["mac", (i) => `Fernseher: ${i.action || ""}${i.value ? " " + i.value : ""}`],
 };
 
 export async function runTool(name, input = {}) {
@@ -460,6 +479,10 @@ export async function runTool(name, input = {}) {
       return Object.fromEntries(Object.entries(getProtocols()).map(([k, v]) => [k, v.description]));
     case "smart_home":
       return homeAssistant(input.action, input.entity_id);
+    case "fernseher": {
+      const r = await tvCommand(input);
+      return r.ok ? r : { error: r.error };
+    }
     case "alexa": {
       const r = await alexaCommand(input);
       return r.ok ? r : { error: r.error };

@@ -6,6 +6,7 @@ import { isAgentOnline } from "./agent-hub.js";
 import { videoTeamReady } from "./videoteam.js";
 import { marktReady } from "./markt.js";
 import { alexaConfigured } from "./alexa.js";
+import { tvPaired } from "./fernseher.js";
 
 // need beschreibt, was ein Agent braucht:
 //  {type:"frei"}                      -> immer einsatzbereit (kostenlose Quelle)
@@ -41,6 +42,7 @@ export const AGENTS = [
   // --- Entwicklung & Steuerung ---
   { id: "code", name: "Code-Agent", emoji: "💻", cat: "Entwicklung & Steuerung", purpose: "Sichert und erweitert Fridays Code (GitHub).", examples: ["Gibt es ein Update?", "Was wurde zuletzt geändert?"], need: { type: "frei" } },
   { id: "smarthome", name: "SmartHome-Agent", emoji: "🏠", cat: "Entwicklung & Steuerung", purpose: "Licht und Geräte über Home Assistant.", examples: ["Mach das Licht an", "Schalt alles aus"], need: { type: "key", key: "haToken", label: "Home Assistant" } },
+  { id: "fernseher", name: "Fernseher-Agent", emoji: "📺", cat: "Entwicklung & Steuerung", purpose: "Steuert deinen Samsung-Fernseher im WLAN: an/aus, Lautstärke, Sender, Apps wie Netflix und YouTube.", examples: ["Friday, mach Netflix an", "Fernseher leiser", "Fernseher aus"], need: { type: "check", ok: () => tvPaired(), label: "Fernseher koppeln (Werkzeug-Menü → Fernbedienung)" } },
   { id: "alexa", name: "Alexa-Agent", emoji: "🔵", cat: "Entwicklung & Steuerung", purpose: "Startet deine Alexa-Routinen und lässt Alexa etwas ansagen – damit steuert Friday alles, was an Alexa hängt.", examples: ["Friday, Alexa Licht an", "Alexa, sag Essen ist fertig", "Alexa Gute Nacht"], need: { type: "check", ok: () => alexaConfigured(), label: "Voice-Monkey-Schlüssel (Werkzeug-Menü → Alexa)" } },
   { id: "mac", name: "Mac-Agent", emoji: "🖥️", cat: "Entwicklung & Steuerung", purpose: "Steuert deinen Mac (Apps öffnen, suchen, Screenshot).", examples: ["Öffne YouTube", "Mach einen Screenshot"], need: { type: "mac" } },
   { id: "system", name: "System-Agent", emoji: "🛡️", cat: "Entwicklung & Steuerung", purpose: "System-Check, Sicherungen und Updates.", examples: ["Mach einen System-Check", "Sicher dich jetzt"], need: { type: "frei" } },

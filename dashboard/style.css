@@ -1523,3 +1523,30 @@ body.reduce-anim.glow-breathe .panel { animation: none; }
 .alexa-msg { min-height: 1.2em; margin: 10px 0 4px; font-size: 12px; }
 .alexa-msg.bad { color: var(--bad); }
 .alexa-hint { font-size: 11px; }
+/* ---------- Fernbedienung (Samsung-TV) ---------- */
+.tv-box { width: min(440px, 100%); }
+.tv-row { display: flex; gap: 8px; align-items: center; margin: 10px 0; flex-wrap: wrap; }
+.tv-row input { flex: 1 1 160px; min-width: 0; }
+.tv-found { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+.tv-pick { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; }
+.tv-pick span { font-size: 11px; color: var(--muted); }
+.tv-wait { color: var(--gold); animation: tvBlink 1.4s ease-in-out infinite; }
+@keyframes tvBlink { 50% { opacity: .45; } }
+.tv-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; color: var(--text); }
+.tv-state { font-size: 11px; letter-spacing: .12em; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.tv-state.on { color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 10px rgba(255,138,30,.35); }
+.tv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
+.tv-btn { padding: 10px 6px; font-size: 13px; border-radius: 12px; transition: transform .08s, box-shadow .15s; }
+.tv-btn:active, .tv-press { transform: scale(.94); box-shadow: 0 0 14px rgba(255,138,30,.55); }
+.tv-power { color: var(--ok); }
+.tv-power.off { color: var(--bad); }
+.tv-pads { display: grid; grid-template-columns: 64px 1fr 64px; gap: 10px; align-items: center; margin: 12px 0; }
+.tv-rocker { display: flex; flex-direction: column; align-items: stretch; gap: 6px; text-align: center; font-size: 10px; color: var(--muted); letter-spacing: .08em; }
+.tv-dpad { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 46px); gap: 6px; max-width: 190px; margin: 0 auto; width: 100%; }
+.tv-dpad .up { grid-area: 1 / 2; } .tv-dpad .left { grid-area: 2 / 1; } .tv-dpad .mid { grid-area: 2 / 2; border-radius: 50%; color: var(--text); border-color: var(--cyan); }
+.tv-dpad .right { grid-area: 2 / 3; } .tv-dpad .down { grid-area: 3 / 2; }
+.tv-chan input { flex: 0 1 120px; }
+.tv-apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tv-app { padding: 12px 6px; font-size: 12px; color: var(--text); }
+.tv-msg { min-height: 1.2em; margin: 10px 0 4px; font-size: 12px; }
+.tv-hint { font-size: 11px; }

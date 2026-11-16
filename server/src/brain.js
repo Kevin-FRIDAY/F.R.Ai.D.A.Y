@@ -6,6 +6,7 @@ import * as store from "./store.js";
 import { isAgentOnline } from "./agent-hub.js";
 import { agentsBrief } from "./agents.js";
 import { quickCommand as alexaQuick } from "./alexa.js";
+import { quickCommand as tvQuick } from "./fernseher.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
@@ -28,7 +29,8 @@ Werkzeuge:
 - Zum Öffnen von Apps/Websites auf dem Mac ("öffne YouTube", "mach Netflix auf") nutze open_app. Für Luftqualität air_quality, für Währungsumrechnung currency, für Krypto-Preise crypto, für Feiertage holidays, für die ISS-Position iss, für kurze Faktenfragen zuerst lookup (Wikipedia), für Länder-Steckbriefe country_info. Diese Dienste sind kostenlos; nimm sie vor der Websuche.
 - Wenn ${config.userName} etwas Persönliches erzählt, das später nützlich ist, speichere es mit "remember", ohne lange nachzufragen.
 - Erinnerungen: Rechne relative Angaben ("in 20 Minuten", "morgen um 8") anhand der aktuellen Zeit in eine genaue Zeit um.
-- Für Alexa (Routinen wie "Licht an", Ansagen auf dem Echo) nutze alexa. Geräte, die nur an Alexa hängen, steuerst du über deren Alexa-Routinen.
+- Für den Fernseher (Samsung-TV im WLAN) nutze fernseher. "Öffne YouTube" heißt Mac (open_app); "mach Netflix an", "auf dem Fernseher" oder "TV" heißt Fernseher.
+- Für Alexa (Routinen wie "Licht an", Ansagen auf dem Echo) nutze alexa. Geräte, die nur an Alexa hängen, steuerst du über deren Alexa-Routinen. Sätze, die mit "Alexa" beginnen, gehen an Alexa, nicht an den Fernseher.
 - Mac-Aktionen gehen nur, wenn der Mac verbunden ist. Wenn nicht, sag es kurz.
 - Lösche, kaufe oder verschicke nie etwas an andere Personen ohne ausdrückliche Bestätigung.`;
 
@@ -80,12 +82,23 @@ export async function ask({ text, channel = "web", image, mode = "normal", targe
   const actions = [];
 
   // Alexa-Befehle ("Alexa Licht an", "Alexa sag ...") gehen sofort und ohne Claude (klappt auch bei leerem Guthaben).
+  // Steht vor dem Fernseher, damit "Alexa, mach Netflix an" bei Alexa landet.
   if (mode !== "translate" && !image && text) {
     try {
       const alexaAnswer = await alexaQuick(text);
       if (alexaAnswer) { actions.push("alexa"); return finish(alexaAnswer); }
     } catch (err) {
       console.error("Alexa-Schnellbefehl:", err.message);
+    }
+  }
+
+  // Fernseher-Befehle gehen sofort und ohne Claude (klappt auch bei leerem Guthaben).
+  if (mode !== "translate" && !image && text) {
+    try {
+      const tvAnswer = await tvQuick(text);
+      if (tvAnswer) { actions.push("fernseher"); return finish(tvAnswer); }
+    } catch (err) {
+      console.error("Fernseher-Schnellbefehl:", err.message);
     }
   }
 

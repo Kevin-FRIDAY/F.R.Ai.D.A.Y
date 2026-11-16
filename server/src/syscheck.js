@@ -7,6 +7,7 @@ import { getEnergie } from "./energie.js";
 import { videoTeamReady } from "./videoteam.js";
 import { marktReady } from "./markt.js";
 import { status as alexaStatus } from "./alexa.js";
+import { status as tvStatus } from "./fernseher.js";
 
 async function timed(label, fn) {
   const t0 = Date.now();
@@ -60,6 +61,13 @@ export async function runSystemCheck() {
     timed("iCloud-Postfach", async () => ({ ok: mailConfigured(), detail: mailConfigured() ? "verbunden" : "nicht verbunden" })),
     // Telegram
     timed("Telegram", async () => ({ ok: Boolean(config.telegramToken), detail: config.telegramToken ? "eingerichtet" : "nicht eingerichtet" })),
+    // Fernseher
+    timed("Fernseher (Samsung)", async () => {
+      const s = await tvStatus();
+      if (!s.eingerichtet) return { ok: false, detail: "nicht eingerichtet" };
+      if (!s.gekoppelt) return { ok: false, detail: "noch nicht gekoppelt" };
+      return { ok: true, detail: s.erreichbar ? `${s.name}: ${s.zustand === "standby" ? "Standby" : "an"}` : `${s.name}: aus` };
+    }),
     // Alexa (Voice Monkey)
     timed("Alexa (Voice Monkey)", async () => {
       const s = await alexaStatus();
