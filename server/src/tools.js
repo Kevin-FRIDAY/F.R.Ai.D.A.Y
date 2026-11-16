@@ -254,7 +254,7 @@ export const toolDefinitions = [
   },
   {
     name: "werkstatt",
-    description: "Fridays 3D-Werkstatt: entwirft aus einem Wunsch (z. B. 'ein Porsche Taycan', 'ein Wohnhaus mit 12 Etagen', 'eine Gartenhütte') ein 3D-Hologramm, das im Dashboard Schritt für Schritt aufgebaut und erklärt wird. erweitern=true ergänzt das zuletzt gebaute Modell (z. B. 'mach eine Fußbodenheizung rein'). Die Werkstatt spricht die Schritte selbst; antworte danach nur mit einem kurzen Satz wie 'Sehr gern, Chef.'",
+    description: "Fridays 3D-Werkstatt: entwirft aus einem Wunsch (z. B. 'ein Porsche Taycan', 'ein Wohnhaus mit 12 Etagen', 'eine Gartenhütte') ein 3D-Hologramm. Wohnhäuser ('Mehrfamilienhaus mit 4 Etagen', 'Einfamilienhaus') entwirft sie selbst ohne Claude: Wohnungen, Grundrisse mit m², Möbel und Leitungen (Kaltwasser, Warmwasser, Abwasser, Heizung, Strom) als schematischer Entwurf, das im Dashboard Schritt für Schritt aufgebaut und erklärt wird. erweitern=true ergänzt das zuletzt gebaute Modell (z. B. 'mach eine Fußbodenheizung rein'). Die Werkstatt spricht die Schritte selbst; antworte danach nur mit einem kurzen Satz wie 'Sehr gern, Chef.'",
     input_schema: {
       type: "object",
       properties: { wunsch: { type: "string" }, erweitern: { type: "boolean" } },

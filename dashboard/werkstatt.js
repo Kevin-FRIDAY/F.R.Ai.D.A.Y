@@ -8,7 +8,10 @@
   if (!box || !window.THREE) return;
   const THREE = window.THREE;
 
-  const COLORS = { cyan: 0x4fd8ff, weiss: 0xf2f6ff, rot: 0xff4d5e, orange: 0xff8a1e, gelb: 0xffd84d, gruen: 0x4dffa6, blau: 0x3d7dff, lila: 0xb57bff, grau: 0x9aa4b2, schwarz: 0x2a2f38, glas: 0x9fe8ff };
+  const COLORS = { cyan: 0x4fd8ff, weiss: 0xf2f6ff, rot: 0xff4d5e, orange: 0xff8a1e, gelb: 0xffd84d, gruen: 0x4dffa6, blau: 0x3d7dff, lila: 0xb57bff, grau: 0x9aa4b2, schwarz: 0x2a2f38, glas: 0x9fe8ff, braun: 0xc08850, hellorange: 0xffc078 };
+  // Hausmodus: wie durchsichtig die Ebenen im Hologramm sind (viele Wände sollen nicht alles überstrahlen).
+  const ALPHA = { struktur: 0.05, raeume: 0.1 };
+  const EDGE = { struktur: 0.22, raeume: 0.18, moebel: 0.5 };
   let renderer, scene, camera, root, grid, raf = 0, plan = null, built = [], running = 0;
   let solid = (() => { try { return localStorage.getItem("friday_werkstatt_massiv") === "1"; } catch { return false; } })();
   let yaw = 0.7, pitch = 0.42, dist = 9, target = new THREE.Vector3(0, 0.8, 0), autoSpin = true;
@@ -18,6 +21,7 @@
     if (renderer) return;
     const canvas = $("werkstatt-canvas");
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.localClippingEnabled = true;
     renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x02060b);
@@ -60,6 +64,8 @@
   function loop(t) {
     raf = requestAnimationFrame(loop);
     if (autoSpin) yaw += 0.0025;
+    // Nebel mit dem Abstand mitziehen, sonst verschwinden große Modelle (Häuser) im Dunst.
+    scene.fog.near = Math.max(14, dist * 0.9); scene.fog.far = Math.max(46, dist * 3);
     camera.position.set(target.x + dist * Math.cos(pitch) * Math.cos(yaw), target.y + dist * Math.sin(pitch), target.z + dist * Math.cos(pitch) * Math.sin(yaw));
     camera.lookAt(target);
     // Teile fahren beim Erscheinen von unten ein und leuchten kurz auf.
@@ -68,7 +74,7 @@
       const e = 1 - Math.pow(1 - k, 3);
       b.obj.scale.copy(b.base).multiplyScalar(0.001 + e * 0.999);
       b.obj.position.y = b.y + (1 - e) * 0.6;
-      if (b.edge) b.edge.material.opacity = 0.35 + (1 - k) * 0.65;
+      if (b.edge) b.edge.material.opacity = b.edgeBase + (1 - k) * (1 - b.edgeBase);
     }
     renderer.render(scene, camera);
   }
@@ -98,6 +104,10 @@
     if (p.form === "text") {
       const s = labelSprite(String(p.text || ""), css);
       s.position.fromArray(p.pos || [0, 1, 0]);
+      if (p.ebene && haus) { // Haus: Schilder mit der Hausgröße wachsen lassen
+        const k = Math.max(1, Math.min(2.4, Math.max(haus.masse.breite, haus.masse.tiefe) / 11));
+        s.scale.multiplyScalar(p.nurEtage ? Math.max(0.7, k * 0.7) : k);
+      }
       return { obj: s };
     }
     let geo;
@@ -118,31 +128,35 @@
     const glass = p.farbe === "glas";
     const fill = new THREE.Mesh(geo, solid
       ? new THREE.MeshStandardMaterial({ color: hex, metalness: glass ? 0.1 : 0.35, roughness: glass ? 0.05 : 0.45, transparent: glass, opacity: glass ? 0.45 : 1 })
-      : new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: p.form === "rohr" ? 0.85 : glass ? 0.08 : 0.14, depthWrite: false, blending: THREE.AdditiveBlending }));
+      : new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: p.form === "rohr" || p.form === "kugel" ? 0.85 : glass ? 0.08 : (ALPHA[p.ebene] ?? 0.14), depthWrite: false, blending: THREE.AdditiveBlending }));
     group.add(fill);
     let edge = null;
     if (p.form !== "rohr" && p.form !== "kugel") {
       edge = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), new THREE.LineBasicMaterial({ color: hex, transparent: true, opacity: 1 }));
+      edge.userData.base = EDGE[p.ebene] ?? 0.35;
       group.add(edge);
     }
     const pos = p.form === "rohr" ? [0, 0, 0] : (p.pos || [0, 0.5, 0]);
     group.position.fromArray(pos);
     if (Array.isArray(p.drehung)) group.rotation.set(...p.drehung.map((d) => (Number(d) || 0) * Math.PI / 180));
-    return { obj: group, edge };
+    return { obj: group, edge, edgeBase: edge ? edge.userData.base : 0.35 };
   }
 
   function addParts(teile, t0) {
+    const gap = Math.min(35, 4000 / Math.max(1, teile.length)); // große Bauabschnitte schneller einblenden
     teile.forEach((p, i) => {
       const part = makePart(p);
       if (!part) return;
       root.add(part.obj);
-      built.push({ ...part, y: part.obj.position.y, base: part.obj.scale.clone(), born: t0 + i * 35, src: p });
+      built.push({ edgeBase: 0.35, ...part, y: part.obj.position.y, base: part.obj.scale.clone(), born: t0 + i * gap, src: p });
     });
+    applyHaus();
   }
 
   // Kamera an die Größe des Modells anpassen.
   function frameModel() {
-    const bb = new THREE.Box3().setFromObject(root);
+    const bb = new THREE.Box3();
+    for (const b of built) if (b.obj.visible && b.src.form !== "text") bb.expandByObject(b.obj);
     if (bb.isEmpty()) return;
     const size = bb.getSize(new THREE.Vector3()), center = bb.getCenter(new THREE.Vector3());
     target.copy(center);
@@ -152,7 +166,8 @@
   // Gesamtmaße als Maßlinien mit Beschriftung.
   function addDimensions() {
     const bb = new THREE.Box3();
-    for (const b of built) if (b.src.form !== "text") bb.expandByObject(b.obj);
+    // Beim Haus zählen nur Rohbau-Teile (nicht Wärmepumpe im Garten oder Kanal-Anschluss).
+    for (const b of built) if (b.src.form !== "text" && (!b.src.ebene || b.src.ebene === "struktur")) bb.expandByObject(b.obj);
     if (bb.isEmpty()) return;
     const fmt = (m) => `${m.toLocaleString("de-DE", { maximumFractionDigits: 2 })} m`;
     const mat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 });
@@ -190,6 +205,7 @@
     const p = entry.plan;
     if (!entry.erweiterung || !plan) {
       root.clear(); built = []; plan = { ...p, schritte: [...p.schritte] }; autoSpin = true;
+      setupHaus(p.haus || null);
     } else {
       root.getObjectByName("masse")?.removeFromParent();
       plan.schritte.push(...p.schritte);
@@ -219,12 +235,13 @@
     root.clear(); built = [];
     steps.forEach((s) => addParts(s.teile, performance.now() - 2000));
     addDimensions();
+    applyHaus();
   }
 
-  async function request(wunsch) {
+  async function request(wunsch, { neu = false } = {}) {
     wunsch = String(wunsch || "").trim();
     if (!wunsch) return;
-    const erweitern = $("werkstatt-extend").checked && plan;
+    const erweitern = !neu && $("werkstatt-extend").checked && plan;
     setState("PLANT …", "busy");
     setCaption(erweitern ? "Ich ergänze das Modell …" : "Ich entwerfe den Bauplan …");
     try {
@@ -257,6 +274,139 @@
   $("werkstatt-x")?.addEventListener("click", close);
   $("werkstatt-form")?.addEventListener("submit", (e) => { e.preventDefault(); const t = $("werkstatt-input"); request(t.value); t.value = ""; });
   $("werkstatt-solid")?.addEventListener("change", (e) => { solid = e.target.checked; rebuildMaterials(); });
+  $("werkstatt-beispiel")?.addEventListener("click", () => request("Mehrfamilienhaus mit 4 Etagen und 8 Wohnungen", { neu: true }));
+
+  // ---------- Hausmodus: Etagen, Ebenen, Schnitt, Grundriss ----------
+  let haus = null, etageSel = "alle", ebeneOn = {}, schnittOn = false;
+  const clip = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const COLOR_CSS = (name) => `#${(COLORS[name] ?? COLORS.cyan).toString(16).padStart(6, "0")}`;
+  const etagenLabel = (nr) => (nr === "alle" ? "Alle" : nr === haus?.dach ? "Dach" : haus?.etagen.find((e) => e.nr === nr)?.kurz || String(nr));
+
+  function setupHaus(h) {
+    haus = h;
+    const panel = $("werkstatt-haus");
+    $("werkstatt-plan")?.classList.add("hidden");
+    $("wh-plan")?.classList.remove("on");
+    if (!h) { panel?.classList.add("hidden"); box.classList.remove("ist-haus"); schnittOn = false; return; }
+    etageSel = "alle"; schnittOn = false;
+    ebeneOn = Object.fromEntries(h.ebenen.map((e) => [e.id, true]));
+    if (window.innerWidth < 700) panel.open = false;
+    box.classList.add("ist-haus");
+    $("wh-schnitt").checked = false; $("wh-schnitt-pos").disabled = true; $("wh-schnitt-pos").value = 50;
+    $("wh-ebenen").innerHTML = h.ebenen.map((e) => `<label style="color:${COLOR_CSS(e.farbe)}"><input type="checkbox" data-ebene="${escapeHtml(e.id)}" checked><i></i><span style="color:#fff">${escapeHtml(e.name)}</span></label>`).join("");
+    const nrs = ["alle", ...h.etagen.map((e) => e.nr), h.dach];
+    $("wh-etagen").innerHTML = nrs.map((nr) => `<button type="button" data-etage="${nr}">${escapeHtml(etagenLabel(nr))}</button>`).join("");
+    markEtage();
+    zeigeKosten(h.kosten);
+    panel.classList.remove("hidden");
+  }
+  // Grobe Kostenschätzung (kommt fertig vom Server).
+  function zeigeKosten(k) {
+    const el = $("wh-kosten");
+    if (!el) return;
+    if (!k) { el.classList.add("hidden"); return; }
+    const euro = (v) => `${Number(v).toLocaleString("de-DE")} €`;
+    const kurz = (v) => (v >= 1e6 ? `${(v / 1e6).toLocaleString("de-DE", { maximumFractionDigits: 2 })} Mio. €` : `${Math.round(v / 1000).toLocaleString("de-DE")} Tsd. €`);
+    $("wh-kosten-summe").textContent = `ca. ${kurz(k.summe)}`;
+    $("wh-kosten-liste").innerHTML = k.posten.map((p) => `<li><span>${escapeHtml(p.bereich)}</span><b>${euro(p.betrag)}</b></li>`).join("")
+      + `<li class="summe"><span>Gesamt (ca. ${k.proM2.toLocaleString("de-DE")} €/m²)</span><b>${euro(k.summe)}</b></li>`
+      + `<li><span>Spanne</span><b>${kurz(k.spanne[0])} – ${kurz(k.spanne[1])}</b></li>`;
+    $("wh-kosten-hinweis").textContent = `⚠︎ ${k.hinweis}`;
+    el.classList.remove("hidden");
+  }
+  function markEtage() {
+    $("wh-etagen")?.querySelectorAll("button").forEach((b) => b.classList.toggle("on", String(etageSel) === b.dataset.etage));
+  }
+
+  // Sichtbarkeit je Teil: Ebene an/aus, gewählte Etage, Raum-Beschriftungen nur in der Einzel-Etage.
+  function applyHaus() {
+    if (!root) return;
+    const planes = schnittOn ? [clip] : null;
+    for (const b of built) {
+      const s = b.src;
+      let vis = true;
+      if (haus) {
+        if (s.ebene && ebeneOn[s.ebene] === false) vis = false;
+        if (etageSel === "alle") { if (s.nurEtage) vis = false; }
+        else if (s.etage !== undefined && s.etage !== etageSel) vis = false;
+      }
+      b.obj.visible = vis;
+      b.obj.traverse((o) => { if (o.material && o.material.clippingPlanes !== planes) { o.material.clippingPlanes = planes; o.material.needsUpdate = true; } });
+    }
+    const masse = root.getObjectByName("masse");
+    if (masse) masse.visible = !haus || etageSel === "alle";
+  }
+
+  function updateClip() {
+    if (!haus) return;
+    const t = Number($("wh-schnitt-pos").value) / 100;
+    const T = haus.masse.tiefe;
+    // Alles vor der Schnittebene (Straßenseite) wird ausgeblendet.
+    clip.constant = -(-T / 2 - 0.5 + t * (T + 1));
+  }
+
+  function focusEtage() {
+    if (!haus) return;
+    if (etageSel === "alle") { frameModel(); return; }
+    const e = haus.etagen.find((x) => x.nr === etageSel);
+    const y = e ? e.y : haus.dach * 3;
+    target.set(0, y + 1, 0);
+    dist = Math.max(8, Math.max(haus.masse.breite, haus.masse.tiefe) * 1.25);
+  }
+
+  const fl = (v) => Number(v).toLocaleString("de-DE", { maximumFractionDigits: 1 });
+  function zeigeGrundriss() {
+    if (!haus) return;
+    const nr = etageSel === "alle" || etageSel === haus.dach ? 0 : etageSel;
+    const e = haus.etagen.find((x) => x.nr === nr) || haus.etagen[0];
+    const B = haus.masse.breite, T = haus.masse.tiefe, pad = 0.8;
+    const FILL = { wohnen: "#123d52", essen: "#123d52", schlafen: "#2a2350", kind: "#203a2a", kueche: "#3b2a12", bad: "#0f3a4a", wc: "#0f3a4a", flur: "#1a2430", garderobe: "#1a2430", abstell: "#1d1d26", treppenhaus: "#262626", keller: "#1d1d26", technik: "#3b2412" };
+    // Blick von oben: Straßenseite (vorne) unten.
+    const Y = (z) => T / 2 - z;
+    let svg = `<svg viewBox="${-B / 2 - pad} ${-pad} ${B + 2 * pad} ${T + 2 * pad + 0.6}" preserveAspectRatio="xMidYMid meet">`;
+    svg += `<rect x="${-B / 2}" y="0" width="${B}" height="${T}" fill="none" stroke="#4fd8ff" stroke-width=".3"/>`;
+    for (const r of e.raeume) {
+      const [x0, z0, x1, z1] = r.rect, w = x1 - x0, d = z1 - z0;
+      const fs = Math.min(Math.max(B * 0.017, 0.3), w / 6.5, d / 3);
+      svg += `<rect class="raum" x="${x0}" y="${Y(z1)}" width="${w}" height="${d}" fill="${FILL[r.typ] || "#16202a"}"/>`;
+      svg += `<text x="${x0 + w / 2}" y="${Y(z1) + d / 2 - fs * 0.6}" font-size="${fs}">${escapeHtml(r.name)}</text>`;
+      svg += `<text x="${x0 + w / 2}" y="${Y(z1) + d / 2 + fs * 0.7}" font-size="${fs * 0.9}" fill="#8fc7de">${fl(r.flaeche)} m²</text>`;
+    }
+    for (const w of e.wohnungen) {
+      const [x0, z0, x1, z1] = w.rect;
+      svg += `<rect x="${x0}" y="${Y(z1)}" width="${x1 - x0}" height="${z1 - z0}" fill="none" stroke="#ff8a1e" stroke-width=".12" stroke-dasharray=".4 .25"/>`;
+    }
+    for (const [sx, sz] of e.schaechte || []) svg += `<circle cx="${sx}" cy="${Y(sz)}" r=".22" fill="#3d7dff" stroke="#fff" stroke-width=".05"><title>Installationsschacht</title></circle>`;
+    svg += `<text x="0" y="${T + pad * 0.6}" font-size="${Math.min(0.42, B * 0.016)}" fill="#8fc7de">▼ Straßenseite · ${String(B).replace(".", ",")} × ${String(T).replace(".", ",")} m · blauer Punkt = Installationsschacht</text></svg>`;
+    $("wp-svg").innerHTML = svg;
+    $("wp-titel").textContent = `GRUNDRISS · ${e.name.toUpperCase()}`;
+    const list = e.wohnungen.length ? e.wohnungen.map((w) => `<li><b>${escapeHtml(w.name)}</b><br>${w.zimmer} Zimmer · ${fl(w.flaeche)} m²</li>`) : e.raeume.map((r) => `<li><b>${escapeHtml(r.name)}</b><br>${fl(r.flaeche)} m²</li>`);
+    $("wp-liste").innerHTML = list.join("");
+    $("werkstatt-plan").classList.remove("hidden");
+    $("wh-plan").classList.add("on");
+  }
+
+  $("wh-etagen")?.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-etage]");
+    if (!b) return;
+    etageSel = b.dataset.etage === "alle" ? "alle" : Number(b.dataset.etage);
+    markEtage(); applyHaus(); focusEtage();
+    if (!$("werkstatt-plan").classList.contains("hidden")) zeigeGrundriss();
+  });
+  $("wh-ebenen")?.addEventListener("change", (e) => {
+    const id = e.target?.dataset?.ebene;
+    if (!id) return;
+    ebeneOn[id] = e.target.checked; applyHaus();
+  });
+  $("wh-schnitt")?.addEventListener("change", (e) => {
+    schnittOn = e.target.checked; $("wh-schnitt-pos").disabled = !schnittOn; updateClip(); applyHaus();
+    if (schnittOn) { autoSpin = false; yaw = -Math.PI / 2 + 0.55; pitch = 0.35; } // von vorn auf die Schnittfläche schauen
+  });
+  $("wh-schnitt-pos")?.addEventListener("input", updateClip);
+  $("wh-oben")?.addEventListener("click", () => { autoSpin = false; pitch = 1.45; yaw = -Math.PI / 2; focusEtage(); });
+  $("wh-3d")?.addEventListener("click", () => { autoSpin = false; pitch = 0.42; yaw = 0.7; focusEtage(); });
+  $("wh-plan")?.addEventListener("click", () => { if ($("werkstatt-plan").classList.contains("hidden")) zeigeGrundriss(); else { $("werkstatt-plan").classList.add("hidden"); $("wh-plan").classList.remove("on"); } });
+  $("wp-x")?.addEventListener("click", () => { $("werkstatt-plan").classList.add("hidden"); $("wh-plan").classList.remove("on"); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.classList.contains("hidden")) close(); });
 
   // Wenn Friday im Chat etwas gebaut hat: Werkstatt öffnen und abspielen.

@@ -3,6 +3,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { config } from "./config.js";
 import { recordUsage, isCreditError, markEmpty } from "./energie.js";
+import { isHausWunsch, isHausBefehl, planHouse } from "./haus.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
 
@@ -73,7 +74,23 @@ function compact(plan) {
   return JSON.stringify({ titel: plan.titel, kennzahlen: plan.kennzahlen, schritte: plan.schritte.map((s) => s.sagen) });
 }
 
+// Wohnhäuser entwirft Friday selbst (ohne Claude): Grundrisse, Möbel und alle Leitungen.
+function planHaus(text) {
+  const plan = planHouse(text);
+  seq += 1;
+  latest = { id: seq, wunsch: text, erweiterung: false, plan, zeit: new Date().toISOString(), ohneClaude: true };
+  return { ok: true, ...latest };
+}
+
+// Sprachbefehl "Friday, bau mir ein Mehrfamilienhaus" – sofort und ohne Guthaben.
+export function quickCommand(text) {
+  if (!isHausBefehl(text)) return null;
+  const r = planHaus(String(text).trim().slice(0, 1000));
+  return { answer: "Einen Moment, Chef.", actions: ["werkstatt"], titel: r.plan.titel };
+}
+
 export async function planBuild(wunsch, basis = null) {
+  if (!basis && isHausWunsch(wunsch)) return planHaus(String(wunsch).trim().slice(0, 1000));
   if (!config.anthropicKey) return { ok: false, error: "Ohne Claude-Schlüssel kann die Werkstatt nichts entwerfen." };
   const text = String(wunsch || "").trim().slice(0, 1000);
   if (!text) return { ok: false, error: "Was soll ich bauen, Chef?" };

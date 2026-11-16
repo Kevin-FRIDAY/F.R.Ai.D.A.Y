@@ -9,6 +9,7 @@ import { quickCommand as alexaQuick } from "./alexa.js";
 import { quickCommand as tvQuick } from "./fernseher.js";
 import { quickCommand as dienstQuick, dienstKurzinfo } from "./dienste.js";
 import { offlineAnswer, notfallText } from "./offline.js";
+import { quickCommand as hausQuick } from "./werkstatt.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
@@ -103,6 +104,16 @@ export async function ask({ text, channel = "web", image, mode = "normal", targe
       if (tvAnswer) { actions.push("fernseher"); return finish(tvAnswer); }
     } catch (err) {
       console.error("Fernseher-Schnellbefehl:", err.message);
+    }
+  }
+
+  // Werkstatt: Wohnhäuser ("bau mir ein Mehrfamilienhaus") entwirft Friday selbst – ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const h = hausQuick(text);
+      if (h) { actions.push(...h.actions); return finish(h.answer); }
+    } catch (err) {
+      console.error("Haus-Werkstatt:", err.message);
     }
   }
 
