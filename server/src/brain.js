@@ -5,6 +5,7 @@ import { toolDefinitions, runTool } from "./tools.js";
 import * as store from "./store.js";
 import { isAgentOnline } from "./agent-hub.js";
 import { agentsBrief } from "./agents.js";
+import { quickCommand as alexaQuick } from "./alexa.js";
 import { quickCommand as tvQuick } from "./fernseher.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 
@@ -29,6 +30,7 @@ Werkzeuge:
 - Wenn ${config.userName} etwas Persönliches erzählt, das später nützlich ist, speichere es mit "remember", ohne lange nachzufragen.
 - Erinnerungen: Rechne relative Angaben ("in 20 Minuten", "morgen um 8") anhand der aktuellen Zeit in eine genaue Zeit um.
 - Für den Fernseher (Samsung-TV im WLAN) nutze fernseher. "Öffne YouTube" heißt Mac (open_app); "mach Netflix an", "auf dem Fernseher" oder "TV" heißt Fernseher.
+- Für Alexa (Routinen wie "Licht an", Ansagen auf dem Echo) nutze alexa. Geräte, die nur an Alexa hängen, steuerst du über deren Alexa-Routinen. Sätze, die mit "Alexa" beginnen, gehen an Alexa, nicht an den Fernseher.
 - Mac-Aktionen gehen nur, wenn der Mac verbunden ist. Wenn nicht, sag es kurz.
 - Lösche, kaufe oder verschicke nie etwas an andere Personen ohne ausdrückliche Bestätigung.`;
 
@@ -78,6 +80,17 @@ export async function ask({ text, channel = "web", image, mode = "normal", targe
   // Im Verlauf stehen nur reine Text-Paare. Innerhalb einer Anfrage bleibt alles vollständig.
   const messages = [...history, { role: "user", content: userContent }];
   const actions = [];
+
+  // Alexa-Befehle ("Alexa Licht an", "Alexa sag ...") gehen sofort und ohne Claude (klappt auch bei leerem Guthaben).
+  // Steht vor dem Fernseher, damit "Alexa, mach Netflix an" bei Alexa landet.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const alexaAnswer = await alexaQuick(text);
+      if (alexaAnswer) { actions.push("alexa"); return finish(alexaAnswer); }
+    } catch (err) {
+      console.error("Alexa-Schnellbefehl:", err.message);
+    }
+  }
 
   // Fernseher-Befehle gehen sofort und ohne Claude (klappt auch bei leerem Guthaben).
   if (mode !== "translate" && !image && text) {

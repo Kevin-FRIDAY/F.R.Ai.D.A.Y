@@ -27,6 +27,7 @@ Danach startet Friday jedes Mal automatisch, wenn du dich am Mac anmeldest.
 | Telegram | Friday per Nachricht oder Foto | [Telegram](anleitungen/6-telegram-push-briefing.md) |
 | Stimme | Echte Friday-Stimme über ElevenLabs | [Stimme](anleitungen/7-stimme.md) |
 | Smart Home | Licht und Geräte über Home Assistant | [Smart Home](anleitungen/8-protokolle-smart-home.md) |
+| Alexa | Alexa-Routinen starten und Ansagen auf dem Echo ("Friday, Alexa Licht an") | [Alexa](anleitungen/13-alexa.md) |
 | Fernseher | Samsung-TV: an/aus, Lautstärke, Sender, Netflix & Co. ("Friday, mach Netflix an") | [Fernseher](anleitungen/12-fernseher.md) |
 | Updates | Roter Knopf = neue Version, grüner Knopf = aktuell | [Updates](anleitungen/10-updates.md) |
 | Sicherung | Tägliches Backup + vor jedem Update, Zurückholen per Klick | [Sicherung](anleitungen/11-sicherung.md) |

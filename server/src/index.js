@@ -18,6 +18,7 @@ import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webs
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
+import * as alexa from "./alexa.js";
 import * as fernseher from "./fernseher.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
@@ -252,6 +253,18 @@ app.post("/api/fernseher/befehl", asyncRoute(async (req, res) => {
   const { action, value, anzahl } = req.body || {};
   const r = await fernseher.command({ action: String(action || ""), value: value == null ? undefined : String(value).slice(0, 60), anzahl });
   if (r.ok && action !== "status") store.logActivity("mac", `Fernseher: ${action}${value ? " " + value : ""}`);
+  res.status(r.ok ? 200 : 400).json(r);
+}));
+// Alexa (über Voice Monkey)
+app.get("/api/alexa", asyncRoute(async (req, res) => res.json(await alexa.status())));
+app.post("/api/alexa/schluessel", asyncRoute(async (req, res) => { const r = await alexa.setToken(req.body?.token); res.status(r.ok ? 200 : 400).json(r); }));
+app.post("/api/alexa/aktualisieren", asyncRoute(async (req, res) => { const r = await alexa.refreshDevices(); res.status(r.ok ? 200 : 400).json(r.ok ? await alexa.status() : r); }));
+app.post("/api/alexa/standard", (req, res) => { const r = alexa.setStandard(String(req.body?.id || "")); res.status(r.ok ? 200 : 400).json(r); });
+app.post("/api/alexa/vergessen", (req, res) => res.json(alexa.forget()));
+app.post("/api/alexa/befehl", asyncRoute(async (req, res) => {
+  const { action, value, lautsprecher } = req.body || {};
+  const r = await alexa.command({ action: String(action || ""), value: value == null ? undefined : String(value).slice(0, 900), lautsprecher: lautsprecher ? String(lautsprecher).slice(0, 60) : undefined });
+  if (r.ok && action !== "liste") store.logActivity("mac", action === "ansage" ? "Alexa: Ansage" : `Alexa: ${r.routine || action}`);
   res.status(r.ok ? 200 : 400).json(r);
 }));
 app.get("/api/agents", (req, res) => res.json(agentsWithStatus()));

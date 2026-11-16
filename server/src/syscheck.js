@@ -6,6 +6,7 @@ import { shipsStatus } from "./ships.js";
 import { getEnergie } from "./energie.js";
 import { videoTeamReady } from "./videoteam.js";
 import { marktReady } from "./markt.js";
+import { status as alexaStatus } from "./alexa.js";
 import { status as tvStatus } from "./fernseher.js";
 
 async function timed(label, fn) {
@@ -66,6 +67,12 @@ export async function runSystemCheck() {
       if (!s.eingerichtet) return { ok: false, detail: "nicht eingerichtet" };
       if (!s.gekoppelt) return { ok: false, detail: "noch nicht gekoppelt" };
       return { ok: true, detail: s.erreichbar ? `${s.name}: ${s.zustand === "standby" ? "Standby" : "an"}` : `${s.name}: aus` };
+    }),
+    // Alexa (Voice Monkey)
+    timed("Alexa (Voice Monkey)", async () => {
+      const s = await alexaStatus();
+      if (!s.eingerichtet) return { ok: false, detail: "nicht eingerichtet" };
+      return { ok: true, detail: `${s.routinen.length} Routinen, ${s.lautsprecher.length} Lautsprecher` };
     }),
     // Stimme
     timed("Stimme (ElevenLabs)", async () => ({ ok: Boolean(config.elevenKey), detail: config.elevenKey ? "Schlüssel vorhanden" : "Gerätestimme" })),

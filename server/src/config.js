@@ -38,6 +38,8 @@ export const config = {
   telegramChatId: env("TELEGRAM_CHAT_ID"),
   haUrl: env("HOME_ASSISTANT_URL").replace(/\/$/, ""),
   haToken: env("HOME_ASSISTANT_TOKEN"),
+  // Alexa über Voice Monkey (voicemonkey.io, v3-Schlüssel). Kann auch im Dashboard eingetragen werden.
+  voicemonkeyToken: env("VOICEMONKEY_TOKEN"),
   // Woher Updates kommen (GitHub-Repo "Besitzer/Name" und Zweig).
   updateRepo: env("UPDATE_REPO", "Kevin-FRIDAY/F.R.Ai.D.A.Y"),
   updateBranch: env("UPDATE_BRANCH", "main"),
