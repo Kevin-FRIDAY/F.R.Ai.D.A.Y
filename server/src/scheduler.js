@@ -86,7 +86,7 @@ async function checkUpdates() {
     if (!laeuftSchon && tries < 2 && idleFor(5 * 60 * 1000) && !marktBusy() && !(job && job.status === "läuft")) {
       autoTries.set(u.latest, tries + 1);
       console.log(`Automatisches Update auf ${u.latest}`);
-      startUpdate();
+      startUpdate({ auto: true });
       return;
     }
     if (tries < 2) return; // später noch einmal versuchen

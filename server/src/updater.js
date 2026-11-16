@@ -17,6 +17,11 @@ export function localVersion() {
   }
 }
 
+// Die Version, mit der dieser Server gestartet ist. Die VERSION-Datei wechselt schon mitten im
+// Update; erst nach dem Neustart läuft die neue Version wirklich.
+const BOOT_VERSION = localVersion();
+export const runningVersion = () => BOOT_VERSION;
+
 // Ist Version a neuer als b? (z. B. "1.2.0" gegen "1.1.9")
 function isNewer(a, b) {
   const pa = a.split(".").map(Number);
@@ -115,7 +120,17 @@ export function getUpdateStatus() {
   }
 }
 
-export function startUpdate() {
+// Kurzfassung für den Ladebalken im Dashboard (ohne GitHub-Abfrage, darf oft abgefragt werden).
+export function updateProgress() {
+  const st = getUpdateStatus();
+  if (!st) return { installed: BOOT_VERSION, status: null };
+  const alter = Date.now() - new Date(st.time).getTime();
+  // Ein "läuft", das seit 10 Minuten nichts mehr gemeldet hat, ist hängen geblieben.
+  const status = st.state === "laeuft" && alter > 10 * 60 * 1000 ? { ...st, state: "fehler", message: "Das Update hängt. Schau in ~/Library/Logs/Friday/update.log nach." } : st;
+  return { installed: BOOT_VERSION, status, alterSek: Math.round(alter / 1000) };
+}
+
+export function startUpdate({ auto = false } = {}) {
   const current = getUpdateStatus();
   if (current?.state === "laeuft" && Date.now() - new Date(current.time).getTime() < 10 * 60 * 1000) {
     return { error: "Es läuft schon ein Update." };
@@ -123,14 +138,15 @@ export function startUpdate() {
   if (!fs.existsSync(SCRIPT)) return { error: "Das Update-Skript fehlt." };
   const logDir = path.join(os.homedir(), "Library", "Logs", "Friday");
   fs.mkdirSync(logDir, { recursive: true });
-  fs.writeFileSync(STATUS_FILE, JSON.stringify({ state: "laeuft", message: "Update startet...", time: new Date().toISOString() }));
+  const jetzt = new Date().toISOString();
+  fs.writeFileSync(STATUS_FILE, JSON.stringify({ state: "laeuft", message: "Update startet...", step: "start", percent: 3, von: localVersion(), auto: Boolean(auto), started: jetzt, time: jetzt }));
   const log = fs.openSync(path.join(logDir, "update.log"), "a");
   // Eigene Prozessgruppe, damit das Skript den Neustart von Friday überlebt.
   const child = spawn("/bin/bash", [SCRIPT], {
     cwd: APP_DIR,
     detached: true,
     stdio: ["ignore", log, log],
-    env: { ...process.env, FRIDAY_NODE: process.execPath, FRIDAY_GITHUB_TOKEN: githubToken() },
+    env: { ...process.env, FRIDAY_NODE: process.execPath, FRIDAY_GITHUB_TOKEN: githubToken(), FRIDAY_UPDATE_AUTO: auto ? "1" : "0" },
   });
   child.unref();
   fs.closeSync(log);

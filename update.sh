@@ -10,8 +10,14 @@ BACKUP="$HOME/Friday-Sicherung"
 KEEP=(--exclude node_modules --exclude .env --exclude server/data --exclude server/eigene-protokolle.json --exclude .git --exclude .venv --exclude kronos)
 mkdir -p "$DEST/server/data"
 
-status() { # status ZUSTAND TEXT
-  printf '{"state":"%s","message":"%s","time":"%s"}\n' "$1" "$2" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$STATUS"
+# Fortschritt für den Ladebalken im Dashboard: Schritt (laden, sichern, installieren, neustart) und Prozent.
+SCHRITT=start; PROZENT=3; ZIEL=""; VON="$(head -1 "$DEST/VERSION" 2>/dev/null | tr -cd '0-9.')"; START="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+AUTO="${FRIDAY_UPDATE_AUTO:-0}"; [ "$AUTO" = 1 ] && AUTO=true || AUTO=false
+status() { # status ZUSTAND TEXT [SCHRITT PROZENT]
+  [ -n "${3:-}" ] && SCHRITT="$3"
+  [ -n "${4:-}" ] && PROZENT="$4"
+  printf '{"state":"%s","message":"%s","step":"%s","percent":%s,"von":"%s","ziel":"%s","auto":%s,"started":"%s","time":"%s"}\n' \
+    "$1" "$2" "$SCHRITT" "$PROZENT" "$VON" "$ZIEL" "$AUTO" "$START" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$STATUS.tmp" && mv -f "$STATUS.tmp" "$STATUS"
   echo "$(date '+%F %T') $2"
 }
 fail() { status fehler "$1"; exit 1; }
@@ -49,7 +55,7 @@ GH_API="${FRIDAY_GITHUB_API:-https://api.github.com}"
 GH_CODELOAD="${FRIDAY_GITHUB_CODELOAD:-https://codeload.github.com}"
 
 # 1. Neue Version laden und prüfen
-status laeuft "Lade die neue Version von GitHub..."
+status laeuft "Lade die neue Version von GitHub..." laden 8
 if [ -n "$TOKEN" ]; then
   # Schlüssel steht in einer Datei, nicht in der Befehlszeile (sonst wäre er in der Prozessliste sichtbar).
   ( umask 077; printf 'Authorization: Bearer %s\n' "$TOKEN" > "$TMP/auth.txt" )
@@ -67,26 +73,30 @@ else
     || fail "Download von GitHub hat nicht geklappt. Ist das Repo privat? Dann trag in den Einstellungen deinen GitHub-Schlüssel ein."
 fi
 mkdir "$TMP/neu"
+status laeuft "Prüfe den Download..." laden 22
 tar -xzf "$TMP/friday.tar.gz" -C "$TMP/neu" --strip-components 1 || fail "Der Download ist beschädigt."
 NEW="$TMP/neu"
 [ -f "$NEW/VERSION" ] && [ -f "$NEW/server/src/index.js" ] && [ -f "$NEW/mac-agent/agent.js" ] \
   || fail "Auf GitHub liegt kein vollständiges Friday."
 VERSION="$(head -1 "$NEW/VERSION" | tr -cd '0-9.')"
+ZIEL="$VERSION"
 
 # 2. Alte Version sichern (für den Notfall)
-status laeuft "Sichere die alte Version..."
+status laeuft "Sichere die alte Version..." sichern 28
 # Versionierte Sicherung in ~/Friday-Backups (Daten, Schlüssel und Programm), lässt sich später zurückholen.
 if [ -f "$DEST/sicherung.sh" ]; then
   /bin/bash "$DEST/sicherung.sh" "vor-update-$(head -1 "$DEST/VERSION" 2>/dev/null | tr -cd '0-9.')" --programm >/dev/null \
     || fail "Sicherung vor dem Update hat nicht geklappt. Ich habe nichts verändert."
 fi
+status laeuft "Lege die Notfall-Kopie an..." sichern 45
 rm -rf "$BACKUP" && mkdir -p "$BACKUP" && chmod 700 "$BACKUP"
 rsync -a --exclude node_modules --exclude .venv --exclude kronos "$DEST/" "$BACKUP/" || fail "Sicherung hat nicht geklappt."
 
 # 3. Neue Version einspielen
-status laeuft "Installiere Version $VERSION..."
+status laeuft "Installiere Version $VERSION..." installieren 55
 rsync -a "${KEEP[@]}" "$NEW/" "$DEST/" || fail "Kopieren hat nicht geklappt."
 chmod +x "$DEST"/*.command "$DEST"/*.sh 2>/dev/null
+status laeuft "Installiere die Bausteine..." installieren 68
 if ! install_packages; then
   # Zurück zur alten Version, damit Friday weiterläuft
   rsync -a --delete "${KEEP[@]}" "$BACKUP/" "$DEST/"
@@ -95,7 +105,7 @@ if ! install_packages; then
 fi
 
 # 4. Neu starten
-status fertig "Version $VERSION ist installiert."
+status fertig "Version $VERSION ist installiert. Friday startet neu..." neustart 90
 if command -v launchctl >/dev/null; then
   launchctl kickstart -k "gui/$(id -u)/com.friday.agent" 2>/dev/null || true
   launchctl kickstart -k "gui/$(id -u)/com.friday.server" 2>/dev/null || true
