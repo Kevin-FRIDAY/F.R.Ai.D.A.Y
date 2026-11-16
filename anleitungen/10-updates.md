@@ -41,6 +41,23 @@ Wenn ich Friday verbessere, bekommst du ein neues Paket mit höherer Nummer in `
 - Wer in dein GitHub-Repo schreiben darf, bestimmt, was Friday beim nächsten Update installiert. Schütze dein GitHub-Konto deshalb mit Zwei-Faktor-Anmeldung.
 - Ein anderes Repo stellst du in `server/.env` mit `UPDATE_REPO=Besitzer/Name` und `UPDATE_BRANCH=main` ein.
 
+## Privates Repo (GitHub-Schlüssel)
+
+Ist dein Repo öffentlich, braucht Friday keinen Schlüssel. Willst du es **privat** stellen, braucht Friday einen eigenen Lese-Schlüssel, sonst kommen keine Updates mehr an.
+
+**Wichtig, die Reihenfolge:** Erst muss Friday mindestens Version 1.74.0 haben (das Update kommt automatisch, solange das Repo noch öffentlich ist). Erst danach Schlüssel eintragen und erst ganz am Ende das Repo privat stellen.
+
+1. Auf github.com oben rechts auf dein Bild → **Settings** → ganz unten **Developer settings** → **Personal access tokens** → **Fine-grained tokens** → **Generate new token**.
+2. Name: `Friday Updates`. Ablauf (Expiration): z. B. **1 Jahr**.
+3. **Repository access** → **Only select repositories** → **F.R.Ai.D.A.Y** auswählen.
+4. **Permissions** → **Repository permissions** → **Contents** auf **Read-only**. Mehr nicht.
+5. **Generate token** drücken und den Schlüssel (beginnt mit `github_pat_`) kopieren. Er wird nur einmal angezeigt.
+6. Im Friday-Dashboard: **Einstellungen** → **Immer aktuell** → Schlüssel ins Feld einfügen → **Speichern**. Friday prüft ihn sofort. Danach steht dort „✓ eingetragen“.
+7. Jetzt erst: Repo auf github.com → **Settings** → ganz unten **Change visibility** → **Make private**.
+8. Im Dashboard **Jetzt prüfen** drücken. Steht dort „aktuell“, klappt alles.
+
+Den Schlüssel nie in einen Chat schreiben. Er liegt nur auf deinem Mac in `server/data/github.json` (oder alternativ in der `.env` als `FRIDAY_GITHUB_TOKEN=`). Läuft er ab, meldet Friday das im Dashboard und per Telegram; dann einfach einen neuen erstellen und eintragen.
+
 ## Wenn ein Update schiefgeht
 
 - Lassen sich die Bausteine nicht installieren, stellt Friday die alte Version automatisch wieder her.

@@ -66,9 +66,16 @@ async function checkBriefing() {
 
 // Zweimal am Tag nach Updates schauen und einmal pro neuer Version Bescheid geben.
 let notifiedVersion = null;
+let warnedToken = false;
 const autoTries = new Map(); // Version -> Anzahl automatischer Versuche
 async function checkUpdates() {
   const u = await checkForUpdate();
+  if (u.needsToken && !warnedToken) {
+    // Repo ist privat geworden, aber Friday hat keinen Schlüssel: einmal Bescheid geben.
+    warnedToken = true;
+    await notifyAll("Updates blockiert", "Ich komme nicht mehr an das Friday-Repo, Boss. Ist es privat? Trag in den Einstellungen → Immer aktuell deinen GitHub-Schlüssel ein.");
+  }
+  if (!u.needsToken) warnedToken = false;
   if (!u.available) return;
   if (getSettings().autoUpdate) {
     // Nur in ruhigen Momenten: 5 Minuten niemand aktiv, kein Videoschnitt, keine Markt-Rechnung.

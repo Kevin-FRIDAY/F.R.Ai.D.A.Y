@@ -4,7 +4,7 @@
 
 1. Tailscale einrichten ([Anleitung](2-tailscale.md)) und in der Tailscale-App auf dem iPhone einschalten.
 2. Falls schon ein altes Friday-Symbol auf dem Home-Bildschirm liegt: lange drauf drücken > **App entfernen** > **Vom Home-Bildschirm entfernen**. (Nur so holt sich das iPhone das neue Logo und den Startbildschirm.)
-3. In **Safari** deine Friday-Adresse öffnen (z. B. `https://macbook-air-von-kevin.tailb0e1a5.ts.net`).
+3. In **Safari** deine Friday-Adresse öffnen (z. B. `https://dein-mac.tailXXXX.ts.net`).
 4. Anmelden.
 5. Teilen-Knopf (Quadrat mit Pfeil) > **Zum Home-Bildschirm** > Name bleibt **Friday** > **Hinzufügen**.
 
