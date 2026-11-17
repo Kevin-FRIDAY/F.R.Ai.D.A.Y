@@ -26,6 +26,16 @@
 
   const THREE = window.THREE;
 
+  // Kopf-Stil: "holo" (Standard), "detail" (Detail-Hologramm), "partikel" (Lichtpunkt-Wolke), "kern" (abstrakter KI-Kern)
+  const STILE = ["holo", "detail", "partikel", "kern"];
+  const STIL = (() => {
+    try {
+      const q = new URLSearchParams(location.search).get("kopf");
+      const v = q || localStorage.getItem("friday_kopfstil") || "holo";
+      return STILE.includes(v) ? v : "holo";
+    } catch { return "holo"; }
+  })();
+
   // Akzentfarbe aus dem Theme (Neon-Orange)
   function themeColor() {
     try {
@@ -76,6 +86,7 @@
     uColor: { value: col.clone() },
     uTime: { value: 0 },
     uOpen: { value: 0 },
+    uDetail: { value: STIL === "detail" ? 1 : 0 },
     uTalk: { value: 0 },
     uMouth: { value: new THREE.Vector3(0, MOUTH.y, MOUTH.halfW) },
   };
@@ -91,7 +102,7 @@
       gl_Position = projectionMatrix * mv;
     }`;
   const frag = `
-    uniform vec3 uColor; uniform float uTime; uniform float uOpen; uniform float uTalk; uniform vec3 uMouth;
+    uniform vec3 uColor; uniform float uTime; uniform float uOpen; uniform float uTalk; uniform float uDetail; uniform vec3 uMouth;
     varying vec3 vN; varying vec3 vV; varying vec3 vRest; varying float vY;
     void main() {
       vec3 n = normalize(vN); vec3 v = normalize(vV);
@@ -106,6 +117,14 @@
       float scan = 0.88 + 0.12 * sin(vY * 70.0 - uTime * 3.0);
       float band = smoothstep(0.35, 0.0, abs(fract(uTime * 0.12) * 11.0 - 5.5 - vY)) * 0.55;
       c = c * scan + uColor * band * (0.25 + fres);
+      // Detail-Hologramm: Höhenlinien wie ein 3D-Scan, feine Querlinien, Hautstruktur, mehr Glanz
+      if (uDetail > 0.5) {
+        float topo = abs(fract(vRest.z * 7.0) - 0.5);
+        float tl = smoothstep(0.07, 0.0, topo) * smoothstep(0.3, 1.5, vRest.z);
+        float hl = smoothstep(0.035, 0.0, abs(fract(vRest.y * 6.0) - 0.5));
+        c = c * 0.82 + uColor * (tl * 0.75 + hl * 0.2) * (0.45 + key);
+        c *= 0.94 + 0.06 * sin(vRest.x * 55.0 + vRest.z * 20.0) * sin(vRest.y * 55.0);
+      }
       // Innerer Mund: dunkel, wenn die Lippen offen sind
       float mx = vRest.x / uMouth.z;
       float my = (vRest.y - uMouth.y) / 0.13;
@@ -123,6 +142,94 @@
   let headGeo = null, basePos = null, lastOpen = -1, lastWide = -9;
   const eyeSprites = [];
   let particles = null, partMat = null;
+  const irisRings = [];
+  let wolke = null, kern = null;
+
+  // ---- Stil "partikel": Kopf aus zehntausenden Lichtpunkten ----
+  function baueWolke(geo, inner) {
+    const idx = geo.index ? geo.index.array : null;
+    const pos = geo.attributes.position.array;
+    const triCount = idx ? idx.length / 3 : pos.length / 9;
+    const v = (t, k) => (idx ? idx[t * 3 + k] : t * 3 + k);
+    const areas = new Float32Array(triCount); let total = 0;
+    const A = new THREE.Vector3(), B = new THREE.Vector3(), C = new THREE.Vector3();
+    for (let t = 0; t < triCount; t++) {
+      A.fromArray(pos, v(t, 0) * 3); B.fromArray(pos, v(t, 1) * 3); C.fromArray(pos, v(t, 2) * 3);
+      const a = B.sub(A).cross(C.sub(A)).length() / 2; areas[t] = a; total += a;
+    }
+    const N = 80000, refs = new Uint32Array(N * 3), bary = new Float32Array(N * 3), cols = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) {
+      let r = Math.random() * total, t = 0;
+      while (t < triCount - 1 && r > areas[t]) { r -= areas[t]; t++; }
+      let u = Math.random(), w = Math.random(); if (u + w > 1) { u = 1 - u; w = 1 - w; }
+      refs[i * 3] = v(t, 0); refs[i * 3 + 1] = v(t, 1); refs[i * 3 + 2] = v(t, 2);
+      bary[i * 3] = 1 - u - w; bary[i * 3 + 1] = u; bary[i * 3 + 2] = w;
+      // Helligkeit aus Licht + Randlicht, damit Gesichtszüge sichtbar bleiben
+      const nr = geo.attributes.normal.array;
+      let nx = 0, ny = 0, nz = 0;
+      for (let k = 0; k < 3; k++) { const q = v(t, k) * 3, f = bary[i * 3 + k]; nx += nr[q] * f; ny += nr[q + 1] * f; nz += nr[q + 2] * f; }
+      const nl = Math.hypot(nx, ny, nz) || 1; nx /= nl; ny /= nl; nz /= nl;
+      const lit = Math.max(0, -0.45 * nx + 0.55 * ny + 0.7 * nz);
+      const rim = Math.pow(1 - Math.abs(nz), 2.5);
+      const b = (0.12 + 1.1 * lit * lit + 0.7 * rim) * (0.7 + Math.random() * 0.5) * (Math.random() < 0.05 ? 1.8 : 1); cols[i * 3] = b; cols[i * 3 + 1] = b; cols[i * 3 + 2] = b;
+    }
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute("position", new THREE.BufferAttribute(new Float32Array(N * 3), 3));
+    pg.setAttribute("color", new THREE.BufferAttribute(cols, 3));
+    const pm = new THREE.PointsMaterial({ color: col.clone(), size: 0.026, vertexColors: true, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false });
+    const pts = new THREE.Points(pg, pm);
+    pts.scale.setScalar(1 / 1); // gleiche Einheiten wie der Kopf
+    inner.add(pts);
+    wolke = { pg, refs, bary, mat: pm, N };
+    updateWolke();
+  }
+  function updateWolke() {
+    if (!wolke || !headGeo) return;
+    const src = headGeo.attributes.position.array, out = wolke.pg.attributes.position.array;
+    const { refs, bary, N } = wolke;
+    for (let i = 0; i < N; i++) {
+      const a = refs[i * 3] * 3, b = refs[i * 3 + 1] * 3, c = refs[i * 3 + 2] * 3;
+      const u = bary[i * 3], v = bary[i * 3 + 1], w = bary[i * 3 + 2];
+      out[i * 3] = src[a] * u + src[b] * v + src[c] * w;
+      out[i * 3 + 1] = src[a + 1] * u + src[b + 1] * v + src[c + 1] * w;
+      out[i * 3 + 2] = src[a + 2] * u + src[b + 2] * v + src[c + 2] * w;
+    }
+    wolke.pg.attributes.position.needsUpdate = true;
+  }
+
+  // ---- Stil "detail": leuchtende Aura-Hülle um den Kopf ----
+  function baueDetail(geo, inner) {
+    const aura = new THREE.ShaderMaterial({
+      uniforms: { uColor: uniforms.uColor, uTalk: uniforms.uTalk },
+      vertexShader: `varying vec3 vN; varying vec3 vV; void main(){ vec4 mv = modelViewMatrix * vec4(position + normal * 0.06, 1.0); vV = -mv.xyz; vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `uniform vec3 uColor; uniform float uTalk; varying vec3 vN; varying vec3 vV; void main(){ float f = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 3.0); gl_FragColor = vec4(uColor * f * (0.9 + uTalk), f); }`,
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide,
+    });
+    inner.add(new THREE.Mesh(geo, aura));
+  }
+
+  // ---- Stil "kern": abstrakter KI-Kern (ohne Gesicht), pulsiert beim Sprechen ----
+  function baueKern() {
+    const g = new THREE.Group();
+    const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(1.0, 3), new THREE.MeshBasicMaterial({ color: col.clone(), wireframe: true, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const innerS = new THREE.Mesh(new THREE.IcosahedronGeometry(0.62, 1), new THREE.MeshBasicMaterial({ color: col.clone(), wireframe: true, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: col.clone(), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+    glow.scale.set(2.2, 2.2, 1);
+    const core = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.9 }));
+    core.scale.set(0.7, 0.7, 1);
+    g.add(glow, shell, innerS, core);
+    // Kreis-Equalizer: 72 Balken, die mit der Stimme ausschlagen
+    const bars = [];
+    const bm = new THREE.MeshBasicMaterial({ color: col.clone(), transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
+    const bg = new THREE.PlaneGeometry(0.035, 1); bg.translate(0, 0.5, 0);
+    for (let i = 0; i < 72; i++) {
+      const b = new THREE.Mesh(bg, bm); const a = (i / 72) * Math.PI * 2;
+      b.position.set(Math.cos(a) * 1.4, Math.sin(a) * 1.4, 0); b.rotation.z = a - Math.PI / 2; b.scale.y = 0.06;
+      g.add(b); bars.push({ m: b, ph: Math.random() * 6.28 });
+    }
+    group.add(g);
+    kern = { g, shell, innerS, glow, core, bars, mats: [shell.material, innerS.material, glow.material, bm] };
+  }
 
   function glowTexture() {
     const c = document.createElement("canvas"); c.width = c.height = 64;
@@ -177,7 +284,8 @@
   }
 
   const loader = new THREE.GLTFLoader();
-  loader.load("vendor/head.glb", (gltf) => {
+  if (STIL === "kern") { baueKern(); setTimeout(baueRinge, 0); ready = true; }
+  else loader.load("vendor/head.glb", (gltf) => {
     let geo = null;
     gltf.scene.traverse((o) => { if (o.isMesh && o.geometry && !geo) geo = o.geometry; });
     if (!geo) { fallback2d(); return; }
@@ -196,14 +304,22 @@
       solidMat = new THREE.ShaderMaterial({ uniforms, vertexShader: vert, fragmentShader: frag });
       solidMat.polygonOffset = true; solidMat.polygonOffsetFactor = 1; solidMat.polygonOffsetUnits = 1;
     } catch { solidMat = new THREE.MeshBasicMaterial({ color: 0x140a04 }); }
+    if (STIL === "partikel") {
+      // Nur Tiefe schreiben: verdeckt die Rückseite, ohne selbst sichtbar zu sein
+      solidMat = new THREE.MeshBasicMaterial({ colorWrite: false });
+      solidMat.polygonOffset = true; solidMat.polygonOffsetFactor = 2; solidMat.polygonOffsetUnits = 2;
+    }
     const solid = new THREE.Mesh(geo, solidMat);
 
     // Feines Netz darüber (Hologramm-Struktur)
-    wireMat = new THREE.MeshBasicMaterial({ color: col.clone(), wireframe: true, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false });
+    wireMat = new THREE.MeshBasicMaterial({ color: col.clone(), wireframe: true, transparent: true, opacity: STIL === "detail" ? 0.05 : 0.1, blending: THREE.AdditiveBlending, depthWrite: false });
     const wire = new THREE.Mesh(geo, wireMat);
 
     const inner = new THREE.Group();
-    inner.add(solid); inner.add(wire);
+    inner.add(solid);
+    if (STIL !== "partikel") inner.add(wire);
+    if (STIL === "partikel") baueWolke(geo, inner);
+    if (STIL === "detail") baueDetail(geo, inner);
 
     // Leuchtende Augen (blinzeln)
     const tex = glowTexture();
@@ -213,6 +329,13 @@
       sp.position.set(x, y, z + 0.08);
       sp.scale.set(0.34, 0.2, 1);
       inner.add(sp); eyeSprites.push(sp);
+      if (STIL === "detail") {
+        // Iris-Ringe, die sich langsam drehen
+        const rm = new THREE.MeshBasicMaterial({ color: col.clone(), transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.075, 0.1, 24, 1, 0, Math.PI * 1.6), rm);
+        ring.position.set(x, y, z + 0.1);
+        inner.add(ring); irisRings.push(ring);
+      }
     }
 
     inner.scale.setScalar(s);
@@ -235,6 +358,11 @@
       scene.add(particles);
     } catch { /* Partikel optional */ }
 
+    baueRinge();
+    ready = true;
+  }, undefined, () => { fallback2d(); });
+
+  function baueRinge() {
     // Futuristische HUD-Orbitringe um den Kopf
     try {
       ringMats = [];
@@ -249,9 +377,7 @@
       mkRing(2.9, 0.006, Math.PI / 1.9, -0.4, 0.5);
       scene.add(rings);
     } catch { /* Ringe optional */ }
-
-    ready = true;
-  }, undefined, () => { fallback2d(); });
+  }
 
   resize();
   if (window.ResizeObserver) { try { new ResizeObserver(resize).observe(host); } catch {} }
@@ -263,6 +389,9 @@
     if (partMat) partMat.color.copy(c);
     eyeSprites.forEach((s) => s.material.color.copy(c));
     ringMats.forEach((m) => m.color.copy(c));
+    irisRings.forEach((r) => r.material.color.copy(c));
+    if (wolke) wolke.mat.color.copy(c);
+    if (kern) kern.mats.forEach((m) => m.color.copy(c));
   }, 1500);
 
   // ---- Einstellungen (localStorage) ----
@@ -320,6 +449,7 @@
       uniforms.uTalk.value = talkGlow * (0.4 + open * 0.6);
       if (Math.abs(mouthOpen - lastOpen) > 0.006 || Math.abs(wide - lastWide) > 0.02) {
         deformMouth(mouthOpen, optMouth ? wide : 0); lastOpen = mouthOpen; lastWide = wide;
+        if (wolke) updateWolke();
       }
       if (wireMat) wireMat.opacity = 0.08 + talkGlow * 0.06;
 
@@ -333,6 +463,19 @@
       }
       const pulse = 0.55 + Math.sin(t * 2.2) * 0.08 + talkGlow * 0.15;
       eyeSprites.forEach((s) => { s.scale.set(0.34, 0.2 * Math.max(0.06, lid), 1); s.material.opacity = pulse; });
+      irisRings.forEach((r, i) => { r.rotation.z += dt * 0.002 * (i ? -1 : 1); r.scale.y = Math.max(0.06, lid); });
+      if (wolke) wolke.mat.size = 0.026 * (0.95 + Math.sin(t * 3) * 0.05 + talkGlow * 0.15);
+      if (kern) {
+        kern.shell.rotation.y += dt * 0.0004; kern.shell.rotation.x += dt * 0.00015;
+        kern.innerS.rotation.y -= dt * 0.0009; kern.innerS.rotation.z += dt * 0.0003;
+        const puls = 1 + open * 0.18 + Math.sin(t * 1.6) * 0.02;
+        kern.innerS.scale.setScalar(puls); kern.core.scale.setScalar(0.7 + open * 0.6);
+        kern.glow.material.opacity = 0.55 + open * 0.45;
+        kern.bars.forEach((b, i) => {
+          const wave = 0.5 + 0.5 * Math.sin(t * 9 + b.ph + i * 0.35);
+          b.m.scale.y = 0.06 + (talkMode ? open * (0.25 + wave * 0.55) : 0.02 + 0.03 * Math.sin(t * 1.5 + i * 0.2) ** 2);
+        });
+      }
 
       // Partikel steigen langsam auf
       if (particles && !optReduce) {
