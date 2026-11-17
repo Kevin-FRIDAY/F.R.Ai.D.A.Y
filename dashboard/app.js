@@ -400,7 +400,7 @@
   }
 
   // ---------- Senden ----------
-  async function send(text) {
+  async function send(text, opts = {}) {
     text = (text || "").trim();
     if ((!text && !pendingImage) || busy) return;
     // "System Check" / "System Status": lokal prüfen (ohne Guthaben)
@@ -412,6 +412,7 @@
       return;
     }
     busy = true;
+    if (gespraechRec) { try { gespraechRec.abort(); } catch { /* egal */ } } // getippt statt gesprochen
     addMessage("user", pendingImage ? `📷 ${text}` : text);
     setState("Denkt nach", "thinking");
     const body = { text, image: pendingImage || undefined };
@@ -450,7 +451,11 @@
       await say(answer);
       clearSpeaking();
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
-      if (hat("zuhoeren") && Recognition && !callActive) setTimeout(() => { if (!busy && !speaking) listenOnce(); }, 250);
+      // Gesprächsmodus: Kam der Befehl per Stimme, hört Friday danach weiter zu, ohne "Friday" davor.
+      const weiter = hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer);
+      if (weiter && Recognition && !callActive) {
+        setTimeout(() => { if (!busy && !speaking) listenOnce({ folge: true, frage: hat("zuhoeren") }); }, 250);
+      }
     } catch (err) {
       addMessage("friday", `Verbindung gestört: ${err.message}`);
       setState("Fehler", "");
@@ -562,6 +567,7 @@
   }
   bindFlag("set-mouth", "friday_mouth", true);
   bindFlag("set-vollbild", "friday_vollbild", false);
+  bindFlag("set-gespraech", "friday_gespraech", true);
   // Kopf-Stil: wird beim Laden von face.js gelesen, darum nach dem Wechsel neu laden
   (() => {
     const sel = $("set-kopfstil");
@@ -1079,24 +1085,55 @@
   let wakeRec = null;
   let wakeActive = false;
 
-  function listenOnce() {
+  // Gesprächsmodus (Standard an): Nach einer gesprochenen Antwort hört Friday weiter zu.
+  const gespraechAn = () => storage.get("friday_gespraech") !== "0";
+  // Damit endet das Gespräch, ohne dass es an Friday geschickt wird.
+  const GESPRAECH_ENDE = /^(?:(?:ok(?:ay)?|gut|alles klar|super|perfekt)[ ,.!]*)?(?:danke(?: dir| schön| schoen| sehr)?|das wars?|das war's|das war es|das reicht|reicht|fertig|stopp?|ende|schluss|tschüss|tschuess|bis später|bis spaeter|nichts mehr|nein danke)(?: friday| boss)?[ .!]*$/i;
+  let gespraechRec = null;
+
+  function listenOnce({ folge = false, frage = false, versuch = 1 } = {}) {
     if (!Recognition) {
       addMessage("friday", "Dein Browser kann keine Sprache erkennen. Nutze Safari oder Chrome, oder tipp unten.");
       return;
     }
     pauseWake();
+    if (gespraechRec) { try { gespraechRec.abort(); } catch { /* egal */ } }
     const rec = new Recognition();
+    gespraechRec = rec;
     rec.lang = "de-DE";
     rec.interimResults = false;
     rec.maxAlternatives = 1;
-    setState("Ich höre", "listening");
-    rec.onresult = (e) => send(e.results[0][0].transcript);
-    rec.onerror = () => setState("Nicht verstanden");
+    setState(folge ? "Ich höre weiter …" : "Ich höre", "listening");
+    document.body.classList.toggle("gespraech", folge);
+    let gehoert = false, stille = false;
+    rec.onresult = (e) => {
+      gehoert = true;
+      const said = String(e.results[0][0].transcript || "").trim();
+      // "Danke" / "Das war's" beendet das Gespräch (außer Friday hat gerade etwas gefragt, dann entscheidet der Server).
+      if (folge && !frage && GESPRAECH_ENDE.test(said.replace(/^(?:hey |ok )?(?:friday|freitag)[,.!]?\s*/i, ""))) {
+        addMessage("user", said);
+        say(["Gern, Boss.", "Jederzeit, Boss.", "Alles klar, Boss."][Math.floor(Math.random() * 3)]);
+        return;
+      }
+      send(said, { stimme: true });
+    };
+    rec.onerror = (e) => {
+      if (e.error === "no-speech" || e.error === "aborted") stille = true;
+      else setState("Nicht verstanden");
+    };
     rec.onend = () => {
-      if (!busy && !speaking) setState("Bereit, Boss.");
+      if (gespraechRec && gespraechRec !== rec) return; // ein neueres Zuhören hat übernommen
+      gespraechRec = null;
+      document.body.classList.remove("gespraech");
+      // Im Gespräch einmal nachhaken, falls der Browser zu früh aufgibt.
+      if (folge && !gehoert && stille && versuch < 2 && !busy && !speaking) {
+        setTimeout(() => { if (!busy && !speaking && !gespraechRec) listenOnce({ folge, frage, versuch: versuch + 1 }); }, 150);
+        return;
+      }
+      if (!busy && !speaking) setState(wakeActive ? 'Höre auf "Friday"' : "Bereit, Boss.");
       resumeWake();
     };
-    rec.start();
+    try { rec.start(); } catch { rec.onend(); }
   }
 
   $("reactor").addEventListener("click", () => {
@@ -1121,7 +1158,7 @@
       const match = said.match(WAKE);
       if (!match || busy || speaking) return;
       const command = said.slice(match.index + match[0].length).trim();
-      if (command.length > 2) send(command);
+      if (command.length > 2) send(command, { stimme: true });
       else listenOnce();
     };
     wakeRec.onend = () => {
