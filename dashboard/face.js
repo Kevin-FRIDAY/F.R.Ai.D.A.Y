@@ -30,7 +30,7 @@
   const STILE = ["holo", "detail", "partikel", "kern", "kristall", "facetten", "visier", "linien"];
   const MODUS = { holo: 0, detail: 1, partikel: 0, kern: 0, kristall: 2, facetten: 3, visier: 4, linien: 5 };
   const FLACH = ["kristall", "facetten"]; // Stile mit sichtbaren Dreiecks-Facetten
-  const STANDARD_STIL = "detail";
+  const STANDARD_STIL = "kristall";
   const STIL = (() => {
     try {
       const q = new URLSearchParams(location.search).get("kopf");

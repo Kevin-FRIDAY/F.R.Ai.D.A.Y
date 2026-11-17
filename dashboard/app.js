@@ -521,7 +521,7 @@
   (() => {
     const sel = $("set-kopfstil");
     if (!sel) return;
-    sel.value = storage.get("friday_kopfstil") || window.FridayFace?.standardStil || "detail";
+    sel.value = storage.get("friday_kopfstil") || window.FridayFace?.standardStil || "kristall";
     sel.addEventListener("change", () => { storage.set("friday_kopfstil", sel.value); location.reload(); });
   })();
   bindFlag("set-headmove", "friday_headmove", true);
