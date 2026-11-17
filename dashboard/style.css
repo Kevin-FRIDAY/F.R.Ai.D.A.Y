@@ -1817,3 +1817,16 @@ body.reduce-anim.glow-breathe .panel { animation: none; }
   .land-fotos { grid-template-columns: 1fr 1fr; grid-auto-rows: 80px; }
   .land-title h2 { font-size: 21px; }
 }
+
+/* Einstellungen → Immer aktuell: deutlicher Knopf „Jetzt installieren“ (v1.81.0) */
+.upd-neu { display: flex; align-items: center; gap: 12px; margin: 4px 0 6px; padding: 12px 14px; border: 1px solid rgba(255, 138, 30, 0.55); border-radius: 14px; background: linear-gradient(150deg, rgba(255, 138, 30, 0.16), rgba(255, 138, 30, 0.04)); box-shadow: 0 0 calc(22px * var(--glow, 1)) rgba(255, 138, 30, 0.22), inset 0 1px 0 rgba(255, 200, 140, 0.12); animation: upd-neu-rein .35s ease-out; }
+@keyframes upd-neu-rein { from { opacity: 0; transform: translateY(-6px); } }
+.upd-neu.hidden { display: none; }
+.upd-neu-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.upd-neu-txt b { color: var(--cyan); letter-spacing: .04em; }
+.upd-neu-txt small { color: var(--muted, #b9a58f); font-size: 12px; line-height: 1.35; }
+.upd-install { flex: none; padding: 11px 18px; font: inherit; font-weight: 700; font-size: 14px; letter-spacing: .03em; color: #120800; background: linear-gradient(180deg, #ffb057, #ff8a1e); border: 0; border-radius: 11px; cursor: pointer; box-shadow: 0 0 calc(18px * var(--glow, 1)) rgba(255, 138, 30, 0.6); animation: upd-puls 2.2s ease-in-out infinite; }
+.upd-install:hover { filter: brightness(1.08); }
+.upd-install:disabled { opacity: .6; cursor: default; animation: none; }
+@keyframes upd-puls { 50% { box-shadow: 0 0 calc(30px * var(--glow, 1)) rgba(255, 138, 30, 0.9); } }
+@media (max-width: 520px) { .upd-neu { flex-direction: column; align-items: stretch; } .upd-install { width: 100%; } }
