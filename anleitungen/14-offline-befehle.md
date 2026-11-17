@@ -28,6 +28,14 @@ Sag oder schreib zum Beispiel:
 
 Alles, was mehr Nachdenken braucht (Gedichte, Erklärungen, Webseiten, Werkstatt …), braucht weiterhin Claude-Guthaben.
 
+## Gesprächsmodus: ohne jedes Mal „Friday“ (ab 1.88.0)
+
+Wenn du Friday per Stimme etwas fragst (mit „Friday …“ oder über den Kern), hört sie nach ihrer Antwort **von selbst weiter zu**. Du sprichst einfach weiter, ohne „Friday“ davor.
+
+- Das Gespräch endet, wenn du **„Danke“**, **„Das war's“**, **„Stopp“** oder **„Tschüss“** sagst, oder wenn du ein paar Sekunden nichts sagst.
+- Danach wartet Friday wieder auf „Friday“.
+- Abschalten: Einstellungen → Glow & Werkzeuge → „Gesprächsmodus“.
+
 ## Weltgeschehen als Gespräch (ab 1.86.0)
 
 - **„Friday, zeig mir das Weltgeschehen“**: Der Globus geht auf und Friday fragt: „Welches Land willst du sehen?“ Das Mikrofon geht von selbst an.
