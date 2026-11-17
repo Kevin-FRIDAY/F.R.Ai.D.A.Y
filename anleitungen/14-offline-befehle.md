@@ -44,7 +44,7 @@ Wenn Friday ein Land zeigt, dreht sich der Globus hin und zoomt so weit hinein, 
 - Oben links umschalten: **🛰 Satellit** oder **🗺 Karte** (dunkle Straßenkarte). Friday merkt sich die Wahl.
 - Mit Mausrad, Fingern oder **+ / −** weiter hineinzoomen, bis auf einzelne Straßen.
 - **◎ Globus** bringt dich zurück zum Globus.
-- Ausschalten: Einstellungen → Karten → „Beim Land tief hineinzoomen …“.
+- Ausschalten: Einstellungen → Glow & Werkzeuge → „Beim Land tief hineinzoomen …“.
 
 ## Vollbild
 
