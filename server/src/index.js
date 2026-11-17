@@ -13,7 +13,7 @@ import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
 import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
 import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { getEnergie, aufladen, einnahme } from "./energie.js";
-import { getSettings, setSettings, markActive } from "./einstellungen.js";
+import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } from "./einstellungen.js";
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webseiten.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
@@ -334,6 +334,11 @@ app.get("/api/werkstatt/latest", (req, res) => res.json(getLatestBuild() || {}))
 app.get("/api/energie", (req, res) => res.json(getEnergie()));
 app.get("/api/einstellungen", (req, res) => res.json(getSettings()));
 app.post("/api/einstellungen", (req, res) => res.json(setSettings(req.body || {})));
+// Dashboard-Einstellungen für alle Geräte (Mac + iPhone gleich), dauerhaft in data/oberflaeche.json
+app.get("/api/einstellungen/oberflaeche", (req, res) => res.json(getUiSettings()));
+app.post("/api/einstellungen/oberflaeche", (req, res) => {
+  try { res.json(setUiSettings(req.body || {})); } catch (e) { console.error("oberflaeche:", e.message); res.status(500).json({ error: "Konnte nicht speichern." }); }
+});
 app.get("/api/webseiten", (req, res) => res.json(listSites()));
 app.post("/api/webseite", asyncRoute(async (req, res) => { const r = await buildSite(req.body?.auftrag, req.body?.basis || null); res.status(r.ok ? 200 : 400).json(r); }));
 app.get("/api/webseite/:id/html", (req, res) => { const html = getSiteHtml(req.params.id); if (html == null) return res.status(404).json({ error: "Nicht gefunden" }); res.json({ html }); });
