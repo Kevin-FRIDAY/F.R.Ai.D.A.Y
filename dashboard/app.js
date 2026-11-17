@@ -327,22 +327,53 @@
   // Philips Hue: Lampen leuchten Neon-Orange, solange Friday spricht (wenn in Verbindungen eingeschaltet).
   const hueSprechen = (an) => { if (status.hueSprechen) api("/api/dienste/hue/sprechen", { method: "POST", body: JSON.stringify({ an }) }).catch(() => {}); };
 
+  // Lange Texte in Häppchen teilen: Der erste Satz wird sofort gesprochen, der Rest lädt währenddessen.
+  // So fängt Friday schneller an zu reden, statt auf die Stimme für den ganzen Text zu warten.
+  function haeppchen(text) {
+    const saetze = String(text).match(/[^.!?…]+[.!?…]+["“”»)]*\s*|[^.!?…]+$/g) || [text];
+    const out = [];
+    let cur = "";
+    for (const satz of saetze) {
+      const grenze = out.length === 0 ? 60 : 320; // erstes Häppchen kurz, danach größere
+      if (cur && (cur + satz).length > grenze) { out.push(cur.trim()); cur = ""; }
+      cur += satz;
+    }
+    if (cur.trim()) out.push(cur.trim());
+    return out.length ? out : [text];
+  }
+  let sprechNr = 0; // jede neue Ansage / jedes Stoppen bricht die alte ab
+  async function stimmeHolen(t) {
+    const res = await api("/api/tts", { method: "POST", body: JSON.stringify({ text: t }) });
+    if (!res.ok) throw new Error("tts");
+    return URL.createObjectURL(await res.blob());
+  }
+
   async function say(text) {
     if (!$("voice-toggle").checked || !text) return;
+    const nr = ++sprechNr;
     speaking = true;
     hueSprechen(true);
     pauseWake();
     setState("Spricht", "speaking");
     try {
       if (status.voice) {
-        const res = await api("/api/tts", { method: "POST", body: JSON.stringify({ text }) });
-        if (res.ok) {
-          audio.src = URL.createObjectURL(await res.blob());
+        const teile = text.length > 160 ? haeppchen(text) : [text];
+        let naechstes = stimmeHolen(teile[0]);
+        let ok = false;
+        for (let i = 0; i < teile.length; i++) {
+          let url;
+          try { url = await naechstes; } catch { break; }
+          if (nr !== sprechNr) { URL.revokeObjectURL(url); return; }
+          if (i + 1 < teile.length) { naechstes = stimmeHolen(teile[i + 1]); naechstes.catch(() => {}); }
+          audio.src = url;
           window.FridayFace?.talkWithAudio(audio);
           await audio.play();
-          await new Promise((r) => { audio.onended = r; audio.onerror = r; });
-          return;
+          ok = true;
+          await new Promise((r) => { audio.onended = r; audio.onerror = r; audio.onpause = r; });
+          URL.revokeObjectURL(url);
+          if (nr !== sprechNr || (audio.paused && !audio.ended)) return; // gestoppt
         }
+        if (ok) return;
       }
       if ("speechSynthesis" in window) {
         await new Promise((resolve) => {
@@ -392,7 +423,13 @@
     try {
       const res = await api("/api/chat", { method: "POST", body: JSON.stringify(body) });
       const data = await res.json();
-      const answer = data.answer || data.error || "Keine Antwort.";
+      let answer = data.answer || data.error || "Keine Antwort.";
+      const hat = (a) => data.actions?.includes(a);
+      // Vollbild: im Browser umschalten (auf dem iPhone ist die Home-Bildschirm-App schon Vollbild).
+      if (hat("vollbild") || hat("vollbild_aus")) {
+        const r = window.FridayVollbild?.sprachBefehl(hat("vollbild"));
+        if (r) answer = r;
+      }
       // Nur vorlesen: Bei erfolgreicher Antwort und aktivem Vorlesen keinen Text zeigen.
       const voiceOn = $("voice-toggle").checked && "speechSynthesis" in window;
       if (data.answer && voiceOn) addSpeaking();
@@ -402,11 +439,18 @@
       if (data.actions?.includes("werkstatt")) window.FridayWerkstatt?.showLatest();
       const landAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("land:"));
       if (landAktion) window.FridayLand?.open(landAktion.slice(5));
+      // Weltgeschehen als Gespräch: Globus öffnen, Land anfliegen, Bewertung zeigen.
+      const lageLand = data.actions?.find((a) => typeof a === "string" && a.startsWith("lage_land:"));
+      const lageWert = data.actions?.find((a) => typeof a === "string" && a.startsWith("lage_bewertung:"));
+      if (lageLand) window.FridayLage?.showCountry(lageLand.slice(10), { stumm: true, bewertung: lageWert?.slice(15) });
+      else if (hat("weltgeschehen") && !window.FridayLage?.offen()) window.FridayLage?.open({ stumm: true });
       if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       window.FridayEnergie?.refresh();
       await say(answer);
       clearSpeaking();
+      // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
+      if (hat("zuhoeren") && Recognition && !callActive) setTimeout(() => { if (!busy && !speaking) listenOnce(); }, 250);
     } catch (err) {
       addMessage("friday", `Verbindung gestört: ${err.message}`);
       setState("Fehler", "");
@@ -517,6 +561,7 @@
     el.addEventListener("change", () => { storage.set(key, el.checked ? "1" : "0"); window.dispatchEvent(new Event("friday-settings")); });
   }
   bindFlag("set-mouth", "friday_mouth", true);
+  bindFlag("set-vollbild", "friday_vollbild", false);
   // Kopf-Stil: wird beim Laden von face.js gelesen, darum nach dem Wechsel neu laden
   (() => {
     const sel = $("set-kopfstil");
@@ -1025,7 +1070,7 @@
   });
   // Für Friday Vision (vision.js): Standbild fragen, Stimme stoppen.
   window.Friday.askAboutImage = (frame, text) => { pendingImage = frame; return send(text); };
-  window.Friday.stopSpeaking = () => { try { speechSynthesis?.cancel(); } catch { /* egal */ } try { audio.pause(); } catch { /* egal */ } };
+  window.Friday.stopSpeaking = () => { sprechNr++; try { speechSynthesis?.cancel(); } catch { /* egal */ } try { audio.pause(); } catch { /* egal */ } };
 
   // ---------- Spracherkennung ----------
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1055,6 +1100,7 @@
 
   $("reactor").addEventListener("click", () => {
     if (speaking) {
+      sprechNr++;
       speechSynthesis?.cancel();
       audio.pause();
       return;

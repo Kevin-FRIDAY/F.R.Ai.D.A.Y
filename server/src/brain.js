@@ -11,6 +11,7 @@ import { quickCommand as dienstQuick, dienstKurzinfo } from "./dienste.js";
 import { offlineAnswer, notfallText } from "./offline.js";
 import { quickCommand as hausQuick } from "./werkstatt.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
+import { quickCommand as weltQuick, vollbildQuick } from "./weltgespraech.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
@@ -115,6 +116,19 @@ export async function ask({ text, channel = "web", image, mode = "normal", targe
       if (h) { actions.push(...h.actions); return finish(h.answer); }
     } catch (err) {
       console.error("Haus-Werkstatt:", err.message);
+    }
+  }
+
+  // Weltgeschehen als Gespräch ("zeig mir das Weltgeschehen" → "Welches Land?" → Lage + Nachrichten)
+  // und Vollbild. Steht vor der Länder-Info, damit die Antwort auf "Welches Land?" hier landet.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const v = vollbildQuick(text);
+      if (v) { actions.push(...v.actions); return finish(v.answer); }
+      const w = await weltQuick(text, channel);
+      if (w) { actions.push(...w.actions); return finish(w.answer); }
+    } catch (err) {
+      console.error("Weltgeschehen:", err.message);
     }
   }
 

@@ -2151,3 +2151,14 @@ body.reduce-anim #sync-toast { transition: none; }
 @keyframes m-hoch { from { opacity: 0; transform: translateY(24px); } }
 @media (prefers-reduced-motion: reduce) { .menu-pop, .sheet-box { animation: none !important; } }
 body.reduce-anim .menu-pop { animation: none !important; }
+
+/* ---------- Vollbild (v1.86.0) ---------- */
+.hb-vb { font-size: 13px; line-height: 1; margin-right: 2px; color: var(--cyan); text-shadow: 0 0 8px rgba(255, 138, 30, 0.6); }
+#hb-vollbild.hidden { display: none; }
+.vb-tipp { position: fixed; z-index: 70; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 14px 22px; border-radius: 18px; border: 1px solid rgba(255, 138, 30, 0.6); background: linear-gradient(160deg, rgba(30, 16, 4, 0.95), rgba(8, 5, 2, 0.97)); color: var(--text); font-family: var(--font-ui, var(--font)); cursor: pointer; box-shadow: 0 0 calc(30px * var(--glow, 1)) rgba(255, 138, 30, 0.4); animation: vb-puls 1.6s ease-in-out infinite; }
+.vb-tipp.hidden { display: none; }
+.vb-tipp .vb-icon { font-size: 26px; color: var(--cyan); text-shadow: 0 0 12px rgba(255, 138, 30, 0.8); }
+.vb-tipp b { font-family: var(--font-head, var(--font)); letter-spacing: .12em; font-size: 14px; color: #ffd2a6; }
+.vb-tipp small { color: var(--muted); font-size: 12px; }
+@keyframes vb-puls { 50% { box-shadow: 0 0 calc(44px * var(--glow, 1)) rgba(255, 138, 30, 0.65); } }
+@media (prefers-reduced-motion: reduce) { .vb-tipp { animation: none; } }

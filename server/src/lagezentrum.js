@@ -535,6 +535,7 @@ export async function getSummary(country) {
     response = await client.messages.create({
       model: config.model,
       max_tokens: 1500,
+      output_config: { effort: "low" }, // kurze Zusammenfassung: wenig Nachdenken, schnelle Antwort
       tool_choice: { type: "auto" }, // Opus 5.5 erlaubt kein erzwungenes Werkzeug
       tools: [RATING_TOOL],
       system: "Du bist F.R.Ai.D.A.Y und erstellst kurze Lageberichte. Stütze dich ausschließlich auf die gelieferten Schlagzeilen, erfinde nichts dazu. Sachlich, ohne Markdown. Antworte immer, indem du das Werkzeug lagebericht genau einmal aufrufst.",
