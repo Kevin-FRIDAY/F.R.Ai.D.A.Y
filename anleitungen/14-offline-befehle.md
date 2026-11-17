@@ -37,6 +37,15 @@ Alles, was mehr Nachdenken braucht (Gedichte, Erklärungen, Webseiten, Werkstatt
 
 Öffnen, Land und Nachrichten laufen ohne Claude, also sofort. Ohne Guthaben fehlt nur die Einschätzung.
 
+### Tief ins Land hinein (ab 1.87.0)
+
+Wenn Friday ein Land zeigt, dreht sich der Globus hin und zoomt so weit hinein, dass das Land das Bild füllt. Danach wechselt sie auf eine **Detailkarte** mit echtem Satellitenbild, Städten, Straßen und Grenzen (orange umrandet ist das Land).
+
+- Oben links umschalten: **🛰 Satellit** oder **🗺 Karte** (dunkle Straßenkarte). Friday merkt sich die Wahl.
+- Mit Mausrad, Fingern oder **+ / −** weiter hineinzoomen, bis auf einzelne Straßen.
+- **◎ Globus** bringt dich zurück zum Globus.
+- Ausschalten: Einstellungen → Karten → „Beim Land tief hineinzoomen …“.
+
 ## Vollbild
 
 - Knopf **⛶ Vollbild** oben in der Leiste, Taste **F** oder **„Friday, Vollbild“** / **„Vollbild aus“**.

@@ -109,6 +109,7 @@
   }
 
   function close() {
+    detailAus();
     showSide(false);
     $("lage").classList.add("hidden");
     document.body.classList.remove("lage-open");
@@ -217,6 +218,7 @@
     }));
   }
   let baseScale = 1, autoRaf = null, lastFrame = 0, spinning = true;
+  const ZOOM_MAX = 40; // so nah geht der Globus heran (vorher 9)
   const CX = W / 2, CY = H / 2;
 
   function visible(lon, lat) {
@@ -439,14 +441,113 @@
     viewAnim = requestAnimationFrame(step);
   }
 
+  // Größtes Stück eines Landes (USA ohne Alaska/Hawaii, Frankreich ohne Überseegebiete …).
+  function landFeature(id) {
+    const set = geoSets.hi || geoSets.lo;
+    return set?.features.find((f) => String(f.id).padStart(3, "0") === id) || null;
+  }
+  function hauptteil(f) {
+    if (!f || !f.geometry) return null;
+    if (f.geometry.type !== "MultiPolygon") return f;
+    let best = null, bestA = -1;
+    for (const coords of f.geometry.coordinates) {
+      const poly = { type: "Polygon", coordinates: coords };
+      const a = d3geo.geoArea(poly);
+      if (a > bestA) { bestA = a; best = poly; }
+    }
+    return best ? { type: "Feature", properties: {}, geometry: best } : f;
+  }
+  // Wie nah muss der Globus heran, damit das Land das Bild füllt?
+  function passendeGroesse(teil, rot) {
+    try {
+      const p = d3geo.geoOrthographic().rotate(rot).scale(baseScale).translate(projection.translate()).clipAngle(90);
+      const [[x0, y0], [x1, y1]] = d3geo.geoPath(p).bounds(teil);
+      const k = Math.min((W * 0.7) / Math.max(1, x1 - x0), (H * 0.7) / Math.max(1, y1 - y0));
+      return Math.max(baseScale * 1.8, Math.min(baseScale * ZOOM_MAX, baseScale * k));
+    } catch { return baseScale * 3; }
+  }
+
   function flyToCountry(id) {
     const c = countries.find((x) => x.id === id);
     if (!c || !projection) return;
     $("lage-world").classList.remove("hidden");
-    animateGlobe([-c.lon, -c.lat, 0], baseScale * 2.1, 1000);
+    detailAus();
+    const teil = hauptteil(landFeature(id));
+    let mitte = [c.lon, c.lat];
+    if (teil) { try { mitte = d3geo.geoCentroid(teil); } catch { /* Mittelpunkt aus der Liste */ } }
+    const rot = [-mitte[0], -mitte[1], 0];
+    const ziel = teil ? passendeGroesse(teil, rot) : baseScale * 3;
+    // Erst zum Land drehen, dann tief hineinzoomen und auf die Detailkarte umschalten.
+    animateGlobe(rot, ziel, 1400, () => { if (selected === id) detailAn(id, teil, mitte); });
   }
 
+  // ---------- Detailkarte: echte Karte mit Städten, Straßen und Gelände ----------
+  let detailMap = null, detailLayers = null, detailUmriss = null, detailStil = "sat";
+  const detailErlaubt = () => { try { return localStorage.getItem("friday_lage_detail") !== "0"; } catch { return true; } };
+  function detailStilSetzen(stil) {
+    const L = window.L;
+    if (!L || !detailMap) return;
+    detailStil = stil;
+    try { localStorage.setItem("friday_lage_detailstil", stil); } catch { /* egal */ }
+    if (detailLayers) detailLayers.forEach((l) => detailMap.removeLayer(l));
+    detailLayers = stil === "karte"
+      ? [L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", { maxZoom: 19, subdomains: "abcd", attribution: "© OpenStreetMap, © CARTO" })]
+      : [
+        L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri" }),
+        L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, opacity: 0.85 }),
+      ];
+    detailLayers.forEach((l) => l.addTo(detailMap));
+    detailUmriss?.bringToFront();
+    document.querySelectorAll("#lage-dm-stil button").forEach((b) => b.classList.toggle("active", b.dataset.stil === stil));
+  }
+  async function detailAn(id, teil, mitte) {
+    if (!detailErlaubt()) return;
+    const box = $("lage-detailmap");
+    if (!box) return;
+    try {
+      leafletReady ??= ladeLeaflet();
+      await leafletReady;
+      if (selected !== id) return;
+      const L = window.L;
+      box.classList.remove("hidden");
+      if (!detailMap) {
+        detailMap = L.map("lage-dm-map", { attributionControl: true, zoomControl: false, worldCopyJump: true, zoomSnap: 0.25 });
+        detailMap.attributionControl.setPrefix(false);
+        L.control.zoom({ position: "bottomright" }).addTo(detailMap);
+        try { detailStil = localStorage.getItem("friday_lage_detailstil") || "sat"; } catch { /* egal */ }
+        detailStilSetzen(detailStil);
+      }
+      detailMap.invalidateSize();
+      if (detailUmriss) { detailMap.removeLayer(detailUmriss); detailUmriss = null; }
+      const ganz = landFeature(id);
+      if (ganz) detailUmriss = L.geoJSON(ganz, { interactive: false, style: { color: "#ff8a1e", weight: 2.5, opacity: 0.95, fill: false } }).addTo(detailMap);
+      let grenzen = null;
+      if (teil) {
+        const [[w, s], [e, n]] = d3geo.geoBounds(teil);
+        grenzen = L.latLngBounds([s, w], [n, e < w ? e + 360 : e]);
+      }
+      if (grenzen && grenzen.isValid()) detailMap.fitBounds(grenzen, { padding: [24, 24], maxZoom: 9 });
+      else detailMap.setView([mitte[1], mitte[0]], 6);
+      requestAnimationFrame(() => box.classList.add("show"));
+    } catch {
+      box.classList.add("hidden"); // ohne Detailkarte bleibt der Globus
+    }
+  }
+  function detailAus() {
+    const box = $("lage-detailmap");
+    if (!box) return;
+    box.classList.remove("show");
+    box.classList.add("hidden");
+  }
+  $("lage-dm-globus")?.addEventListener("click", () => {
+    detailAus();
+    const id = selected;
+    if (id) { const teil = hauptteil(landFeature(id)); if (teil) animateGlobe(projection.rotate(), Math.min(projection.scale(), baseScale * 2.2), 700); }
+  });
+  $("lage-dm-stil")?.addEventListener("click", (e) => { const b = e.target.closest("button[data-stil]"); if (b) detailStilSetzen(b.dataset.stil); });
+
   function flyToWorld() {
+    detailAus();
     if (!projection) return;
     animateGlobe([-10, -25, 0], baseScale, 900, startSpin);
   }
@@ -456,7 +557,7 @@
   // Zoomen (Mausrad + Knöpfe)
   function zoomBy(factor) {
     if (!projection) return;
-    const min = baseScale * 0.85, max = baseScale * 9;
+    const min = baseScale * 0.85, max = baseScale * ZOOM_MAX;
     projection.scale(Math.max(min, Math.min(max, projection.scale() * factor)));
     redrawGlobe();
   }
@@ -854,16 +955,17 @@
 
   // ---------- Satellitenansicht (Esri, öffentlich, kein Schlüssel) ----------
   let leafletReady = null, satMap = null;
+  async function ladeLeaflet() {
+    if (!document.getElementById("leaflet-css")) {
+      const l = document.createElement("link"); l.id = "leaflet-css"; l.rel = "stylesheet";
+      l.href = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"; document.head.append(l);
+    }
+    if (!window.L) await import("https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet-src.esm.js").then((m) => { window.L = m; });
+  }
   async function openSat(lon, lat, zoom, title) {
     $("sat-title").textContent = `Satellit: ${title}`;
     $("sat").classList.remove("hidden");
-    leafletReady ??= (async () => {
-      if (!document.getElementById("leaflet-css")) {
-        const l = document.createElement("link"); l.id = "leaflet-css"; l.rel = "stylesheet";
-        l.href = "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"; document.head.append(l);
-      }
-      await import("https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet-src.esm.js").then((m) => { window.L = m; });
-    })();
+    leafletReady ??= ladeLeaflet();
     try {
       await leafletReady;
       const L = window.L;

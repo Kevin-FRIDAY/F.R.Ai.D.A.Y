@@ -2162,3 +2162,22 @@ body.reduce-anim .menu-pop { animation: none !important; }
 .vb-tipp small { color: var(--muted); font-size: 12px; }
 @keyframes vb-puls { 50% { box-shadow: 0 0 calc(44px * var(--glow, 1)) rgba(255, 138, 30, 0.65); } }
 @media (prefers-reduced-motion: reduce) { .vb-tipp { animation: none; } }
+
+/* ---------- v1.87.0: Detailkarte beim Land (tief hineingezoomt) ---------- */
+.lage-map-wrap { position: relative; }
+.lage-detailmap { position: absolute; inset: 8px; z-index: 6; border-radius: 16px; overflow: hidden;
+  border: 1px solid var(--u-kante, rgba(255,138,30,.55)); box-shadow: 0 0 0 1px rgba(255,138,30,.15), 0 0 28px rgba(255,138,30,.25), inset 0 0 40px rgba(0,0,0,.5);
+  background: #050403; opacity: 0; transform: scale(.985); transition: opacity .45s ease, transform .45s ease; }
+.lage-detailmap.show { opacity: 1; transform: none; }
+.lage-detailmap.hidden { display: none; }
+#lage-dm-map { position: absolute; inset: 0; background: #050403; }
+.lage-dm-bar { position: absolute; top: 10px; left: 10px; right: 10px; z-index: 500; display: flex; justify-content: space-between; gap: 8px; pointer-events: none; }
+.lage-dm-bar > * { pointer-events: auto; }
+.lage-dm-stil { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(10,6,3,.72); border: 1px solid rgba(255,138,30,.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.lage-dm-stil button, .lage-dm-globus { font: inherit; font-size: 12px; letter-spacing: .04em; color: var(--cyan, #ff8a1e); background: transparent; border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.lage-dm-stil button.active { background: linear-gradient(135deg, rgba(255,138,30,.9), rgba(255,90,20,.85)); color: #120700; box-shadow: 0 0 12px rgba(255,138,30,.6); }
+.lage-dm-globus { background: rgba(10,6,3,.72); border: 1px solid rgba(255,138,30,.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.lage-dm-globus:hover, .lage-dm-stil button:not(.active):hover { background: rgba(255,138,30,.15); }
+.lage-detailmap .leaflet-control-zoom a { background: rgba(10,6,3,.8); color: var(--cyan, #ff8a1e); border-color: rgba(255,138,30,.4); }
+.lage-detailmap .leaflet-control-attribution { background: rgba(0,0,0,.55); color: #a88; font-size: 9px; }
+.lage-detailmap .leaflet-control-attribution a { color: #c96; }
