@@ -45,7 +45,9 @@ app.use(express.json({ limit: "12mb" }));
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("Referrer-Policy", "no-referrer");
+  // Nur die Herkunft (z. B. https://…ts.net) an fremde Seiten, nie Pfad oder Parameter.
+  // YouTube verlangt diese Angabe für eingebettete Videos (sonst "Video kann nicht eingebettet werden").
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("Permissions-Policy", "camera=(self), microphone=(self), geolocation=()");
   next();
 });
