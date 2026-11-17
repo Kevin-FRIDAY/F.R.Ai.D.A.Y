@@ -569,7 +569,9 @@
     } catch { /* später */ }
   }
   for (const k of ["autoUpdate", "vorladen", "marktVorrechnen"]) {
-    $(`srv-${k}`)?.addEventListener("change", (e) => api("/api/einstellungen", { method: "POST", body: JSON.stringify({ [k]: e.target.checked }) }));
+    $(`srv-${k}`)?.addEventListener("change", (e) => api("/api/einstellungen", { method: "POST", body: JSON.stringify({ [k]: e.target.checked }) })
+      .then((r) => (r.ok ? window.FridaySync?.gespeichert() : window.FridaySync?.nichtGespeichert()))
+      .catch(() => window.FridaySync?.nichtGespeichert()));
   }
   async function checkUpdateInfo() {
     const info = $("upd-info"); if (!info) return;
