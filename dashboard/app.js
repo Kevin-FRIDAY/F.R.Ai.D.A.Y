@@ -517,6 +517,13 @@
     el.addEventListener("change", () => { storage.set(key, el.checked ? "1" : "0"); window.dispatchEvent(new Event("friday-settings")); });
   }
   bindFlag("set-mouth", "friday_mouth", true);
+  // Kopf-Stil: wird beim Laden von face.js gelesen, darum nach dem Wechsel neu laden
+  (() => {
+    const sel = $("set-kopfstil");
+    if (!sel) return;
+    sel.value = storage.get("friday_kopfstil") || window.FridayFace?.standardStil || "kristall";
+    sel.addEventListener("change", () => { storage.set("friday_kopfstil", sel.value); location.reload(); });
+  })();
   bindFlag("set-headmove", "friday_headmove", true);
   bindFlag("set-globespin", "friday_globespin", true);
   bindFlag("set-reduce", "friday_reduce", false);

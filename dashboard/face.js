@@ -26,6 +26,20 @@
 
   const THREE = window.THREE;
 
+  // Kopf-Stil: "holo" (Standard), "detail" (Detail-Hologramm), "partikel" (Lichtpunkt-Wolke), "kern" (abstrakter KI-Kern)
+  const STILE = ["holo", "detail", "partikel", "kern", "kristall", "facetten", "visier", "linien"];
+  const MODUS = { holo: 0, detail: 1, partikel: 0, kern: 0, kristall: 2, facetten: 3, visier: 4, linien: 5 };
+  const FLACH = ["kristall", "facetten"]; // Stile mit sichtbaren Dreiecks-Facetten
+  const STANDARD_STIL = "kristall";
+  const STIL = (() => {
+    try {
+      const q = new URLSearchParams(location.search).get("kopf");
+      const v = q || localStorage.getItem("friday_kopfstil") || STANDARD_STIL;
+      return STILE.includes(v) ? v : STANDARD_STIL;
+    } catch { return STANDARD_STIL; }
+  })();
+  const BASE_RY = STIL === "linien" ? -0.62 : -0.18; // Neon-Linien: Halbprofil
+
   // Akzentfarbe aus dem Theme (Neon-Orange)
   function themeColor() {
     try {
@@ -76,14 +90,16 @@
     uColor: { value: col.clone() },
     uTime: { value: 0 },
     uOpen: { value: 0 },
+    uDetail: { value: STIL === "detail" ? 1 : 0 },
+    uMode: { value: 0 },
     uTalk: { value: 0 },
     uMouth: { value: new THREE.Vector3(0, MOUTH.y, MOUTH.halfW) },
   };
   const vert = `
-    attribute vec3 rest;
-    varying vec3 vN; varying vec3 vV; varying vec3 vRest; varying float vY;
+    attribute vec3 rest; attribute vec3 bary;
+    varying vec3 vN; varying vec3 vV; varying vec3 vRest; varying float vY; varying vec3 vBary;
     void main() {
-      vRest = rest;
+      vRest = rest; vBary = bary;
       vec4 mv = modelViewMatrix * vec4(position, 1.0);
       vV = -mv.xyz;
       vN = normalize(normalMatrix * normal);
@@ -91,8 +107,8 @@
       gl_Position = projectionMatrix * mv;
     }`;
   const frag = `
-    uniform vec3 uColor; uniform float uTime; uniform float uOpen; uniform float uTalk; uniform vec3 uMouth;
-    varying vec3 vN; varying vec3 vV; varying vec3 vRest; varying float vY;
+    uniform vec3 uColor; uniform float uTime; uniform float uOpen; uniform float uTalk; uniform float uDetail; uniform float uMode; uniform vec3 uMouth;
+    varying vec3 vN; varying vec3 vV; varying vec3 vRest; varying float vY; varying vec3 vBary;
     void main() {
       vec3 n = normalize(vN); vec3 v = normalize(vV);
       if (!gl_FrontFacing) n = -n;
@@ -106,6 +122,44 @@
       float scan = 0.88 + 0.12 * sin(vY * 70.0 - uTime * 3.0);
       float band = smoothstep(0.35, 0.0, abs(fract(uTime * 0.12) * 11.0 - 5.5 - vY)) * 0.55;
       c = c * scan + uColor * band * (0.25 + fres);
+      // Detail-Hologramm: Höhenlinien wie ein 3D-Scan, feine Querlinien, Hautstruktur, mehr Glanz
+      if (uDetail > 0.5) {
+        float topo = abs(fract(vRest.z * 7.0) - 0.5);
+        float tl = smoothstep(0.07, 0.0, topo) * smoothstep(0.3, 1.5, vRest.z);
+        float hl = smoothstep(0.035, 0.0, abs(fract(vRest.y * 6.0) - 0.5));
+        c = c * 0.82 + uColor * (tl * 0.75 + hl * 0.2) * (0.45 + key);
+        c *= 0.94 + 0.06 * sin(vRest.x * 55.0 + vRest.z * 20.0) * sin(vRest.y * 55.0);
+      }
+      float alpha = 1.0;
+      float edge = smoothstep(0.022, 0.0, min(vBary.x, min(vBary.y, vBary.z)));
+      if (uMode > 1.5 && uMode < 2.5) {
+        // Kristall: durchscheinendes Glas, funkelnde Facetten, helle Kanten
+        float tw = 0.5 + 0.5 * sin(dot(n, vec3(31.0, 17.0, 23.0)) * 3.0 + uTime * 2.5);
+        float glint = pow(max(dot(reflect(-normalize(vec3(-0.45, 0.55, 0.75)), n), v), 0.0), 60.0);
+        c = uColor * (0.03 + 0.3 * key * key + 1.5 * fres) + mix(uColor, vec3(1.0, 0.92, 0.8), 0.5) * glint * (0.25 + 0.5 * tw) + uColor * edge * 0.35 * (0.4 + key);
+        alpha = clamp(0.25 + fres * 0.9 + glint * 0.5 + edge * 0.3, 0.0, 1.0);
+      } else if (uMode > 2.5 && uMode < 3.5) {
+        // Facetten: dunkle Panzer-Flächen mit leuchtenden Kanten
+        c = uColor * (0.03 + 0.42 * key * key + 0.1 * fill) + vec3(1.0, 0.85, 0.65) * spec * 0.12;
+        c = c * 1.25 + uColor * edge * (0.45 + 0.25 * key) * (0.85 + 0.15 * sin(uTime * 2.0 + vRest.y * 3.0));
+      } else if (uMode > 3.5 && uMode < 4.5) {
+        // Visier: leuchtendes Glasband über den Augen + Panel-Fugen
+        float fz = smoothstep(1.2, 1.7, vRest.z);
+        float vis = smoothstep(1.32, 1.42, vRest.y) * (1.0 - smoothstep(2.02, 2.12, vRest.y)) * (1.0 - smoothstep(1.35, 1.5, abs(vRest.x))) * fz;
+        float vscan = 0.75 + 0.25 * sin(vRest.y * 140.0 - uTime * 6.0);
+        c = mix(c * 0.75, uColor * (1.3 + 0.6 * fres) * vscan + vec3(1.0, 0.9, 0.7) * spec * 0.5, vis);
+        float groove = smoothstep(0.03, 0.0, abs(abs(vRest.x) - 1.05)) * step(2.1, vRest.y)
+          + smoothstep(0.03, 0.0, abs(vRest.y - 2.75)) + smoothstep(0.025, 0.0, abs(vRest.x)) * step(2.75, vRest.y)
+          + smoothstep(0.03, 0.0, abs(vRest.y - 1.3)) * (1.0 - fz) * step(0.0, vRest.z);
+        c = mix(c, uColor * 0.03, clamp(groove, 0.0, 1.0) * 0.8) + uColor * clamp(groove, 0.0, 1.0) * 0.25 * key;
+      } else if (uMode > 4.5) {
+        // Neon-Linien: nur leuchtende Schnittlinien, Rest bleibt durchsichtig
+        float sl = smoothstep(0.09, 0.0, abs(fract(vRest.y * 7.0 - uTime * 0.15) - 0.5) - 0.0);
+        float lit = sl * (0.5 + key) + fres * 0.55;
+        if (lit < 0.06) discard;
+        c = uColor * lit * 1.4;
+        alpha = clamp(lit * 1.2, 0.0, 1.0);
+      }
       // Innerer Mund: dunkel, wenn die Lippen offen sind
       float mx = vRest.x / uMouth.z;
       float my = (vRest.y - uMouth.y) / 0.13;
@@ -116,13 +170,101 @@
       c = mix(c, inner, m * 0.92);
       // Sprechen: Hologramm leuchtet etwas stärker
       c *= 1.0 + uTalk * 0.25;
-      gl_FragColor = vec4(c, 1.0);
+      gl_FragColor = vec4(c, alpha);
     }`;
 
   let solidMat = null, wireMat = null, ready = false;
   let headGeo = null, basePos = null, lastOpen = -1, lastWide = -9;
   const eyeSprites = [];
   let particles = null, partMat = null;
+  const irisRings = [];
+  let wolke = null, kern = null;
+
+  // ---- Stil "partikel": Kopf aus zehntausenden Lichtpunkten ----
+  function baueWolke(geo, inner) {
+    const idx = geo.index ? geo.index.array : null;
+    const pos = geo.attributes.position.array;
+    const triCount = idx ? idx.length / 3 : pos.length / 9;
+    const v = (t, k) => (idx ? idx[t * 3 + k] : t * 3 + k);
+    const areas = new Float32Array(triCount); let total = 0;
+    const A = new THREE.Vector3(), B = new THREE.Vector3(), C = new THREE.Vector3();
+    for (let t = 0; t < triCount; t++) {
+      A.fromArray(pos, v(t, 0) * 3); B.fromArray(pos, v(t, 1) * 3); C.fromArray(pos, v(t, 2) * 3);
+      const a = B.sub(A).cross(C.sub(A)).length() / 2; areas[t] = a; total += a;
+    }
+    const N = 80000, refs = new Uint32Array(N * 3), bary = new Float32Array(N * 3), cols = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) {
+      let r = Math.random() * total, t = 0;
+      while (t < triCount - 1 && r > areas[t]) { r -= areas[t]; t++; }
+      let u = Math.random(), w = Math.random(); if (u + w > 1) { u = 1 - u; w = 1 - w; }
+      refs[i * 3] = v(t, 0); refs[i * 3 + 1] = v(t, 1); refs[i * 3 + 2] = v(t, 2);
+      bary[i * 3] = 1 - u - w; bary[i * 3 + 1] = u; bary[i * 3 + 2] = w;
+      // Helligkeit aus Licht + Randlicht, damit Gesichtszüge sichtbar bleiben
+      const nr = geo.attributes.normal.array;
+      let nx = 0, ny = 0, nz = 0;
+      for (let k = 0; k < 3; k++) { const q = v(t, k) * 3, f = bary[i * 3 + k]; nx += nr[q] * f; ny += nr[q + 1] * f; nz += nr[q + 2] * f; }
+      const nl = Math.hypot(nx, ny, nz) || 1; nx /= nl; ny /= nl; nz /= nl;
+      const lit = Math.max(0, -0.45 * nx + 0.55 * ny + 0.7 * nz);
+      const rim = Math.pow(1 - Math.abs(nz), 2.5);
+      const b = (0.12 + 1.1 * lit * lit + 0.7 * rim) * (0.7 + Math.random() * 0.5) * (Math.random() < 0.05 ? 1.8 : 1); cols[i * 3] = b; cols[i * 3 + 1] = b; cols[i * 3 + 2] = b;
+    }
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute("position", new THREE.BufferAttribute(new Float32Array(N * 3), 3));
+    pg.setAttribute("color", new THREE.BufferAttribute(cols, 3));
+    const pm = new THREE.PointsMaterial({ color: col.clone(), size: 0.026, vertexColors: true, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false });
+    const pts = new THREE.Points(pg, pm);
+    pts.scale.setScalar(1 / 1); // gleiche Einheiten wie der Kopf
+    inner.add(pts);
+    wolke = { pg, refs, bary, mat: pm, N };
+    updateWolke();
+  }
+  function updateWolke() {
+    if (!wolke || !headGeo) return;
+    const src = headGeo.attributes.position.array, out = wolke.pg.attributes.position.array;
+    const { refs, bary, N } = wolke;
+    for (let i = 0; i < N; i++) {
+      const a = refs[i * 3] * 3, b = refs[i * 3 + 1] * 3, c = refs[i * 3 + 2] * 3;
+      const u = bary[i * 3], v = bary[i * 3 + 1], w = bary[i * 3 + 2];
+      out[i * 3] = src[a] * u + src[b] * v + src[c] * w;
+      out[i * 3 + 1] = src[a + 1] * u + src[b + 1] * v + src[c + 1] * w;
+      out[i * 3 + 2] = src[a + 2] * u + src[b + 2] * v + src[c + 2] * w;
+    }
+    wolke.pg.attributes.position.needsUpdate = true;
+  }
+
+  // ---- Stil "detail": leuchtende Aura-Hülle um den Kopf ----
+  function baueDetail(geo, inner) {
+    const aura = new THREE.ShaderMaterial({
+      uniforms: { uColor: uniforms.uColor, uTalk: uniforms.uTalk },
+      vertexShader: `varying vec3 vN; varying vec3 vV; void main(){ vec4 mv = modelViewMatrix * vec4(position + normal * 0.06, 1.0); vV = -mv.xyz; vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `uniform vec3 uColor; uniform float uTalk; varying vec3 vN; varying vec3 vV; void main(){ float f = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 3.0); gl_FragColor = vec4(uColor * f * (0.9 + uTalk), f); }`,
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide,
+    });
+    inner.add(new THREE.Mesh(geo, aura));
+  }
+
+  // ---- Stil "kern": abstrakter KI-Kern (ohne Gesicht), pulsiert beim Sprechen ----
+  function baueKern() {
+    const g = new THREE.Group();
+    const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(1.0, 3), new THREE.MeshBasicMaterial({ color: col.clone(), wireframe: true, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const innerS = new THREE.Mesh(new THREE.IcosahedronGeometry(0.62, 1), new THREE.MeshBasicMaterial({ color: col.clone(), wireframe: true, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: col.clone(), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+    glow.scale.set(2.2, 2.2, 1);
+    const core = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.9 }));
+    core.scale.set(0.7, 0.7, 1);
+    g.add(glow, shell, innerS, core);
+    // Kreis-Equalizer: 72 Balken, die mit der Stimme ausschlagen
+    const bars = [];
+    const bm = new THREE.MeshBasicMaterial({ color: col.clone(), transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
+    const bg = new THREE.PlaneGeometry(0.035, 1); bg.translate(0, 0.5, 0);
+    for (let i = 0; i < 72; i++) {
+      const b = new THREE.Mesh(bg, bm); const a = (i / 72) * Math.PI * 2;
+      b.position.set(Math.cos(a) * 1.4, Math.sin(a) * 1.4, 0); b.rotation.z = a - Math.PI / 2; b.scale.y = 0.06;
+      g.add(b); bars.push({ m: b, ph: Math.random() * 6.28 });
+    }
+    group.add(g);
+    kern = { g, shell, innerS, glow, core, bars, mats: [shell.material, innerS.material, glow.material, bm] };
+  }
 
   function glowTexture() {
     const c = document.createElement("canvas"); c.width = c.height = 64;
@@ -177,12 +319,20 @@
   }
 
   const loader = new THREE.GLTFLoader();
-  loader.load("vendor/head.glb", (gltf) => {
+  if (STIL === "kern") { baueKern(); setTimeout(baueRinge, 0); ready = true; }
+  else loader.load("vendor/head.glb", (gltf) => {
     let geo = null;
     gltf.scene.traverse((o) => { if (o.isMesh && o.geometry && !geo) geo = o.geometry; });
     if (!geo) { fallback2d(); return; }
     geo = geo.clone();
     geo.center();
+    if (FLACH.includes(STIL)) {
+      // Jedes Dreieck eigene Ecken -> flache Facetten + Kanten-Koordinaten
+      geo = geo.toNonIndexed();
+      const n = geo.attributes.position.count, b = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) b[i * 3 + (i % 3)] = 1;
+      geo.setAttribute("bary", new THREE.BufferAttribute(b, 3));
+    }
     geo.computeVertexNormals();
     geo.computeBoundingSphere();
     const s = 2.1 / (geo.boundingSphere.radius || 1);
@@ -193,17 +343,33 @@
 
     // Beleuchtete Hologramm-Oberfläche
     try {
-      solidMat = new THREE.ShaderMaterial({ uniforms, vertexShader: vert, fragmentShader: frag });
+      uniforms.uMode.value = MODUS[STIL] || 0;
+      const durchsichtig = STIL === "kristall" || STIL === "linien";
+      solidMat = new THREE.ShaderMaterial({ uniforms, vertexShader: vert, fragmentShader: frag, transparent: durchsichtig, depthWrite: !durchsichtig, side: THREE.FrontSide });
       solidMat.polygonOffset = true; solidMat.polygonOffsetFactor = 1; solidMat.polygonOffsetUnits = 1;
     } catch { solidMat = new THREE.MeshBasicMaterial({ color: 0x140a04 }); }
+    if (STIL === "partikel") {
+      // Nur Tiefe schreiben: verdeckt die Rückseite, ohne selbst sichtbar zu sein
+      solidMat = new THREE.MeshBasicMaterial({ colorWrite: false });
+      solidMat.polygonOffset = true; solidMat.polygonOffsetFactor = 2; solidMat.polygonOffsetUnits = 2;
+    }
     const solid = new THREE.Mesh(geo, solidMat);
 
     // Feines Netz darüber (Hologramm-Struktur)
-    wireMat = new THREE.MeshBasicMaterial({ color: col.clone(), wireframe: true, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false });
+    wireMat = new THREE.MeshBasicMaterial({ color: col.clone(), wireframe: true, transparent: true, opacity: STIL === "detail" ? 0.05 : 0.1, blending: THREE.AdditiveBlending, depthWrite: false });
     const wire = new THREE.Mesh(geo, wireMat);
 
     const inner = new THREE.Group();
-    inner.add(solid); inner.add(wire);
+    inner.add(solid);
+    if (!["partikel", "kristall", "facetten", "linien"].includes(STIL)) inner.add(wire);
+    if (STIL === "kristall" || STIL === "linien") {
+      // Tiefen-Vorlauf: nur die vorderste Oberfläche leuchtet, innere Flächen (Mundhöhle) bleiben verborgen
+      const tiefe = new THREE.MeshBasicMaterial({ colorWrite: false, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+      const pre = new THREE.Mesh(geo, tiefe); pre.renderOrder = -1;
+      inner.add(pre); solid.renderOrder = 1;
+    }
+    if (STIL === "partikel") baueWolke(geo, inner);
+    if (STIL === "detail") baueDetail(geo, inner);
 
     // Leuchtende Augen (blinzeln)
     const tex = glowTexture();
@@ -213,11 +379,18 @@
       sp.position.set(x, y, z + 0.08);
       sp.scale.set(0.34, 0.2, 1);
       inner.add(sp); eyeSprites.push(sp);
+      if (STIL === "detail") {
+        // Iris-Ringe, die sich langsam drehen
+        const rm = new THREE.MeshBasicMaterial({ color: col.clone(), transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.075, 0.1, 24, 1, 0, Math.PI * 1.6), rm);
+        ring.position.set(x, y, z + 0.1);
+        inner.add(ring); irisRings.push(ring);
+      }
     }
 
     inner.scale.setScalar(s);
     group.add(inner);
-    group.rotation.y = -0.18;
+    group.rotation.y = BASE_RY;
 
     // Schwebende Licht-Partikel um den Kopf
     try {
@@ -235,6 +408,11 @@
       scene.add(particles);
     } catch { /* Partikel optional */ }
 
+    baueRinge();
+    ready = true;
+  }, undefined, () => { fallback2d(); });
+
+  function baueRinge() {
     // Futuristische HUD-Orbitringe um den Kopf
     try {
       ringMats = [];
@@ -249,9 +427,7 @@
       mkRing(2.9, 0.006, Math.PI / 1.9, -0.4, 0.5);
       scene.add(rings);
     } catch { /* Ringe optional */ }
-
-    ready = true;
-  }, undefined, () => { fallback2d(); });
+  }
 
   resize();
   if (window.ResizeObserver) { try { new ResizeObserver(resize).observe(host); } catch {} }
@@ -263,6 +439,9 @@
     if (partMat) partMat.color.copy(c);
     eyeSprites.forEach((s) => s.material.color.copy(c));
     ringMats.forEach((m) => m.color.copy(c));
+    irisRings.forEach((r) => r.material.color.copy(c));
+    if (wolke) wolke.mat.color.copy(c);
+    if (kern) kern.mats.forEach((m) => m.color.copy(c));
   }, 1500);
 
   // ---- Einstellungen (localStorage) ----
@@ -301,10 +480,10 @@
     uniforms.uTime.value = t;
     if (ready) {
       if (optHead && !optReduce) {
-        group.rotation.y = -0.18 + Math.sin(t * 0.4) * 0.11 + Math.sin(t * 0.15) * 0.04;
+        group.rotation.y = BASE_RY + Math.sin(t * 0.4) * 0.11 + Math.sin(t * 0.15) * 0.04;
         group.rotation.x = Math.sin(t * 0.3) * 0.05 - 0.02 + open * 0.035;
         group.position.y = Math.sin(t * 0.6) * 0.03;
-      } else { group.rotation.y = -0.18; group.rotation.x = -0.02; group.position.y = 0; }
+      } else { group.rotation.y = BASE_RY; group.rotation.x = -0.02; group.position.y = 0; }
 
       if (talkMode === "speech") openTarget = speechTarget(now);
       else if (talkMode !== "amp") { openTarget = 0; wideTarget = 0; }
@@ -320,6 +499,7 @@
       uniforms.uTalk.value = talkGlow * (0.4 + open * 0.6);
       if (Math.abs(mouthOpen - lastOpen) > 0.006 || Math.abs(wide - lastWide) > 0.02) {
         deformMouth(mouthOpen, optMouth ? wide : 0); lastOpen = mouthOpen; lastWide = wide;
+        if (wolke) updateWolke();
       }
       if (wireMat) wireMat.opacity = 0.08 + talkGlow * 0.06;
 
@@ -333,6 +513,19 @@
       }
       const pulse = 0.55 + Math.sin(t * 2.2) * 0.08 + talkGlow * 0.15;
       eyeSprites.forEach((s) => { s.scale.set(0.34, 0.2 * Math.max(0.06, lid), 1); s.material.opacity = pulse; });
+      irisRings.forEach((r, i) => { r.rotation.z += dt * 0.002 * (i ? -1 : 1); r.scale.y = Math.max(0.06, lid); });
+      if (wolke) wolke.mat.size = 0.026 * (0.95 + Math.sin(t * 3) * 0.05 + talkGlow * 0.15);
+      if (kern) {
+        kern.shell.rotation.y += dt * 0.0004; kern.shell.rotation.x += dt * 0.00015;
+        kern.innerS.rotation.y -= dt * 0.0009; kern.innerS.rotation.z += dt * 0.0003;
+        const puls = 1 + open * 0.18 + Math.sin(t * 1.6) * 0.02;
+        kern.innerS.scale.setScalar(puls); kern.core.scale.setScalar(0.7 + open * 0.6);
+        kern.glow.material.opacity = 0.55 + open * 0.45;
+        kern.bars.forEach((b, i) => {
+          const wave = 0.5 + 0.5 * Math.sin(t * 9 + b.ph + i * 0.35);
+          b.m.scale.y = 0.06 + (talkMode ? open * (0.25 + wave * 0.55) : 0.02 + 0.03 * Math.sin(t * 1.5 + i * 0.2) ** 2);
+        });
+      }
 
       // Partikel steigen langsam auf
       if (particles && !optReduce) {
@@ -398,6 +591,7 @@
 
   // ---- API ----
   window.FridayFace = {
+    stil: STIL, standardStil: STANDARD_STIL,
     // Gerätestimme: Silben-Rhythmus starten/stoppen
     talk(on) { stopAmp(); talkMode = on ? "speech" : null; if (on) nextSyllable(performance.now()); else openTarget = 0; },
     // Server-Stimme (ElevenLabs): Mund folgt der echten Lautstärke
