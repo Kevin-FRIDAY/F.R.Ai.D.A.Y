@@ -583,6 +583,7 @@
   // Länder-Namen auf dem Globus (von lagezentrum.js gelesen)
   bindFlag("set-globelabels", "friday_globelabels", true);
   bindFlag("set-alarmauto", "friday_alarm_auto", false);
+  bindFlag("set-lagedetail", "friday_lage_detail", true);
   bindFlag("set-marktspeak", "friday_markt_speak", true);
   bindFlag("set-visiongesten", "friday_vision_gesten", true);
   bindFlag("set-werkstattmassiv", "friday_werkstatt_massiv", false);

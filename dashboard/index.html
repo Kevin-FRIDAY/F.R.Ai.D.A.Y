@@ -555,6 +555,7 @@
             <label class="switch"><input type="checkbox" id="set-glowbreathe"><span>Neon atmet (Panels pulsieren sanft)</span></label>
             <label class="switch"><input type="checkbox" id="set-vollbild"><span>Friday immer im Vollbild (ab dem ersten Klick, Taste F schaltet um)</span></label>
             <label class="switch"><input type="checkbox" id="set-alarmauto"><span>Welt-Alarm beim Öffnen des Weltgeschehens abspielen (max. alle 30 Min.)</span></label>
+            <label class="switch"><input type="checkbox" id="set-lagedetail"><span>Beim Land tief hineinzoomen und auf die Detailkarte (Satellit mit Städten und Straßen) wechseln</span></label>
             <label class="row-field"><span>Markt beim Öffnen</span><select id="set-marktdefault"><option value="gold">Gold</option><option value="bitcoin">Bitcoin</option><option value="ethereum">Ethereum</option></select></label>
             <label class="switch"><input type="checkbox" id="set-marktspeak" checked><span>Markt-Ergebnis ansagen</span></label>
             <label class="row-field"><span>Vision: Erkennen ab</span><input type="range" id="set-visionschwelle" min="30" max="80" step="5" value="45"></label>
@@ -908,6 +909,16 @@
       <div class="lage-map-wrap panel">
         <svg id="lage-map" class="lage-map" viewBox="0 0 960 500" role="img" aria-label="Weltkarte"></svg>
         <div class="alarm-sweep" aria-hidden="true"></div>
+        <div id="lage-detailmap" class="lage-detailmap hidden">
+          <div id="lage-dm-map"></div>
+          <div class="lage-dm-bar">
+            <div id="lage-dm-stil" class="lage-dm-stil">
+              <button type="button" data-stil="sat">🛰 Satellit</button>
+              <button type="button" data-stil="karte">🗺 Karte</button>
+            </div>
+            <button type="button" id="lage-dm-globus" class="lage-dm-globus" title="Zurück zum Globus">◎ Globus</button>
+          </div>
+        </div>
         <div id="lage-alarm-hud" class="alarm-hud hidden">
           <button id="alarm-x" class="alarm-x" title="Alarm beenden">✕</button>
           <div id="alarm-stufe" class="alarm-stufe"></div>
