@@ -569,11 +569,34 @@
     info.textContent = "Prüfe GitHub …";
     try {
       const u = await (await api("/api/update")).json();
-      info.textContent = u.error ? `Version ${u.installed} · ${u.error}` : u.available ? `Version ${u.installed} · neu: ${u.latest} (wird automatisch installiert)` : `Version ${u.installed} · aktuell`;
+      info.textContent = u.error ? `Version ${u.installed} · ${u.error}` : u.available ? `Version ${u.installed} · neu: ${u.latest}` : `Version ${u.installed} · aktuell ✓`;
+      zeigeInstallKnopf(u);
       showGhKey(u.githubSchluessel);
-    } catch { info.textContent = "Konnte nicht prüfen."; }
+    } catch { info.textContent = "Konnte nicht prüfen."; zeigeInstallKnopf(null); }
+  }
+  // Deutlicher Knopf „Jetzt installieren“, sobald eine neue Version da ist.
+  let einstUpdate = null;
+  function zeigeInstallKnopf(u) {
+    const box = $("upd-neu"); if (!box) return;
+    einstUpdate = u && !u.error && u.available ? u : null;
+    box.classList.toggle("hidden", !einstUpdate);
+    if (!einstUpdate) return;
+    $("upd-neu-titel").textContent = `Update auf ${u.latest} verfügbar`;
+    $("upd-neu-sub").textContent = `Du hast ${u.installed}. Vorher wird automatisch gesichert, Friday ist danach kurz offline.`;
+    const btn = $("upd-install");
+    const laeuft = window.FridayUpdate?.aktiv?.();
+    btn.disabled = Boolean(laeuft);
+    btn.textContent = laeuft ? "Update läuft …" : "⬇ Jetzt installieren";
   }
   $("upd-check")?.addEventListener("click", checkUpdateInfo);
+  $("upd-install")?.addEventListener("click", async () => {
+    if (!einstUpdate) return;
+    const btn = $("upd-install");
+    btn.disabled = true; btn.textContent = "Startet …";
+    const ok = await installUpdate(einstUpdate);
+    if (ok) { btn.textContent = "Update läuft …"; $("upd-info").textContent = `Installiere Version ${einstUpdate.latest} …`; }
+    else { btn.disabled = false; btn.textContent = "⬇ Jetzt installieren"; }
+  });
   // GitHub-Schlüssel (nur nötig, wenn das Repo privat ist). Der Schlüssel selbst kommt nie zurück.
   function showGhKey(k) {
     const el = $("gh-info"); if (!el || !k) return;
@@ -887,15 +910,21 @@
       return;
     }
     if (!confirm(`Friday auf Version ${update.latest} aktualisieren? Sie ist danach kurz offline.`)) return;
-    const res = await (await api("/api/update", { method: "POST" })).json();
-    if (res.error) return addMessage("sys", res.error);
-    showUpdate("busy", "Update läuft...");
-    addMessage("friday", `Ich spiele Version ${update.latest} ein und starte gleich neu, Boss.`);
-    // Ladebalken zeigt Herunterladen → Sicherung → Installieren → Neustart und lädt am Ende neu.
-    window.FridayUpdate?.start({ ziel: update.latest, von: update.installed });
+    await installUpdate(update);
   });
+  // Startet das Update sofort (Kopf-Knopf und „Jetzt installieren“ in den Einstellungen).
+  async function installUpdate(u) {
+    let res;
+    try { res = await (await api("/api/update", { method: "POST" })).json(); } catch { res = { error: "Friday ist nicht erreichbar." }; }
+    if (res.error) { addMessage("sys", res.error); return false; }
+    showUpdate("busy", "Update läuft...");
+    addMessage("friday", `Ich spiele Version ${u.latest} ein und starte gleich neu, Boss.`);
+    // Ladebalken zeigt Herunterladen → Sicherung → Installieren → Neustart und lädt am Ende neu.
+    window.FridayUpdate?.start({ ziel: u.latest, von: u.installed });
+    return true;
+  }
   window.addEventListener("friday-update-ende", (e) => {
-    if (e.detail?.ok === false) { if (e.detail.text) addMessage("sys", e.detail.text); checkUpdate(); }
+    if (e.detail?.ok === false) { if (e.detail.text) addMessage("sys", e.detail.text); checkUpdate(); checkUpdateInfo(); }
   });
 
   // ---------- Foto ----------
