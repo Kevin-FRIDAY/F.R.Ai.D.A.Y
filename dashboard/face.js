@@ -28,12 +28,13 @@
 
   // Kopf-Stil: "holo" (Standard), "detail" (Detail-Hologramm), "partikel" (Lichtpunkt-Wolke), "kern" (abstrakter KI-Kern)
   const STILE = ["holo", "detail", "partikel", "kern"];
+  const STANDARD_STIL = "detail";
   const STIL = (() => {
     try {
       const q = new URLSearchParams(location.search).get("kopf");
-      const v = q || localStorage.getItem("friday_kopfstil") || "holo";
-      return STILE.includes(v) ? v : "holo";
-    } catch { return "holo"; }
+      const v = q || localStorage.getItem("friday_kopfstil") || STANDARD_STIL;
+      return STILE.includes(v) ? v : STANDARD_STIL;
+    } catch { return STANDARD_STIL; }
   })();
 
   // Akzentfarbe aus dem Theme (Neon-Orange)
@@ -541,6 +542,7 @@
 
   // ---- API ----
   window.FridayFace = {
+    stil: STIL, standardStil: STANDARD_STIL,
     // Gerätestimme: Silben-Rhythmus starten/stoppen
     talk(on) { stopAmp(); talkMode = on ? "speech" : null; if (on) nextSyllable(performance.now()); else openTarget = 0; },
     // Server-Stimme (ElevenLabs): Mund folgt der echten Lautstärke
