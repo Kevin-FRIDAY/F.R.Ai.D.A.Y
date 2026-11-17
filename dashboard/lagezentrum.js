@@ -82,7 +82,8 @@
 
   const showSide = (on) => document.querySelector(".lage-body")?.classList.toggle("open", on);
 
-  function open() {
+  function open(opts = {}) {
+    const schonOffen = !$("lage").classList.contains("hidden");
     $("lage").classList.remove("hidden");
     document.body.classList.add("lage-open");
     mapReady ??= drawMap();
@@ -100,7 +101,7 @@
     startISS();
     // Optional: Welt-Alarm direkt abspielen (höchstens alle 30 Minuten).
     try {
-      if (localStorage.getItem("friday_alarm_auto") === "1" && Date.now() - Number(localStorage.getItem("friday_alarm_last") || 0) > 30 * 60 * 1000) {
+      if (!opts.stumm && !schonOffen && localStorage.getItem("friday_alarm_auto") === "1" && Date.now() - Number(localStorage.getItem("friday_alarm_last") || 0) > 30 * 60 * 1000) {
         localStorage.setItem("friday_alarm_last", String(Date.now()));
         setTimeout(() => window.FridayAlarm?.play(), 1200);
       }
@@ -1244,7 +1245,23 @@
   $("alarm-x")?.addEventListener("click", () => stopAlarm());
   window.FridayAlarm = { play: playAlarm, stop: stopAlarm };
   // Von außen (Länder-Fenster): Lagezentrum öffnen und direkt ein Land anfliegen
-  window.FridayLage = { open, showCountry: async (id) => { open(); await mapReady; select(String(id)); } };
+  // Bewertung aus dem Sprach-Briefing anzeigen (Friday liest die Einschätzung selbst vor).
+  function zeigeBewertung(id, wert) {
+    const box = $("lage-assess");
+    const label = { gut: "GUT", schlecht: "SCHLECHT", gemischt: "GEMISCHT" }[wert];
+    if (!box || !label || selected !== String(id)) return;
+    box.innerHTML = `<span class="rating ${wert}">${label}</span><span class="speaking-note">🔊 Friday spricht</span>`;
+    const c = countries.find((x) => x.id === String(id));
+    if (c) { c.bewertung = wert; render(); }
+  }
+  window.FridayLage = {
+    open,
+    offen: () => !$("lage").classList.contains("hidden"),
+    showCountry: async (id, opts = {}) => {
+      open(opts); await mapReady; await select(String(id));
+      if (opts.bewertung) zeigeBewertung(id, opts.bewertung);
+    },
+  };
 
   // ---------- Robuster YouTube-Player ----------
   // Lädt die YouTube-IFrame-API einmal; der Player überspringt nicht einbettbare

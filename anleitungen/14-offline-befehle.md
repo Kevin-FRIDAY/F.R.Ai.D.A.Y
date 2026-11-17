@@ -27,3 +27,19 @@ Sag oder schreib zum Beispiel:
 **Wenn Claude nicht erreichbar ist** (Guthaben leer, kein Internet), springt Friday trotzdem ein: Fragen wie „Wer ist Albert Einstein?“ beantwortet sie dann kurz aus Wikipedia, und das Morgenbriefing kommt als Kurzfassung (Wetter, Erinnerungen, Aufgaben, Top-Meldung).
 
 Alles, was mehr Nachdenken braucht (Gedichte, Erklärungen, Webseiten, Werkstatt …), braucht weiterhin Claude-Guthaben.
+
+## Weltgeschehen als Gespräch (ab 1.86.0)
+
+- **„Friday, zeig mir das Weltgeschehen“**: Der Globus geht auf und Friday fragt: „Welches Land willst du sehen?“ Das Mikrofon geht von selbst an.
+- Dann einfach das Land sagen, z. B. **„USA“** oder **„die Türkei“**. Friday fliegt hin, schätzt die Lage ein (braucht Claude-Guthaben) und liest die wichtigsten Nachrichten vor.
+- Danach fragt sie: „Noch ein Land, Boss?“ Sag ein weiteres Land oder **„Nein danke“**.
+- Direkt geht auch: **„Wie ist die Lage in Japan?“** oder **„Weltgeschehen Frankreich“**.
+
+Öffnen, Land und Nachrichten laufen ohne Claude, also sofort. Ohne Guthaben fehlt nur die Einschätzung.
+
+## Vollbild
+
+- Knopf **⛶ Vollbild** oben in der Leiste, Taste **F** oder **„Friday, Vollbild“** / **„Vollbild aus“**.
+- Kommt der Befehl per Stimme, verlangt der Browser manchmal einen Tipp: Dann erscheint unten ein Knopf „Vollbild – einmal tippen“.
+- Einstellungen → Glow & Werkzeuge → **„Friday immer im Vollbild“**: schaltet beim ersten Klick nach dem Öffnen um.
+- Auf dem iPhone ist Friday als App vom Home-Bildschirm schon im Vollbild.
