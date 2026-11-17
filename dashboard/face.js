@@ -27,7 +27,9 @@
   const THREE = window.THREE;
 
   // Kopf-Stil: "holo" (Standard), "detail" (Detail-Hologramm), "partikel" (Lichtpunkt-Wolke), "kern" (abstrakter KI-Kern)
-  const STILE = ["holo", "detail", "partikel", "kern"];
+  const STILE = ["holo", "detail", "partikel", "kern", "kristall", "facetten", "visier", "linien"];
+  const MODUS = { holo: 0, detail: 1, partikel: 0, kern: 0, kristall: 2, facetten: 3, visier: 4, linien: 5 };
+  const FLACH = ["kristall", "facetten"]; // Stile mit sichtbaren Dreiecks-Facetten
   const STANDARD_STIL = "detail";
   const STIL = (() => {
     try {
@@ -36,6 +38,7 @@
       return STILE.includes(v) ? v : STANDARD_STIL;
     } catch { return STANDARD_STIL; }
   })();
+  const BASE_RY = STIL === "linien" ? -0.62 : -0.18; // Neon-Linien: Halbprofil
 
   // Akzentfarbe aus dem Theme (Neon-Orange)
   function themeColor() {
@@ -88,14 +91,15 @@
     uTime: { value: 0 },
     uOpen: { value: 0 },
     uDetail: { value: STIL === "detail" ? 1 : 0 },
+    uMode: { value: 0 },
     uTalk: { value: 0 },
     uMouth: { value: new THREE.Vector3(0, MOUTH.y, MOUTH.halfW) },
   };
   const vert = `
-    attribute vec3 rest;
-    varying vec3 vN; varying vec3 vV; varying vec3 vRest; varying float vY;
+    attribute vec3 rest; attribute vec3 bary;
+    varying vec3 vN; varying vec3 vV; varying vec3 vRest; varying float vY; varying vec3 vBary;
     void main() {
-      vRest = rest;
+      vRest = rest; vBary = bary;
       vec4 mv = modelViewMatrix * vec4(position, 1.0);
       vV = -mv.xyz;
       vN = normalize(normalMatrix * normal);
@@ -103,8 +107,8 @@
       gl_Position = projectionMatrix * mv;
     }`;
   const frag = `
-    uniform vec3 uColor; uniform float uTime; uniform float uOpen; uniform float uTalk; uniform float uDetail; uniform vec3 uMouth;
-    varying vec3 vN; varying vec3 vV; varying vec3 vRest; varying float vY;
+    uniform vec3 uColor; uniform float uTime; uniform float uOpen; uniform float uTalk; uniform float uDetail; uniform float uMode; uniform vec3 uMouth;
+    varying vec3 vN; varying vec3 vV; varying vec3 vRest; varying float vY; varying vec3 vBary;
     void main() {
       vec3 n = normalize(vN); vec3 v = normalize(vV);
       if (!gl_FrontFacing) n = -n;
@@ -126,6 +130,36 @@
         c = c * 0.82 + uColor * (tl * 0.75 + hl * 0.2) * (0.45 + key);
         c *= 0.94 + 0.06 * sin(vRest.x * 55.0 + vRest.z * 20.0) * sin(vRest.y * 55.0);
       }
+      float alpha = 1.0;
+      float edge = smoothstep(0.022, 0.0, min(vBary.x, min(vBary.y, vBary.z)));
+      if (uMode > 1.5 && uMode < 2.5) {
+        // Kristall: durchscheinendes Glas, funkelnde Facetten, helle Kanten
+        float tw = 0.5 + 0.5 * sin(dot(n, vec3(31.0, 17.0, 23.0)) * 3.0 + uTime * 2.5);
+        float glint = pow(max(dot(reflect(-normalize(vec3(-0.45, 0.55, 0.75)), n), v), 0.0), 60.0);
+        c = uColor * (0.03 + 0.3 * key * key + 1.5 * fres) + mix(uColor, vec3(1.0, 0.92, 0.8), 0.5) * glint * (0.25 + 0.5 * tw) + uColor * edge * 0.35 * (0.4 + key);
+        alpha = clamp(0.25 + fres * 0.9 + glint * 0.5 + edge * 0.3, 0.0, 1.0);
+      } else if (uMode > 2.5 && uMode < 3.5) {
+        // Facetten: dunkle Panzer-Flächen mit leuchtenden Kanten
+        c = uColor * (0.03 + 0.42 * key * key + 0.1 * fill) + vec3(1.0, 0.85, 0.65) * spec * 0.12;
+        c = c * 1.25 + uColor * edge * (0.45 + 0.25 * key) * (0.85 + 0.15 * sin(uTime * 2.0 + vRest.y * 3.0));
+      } else if (uMode > 3.5 && uMode < 4.5) {
+        // Visier: leuchtendes Glasband über den Augen + Panel-Fugen
+        float fz = smoothstep(1.2, 1.7, vRest.z);
+        float vis = smoothstep(1.32, 1.42, vRest.y) * (1.0 - smoothstep(2.02, 2.12, vRest.y)) * (1.0 - smoothstep(1.35, 1.5, abs(vRest.x))) * fz;
+        float vscan = 0.75 + 0.25 * sin(vRest.y * 140.0 - uTime * 6.0);
+        c = mix(c * 0.75, uColor * (1.3 + 0.6 * fres) * vscan + vec3(1.0, 0.9, 0.7) * spec * 0.5, vis);
+        float groove = smoothstep(0.03, 0.0, abs(abs(vRest.x) - 1.05)) * step(2.1, vRest.y)
+          + smoothstep(0.03, 0.0, abs(vRest.y - 2.75)) + smoothstep(0.025, 0.0, abs(vRest.x)) * step(2.75, vRest.y)
+          + smoothstep(0.03, 0.0, abs(vRest.y - 1.3)) * (1.0 - fz) * step(0.0, vRest.z);
+        c = mix(c, uColor * 0.03, clamp(groove, 0.0, 1.0) * 0.8) + uColor * clamp(groove, 0.0, 1.0) * 0.25 * key;
+      } else if (uMode > 4.5) {
+        // Neon-Linien: nur leuchtende Schnittlinien, Rest bleibt durchsichtig
+        float sl = smoothstep(0.09, 0.0, abs(fract(vRest.y * 7.0 - uTime * 0.15) - 0.5) - 0.0);
+        float lit = sl * (0.5 + key) + fres * 0.55;
+        if (lit < 0.06) discard;
+        c = uColor * lit * 1.4;
+        alpha = clamp(lit * 1.2, 0.0, 1.0);
+      }
       // Innerer Mund: dunkel, wenn die Lippen offen sind
       float mx = vRest.x / uMouth.z;
       float my = (vRest.y - uMouth.y) / 0.13;
@@ -136,7 +170,7 @@
       c = mix(c, inner, m * 0.92);
       // Sprechen: Hologramm leuchtet etwas stärker
       c *= 1.0 + uTalk * 0.25;
-      gl_FragColor = vec4(c, 1.0);
+      gl_FragColor = vec4(c, alpha);
     }`;
 
   let solidMat = null, wireMat = null, ready = false;
@@ -292,6 +326,13 @@
     if (!geo) { fallback2d(); return; }
     geo = geo.clone();
     geo.center();
+    if (FLACH.includes(STIL)) {
+      // Jedes Dreieck eigene Ecken -> flache Facetten + Kanten-Koordinaten
+      geo = geo.toNonIndexed();
+      const n = geo.attributes.position.count, b = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) b[i * 3 + (i % 3)] = 1;
+      geo.setAttribute("bary", new THREE.BufferAttribute(b, 3));
+    }
     geo.computeVertexNormals();
     geo.computeBoundingSphere();
     const s = 2.1 / (geo.boundingSphere.radius || 1);
@@ -302,7 +343,9 @@
 
     // Beleuchtete Hologramm-Oberfläche
     try {
-      solidMat = new THREE.ShaderMaterial({ uniforms, vertexShader: vert, fragmentShader: frag });
+      uniforms.uMode.value = MODUS[STIL] || 0;
+      const durchsichtig = STIL === "kristall" || STIL === "linien";
+      solidMat = new THREE.ShaderMaterial({ uniforms, vertexShader: vert, fragmentShader: frag, transparent: durchsichtig, depthWrite: !durchsichtig, side: THREE.FrontSide });
       solidMat.polygonOffset = true; solidMat.polygonOffsetFactor = 1; solidMat.polygonOffsetUnits = 1;
     } catch { solidMat = new THREE.MeshBasicMaterial({ color: 0x140a04 }); }
     if (STIL === "partikel") {
@@ -318,7 +361,13 @@
 
     const inner = new THREE.Group();
     inner.add(solid);
-    if (STIL !== "partikel") inner.add(wire);
+    if (!["partikel", "kristall", "facetten", "linien"].includes(STIL)) inner.add(wire);
+    if (STIL === "kristall" || STIL === "linien") {
+      // Tiefen-Vorlauf: nur die vorderste Oberfläche leuchtet, innere Flächen (Mundhöhle) bleiben verborgen
+      const tiefe = new THREE.MeshBasicMaterial({ colorWrite: false, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+      const pre = new THREE.Mesh(geo, tiefe); pre.renderOrder = -1;
+      inner.add(pre); solid.renderOrder = 1;
+    }
     if (STIL === "partikel") baueWolke(geo, inner);
     if (STIL === "detail") baueDetail(geo, inner);
 
@@ -341,7 +390,7 @@
 
     inner.scale.setScalar(s);
     group.add(inner);
-    group.rotation.y = -0.18;
+    group.rotation.y = BASE_RY;
 
     // Schwebende Licht-Partikel um den Kopf
     try {
@@ -431,10 +480,10 @@
     uniforms.uTime.value = t;
     if (ready) {
       if (optHead && !optReduce) {
-        group.rotation.y = -0.18 + Math.sin(t * 0.4) * 0.11 + Math.sin(t * 0.15) * 0.04;
+        group.rotation.y = BASE_RY + Math.sin(t * 0.4) * 0.11 + Math.sin(t * 0.15) * 0.04;
         group.rotation.x = Math.sin(t * 0.3) * 0.05 - 0.02 + open * 0.035;
         group.position.y = Math.sin(t * 0.6) * 0.03;
-      } else { group.rotation.y = -0.18; group.rotation.x = -0.02; group.position.y = 0; }
+      } else { group.rotation.y = BASE_RY; group.rotation.x = -0.02; group.position.y = 0; }
 
       if (talkMode === "speech") openTarget = speechTarget(now);
       else if (talkMode !== "amp") { openTarget = 0; wideTarget = 0; }
