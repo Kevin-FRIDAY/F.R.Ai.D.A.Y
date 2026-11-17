@@ -10,6 +10,7 @@ import { quickCommand as tvQuick } from "./fernseher.js";
 import { quickCommand as dienstQuick, dienstKurzinfo } from "./dienste.js";
 import { offlineAnswer, notfallText } from "./offline.js";
 import { quickCommand as hausQuick } from "./werkstatt.js";
+import { quickCommand as landQuick } from "./laenderinfo.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
@@ -114,6 +115,16 @@ export async function ask({ text, channel = "web", image, mode = "normal", targe
       if (h) { actions.push(...h.actions); return finish(h.answer); }
     } catch (err) {
       console.error("Haus-Werkstatt:", err.message);
+    }
+  }
+
+  // Länder-Info ("zeig mir USA", "erzähl mir was über Japan"): Fenster + Vorlesen – ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const l = await landQuick(text);
+      if (l) { actions.push(...l.actions); return finish(l.answer); }
+    } catch (err) {
+      console.error("Länder-Info:", err.message);
     }
   }
 

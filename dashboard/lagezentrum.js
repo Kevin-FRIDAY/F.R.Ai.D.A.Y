@@ -1243,6 +1243,8 @@
   $("lage-alarm-btn")?.addEventListener("click", () => playAlarm());
   $("alarm-x")?.addEventListener("click", () => stopAlarm());
   window.FridayAlarm = { play: playAlarm, stop: stopAlarm };
+  // Von außen (Länder-Fenster): Lagezentrum öffnen und direkt ein Land anfliegen
+  window.FridayLage = { open, showCountry: async (id) => { open(); await mapReady; select(String(id)); } };
 
   // ---------- Robuster YouTube-Player ----------
   // Lädt die YouTube-IFrame-API einmal; der Player überspringt nicht einbettbare

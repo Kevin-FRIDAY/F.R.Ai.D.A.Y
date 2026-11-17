@@ -352,6 +352,8 @@
           u.rate = Number(storage.get("friday_rate")) || 1.05;
           u.pitch = Number(storage.get("friday_pitch")) || 1;
           u.onstart = () => window.FridayFace?.talk(true);
+          // Mund im Takt der gesprochenen Wörter bewegen
+          u.onboundary = (e) => { if (!e.name || e.name === "word") window.FridayFace?.boundary?.(e.charIndex, text); };
           u.onend = resolve;
           u.onerror = resolve;
           speechSynthesis.speak(u);
@@ -398,6 +400,8 @@
       busy = false;
       if (data.actions?.some((a) => a === "set_reminder")) { refreshReminders(); window.FridayHud?.refresh(); }
       if (data.actions?.includes("werkstatt")) window.FridayWerkstatt?.showLatest();
+      const landAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("land:"));
+      if (landAktion) window.FridayLand?.open(landAktion.slice(5));
       if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       window.FridayEnergie?.refresh();

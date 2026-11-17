@@ -360,7 +360,7 @@ export async function getNewsImages(country) {
 // --- Bilder und öffentliche Kameras pro Land (alles frei zugänglich) ---
 const mediaCache = new Map(); // id -> { at, fotos }
 
-async function fetchFotos(country) {
+export async function fetchFotos(country) {
   try {
     const q = encodeURIComponent((country.en || country.name) + " landmark city");
     const res = await fetch(`https://api.openverse.org/v1/images/?q=${q}&page_size=9&mature=false&license_type=all`, {
