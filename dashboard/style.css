@@ -1997,3 +1997,157 @@ body.reduce-anim .sheet-box, body.reduce-anim .en-bar::after, body.reduce-anim .
 #sync-toast.warn { border-color: rgba(255, 93, 108, 0.55); }
 #sync-toast.warn .st-ico { background: linear-gradient(135deg, #ff9aa4, #ff5d6c); box-shadow: 0 0 14px rgba(255, 93, 108, 0.6); }
 body.reduce-anim #sync-toast { transition: none; }
+
+/* =====================================================================
+   v1.85.0: Handy-App aufgeräumt (iPhone/Android, bis 900 px Breite)
+   – Kopfleiste mit Uhr/Wetter oben (unter der Notch), Kopf groß als
+     Mittelpunkt, Eingabe + Vorschläge direkt darunter
+   – Status-Karten kompakt darunter, leere Karten ausgeblendet
+   – Navigation als feste Leiste unten (Daumen-Reichweite) mit rundem
+     Werkzeug-Knopf in der Mitte; Werkzeug-Menü als Blatt von unten
+   – Touch-Größen ≥ 44 px, Eingaben 16 px (kein Safari-Zoom), Safe-Areas
+   ===================================================================== */
+@media (max-width: 900px) {
+  :root { --m-bar: 64px; --m-safe-b: env(safe-area-inset-bottom, 0px); --m-safe-t: env(safe-area-inset-top, 0px); }
+  html { -webkit-text-size-adjust: 100%; }
+  body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+
+  /* Reihenfolge: Kopfleiste → Kopf/Eingabe → Status → Dienste */
+  .hud {
+    display: flex; flex-direction: column; gap: 12px;
+    padding: calc(10px + var(--m-safe-t)) max(14px, env(safe-area-inset-right)) calc(var(--m-bar) + 26px + var(--m-safe-b)) max(14px, env(safe-area-inset-left));
+  }
+  .hud::before { display: none; }
+  .rightcol { display: contents; }
+  .weathercard { order: 0; }
+  .center { order: 1; gap: 14px; padding-top: 0; }
+  .rightcol > .panel:not(.weathercard) { order: 2; }
+  .sidebar { order: 3; }
+
+  /* Kopfleiste: Uhr links, Wetter rechts, Platz für nichts anderes */
+  .weathercard {
+    padding: 10px 16px; border-radius: 18px; min-height: 64px;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--cyan) 12%, rgba(14, 8, 3, 0.86)), rgba(8, 5, 2, 0.9));
+  }
+  .weathercard .clock, .wc-time .clock { font-size: 26px; line-height: 1.05; letter-spacing: .04em; }
+  .wc-time .date-line { font-size: 12px; margin-top: 2px; }
+  .wc-weather { font-size: 12px; max-width: 46%; }
+  .weather-top, .weather-off { padding-right: 0 !important; }
+
+  /* Mitte: Kopf groß, Begrüßung, Eingabe */
+  .hud-bar { order: 2; margin: 0 auto; gap: 6px; }
+  .hero { order: 1; gap: 10px; }
+  .quick { order: 3; }
+  .reactor { width: min(330px, 80vw) !important; margin: 4px auto 0; }
+  .hero-text h1, #greeting { font-size: clamp(22px, 6.4vw, 28px); margin: 0 0 4px; }
+  .hero-input { max-width: none; padding: 6px 6px 6px 8px; border-radius: 18px; min-height: 56px; }
+  .hero-input #text { font-size: 16px; min-height: 44px; font-family: var(--font-ui); letter-spacing: .02em; }
+  .hero-input .mic, .hero-input #camera-btn { width: 44px; height: 44px; min-width: 44px; border-radius: 14px; }
+  .state { font-size: 12px; }
+  .cmd-chips { gap: 8px; margin-top: 8px; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; width: calc(100% + 28px); margin-left: -14px; margin-right: -14px; padding: 2px 14px 6px; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%); }
+  .cmd-chips::-webkit-scrollbar { display: none; }
+  .cmd-chip { flex: none; min-height: 38px; padding: 8px 15px; font-size: 13.5px; scroll-snap-align: start; white-space: nowrap; }
+  .transcript { max-height: 38vh; }
+
+  /* HUD-Chips: gleich breit, gut antippbar */
+  .hb-chip { height: 34px; padding: 0 12px; font-size: 11px; }
+  .hb-ver { display: none; }
+
+  /* Schnellzugriff: 2×2 kompakt */
+  .quick-grid { gap: 10px; }
+  .quick-card { padding: 14px 14px 12px; min-height: 96px; border-radius: 16px; }
+  .quick-card:active, .nav-item:active, .menu-row:active, .cmd-chip:active, .hb-btn:active { transform: scale(.97); }
+
+  /* Status-Karten: kompakter, leere Prozess-Liste ausblenden */
+  .rightcol > .panel:not(.weathercard) { padding: 14px 16px; border-radius: 16px; }
+  .rightcol .panel h2 { margin-bottom: 8px; }
+  .rightcol > .panel:has(#proc-list > li.muted:only-child) { display: none; }
+  .bk-actions .chip { min-height: 44px; }
+
+  /* Seitenleiste: Logo/Profil weg, Dienste als Reihe, Navigation als Leiste unten */
+  .side-logo, .side-user-panel { display: none !important; }
+  .sidebar { gap: 0; }
+  .side-nav { margin: 0 !important; }
+  .side-nav > .side-panel + .side-panel { flex-direction: row; justify-content: center; gap: 8px; padding: 8px; }
+  .side-nav > .side-panel + .side-panel .nav-item { flex: 1; justify-content: center; min-height: 44px; padding: 8px; border: 1px solid var(--u-rand-soft); font-size: 13px; }
+
+  .side-nav > .side-panel:first-child {
+    position: fixed; z-index: 17; left: max(10px, env(safe-area-inset-left)); right: max(10px, env(safe-area-inset-right));
+    bottom: calc(8px + var(--m-safe-b)); height: var(--m-bar);
+    display: grid; grid-template-columns: 1fr 1fr 74px 1fr 1fr; align-items: center; gap: 0;
+    padding: 4px 6px; border-radius: 22px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--cyan) 10%, rgba(14, 8, 3, 0.9)), rgba(6, 4, 2, 0.94));
+    box-shadow: var(--u-glow), var(--u-schein), 0 -6px 30px rgba(0, 0, 0, 0.6);
+  }
+  .side-nav > .side-panel:first-child .nav-item {
+    flex-direction: column; justify-content: center; gap: 3px; height: 54px; padding: 4px 2px;
+    font-size: 10.5px; letter-spacing: .04em; text-align: center; border-radius: 14px;
+    background: none; border: 0; box-shadow: none; color: var(--muted);
+  }
+  .side-nav > .side-panel:first-child .nav-item .ni { width: 22px; height: 22px; }
+  .side-nav > .side-panel:first-child .nav-item span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .side-nav > .side-panel:first-child .nav-item.active { color: var(--cyan); background: radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--cyan) 22%, transparent), transparent 70%) !important; box-shadow: none !important; }
+  .side-nav > .side-panel:first-child .nav-item.active::after { content: ""; position: absolute; bottom: 2px; left: 50%; width: 18px; height: 3px; margin-left: -9px; border-radius: 2px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+  .side-nav > .side-panel:first-child .nav-item { position: relative; }
+  .side-nav > .side-panel:first-child .nav-item::before, .side-nav > .side-panel + .side-panel .nav-item::before { display: none; }
+  .side-nav > .side-panel:first-child .nav-item.active .ni { filter: drop-shadow(0 0 6px var(--cyan)); }
+  .side-nav > .side-panel:first-child .nav-item:nth-of-type(3) { grid-column: 4; }
+
+  /* Werkzeug-Knopf: rund, leuchtend, mitten in der Leiste */
+  .menu-fab {
+    top: auto !important; left: 50% !important; right: auto !important; transform: translateX(-50%);
+    bottom: calc(8px + var(--m-safe-b) + (var(--m-bar) - 60px) / 2 + 10px);
+    width: 60px !important; height: 60px !important; border-radius: 50% !important; z-index: 19;
+    color: #140900;
+    background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--cyan) 45%, #fff 55%), var(--cyan) 62%, color-mix(in srgb, var(--cyan) 70%, #000)) !important;
+    border: 2px solid color-mix(in srgb, var(--cyan) 50%, #fff) !important;
+    box-shadow: 0 0 calc(24px * var(--glow, 1)) color-mix(in srgb, var(--cyan) 70%, transparent), 0 0 0 5px rgba(8, 5, 2, 0.95), 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+  }
+  .menu-fab svg { width: 26px; height: 26px; stroke-width: 2.1; }
+  .menu-fab:active { transform: translateX(-50%) scale(.94); }
+
+  /* Werkzeug-Menü als Blatt von unten, zweispaltig */
+  .menu-pop {
+    top: auto !important; left: max(10px, env(safe-area-inset-left)) !important; right: max(10px, env(safe-area-inset-right)) !important;
+    bottom: calc(var(--m-bar) + 22px + var(--m-safe-b)); width: auto !important;
+    max-height: calc(100dvh - var(--m-bar) - 60px - var(--m-safe-b) - var(--m-safe-t)) !important;
+    display: grid !important; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px; border-radius: 22px;
+    animation: m-hoch .26s cubic-bezier(.2, .9, .3, 1.1); overscroll-behavior: contain;
+    box-shadow: var(--u-glow), 0 0 0 100vmax rgba(3, 2, 1, 0.72) !important;
+  }
+  .menu-pop.hidden { display: none !important; }
+  .menu-sep { grid-column: 1 / -1; padding: 10px 6px 2px; }
+  .menu-row { min-height: 52px; padding: 10px 10px; gap: 10px; font-size: 13.5px; line-height: 1.2; border: 1px solid var(--u-rand-soft); background: var(--u-karte); border-radius: 14px; }
+  .menu-row .mi { width: 21px; height: 21px; color: var(--cyan); }
+
+  /* Fenster (Einstellungen, Gehirn, …) als Blatt von unten, volle Breite */
+  .sheet { align-items: flex-end; padding: calc(10px + var(--m-safe-t)) 0 0; }
+  .sheet-box {
+    width: 100%; max-height: calc(100dvh - 18px - var(--m-safe-t)); border-radius: 24px 24px 0 0;
+    padding: 8px 16px calc(20px + var(--m-safe-b)); border-bottom: 0;
+    animation: m-hoch .3s cubic-bezier(.2, .9, .3, 1.05); overscroll-behavior: contain;
+  }
+  .sheet-top { position: sticky; top: -8px; z-index: 2; margin: 0 -16px 14px; padding: 6px 16px 10px; background: linear-gradient(180deg, rgba(14, 8, 3, 0.98) 70%, rgba(14, 8, 3, 0)); }
+  .sheet-top > button.ghost.small, .sheet-top button[id$="-x"] { width: 40px; height: 40px; font-size: 16px; }
+
+  /* Eingaben: 16 px, damit Safari nicht hineinzoomt; Knöpfe fingerfreundlich */
+  input[type="text"], input[type="password"], input[type="number"], input[type="search"], input[type="email"], input[type="url"], select, textarea { font-size: 16px; min-height: 44px; }
+  .chip { min-height: 40px; }
+
+  /* Vollbild-Werkzeuge: nicht unter Notch/Home-Balken */
+  .vision, .schnitt, .markt, .webseiten { padding-top: calc(14px + var(--m-safe-t)); padding-bottom: calc(14px + var(--m-safe-b)); }
+
+  /* „Gespeichert“-Schild über der Leiste */
+  #sync-toast { bottom: calc(var(--m-bar) + 24px + var(--m-safe-b)); }
+}
+@media (max-width: 380px) {
+  .weathercard .clock, .wc-time .clock { font-size: 22px; }
+  .menu-row { font-size: 12.5px; padding: 8px; }
+  .hb-chip { padding: 0 9px; letter-spacing: .04em; }
+  .side-nav > .side-panel:first-child .nav-item { font-size: 9.5px; letter-spacing: 0; }
+  .hero-input { gap: 6px; }
+  .hero-input .mic, .hero-input #camera-btn { width: 42px; min-width: 42px; }
+}
+@keyframes m-hoch { from { opacity: 0; transform: translateY(24px); } }
+@media (prefers-reduced-motion: reduce) { .menu-pop, .sheet-box { animation: none !important; } }
+body.reduce-anim .menu-pop { animation: none !important; }

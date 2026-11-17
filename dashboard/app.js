@@ -717,7 +717,7 @@
   function navTo(where, el) {
     document.querySelectorAll(".nav-item").forEach((n) => n.classList.toggle("active", n.dataset.nav === where));
     switch (where) {
-      case "home": break;
+      case "home": try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch { window.scrollTo(0, 0); } break;
       case "chat": $("text")?.focus(); break;
       case "kalender": openSheet("kalender"); loadKalender(); break;
       case "aufgaben": openSheet("organizer"); loadOrganizer(); break;
