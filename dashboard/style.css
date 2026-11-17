@@ -1780,3 +1780,40 @@ body.reduce-anim.glow-breathe .panel { animation: none; }
   .side-panel { flex-direction: row; flex-wrap: wrap; padding: 6px; }
   .side-user-panel { display: none; }
 }
+
+/* ---------- Länder-Fenster ("zeig mir USA") – v1.80 ---------- */
+.land-box { width: min(760px, 100%); position: relative; border: 1px solid var(--cyan); box-shadow: 0 0 40px color-mix(in srgb, var(--cyan) 25%, transparent), inset 0 0 30px rgba(255,140,30,.06); }
+.land-box.loading::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); background-size: 50% 100%; background-repeat: no-repeat; animation: land-load 1s linear infinite; }
+@keyframes land-load { from { background-position: -50% 0; } to { background-position: 150% 0; } }
+.land-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.land-flag { font-size: 40px; line-height: 1; flex: none; }
+.land-flag img { display: block; height: 42px; width: auto; border-radius: 4px; border: 1px solid var(--line); box-shadow: 0 0 14px rgba(255,140,30,.25); }
+.land-title { flex: 1; min-width: 0; }
+.land-title h2 { margin: 0; font-size: 26px; letter-spacing: .04em; color: var(--cyan); text-shadow: 0 0 14px color-mix(in srgb, var(--cyan) 55%, transparent); }
+.land-title small { color: var(--muted); font-size: 12px; letter-spacing: .08em; }
+.land-top { display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: center; }
+.land-globe { width: 200px; height: 200px; display: block; filter: drop-shadow(0 0 16px rgba(255,140,30,.3)); }
+.land-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.land-tile { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 8px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,140,30,.05); }
+.land-tile-i { grid-row: span 2; font-size: 20px; }
+.land-tile-l { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.land-tile b { font-size: 14px; font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.land-fotos { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-auto-rows: 86px; gap: 6px; margin-top: 14px; }
+.land-foto { display: block; overflow: hidden; border-radius: 8px; border: 1px solid var(--line); }
+.land-foto.big { grid-row: span 2; }
+.land-foto img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s; }
+.land-foto:hover img { transform: scale(1.06); }
+.land-text { margin-top: 14px; font-size: 14px; line-height: 1.55; color: var(--text); }
+.land-text p { margin: 0 0 6px; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.land-more { color: var(--cyan); font-size: 12px; text-decoration: none; }
+.land-news h3 { margin: 14px 0 6px; }
+.land-news-row { display: flex; justify-content: space-between; gap: 10px; padding: 7px 10px; border-left: 2px solid var(--cyan); background: rgba(255,140,30,.04); margin-bottom: 4px; color: var(--text); text-decoration: none; font-size: 13px; }
+.land-news-row small { color: var(--muted); flex: none; }
+.land-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+@media (max-width: 600px) {
+  .land-top { grid-template-columns: 1fr; justify-items: center; }
+  .land-globe { width: 170px; height: 170px; }
+  .land-tiles { width: 100%; grid-template-columns: 1fr 1fr; }
+  .land-fotos { grid-template-columns: 1fr 1fr; grid-auto-rows: 80px; }
+  .land-title h2 { font-size: 21px; }
+}

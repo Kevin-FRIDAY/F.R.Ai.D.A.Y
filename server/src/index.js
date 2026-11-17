@@ -28,6 +28,7 @@ import { haBereit } from "./homeassistant.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
+import { getLandInfo, findeLand } from "./laenderinfo.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus, updateProgress, runningVersion, githubTokenStatus, setGithubToken, forgetGithubToken } from "./updater.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
@@ -372,6 +373,12 @@ app.get("/api/lage/:id/medien", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id);
   if (!country) return res.status(404).json({ error: "Land nicht gefunden" });
   res.json(await getMedia(country));
+}));
+// Länder-Fenster ("zeig mir USA"): Steckbrief, Wikipedia, Fotos, Schlagzeilen in einem Rutsch
+app.get("/api/land/:id", asyncRoute(async (req, res) => {
+  const country = findCountry(req.params.id) || findeLand(req.params.id);
+  if (!country) return res.status(404).json({ error: "Land nicht gefunden" });
+  res.json(await getLandInfo(country));
 }));
 app.get("/api/lage/:id/info", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id);

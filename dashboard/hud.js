@@ -48,7 +48,7 @@
   // ---------- 2. Befehls-Vorschläge unter dem Eingabefeld ----------
   const VORSCHLAEGE = [
     "Wie spät ist es?", "Wie wird das Wetter morgen?", "Timer 5 Minuten", "Was kostet Bitcoin?", "Was ist in der Welt los?",
-    "Was steht auf der Einkaufsliste?", "Was kannst du?", "Wann ist der nächste Feiertag?", "100 Euro in Dollar", "Wo ist die ISS?",
+    "Was steht auf der Einkaufsliste?", "Was kannst du?", "Wann ist der nächste Feiertag?", "100 Euro in Dollar", "Zeig mir USA", "Erzähl mir was über Japan", "Wo ist die ISS?",
     "Erzähl mir einen Witz", "Brauche ich einen Schirm?", "Welche Erinnerungen habe ich?", "Was ist 15 Prozent von 80?",
   ];
   function chipsZeigen() {

@@ -16,6 +16,7 @@ Sag oder schreib zum Beispiel:
 | Kurse | „Was kostet Bitcoin?“, „100 Euro in Dollar“, „Wie steht der Dollar?“ |
 | Rechnen | „Was ist 12 mal 7?“, „Rechne 15 Prozent von 80“ |
 | Welt | „Was ist in Japan los?“, „Was ist in der Welt los?“, „Wo ist die ISS?“, „Wann ist der nächste Feiertag?“ |
+| Länder-Fenster | „Zeig mir USA“, „Erzähl mir was über Japan“, „Was weißt du über Kanada?“, „Steckbrief Frankreich“ – öffnet ein Fenster mit Flagge, Globus, Steckbrief, Fotos, Wikipedia-Text und Schlagzeilen; Friday liest das Wichtigste vor |
 | Mac | „Öffne YouTube“, „Öffne Notizen“, „Mach lauter“, „Musik pause“, „Nächster Titel“, „Sperr den Mac“ |
 | Protokolle | „Starte Protokoll Feierabend“ |
 | Spaß | „Erzähl mir einen Witz“, „Wirf eine Münze“, „Würfel“ |

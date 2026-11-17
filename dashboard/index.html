@@ -273,6 +273,26 @@
     </section>
 
     <!-- Alexa: Routinen auslösen und Ansagen über Voice Monkey -->
+    <section id="land" class="sheet hidden" aria-label="Länder-Info">
+      <div id="land-box" class="panel sheet-box land-box">
+        <header class="land-head">
+          <span id="land-flag" class="land-flag"></span>
+          <div class="land-title"><h2 id="land-name">Land</h2><small id="land-sub"></small></div>
+          <button id="land-x" class="ghost small" aria-label="Schließen">✕</button>
+        </header>
+        <div class="land-top">
+          <canvas id="land-globe" class="land-globe" aria-hidden="true"></canvas>
+          <div id="land-tiles" class="land-tiles"></div>
+        </div>
+        <div id="land-fotos" class="land-fotos hidden"></div>
+        <div id="land-text" class="land-text"></div>
+        <div id="land-news" class="land-news"></div>
+        <div class="land-actions">
+          <button id="land-lage" class="chip primary">🌍 Im Lagezentrum zeigen</button>
+          <button id="land-sprich" class="chip">🔊 Vorlesen</button>
+        </div>
+      </div>
+    </section>
     <button id="alexa-open" class="hidden" aria-hidden="true"></button>
     <section id="alexa" class="sheet hidden" aria-label="Alexa">
       <div class="panel sheet-box alexa-box">
@@ -933,6 +953,7 @@
   <script src="schnitt.js"></script>
   <script src="markt.js"></script>
   <script src="alexa.js"></script>
+  <script src="land.js"></script>
   <script src="dienste.js"></script>
   <script src="aktiv.js"></script>
   <script src="postfach.js"></script>
