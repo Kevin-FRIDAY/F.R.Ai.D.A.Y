@@ -171,6 +171,7 @@
           </form>
           <div id="state" class="state">Bereit, Boss.</div>
           <div id="transcript" class="transcript" aria-live="polite"></div>
+          <button type="button" id="verlauf-link" class="verlauf-link hidden" data-nav="wissen">Ganzer Verlauf in der Datenbank ›</button>
           <div id="photo-preview" class="photo-preview hidden"></div>
         </div>
       </div>
@@ -497,6 +498,13 @@
         <div class="set-group">
           <div class="set-g-head"><span class="set-g-ico">🤖</span><div class="set-g-txt"><h3>Assistent</h3><small>Gesicht, Weckwort, Übersetzer</small></div></div>
           <div class="set-g-body">
+            <label class="row-field"><span>Denk-Tempo</span>
+              <select id="srv-tempo">
+                <option value="blitz">⚡ Blitz – am schnellsten, einfache Sachen</option>
+                <option value="schnell">🚀 Schnell – schnell und klug (Standard)</option>
+                <option value="gruendlich">🧠 Gründlich – langsamer, für schwere Aufgaben</option>
+              </select>
+            </label>
             <label class="row-field"><span>Kopf-Stil</span>
               <select id="set-kopfstil">
                 <option value="kristall">Kristall-Glas</option>
@@ -672,6 +680,7 @@
           <button type="button" data-typ="aufgabe">✅ Aufgaben</button>
           <button type="button" data-typ="erinnerung">⏰ Erinnerungen</button>
           <button type="button" data-typ="einkauf">🛒 Einkauf</button>
+          <button type="button" data-typ="dokument">📄 Dokumente</button>
         </div>
         <div id="wissen-liste" class="wissen-liste"><span class="muted">Lade …</span></div>
         <button id="wissen-mehr" class="chip wissen-mehr hidden" type="button">Ältere laden</button>
@@ -1015,6 +1024,8 @@
   <script src="fernseher.js"></script>
   <script src="sicherung.js"></script>
   <script src="update-balken.js"></script>
+  <script src="auftrag-balken.js"></script>
+  <script src="dokumente.js"></script>
   <script src="vollbild.js"></script>
   <script src="hud.js"></script>
   <script src="vendor/three.min.js"></script>

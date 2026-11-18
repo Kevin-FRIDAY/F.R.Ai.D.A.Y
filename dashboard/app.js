@@ -85,7 +85,17 @@
     label.textContent = who === "user" ? (status.name || "DU").toUpperCase() : "F.R.AI.D.A.Y";
     div.append(label, document.createTextNode(text));
     $("transcript").append(div);
-    $("transcript").scrollTop = $("transcript").scrollHeight;
+    kuerzeVerlauf();
+  }
+  // Chat-Verlauf klein halten: nur die letzten Nachrichten, der Rest steht in der Datenbank (Wissen).
+  const VERLAUF_MAX = 4;
+  function kuerzeVerlauf() {
+    const t = $("transcript");
+    if (!t) return;
+    const alle = t.querySelectorAll(".msg:not(.speaking-msg)");
+    for (let i = 0; i < alle.length - VERLAUF_MAX; i++) alle[i].remove();
+    $("verlauf-link")?.classList.toggle("hidden", alle.length < 2);
+    t.scrollTop = t.scrollHeight;
   }
 
   // "Nur vorlesen": statt Text ein Hinweis, dass Friday spricht.
@@ -101,7 +111,7 @@
     note.textContent = "🔊 Friday spricht";
     div.append(label, note);
     $("transcript").append(div);
-    $("transcript").scrollTop = $("transcript").scrollHeight;
+    kuerzeVerlauf();
   }
 
   function clearSpeaking() {
@@ -412,6 +422,7 @@
       return;
     }
     busy = true;
+    window.FridayAuftrag?.start();
     if (gespraechRec) { try { gespraechRec.abort(); } catch { /* egal */ } } // getippt statt gesprochen
     addMessage("user", pendingImage ? `📷 ${text}` : text);
     setState("Denkt nach", "thinking");
@@ -426,6 +437,9 @@
       const data = await res.json();
       let answer = data.answer || data.error || "Keine Antwort.";
       const hat = (a) => data.actions?.includes(a);
+      window.FridayAuftrag?.ende(res.ok && !data.error);
+      // Friday hat ein Dokument oder einen Fragebogen erstellt: gleich zeigen.
+      if (hat("fragebogen_erstellen") || hat("dokument_erstellen")) window.FridayDokumente?.neuestes();
       // Vollbild: im Browser umschalten (auf dem iPhone ist die Home-Bildschirm-App schon Vollbild).
       if (hat("vollbild") || hat("vollbild_aus")) {
         const r = window.FridayVollbild?.sprachBefehl(hat("vollbild"));
@@ -453,10 +467,11 @@
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
       // Gesprächsmodus: Kam der Befehl per Stimme, hört Friday danach weiter zu, ohne "Friday" davor.
       const weiter = hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer);
-      if (weiter && Recognition && !callActive) {
+      if (weiter && Recognition && !callActive && !window.FridayDokumente?.offen()) {
         setTimeout(() => { if (!busy && !speaking) listenOnce({ folge: true, frage: hat("zuhoeren") }); }, 250);
       }
     } catch (err) {
+      window.FridayAuftrag?.ende(false);
       addMessage("friday", `Verbindung gestört: ${err.message}`);
       setState("Fehler", "");
     } finally {
@@ -618,6 +633,7 @@
     try {
       const s = await (await api("/api/einstellungen")).json();
       for (const k of ["autoUpdate", "vorladen", "marktVorrechnen"]) { const el = $(`srv-${k}`); if (el) el.checked = Boolean(s[k]); }
+      if ($("srv-tempo") && s.tempo) $("srv-tempo").value = s.tempo;
     } catch { /* später */ }
   }
   for (const k of ["autoUpdate", "vorladen", "marktVorrechnen"]) {
@@ -625,6 +641,9 @@
       .then((r) => (r.ok ? window.FridaySync?.gespeichert() : window.FridaySync?.nichtGespeichert()))
       .catch(() => window.FridaySync?.nichtGespeichert()));
   }
+  $("srv-tempo")?.addEventListener("change", (e) => api("/api/einstellungen", { method: "POST", body: JSON.stringify({ tempo: e.target.value }) })
+    .then((r) => (r.ok ? window.FridaySync?.gespeichert() : window.FridaySync?.nichtGespeichert()))
+    .catch(() => window.FridaySync?.nichtGespeichert()));
   async function checkUpdateInfo() {
     const info = $("upd-info"); if (!info) return;
     info.textContent = "Prüfe GitHub …";
@@ -917,8 +936,8 @@
     loadBrain();
   }
   // ---------- Wissen = Fridays Datenbank: alles, was gesprochen und gemacht wurde ----------
-  const W_ICON = { gespraech: "💬", aktion: "⚡", gedaechtnis: "🧠", aufgabe: "✅", erinnerung: "⏰", einkauf: "🛒" };
-  const W_NAME = { gespraech: "Gespräche", aktion: "Aktionen", gedaechtnis: "Gemerkt", aufgabe: "Aufgaben", erinnerung: "Erinnerungen", einkauf: "Einkauf" };
+  const W_ICON = { gespraech: "💬", aktion: "⚡", gedaechtnis: "🧠", aufgabe: "✅", erinnerung: "⏰", einkauf: "🛒", dokument: "📄" };
+  const W_NAME = { gespraech: "Gespräche", aktion: "Aktionen", gedaechtnis: "Gemerkt", aufgabe: "Aufgaben", erinnerung: "Erinnerungen", einkauf: "Einkauf", dokument: "Dokumente" };
   const W_KANAL = { web: "Dashboard", telegram: "Telegram", siri: "Siri", briefing: "Briefing" };
   let wTyp = "", wQ = "", wLetztes = "", wSuchTimer = null, wLaedt = false;
   const wMark = (t) => {
@@ -944,6 +963,10 @@
     } else if (e.typ === "erinnerung") {
       haupt = wMark(e.text);
       if (e.faellig) neben = `<div class="antwort">fällig ${escapeHtml(new Date(e.faellig).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }))}</div>`;
+    } else if (e.typ === "dokument") {
+      haupt = `${wMark(e.text)}<span class="kanal">${e.art === "fragebogen" ? "Fragebogen" : "Dokument"}${e.info ? ` · ${escapeHtml(e.info)}` : ""}</span>`;
+      neben = `<div class="antwort">${wMark((e.inhalt || "").slice(0, 400))}</div>`;
+      return `<div class="wissen-e wissen-dok" data-dok="${escapeHtml(e.id)}" role="button" tabindex="0" title="Öffnen"><span class="ico">${e.art === "fragebogen" ? "📝" : "📄"}</span><div><div class="frage">${haupt}</div>${neben}</div><span class="zeit">${zeit}</span></div>`;
     } else {
       haupt = wMark(e.text);
       if (e.typ === "aktion" && e.art) haupt += `<span class="kanal">${escapeHtml(e.art)}</span>`;
@@ -992,7 +1015,11 @@
     document.querySelectorAll("#wissen-filter button").forEach((x) => x.classList.toggle("active", x === b));
     ladeWissen();
   });
-  $("wissen-liste")?.addEventListener("click", (e) => { const a = e.target.closest(".antwort"); if (a) a.classList.toggle("offen"); });
+  $("wissen-liste")?.addEventListener("click", (e) => {
+    const dok = e.target.closest("[data-dok]");
+    if (dok) { window.FridayDokumente?.oeffne(dok.dataset.dok); return; }
+    const a = e.target.closest(".antwort"); if (a) a.classList.toggle("offen");
+  });
   $("wissen-export")?.addEventListener("click", async () => {
     try {
       const blob = await (await api("/api/wissen/export")).blob();

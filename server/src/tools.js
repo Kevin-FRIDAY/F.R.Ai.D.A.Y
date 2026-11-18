@@ -1,5 +1,6 @@
 // Fridays Werkzeuge: alles, was sie außer Reden noch kann.
 import fs from "node:fs";
+import { dokumentErstellen, fragebogenErstellen } from "./dokumente.js";
 import path from "node:path";
 import { config, ROOT } from "./config.js";
 import * as store from "./store.js";
@@ -31,6 +32,16 @@ const MAC_ACTIONS = [
 ];
 
 export const toolDefinitions = [
+  {
+    name: "dokument_erstellen",
+    description: "Speichert einen fertigen Text für Boss als Dokument im Dashboard (Liste, Plan, Brief, Rezept, Zusammenfassung, Ideen …). Benutze es immer, wenn Boss dich bittet, etwas zu erstellen, zu schreiben oder auszuarbeiten, das länger als drei Sätze ist. Schreib den vollständigen Inhalt direkt hinein.",
+    input_schema: { type: "object", properties: { titel: { type: "string" }, inhalt: { type: "string", description: "Der komplette, fertige Text (Zeilenumbrüche erlaubt)" } }, required: ["titel", "inhalt"] },
+  },
+  {
+    name: "fragebogen_erstellen",
+    description: "Erstellt einen Fragebogen, den Boss im Dashboard Frage für Frage ausfüllen kann (z. B. 'Mach einen Fragebogen mit 30 Fragen, um mich kennenzulernen'). Die Antworten landen danach automatisch in deinem Gedächtnis. Schreib alle Fragen vollständig aus, genau so viele wie gewünscht.",
+    input_schema: { type: "object", properties: { titel: { type: "string" }, fragen: { type: "array", items: { type: "string" }, description: "Die einzelnen Fragen, ausformuliert" } }, required: ["titel", "fragen"] },
+  },
   {
     name: "world_news",
     description: "Lagezentrum: aktuelle Schlagzeilen der letzten 24 Stunden zu einem Land (z. B. 'Was ist in Frankreich los?'). Ohne Land: Übersicht, wo gerade am meisten berichtet wird.",
@@ -429,6 +440,16 @@ export async function runTool(name, input = {}) {
       const v = getVideoJob();
       if (!v.job) return { status: "frei", clips_im_eingang: v.clips.length, ordner: v.dirs.eingang };
       return { status: v.job.status, agenten: Object.fromEntries(Object.entries(v.job.agents).map(([k, a]) => [k, `${a.status}: ${a.text}`])), ergebnis: v.job.result?.name, fehler: v.job.error };
+    }
+    case "dokument_erstellen": {
+      const d = dokumentErstellen(input);
+      if (d.error) return d;
+      return { gespeichert: d.titel, id: d.id, hinweis: "Das Dashboard zeigt das Dokument gleich. Sag nur kurz, was drinsteht, lies es nicht komplett vor." };
+    }
+    case "fragebogen_erstellen": {
+      const d = fragebogenErstellen(input);
+      if (d.error) return d;
+      return { erstellt: d.titel, fragen: d.fragen.length, id: d.id, hinweis: "Das Dashboard öffnet den Fragebogen gleich zum Ausfüllen. Sag kurz, dass er bereitliegt; lies die Fragen nicht vor." };
     }
     case "get_weather":
       return getWeather(input.city || config.city);

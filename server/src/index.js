@@ -27,6 +27,8 @@ import { hueSprechenAn, sprechen as hueSprechen } from "./hue.js";
 import { haBereit } from "./homeassistant.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
+import { alleDokumente, dokument, antwortenSpeichern } from "./dokumente.js";
+import { auftragStand } from "./auftrag.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
 import { getLandInfo, findeLand } from "./laenderinfo.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus, updateProgress, runningVersion, githubTokenStatus, setGithubToken, forgetGithubToken } from "./updater.js";
@@ -191,8 +193,22 @@ function alleEintraege() {
   for (const t of store.getTasks()) out.push({ typ: "aufgabe", at: t.at ? new Date(t.at).toISOString() : zeit(t.id), text: t.text, erledigt: !!t.done });
   for (const r of store.getReminders()) out.push({ typ: "erinnerung", at: zeit(r.id) || r.due, faellig: r.due, text: r.text, erledigt: !!r.done });
   for (const s of store.getShopping()) out.push({ typ: "einkauf", at: zeit(s.id), text: s.text, erledigt: !!s.done });
+  for (const d of alleDokumente()) {
+    const n = d.fragen?.length || 0, b = d.fragen?.filter((f) => f.antwort.trim()).length || 0;
+    out.push({ typ: "dokument", at: d.erstellt, id: d.id, art: d.art, text: d.titel, inhalt: d.art === "fragebogen" ? d.fragen.map((f, i) => `${i + 1}. ${f.frage}${f.antwort ? ` → ${f.antwort}` : ""}`).join("\n") : d.inhalt, info: d.art === "fragebogen" ? `${b} von ${n} beantwortet` : "" });
+  }
   return out.filter((e) => e.at).sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
 }
+// Dokumente und Fragebögen, die Friday erstellt hat.
+app.get("/api/dokumente", (req, res) => res.json(alleDokumente().slice().reverse().map(({ inhalt, fragen, ...d }) => ({ ...d, fragen: fragen?.length, beantwortet: fragen?.filter((f) => f.antwort.trim()).length }))));
+app.get("/api/dokumente/:id", (req, res) => { const d = dokument(req.params.id); return d ? res.json(d) : res.status(404).json({ error: "Nicht gefunden" }); });
+app.post("/api/dokumente/:id/antworten", (req, res) => {
+  const r = antwortenSpeichern(req.params.id, Array.isArray(req.body?.antworten) ? req.body.antworten : [], Boolean(req.body?.fertig));
+  return r.error ? res.status(404).json(r) : res.json(r);
+});
+// Wie weit Friday mit dem aktuellen Auftrag ist (Arbeits-Balken).
+app.get("/api/auftrag/fortschritt", (req, res) => res.json(auftragStand(String(req.query.kanal || "web")) || {}));
+
 app.get("/api/wissen/datenbank", (req, res) => {
   const alle = alleEintraege();
   const typ = String(req.query.typ || "");
@@ -203,7 +219,7 @@ app.get("/api/wissen/datenbank", (req, res) => {
   for (const e of alle) stats[e.typ] = (stats[e.typ] || 0) + 1;
   let liste = alle;
   if (typ) liste = liste.filter((e) => e.typ === typ);
-  if (q) liste = liste.filter((e) => [e.frage, e.antwort, e.text, e.art, e.kanal].some((v) => v && String(v).toLowerCase().includes(q)));
+  if (q) liste = liste.filter((e) => [e.frage, e.antwort, e.text, e.art, e.kanal, e.inhalt].some((v) => v && String(v).toLowerCase().includes(q)));
   const treffer = liste.length;
   if (vor) liste = liste.filter((e) => e.at < vor);
   res.json({ stats, treffer, eintraege: liste.slice(0, limit), mehr: liste.length > limit });

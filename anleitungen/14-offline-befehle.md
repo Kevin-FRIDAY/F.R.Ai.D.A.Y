@@ -28,6 +28,14 @@ Sag oder schreib zum Beispiel:
 
 Alles, was mehr Nachdenken braucht (Gedichte, Erklärungen, Webseiten, Werkstatt …), braucht weiterhin Claude-Guthaben.
 
+## Aufträge, Fragebögen und Denk-Tempo (ab 1.90.0)
+
+- **Friday erledigt Aufträge sofort.** Sagt sie nur „mache ich“, ohne etwas zu tun, hakt Friday selbst nach und erledigt es. Längere Ergebnisse (Listen, Pläne, Texte) speichert sie als **Dokument**, das sich direkt öffnet.
+- **Fragebögen:** „Friday, erstelle einen Fragebogen mit 30 Fragen, um mich kennenzulernen.“ Der Fragebogen öffnet sich, du antwortest Frage für Frage (tippen oder 🎤 sprechen, Enter = weiter). Am Ende merkt sich Friday alle Antworten. Du kannst jederzeit schließen und später unter **Wissen → 📄 Dokumente** weitermachen.
+- **Arbeits-Balken:** Solange Friday an einem Auftrag arbeitet, zeigt oben ein Balken im Update-Stil, wie weit sie ist (Verstehen → Arbeiten → Erstellen → Fertig).
+- **Denk-Tempo:** Einstellungen → Assistent → Denk-Tempo. **Schnell** ist Standard (deutlich schneller als vorher), **Blitz** ist am schnellsten und günstigsten, **Gründlich** nimmt sich mehr Zeit für schwere Aufgaben.
+- Der Chat unter dem Kopf zeigt nur noch die letzten Nachrichten. Alles andere steht in der Datenbank („Ganzer Verlauf“).
+
 ## Fridays Datenbank: Knopf „Wissen“ (ab 1.89.0)
 
 Unter **Wissen** (Seitenleiste bzw. unten in der Handy-Leiste) liegt jetzt Fridays Datenbank. Dort steht alles, was je passiert ist, nach Tagen sortiert:
