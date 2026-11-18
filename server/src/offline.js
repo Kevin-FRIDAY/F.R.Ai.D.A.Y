@@ -25,6 +25,11 @@ const zahl = (v, stellen = 0) => Number(v).toLocaleString("de-DE", { maximumFrac
 const grad = (v) => `${Math.round(v)} Grad`;
 
 // Text vereinfachen: klein, ohne Satzzeichen, ohne "Friday," am Anfang.
+// Morgens (4–11 Uhr) „Guten Morgen“, mittags/nachmittags (11–18 Uhr) „Guten Tag“, abends und nachts „Guten Abend“.
+export function tagesGruss(h = teile().h) {
+  return h >= 4 && h < 11 ? "Guten Morgen" : h >= 11 && h < 18 ? "Guten Tag" : "Guten Abend";
+}
+
 export function normalize(text, { gross = false } = {}) {
   let t = String(text || "")
     .replace(/[„“”"'!?¿¡;]/g, " ")
@@ -227,7 +232,7 @@ function hilfeText() {
 // Mini-Briefing ohne Claude: Wetter, Termine, Aufgaben, eine Schlagzeile.
 export async function offlineBriefing() {
   const p = teile();
-  const gruss = p.h < 11 ? "Guten Morgen" : p.h < 18 ? "Guten Tag" : "Guten Abend";
+  const gruss = tagesGruss(p.h);
   const teil = [`${gruss}, ${name()}.`];
   const wochentag = new Date().toLocaleDateString("de-DE", { timeZone: config.timezone, weekday: "long", day: "numeric", month: "long" });
   teil.push(`Heute ist ${wochentag}.`);
@@ -293,7 +298,7 @@ export async function offlineAnswer(text, { notfall = false } = {}) {
   if (!notfall && has(/\b(und|dann|danach|außerdem|ausserdem)\b.*\b(was|wie|wo|wann|warum|öffne|oeffne|erinnere|schreib|such|erklär|erklaer)\b/)) return null;
 
   // --- Smalltalk ---
-  if (/^(hallo|hi|hey|servus|moin|na|yo|guten tag|grüß dich|gruess dich)( du)?$/.test(t)) return ok(pick([`Hallo ${name()}. Was kann ich für dich tun?`, `Hey ${name()}. Ich bin bereit.`, `Zur Stelle, ${name()}.`]));
+  if (/^(hallo|hi|hey|servus|moin|na|yo|guten tag|grüß dich|gruess dich)( du)?$/.test(t)) return ok(pick([`${tagesGruss()}, ${name()}. Was kann ich für dich tun?`, `${tagesGruss()}, ${name()}. Ich bin bereit.`, `${tagesGruss()}, ${name()}. Zur Stelle.`]));
   if (/^(danke|danke schön|dankeschön|vielen dank|danke dir|merci|top|super|perfekt|cool)( friday)?$/.test(t)) return ok(pick(["Gern geschehen, Boss.", "Immer doch.", "Dafür bin ich da."]));
   if (/^(wie geht('s| es) dir|wie gehts|alles klar bei dir|alles gut bei dir)$/.test(t)) return ok(`Alle Systeme laufen, ${name()}. ${isAgentOnline() ? "Der Mac ist verbunden." : "Nur der Mac ist gerade nicht verbunden."} Und dir?`);
   if (/^(wer bist du|was bist du|stell dich vor)$/.test(t)) return ok(`Ich bin F.R.Ai.D.A.Y, deine persönliche KI, ${name()}. Ich passe auf deine Termine, die Welt und deinen Mac auf.`);
