@@ -29,10 +29,22 @@
   const LEISTUNG = window.FridayLeistung || { fps: 60, maxDpr: 2, partikel: 1, verdeckt: false };
 
   // Kopf-Stil: "holo" (Standard), "detail" (Detail-Hologramm), "partikel" (Lichtpunkt-Wolke), "kern" (abstrakter KI-Kern)
-  const STILE = ["holo", "detail", "partikel", "kern", "kristall", "facetten", "visier", "linien"];
-  const MODUS = { holo: 0, detail: 1, partikel: 0, kern: 0, kristall: 2, facetten: 3, visier: 4, linien: 5 };
+  // v1.100: "neuronen" = dunkel-türkiser Glanz-Kopf mit Sternen-Funkeln, leuchtendem Neuronen-Netz
+  // im Kopf, das oben in Partikel ausfranst, vor einem Sternenhimmel (nach Kevins Vorlagebild).
+  const STILE = ["neuronen", "holo", "detail", "partikel", "kern", "kristall", "facetten", "visier", "linien"];
+  const MODUS = { holo: 0, detail: 1, partikel: 0, kern: 0, kristall: 2, facetten: 3, visier: 4, linien: 5, neuronen: 6 };
   const FLACH = ["kristall", "facetten"]; // Stile mit sichtbaren Dreiecks-Facetten
-  const STANDARD_STIL = "kristall";
+  const STANDARD_STIL = "neuronen";
+  // Einmalig auf den neuen Kopf umstellen (Kevin hatte bisher "Kristall" gewählt). Danach gilt
+  // wieder seine eigene Wahl. Merker erst "0", dann "1": so wird er mit dem Mac abgeglichen
+  // (einstellungen-sync speichert nur Änderungen) und andere Geräte stellen nicht erneut um.
+  try {
+    if (!localStorage.getItem("friday_kopf_neuronen")) {
+      localStorage.setItem("friday_kopf_neuronen", "0");
+      localStorage.setItem("friday_kopf_neuronen", "1");
+      if (localStorage.getItem("friday_kopfstil")) localStorage.setItem("friday_kopfstil", "neuronen");
+    }
+  } catch {}
   const STIL = (() => {
     try {
       const q = new URLSearchParams(location.search).get("kopf");
@@ -40,7 +52,7 @@
       return STILE.includes(v) ? v : STANDARD_STIL;
     } catch { return STANDARD_STIL; }
   })();
-  const BASE_RY = STIL === "linien" ? -0.62 : -0.18; // Neon-Linien: Halbprofil
+  const BASE_RY = STIL === "linien" ? -0.62 : STIL === "neuronen" ? -0.06 : -0.18; // Neon-Linien: Halbprofil, Neuronen: von vorne
 
   // Akzentfarbe aus dem Theme (Neon-Orange)
   function themeColor() {
@@ -75,6 +87,12 @@
     renderer.setPixelRatio(Math.min(LEISTUNG.maxDpr, window.devicePixelRatio || 1));
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
+    if (neuro) neuro.uni.uPx.value = pxScale();
+  }
+  // Punktgröße passend zur Bildschirmauflösung (Sterne/Synapsen sehen überall gleich aus)
+  function pxScale() {
+    const r = host.getBoundingClientRect();
+    return renderer.getPixelRatio() * Math.max(60, r.height) / 700;
   }
 
   const group = new THREE.Group();
@@ -86,6 +104,8 @@
   // ---- Maße im Kopfmodell (zentrierte Modell-Einheiten, Kopf ca. 8 hoch) ----
   const MOUTH = { y: 0.06, z: 2.2, halfW: 0.62 };      // Mundspalte (zwischen den Lippen)
   const EYES = [[-0.56, 1.72, 1.98], [0.56, 1.72, 1.98]];
+  // Neuronen-Stil: schmale, glimmende Lidspalte wie im Vorlagebild
+  const EYE_W = STIL === "neuronen" ? 0.42 : 0.34, EYE_H = STIL === "neuronen" ? 0.11 : 0.2;
 
   // ---- Hologramm-Shader ----
   const uniforms = {
@@ -154,6 +174,31 @@
           + smoothstep(0.03, 0.0, abs(vRest.y - 2.75)) + smoothstep(0.025, 0.0, abs(vRest.x)) * step(2.75, vRest.y)
           + smoothstep(0.03, 0.0, abs(vRest.y - 1.3)) * (1.0 - fz) * step(0.0, vRest.z);
         c = mix(c, uColor * 0.03, clamp(groove, 0.0, 1.0) * 0.8) + uColor * clamp(groove, 0.0, 1.0) * 0.25 * key;
+      } else if (uMode > 5.5) {
+        // Neuronen: dunkel-türkise, glänzende Haut mit Sternen-Funkeln, orange Randlicht.
+        // Oben am Schädel wird sie durchsichtig, damit das Neuronen-Netz durchleuchtet.
+        vec3 teal = vec3(0.018, 0.1, 0.12);
+        vec3 L = normalize(vec3(-0.35, 0.6, 0.75));
+        float k2 = max(dot(n, L), 0.0);
+        float gl = pow(max(dot(reflect(-L, n), v), 0.0), 26.0);
+        float gl2 = pow(max(dot(reflect(-normalize(vec3(0.5, 0.1, 0.85)), n), v), 0.0), 40.0);
+        c = teal * (0.18 + 1.25 * k2 * k2 + 0.3 * fill) + vec3(0.5, 0.85, 0.92) * (gl * 0.42 + gl2 * 0.06) + uColor * fres * fres * 1.1;
+        // Sternen-Funkeln in der Haut
+        vec3 q = vRest * 20.0; vec3 cell = floor(q);
+        float h = fract(sin(dot(cell, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+        vec3 off = vec3(fract(h * 17.3), fract(h * 31.7), fract(h * 53.1)) * 0.6 + 0.2;
+        float d = length(fract(q) - off);
+        float tw = 0.55 + 0.45 * sin(uTime * (1.5 + h * 3.0) + h * 40.0);
+        float star = step(0.84, h) * smoothstep(0.2 * (0.5 + fract(h * 91.0)), 0.0, d) * tw;
+        c += mix(vec3(0.85, 0.95, 1.0), uColor, step(0.95, h)) * star * 1.3;
+        // Lippen und Lidspalten glimmen orange
+        float lip = (1.0 - smoothstep(0.0, 0.32, abs(vRest.y - uMouth.y))) * (1.0 - smoothstep(0.4, 0.75, abs(vRest.x))) * smoothstep(1.85, 2.1, vRest.z);
+        c += uColor * lip * 0.22 * (0.6 + k2);
+        float skull = smoothstep(1.9, 2.9, vRest.y) + smoothstep(0.2, -0.9, vRest.z) * smoothstep(0.5, 1.5, vRest.y);
+        alpha = clamp(0.84 - 0.6 * clamp(skull, 0.0, 1.0) + fres * 0.3 + star * 0.4, 0.0, 1.0);
+        // Hals und Schultern lösen sich nach unten ins Dunkel auf
+        float hals = smoothstep(-3.1, -1.2, vRest.y);
+        c *= hals; alpha *= hals;
       } else if (uMode > 4.5) {
         // Neon-Linien: nur leuchtende Schnittlinien, Rest bleibt durchsichtig
         float sl = smoothstep(0.09, 0.0, abs(fract(vRest.y * 7.0 - uTime * 0.15) - 0.5) - 0.0);
@@ -170,6 +215,7 @@
       float m = (1.0 - smoothstep(0.55, 1.0, e)) * front * smoothstep(0.02, 0.18, uOpen);
       vec3 inner = uColor * 0.05 + uColor * 0.25 * smoothstep(0.3, 0.9, e);
       c = mix(c, inner, m * 0.92);
+      alpha = max(alpha, m * 0.92);
       // Sprechen: Hologramm leuchtet etwas stärker
       c *= 1.0 + uTalk * 0.25;
       gl_FragColor = vec4(c, alpha);
@@ -180,7 +226,7 @@
   const eyeSprites = [];
   let particles = null, partMat = null;
   const irisRings = [];
-  let wolke = null, kern = null;
+  let wolke = null, kern = null, neuro = null;
 
   // ---- Stil "partikel": Kopf aus zehntausenden Lichtpunkten ----
   function baueWolke(geo, inner) {
@@ -232,6 +278,184 @@
       out[i * 3 + 2] = src[a + 2] * u + src[b + 2] * v + src[c + 2] * w;
     }
     wolke.pg.attributes.position.needsUpdate = true;
+  }
+
+
+  // ---- Stil "neuronen": leuchtendes Netz im Kopf, Ausfransen, Sternenhimmel ----
+  function baueNeuronen(geo, inner) {
+    const F = LEISTUNG.partikel || 1;
+    const idx = geo.index ? geo.index.array : null;
+    const pos = geo.attributes.position.array, nor = geo.attributes.normal.array;
+    const triCount = idx ? idx.length / 3 : pos.length / 9;
+    const vi = (t, k) => (idx ? idx[t * 3 + k] : t * 3 + k);
+    const A = new THREE.Vector3(), B = new THREE.Vector3(), C = new THREE.Vector3();
+    geo.computeBoundingBox();
+    const bb = geo.boundingBox;
+    // Nur Dreiecke am Schädel (oberhalb der Augenbrauen + Hinterkopf) als Quelle
+    const tris = [], areas = []; let total = 0;
+    for (let t = 0; t < triCount; t++) {
+      A.fromArray(pos, vi(t, 0) * 3); B.fromArray(pos, vi(t, 1) * 3); C.fromArray(pos, vi(t, 2) * 3);
+      const cy = (A.y + B.y + C.y) / 3, cz = (A.z + B.z + C.z) / 3;
+      if (cy < 1.05 || (cy < 2.0 && cz > 1.2)) continue;
+      const a = B.clone().sub(A).cross(C.clone().sub(A)).length() / 2;
+      tris.push(t); areas.push(a); total += a;
+    }
+    if (!tris.length) return;
+    const pick = (out, nOut) => {
+      let r = Math.random() * total, i = 0;
+      while (i < tris.length - 1 && r > areas[i]) { r -= areas[i]; i++; }
+      const t = tris[i];
+      let u = Math.random(), w = Math.random(); if (u + w > 1) { u = 1 - u; w = 1 - w; }
+      const b0 = 1 - u - w;
+      for (let k = 0; k < 3; k++) {
+        const a0 = vi(t, 0) * 3 + k, a1 = vi(t, 1) * 3 + k, a2 = vi(t, 2) * 3 + k;
+        out[k] = pos[a0] * b0 + pos[a1] * u + pos[a2] * w;
+        if (nOut) nOut[k] = nor[a0] * b0 + nor[a1] * u + nor[a2] * w;
+      }
+    };
+    const mitte = new THREE.Vector3(0, Math.max(1.6, (bb.max.y + 1.2) / 2), (bb.min.z + bb.max.z) / 2 - 0.2);
+    const uni = { uColor: { value: col.clone() }, uTime: { value: 0 }, uTalk: { value: 0 }, uPx: { value: pxScale() } };
+    const p = [0, 0, 0], nn = [0, 0, 0];
+
+    // Knoten: Schädel-Oberfläche Richtung Mitte geschoben (Netz liegt IM Kopf)
+    const NK = Math.round(1300 * F);
+    const kn = new Float32Array(NK * 3), kGr = new Float32Array(NK), kPh = new Float32Array(NK);
+    for (let i = 0; i < NK; i++) {
+      pick(p);
+      const f = Math.random() < 0.55 ? 0.86 + Math.random() * 0.12 : 0.45 + Math.random() * 0.42;
+      kn[i * 3] = mitte.x + (p[0] - mitte.x) * f;
+      kn[i * 3 + 1] = mitte.y + (p[1] - mitte.y) * f;
+      kn[i * 3 + 2] = mitte.z + (p[2] - mitte.z) * f;
+      const hub = Math.random() < 0.06;
+      kGr[i] = hub ? 3 + Math.random() * 4 : 0.6 + Math.random() * 1.2;
+      kPh[i] = Math.random() * 6.283;
+    }
+    // Verbindungen: jeder Knoten zu seinen 3 nächsten Nachbarn (Nervenbahnen)
+    const lin = [], lT = [], lPh = [];
+    const maxD2 = 0.75 * 0.75;
+    for (let i = 0; i < NK; i++) {
+      const best = [[1e9, -1], [1e9, -1], [1e9, -1]];
+      const x = kn[i * 3], y = kn[i * 3 + 1], z = kn[i * 3 + 2];
+      for (let j = 0; j < NK; j++) {
+        if (j === i) continue;
+        const dx = kn[j * 3] - x, dy = kn[j * 3 + 1] - y, dz = kn[j * 3 + 2] - z;
+        const d2 = dx * dx + dy * dy + dz * dz;
+        if (d2 < best[2][0] && d2 < maxD2) { best[2] = [d2, j]; best.sort((a, b) => a[0] - b[0]); }
+      }
+      const ph = Math.random();
+      for (const [, j] of best) {
+        if (j < 0 || j < i && Math.random() < 0.5) continue;
+        lin.push(x, y, z, kn[j * 3], kn[j * 3 + 1], kn[j * 3 + 2]);
+        lT.push(0, 1); lPh.push(ph + Math.random() * 0.3, 0); lPh[lPh.length - 1] = lPh[lPh.length - 2];
+      }
+    }
+    const lg = new THREE.BufferGeometry();
+    lg.setAttribute("position", new THREE.BufferAttribute(new Float32Array(lin), 3));
+    lg.setAttribute("aT", new THREE.BufferAttribute(new Float32Array(lT), 1));
+    lg.setAttribute("aPh", new THREE.BufferAttribute(new Float32Array(lPh), 1));
+    const lm = new THREE.ShaderMaterial({
+      uniforms: uni,
+      vertexShader: `attribute float aT; attribute float aPh; varying float vT; varying float vPh; void main(){ vT = aT; vPh = aPh; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      // Impulse wandern die Bahnen entlang, beim Sprechen schneller und heller
+      fragmentShader: `uniform vec3 uColor; uniform float uTime; uniform float uTalk; varying float vT; varying float vPh;
+        void main(){ float s = fract(uTime * (0.22 + uTalk * 0.35) + vPh * 7.0); float imp = smoothstep(0.14, 0.0, abs(s - vT));
+          float b = 0.45 + imp * (1.1 + uTalk) + uTalk * 0.15;
+          gl_FragColor = vec4(mix(uColor * vec3(1.0, 0.62, 0.4), vec3(1.0, 0.8, 0.45), imp * 0.7) * max(1.0, b), clamp(b, 0.0, 1.0)); }`,
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false,
+    });
+    const lines = new THREE.LineSegments(lg, lm); lines.renderOrder = 0;
+    inner.add(lines);
+
+    // Leuchtende Knoten (Synapsen), große Knoten flackern
+    const kg = new THREE.BufferGeometry();
+    kg.setAttribute("position", new THREE.BufferAttribute(kn, 3));
+    kg.setAttribute("aGr", new THREE.BufferAttribute(kGr, 1));
+    kg.setAttribute("aPh", new THREE.BufferAttribute(kPh, 1));
+    const punktFrag = `uniform vec3 uColor; varying float vB; varying vec3 vC;
+      void main(){ vec2 q = gl_PointCoord - 0.5; float d = length(q); float a = smoothstep(0.5, 0.0, d); a = a * a;
+        gl_FragColor = vec4(vC, clamp(a * vB, 0.0, 1.0)); }`;
+    const km = new THREE.ShaderMaterial({
+      uniforms: uni,
+      vertexShader: `attribute float aGr; attribute float aPh; uniform float uTime; uniform float uTalk; uniform float uPx; uniform vec3 uColor; varying float vB; varying vec3 vC;
+        void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          float fl = 0.65 + 0.35 * sin(uTime * (1.2 + aPh * 0.5) + aPh * 9.0);
+          vB = (0.55 + 0.45 * fl) * (1.0 + uTalk * 0.7);
+          vC = mix(uColor * vec3(1.0, 0.7, 0.45), vec3(1.0, 0.78, 0.5), smoothstep(3.0, 6.5, aGr) * 0.45);
+          gl_PointSize = aGr * (16.0 + uTalk * 7.0) * uPx / -mv.z;
+          gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: punktFrag,
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false,
+    });
+    const knoten = new THREE.Points(kg, km); knoten.renderOrder = 0;
+    inner.add(knoten);
+
+    // Ausfransen: Lichtfasern lösen sich oben und an den Seiten vom Schädel und treiben weg
+    const NF = Math.round(2600 * F);
+    const fs = new Float32Array(NF * 3), fd = new Float32Array(NF * 3), fp = new Float32Array(NF);
+    let n = 0, tries = 0;
+    while (n < NF && tries++ < NF * 20) {
+      pick(p, nn);
+      if (p[1] < 1.9 && Math.abs(p[0]) < 1.1) continue; // nicht vor der Stirn/dem Gesicht
+      const l = Math.hypot(nn[0], nn[1], nn[2]) || 1;
+      let dx = nn[0] / l * 1.3, dy = nn[1] / l + 0.6, dz = nn[2] / l * 0.4 - 0.15;
+      const dl = Math.hypot(dx, dy, dz) || 1;
+      const len = 1.2 + Math.random() * Math.random() * 3.5;
+      fs.set(p, n * 3);
+      fd[n * 3] = dx / dl * len; fd[n * 3 + 1] = dy / dl * len; fd[n * 3 + 2] = dz / dl * len;
+      fp[n] = Math.random(); n++;
+    }
+    const fg = new THREE.BufferGeometry();
+    fg.setAttribute("position", new THREE.BufferAttribute(fs.subarray(0, n * 3), 3));
+    fg.setAttribute("aDir", new THREE.BufferAttribute(fd.subarray(0, n * 3), 3));
+    fg.setAttribute("aPh", new THREE.BufferAttribute(fp.subarray(0, n), 1));
+    const fm = new THREE.ShaderMaterial({
+      uniforms: uni,
+      vertexShader: `attribute vec3 aDir; attribute float aPh; uniform float uTime; uniform float uTalk; uniform float uPx; uniform vec3 uColor; varying float vB; varying vec3 vC;
+        void main(){ float life = fract(uTime * 0.07 * (0.6 + aPh) + aPh * 13.0);
+          vec3 pp = position + aDir * life + vec3(sin(uTime * 0.7 + aPh * 20.0), 0.0, cos(uTime * 0.5 + aPh * 30.0)) * 0.08 * life;
+          vec4 mv = modelViewMatrix * vec4(pp, 1.0);
+          vB = smoothstep(0.0, 0.08, life) * (1.0 - life) * (1.5 + uTalk * 0.6);
+          vC = mix(uColor, vec3(1.0, 0.8, 0.5), step(0.92, aPh));
+          gl_PointSize = (9.0 + 12.0 * step(0.88, fract(aPh * 7.0))) * uPx / -mv.z;
+          gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: punktFrag,
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false,
+    });
+    const fransen = new THREE.Points(fg, fm); fransen.renderOrder = 2;
+    inner.add(fransen);
+
+    // Sternenhimmel hinter dem Kopf: weiße Sterne + orange Glutpunkte, funkeln leise
+    const NS = Math.round(1100 * F);
+    const sp = new Float32Array(NS * 3), sg = new Float32Array(NS), sph = new Float32Array(NS);
+    for (let i = 0; i < NS; i++) {
+      sp[i * 3] = (Math.random() - 0.5) * 9; sp[i * 3 + 1] = (Math.random() - 0.5) * 6.5; sp[i * 3 + 2] = -2.5 - Math.random() * 3;
+      sg[i] = Math.random() < 0.13 ? -(1.2 + Math.random() * 2.2) : 0.6 + Math.random() * Math.random() * 2.4; // negativ = orange
+      sph[i] = Math.random() * 6.283;
+    }
+    const sgeo = new THREE.BufferGeometry();
+    sgeo.setAttribute("position", new THREE.BufferAttribute(sp, 3));
+    sgeo.setAttribute("aGr", new THREE.BufferAttribute(sg, 1));
+    sgeo.setAttribute("aPh", new THREE.BufferAttribute(sph, 1));
+    const sm = new THREE.ShaderMaterial({
+      uniforms: uni,
+      vertexShader: `attribute float aGr; attribute float aPh; uniform float uTime; uniform float uPx; uniform vec3 uColor; varying float vB; varying vec3 vC;
+        void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0); vec4 cp = projectionMatrix * mv;
+          vec2 ndc = cp.xy / cp.w; float rand = 1.0 - smoothstep(0.7, 1.0, max(abs(ndc.x), abs(ndc.y)));
+          float g = abs(aGr); vB = (0.55 + 0.45 * sin(uTime * (0.8 + fract(aPh) * 2.0) + aPh * 5.0)) * rand * (aGr < 0.0 ? 0.9 : 0.75);
+          vC = aGr < 0.0 ? uColor : vec3(0.92, 0.95, 1.0);
+          gl_PointSize = g * 22.0 * uPx / -mv.z; gl_Position = cp; }`,
+      fragmentShader: punktFrag,
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    const sterne = new THREE.Points(sgeo, sm); sterne.renderOrder = -2;
+    scene.add(sterne);
+
+    // Weicher Glutschein hinter dem Schädel
+    const schein = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: col.clone(), transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false }));
+    schein.position.set(0, mitte.y + 0.6, mitte.z - 1.2); schein.scale.set(8.5, 6.5, 1); schein.renderOrder = -1;
+    inner.add(schein);
+
+    neuro = { uni, lines, knoten, fransen, sterne, schein };
   }
 
   // ---- Stil "detail": leuchtende Aura-Hülle um den Kopf ----
@@ -346,7 +570,7 @@
     // Beleuchtete Hologramm-Oberfläche
     try {
       uniforms.uMode.value = MODUS[STIL] || 0;
-      const durchsichtig = STIL === "kristall" || STIL === "linien";
+      const durchsichtig = STIL === "kristall" || STIL === "linien" || STIL === "neuronen";
       solidMat = new THREE.ShaderMaterial({ uniforms, vertexShader: vert, fragmentShader: frag, transparent: durchsichtig, depthWrite: !durchsichtig, side: THREE.FrontSide });
       solidMat.polygonOffset = true; solidMat.polygonOffsetFactor = 1; solidMat.polygonOffsetUnits = 1;
     } catch { solidMat = new THREE.MeshBasicMaterial({ color: 0x140a04 }); }
@@ -363,8 +587,8 @@
 
     const inner = new THREE.Group();
     inner.add(solid);
-    if (!["partikel", "kristall", "facetten", "linien"].includes(STIL)) inner.add(wire);
-    if (STIL === "kristall" || STIL === "linien") {
+    if (!["partikel", "kristall", "facetten", "linien", "neuronen"].includes(STIL)) inner.add(wire);
+    if (STIL === "kristall" || STIL === "linien" || STIL === "neuronen") {
       // Tiefen-Vorlauf: nur die vorderste Oberfläche leuchtet, innere Flächen (Mundhöhle) bleiben verborgen
       const tiefe = new THREE.MeshBasicMaterial({ colorWrite: false, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
       const pre = new THREE.Mesh(geo, tiefe); pre.renderOrder = -1;
@@ -372,6 +596,7 @@
     }
     if (STIL === "partikel") baueWolke(geo, inner);
     if (STIL === "detail") baueDetail(geo, inner);
+    if (STIL === "neuronen") baueNeuronen(geo, inner);
 
     // Leuchtende Augen (blinzeln)
     const tex = glowTexture();
@@ -379,7 +604,8 @@
       const m = new THREE.SpriteMaterial({ map: tex, color: col.clone(), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, opacity: 0.85 });
       const sp = new THREE.Sprite(m);
       sp.position.set(x, y, z + 0.08);
-      sp.scale.set(0.34, 0.2, 1);
+      sp.scale.set(EYE_W, EYE_H, 1);
+      sp.renderOrder = 3;
       inner.add(sp); eyeSprites.push(sp);
       if (STIL === "detail") {
         // Iris-Ringe, die sich langsam drehen
@@ -394,8 +620,8 @@
     group.add(inner);
     group.rotation.y = BASE_RY;
 
-    // Schwebende Licht-Partikel um den Kopf
-    try {
+    // Schwebende Licht-Partikel um den Kopf (Neuronen-Stil hat stattdessen Sterne + Ausfransen)
+    if (STIL !== "neuronen") try {
       const N = Math.max(60, Math.round(260 * LEISTUNG.partikel)), p = new Float32Array(N * 3), sp = new Float32Array(N);
       for (let i = 0; i < N; i++) {
         const a = Math.random() * Math.PI * 2, r = 1.25 + Math.random() * 1.35;
@@ -410,7 +636,7 @@
       scene.add(particles);
     } catch { /* Partikel optional */ }
 
-    baueRinge();
+    if (STIL !== "neuronen") baueRinge();
     ready = true;
   }, undefined, () => { fallback2d(); });
 
@@ -452,6 +678,7 @@
     irisRings.forEach((r) => r.material.color.copy(c));
     if (wolke) wolke.mat.color.copy(c);
     if (kern) kern.mats.forEach((m) => m.color.copy(c));
+    if (neuro) { neuro.uni.uColor.value.copy(c); neuro.schein.material.color.copy(c); }
   }, 1500);
 
   // ---- Einstellungen (localStorage) ----
@@ -531,8 +758,12 @@
         if (b >= 1) { blinkStart = -1; nextBlink = now + 2500 + Math.random() * 4000; }
       }
       const pulse = 0.55 + Math.sin(t * 2.2) * 0.08 + talkGlow * 0.15;
-      eyeSprites.forEach((s) => { s.scale.set(0.34, 0.2 * Math.max(0.06, lid), 1); s.material.opacity = pulse; });
+      eyeSprites.forEach((s) => { s.scale.set(EYE_W, EYE_H * Math.max(0.06, lid), 1); s.material.opacity = pulse; });
       irisRings.forEach((r, i) => { r.rotation.z += dt * 0.002 * (i ? -1 : 1); r.scale.y = Math.max(0.06, lid); });
+      if (neuro) {
+        neuro.uni.uTime.value = optReduce ? 0 : t;
+        neuro.uni.uTalk.value = talkGlow * (0.5 + open * 0.8);
+      }
       if (wolke) wolke.mat.size = 0.026 * (0.95 + Math.sin(t * 3) * 0.05 + talkGlow * 0.15);
       if (kern) {
         kern.shell.rotation.y += dt * 0.0004; kern.shell.rotation.x += dt * 0.00015;
