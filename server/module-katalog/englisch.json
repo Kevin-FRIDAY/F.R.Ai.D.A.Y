@@ -1,0 +1,12 @@
+{
+  "id": "englisch",
+  "name": "Schnell-Übersetzer",
+  "version": "1.0.0",
+  "braucht_friday": ">=1.97.0",
+  "autor": "Friday",
+  "beschreibung": "„Wie sagt man … auf Englisch?“ – gibt den Satz an Fridays Gehirn weiter (kostet etwas Guthaben).",
+  "rechte": ["befehle", "claude"],
+  "befehle": [
+    { "saetze": ["wie sagt man * auf englisch", "was heißt * auf englisch"], "friday": "Übersetze kurz ins Englische und sag nur die Übersetzung: {1}" }
+  ]
+}

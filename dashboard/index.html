@@ -113,6 +113,7 @@
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="1.4"/><circle cx="5" cy="12" r="1.4"/><circle cx="5" cy="18" r="1.4"/><path d="M10 6h9M10 12h9M10 18h9"/></svg>
     </button>
     <div id="menu-pop" class="menu-pop hidden" role="menu">
+      <button class="menu-row menu-zentrale" data-target="zentrale-open"><svg viewBox="0 0 24 24" class="mi"><circle cx="12" cy="12" r="2.6"/><circle cx="12" cy="12" r="6.2" stroke-dasharray="3 2.2"/><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="2.5" r="1.3" fill="currentColor"/><circle cx="20.2" cy="16.8" r="1.3" fill="currentColor"/><circle cx="3.8" cy="16.8" r="1.3" fill="currentColor"/></svg>Modul-Zentrale</button>
       <div class="menu-sep" role="presentation">Welt</div>
       <button class="menu-row" data-osiris><svg viewBox="0 0 24 24" class="mi"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="9" ry="3.6"/><path d="M12 3v18"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>Lagezentrum (Osiris)</button>
       <button class="menu-row" data-target="lage-btn"><svg viewBox="0 0 24 24" class="mi"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>Weltgeschehen</button>
@@ -552,6 +553,7 @@
                 <option value="blitz">⚡ Blitz – am schnellsten, einfache Sachen</option>
                 <option value="schnell">🚀 Schnell – schnell und klug (Standard)</option>
                 <option value="gruendlich">🧠 Gründlich – langsamer, für schwere Aufgaben</option>
+                <option value="auto">🎯 Automatisch – Friday wählt je nach Frage das passende Modell</option>
               </select>
             </label>
             <label class="row-field"><span>Kopf-Stil</span>
@@ -1143,6 +1145,7 @@
   <script src="dokumente.js"></script>
   <script src="archiv.js"></script>
   <script src="logbuch.js"></script>
+  <script src="zentrale.js"></script>
   <script src="vollbild.js"></script>
   <script src="hud.js"></script>
   <script src="vendor/three.min.js"></script>

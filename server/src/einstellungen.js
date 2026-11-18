@@ -8,7 +8,7 @@ const DEFAULTS = {
   autoUpdate: true,       // neue Versionen von GitHub selbst installieren, wenn gerade nichts los ist
   vorladen: true,         // Welt-Alarm, Welt-Videos usw. im Hintergrund frisch halten
   marktVorrechnen: true,  // Kronos-Prognosen im Hintergrund nachrechnen (braucht Rechenleistung)
-  tempo: "schnell",       // Denk-Tempo: blitz (Haiku) | schnell (Sonnet) | gruendlich (Opus)
+  tempo: "schnell",       // Denk-Tempo: blitz (Haiku) | schnell (Sonnet) | gruendlich (Opus) | auto (je nach Frage)
   anrede: "",             // Wie Friday dich nennt (leer = USER_NAME aus .env)
   stadt: "",              // Stadt für Wetter und Briefing (leer = CITY aus .env)
 };
@@ -22,7 +22,7 @@ function textAnwenden(s) {
   config.userName = (nameOk(s.anrede) && s.anrede) || (nameOk(ENV_WERTE.anrede) && ENV_WERTE.anrede) || "Boss";
   config.city = s.stadt || ENV_WERTE.stadt;
 }
-export const TEMPI = ["blitz", "schnell", "gruendlich"];
+export const TEMPI = ["blitz", "schnell", "gruendlich", "auto"];
 
 export function getSettings() {
   try {

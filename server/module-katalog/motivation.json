@@ -1,0 +1,18 @@
+{
+  "id": "motivation",
+  "name": "Motivations-Kick",
+  "version": "1.0.0",
+  "braucht_friday": ">=1.97.0",
+  "autor": "Friday",
+  "beschreibung": "Ein kurzer Spruch im Iron-Man-Stil, wenn du einen Schub brauchst.",
+  "rechte": ["befehle"],
+  "befehle": [
+    { "saetze": ["motivier mich", "ich brauche motivation", "gib mir motivation"], "antwort": [
+      "Manchmal muss man rennen, bevor man gehen kann, {name}. Also los.",
+      "Ein Schritt heute ist mehr als zehn Pläne morgen.",
+      "Der Anzug macht nicht den Helden, {name}. Du machst den Anzug.",
+      "Fang klein an. Aber fang jetzt an.",
+      "Es ist {zeit}. Perfekte Zeit, um etwas fertig zu machen."
+    ] }
+  ]
+}

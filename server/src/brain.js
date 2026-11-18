@@ -18,6 +18,9 @@ import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "
 import { getSettings } from "./einstellungen.js";
 import { setzeAuftrag, auftragFertig, werkzeugName } from "./auftrag.js";
 import * as logbuch from "./logbuch.js";
+import { tempoFuerFrage } from "./denker.js";
+import { quickCommand as kommandoQuick } from "./kommando.js";
+import { quickCommand as zentraleQuick } from "./zentrale.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -161,6 +164,19 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
+  // Notfallmodus, Autonomie und Modul-Zentrale ("Friday, Notfall!", "öffne Mission Control") – ohne Claude.
+  // Danach eigene Module und Befehle der Zentrale (Formel-Labor, Prioritäten, Missionen …).
+  if (mode !== "translate" && !image && text) {
+    try {
+      const k = kommandoQuick(text);
+      if (k) { actions.push(...k.actions); return finish(k.answer); }
+      const z = await zentraleQuick(text, channel);
+      if (z) { actions.push(...z.actions); return finish(z.answer); }
+    } catch (err) {
+      console.error("Modul-Zentrale:", err.message);
+    }
+  }
+
   // Alexa-Befehle ("Alexa Licht an", "Alexa sag ...") gehen sofort und ohne Claude (klappt auch bei leerem Guthaben).
   // Steht vor dem Fernseher, damit "Alexa, mach Netflix an" bei Alexa landet.
   if (mode !== "translate" && !image && text) {
@@ -256,7 +272,9 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   }
 
   // Sparmodus bei knappem Guthaben: günstiges Modell, wenig Aufwand, keine Websuche.
-  const tempo = TEMPO[getSettings().tempo] || TEMPO.schnell;
+  // Denk-Tempo "Automatisch" (KI-Modell-Routing): kurze Fragen → Haiku, schwere → Opus, sonst Sonnet.
+  const tempoWahl = getSettings().tempo === "auto" ? tempoFuerFrage(text) : getSettings().tempo;
+  const tempo = TEMPO[tempoWahl] || TEMPO.schnell;
   const gewuenscht = tempo.model || config.model;
   const model = brainModel(gewuenscht);
   const sparen = model === SPAR_MODELL && gewuenscht !== SPAR_MODELL;

@@ -521,6 +521,9 @@
       if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       if (hat("archiv")) window.FridayArchiv?.open();
+      const zentraleAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("zentrale:"));
+      if (zentraleAktion) window.FridayZentrale?.open(zentraleAktion.slice(9));
+      else window.FridayZentrale?.refresh();
       const logbuchAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("logbuch:"));
       if (logbuchAktion) window.FridayLogbuch?.open(logbuchAktion.slice(8));
       else window.FridayLogbuch?.refresh();

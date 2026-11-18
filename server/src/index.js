@@ -35,6 +35,7 @@ import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites
 import { getLandInfo, findeLand } from "./laenderinfo.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus, updateProgress, runningVersion, githubTokenStatus, setGithubToken, forgetGithubToken } from "./updater.js";
 import { archivUebersicht, speichereFoto, einsortieren, dateiPfad, fotoWegwerfen, oeffneOrdner, archivStart } from "./archiv.js";
+import { zentraleRouten, zentraleStart } from "./zentrale.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
 const missing = checkConfig();
@@ -560,6 +561,9 @@ app.get("/api/logbuch/export", (req, res) => {
 
 app.post("/api/protocols/:name/run", asyncRoute(async (req, res) => res.json(await runTool("run_protocol", { name: req.params.name }))));
 
+// Modul-Zentrale: Kontrolle, Missionen, Automationen, Labor, Rechnen, Sicherheit, Module, Netzwerk.
+zentraleRouten(app, asyncRoute);
+
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
 
@@ -570,6 +574,7 @@ server.listen(config.port, config.host, () => {
 });
 logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
+zentraleStart(ask);
 startTelegram();
 startShips();
 startAutoScan();

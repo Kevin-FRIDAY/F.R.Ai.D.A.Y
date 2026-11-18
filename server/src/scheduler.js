@@ -11,6 +11,7 @@ import { warmForecast, marktBusy, MAERKTE } from "./markt.js";
 import { getVideoJob } from "./videoteam.js";
 import { autoBackup } from "./backup.js";
 import { eintragen } from "./logbuch.js";
+import { notfallAktiv } from "./kommando.js";
 
 let lastBriefingDay = null;
 let latestBriefing = null;
@@ -73,6 +74,7 @@ let notifiedVersion = null;
 let warnedToken = false;
 const autoTries = new Map(); // Version -> Anzahl automatischer Versuche
 async function checkUpdates() {
+  if (notfallAktiv()) return; // Notfallmodus: keine Auto-Updates
   const u = await checkForUpdate();
   if (u.needsToken && !warnedToken) {
     // Repo ist privat geworden, aber Friday hat keinen Schlüssel: einmal Bescheid geben.

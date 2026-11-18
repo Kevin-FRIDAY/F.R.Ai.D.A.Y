@@ -29,6 +29,7 @@ Danach startet Friday jedes Mal automatisch, wenn du dich am Mac anmeldest.
 | Smart Home | Licht und Geräte über Home Assistant | [Smart Home](anleitungen/8-protokolle-smart-home.md) |
 | Alexa | Alexa-Routinen starten und Ansagen auf dem Echo ("Friday, Alexa Licht an") | [Alexa](anleitungen/13-alexa.md) |
 | Archiv | Fotos, Videos, Webseiten und Dokumente nach Jahr und Monat ("Friday, öffne das Archiv") | [Archiv](anleitungen/17-archiv.md) |
+| Modul-Zentrale | Autonomie-Regler, Freigaben, Notfall-Stopp, Missionen, Automationen, Denk-Labor, Rechnen, Ziele, Entscheidungen, Wissensgraph, Geräte, Sicherheit, eigene Module ("Friday, öffne die Modul-Zentrale", "Friday, Notfall!") | [Modul-Zentrale](anleitungen/21-modul-zentrale.md) |
 | Logbuch | Alles, was Friday tut, mit Uhrzeit: Befehle, Anrufe, Häuser, Aufgaben, Updates … ("Friday, öffne das Logbuch", "Was hast du heute gemacht?") | [Logbuch](anleitungen/20-logbuch.md) |
 | Offline-Befehle | Uhrzeit, Wetter, Timer, Listen, Kurse, Nachrichten – ohne Guthaben | [Offline-Befehle](anleitungen/14-offline-befehle.md) |
 | Verbindungen | Apple Kalender & Erinnerungen, ElevenLabs-Stimme, Spotify, Home Assistant, Philips Hue, Todoist, Notion | [Verbindungen](anleitungen/15-verbindungen.md) |

@@ -1,0 +1,14 @@
+{
+  "id": "wuerfel",
+  "name": "Würfel & Münze",
+  "version": "1.0.0",
+  "braucht_friday": ">=1.97.0",
+  "autor": "Friday",
+  "beschreibung": "Würfeln, Münze werfen, Zufallszahl – ganz ohne Guthaben.",
+  "rechte": ["befehle"],
+  "befehle": [
+    { "saetze": ["würfel", "würfeln", "wirf einen würfel", "würfel mal"], "antwort": ["Eine {zufall:1-6}!", "Der Würfel sagt {zufall:1-6}.", "{zufall:1-6}. Glück gehabt, {name}?"] },
+    { "saetze": ["wirf eine münze", "münze werfen", "kopf oder zahl"], "antwort": ["Kopf.", "Zahl."] },
+    { "saetze": ["zufallszahl", "nenn mir eine zufallszahl"], "antwort": "Deine Zufallszahl: {zufall:1-100}." }
+  ]
+}
