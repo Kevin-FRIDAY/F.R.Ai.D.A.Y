@@ -412,7 +412,7 @@
     const tick = (now) => {
       const dt = now - lastFrame;
       const spinOn = (() => { try { return localStorage.getItem("friday_globespin") !== "0"; } catch { return true; } })();
-      if (spinning && spinOn && !selected && dt >= 30) { // ~30 fps, schont ältere Geräte
+      if (spinning && spinOn && !selected && dt >= (window.FridayLeistung?.globusMs || 30)) { // ~30 fps (Handy ~15), schont ältere Geräte
         lastFrame = now;
         const r = projection.rotate();
         projection.rotate([r[0] + Math.min(100, dt) * 0.004, r[1], r[2]]); // langsame Erddrehung

@@ -306,10 +306,13 @@
         : '<li class="muted">–</li>';
     } catch { box.innerHTML = '<span class="muted">nicht verfügbar</span>'; }
   }
-  setInterval(() => { if (token) refreshSystem(); }, 8000);
+  // Abfragen ruhen, solange die App im Hintergrund ist (spart Akku und Netz auf dem iPhone)
+  const aktiv = () => token && !document.hidden;
+  setInterval(() => { if (aktiv()) refreshSystem(); }, 8000);
 
-  setInterval(() => token && refreshStatus(), 20000);
-  setInterval(() => token && refreshReminders(), 60000);
+  setInterval(() => aktiv() && refreshStatus(), 20000);
+  setInterval(() => aktiv() && refreshReminders(), 60000);
+  document.addEventListener("visibilitychange", () => { if (aktiv()) { refreshSystem(); refreshStatus(); } });
   setInterval(() => token && refreshWeather(), 15 * 60000);
   window.addEventListener("friday-wetter-neu", () => token && refreshWeather());
 
@@ -602,6 +605,26 @@
     if (!sel) return;
     sel.value = storage.get("friday_kopfstil") || window.FridayFace?.standardStil || "kristall";
     sel.addEventListener("change", () => { storage.set("friday_kopfstil", sel.value); location.reload(); });
+  })();
+  // Leistungsmodus (leistung.js): Automatisch / Schön / Flüssig – gilt nur für dieses Gerät
+  (() => {
+    const sel = $("set-leistung"), info = $("set-leistung-info");
+    const L = window.FridayLeistung;
+    if (!sel || !L) return;
+    const zeige = () => {
+      sel.value = L.modus;
+      if (info) info.textContent = L.modus === "auto"
+        ? `Gerade aktiv: ${L.fluessig ? "Flüssig" : "Schön"} (${L.istHandy() ? "Handy erkannt" : "Computer erkannt"})`
+        : `Gerade aktiv: ${L.fluessig ? "Flüssig" : "Schön"}`;
+    };
+    zeige();
+    sel.addEventListener("change", () => {
+      L.setzen(sel.value);
+      zeige();
+      // Pixeldichte und Partikel des Kopfes werden beim Laden festgelegt → kurz neu laden
+      setTimeout(() => location.reload(), 350);
+    });
+    window.addEventListener("friday-leistung", zeige);
   })();
   bindFlag("set-headmove", "friday_headmove", true);
   bindFlag("set-globespin", "friday_globespin", true);
