@@ -126,3 +126,10 @@ Das Menü **System** in der Seitenleiste ist jetzt die **System-Zentrale**:
 | „Öffne das Archiv“ / „Zeig mir meine Fotos“ / „Fotoalbum“ | öffnet das Archiv (Fotos, Videos, Webseiten, Dokumente nach Jahr und Monat) |
 
 Mehr in [17-archiv.md](17-archiv.md).
+
+## Anrufe & Nachrichten (ab 1.93.0)
+
+- „Ruf meine Frau an und sag ihr, dass ich heute Pizza essen will.“
+- „Schreib meiner Frau, dass ich später komme.“ / „Sag meiner Frau Bescheid, dass …“
+- „Ruf meine Frau an.“ → „Was soll ich ihr sagen?“
+Einrichten: Verbindungen → Anrufe & Nachrichten. Details in 18-anrufe.md.

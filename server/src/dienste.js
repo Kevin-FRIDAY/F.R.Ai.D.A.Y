@@ -9,11 +9,12 @@ import * as homeassistant from "./homeassistant.js";
 import * as hue from "./hue.js";
 import * as todoist from "./todoist.js";
 import * as notion from "./notion.js";
+import * as anrufe from "./anrufe.js";
 import { normalize } from "./offline.js";
 import { U, findeTag } from "./datum.js";
 
-export const DIENSTE = { kalender, stimme, spotify, homeassistant, hue, todoist, notion };
-export const REIHENFOLGE = ["kalender", "stimme", "spotify", "homeassistant", "hue", "todoist", "notion"];
+export const DIENSTE = { anrufe, kalender, stimme, spotify, homeassistant, hue, todoist, notion };
+export const REIHENFOLGE = ["anrufe", "kalender", "stimme", "spotify", "homeassistant", "hue", "todoist", "notion"];
 
 export async function alleStatus() {
   const liste = await Promise.all(
@@ -75,7 +76,7 @@ export async function quickCommand(text) {
 // ---------- Werkzeuge für Claude (Beschreibungen in dienste-werkzeuge.js) ----------
 export { toolDefinitions, smartHomeTool } from "./dienste-werkzeuge.js";
 
-const TOOL_MODULE = { kalender, spotify, hue, todoist, notion, smart_home: homeassistant };
+const TOOL_MODULE = { anrufe, kalender, spotify, hue, todoist, notion, smart_home: homeassistant };
 export const istDienstTool = (name) => Object.hasOwn(TOOL_MODULE, name);
 export async function runDienstTool(name, input = {}) {
   const r = await TOOL_MODULE[name].command(input);
@@ -91,6 +92,7 @@ export function dienstKurzinfo() {
   if (homeassistant.haBereit()) an.push("Home Assistant (smart_home)");
   if (todoist.todoistBereit()) an.push("Todoist (todoist)");
   if (notion.notionBereit()) an.push("Notion (notion)");
+  if (anrufe.anrufeBereit()) an.push(anrufe.kurzinfo());
   return an.length ? `Verbundene Dienste: ${an.join(", ")}.` : "Noch keine Dienste wie Kalender, Spotify oder Smart Home verbunden.";
 }
 
