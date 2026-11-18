@@ -17,6 +17,7 @@ import { quickCommand as weltQuick, vollbildQuick } from "./weltgespraech.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 import { getSettings } from "./einstellungen.js";
 import { setzeAuftrag, auftragFertig, werkzeugName } from "./auftrag.js";
+import * as logbuch from "./logbuch.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -98,7 +99,15 @@ function isoAgentText() {
  */
 // Jede Frage und Antwort kommt in Fridays Datenbank (Fenster "Wissen"), egal über welchen Weg.
 export async function ask(opts) {
-  const res = await askIntern(opts);
+  const start = Date.now();
+  let res;
+  try {
+    res = await askIntern(opts);
+  } catch (err) {
+    logbuchBefehl(opts, { answer: `Fehler: ${err.message}`, actions: [], fehler: true }, Date.now() - start);
+    throw err;
+  }
+  logbuchBefehl(opts, res, Date.now() - start);
   store.archiviere({
     typ: "gespraech",
     kanal: opts?.channel || "web",
@@ -107,6 +116,25 @@ export async function ask(opts) {
     ...(res?.actions?.length ? { aktionen: res.actions.filter((a) => typeof a === "string").slice(0, 8) } : {}),
   });
   return res;
+}
+
+// Fürs Logbuch: was gesagt wurde, was Friday geantwortet hat, über welchen Weg und wie schnell.
+function logbuchBefehl(opts, res, dauer) {
+  const kanal = opts?.channel || "web";
+  const frage = `${opts?.image ? "📷 " : ""}${String(opts?.text || "").trim()}`.trim() || (opts?.image ? "📷 Foto" : "");
+  const aktionen = (res?.actions || []).filter((a) => typeof a === "string" && a !== "zuhoeren");
+  const briefing = kanal === "briefing";
+  logbuch.eintragen({
+    bereich: briefing ? "briefing" : "befehl",
+    titel: briefing ? "Morgenbriefing erstellt" : frage || "(leer)",
+    details: res?.answer ? `Friday: ${res.answer}` : "",
+    kanal,
+    quelle: opts?.mode === "translate" ? "übersetzer" : res?.claude ? "claude" : aktionen.includes("offline") ? "offline" : aktionen.length ? "schnellbefehl" : "",
+    claude: Boolean(res?.claude),
+    ok: !res?.fehler,
+    dauer_ms: dauer,
+    aktionen,
+  });
 }
 
 async function askIntern({ text, channel = "web", image, mode = "normal", targetLang, keepHistory = true }) {
@@ -119,6 +147,8 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // Im Verlauf stehen nur reine Text-Paare. Innerhalb einer Anfrage bleibt alles vollständig.
   const messages = [...history, { role: "user", content: userContent }];
   const actions = [];
+  let claudeGefragt = false; // fürs Logbuch: hat Claude geantwortet?
+  let nichtGeklappt = false; // Claude nicht erreichbar und auch offline keine Antwort
 
   // Anrufe & Nachrichten ("ruf meine Frau an und sag ihr, dass …") – ohne Claude.
   // Ganz vorne, damit die Antwort auf "Was soll ich ihr sagen?" hier landet.
@@ -172,6 +202,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (w) { actions.push(...w.actions); return finish(w.answer); }
     } catch (err) {
       console.error("Weltgeschehen:", err.message);
+    }
+  }
+
+  // Logbuch ("öffne das Logbuch", "was hast du heute gemacht?") – ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const lb = logbuch.quickCommand(text);
+      if (lb) { actions.push(...lb.actions); return finish(lb.answer); }
+    } catch (err) {
+      console.error("Logbuch:", err.message);
     }
   }
 
@@ -248,6 +288,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       return notfall(leer);
     }
     recordUsage(response.model || model, response.usage, "chat");
+    claudeGefragt = true;
 
     if (response.stop_reason === "refusal") {
       return finish("Dabei kann ich dir leider nicht helfen, Boss.");
@@ -280,7 +321,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       toolUses.map(async (tool) => {
         actions.push(tool.name === "mac" ? `mac:${tool.input?.action}` : tool.name);
         try {
-          const result = await runTool(tool.name, tool.input);
+          const result = await runTool(tool.name, tool.input, { quelle: "claude", kanal: channel });
           if (result && Array.isArray(result.content)) return { type: "tool_result", tool_use_id: tool.id, content: result.content };
           const isError = Boolean(result && result.error);
           return { type: "tool_result", tool_use_id: tool.id, content: JSON.stringify(result ?? {}), is_error: isError };
@@ -304,6 +345,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
         console.error("Offline-Gehirn (Notfall):", err.message);
       }
     }
+    nichtGeklappt = true;
     if (leer) return finish(`Mir geht die Energie aus, ${config.userName}. Mein Guthaben ist leer. Lade es auf console.anthropic.com auf und sag mir dann im Energie-Fenster, wie viel. Bis dahin laufen meine Offline-Befehle – sag einfach: Was kannst du?`);
     return finish(notfallText());
   }
@@ -314,6 +356,6 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       const userText = image ? `[Foto] ${text || ""}`.trim() : text;
       store.saveHistory(channel, [...history, { role: "user", content: userText }, { role: "assistant", content: answer }]);
     }
-    return { answer, actions };
+    return { answer, actions, ...(claudeGefragt ? { claude: true } : {}), ...(nichtGeklappt ? { fehler: true } : {}) };
   }
 }

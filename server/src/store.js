@@ -1,7 +1,8 @@
 // Einfacher Speicher in JSON-Dateien im Ordner data/.
 import fs from "node:fs";
 import path from "node:path";
-import { DATA_DIR } from "./config.js";
+import { DATA_DIR, config } from "./config.js";
+import * as logbuch from "./logbuch.js";
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -28,12 +29,17 @@ export function save(name, value) {
 export function getActivity() {
   return load("activity", []);
 }
-export function logActivity(cat, label) {
+// Alles, was hier landet, kommt auch ins Logbuch (außer opts.logbuch === false).
+const CAT_ZU_BEREICH = { system: "verbindung", suche: "suche", chat: "befehl" };
+export function logActivity(cat, label, opts = {}) {
   try {
     const list = getActivity();
     list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), cat, label: String(label || "").slice(0, 120), at: new Date().toISOString() });
     save("activity", list.slice(-5000));
   } catch { /* egal */ }
+  if (opts.logbuch !== false) {
+    logbuch.eintragen({ bereich: opts.bereich || CAT_ZU_BEREICH[cat] || logbuch.bereichFuer(cat), titel: String(label || cat), details: opts.details, quelle: opts.quelle, ok: opts.ok });
+  }
 }
 
 // --- Friday-Datenbank: jedes Gespräch dauerhaft, eine Datei pro Monat (data/archiv/2026-11.jsonl) ---
@@ -90,6 +96,7 @@ export function addMemory(text) {
   const entry = { id: Date.now().toString(36), text: text.slice(0, 500), created: new Date().toISOString() };
   memories.push(entry);
   save("memory", memories.slice(-300));
+  logbuch.eintragen({ bereich: "gedaechtnis", titel: `Gemerkt: ${entry.text}` });
   return entry;
 }
 
@@ -98,7 +105,9 @@ export function forgetMemory(query) {
   const memories = getMemories();
   const kept = memories.filter((m) => m.id !== query && !m.text.toLowerCase().includes(q));
   save("memory", kept);
-  return memories.length - kept.length;
+  const weg = memories.length - kept.length;
+  if (weg) logbuch.eintragen({ bereich: "gedaechtnis", titel: `Vergessen: ${weg === 1 ? memories.find((m) => !kept.includes(m))?.text || query : `${weg} Einträge (${query})`}` });
+  return weg;
 }
 
 // --- Erinnerungen ---
@@ -111,6 +120,9 @@ export function addReminder(text, dueIso) {
   const entry = { id: Date.now().toString(36), text: text.slice(0, 300), due: dueIso, done: false };
   reminders.push(entry);
   save("reminders", reminders);
+  let wann = dueIso;
+  try { wann = new Date(dueIso).toLocaleString("de-DE", { timeZone: config.timezone, dateStyle: "short", timeStyle: "short" }); } catch { /* egal */ }
+  logbuch.eintragen({ bereich: "erinnerung", titel: `Erinnerung gesetzt: ${entry.text}`, details: `Fällig: ${wann}` });
   return entry;
 }
 
@@ -123,14 +135,23 @@ export function getTasks() { return load("tasks", []); }
 export function addTask(text) {
   const tasks = getTasks();
   const entry = { id: Date.now().toString(36), text: String(text).slice(0, 300), done: false, at: Date.now() };
-  tasks.push(entry); save("tasks", tasks); return entry;
+  tasks.push(entry); save("tasks", tasks);
+  logbuch.eintragen({ bereich: "aufgabe", titel: `Aufgabe erstellt: ${entry.text}` });
+  return entry;
 }
 export function toggleTask(id) {
   const tasks = getTasks(); const t = tasks.find((x) => x.id === id);
-  if (t) { t.done = !t.done; save("tasks", tasks); } return t;
+  if (t) {
+    t.done = !t.done; save("tasks", tasks);
+    logbuch.eintragen({ bereich: "aufgabe", titel: t.done ? `Aufgabe erledigt: ${t.text}` : `Aufgabe wieder offen: ${t.text}` });
+  }
+  return t;
 }
 export function deleteTask(id) {
-  const tasks = getTasks().filter((x) => x.id !== id); save("tasks", tasks); return true;
+  const alt = getTasks(); const t = alt.find((x) => x.id === id);
+  save("tasks", alt.filter((x) => x.id !== id));
+  if (t) logbuch.eintragen({ bereich: "aufgabe", titel: `Aufgabe gelöscht: ${t.text}` });
+  return true;
 }
 
 // --- Einkaufsliste ---
@@ -138,14 +159,23 @@ export function getShopping() { return load("shopping", []); }
 export function addShopping(text) {
   const list = getShopping();
   const entry = { id: Date.now().toString(36), text: String(text).slice(0, 120), done: false };
-  list.push(entry); save("shopping", list); return entry;
+  list.push(entry); save("shopping", list);
+  logbuch.eintragen({ bereich: "einkauf", titel: `Auf die Einkaufsliste: ${entry.text}` });
+  return entry;
 }
 export function toggleShopping(id) {
   const list = getShopping(); const i = list.find((x) => x.id === id);
-  if (i) { i.done = !i.done; save("shopping", list); } return i;
+  if (i) {
+    i.done = !i.done; save("shopping", list);
+    logbuch.eintragen({ bereich: "einkauf", titel: i.done ? `Eingekauft: ${i.text}` : `Wieder auf der Liste: ${i.text}` });
+  }
+  return i;
 }
 export function deleteShopping(id) {
-  save("shopping", getShopping().filter((x) => x.id !== id)); return true;
+  const alt = getShopping(); const i = alt.find((x) => x.id === id);
+  save("shopping", alt.filter((x) => x.id !== id));
+  if (i) logbuch.eintragen({ bereich: "einkauf", titel: `Von der Einkaufsliste gelöscht: ${i.text}` });
+  return true;
 }
 
 // --- Gesprächsverlauf (pro Kanal: web, telegram, siri) ---
