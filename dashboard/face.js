@@ -25,6 +25,8 @@
   if (!window.THREE || !window.THREE.GLTFLoader || !hasWebGL) { fallback2d(); return; }
 
   const THREE = window.THREE;
+  // Leistungsmodus (leistung.js): auf dem Handy 30 Bilder/s, ohne Kantenglättung, weniger Partikel
+  const LEISTUNG = window.FridayLeistung || { fps: 60, maxDpr: 2, partikel: 1, verdeckt: false };
 
   // Kopf-Stil: "holo" (Standard), "detail" (Detail-Hologramm), "partikel" (Lichtpunkt-Wolke), "kern" (abstrakter KI-Kern)
   const STILE = ["holo", "detail", "partikel", "kern", "kristall", "facetten", "visier", "linien"];
@@ -58,7 +60,7 @@
 
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer = new THREE.WebGLRenderer({ antialias: LEISTUNG.kantenglaettung !== false, alpha: true });
   } catch { fallback2d(); return; }
   renderer.setClearColor(0x000000, 0);
   host.innerHTML = "";
@@ -70,7 +72,7 @@
   function resize() {
     const r = host.getBoundingClientRect();
     const w = Math.max(60, r.width), h = Math.max(60, r.height);
-    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.setPixelRatio(Math.min(LEISTUNG.maxDpr, window.devicePixelRatio || 1));
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
   }
@@ -394,7 +396,7 @@
 
     // Schwebende Licht-Partikel um den Kopf
     try {
-      const N = 260, p = new Float32Array(N * 3), sp = new Float32Array(N);
+      const N = Math.max(60, Math.round(260 * LEISTUNG.partikel)), p = new Float32Array(N * 3), sp = new Float32Array(N);
       for (let i = 0; i < N; i++) {
         const a = Math.random() * Math.PI * 2, r = 1.25 + Math.random() * 1.35;
         p[i * 3] = Math.cos(a) * r; p[i * 3 + 1] = (Math.random() - 0.5) * 3.6; p[i * 3 + 2] = Math.sin(a) * r * 0.7;
@@ -432,6 +434,14 @@
   resize();
   if (window.ResizeObserver) { try { new ResizeObserver(resize).observe(host); } catch {} }
   window.addEventListener("resize", resize);
+  window.addEventListener("friday-leistung", resize);
+
+  // Nicht zeichnen, wenn der Kopf gar nicht zu sehen ist (weggescrollt, Fenster darüber, App im Hintergrund)
+  let imBild = true;
+  if (window.IntersectionObserver) {
+    try { new IntersectionObserver((e) => { imBild = e[e.length - 1].isIntersecting; }).observe(host); } catch {}
+  }
+  const pausiert = () => document.hidden || !imBild || LEISTUNG.verdeckt;
   setInterval(() => {
     const c = themeColor();
     uniforms.uColor.value.copy(c);
@@ -475,6 +485,15 @@
   let nextBlink = performance.now() + 2500, blinkStart = -1;
 
   function animate(now) {
+    if (pausiert()) {
+      // im Ruhezustand nur 3× pro Sekunde nachsehen, ob der Kopf wieder sichtbar ist
+      animate.last = 0;
+      setTimeout(() => requestAnimationFrame(animate), 300);
+      return;
+    }
+    // Bilder-Bremse: im flüssigen Modus 30 statt 60 Bilder pro Sekunde
+    const minAbstand = 1000 / LEISTUNG.fps - 3;
+    if (animate.last && now - animate.last < minAbstand) { requestAnimationFrame(animate); return; }
     const dt = Math.min(60, now - (animate.last || now)); animate.last = now;
     const t = now / 1000;
     uniforms.uTime.value = t;

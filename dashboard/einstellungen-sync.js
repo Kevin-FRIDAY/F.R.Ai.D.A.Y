@@ -11,7 +11,7 @@
 
   const KEY = /^friday_[a-z0-9_]{1,48}$/;
   // Bleibt nur auf diesem Gerät (gleiche Liste wie im Server)
-  const NUR_GERAET = /^friday_(token|voice|alarm_last|focus_.*|boot|wake|theme_mockup|sync_.*)$/;
+  const NUR_GERAET = /^friday_(token|voice|alarm_last|focus_.*|boot|wake|theme_mockup|sync_.*|leistung)$/;
   const synced = (k) => KEY.test(k) && !NUR_GERAET.test(k);
   const PENDING = "friday_sync_pending";
   const proto = Storage.prototype;

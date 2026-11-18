@@ -2502,3 +2502,25 @@ body.hud-raster #app::after { content: ""; position: fixed; inset: 0; z-index: 0
   .arc-gross { padding: 60px 8px 90px; }
   .arc-g-pf { width: 38px; height: 38px; margin-top: -19px; font-size: 22px; }
 }
+
+/* ======================= v1.94.0 Leistungsmodus „Flüssig“ (leistung.js) ======================= */
+/* Gleiche Optik, aber ohne die teuersten Effekte. Auf dem Handy automatisch an.
+   - Kein Weichzeichner (backdrop-filter) hinter Glas: die Karten sind ohnehin fast deckend (--u-glas 0.94),
+     der Weichzeichner musste aber hinter dem animierten Kopf in jedem Bild neu gerechnet werden.
+   - Dauer-Animationen, die den ganzen Bildschirm neu malen (Raster-Wandern, Hintergrund-Glühen,
+     atmende Karten), stehen still – die Leuchtwirkung bleibt.
+   - Drehende Ringe behalten ihre Bewegung, verlieren aber den mitgedrehten Schatten-Filter. */
+html.perf-fluessig *, html.perf-fluessig *::before, html.perf-fluessig *::after {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+html.perf-fluessig .sheet { background: rgba(5, 4, 3, .9); }
+html.perf-fluessig .grid-bg,
+html.perf-fluessig body::before,
+html.perf-fluessig body.glow-breathe .panel,
+html.perf-fluessig .side-logo-ic { animation: none !important; }
+html.perf-fluessig .r2, html.perf-fluessig .ava-ring2, html.perf-fluessig .sz-c2 { filter: none; }
+html.perf-fluessig .r2 { box-shadow: 0 0 10px rgba(255, 138, 30, .35); }
+/* Drehende Teile auf eigene Grafik-Ebene, damit das Drehen nichts anderes neu malen lässt */
+html.perf-fluessig .ring { will-change: transform; }
+html.perf-fluessig .face-host { contain: strict; }

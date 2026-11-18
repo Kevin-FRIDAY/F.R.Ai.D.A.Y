@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;500;600&family=Exo+2:wght@500;700&family=Audiowide&family=Chakra+Petch:wght@500;600&family=Oxanium:wght@500;700&family=Michroma&family=Saira:wght@500;600&display=swap">
   <link rel="stylesheet" href="style.css">
   <script src="einstellungen-sync.js"></script>
+  <script src="leistung.js"></script>
 </head>
 <body>
   <div class="grid-bg" aria-hidden="true"></div>
@@ -573,6 +574,14 @@
               <option>Italienische</option><option>Türkische</option><option>Polnische</option>
               <option>Japanische</option><option>Kroatische</option>
             </select>
+            <label class="row-field"><span>Leistung</span>
+              <select id="set-leistung">
+                <option value="auto">Automatisch</option>
+                <option value="schoen">Schön (volle Grafik)</option>
+                <option value="fluessig">Flüssig (ruckelfrei)</option>
+              </select>
+            </label>
+            <small id="set-leistung-info" class="muted small-text"></small>
             <label class="switch"><input type="checkbox" id="set-reduce"><span>Weniger Animationen (schont Akku)</span></label>
           </div>
         </div>
