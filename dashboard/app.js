@@ -521,6 +521,7 @@
       if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       if (hat("archiv")) window.FridayArchiv?.open();
+      if (hat("oekosystem")) window.FridayOekosystem?.open();
       const zentraleAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("zentrale:"));
       if (zentraleAktion) window.FridayZentrale?.open(zentraleAktion.slice(9));
       else window.FridayZentrale?.refresh();
