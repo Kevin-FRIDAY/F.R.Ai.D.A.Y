@@ -206,7 +206,7 @@
   function start() {
     if (gestartet || !angemeldet()) return;
     gestartet = true;
-    chipsZeigen();
+    // v1.98.0: Befehls-Vorschläge unter dem Eingabefeld entfernt (Kevins Wunsch).
     wellen();
     ladeErinnerungen();
     setInterval(ladeErinnerungen, 15000);

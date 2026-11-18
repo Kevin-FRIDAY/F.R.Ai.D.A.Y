@@ -2824,3 +2824,38 @@ div.zt-karte { cursor: default; }
   .zt-zeile { flex-wrap: wrap; }
 }
 @media (max-width: 480px) { .zt-karten { grid-template-columns: 1fr; } }
+
+/* v1.98.0: Startseite aufgeräumt, Stimmen-Hinweis unten rechts, Arbeits-Balken als dünner Strich */
+#state.ruhe { display: none; }
+#cmd-chips { display: none !important; }
+.transcript .msg.user, .transcript .speaking-msg, #verlauf-link { display: none !important; }
+
+#stimm-hinweis {
+  left: auto; right: calc(16px + env(safe-area-inset-right, 0px)); top: auto;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  transform: translateY(16px); width: min(340px, calc(100vw - 32px));
+  padding: 10px 12px; font-size: 12.5px; gap: 4px 10px;
+  background: rgba(16, 8, 2, 0.97);
+}
+#stimm-hinweis.an { transform: translateY(0); }
+#stimm-hinweis b { grid-column: 1; grid-row: 1; font-size: 13px; }
+#stimm-hinweis span { grid-column: 1 / span 2; grid-row: 2; }
+#stimm-hinweis .sh-x { grid-column: 2; grid-row: 1; }
+#stimm-hinweis .sh-nie { grid-column: 1 / span 2; grid-row: 3; justify-self: start; font-size: 11.5px; color: #ffb36b; text-decoration: underline; padding: 2px 0; }
+@media (max-width: 900px) {
+  #stimm-hinweis { bottom: calc(100px + env(safe-area-inset-bottom, 0px)); width: min(290px, calc(100vw - 32px)); font-size: 12px; }
+}
+
+#auftrag-bar.ab-bar {
+  display: flex; align-items: center; gap: 8px;
+  top: calc(6px + env(safe-area-inset-top, 0px)); width: min(360px, calc(100vw - 48px));
+  padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none; pointer-events: none;
+}
+#auftrag-bar.hidden { display: none; }
+#auftrag-bar .ub-kopf { display: contents; }
+#auftrag-bar .ub-ring, #auftrag-bar .ub-titel, #auftrag-bar .ub-schritte { display: none; }
+#auftrag-bar .ub-spur { order: 1; flex: 1; height: 2px; margin: 0; border: 0; border-radius: 2px; background: rgba(255, 138, 30, 0.15); }
+#auftrag-bar .ub-fuell { border-radius: 2px; box-shadow: 0 0 calc(8px * var(--glow, 1)) rgba(255, 138, 30, 0.9); }
+#auftrag-bar .ub-fuell::after, #auftrag-bar .ub-glanz { display: none; }
+#auftrag-bar .ub-prozent { order: 2; font-size: 11px; font-weight: 600; min-width: 34px; text-align: right; text-shadow: 0 0 8px rgba(255, 138, 30, 0.6); }
