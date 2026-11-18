@@ -67,7 +67,7 @@ if [ "${K:-j}" = "j" ] && [ -f "$SRC/server/.env" ]; then
 fi
 
 # --- 5. Eigene Inhalte ---
-for d in Friday-Webseiten Friday-Video; do
+for d in Friday-Webseiten Friday-Video Friday-Archiv; do
   if [ -d "$HOME/$d" ] && [ -n "$(ls -A "$HOME/$d" 2>/dev/null)" ]; then
     SIZE="$(du -sh "$HOME/$d" | cut -f1)"
     read -r -p "$d ($SIZE) mitnehmen? (j/n) [j]: " A
