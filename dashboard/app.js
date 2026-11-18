@@ -774,7 +774,7 @@
       case "kalender": openSheet("kalender"); loadKalender(); break;
       case "aufgaben": openSheet("organizer"); loadOrganizer(); break;
       case "dateien": openSheet("dateien"); break;
-      case "wissen": openSheet("brain"); loadBrain(); break;
+      case "wissen": openSheet("wissen"); ladeWissen(); break;
       case "system": openSheet("brain"); loadBrain(); break;
       case "einstellungen": openSheet("settings"); break;
       case "websuche": { const t = $("text"); if (t) { t.value = ""; t.placeholder = "Was soll Friday im Web suchen?"; t.focus(); } break; }
@@ -887,7 +887,7 @@
     appsBuilt = true;
   }
   $("briefing-btn2")?.addEventListener("click", () => { closeSheet("settings"); send("Gib mir mein Briefing."); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeSheet("settings"); closeSheet("brain"); } });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeSheet("settings"); closeSheet("brain"); closeSheet("wissen"); } });
   document.querySelectorAll(".sheet").forEach((sh) => sh.addEventListener("click", (e) => { if (e.target === sh) sh.classList.add("hidden"); }));
 
   async function loadBrain() {
@@ -916,6 +916,94 @@
     if (inp) inp.value = "";
     loadBrain();
   }
+  // ---------- Wissen = Fridays Datenbank: alles, was gesprochen und gemacht wurde ----------
+  const W_ICON = { gespraech: "💬", aktion: "⚡", gedaechtnis: "🧠", aufgabe: "✅", erinnerung: "⏰", einkauf: "🛒" };
+  const W_NAME = { gespraech: "Gespräche", aktion: "Aktionen", gedaechtnis: "Gemerkt", aufgabe: "Aufgaben", erinnerung: "Erinnerungen", einkauf: "Einkauf" };
+  const W_KANAL = { web: "Dashboard", telegram: "Telegram", siri: "Siri", briefing: "Briefing" };
+  let wTyp = "", wQ = "", wLetztes = "", wSuchTimer = null, wLaedt = false;
+  const wMark = (t) => {
+    const h = escapeHtml(t || "");
+    if (!wQ) return h;
+    const q = escapeHtml(wQ).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return h.replace(new RegExp(q, "gi"), (m) => `<mark>${m}</mark>`);
+  };
+  const wTagName = (d) => {
+    const heute = new Date(); const gestern = new Date(Date.now() - 864e5);
+    const gleich = (a, b) => a.toDateString() === b.toDateString();
+    if (gleich(d, heute)) return "Heute";
+    if (gleich(d, gestern)) return "Gestern";
+    return d.toLocaleDateString("de-DE", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+  };
+  function wEintrag(e) {
+    const d = new Date(e.at);
+    const zeit = e.alt ? "früher" : d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+    let haupt = "", neben = "";
+    if (e.typ === "gespraech") {
+      haupt = `${wMark(e.frage || "(ohne Text)")}<span class="kanal">${escapeHtml(W_KANAL[e.kanal] || e.kanal || "")}</span>`;
+      neben = e.antwort ? `<div class="antwort" title="Antippen zum Aufklappen">${wMark(e.antwort)}</div>` : "";
+    } else if (e.typ === "erinnerung") {
+      haupt = wMark(e.text);
+      if (e.faellig) neben = `<div class="antwort">fällig ${escapeHtml(new Date(e.faellig).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }))}</div>`;
+    } else {
+      haupt = wMark(e.text);
+      if (e.typ === "aktion" && e.art) haupt += `<span class="kanal">${escapeHtml(e.art)}</span>`;
+    }
+    return `<div class="wissen-e${e.erledigt ? " erledigt" : ""}"><span class="ico">${W_ICON[e.typ] || "•"}</span><div><div class="frage">${haupt}</div>${neben}</div><span class="zeit">${zeit}</span></div>`;
+  }
+  async function ladeWissen(weiter = false) {
+    if (wLaedt) return;
+    wLaedt = true;
+    const liste = $("wissen-liste");
+    if (!weiter) { wLetztes = ""; if (liste) liste.innerHTML = '<span class="muted">Lade …</span>'; }
+    try {
+      const u = new URLSearchParams({ typ: wTyp, q: wQ, limit: "120" });
+      if (weiter && wLetztes) u.set("vor", wLetztes);
+      const d = await (await api("/api/wissen/datenbank?" + u)).json();
+      const st = d.stats || {};
+      const seit = st.seit ? new Date(st.seit).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "–";
+      $("wissen-stats").innerHTML = `<div class="wissen-stat"><b>${st.gesamt || 0}</b><small>Einträge gesamt</small></div>`
+        + ["gespraech", "aktion", "gedaechtnis"].map((t) => `<div class="wissen-stat"><b>${st[t] || 0}</b><small>${W_NAME[t]}</small></div>`).join("")
+        + `<div class="wissen-stat"><b style="font-size:15px">${seit}</b><small>Erster Eintrag</small></div>`;
+      let html = "", letzterTag = weiter && liste?.dataset.tag ? liste.dataset.tag : "";
+      for (const e of d.eintraege || []) {
+        const tag = e.alt ? "Ältere Gespräche" : wTagName(new Date(e.at));
+        if (tag !== letzterTag) { html += `<div class="wissen-tag">${escapeHtml(tag)}</div>`; letzterTag = tag; }
+        html += wEintrag(e);
+      }
+      if (liste) {
+        liste.dataset.tag = letzterTag;
+        if (!weiter) liste.innerHTML = html || `<span class="muted">${wQ ? `Nichts gefunden zu „${escapeHtml(wQ)}“.` : wTyp ? `Noch keine ${W_NAME[wTyp]} gespeichert.` : "Noch nichts gespeichert. Ab jetzt landet hier alles, was du mit Friday besprichst."}</span>`;
+        else liste.insertAdjacentHTML("beforeend", html);
+      }
+      const l = d.eintraege || [];
+      if (l.length) wLetztes = l[l.length - 1].at;
+      $("wissen-mehr")?.classList.toggle("hidden", !d.mehr);
+    } catch {
+      if (liste && !weiter) liste.innerHTML = '<span class="muted">Datenbank nicht erreichbar.</span>';
+    } finally { wLaedt = false; }
+  }
+  $("wissen-x")?.addEventListener("click", () => closeSheet("wissen"));
+  $("wissen-mehr")?.addEventListener("click", () => ladeWissen(true));
+  $("wissen-q")?.addEventListener("input", (e) => { clearTimeout(wSuchTimer); wSuchTimer = setTimeout(() => { wQ = e.target.value.trim(); ladeWissen(); }, 250); });
+  $("wissen-filter")?.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-typ]");
+    if (!b) return;
+    wTyp = b.dataset.typ;
+    document.querySelectorAll("#wissen-filter button").forEach((x) => x.classList.toggle("active", x === b));
+    ladeWissen();
+  });
+  $("wissen-liste")?.addEventListener("click", (e) => { const a = e.target.closest(".antwort"); if (a) a.classList.toggle("offen"); });
+  $("wissen-export")?.addEventListener("click", async () => {
+    try {
+      const blob = await (await api("/api/wissen/export")).blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `friday-datenbank-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    } catch { /* egal */ }
+  });
+
   $("brain-memory")?.addEventListener("click", async (e) => {
     const del = e.target.closest(".mem-del");
     if (del) { try { await api("/api/memory/" + encodeURIComponent(del.dataset.id), { method: "DELETE" }); } catch {} loadBrain(); return; }

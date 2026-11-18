@@ -28,6 +28,18 @@ Sag oder schreib zum Beispiel:
 
 Alles, was mehr Nachdenken braucht (Gedichte, Erklärungen, Webseiten, Werkstatt …), braucht weiterhin Claude-Guthaben.
 
+## Fridays Datenbank: Knopf „Wissen“ (ab 1.89.0)
+
+Unter **Wissen** (Seitenleiste bzw. unten in der Handy-Leiste) liegt jetzt Fridays Datenbank. Dort steht alles, was je passiert ist, nach Tagen sortiert:
+
+- 💬 **Gespräche**: jede Frage und jede Antwort, egal ob Dashboard, Telegram oder Siri.
+- ⚡ **Aktionen**: was Friday gemacht hat (Mac, Protokolle, Aufgaben erledigt …).
+- 🧠 **Gemerkt**, ✅ **Aufgaben**, ⏰ **Erinnerungen**, 🛒 **Einkauf**.
+
+Oben suchst du in allem gleichzeitig, mit den Knöpfen filterst du. **⬇ Export** speichert alles als Datei. Die Gespräche liegen auf deinem Mac in `~/Friday/server/data/archiv/` (eine Datei pro Monat) und sind in der täglichen Sicherung mit drin. Gespräche von vor dem Update stehen unter „Ältere Gespräche“ (nur die letzten, die Friday noch hatte).
+
+**System** zeigt wie bisher Fridays Zustand (Gehirn, Augen, Ohren, Verbindungen).
+
 ## Gesprächsmodus: ohne jedes Mal „Friday“ (ab 1.88.0)
 
 Wenn du Friday per Stimme etwas fragst (mit „Friday …“ oder über den Kern), hört sie nach ihrer Antwort **von selbst weiter zu**. Du sprichst einfach weiter, ohne „Friday“ davor.

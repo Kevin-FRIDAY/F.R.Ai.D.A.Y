@@ -77,7 +77,20 @@ function isoAgentText() {
  * @param {string} [opts.targetLang]
  * @param {boolean} [opts.keepHistory] - Verlauf speichern (Standard: ja)
  */
-export async function ask({ text, channel = "web", image, mode = "normal", targetLang, keepHistory = true }) {
+// Jede Frage und Antwort kommt in Fridays Datenbank (Fenster "Wissen"), egal über welchen Weg.
+export async function ask(opts) {
+  const res = await askIntern(opts);
+  store.archiviere({
+    typ: "gespraech",
+    kanal: opts?.channel || "web",
+    frage: `${opts?.image ? "📷 " : ""}${String(opts?.text || "")}`.trim().slice(0, 2000),
+    antwort: String(res?.answer || "").slice(0, 4000),
+    ...(res?.actions?.length ? { aktionen: res.actions.filter((a) => typeof a === "string").slice(0, 8) } : {}),
+  });
+  return res;
+}
+
+async function askIntern({ text, channel = "web", image, mode = "normal", targetLang, keepHistory = true }) {
   const history = keepHistory ? store.getHistory(channel) : [];
 
   const userContent = [];
