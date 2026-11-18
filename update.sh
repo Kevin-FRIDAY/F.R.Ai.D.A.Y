@@ -81,6 +81,18 @@ NEW="$TMP/neu"
 VERSION="$(head -1 "$NEW/VERSION" | tr -cd '0-9.')"
 ZIEL="$VERSION"
 
+# 1b. Testlabor (Update-Sandbox): die neue Version prüfen, BEVOR irgendetwas verändert wird.
+# Benutzt das Prüfprogramm der installierten Version (nicht das aus dem Download).
+if [ -f "$DEST/server/src/testlabor.js" ] && [ "${FRIDAY_OHNE_TESTLABOR:-0}" != 1 ]; then
+  status laeuft "Teste die neue Version im Testlabor..." laden 25
+  if ! "$NODE" "$DEST/server/src/testlabor.js" "$NEW" > "$TMP/testlabor.txt" 2>&1; then
+    GRUND="$(head -1 "$TMP/testlabor.txt" | tr -d '"\\' | cut -c1-180)"
+    mkdir -p "$DEST/server/data" && cp "$TMP/testlabor.txt" "$DEST/server/data/testlabor-letztes.txt" 2>/dev/null
+    fail "$GRUND. Ich habe nichts verändert."
+  fi
+  cp "$TMP/testlabor.txt" "$DEST/server/data/testlabor-letztes.txt" 2>/dev/null
+fi
+
 # 2. Alte Version sichern (für den Notfall)
 status laeuft "Sichere die alte Version..." sichern 28
 # Versionierte Sicherung in ~/Friday-Backups (Daten, Schlüssel und Programm), lässt sich später zurückholen.

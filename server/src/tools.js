@@ -1,5 +1,6 @@
 // Fridays Werkzeuge: alles, was sie außer Reden noch kann.
 import * as logbuch from "./logbuch.js";
+import { pruefeWerkzeug, freigabeAnfordern } from "./kommando.js";
 import fs from "node:fs";
 import { dokumentErstellen, fragebogenErstellen } from "./dokumente.js";
 import path from "node:path";
@@ -429,6 +430,15 @@ const LOGBUCH_SELBST = new Set(["anrufe", "werkstatt", "add_task", "add_shopping
 export async function runTool(name, input = {}, wer = {}) {
   if (ACTLOG[name]) { try { store.logActivity(ACTLOG[name][0], ACTLOG[name][1](input), { logbuch: false }); } catch { /* egal */ } }
   const start = Date.now();
+  // Autonomie-Regler + Notfallmodus: Claude und Automatisches dürfen nicht alles sofort.
+  if (wer.quelle === "claude" || ["mission", "automation", "modul"].includes(wer.kanal)) {
+    const p = pruefeWerkzeug(name, wer.kanal);
+    if (p.blockiert) { logWerkzeug(name, input, wer, { error: p.blockiert }, 0); return { error: p.blockiert }; }
+    if (p.freigabe) {
+      const g = freigabeAnfordern({ werkzeug: name, eingabe: input, kanal: wer.kanal, grund: wer.grund });
+      return { wartet_auf_freigabe: true, info: `Diese Aktion (${g.titel}) braucht erst die Freigabe von Boss. Sie liegt in der Modul-Zentrale unter Kontrolle → Genehmigungen. Sag Boss kurz, dass er sie dort freigeben kann. Behaupte nicht, sie sei schon erledigt.` };
+    }
+  }
   let result;
   try {
     result = await runToolIntern(name, input);

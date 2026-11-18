@@ -1,0 +1,12 @@
+{
+  "id": "pause",
+  "name": "Pausen-Erinnerung",
+  "version": "1.0.0",
+  "braucht_friday": ">=1.97.0",
+  "autor": "Friday",
+  "beschreibung": "„Ich mach Pause“ – Friday schickt dir eine Mitteilung aufs Handy als Merkzettel.",
+  "rechte": ["befehle", "mitteilung"],
+  "befehle": [
+    { "saetze": ["ich mach pause", "ich mache pause", "ich mach jetzt pause"], "antwort": "Gute Pause, {name}. Ich hab dir eine Mitteilung geschickt, damit du weißt, wann du aufgehört hast.", "mitteilung": "Pause gestartet um {zeit}." }
+  ]
+}
