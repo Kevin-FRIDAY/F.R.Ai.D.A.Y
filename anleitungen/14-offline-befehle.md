@@ -118,3 +118,11 @@ Das Menü **System** in der Seitenleiste ist jetzt die **System-Zentrale**:
 - **Darstellung:** eigene Akzentfarbe (Regenbogen-Knopf), Glas-Deckkraft, Ecken rund/sehr rund/kantig, HUD-Raster.
 - **Stimme:** Lautstärke, Signalton bei Timern an/aus und seine Lautstärke.
 - **Einstellungen sichern:** als Datei speichern, aus Datei laden, alles zurücksetzen.
+
+## Archiv (ab 1.92.0)
+
+| Sag | Friday macht |
+|---|---|
+| „Öffne das Archiv“ / „Zeig mir meine Fotos“ / „Fotoalbum“ | öffnet das Archiv (Fotos, Videos, Webseiten, Dokumente nach Jahr und Monat) |
+
+Mehr in [17-archiv.md](17-archiv.md).

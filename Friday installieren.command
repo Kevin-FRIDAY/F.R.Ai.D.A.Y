@@ -57,7 +57,7 @@ if [ -d "$UMZUG" ] && [ "$SRC" != "$DEST" ]; then
   if [ -f "$UMZUG/server.env" ] && [ ! -f "$DEST/server/.env" ]; then
     cp "$UMZUG/server.env" "$DEST/server/.env" && chmod 600 "$DEST/server/.env" && echo "✓ Schlüssel und Passwort übernommen"
   fi
-  for d in Friday-Webseiten Friday-Video; do
+  for d in Friday-Webseiten Friday-Video Friday-Archiv; do
     [ -d "$UMZUG/$d" ] && rsync -a --ignore-existing "$UMZUG/$d/" "$HOME/$d/" && echo "✓ $d übernommen"
   done
 fi

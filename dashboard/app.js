@@ -471,6 +471,7 @@
       else if (hat("weltgeschehen") && !window.FridayLage?.offen()) window.FridayLage?.open({ stumm: true });
       if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
+      if (hat("archiv")) window.FridayArchiv?.open();
       window.FridayEnergie?.refresh();
       await say(answer);
       clearSpeaking();
@@ -806,6 +807,7 @@
       case "aufgaben": openSheet("organizer"); loadOrganizer(); break;
       case "dateien": openSheet("dateien"); break;
       case "wissen": openSheet("wissen"); ladeWissen(); break;
+      case "archiv": window.FridayArchiv?.open(); break;
       case "system": openSheet("brain"); loadBrain(); break;
       case "einstellungen": openSheet("settings"); break;
       case "websuche": { const t = $("text"); if (t) { t.value = ""; t.placeholder = "Was soll Friday im Web suchen?"; t.focus(); } break; }

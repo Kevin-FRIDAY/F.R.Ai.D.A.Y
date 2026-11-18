@@ -2417,3 +2417,88 @@ body.ecken-kantig .sz-actions button, body.ecken-kantig .menu-pop, body.ecken-ka
 body.hud-raster #app::after { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background-image: linear-gradient(color-mix(in srgb, var(--cyan) 7%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--cyan) 7%, transparent) 1px, transparent 1px);
   background-size: 44px 44px; -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 85%); mask-image: radial-gradient(ellipse at center, #000 30%, transparent 85%); }
+
+/* ===== v1.92.0 Archiv: Fotos & Werke nach Jahr → Monat (Stil --u-*) ===== */
+.arc-box { width: min(1080px, 100%); max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+.arc-box > * { flex-shrink: 0; }
+.arc-box .sheet-top { gap: 10px; }
+.arc-zahl { margin-left: auto; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.arc-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.arc-stat { background: var(--u-karte); border: 1px solid var(--u-rand-soft); border-radius: 12px; padding: 8px 12px; box-shadow: var(--u-schein); }
+.arc-stat b { display: block; font-size: 20px; color: var(--cyan); text-shadow: 0 0 calc(10px * var(--glow, 1)) color-mix(in srgb, var(--cyan) 55%, transparent); }
+.arc-stat small { color: var(--muted); font-size: 11px; }
+.arc-leiste { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.arc-filter { flex: 1 1 auto; margin: 0 !important; padding-bottom: 2px !important; }
+.arc-knoepfe { display: flex; gap: 6px; flex: 0 0 auto; }
+.arc-knoepfe .chip { cursor: pointer; border: 1px solid var(--u-rand); border-radius: 999px; background: color-mix(in srgb, var(--cyan) 10%, rgba(10, 6, 3, .6)); color: var(--u-titel); padding: 7px 12px; }
+.arc-knoepfe .chip:hover { box-shadow: var(--u-glow); border-color: var(--cyan); }
+.arc-plus { background: linear-gradient(135deg, color-mix(in srgb, var(--cyan) 90%, #fff 0%), color-mix(in srgb, var(--cyan) 70%, #ff4d00)) !important; color: #140800 !important; font-weight: 700; border-color: transparent !important; box-shadow: 0 0 calc(14px * var(--glow, 1)) color-mix(in srgb, var(--cyan) 50%, transparent); }
+.arc-msg { margin: 0 0 8px; padding: 8px 12px; border-radius: 10px; font-size: 13px; background: var(--u-karte); border: 1px solid var(--u-rand-soft); color: var(--u-titel); }
+.arc-msg.error { color: #ff6b5b; border-color: rgba(255, 80, 60, .5); }
+.arc-haupt { display: grid; grid-template-columns: 190px 1fr; gap: 14px; min-height: 0; flex: 1 1 auto !important; }
+.arc-baum { overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px; max-height: 60vh; }
+.arc-j, .arc-m { all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; width: 100%; cursor: pointer; border-radius: 10px; }
+.arc-j { padding: 9px 12px; font-family: var(--font-head, var(--font)); font-size: 15px; letter-spacing: .12em; color: var(--u-titel); background: var(--u-karte); border: 1px solid var(--u-rand-soft); }
+.arc-jahr.offen .arc-j { border-color: var(--u-rand); box-shadow: var(--u-glow), var(--u-schein); }
+.arc-j i, .arc-m i { font-style: normal; font-size: 11px; min-width: 22px; text-align: center; padding: 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--cyan) 18%, transparent); color: var(--cyan); }
+.arc-monate { display: none; flex-direction: column; gap: 3px; margin: 5px 0 4px 10px; padding-left: 10px; border-left: 1px solid var(--u-rand-soft); }
+.arc-jahr.offen .arc-monate { display: flex; }
+.arc-m { padding: 7px 10px; font-size: 13px; color: var(--text); }
+.arc-m:hover { background: color-mix(in srgb, var(--cyan) 8%, transparent); }
+.arc-m.on { background: linear-gradient(135deg, color-mix(in srgb, var(--cyan) 85%, transparent), color-mix(in srgb, var(--cyan) 60%, #ff4d00)); color: #140800; font-weight: 700; box-shadow: 0 0 12px color-mix(in srgb, var(--cyan) 50%, transparent); }
+.arc-m.on i { background: rgba(20, 8, 0, .25); color: #140800; }
+.arc-inhalt { overflow-y: auto; max-height: 60vh; padding-right: 4px; min-width: 0; }
+.arc-titel { font-family: var(--font-head, var(--font)); font-size: 18px; letter-spacing: .14em; text-transform: uppercase; color: var(--u-titel); text-shadow: 0 0 calc(12px * var(--glow, 1)) color-mix(in srgb, var(--cyan) 60%, transparent); display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.arc-titel small { font-family: var(--font-ui, var(--font)); font-size: 11px; letter-spacing: .06em; text-transform: none; color: var(--muted); text-shadow: none; }
+.arc-tag { margin: 12px 0 8px; padding-bottom: 4px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--cyan); border-bottom: 1px solid var(--u-rand-soft); }
+.arc-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.arc-k { all: unset; box-sizing: border-box; position: relative; display: block; cursor: pointer; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; border: 1px solid var(--u-rand-soft); background: var(--u-glas); box-shadow: var(--u-schein); transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+.arc-k:hover, .arc-k:focus-visible { transform: translateY(-2px); border-color: var(--cyan); box-shadow: var(--u-glow), var(--u-schein); }
+.arc-k img, .arc-k video { width: 100%; height: 100%; object-fit: cover; display: block; background: #0a0603; }
+.arc-k-txt { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 9px 7px; background: linear-gradient(0deg, rgba(6, 3, 1, .92), transparent); display: flex; flex-direction: column; gap: 1px; }
+.arc-k-txt b { font-size: 12px; color: var(--u-titel); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.arc-k-txt small { font-size: 10.5px; color: var(--muted); }
+.arc-play { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; margin: -26px 0 0 -20px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--cyan) 85%, transparent); color: #140800; font-size: 15px; box-shadow: 0 0 16px color-mix(in srgb, var(--cyan) 60%, transparent); }
+.arc-symbol { background: var(--u-karte); }
+.arc-ic { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); font-size: 38px; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cyan) 60%, transparent)); }
+.arc-leer { text-align: center; padding: 40px 16px; color: var(--muted); }
+.arc-leer b { display: block; color: var(--u-titel); font-size: 15px; margin-bottom: 6px; }
+.arc-leer p { max-width: 420px; margin: 0 auto; font-size: 13px; line-height: 1.5; }
+.arc-leer-ic { font-size: 44px; margin-bottom: 8px; filter: drop-shadow(0 0 14px color-mix(in srgb, var(--cyan) 60%, transparent)); }
+.arc-fuss { margin: 10px 0 0; font-size: 11px; }
+.arc-gross { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; background: rgba(3, 2, 1, .92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 50px 60px 80px; }
+.arc-gross figure { margin: 0; max-width: 100%; max-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.arc-gross img, .arc-gross video { max-width: 100%; max-height: calc(100vh - 170px); border-radius: 14px; border: 1px solid var(--u-rand); box-shadow: var(--u-glow); background: #000; }
+.arc-gross figcaption { font-size: 12px; color: var(--u-titel); letter-spacing: .04em; text-align: center; }
+.arc-g-x, .arc-g-pf { all: unset; cursor: pointer; position: absolute; display: grid; place-items: center; color: var(--u-titel); border: 1px solid var(--u-rand); background: var(--u-glas); box-shadow: var(--u-glow); border-radius: 50%; }
+.arc-g-x { top: calc(12px + env(safe-area-inset-top)); right: 14px; width: 40px; height: 40px; font-size: 16px; }
+.arc-g-pf { top: 50%; width: 46px; height: 46px; margin-top: -23px; font-size: 26px; }
+.arc-g-pf.l { left: 10px; } .arc-g-pf.r { right: 10px; }
+.arc-g-knoepfe { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
+.arc-g-knoepfe .chip { cursor: pointer; text-decoration: none; border: 1px solid var(--u-rand); border-radius: 999px; background: var(--u-glas); color: var(--u-titel); padding: 8px 14px; font-size: 13px; white-space: nowrap; }
+.arc-g-knoepfe .chip:hover { box-shadow: var(--u-glow); }
+.arc-gross .hidden { display: none !important; }
+@media (max-width: 900px) {
+  .side-nav > .side-panel:first-child .nav-item[data-nav="archiv"] { display: none; }
+  .arc-box { display: block; overflow-y: auto; max-height: calc(100dvh - 18px - var(--m-safe-t)); }
+  .arc-fuss { overflow-wrap: anywhere; }
+  .arc-stats { grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+  .arc-stat { padding: 6px 4px; text-align: center; }
+  .arc-stat b { font-size: 17px; }
+  .arc-stat small { font-size: 10px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .arc-leiste { flex-direction: column; align-items: stretch; gap: 8px; }
+  .arc-leiste > * { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+  .arc-knoepfe { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .arc-knoepfe .chip { min-width: 0; min-height: 40px; padding: 6px 4px; font-size: 13px; display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; }
+  .arc-haupt { display: block; }
+  .arc-baum { margin-bottom: 10px; }
+  .arc-baum { flex-direction: row; overflow-x: auto; overflow-y: hidden; max-height: none; gap: 8px; padding-bottom: 6px; scrollbar-width: none; }
+  .arc-jahr { display: flex; gap: 6px; flex: 0 0 auto; align-items: center; }
+  .arc-j { width: auto; gap: 8px; }
+  .arc-monate { flex-direction: row; margin: 0; padding-left: 6px; border-left: 1px solid var(--u-rand-soft); }
+  .arc-m { width: auto; gap: 8px; white-space: nowrap; border: 1px solid var(--u-rand-soft); border-radius: 999px; }
+  .arc-inhalt { max-height: none; overflow: visible; }
+  .arc-raster { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px; }
+  .arc-gross { padding: 60px 8px 90px; }
+  .arc-g-pf { width: 38px; height: 38px; margin-top: -19px; font-size: 22px; }
+}

@@ -179,17 +179,31 @@
     window.Friday.askAboutImage?.(frame, "Was siehst du durch die Kamera?");
   });
 
-  // Foto nur auf Knopfdruck: Kamerabild mit den Rahmen als Datei herunterladen.
-  $("vision-foto")?.addEventListener("click", () => {
+  // Foto nur auf Knopfdruck: Kamerabild mit den Rahmen ins Archiv auf dem Mac (Jahr → Monat).
+  // Klappt das nicht (z. B. Server weg), wird es wie früher als Datei heruntergeladen.
+  $("vision-foto")?.addEventListener("click", async () => {
     if (!video.videoWidth) return;
     const c = document.createElement("canvas");
     c.width = video.videoWidth; c.height = video.videoHeight;
     const g = c.getContext("2d");
     g.drawImage(video, 0, 0); g.drawImage(canvas, 0, 0);
-    const a = document.createElement("a");
-    a.href = c.toDataURL("image/jpeg", 0.9);
-    a.download = `friday-vision-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.jpg`;
-    a.click();
+    const bild = c.toDataURL("image/jpeg", 0.9);
+    const knopf = $("vision-foto");
+    knopf.disabled = true;
+    try {
+      const r = await (await window.Friday.api("/api/archiv/foto", { method: "POST", body: JSON.stringify({ bild, quelle: "vision" }) })).json();
+      if (!r.ok) throw new Error(r.error || "Fehler");
+      hint(`📸 Im Archiv gespeichert: ${new Date().toLocaleDateString("de-DE", { month: "long", year: "numeric" })}`);
+      setTimeout(() => hint(""), 2600);
+      window.FridayArchiv?.refresh();
+    } catch {
+      const a = document.createElement("a");
+      a.href = bild;
+      a.download = `friday-vision-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.jpg`;
+      a.click();
+      hint("Archiv nicht erreichbar, Foto wurde heruntergeladen.", true);
+      setTimeout(() => hint(""), 3500);
+    } finally { knopf.disabled = false; }
   });
 
   $("vision-summary")?.addEventListener("click", () => {

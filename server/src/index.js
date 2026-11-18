@@ -2,7 +2,7 @@
 import http from "node:http";
 import express from "express";
 import { config, checkConfig, DASHBOARD_DIR } from "./config.js";
-import { requireAuth, requireShortcutOrAuth, verifyPassword, createToken, loginAllowed, recordFailure, clearFailures } from "./auth.js";
+import { requireAuth, requireShortcutOrAuth, verifyToken, verifyPassword, createToken, loginAllowed, recordFailure, clearFailures } from "./auth.js";
 import { ask } from "./brain.js";
 import { attachAgentHub, isAgentOnline, getAgentInfo, sendToAgent } from "./agent-hub.js";
 import { mailConfigured, getMailOverview, sortMail } from "./mail.js";
@@ -33,6 +33,7 @@ import { auftragStand } from "./auftrag.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
 import { getLandInfo, findeLand } from "./laenderinfo.js";
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus, updateProgress, runningVersion, githubTokenStatus, setGithubToken, forgetGithubToken } from "./updater.js";
+import { archivUebersicht, speichereFoto, einsortieren, dateiPfad, fotoWegwerfen, oeffneOrdner, archivStart } from "./archiv.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
 const missing = checkConfig();
@@ -104,6 +105,22 @@ app.get("/api/spotify/callback", asyncRoute(async (req, res) => {
 }));
 
 // Alles ab hier braucht eine Anmeldung.
+// Archiv-Dateien (Fotos, Videos, Webseiten) für <img>/<video>: Anmeldung per Kopfzeile, Cookie oder ?t=
+app.get(/^\/api\/archiv\/datei\/(foto|video|webseite)\/(.+)$/, (req, res) => {
+  const kopf = (req.headers.authorization || "").replace(/^Bearer /, "");
+  const cookie = (req.headers.cookie || "").match(/(?:^|;\s*)friday_session=([^;]+)/)?.[1];
+  if (![kopf, cookie && decodeURIComponent(cookie), String(req.query.t || "")].some((t) => t && verifyToken(t))) return res.status(401).json({ error: "Nicht angemeldet" });
+  let rel; try { rel = decodeURIComponent(req.params[1]); } catch { return res.status(400).end(); }
+  const p = dateiPfad(req.params[0], rel);
+  if (!p) return res.status(404).json({ error: "Nicht gefunden" });
+  res.setHeader("Cache-Control", "private, max-age=86400");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  // Webseiten laufen abgeschottet, damit sie nicht an Fridays Anmeldung kommen.
+  if (req.params[0] === "webseite") res.setHeader("Content-Security-Policy", "sandbox allow-scripts allow-forms allow-popups allow-modals");
+  res.type(p.mime);
+  res.sendFile(p.voll, { dotfiles: "deny" });
+});
+
 app.use("/api", requireAuth);
 // Aktivität merken (für automatische Updates nur in ruhigen Momenten).
 app.use("/api", (req, res, next) => { if (req.method !== "GET") markActive(); next(); });
@@ -392,6 +409,15 @@ app.get("/api/einstellungen/oberflaeche", (req, res) => res.json(getUiSettings()
 app.post("/api/einstellungen/oberflaeche", (req, res) => {
   try { res.json(setUiSettings(req.body || {})); } catch (e) { console.error("oberflaeche:", e.message); res.status(500).json({ error: "Konnte nicht speichern." }); }
 });
+// Archiv: alles von Friday nach Jahr → Monat
+app.get("/api/archiv", (req, res) => res.json(archivUebersicht()));
+app.post("/api/archiv/foto", (req, res) => {
+  try { const r = speichereFoto({ bild: req.body?.bild, quelle: String(req.body?.quelle || "vision"), zeit: req.body?.zeit }); if (r.ok) store.logActivity("archiv", `Foto im Archiv gespeichert: ${r.datei}`); res.status(r.ok ? 200 : 400).json(r); }
+  catch (e) { console.error("Archiv:", e.message); res.status(500).json({ ok: false, error: "Foto konnte nicht gespeichert werden." }); }
+});
+app.post("/api/archiv/einsortieren", asyncRoute(async (req, res) => res.json(await einsortieren())));
+app.post("/api/archiv/wegwerfen", (req, res) => { const r = fotoWegwerfen(req.body?.datei); res.status(r.ok ? 200 : 400).json(r); });
+app.post("/api/archiv/ordner", (req, res) => res.json(oeffneOrdner(req.body?.jahr, req.body?.monat)));
 app.get("/api/webseiten", (req, res) => res.json(listSites()));
 app.post("/api/webseite", asyncRoute(async (req, res) => { const r = await buildSite(req.body?.auftrag, req.body?.basis || null); res.status(r.ok ? 200 : 400).json(r); }));
 app.get("/api/webseite/:id/html", (req, res) => { const html = getSiteHtml(req.params.id); if (html == null) return res.status(404).json({ error: "Nicht gefunden" }); res.json({ html }); });
@@ -475,3 +501,4 @@ startScheduler();
 startTelegram();
 startShips();
 startAutoScan();
+archivStart();
