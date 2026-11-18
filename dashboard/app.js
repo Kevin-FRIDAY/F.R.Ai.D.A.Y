@@ -168,7 +168,8 @@
       }
       setBadge("st-server", true, "online");
       setBadge("st-mac", status.agent?.online, status.agent?.name || "verbunden", "getrennt");
-      setBadge("st-voice", status.voice, "ElevenLabs", "Gerät");
+      setBadge("st-voice", status.voice && !status.voiceHinweis, "ElevenLabs", status.voice ? "Gerät (ElevenLabs-Pause)" : "Gerät");
+      if ($("st-voice")) $("st-voice").title = status.voiceHinweis || "";
       setBadge("st-push", status.push);
       setBadge("st-telegram", status.telegram);
       setBadge("st-home", status.smartHome);
@@ -370,9 +371,41 @@
   let sprechNr = 0; // jede neue Ansage / jedes Stoppen bricht die alte ab
   async function stimmeHolen(t) {
     const res = await api("/api/tts", { method: "POST", body: JSON.stringify({ text: t }) });
-    if (!res.ok) throw new Error("tts");
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      throw new Error(j.grund || j.error || `ElevenLabs antwortet nicht (Fehler ${res.status}), deshalb spreche ich mit der Gerätestimme.`);
+    }
     return URL.createObjectURL(await res.blob());
   }
+
+  // Wenn ElevenLabs nicht spricht: sichtbar (Hinweis-Schild) und einmal hörbar sagen, warum.
+  // Derselbe Grund wird höchstens alle 30 Minuten vorgelesen, damit es nicht nervt.
+  const hinweisGesagt = new Map();
+  function stimmHinweis(grund) {
+    if (!grund) return false;
+    let el = document.getElementById("stimm-hinweis");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "stimm-hinweis";
+      el.setAttribute("role", "status");
+      el.innerHTML = '<b>🔊 Gerätestimme statt ElevenLabs</b><span></span><button type="button" aria-label="Schließen">✕</button>';
+      el.querySelector("button").onclick = () => el.classList.remove("an");
+      document.body.appendChild(el);
+    }
+    el.querySelector("span").textContent = grund;
+    el.classList.add("an");
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove("an"), 15000);
+    const b = $("st-voice");
+    if (b) { b.textContent = "Gerät (ElevenLabs-Pause)"; b.title = grund; }
+    const art = grund.split(/[.,]/)[0]; // nur der Kern zählt (Datum o. ä. kann sich ändern)
+    const zuletzt = hinweisGesagt.get(art) || 0;
+    if (Date.now() - zuletzt < 30 * 60 * 1000) return false;
+    hinweisGesagt.set(art, Date.now());
+    return true;
+  }
+  window.Friday = window.Friday || {};
+  window.Friday.stimmHinweis = stimmHinweis;
 
   async function say(text) {
     if (!$("voice-toggle").checked || !text) return;
@@ -388,13 +421,21 @@
         let ok = false;
         for (let i = 0; i < teile.length; i++) {
           let url;
-          try { url = await naechstes; } catch { break; }
+          try { url = await naechstes; } catch (e) { if (!ok && stimmHinweis(e?.message) && !text.includes(e.message)) text = `Kurzer Hinweis: ${e.message} ${text}`; break; }
           if (nr !== sprechNr) { URL.revokeObjectURL(url); return; }
           if (i + 1 < teile.length) { naechstes = stimmeHolen(teile[i + 1]); naechstes.catch(() => {}); }
           audio.src = url;
           audio.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
           window.FridayFace?.talkWithAudio(audio);
-          await audio.play();
+          try { await audio.play(); } catch (e) {
+            URL.revokeObjectURL(url);
+            if (nr !== sprechNr) return;
+            if (!ok) {
+              const grund = "Der Browser hat die ElevenLabs-Wiedergabe blockiert. Tipp einmal auf den Bildschirm, dann klappt es wieder.";
+              if (stimmHinweis(grund)) text = `Kurzer Hinweis: ${grund} ${text}`;
+            }
+            break;
+          }
           ok = true;
           await new Promise((r) => { audio.onended = r; audio.onerror = r; audio.onpause = r; });
           URL.revokeObjectURL(url);

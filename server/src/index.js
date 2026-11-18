@@ -22,7 +22,7 @@ import { getISS } from "./extras.js";
 import * as alexa from "./alexa.js";
 import * as fernseher from "./fernseher.js";
 import { DIENSTE, alleStatus } from "./dienste.js";
-import { sprich, stimmeAktiv } from "./stimme.js";
+import { sprich, stimmeAktiv, stimmeHinweis } from "./stimme.js";
 import { callback as spotifyCallback } from "./spotify.js";
 import { hueSprechenAn, sprechen as hueSprechen } from "./hue.js";
 import { haBereit } from "./homeassistant.js";
@@ -147,7 +147,7 @@ app.post("/api/chat", asyncRoute(async (req, res) => {
 app.post("/api/tts", asyncRoute(async (req, res) => {
   if (!stimmeAktiv()) return res.status(404).json({ error: "Keine ElevenLabs-Stimme eingerichtet" });
   const r = await sprich(String(req.body?.text || ""));
-  if (!r.ok) return res.status(503).json({ error: r.error });
+  if (!r.ok) return res.status(503).json({ error: r.error, grund: r.error });
   res.type("audio/mpeg").send(r.audio);
 }));
 
@@ -156,6 +156,7 @@ app.get("/api/status", (req, res) => {
     name: config.userName,
     agent: { online: isAgentOnline(), ...getAgentInfo() },
     voice: stimmeAktiv(),
+    voiceHinweis: stimmeHinweis(),
     hueSprechen: hueSprechenAn(),
     telegram: Boolean(config.telegramToken),
     push: Boolean(config.ntfyTopic),
