@@ -10,6 +10,7 @@ import { getAlarm, getWorldVideos } from "./lagezentrum.js";
 import { warmForecast, marktBusy, MAERKTE } from "./markt.js";
 import { getVideoJob } from "./videoteam.js";
 import { autoBackup } from "./backup.js";
+import { eintragen } from "./logbuch.js";
 
 let lastBriefingDay = null;
 let latestBriefing = null;
@@ -27,6 +28,7 @@ async function checkReminders() {
       r.done = true;
       changed = true;
       await notifyAll("Erinnerung", r.text);
+      eintragen({ bereich: "erinnerung", titel: `Erinnerung ausgelöst: ${r.text}`, details: "Mitteilung an Handy/Telegram geschickt", quelle: "automatisch" });
       if (isAgentOnline()) sendToAgent("notify", { value: `Erinnerung: ${r.text}` });
     }
   }
@@ -59,8 +61,10 @@ async function checkBriefing() {
   try {
     const text = await makeBriefing();
     await notifyAll("Guten Morgen, Boss", text);
+    eintragen({ bereich: "briefing", titel: "Morgenbriefing verschickt", details: text, quelle: "automatisch" });
   } catch (err) {
     console.error("Briefing fehlgeschlagen:", err.message);
+    eintragen({ bereich: "briefing", titel: "Morgenbriefing fehlgeschlagen", details: err.message, quelle: "automatisch", ok: false });
   }
 }
 
@@ -86,13 +90,15 @@ async function checkUpdates() {
     if (!laeuftSchon && tries < 2 && idleFor(5 * 60 * 1000) && !marktBusy() && !(job && job.status === "läuft")) {
       autoTries.set(u.latest, tries + 1);
       console.log(`Automatisches Update auf ${u.latest}`);
-      startUpdate({ auto: true });
+      const st2 = startUpdate({ auto: true });
+      eintragen({ bereich: "update", titel: `Automatisches Update auf ${u.latest} gestartet`, details: st2?.error || "", quelle: "automatisch", ok: !st2?.error });
       return;
     }
     if (tries < 2) return; // später noch einmal versuchen
   }
   if (u.latest === notifiedVersion) return;
   notifiedVersion = u.latest;
+  eintragen({ bereich: "update", titel: `Update ${u.latest} verfügbar`, details: "Bescheid gegeben", quelle: "automatisch" });
   await notifyAll("Update verfügbar", `Version ${u.latest} ist da, Boss. Tippe im Dashboard auf den roten Update-Knopf.`);
 }
 
@@ -115,9 +121,10 @@ function marktVorrechnen() {
 async function checkBackup() {
   try {
     const b = await autoBackup();
-    if (b) console.log("Automatische Sicherung:", b.name);
+    if (b) { console.log("Automatische Sicherung:", b.name); eintragen({ bereich: "sicherung", titel: "Automatische Sicherung erstellt", details: b.name, quelle: "automatisch" }); }
   } catch (err) {
     console.error("Automatische Sicherung fehlgeschlagen:", err.message);
+    eintragen({ bereich: "sicherung", titel: "Automatische Sicherung fehlgeschlagen", details: err.message, quelle: "automatisch", ok: false });
   }
 }
 

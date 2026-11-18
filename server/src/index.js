@@ -28,6 +28,7 @@ import { hueSprechenAn, sprechen as hueSprechen } from "./hue.js";
 import { haBereit } from "./homeassistant.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
+import * as logbuch from "./logbuch.js";
 import { alleDokumente, dokument, antwortenSpeichern } from "./dokumente.js";
 import { auftragStand } from "./auftrag.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
@@ -124,6 +125,54 @@ app.get(/^\/api\/archiv\/datei\/(foto|video|webseite)\/(.+)$/, (req, res) => {
 app.use("/api", requireAuth);
 // Aktivität merken (für automatische Updates nur in ruhigen Momenten).
 app.use("/api", (req, res, next) => { if (req.method !== "GET") markActive(); next(); });
+
+// Logbuch: Knöpfe im Dashboard, die nicht schon an anderer Stelle festgehalten werden.
+// Nur Pfad und wenige harmlose Felder – nie Schlüssel oder Passwörter.
+const nr = (v) => (Number.isFinite(Number(v)) ? Number(v).toLocaleString("de-DE") : "");
+const DASHBOARD_LOG = [
+  ["POST", /^\/update$/, "update", () => "Update gestartet (von Hand)"],
+  ["POST", /^\/backups$/, "sicherung", () => "Sicherung erstellt (von Hand)"],
+  ["POST", /^\/backups\/([^/]+)\/restore$/, "sicherung", (q, m) => `Sicherung zurückgeholt: ${decodeURIComponent(m[1])}${q.body?.programm ? " (mit Programm)" : ""}`],
+  ["POST", /^\/webseite$/, "webseite", (q) => `Webseite gebaut: ${String(q.body?.auftrag || "").slice(0, 120)}`],
+  ["POST", /^\/webseite\/([^/]+)\/verkauft$/, "energie", (q) => `Webseite verkauft für ${nr(q.body?.betrag)} €`],
+  ["POST", /^\/energie\/aufgeladen$/, "energie", (q) => `Guthaben aufgeladen: ${nr(q.body?.betrag)} $`],
+  ["POST", /^\/energie\/einnahme$/, "energie", (q) => `Einnahme eingetragen: ${nr(q.body?.betrag)} € ${String(q.body?.wofuer || "").slice(0, 60)}`],
+  ["POST", /^\/papierdepot\/freigeben$/, "markt", (q) => `Spielgeld-Handel: ${String(q.body?.richtung || "")} ${String(q.body?.asset || "")}`],
+  ["POST", /^\/papierdepot\/zuruecksetzen$/, "markt", () => "Spielgeld-Depot zurückgesetzt"],
+  ["POST", /^\/markt\/([^/]+)\/neu$/, "markt", (q, m) => `Prognose neu berechnet: ${m[1]}`],
+  ["POST", /^\/video-job$/, "video", (q) => `Videoschnitt gestartet${q.body?.look ? ` (Look ${String(q.body.look).slice(0, 20)})` : ""}`],
+  ["POST", /^\/dienste\/([^/]+)\/vergessen$/, "verbindung", (q, m) => `Verbindung getrennt: ${m[1]}`],
+  ["POST", /^\/dienste\/([^/]+)\/befehl$/, null, (q, m) => `${m[1]}: ${String(q.body?.action || "")} ${String(q.body?.value ?? "").slice(0, 60)}`],
+  ["POST", /^\/fernseher\/koppeln$/, "tv", () => "Fernseher gekoppelt"],
+  ["POST", /^\/fernseher\/vergessen$/, "tv", () => "Fernseher vergessen"],
+  ["POST", /^\/alexa\/schluessel$/, "verbindung", () => "Alexa-Schlüssel gespeichert"],
+  ["POST", /^\/alexa\/vergessen$/, "verbindung", () => "Alexa getrennt"],
+  ["POST", /^\/update\/schluessel$/, "verbindung", () => "GitHub-Schlüssel gespeichert"],
+  ["POST", /^\/update\/schluessel\/vergessen$/, "verbindung", () => "GitHub-Schlüssel entfernt"],
+  ["POST", /^\/einstellungen$/, "system", (q) => `Einstellungen geändert: ${Object.keys(q.body || {}).slice(0, 6).join(", ")}`],
+  ["POST", /^\/archiv\/wegwerfen$/, "archiv", () => "Foto in den Papierkorb gelegt"],
+  ["POST", /^\/archiv\/einsortieren$/, "archiv", () => "Fotos aus Downloads einsortiert"],
+  ["POST", /^\/history\/clear$/, "system", () => "Neues Gespräch begonnen"],
+  ["POST", /^\/lage\/([^/]+)\/einschaetzung$/, "welt", (q, m) => `Lage-Einschätzung: ${decodeURIComponent(m[1])}`],
+  ["DELETE", /^\/reminders\/([^/]+)$/, "erinnerung", () => "Erinnerung gelöscht"],
+];
+const DIENST_BEREICH = { anrufe: "anruf", kalender: "kalender", spotify: "musik", hue: "smarthome", homeassistant: "smarthome", todoist: "aufgabe", notion: "suche", stimme: "system" };
+app.use("/api", (req, res, next) => {
+  if (req.method === "GET") return next();
+  for (const [methode, muster, bereich, titel] of DASHBOARD_LOG) {
+    if (req.method !== methode) continue;
+    const m = req.path.match(muster);
+    if (!m) continue;
+    res.on("finish", () => {
+      try {
+        const ok = res.statusCode < 400;
+        logbuch.eintragen({ bereich: bereich || DIENST_BEREICH[m[1]] || "verbindung", titel: titel(req, m), quelle: "dashboard", ok, ...(ok ? {} : { details: `Fehler ${res.statusCode}` }) });
+      } catch { /* egal */ }
+    });
+    break;
+  }
+  next();
+});
 
 app.get("/api/shortcut-token", (req, res) => res.json({ token: config.shortcutToken }));
 
@@ -253,8 +302,8 @@ app.get("/api/systemcheck", asyncRoute(async (req, res) => res.json(await runSys
 app.get("/api/mail", asyncRoute(async (req, res) => res.json(await getMailOverview(req.query.force === "1"))));
 app.post("/api/mail/sort", asyncRoute(async (req, res) => res.json(await sortMail())));
 app.get("/api/tasks", (req, res) => res.json(store.getTasks()));
-app.post("/api/tasks", (req, res) => { const t = store.addTask(String(req.body?.text || "")); store.logActivity("aufgabe", `Aufgabe erstellt: ${t?.text || ""}`); res.json(t); });
-app.patch("/api/tasks/:id", (req, res) => { const t = store.toggleTask(req.params.id) || {}; if (t.done) store.logActivity("aufgabe", `Aufgabe erledigt: ${t.text || ""}`); res.json(t); });
+app.post("/api/tasks", (req, res) => { const t = store.addTask(String(req.body?.text || "")); store.logActivity("aufgabe", `Aufgabe erstellt: ${t?.text || ""}`, { logbuch: false }); res.json(t); });
+app.patch("/api/tasks/:id", (req, res) => { const t = store.toggleTask(req.params.id) || {}; if (t.done) store.logActivity("aufgabe", `Aufgabe erledigt: ${t.text || ""}`, { logbuch: false }); res.json(t); });
 app.delete("/api/tasks/:id", (req, res) => res.json({ ok: store.deleteTask(req.params.id) }));
 app.get("/api/shopping", (req, res) => res.json(store.getShopping()));
 app.post("/api/shopping", (req, res) => res.json(store.addShopping(String(req.body?.text || ""))));
@@ -281,7 +330,7 @@ app.post("/api/memory", (req, res) => {
   const text = String(req.body?.text || "").trim();
   if (!text) return res.status(400).json({ error: "Kein Text" });
   const m = store.addMemory(text);
-  store.logActivity("gedaechtnis", `Gemerkt: ${text}`);
+  store.logActivity("gedaechtnis", `Gemerkt: ${text}`, { logbuch: false });
   return res.json(m);
 });
 app.delete("/api/memory/:id", (req, res) => res.json({ geloescht: store.forgetMemory(req.params.id) }));
@@ -345,7 +394,11 @@ app.post("/api/fernseher/vergessen", (req, res) => res.json(fernseher.forget()))
 app.post("/api/fernseher/befehl", asyncRoute(async (req, res) => {
   const { action, value, anzahl } = req.body || {};
   const r = await fernseher.command({ action: String(action || ""), value: value == null ? undefined : String(value).slice(0, 60), anzahl });
-  if (r.ok && action !== "status") store.logActivity("mac", `Fernseher: ${action}${value ? " " + value : ""}`);
+  if (action !== "status") {
+    const was = `Fernseher: ${action}${value ? " " + value : ""}`;
+    if (r.ok) store.logActivity("mac", was, { bereich: "tv", quelle: "dashboard" });
+    else logbuch.eintragen({ bereich: "tv", titel: was, details: r.error, quelle: "dashboard", ok: false });
+  }
   res.status(r.ok ? 200 : 400).json(r);
 }));
 // Alexa (über Voice Monkey)
@@ -357,7 +410,11 @@ app.post("/api/alexa/vergessen", (req, res) => res.json(alexa.forget()));
 app.post("/api/alexa/befehl", asyncRoute(async (req, res) => {
   const { action, value, lautsprecher } = req.body || {};
   const r = await alexa.command({ action: String(action || ""), value: value == null ? undefined : String(value).slice(0, 900), lautsprecher: lautsprecher ? String(lautsprecher).slice(0, 60) : undefined });
-  if (r.ok && action !== "liste") store.logActivity("mac", action === "ansage" ? "Alexa: Ansage" : `Alexa: ${r.routine || action}`);
+  if (action !== "liste") {
+    const was = action === "ansage" ? `Alexa: Ansage „${String(value || "").slice(0, 80)}“` : `Alexa: ${r.routine || value || action}`;
+    if (r.ok) store.logActivity("mac", was, { bereich: "alexa", quelle: "dashboard" });
+    else logbuch.eintragen({ bereich: "alexa", titel: was, details: r.error, quelle: "dashboard", ok: false });
+  }
   res.status(r.ok ? 200 : 400).json(r);
 }));
 // Verbindungen (Kalender, Stimme, Spotify, Home Assistant, Hue, Todoist, Notion)
@@ -487,6 +544,19 @@ app.post("/api/lage/:id/einschaetzung", asyncRoute(async (req, res) => {
 
 app.post("/api/briefing", asyncRoute(async (req, res) => res.json({ text: await makeBriefing() })));
 app.get("/api/protocols", (req, res) => res.json(getProtocols()));
+// Fridays Logbuch: alles, was Friday getan hat, nach Tag.
+app.get("/api/logbuch", (req, res) => res.json(logbuch.tag({ tag: String(req.query.tag || ""), bereich: String(req.query.bereich || ""), q: String(req.query.q || ""), fehler: req.query.fehler === "1", limit: Number(req.query.limit) || 1000 })));
+app.get("/api/logbuch/tage", (req, res) => res.json(logbuch.tage({ anzahl: Number(req.query.anzahl) || 60 })));
+app.get("/api/logbuch/suche", (req, res) => res.json({ eintraege: logbuch.suche({ q: String(req.query.q || ""), bereich: String(req.query.bereich || ""), limit: Math.min(1000, Number(req.query.limit) || 300) }), bereiche: logbuch.BEREICHE }));
+app.get("/api/logbuch/export", (req, res) => {
+  const t = String(req.query.tag || "");
+  const liste = t === "alle" ? logbuch.suche({ limit: 100000 }) : logbuch.tag({ tag: t, limit: 5000 }).eintraege;
+  const name = t === "alle" ? "friday-logbuch-alles" : `friday-logbuch-${logbuch.tag({ tag: t, limit: 1 }).tag}`;
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", `attachment; filename="${name}.csv"`);
+  res.send(logbuch.alsCsv(liste));
+});
+
 app.post("/api/protocols/:name/run", asyncRoute(async (req, res) => res.json(await runTool("run_protocol", { name: req.params.name }))));
 
 // --- Dashboard ---
@@ -497,6 +567,7 @@ attachAgentHub(server);
 server.listen(config.port, config.host, () => {
   console.log(`F.R.Ai.D.A.Y ist online: http://${config.host}:${config.port}`);
 });
+logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
 startTelegram();
 startShips();

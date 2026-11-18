@@ -5,6 +5,7 @@
 //  - nachricht: iMessage (oder SMS übers iPhone) aus der Nachrichten-App des Macs. Kostenlos.
 //  - facetime:  Nachricht wie oben UND der Mac startet einen FaceTime-Audio-Anruf. Kostenlos, man spricht selbst.
 //  - twilio:    echter Telefonanruf, Friday spricht die Nachricht mit ihrer Stimme. Braucht ein Twilio-Konto (kostet).
+import { eintragen } from "./logbuch.js";
 import { config } from "./config.js";
 import { isAgentOnline, sendToAgent } from "./agent-hub.js";
 import * as V from "./verbindungen.js";
@@ -153,7 +154,25 @@ const wen = (k) => (k.rolle === "ich" ? "dich" : k.rolle === "frau" ? (d().frau_
 /**
  * @param {{an:string|object, text?:string, art?:"nachricht"|"anruf"}} p
  */
-export async function ausfuehren({ an, text = "", art = "nachricht" } = {}) {
+export async function ausfuehren(p = {}) {
+  const r = await ausfuehrenIntern(p);
+  // Logbuch: an wen, was, auf welchem Weg – und ob es geklappt hat.
+  try {
+    const k = typeof p.an === "object" && p.an ? p.an : findeKontakt(p.an);
+    const wer = k && !k.fehlt ? wen(k) : k?.fehlt === "frau" ? "deine Frau" : k?.fehlt === "ich" ? "dich" : String(p.an?.name || p.an || "?");
+    const satz = p.text && !k?.fehlt ? hauptsatz(p.text) : "";
+    const weg = r.aktion === "anruf" ? "Anruf (Twilio)" : r.aktion === "facetime" ? "FaceTime" : r.aktion === "nachricht" ? "iMessage/SMS" : "";
+    eintragen({
+      bereich: "anruf",
+      titel: `${p.art === "anruf" ? "Anruf" : "Nachricht"} an ${wer}${satz ? `: „${satz}“` : ""}`,
+      details: r.ok ? `${weg ? `Weg: ${weg}. ` : ""}${r.text || ""}` : r.error,
+      ok: Boolean(r.ok),
+    });
+  } catch { /* egal */ }
+  return r;
+}
+
+async function ausfuehrenIntern({ an, text = "", art = "nachricht" } = {}) {
   const k = typeof an === "object" && an ? an : findeKontakt(an);
   if (!k) return { ok: false, error: `„${an}“ kenne ich nicht, ${boss()}. Trag den Kontakt im Fenster Verbindungen unter Anrufe ein. Ich schreibe nur Leuten, die du dort hinterlegst.` };
   if (k.fehlt === "frau") return { ok: false, error: "Ich habe noch keine Nummer von deiner Frau. Trag sie im Werkzeug-Menü unter Verbindungen → Anrufe ein." };

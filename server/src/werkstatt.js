@@ -1,5 +1,6 @@
 // Fridays Werkstatt: Claude entwirft aus einem Wunsch ("ein Porsche", "ein Wohnhaus mit 12 Etagen")
 // einen 3D-Bauplan aus einfachen Teilen, den das Dashboard Schritt für Schritt als Hologramm aufbaut.
+import { eintragen } from "./logbuch.js";
 import Anthropic from "@anthropic-ai/sdk";
 import { config } from "./config.js";
 import { recordUsage, isCreditError, markEmpty } from "./energie.js";
@@ -79,6 +80,7 @@ function planHaus(text) {
   const plan = planHouse(text);
   seq += 1;
   latest = { id: seq, wunsch: text, erweiterung: false, plan, zeit: new Date().toISOString(), ohneClaude: true };
+  eintragen({ bereich: "haus", titel: `Haus entworfen: ${plan.titel || text}`, details: `Wunsch: ${text}${eckdaten(plan)}` });
   return { ok: true, ...latest };
 }
 
@@ -89,7 +91,22 @@ export function quickCommand(text) {
   return { answer: "Einen Moment, Chef.", actions: ["werkstatt"], titel: r.plan.titel };
 }
 
+// Fürs Logbuch: die ersten Eckdaten als kurzer Text ("Wohnfläche: ca. 420 m², …").
+function eckdaten(plan) {
+  const k = Array.isArray(plan?.kennzahlen) ? plan.kennzahlen : [];
+  return k.length ? ` · ${k.slice(0, 5).map((x) => `${x.label}: ${x.wert}`).join(", ")}` : "";
+}
+
 export async function planBuild(wunsch, basis = null) {
+  const r = await planBuildIntern(wunsch, basis);
+  if (r.ohneClaude) return r; // Häuser schreibt planHaus selbst ins Logbuch
+  eintragen(r.ok
+    ? { bereich: "werkstatt", titel: `${r.erweiterung ? "Modell ergänzt" : "3D-Modell entworfen"}: ${r.plan?.titel || r.wunsch}`, details: `Wunsch: ${r.wunsch}${eckdaten(r.plan)}`, claude: true }
+    : { bereich: "werkstatt", titel: `Werkstatt: ${String(wunsch || "").slice(0, 120)}`, details: r.error, ok: false });
+  return r;
+}
+
+async function planBuildIntern(wunsch, basis = null) {
   if (!basis && isHausWunsch(wunsch)) return planHaus(String(wunsch).trim().slice(0, 1000));
   if (!config.anthropicKey) return { ok: false, error: "Ohne Claude-Schlüssel kann die Werkstatt nichts entwerfen." };
   const text = String(wunsch || "").trim().slice(0, 1000);

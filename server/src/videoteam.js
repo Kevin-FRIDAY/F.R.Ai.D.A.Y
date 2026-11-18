@@ -1,5 +1,6 @@
 // Fridays Videoschnitt-Team: startet tools/videoteam.py und sammelt, was die Agenten melden.
 // Clips kommen aus ~/Friday-Video/Eingang, das fertige 9:16-Video landet in ~/Friday-Video/Fertig.
+import { eintragen } from "./logbuch.js";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -96,7 +97,10 @@ export function startVideoJob({ look } = {}) {
       if (current.status === "fehler" && !current.error) current.error = short(errTail.trim().split("\n").pop() || `Abbruch (Code ${code})`, 300);
     }
     current.ended = new Date().toISOString();
-    if (current.status === "fertig") await writeCaption(current);
+    if (current.status === "fertig") await writeCaption(current).catch(() => {});
+    eintragen(current.status === "fertig"
+      ? { bereich: "video", titel: `Video fertig geschnitten (${current.clips?.length || 0} Clips, Look ${current.look})`, details: current.result?.name || current.result?.file || "", quelle: "automatisch" }
+      : { bereich: "video", titel: "Videoschnitt abgebrochen", details: current.error || "", quelle: "automatisch", ok: false });
   });
   return { ok: true, clips: clips.length, look: chosenLook };
 }

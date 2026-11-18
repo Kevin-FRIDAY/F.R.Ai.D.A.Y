@@ -1,4 +1,5 @@
 // Fridays Werkzeuge: alles, was sie außer Reden noch kann.
+import * as logbuch from "./logbuch.js";
 import fs from "node:fs";
 import { dokumentErstellen, fragebogenErstellen } from "./dokumente.js";
 import path from "node:path";
@@ -397,8 +398,63 @@ const ACTLOG = {
   notion: ["gedaechtnis", (i) => `Notion: ${i.action || ""}`],
 };
 
-export async function runTool(name, input = {}) {
-  if (ACTLOG[name]) { try { store.logActivity(ACTLOG[name][0], ACTLOG[name][1](input)); } catch { /* egal */ } }
+// Weitere Werkzeuge mit lesbarem Namen fürs Logbuch.
+const LOGTITEL = {
+  get_weather: (i) => `Wetter abgefragt${i.city ? `: ${i.city}` : ""}`,
+  list_tasks: () => "Aufgaben angesehen",
+  list_reminders: () => "Erinnerungen angesehen",
+  list_protocols: () => "Protokolle angesehen",
+  forget: (i) => `Vergessen: ${i.query || ""}`,
+  get_health: () => "Gesundheitsdaten angesehen",
+  check_mail: () => "Mails geprüft",
+  sort_mail: () => "Mails sortiert",
+  currency: (i) => `Währung umgerechnet${i.from ? `: ${i.amount || ""} ${i.from} → ${i.to || ""}` : ""}`,
+  crypto: (i) => `Krypto-Kurs: ${i.coin || i.coins || ""}`,
+  holidays: () => "Feiertage nachgesehen",
+  iss: () => "ISS-Position abgefragt",
+  welt_alarm: () => "Welt-Alarm abgefragt",
+  markt_radar: (i) => `Markt-Radar: ${i.action || ""} ${i.asset || ""}`,
+  dokument_erstellen: (i) => `Dokument erstellt: ${i.titel || ""}`,
+  fragebogen_erstellen: (i) => `Fragebogen erstellt: ${i.titel || ""}`,
+  system_check: () => "System-Check gemacht",
+  update: (i) => `Update: ${i.action || "prüfen"}`,
+};
+// Diese Bereiche schreiben ihr Logbuch selbst (mit genauerem Ergebnis).
+const LOGBUCH_SELBST = new Set(["anrufe", "werkstatt", "add_task", "add_shopping", "set_reminder", "remember", "forget"]);
+
+/**
+ * Führt ein Werkzeug aus und hält es im Logbuch fest.
+ * @param {{quelle?:string, kanal?:string}} [wer] - z. B. { quelle: "claude", kanal: "telegram" }
+ */
+export async function runTool(name, input = {}, wer = {}) {
+  if (ACTLOG[name]) { try { store.logActivity(ACTLOG[name][0], ACTLOG[name][1](input), { logbuch: false }); } catch { /* egal */ } }
+  const start = Date.now();
+  let result;
+  try {
+    result = await runToolIntern(name, input);
+  } catch (err) {
+    logWerkzeug(name, input, wer, { error: err.message }, Date.now() - start);
+    throw err;
+  }
+  logWerkzeug(name, input, wer, result, Date.now() - start);
+  return result;
+}
+
+function logWerkzeug(name, input, wer, result, dauer) {
+  if (LOGBUCH_SELBST.has(name)) return;
+  try {
+    const titel = ACTLOG[name] ? ACTLOG[name][1](input || {}) : LOGTITEL[name] ? LOGTITEL[name](input || {}) : `Werkzeug: ${name}`;
+    const fehler = result && typeof result === "object" && !Array.isArray(result) && result.error ? String(result.error) : "";
+    let details = fehler;
+    if (!details && result && typeof result === "object" && !Array.isArray(result.content)) {
+      const text = result.text || result.info || result.hinweis || result.gebaut || "";
+      if (typeof text === "string") details = text;
+    }
+    logbuch.eintragen({ bereich: logbuch.bereichFuer(name === "mac" ? "mac" : name), titel: titel.trim() || name, details, quelle: wer.quelle || "", kanal: wer.kanal || "", claude: wer.quelle === "claude", ok: !fehler, dauer_ms: dauer });
+  } catch { /* egal */ }
+}
+
+async function runToolIntern(name, input = {}) {
   if (istDienstTool(name)) return runDienstTool(name, input);
   switch (name) {
     case "world_news": {
