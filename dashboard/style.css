@@ -2603,3 +2603,19 @@ html.perf-fluessig .face-host { contain: strict; }
 }
 
 #lb-heute.weg { display: none; }
+/* v1.95.0: Hinweis, wenn Friday statt ElevenLabs die Gerätestimme nimmt */
+#stimm-hinweis {
+  position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 64px); z-index: 9000;
+  transform: translate(-50%, -20px); opacity: 0; pointer-events: none;
+  width: min(520px, calc(100vw - 32px)); box-sizing: border-box;
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: start;
+  padding: 12px 14px; border-radius: 14px;
+  background: rgba(20, 10, 2, 0.88); border: 1px solid rgba(255, 140, 0, 0.55);
+  box-shadow: 0 0 18px rgba(255, 120, 0, 0.35); color: #ffe2c2; font-size: 14px; line-height: 1.4;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  transition: opacity .25s ease, transform .25s ease;
+}
+#stimm-hinweis.an { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+#stimm-hinweis b { color: #ff9a2e; font-weight: 600; }
+#stimm-hinweis span { grid-column: 1; }
+#stimm-hinweis button { grid-row: 1 / span 2; grid-column: 2; background: none; border: 0; color: #ffb36b; font-size: 16px; cursor: pointer; padding: 2px 4px; }

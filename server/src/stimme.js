@@ -21,6 +21,11 @@ export function stimmeAktiv() {
   return Boolean(key()) && d().aus !== true;
 }
 
+// Warum ElevenLabs gerade nicht spricht (leer = alles gut). Fürs Dashboard.
+export function stimmeHinweis() {
+  return stimmeAktiv() && Date.now() < pauseBis ? pauseGrund : "";
+}
+
 // Wenn das Kontingent leer ist, ein paar Stunden lang gar nicht erst fragen (spart Wartezeit).
 let pauseBis = 0;
 let pauseGrund = "";
@@ -52,25 +57,39 @@ export async function sprich(text) {
       signal: AbortSignal.timeout(20000),
     });
   } catch (err) {
-    return { ok: false, error: "ElevenLabs ist nicht erreichbar." };
+    return { ok: false, error: "ElevenLabs ist gerade nicht erreichbar, deshalb spreche ich mit der Gerätestimme." };
   }
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     const status = String(body?.detail?.status || body?.detail?.code || "");
     if (/quota_exceeded/.test(status)) {
       pauseBis = Date.now() + 6 * 3600 * 1000;
-      pauseGrund = "Das ElevenLabs-Kontingent für diesen Monat ist aufgebraucht. Ich spreche mit der Gerätestimme weiter.";
+      const basis = "Das ElevenLabs-Guthaben ist aufgebraucht, deshalb spreche ich mit der Gerätestimme.";
+      const datum = (iso) => new Date(iso).toLocaleDateString("de-DE", { timeZone: config.timezone, day: "numeric", month: "long" });
+      pauseGrund = abo?.neuAm ? `${basis} Es füllt sich am ${datum(abo.neuAm)} wieder auf, oder du nimmst bei elevenlabs.io ein Abo.` : `${basis} Es füllt sich nächsten Monat wieder auf, oder du nimmst bei elevenlabs.io ein Abo.`;
+      // Datum zum Auffüllen im Hintergrund nachladen (nicht warten, sonst stockt die Antwort).
+      kontingent(true).then((k) => {
+        if (k?.neuAm && /Guthaben/.test(pauseGrund)) pauseGrund = `${basis} Es füllt sich am ${datum(k.neuAm)} wieder auf, oder du nimmst bei elevenlabs.io ein Abo.`;
+      }).catch(() => {});
     } else if (/missing_permissions/.test(status)) {
       pauseBis = Date.now() + 10 * 60 * 1000;
-      pauseGrund = "Dem ElevenLabs-Schlüssel fehlt das Recht „Text to Speech“. Ich spreche mit der Gerätestimme.";
+      pauseGrund = "Dem ElevenLabs-Schlüssel fehlt das Recht „Text to Speech“, deshalb spreche ich mit der Gerätestimme.";
+    } else if (/detected_unusual_activity/.test(status)) {
+      pauseBis = Date.now() + 30 * 60 * 1000;
+      pauseGrund = "ElevenLabs hat das Gratis-Konto gesperrt (ungewöhnliche Aktivität, zum Beispiel VPN), deshalb spreche ich mit der Gerätestimme.";
     } else if (res.status === 401) {
       pauseBis = Date.now() + 10 * 60 * 1000;
-      pauseGrund = "Der ElevenLabs-Schlüssel wird abgelehnt.";
+      pauseGrund = "Der ElevenLabs-Schlüssel wird abgelehnt, deshalb spreche ich mit der Gerätestimme. Trag unter Verbindungen einen neuen Schlüssel ein.";
+    } else if (res.status === 404) {
+      pauseBis = Date.now() + 10 * 60 * 1000;
+      pauseGrund = "Die gewählte ElevenLabs-Stimme gibt es nicht mehr. Wähl unter Verbindungen eine andere.";
     } else if (res.status === 429) {
       pauseBis = Date.now() + 60 * 1000;
-      pauseGrund = "ElevenLabs bremst gerade.";
+      pauseGrund = "ElevenLabs bremst gerade, deshalb spreche ich kurz mit der Gerätestimme.";
     }
-    return { ok: false, error: pauseGrund || `ElevenLabs: ${res.status}` };
+    const grund = pauseGrund || `ElevenLabs meldet Fehler ${res.status}, deshalb spreche ich mit der Gerätestimme.`;
+    console.warn(`[stimme] ElevenLabs ${res.status} ${status}: ${grund}`);
+    return { ok: false, error: grund };
   }
   const audio = Buffer.from(await res.arrayBuffer());
   if (t.length <= 120) merken(k, audio);
@@ -217,7 +236,13 @@ export async function command({ action, value } = {}) {
     V.set("stimme", { stimmen: r.stimmen.slice(0, 80) });
     return { ok: true, text: `${r.stimmen.length} Stimmen geladen.` };
   }
-  if (action === "probe") return { ok: true, text: `Hallo ${config.userName}. So klinge ich mit ElevenLabs.`, sprechen: true };
+  if (action === "probe") {
+    // Erst wirklich bei ElevenLabs testen, damit ein Fehler hier steht statt still die Gerätestimme zu nehmen.
+    pauseBis = 0;
+    const p = await sprich(`Hallo ${config.userName}. So klinge ich mit ElevenLabs.`);
+    if (!p.ok) return { ok: false, error: p.error };
+    return { ok: true, text: `Hallo ${config.userName}. So klinge ich mit ElevenLabs.`, sprechen: true };
+  }
   if (action === "kontingent") {
     const k = await kontingent(true);
     if (!k || !k.limit) return { ok: false, error: "Das Kontingent konnte ich nicht abfragen. Vielleicht darf dein Schlüssel das nicht (Recht „User: Lesen“)." };
