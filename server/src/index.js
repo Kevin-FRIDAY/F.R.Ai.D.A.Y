@@ -179,6 +179,39 @@ app.get("/api/system", asyncRoute(async (req, res) => {
 app.get("/api/weather", asyncRoute(async (req, res) => res.json(await getWeather())));
 // --- Organizer: Aufgaben + Einkaufsliste ---
 app.get("/api/activity", (req, res) => res.json(store.getActivity()));
+
+// ---------- Friday-Datenbank (Fenster "Wissen"): alles, was gesprochen und gemacht wurde ----------
+store.archivStarten();
+function alleEintraege() {
+  const zeit = (id) => { const n = parseInt(String(id || ""), 36); return n > 1.5e12 && n < 4e12 ? new Date(n).toISOString() : null; };
+  const out = [];
+  for (const e of store.leseArchiv()) out.push({ typ: e.typ || "gespraech", at: e.at, kanal: e.kanal, frage: e.frage, antwort: e.antwort, aktionen: e.aktionen, alt: e.uebernommen || undefined });
+  for (const a of store.getActivity()) out.push({ typ: "aktion", at: a.at, art: a.cat, text: a.label });
+  for (const m of store.getMemories()) out.push({ typ: "gedaechtnis", at: m.created || zeit(m.id), text: m.text });
+  for (const t of store.getTasks()) out.push({ typ: "aufgabe", at: t.at ? new Date(t.at).toISOString() : zeit(t.id), text: t.text, erledigt: !!t.done });
+  for (const r of store.getReminders()) out.push({ typ: "erinnerung", at: zeit(r.id) || r.due, faellig: r.due, text: r.text, erledigt: !!r.done });
+  for (const s of store.getShopping()) out.push({ typ: "einkauf", at: zeit(s.id), text: s.text, erledigt: !!s.done });
+  return out.filter((e) => e.at).sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
+}
+app.get("/api/wissen/datenbank", (req, res) => {
+  const alle = alleEintraege();
+  const typ = String(req.query.typ || "");
+  const q = String(req.query.q || "").trim().toLowerCase();
+  const vor = String(req.query.vor || "");
+  const limit = Math.min(300, Math.max(10, Number(req.query.limit) || 120));
+  const stats = { gesamt: alle.length, seit: alle.length ? alle[alle.length - 1].at : null };
+  for (const e of alle) stats[e.typ] = (stats[e.typ] || 0) + 1;
+  let liste = alle;
+  if (typ) liste = liste.filter((e) => e.typ === typ);
+  if (q) liste = liste.filter((e) => [e.frage, e.antwort, e.text, e.art, e.kanal].some((v) => v && String(v).toLowerCase().includes(q)));
+  const treffer = liste.length;
+  if (vor) liste = liste.filter((e) => e.at < vor);
+  res.json({ stats, treffer, eintraege: liste.slice(0, limit), mehr: liste.length > limit });
+});
+app.get("/api/wissen/export", (req, res) => {
+  res.setHeader("Content-Disposition", `attachment; filename="friday-datenbank-${new Date().toISOString().slice(0, 10)}.json"`);
+  res.json({ exportiert: new Date().toISOString(), eintraege: alleEintraege() });
+});
 app.get("/api/systemcheck", asyncRoute(async (req, res) => res.json(await runSystemCheck())));
 app.get("/api/mail", asyncRoute(async (req, res) => res.json(await getMailOverview(req.query.force === "1"))));
 app.post("/api/mail/sort", asyncRoute(async (req, res) => res.json(await sortMail())));

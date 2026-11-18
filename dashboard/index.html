@@ -655,6 +655,28 @@
         </div>
       </div>
     </section>
+
+    <section id="wissen" class="sheet hidden" aria-label="Fridays Datenbank">
+      <div class="panel sheet-box wissen-box">
+        <header class="sheet-top"><h2>🗄 Fridays Datenbank</h2><button id="wissen-x" class="ghost small">✕</button></header>
+        <div id="wissen-stats" class="wissen-stats"></div>
+        <div class="wissen-leiste">
+          <input id="wissen-q" class="wissen-suche" type="search" placeholder="Alles durchsuchen … z. B. Türkei, Einkauf, Montag" autocomplete="off">
+          <button id="wissen-export" class="chip" type="button" title="Alles als Datei speichern">⬇ Export</button>
+        </div>
+        <div id="wissen-filter" class="wissen-filter" role="tablist">
+          <button type="button" data-typ="" class="active">Alles</button>
+          <button type="button" data-typ="gespraech">💬 Gespräche</button>
+          <button type="button" data-typ="aktion">⚡ Aktionen</button>
+          <button type="button" data-typ="gedaechtnis">🧠 Gemerkt</button>
+          <button type="button" data-typ="aufgabe">✅ Aufgaben</button>
+          <button type="button" data-typ="erinnerung">⏰ Erinnerungen</button>
+          <button type="button" data-typ="einkauf">🛒 Einkauf</button>
+        </div>
+        <div id="wissen-liste" class="wissen-liste"><span class="muted">Lade …</span></div>
+        <button id="wissen-mehr" class="chip wissen-mehr hidden" type="button">Ältere laden</button>
+      </div>
+    </section>
   </main>
 
   <!-- Satellitenansicht (Esri, öffentlich) -->

@@ -32,7 +32,51 @@ export function logActivity(cat, label) {
   try {
     const list = getActivity();
     list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), cat, label: String(label || "").slice(0, 120), at: new Date().toISOString() });
-    save("activity", list.slice(-1000));
+    save("activity", list.slice(-5000));
+  } catch { /* egal */ }
+}
+
+// --- Friday-Datenbank: jedes Gespräch dauerhaft, eine Datei pro Monat (data/archiv/2026-11.jsonl) ---
+const ARCHIV_DIR = path.join(DATA_DIR, "archiv");
+export function archiviere(eintrag) {
+  try {
+    const at = new Date().toISOString();
+    fs.mkdirSync(ARCHIV_DIR, { recursive: true });
+    fs.appendFileSync(path.join(ARCHIV_DIR, `${at.slice(0, 7)}.jsonl`), JSON.stringify({ at, ...eintrag }) + "\n");
+  } catch { /* Archiv darf Friday nie aufhalten */ }
+}
+export function leseArchiv() {
+  let dateien = [];
+  try { dateien = fs.readdirSync(ARCHIV_DIR).filter((f) => f.endsWith(".jsonl")).sort(); } catch { return []; }
+  const out = [];
+  for (const f of dateien) {
+    let text = "";
+    try { text = fs.readFileSync(path.join(ARCHIV_DIR, f), "utf8"); } catch { continue; }
+    for (const zeile of text.split("\n")) {
+      if (!zeile.trim()) continue;
+      try { out.push(JSON.parse(zeile)); } catch { /* kaputte Zeile überspringen */ }
+    }
+  }
+  return out;
+}
+// Einmalig: bisherige Gesprächsverläufe (history-*.json) ins Archiv übernehmen.
+export function archivStarten() {
+  try {
+    if (fs.existsSync(ARCHIV_DIR)) return;
+    fs.mkdirSync(ARCHIV_DIR, { recursive: true });
+    const zeilen = [];
+    for (const f of fs.readdirSync(DATA_DIR)) {
+      const m = f.match(/^history-(.+)\.json$/);
+      if (!m) continue;
+      const at = fs.statSync(path.join(DATA_DIR, f)).mtime.toISOString();
+      const msgs = load(`history-${m[1]}`, []);
+      const text = (c) => (typeof c === "string" ? c : Array.isArray(c) ? c.map((b) => b?.text || "").join(" ") : "").trim();
+      for (let i = 0; i + 1 < msgs.length; i += 2) {
+        if (msgs[i].role !== "user" || msgs[i + 1].role !== "assistant") continue;
+        zeilen.push(JSON.stringify({ at, typ: "gespraech", kanal: m[1], frage: text(msgs[i].content).slice(0, 2000), antwort: text(msgs[i + 1].content).slice(0, 4000), uebernommen: true }));
+      }
+    }
+    if (zeilen.length) fs.writeFileSync(path.join(ARCHIV_DIR, "0000-uebernommen.jsonl"), zeilen.join("\n") + "\n");
   } catch { /* egal */ }
 }
 
