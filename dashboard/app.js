@@ -120,9 +120,16 @@
 
   function tick() {
     const now = new Date();
-    $("clock").textContent = now.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-    $("date").textContent = now.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    // Einstellungen → Uhr & Startseite: 12/24 Stunden, Sekunden, Datum lang/kurz/aus
+    const h12 = storage.get("friday_uhr12") === "1";
+    const sek = storage.get("friday_uhrsek") !== "0";
+    const datum = storage.get("friday_datum") || "lang";
+    $("clock").textContent = now.toLocaleTimeString(h12 ? "en-US" : "de-DE", { hour: "2-digit", minute: "2-digit", ...(sek ? { second: "2-digit" } : {}), hour12: h12 });
+    const d = $("date");
+    d.textContent = datum === "aus" ? "" : now.toLocaleDateString("de-DE", datum === "kurz" ? { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric" } : { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    d.hidden = datum === "aus";
   }
+  window.addEventListener("friday-settings", () => tick());
   setInterval(tick, 1000);
   tick();
 
@@ -304,6 +311,7 @@
   setInterval(() => token && refreshStatus(), 20000);
   setInterval(() => token && refreshReminders(), 60000);
   setInterval(() => token && refreshWeather(), 15 * 60000);
+  window.addEventListener("friday-wetter-neu", () => token && refreshWeather());
 
   if (navigator.getBattery) {
     navigator.getBattery().then((b) => {
@@ -376,6 +384,7 @@
           if (nr !== sprechNr) { URL.revokeObjectURL(url); return; }
           if (i + 1 < teile.length) { naechstes = stimmeHolen(teile[i + 1]); naechstes.catch(() => {}); }
           audio.src = url;
+          audio.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
           window.FridayFace?.talkWithAudio(audio);
           await audio.play();
           ok = true;
@@ -392,6 +401,7 @@
           if (germanVoice) u.voice = germanVoice;
           u.rate = Number(storage.get("friday_rate")) || 1.05;
           u.pitch = Number(storage.get("friday_pitch")) || 1;
+          u.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
           u.onstart = () => window.FridayFace?.talk(true);
           // Mund im Takt der gesprochenen Wörter bewegen
           u.onboundary = (e) => { if (!e.name || e.name === "word") window.FridayFace?.boundary?.(e.charIndex, text); };
@@ -556,7 +566,8 @@
   const THEMES = { orange: "#ff8a1e", cyan: "#4fd8ff", gruen: "#46e0a0", rot: "#ff5d6c", lila: "#b57bff", gold: "#ffcc4d", pink: "#ff6ec7", eis: "#8fb6ff" };
   const hexRgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
   function applyTheme(name) {
-    const hex = THEMES[name] || THEMES.orange;
+    const eigen = /^#[0-9a-f]{6}$/i.test(storage.get("friday_themefarbe") || "") ? storage.get("friday_themefarbe") : THEMES.orange;
+    const hex = name === "eigen" ? eigen : THEMES[name] || THEMES.orange;
     const [r, g, b] = hexRgb(hex);
     const root = document.documentElement.style;
     root.setProperty("--cyan", hex);
@@ -564,8 +575,9 @@
     root.setProperty("--line", `rgba(${r},${g},${b},0.24)`);
     root.setProperty("--gold", hex);
     storage.set("friday_theme", name);
-    document.querySelectorAll(".swatch").forEach((sw) => sw.classList.toggle("on", sw.dataset.theme === name));
+    document.querySelectorAll(".swatch").forEach((sw) => sw.classList.toggle("on", sw.dataset.theme === name || (name === "eigen" && sw.classList.contains("swatch-eigen"))));
   }
+  window.FridayTheme = applyTheme;
   $("theme-swatches")?.addEventListener("click", (e) => { const sw = e.target.closest(".swatch"); if (sw) applyTheme(sw.dataset.theme); });
   function applyAmoled(on) {
     document.documentElement.style.setProperty("--bg", on ? "#000000" : "#050403");
@@ -813,6 +825,7 @@
     g.textContent = `${teil}, ${status.name || "Boss"}.`;
   }
   setGreeting(); setInterval(setGreeting, 10 * 60000);
+  window.addEventListener("friday-status", setGreeting);
 
   // ---------- "Heute" + Schnellzugriff-Zähler ----------
   async function loadToday() {

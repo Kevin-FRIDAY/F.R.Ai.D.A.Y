@@ -7,6 +7,7 @@ import { ask } from "./brain.js";
 import { attachAgentHub, isAgentOnline, getAgentInfo, sendToAgent } from "./agent-hub.js";
 import { mailConfigured, getMailOverview, sortMail } from "./mail.js";
 import { runSystemCheck } from "./syscheck.js";
+import { systemLive } from "./systemlive.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
 import { agentsWithStatus } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
@@ -150,6 +151,9 @@ app.get("/api/status", (req, res) => {
     sicherung: (() => { const all = listBackups(); return { letzte: all[0]?.zeit || null, anzahl: all.length }; })(),
   });
 });
+
+// Live-Werte für die System-Zentrale (Prozessor, Speicher, Platte, Fridays Verbrauch)
+app.get("/api/system/live", (req, res) => res.json(systemLive()));
 
 // --- Updates ---
 app.get("/api/update", asyncRoute(async (req, res) => res.json({ ...(await checkForUpdate()), status: getUpdateStatus(), githubSchluessel: githubTokenStatus() })));

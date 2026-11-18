@@ -1,7 +1,7 @@
 // Fridays Server-Einstellungen (gelten für alle Geräte): Auto-Update und Vorladen im Hintergrund.
 import fs from "node:fs";
 import path from "node:path";
-import { DATA_DIR } from "./config.js";
+import { DATA_DIR, config } from "./config.js";
 
 const FILE = path.join(DATA_DIR, "einstellungen.json");
 const DEFAULTS = {
@@ -9,7 +9,16 @@ const DEFAULTS = {
   vorladen: true,         // Welt-Alarm, Welt-Videos usw. im Hintergrund frisch halten
   marktVorrechnen: true,  // Kronos-Prognosen im Hintergrund nachrechnen (braucht Rechenleistung)
   tempo: "schnell",       // Denk-Tempo: blitz (Haiku) | schnell (Sonnet) | gruendlich (Opus)
+  anrede: "",             // Wie Friday dich nennt (leer = USER_NAME aus .env)
+  stadt: "",              // Stadt für Wetter und Briefing (leer = CITY aus .env)
 };
+// Werte aus der .env merken, damit "leer" wieder darauf zurückfällt.
+const ENV_WERTE = { anrede: config.userName, stadt: config.city };
+const TEXT_OK = /^[\p{L}\p{N} .'\-]{0,40}$/u;
+function textAnwenden(s) {
+  config.userName = s.anrede || ENV_WERTE.anrede;
+  config.city = s.stadt || ENV_WERTE.stadt;
+}
 export const TEMPI = ["blitz", "schnell", "gruendlich"];
 
 export function getSettings() {
@@ -20,10 +29,20 @@ export function getSettings() {
   }
 }
 
+// Beim Start: gespeicherte Anrede/Stadt übernehmen.
+textAnwenden(getSettings());
+
 export function setSettings(patch = {}) {
   const s = getSettings();
   for (const k of Object.keys(DEFAULTS)) if (typeof patch[k] === "boolean" && typeof DEFAULTS[k] === "boolean") s[k] = patch[k];
   if (TEMPI.includes(patch.tempo)) s.tempo = patch.tempo;
+  for (const k of ["anrede", "stadt"]) {
+    if (typeof patch[k] === "string") {
+      const v = patch[k].replace(/\s+/g, " ").trim();
+      if (TEXT_OK.test(v)) s[k] = v;
+    }
+  }
+  textAnwenden(s);
   fs.mkdirSync(DATA_DIR, { recursive: true });
   fs.writeFileSync(FILE, JSON.stringify(s, null, 2));
   return s;

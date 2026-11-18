@@ -192,19 +192,19 @@
         <div class="wc-time"><div id="clock" class="clock">--:--</div><div id="date" class="date-line">-</div></div>
         <div id="weather" class="wc-weather muted">Lade...</div>
       </div>
-      <div class="panel">
+      <div class="panel" id="panel-status">
         <h2>System Status</h2>
         <div id="system-body" class="muted">Lade...</div>
       </div>
-      <div class="panel">
+      <div class="panel" id="panel-proc">
         <h2>Aktive Prozesse</h2>
         <ul id="proc-list" class="list"><li class="muted">–</li></ul>
       </div>
-      <div class="panel">
+      <div class="panel" id="panel-heute">
         <h2>Heute</h2>
         <ul id="today-list" class="list"><li class="muted">Nichts geplant</li></ul>
       </div>
-      <div class="panel backup-card">
+      <div class="panel backup-card" id="panel-backup">
         <h2>Sicherung</h2>
         <div class="bk-mini"><span class="bk-shield" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span>
           <div><div id="bk-last">Noch keine</div><small id="bk-count" class="muted">–</small></div></div>
@@ -431,6 +431,11 @@
     <section id="settings" class="sheet hidden" aria-label="Einstellungen">
       <div class="panel sheet-box">
         <header class="sheet-top"><h2>⚙ Einstellungen</h2><button id="settings-x" class="ghost small">✕</button></header>
+        <div class="set-suche-leiste">
+          <input id="set-suche" type="search" placeholder="Einstellung suchen … z. B. Uhr, Stimme, Farbe" autocomplete="off">
+          <button id="set-allezu" class="chip" type="button" title="Alle Gruppen auf- oder zuklappen">Alle zuklappen</button>
+        </div>
+        <p id="set-nichts" class="muted small-text hidden">Keine passende Einstellung gefunden.</p>
 
         <div class="set-group">
           <div class="set-g-head"><span class="set-g-ico">🎨</span><div class="set-g-txt"><h3>Darstellung</h3><small>Farbe, Dunkelmodus, Schrift, Größe</small></div></div>
@@ -445,9 +450,15 @@
                 <button class="swatch" data-theme="gold" style="--sw:#ffcc4d" title="Gold"></button>
                 <button class="swatch" data-theme="pink" style="--sw:#ff6ec7" title="Pink"></button>
                 <button class="swatch" data-theme="eis" style="--sw:#8fb6ff" title="Eisblau"></button>
+                <label class="swatch swatch-eigen" title="Eigene Farbe"><input type="color" id="set-eigenfarbe" value="#ff8a1e" aria-label="Eigene Farbe"></label>
               </div>
             </div>
             <label class="switch"><input type="checkbox" id="amoled-toggle"><span>Tiefschwarz (AMOLED)</span></label>
+            <label class="row-field"><span>Glas-Deckkraft</span><input type="range" id="set-glas" min="0.6" max="1" step="0.02" value="0.94"></label>
+            <label class="row-field"><span>Ecken</span>
+              <select id="set-ecken"><option value="rund">Rund (Standard)</option><option value="weich">Sehr rund</option><option value="kantig">Kantig</option></select>
+            </label>
+            <label class="switch"><input type="checkbox" id="set-raster"><span>Leichtes HUD-Raster im Hintergrund</span></label>
             <label class="row-field"><span>Schriftart</span>
               <select id="font-select">
                 <option value="1">Orbitron + Rajdhani (Standard)</option>
@@ -469,12 +480,46 @@
         </div>
 
         <div class="set-group">
+          <div class="set-g-head"><span class="set-g-ico">👤</span><div class="set-g-txt"><h3>Profil</h3><small>Wie Friday dich nennt, deine Stadt</small></div></div>
+          <div class="set-g-body">
+            <label class="row-field"><span>Anrede</span><input id="srv-anrede" type="text" maxlength="40" placeholder="z. B. Kevin oder Boss" autocomplete="off"></label>
+            <label class="row-field"><span>Stadt fürs Wetter</span><input id="srv-stadt" type="text" maxlength="40" placeholder="z. B. Berlin" autocomplete="off"></label>
+            <div class="set-row"><span id="profil-info" class="muted small-text">Leer lassen = Wert aus der Installation.</span><button id="profil-save" class="chip" type="button">Speichern</button></div>
+            <label class="switch"><input type="checkbox" id="set-gruss" checked><span>Begrüßung über dem Eingabefeld anzeigen</span></label>
+          </div>
+        </div>
+
+        <div class="set-group">
+          <div class="set-g-head"><span class="set-g-ico">🕒</span><div class="set-g-txt"><h3>Uhr &amp; Startseite</h3><small>Zeitformat, Datum, welche Karten zu sehen sind</small></div></div>
+          <div class="set-g-body">
+            <label class="row-field"><span>Zeitformat</span><select id="set-uhr12"><option value="0">24 Stunden (14:30)</option><option value="1">12 Stunden (2:30 PM)</option></select></label>
+            <label class="switch"><input type="checkbox" id="set-uhrsek" checked><span>Sekunden anzeigen</span></label>
+            <label class="row-field"><span>Datum</span><select id="set-datum"><option value="lang">Lang (Mittwoch, 18. November 2026)</option><option value="kurz">Kurz (Mi., 18.11.2026)</option><option value="aus">Ausblenden</option></select></label>
+            <div class="set-label">Karten auf der Startseite</div>
+            <div class="set-chips" id="set-karten">
+              <label><input type="checkbox" data-karte="weather" checked><span>Wetter</span></label>
+              <label><input type="checkbox" data-karte="panel-status" checked><span>System Status</span></label>
+              <label><input type="checkbox" data-karte="panel-proc" checked><span>Aktive Prozesse</span></label>
+              <label><input type="checkbox" data-karte="panel-heute" checked><span>Heute</span></label>
+              <label><input type="checkbox" data-karte="panel-backup" checked><span>Sicherung</span></label>
+              <label><input type="checkbox" data-karte="quick" checked><span>Schnellzugriff</span></label>
+              <label><input type="checkbox" data-karte="hudbar" checked><span>Obere Leiste</span></label>
+              <label><input type="checkbox" data-karte="chips" checked><span>Befehls-Vorschläge</span></label>
+              <label><input type="checkbox" data-karte="transcript" checked><span>Gesprächsverlauf</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="set-group">
           <div class="set-g-head"><span class="set-g-ico">🔊</span><div class="set-g-txt"><h3>Stimme</h3><small>Vorlesen, Stimme, Tempo</small></div></div>
           <div class="set-g-body">
             <label class="switch"><input type="checkbox" id="voice-toggle" checked><span>Vorlesen</span></label>
             <label class="row-field"><span>Stimme</span><select id="voice-select"></select></label>
             <label class="row-field"><span>Tempo</span><input type="range" id="voice-rate" min="0.6" max="1.6" step="0.05" value="1.05"></label>
             <label class="row-field"><span>Tonhöhe</span><input type="range" id="voice-pitch" min="0.6" max="1.6" step="0.05" value="1"></label>
+            <label class="row-field"><span>Lautstärke</span><input type="range" id="set-lautstaerke" min="0.1" max="1" step="0.05" value="1"></label>
+            <label class="switch"><input type="checkbox" id="set-toene" checked><span>Signalton bei Timern und Erinnerungen</span></label>
+            <label class="row-field"><span>Signalton-Lautstärke</span><input type="range" id="set-tonlaut" min="0.05" max="1" step="0.05" value="0.6"></label>
             <button id="voice-test" class="chip">Stimme testen</button>
           </div>
         </div>
@@ -585,6 +630,19 @@
             </div>
           </div>
         </div>
+
+        <div class="set-group">
+          <div class="set-g-head"><span class="set-g-ico">💾</span><div class="set-g-txt"><h3>Einstellungen sichern</h3><small>Exportieren, importieren, zurücksetzen</small></div></div>
+          <div class="set-g-body">
+            <p class="muted small-text">Deine Einstellungen liegen auf dem Mac und gelten auf allen Geräten. Hier kannst du sie zusätzlich als Datei speichern oder alles auf Werkseinstellung stellen.</p>
+            <div class="chips">
+              <button id="set-export" class="chip" type="button">⬇ Als Datei speichern</button>
+              <label class="chip set-import-btn">⬆ Datei laden<input id="set-import" type="file" accept="application/json,.json" hidden></label>
+              <button id="set-reset" class="chip set-gefahr" type="button">↺ Alles zurücksetzen</button>
+            </div>
+            <p id="set-daten-msg" class="muted small-text"></p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -625,41 +683,83 @@
       </div>
     </section>
 
-    <!-- Gehirn: Gedächtnis, Augen, Ohren, Systeme -->
-    <section id="brain" class="sheet hidden" aria-label="Fridays Gehirn">
-      <div class="panel sheet-box">
-        <header class="sheet-top"><h2>🧠 Fridays Gehirn</h2><button id="brain-x" class="ghost small">✕</button></header>
-        <div class="brain-grid">
-          <div class="brain-card">
-            <h3>🧠 Gedächtnis</h3>
-            <div id="brain-memory" class="muted">Lade...</div>
+    <!-- System-Zentrale (früher "Fridays Gehirn"): Live-Werte, Dienste, Gedächtnis, Werkzeuge -->
+    <section id="brain" class="sheet hidden sz" aria-label="System-Zentrale">
+      <div class="panel sheet-box sz-box">
+        <header class="sz-head">
+          <div class="sz-core" aria-hidden="true">
+            <svg viewBox="0 0 120 120"><circle class="sz-c1" cx="60" cy="60" r="54"/><circle class="sz-c2" cx="60" cy="60" r="44"/><circle class="sz-c3" cx="60" cy="60" r="34"/></svg>
+            <b id="sz-score">–</b>
           </div>
-          <div class="brain-card">
-            <h3>👁 Augen</h3>
-            <ul class="list status-list">
-              <li><span>Kamera</span><b id="st-eyes">bereit</b></li>
-              <li><span>Bildschirm</span><b id="st-screen">-</b></li>
-            </ul>
+          <div class="sz-title">
+            <small>F.R.Ai.D.A.Y · SYSTEM</small>
+            <h2>System-Zentrale</h2>
+            <p id="sz-summary" class="sz-summary">Verbinde …</p>
           </div>
-          <div class="brain-card">
-            <h3>👂 Ohren</h3>
-            <div class="muted small-text">Weckwort in den Einstellungen</div>
-            <ul class="list status-list">
-              <li><span>Stimme</span><b id="st-voice">-</b></li>
-            </ul>
+          <div class="sz-meta">
+            <span class="sz-pill"><i class="sz-live"></i>LIVE</span>
+            <span class="sz-pill">v<b id="sz-version">–</b></span>
           </div>
-          <div class="brain-card">
-            <h3>⚙ Systeme</h3>
-            <ul class="list status-list">
-              <li><span>Gehirn (Claude)</span><b id="st-server" class="ok">online</b></li>
-              <li><span>Datenbank</span><b id="st-db" class="ok">bereit</b></li>
-              <li><span>Mac</span><b id="st-mac">-</b></li>
-              <li><span>Telegram</span><b id="st-telegram">-</b></li>
-              <li><span>Push</span><b id="st-push">-</b></li>
-              <li><span>Smart Home</span><b id="st-home">-</b></li>
-              <li><span>Akku</span><b id="st-battery">-</b></li>
-            </ul>
+          <button id="brain-x" class="ghost small sz-x" title="Schließen">✕</button>
+        </header>
+
+        <nav class="sz-tabs" role="tablist">
+          <button type="button" class="active" data-sz="uebersicht" role="tab">◈ Übersicht</button>
+          <button type="button" data-sz="dienste" role="tab">◉ Dienste</button>
+          <button type="button" data-sz="gedaechtnis" role="tab">◆ Gedächtnis</button>
+          <button type="button" data-sz="werkzeuge" role="tab">⚙ Werkzeuge</button>
+        </nav>
+
+        <div class="sz-pane" data-pane="uebersicht">
+          <div class="sz-gauges">
+            <div class="sz-gauge" id="sz-g-cpu"><svg viewBox="0 0 100 100"><circle class="sz-g-bg" cx="50" cy="50" r="42"/><circle class="sz-g-val" cx="50" cy="50" r="42"/></svg><div class="sz-g-txt"><b>–</b><small>Prozessor</small></div></div>
+            <div class="sz-gauge" id="sz-g-ram"><svg viewBox="0 0 100 100"><circle class="sz-g-bg" cx="50" cy="50" r="42"/><circle class="sz-g-val" cx="50" cy="50" r="42"/></svg><div class="sz-g-txt"><b>–</b><small>Arbeitsspeicher</small></div></div>
+            <div class="sz-gauge" id="sz-g-disk"><svg viewBox="0 0 100 100"><circle class="sz-g-bg" cx="50" cy="50" r="42"/><circle class="sz-g-val" cx="50" cy="50" r="42"/></svg><div class="sz-g-txt"><b>–</b><small>Festplatte</small></div></div>
+            <div class="sz-gauge" id="sz-g-fri"><svg viewBox="0 0 100 100"><circle class="sz-g-bg" cx="50" cy="50" r="42"/><circle class="sz-g-val" cx="50" cy="50" r="42"/></svg><div class="sz-g-txt"><b>–</b><small>Friday selbst</small></div></div>
           </div>
+          <div class="sz-chart">
+            <div class="sz-chart-head"><span>Auslastung · letzte 5 Minuten</span><span class="sz-legend"><i class="l-cpu"></i>Prozessor <i class="l-ram"></i>Speicher</span></div>
+            <svg id="sz-spark" viewBox="0 0 300 70" preserveAspectRatio="none"><path class="sz-sp-ram" d=""/><path class="sz-sp-cpu" d=""/></svg>
+          </div>
+          <div class="sz-facts" id="sz-facts"></div>
+        </div>
+
+        <div class="sz-pane hidden" data-pane="dienste">
+          <div class="sz-services">
+            <div class="sz-svc"><span class="sz-ico">🧠</span><div><span>Gehirn (Claude)</span><b id="st-server" class="ok">online</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">🗄</span><div><span>Datenbank</span><b id="st-db" class="ok">bereit</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">💻</span><div><span>Mac</span><b id="st-mac">-</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">🔊</span><div><span>Stimme</span><b id="st-voice">-</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">👁</span><div><span>Kamera</span><b id="st-eyes" class="ok">bereit</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">🖥</span><div><span>Bildschirm</span><b id="st-screen">-</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">✈️</span><div><span>Telegram</span><b id="st-telegram">-</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">📲</span><div><span>Push</span><b id="st-push">-</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">🏠</span><div><span>Smart Home</span><b id="st-home">-</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">🔋</span><div><span>Akku (dieses Gerät)</span><b id="st-battery">-</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">👂</span><div><span>Weckwort</span><b id="st-wake">-</b></div><i class="sz-dot"></i></div>
+            <div class="sz-svc"><span class="sz-ico">🌐</span><div><span>Internet (Gerät)</span><b id="st-net">-</b></div><i class="sz-dot"></i></div>
+          </div>
+          <p class="muted small-text sz-hint">Grün = läuft · Grau = aus oder nicht eingerichtet · Rot = Störung. Genaue Prüfung aller Quellen: Werkzeuge → System-Check.</p>
+        </div>
+
+        <div class="sz-pane hidden" data-pane="gedaechtnis">
+          <div id="brain-memory" class="sz-mem muted">Lade...</div>
+        </div>
+
+        <div class="sz-pane hidden" data-pane="werkzeuge">
+          <div class="sz-actions">
+            <button type="button" data-sz-go="syscheck-btn"><b>🩺 System-Check</b><span>Alle Dienste und Datenquellen prüfen</span></button>
+            <button type="button" data-sz-act="sichern"><b>🛡 Jetzt sichern</b><span>Sicherung von Daten und Programm</span></button>
+            <button type="button" data-sz-go="hb-backup"><b>🗂 Sicherungen</b><span>Ansehen und zurückholen</span></button>
+            <button type="button" data-sz-act="update"><b>⬇ Nach Update suchen</b><span id="sz-upd-sub">GitHub prüfen</span></button>
+            <button type="button" data-sz-go="hb-energie"><b>⚡ Energie</b><span>Guthaben und Sparmodus</span></button>
+            <button type="button" data-sz-go="dienste-open2"><b>🔗 Verbindungen</b><span>Dienste und Schlüssel</span></button>
+            <button type="button" data-sz-nav="wissen"><b>🗄 Datenbank</b><span>Alles, was gesprochen wurde</span></button>
+            <button type="button" data-sz-nav="einstellungen"><b>⚙ Einstellungen</b><span>Alles anpassen</span></button>
+            <button type="button" data-sz-act="neuladen"><b>↻ Dashboard neu laden</b><span>Lädt die Oberfläche frisch</span></button>
+            <button type="button" data-sz-act="cache"><b>🧹 Zwischenspeicher leeren</b><span>Hilft bei weißen oder alten Seiten</span></button>
+          </div>
+          <p id="sz-msg" class="muted small-text"></p>
         </div>
       </div>
     </section>
@@ -1021,6 +1121,8 @@
   <script src="aktiv.js"></script>
   <script src="postfach.js"></script>
   <script src="syscheck.js"></script>
+  <script src="systemzentrale.js"></script>
+  <script src="einstellungen-plus.js"></script>
   <script src="fernseher.js"></script>
   <script src="sicherung.js"></script>
   <script src="update-balken.js"></script>
