@@ -46,6 +46,9 @@ Gut zu wissen: Wiederkehrende Termine (jede Woche, jedes Jahr) werden mitgezähl
 
 „Tempo: Schnell“ spart Zeichen und antwortet schneller, „Beste Qualität“ klingt noch etwas natürlicher.
 Ist das Monatskontingent aufgebraucht, spricht Friday automatisch mit der Gerätestimme weiter.
+Seit v1.95.0 sagt Friday dann einmal, **warum** (z. B. „Das ElevenLabs-Guthaben ist aufgebraucht“), und oben erscheint ein oranges Schild.
+In der System-Zentrale steht bei Stimme dann „Gerät (ElevenLabs-Pause)“. Das Gratis-Konto hat 10.000 Zeichen im Monat,
+„Beste Qualität“ verbraucht doppelt so viel wie „Schnell“.
 
 Sag: „Wie viele Zeichen habe ich noch?“, „Wechsel die Stimme zu Lily“.
 
