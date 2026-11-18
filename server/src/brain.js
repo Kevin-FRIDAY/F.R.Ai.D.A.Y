@@ -18,6 +18,7 @@ import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "
 import { getSettings } from "./einstellungen.js";
 import { setzeAuftrag, auftragFertig, werkzeugName } from "./auftrag.js";
 import * as logbuch from "./logbuch.js";
+import * as oekosystem from "./oekosystem.js";
 import { tempoFuerFrage } from "./denker.js";
 import { quickCommand as kommandoQuick } from "./kommando.js";
 import { quickCommand as zentraleQuick } from "./zentrale.js";
@@ -218,6 +219,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (w) { actions.push(...w.actions); return finish(w.answer); }
     } catch (err) {
       console.error("Weltgeschehen:", err.message);
+    }
+  }
+
+  // Tool-Ökosystem ("zeig mir alle Werkzeuge") – ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const oe = oekosystem.quickCommand(text);
+      if (oe) { actions.push(...oe.actions); return finish(oe.answer); }
+    } catch (err) {
+      console.error("Ökosystem:", err.message);
     }
   }
 

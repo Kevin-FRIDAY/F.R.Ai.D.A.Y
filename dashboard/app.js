@@ -73,8 +73,11 @@
 
   // ---------- Anzeige ----------
   let coreMode = null;
+  // v1.98.0: Ruhe-Zustand ("Bereit, Boss.") wird auf der Startseite nicht mehr angezeigt.
+  const RUHE = /^(Bereit, Boss\.|Höre auf "Friday")$/;
   function setState(text, mode = "") {
     $("state").textContent = text;
+    $("state").classList.toggle("ruhe", RUHE.test(text));
     $("reactor").className = `reactor ${mode}`;
     // Zustand an Fridays Kern (Orb auf dem Zweitgerät) melden.
     if (token && mode !== coreMode) {
@@ -378,30 +381,36 @@
     return URL.createObjectURL(await res.blob());
   }
 
-  // Wenn ElevenLabs nicht spricht: sichtbar (Hinweis-Schild) und einmal hörbar sagen, warum.
-  // Derselbe Grund wird höchstens alle 30 Minuten vorgelesen, damit es nicht nervt.
-  const hinweisGesagt = new Map();
+  // Wenn ElevenLabs nicht spricht: kleines Schild unten rechts und einmal hörbar sagen, warum.
+  // v1.98.0: höchstens einmal pro Tag (gleicher Grund), mit "Nicht mehr zeigen".
+  const HINWEIS_AUS = "friday_stimmhinweis_aus";
+  const HINWEIS_TAG = "friday_stimmhinweis_tag";
+  const lies = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+  const schreib = (k, v) => { try { localStorage.setItem(k, v); } catch { /* egal */ } };
   function stimmHinweis(grund) {
     if (!grund) return false;
+    const b = $("st-voice");
+    if (b) { b.textContent = "Gerät (ElevenLabs-Pause)"; b.title = grund; }
+    if (lies(HINWEIS_AUS) === "1") return false;
+    const art = grund.split(/[.,]/)[0]; // nur der Kern zählt (Datum o. ä. kann sich ändern)
+    const heute = new Date().toISOString().slice(0, 10);
+    const merk = `${heute}|${art}`;
+    if (lies(HINWEIS_TAG) === merk) return false;
+    schreib(HINWEIS_TAG, merk);
     let el = document.getElementById("stimm-hinweis");
     if (!el) {
       el = document.createElement("div");
       el.id = "stimm-hinweis";
       el.setAttribute("role", "status");
-      el.innerHTML = '<b>🔊 Gerätestimme statt ElevenLabs</b><span></span><button type="button" aria-label="Schließen">✕</button>';
-      el.querySelector("button").onclick = () => el.classList.remove("an");
+      el.innerHTML = '<b>🔊 Gerätestimme statt ElevenLabs</b><button type="button" class="sh-x" aria-label="Schließen">✕</button><span></span><button type="button" class="sh-nie">Nicht mehr zeigen</button>';
+      el.querySelector(".sh-x").onclick = () => el.classList.remove("an");
+      el.querySelector(".sh-nie").onclick = () => { schreib(HINWEIS_AUS, "1"); el.classList.remove("an"); };
       document.body.appendChild(el);
     }
     el.querySelector("span").textContent = grund;
     el.classList.add("an");
     clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove("an"), 15000);
-    const b = $("st-voice");
-    if (b) { b.textContent = "Gerät (ElevenLabs-Pause)"; b.title = grund; }
-    const art = grund.split(/[.,]/)[0]; // nur der Kern zählt (Datum o. ä. kann sich ändern)
-    const zuletzt = hinweisGesagt.get(art) || 0;
-    if (Date.now() - zuletzt < 30 * 60 * 1000) return false;
-    hinweisGesagt.set(art, Date.now());
+    el._t = setTimeout(() => el.classList.remove("an"), 12000);
     return true;
   }
   window.Friday = window.Friday || {};
@@ -521,6 +530,7 @@
       if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       if (hat("archiv")) window.FridayArchiv?.open();
+      if (hat("oekosystem")) window.FridayOekosystem?.open();
       const zentraleAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("zentrale:"));
       if (zentraleAktion) window.FridayZentrale?.open(zentraleAktion.slice(9));
       else window.FridayZentrale?.refresh();
