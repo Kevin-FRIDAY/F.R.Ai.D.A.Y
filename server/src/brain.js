@@ -13,6 +13,17 @@ import { quickCommand as hausQuick } from "./werkstatt.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
 import { quickCommand as weltQuick, vollbildQuick } from "./weltgespraech.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
+import { getSettings } from "./einstellungen.js";
+import { setzeAuftrag, auftragFertig, werkzeugName } from "./auftrag.js";
+
+// Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
+const TEMPO = {
+  blitz: { model: "claude-haiku-5-5", effort: "low", fallback: false, websuche: false },
+  schnell: { model: "claude-sonnet-5-5", effort: "low", fallback: true, websuche: true },
+  gruendlich: { model: null, effort: "medium", fallback: true, websuche: true }, // null = CLAUDE_MODEL aus der .env (Opus)
+};
+// Sätze, mit denen Friday etwas nur ankündigt, statt es zu tun.
+const NUR_ANGEKUENDIGT = /\b(mach(e)? ich|ich mach(e)? (das|dir|es|mich)|ich (erstelle|schreibe|bereite|kümmere|kuemmere|stelle|suche|baue|plane|setze)|wird erledigt|bin dran|gleich (fertig|erledigt)|sofort,? boss|kommt sofort|ich fange (jetzt )?an|einen moment)\b/i;
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
 
@@ -38,7 +49,12 @@ Werkzeuge:
 - Für Alexa (Routinen wie "Licht an", Ansagen auf dem Echo) nutze alexa. Geräte, die nur an Alexa hängen, steuerst du über deren Alexa-Routinen. Sätze, die mit "Alexa" beginnen, gehen an Alexa, nicht an den Fernseher.
 - Termine und Apple-Erinnerungen: kalender (Fridays eigene Erinnerungen mit Wecker: set_reminder). Musik: spotify, wenn verbunden, sonst mac. Lampen: hue für Philips Hue, smart_home für Home Assistant (Heizung, Steckdosen, Rollos, Sensoren). Aufgaben: todoist, wenn verbunden. Notizen und Wissen: notion.
 - Mac-Aktionen gehen nur, wenn der Mac verbunden ist. Wenn nicht, sag es kurz.
-- Lösche, kaufe oder verschicke nie etwas an andere Personen ohne ausdrückliche Bestätigung.`;
+- Lösche, kaufe oder verschicke nie etwas an andere Personen ohne ausdrückliche Bestätigung.
+
+Aufträge:
+- Wenn ${config.userName} dir einen Auftrag gibt, erledigst du ihn sofort in dieser Antwort. Sag nie "mache ich" oder "ich erstelle das", ohne es im selben Zug zu tun. Es gibt kein "später": nach deiner Antwort passiert nichts mehr.
+- Alles, was länger als drei Sätze ist (Listen, Pläne, Texte, Rezepte, Ideen), speicherst du mit dokument_erstellen. Fragebögen erstellst du mit fragebogen_erstellen, mit genau so vielen Fragen wie gewünscht. Danach sagst du nur kurz, dass es fertig im Dashboard liegt.
+- Wenn etwas wirklich nicht geht, sag ehrlich und kurz, warum.`;
 
 const WEB_SEARCH = { type: "web_search_20260209", name: "web_search", max_uses: 3 };
 
@@ -176,24 +192,30 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   }
 
   // Sparmodus bei knappem Guthaben: günstiges Modell, wenig Aufwand, keine Websuche.
-  const model = brainModel(config.model);
-  const sparen = model === SPAR_MODELL;
+  const tempo = TEMPO[getSettings().tempo] || TEMPO.schnell;
+  const gewuenscht = tempo.model || config.model;
+  const model = brainModel(gewuenscht);
+  const sparen = model === SPAR_MODELL && gewuenscht !== SPAR_MODELL;
+  const ohneFallback = sparen || !tempo.fallback;
+  const mitWebsuche = !sparen && tempo.websuche;
+  let nachgehakt = false;
+  setzeAuftrag(channel, "verstehen", 8, "Friday liest den Auftrag …");
   for (let round = 0; round < 8; round++) {
     const params = {
       model,
       max_tokens: sparen ? 4000 : 16000,
-      ...(sparen ? {} : { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" }),
-      output_config: { effort: sparen ? "low" : config.effort },
+      ...(ohneFallback ? {} : { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" }),
+      output_config: { effort: sparen ? "low" : tempo.effort },
       system: [
         { type: "text", text: PERSONA, cache_control: { type: "ephemeral" } },
         { type: "text", text: contextBlock({ channel, mode, targetLang }) },
       ],
       messages,
     };
-    if (mode !== "translate") params.tools = sparen ? [...toolDefinitions] : [...toolDefinitions, WEB_SEARCH];
+    if (mode !== "translate") params.tools = mitWebsuche ? [...toolDefinitions, WEB_SEARCH] : [...toolDefinitions];
     let response;
     try {
-      response = sparen ? await client.messages.create(params) : await client.beta.messages.create(params);
+      response = ohneFallback ? await client.messages.create(params) : await client.beta.messages.create(params);
     } catch (err) {
       // Claude nicht erreichbar (Guthaben leer, falscher Schlüssel, kein Netz): Offline-Gehirn springt ein.
       const leer = isCreditError(err);
@@ -209,7 +231,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
 
     messages.push({ role: "assistant", content: response.content });
 
-    if (response.stop_reason === "pause_turn") continue;
+    if (response.stop_reason === "pause_turn") { setzeAuftrag(channel, "arbeiten", 40, "Friday sucht im Netz …"); continue; }
 
     const toolUses = response.content.filter((b) => b.type === "tool_use");
     if (response.stop_reason !== "tool_use" || toolUses.length === 0) {
@@ -218,8 +240,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
         .map((b) => b.text)
         .join("")
         .trim();
+      // Nur angekündigt, nichts getan? Einmal nachhaken, damit Friday es wirklich erledigt.
+      if (!nachgehakt && actions.length === 0 && mode !== "translate" && NUR_ANGEKUENDIGT.test(answer) && round < 6) {
+        nachgehakt = true;
+        setzeAuftrag(channel, "arbeiten", 35, "Friday erledigt den Auftrag …");
+        messages.push({ role: "user", content: [{ type: "text", text: "[Hinweis vom System, nicht von Boss] Du hast den Auftrag nur angekündigt. Erledige ihn jetzt sofort vollständig mit deinen Werkzeugen (z. B. dokument_erstellen oder fragebogen_erstellen) und antworte danach kurz, dass er fertig ist. Kündige nichts mehr an." }] });
+        continue;
+      }
       return finish(answer || "Erledigt, Boss.");
     }
+    setzeAuftrag(channel, "arbeiten", Math.min(80, 30 + round * 15), `Friday ${werkzeugName(toolUses[0].name)} …`);
 
     // Alle Werkzeuge ausführen und die Ergebnisse gemeinsam zurückgeben.
     const results = await Promise.all(
@@ -236,6 +266,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       }),
     );
     messages.push({ role: "user", content: results });
+    setzeAuftrag(channel, "erstellen", Math.min(90, 55 + round * 12), "Friday fasst das Ergebnis zusammen …");
   }
 
   return finish("Das hat zu viele Schritte gebraucht, Boss. Versuch es bitte etwas einfacher.");
@@ -254,6 +285,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   }
 
   function finish(answer) {
+    auftragFertig(channel, true);
     if (keepHistory) {
       const userText = image ? `[Foto] ${text || ""}`.trim() : text;
       store.saveHistory(channel, [...history, { role: "user", content: userText }, { role: "assistant", content: answer }]);

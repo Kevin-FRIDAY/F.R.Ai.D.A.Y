@@ -2209,3 +2209,52 @@ body.reduce-anim .menu-pop { animation: none !important; }
 .wissen-e mark { background: rgba(255,138,30,.35); color: inherit; border-radius: 3px; padding: 0 1px; }
 .wissen-mehr { align-self: center; margin-top: 10px; cursor: pointer; }
 @media (max-width: 900px) { .wissen-liste { max-height: none; } .wissen-stats { grid-template-columns: repeat(3, 1fr); } .wissen-stat b { font-size: 17px; } .wissen-e { grid-template-columns: 22px 1fr; } .wissen-e .zeit { grid-column: 2; } }
+
+/* ---------- v1.90.0: Arbeits-Balken, Dokumente/Fragebogen im Update-Stil, kleiner Chat ---------- */
+/* Arbeits-Balken: gleiche Optik wie der Update-Balken, etwas kompakter */
+.ab-bar { width: min(420px, calc(100vw - 32px)); padding: 11px 14px 10px; }
+.ab-bar .ub-spur { margin: 9px 0 8px; height: 8px; }
+.ab-bar .ub-prozent { font-size: 17px; }
+.upd-bar:not(.hidden) ~ .ab-bar { top: calc(150px + env(safe-area-inset-top)); }
+
+/* Dokument / Fragebogen: mittiges Fenster in Update-Optik */
+.dok-huelle { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.dok-huelle.hidden { display: none; }
+.dok-huelle .dok-karte { position: relative; top: auto; left: auto; transform: none; width: min(640px, 100%); max-height: calc(100vh - 32px); display: flex; flex-direction: column; padding: 16px 18px 14px; }
+.dok-karte .ub-titel b { font-size: 14px; }
+.dok-karte .ub-ring.still { animation: none; border-color: var(--cyan); }
+.dok-karte .ub-spur.hidden { display: none; }
+.dok-inhalt { overflow-y: auto; min-height: 0; margin-top: 6px; }
+.dok-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.6; color: var(--text); padding: 12px 14px; border: 1px solid rgba(255, 138, 30, 0.22); border-radius: 12px; background: rgba(255, 138, 30, 0.05); max-height: 56vh; overflow-y: auto; }
+.dok-text b { color: #ffd2a6; }
+.dok-knoepfe { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+.dok-knoepfe .chip { cursor: pointer; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255, 138, 30, 0.4); background: rgba(255, 138, 30, 0.08); color: var(--text); font: inherit; font-size: 13px; }
+.dok-knoepfe .chip:hover:not(:disabled) { border-color: var(--cyan); box-shadow: 0 0 12px rgba(255, 138, 30, 0.35); }
+.dok-knoepfe .chip:disabled { opacity: .4; cursor: default; }
+.dok-knoepfe .chip.haupt { background: linear-gradient(135deg, #ff8a1e, #ff6a00); color: #140800; border-color: transparent; font-weight: 700; box-shadow: 0 0 14px rgba(255, 138, 30, 0.55); }
+.fb-nr { font-size: 11px; letter-spacing: .18em; color: var(--cyan); margin-top: 4px; }
+.fb-frage { font-size: 19px; line-height: 1.4; color: #ffe6cc; margin: 8px 0 12px; text-shadow: 0 0 12px rgba(255, 138, 30, 0.25); }
+.fb-antwort { width: 100%; box-sizing: border-box; resize: vertical; min-height: 84px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 138, 30, 0.35); border-radius: 12px; color: var(--text); font: inherit; font-size: 15px; padding: 10px 12px; outline: none; }
+.fb-antwort:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(255, 138, 30, 0.15); }
+.fb-vorlesen { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px; color: var(--muted); }
+.fb-fertig { display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 12px; border: 1px solid rgba(70, 224, 160, 0.4); background: rgba(70, 224, 160, 0.06); }
+.fb-fertig b { color: var(--ok); font-size: 17px; }
+.wissen-dok { cursor: pointer; }
+.wissen-dok:hover { border-color: var(--cyan); }
+
+/* Chat-Verlauf kleiner: nur die letzten Nachrichten, kompakt */
+.transcript { max-height: 19vh; gap: 6px; padding: 2px; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 18px); mask-image: linear-gradient(180deg, transparent 0, #000 18px); }
+.transcript .msg { padding: 6px 11px; font-size: 13px; line-height: 1.4; border-radius: 12px; }
+.transcript .msg small { font-size: 9px; margin-bottom: 2px; }
+.transcript .msg.friday { max-height: 7.2em; overflow: hidden; }
+.verlauf-link { align-self: center; margin-top: 2px; padding: 3px 10px; font: inherit; font-size: 11px; letter-spacing: .06em; color: var(--muted); background: transparent; border: 0; cursor: pointer; }
+.verlauf-link:hover { color: var(--cyan); }
+.verlauf-link.hidden { display: none; }
+@media (max-width: 900px) {
+  .transcript { max-height: 20vh; }
+  .dok-huelle { align-items: flex-end; padding: 0; }
+  .dok-huelle .dok-karte { width: 100%; max-height: 88vh; border-radius: 20px 20px 0 0; padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+  .fb-frage { font-size: 17px; }
+  .fb-antwort { font-size: 16px; }
+}
+.dok-karte.ub-gruen .ub-ring.still { border-color: var(--ok); box-shadow: 0 0 12px rgba(70, 224, 160, 0.5); }

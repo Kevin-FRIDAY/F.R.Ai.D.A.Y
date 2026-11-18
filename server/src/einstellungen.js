@@ -8,7 +8,9 @@ const DEFAULTS = {
   autoUpdate: true,       // neue Versionen von GitHub selbst installieren, wenn gerade nichts los ist
   vorladen: true,         // Welt-Alarm, Welt-Videos usw. im Hintergrund frisch halten
   marktVorrechnen: true,  // Kronos-Prognosen im Hintergrund nachrechnen (braucht Rechenleistung)
+  tempo: "schnell",       // Denk-Tempo: blitz (Haiku) | schnell (Sonnet) | gruendlich (Opus)
 };
+export const TEMPI = ["blitz", "schnell", "gruendlich"];
 
 export function getSettings() {
   try {
@@ -20,7 +22,8 @@ export function getSettings() {
 
 export function setSettings(patch = {}) {
   const s = getSettings();
-  for (const k of Object.keys(DEFAULTS)) if (typeof patch[k] === "boolean") s[k] = patch[k];
+  for (const k of Object.keys(DEFAULTS)) if (typeof patch[k] === "boolean" && typeof DEFAULTS[k] === "boolean") s[k] = patch[k];
+  if (TEMPI.includes(patch.tempo)) s.tempo = patch.tempo;
   fs.mkdirSync(DATA_DIR, { recursive: true });
   fs.writeFileSync(FILE, JSON.stringify(s, null, 2));
   return s;
