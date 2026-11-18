@@ -218,6 +218,30 @@ on run argv
   return "ok"
 end run`;
 
+// ---------- Nachrichten (iMessage/SMS) & FaceTime ----------
+// Empfänger und Text kommen als argv, nie in den Code. Erst iMessage, sonst SMS übers iPhone (SMS-Weiterleitung).
+const NACHRICHT_SENDEN = `
+on run argv
+  set ziel to item 1 of argv
+  set txt to item 2 of argv
+  tell application "Messages"
+    try
+      set svc to 1st account whose service type = iMessage
+      send txt to participant ziel of svc
+      return "iMessage"
+    on error e1
+      try
+        set svc to 1st account whose service type = SMS
+        send txt to participant ziel of svc
+        return "SMS"
+      on error
+        error e1
+      end try
+    end try
+  end tell
+end run`;
+const zielOk = (s) => /^\+\d{5,16}$/.test(s) || /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i.test(s);
+
 function osaFile(script, args, timeout) {
   return run("osascript", ["-e", script, ...args.map(String)], timeout);
 }
@@ -387,6 +411,21 @@ const actions = {
     if (!titel) throw new Error("Welche Erinnerung?");
     await osaFile(ERINNERUNG_ERLEDIGT, [titel], 30000);
     return "Erledigt";
+  },
+  async nachricht_senden({ value }) {
+    const v = jsonVal(value);
+    const an = String(v.an || "").trim();
+    const text = String(v.text || "").trim().slice(0, 2000);
+    if (!zielOk(an)) throw new Error("Ungültige Nummer");
+    if (!text) throw new Error("Leere Nachricht");
+    const weg = await osaFile(NACHRICHT_SENDEN, [an, text], 25000);
+    return { weg: weg || "iMessage" };
+  },
+  async anruf_starten({ value }) {
+    const an = String(jsonVal(value).an || "").trim();
+    if (!zielOk(an)) throw new Error("Ungültige Nummer");
+    await run("open", [`facetime-audio://${encodeURIComponent(an).replace(/%2B/g, "+").replace(/%40/g, "@")}`]);
+    return "Anruf gestartet";
   },
   async screenshot_look() {
     const file = path.join(os.tmpdir(), `friday-${Date.now()}.jpg`);

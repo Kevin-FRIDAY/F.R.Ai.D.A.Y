@@ -1,6 +1,22 @@
 // Beschreibungen der Verbindungs-Werkzeuge für Claude. Bewusst ohne Importe (tools.js lädt sie sehr früh).
 export const toolDefinitions = [
   {
+    name: "anrufe",
+    description:
+      "Nachrichten und Anrufe an Kontakte, die der Nutzer selbst hinterlegt hat (seine Frau, er selbst, weitere). Aktionen: nachricht (an = 'frau', 'ich' oder Name; text = was ankommen soll, " +
+      "in der Ich-Form des Nutzers, z. B. 'Ich will heute Lasagne essen.'), anruf (wie nachricht; je nach Einstellung echter Anruf, bei dem Friday den Text spricht, oder Nachricht + FaceTime), kontakte (wer hinterlegt ist). " +
+      "Nur nutzen, wenn der Nutzer es ausdrücklich will ('ruf meine Frau an', 'schreib meiner Frau'). Fehlt der Inhalt, frag kurz nach, bevor du sendest.",
+    input_schema: {
+      type: "object",
+      properties: {
+        action: { type: "string", enum: ["nachricht", "anruf", "kontakte"] },
+        an: { type: "string" },
+        text: { type: "string" },
+      },
+      required: ["action"],
+    },
+  },
+  {
     name: "kalender",
     description:
       "Apple Kalender und Apple Erinnerungen auf dem Mac (iCloud). Aktionen: termine (value = Tage ab heute, 0 = heute, 1 = morgen; tage = Anzahl Tage, Standard 1), " +

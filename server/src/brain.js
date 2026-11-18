@@ -6,6 +6,7 @@ import * as store from "./store.js";
 import { isAgentOnline } from "./agent-hub.js";
 import { agentsBrief } from "./agents.js";
 import { quickCommand as alexaQuick } from "./alexa.js";
+import { quickCommand as anrufQuick } from "./anrufe.js";
 import { quickCommand as tvQuick } from "./fernseher.js";
 import { quickCommand as dienstQuick, dienstKurzinfo } from "./dienste.js";
 import { offlineAnswer, notfallText } from "./offline.js";
@@ -49,6 +50,7 @@ Werkzeuge:
 - Für den Fernseher (Samsung-TV im WLAN) nutze fernseher. "Öffne YouTube" heißt Mac (open_app); "mach Netflix an", "auf dem Fernseher" oder "TV" heißt Fernseher.
 - Für Alexa (Routinen wie "Licht an", Ansagen auf dem Echo) nutze alexa. Geräte, die nur an Alexa hängen, steuerst du über deren Alexa-Routinen. Sätze, die mit "Alexa" beginnen, gehen an Alexa, nicht an den Fernseher.
 - Termine und Apple-Erinnerungen: kalender (Fridays eigene Erinnerungen mit Wecker: set_reminder). Musik: spotify, wenn verbunden, sonst mac. Lampen: hue für Philips Hue, smart_home für Home Assistant (Heizung, Steckdosen, Rollos, Sensoren). Aufgaben: todoist, wenn verbunden. Notizen und Wissen: notion.
+- Nachrichten und Anrufe an die Frau des Nutzers, ihn selbst oder hinterlegte Kontakte: anrufe. Wer "ruf meine Frau an und sag ihr …" sagt, hat damit bestätigt: direkt ausführen. Den Text in der Ich-Form des Nutzers formulieren.
 - Mac-Aktionen gehen nur, wenn der Mac verbunden ist. Wenn nicht, sag es kurz.
 - Lösche, kaufe oder verschicke nie etwas an andere Personen ohne ausdrückliche Bestätigung.
 
@@ -117,6 +119,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // Im Verlauf stehen nur reine Text-Paare. Innerhalb einer Anfrage bleibt alles vollständig.
   const messages = [...history, { role: "user", content: userContent }];
   const actions = [];
+
+  // Anrufe & Nachrichten ("ruf meine Frau an und sag ihr, dass …") – ohne Claude.
+  // Ganz vorne, damit die Antwort auf "Was soll ich ihr sagen?" hier landet.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const a = await anrufQuick(text, channel);
+      if (a) { actions.push(...a.actions); return finish(a.answer); }
+    } catch (err) {
+      console.error("Anrufe:", err.message);
+    }
+  }
 
   // Alexa-Befehle ("Alexa Licht an", "Alexa sag ...") gehen sofort und ohne Claude (klappt auch bei leerem Guthaben).
   // Steht vor dem Fernseher, damit "Alexa, mach Netflix an" bei Alexa landet.
