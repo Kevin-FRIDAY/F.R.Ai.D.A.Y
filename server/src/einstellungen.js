@@ -15,8 +15,11 @@ const DEFAULTS = {
 // Werte aus der .env merken, damit "leer" wieder darauf zurückfällt.
 const ENV_WERTE = { anrede: config.userName, stadt: config.city };
 const TEXT_OK = /^[\p{L}\p{N} .'\-]{0,40}$/u;
+// "ja", "ok" usw. sind keine Namen (landen z. B. per Sprache aus Versehen im Profil) → ignorieren.
+const KEIN_NAME = /^(ja|nein|ok|okay|jo|jep|jup|klar|gut|hallo|hi|test|name|boss)$/i;
+const nameOk = (v) => Boolean(v) && !KEIN_NAME.test(String(v).trim());
 function textAnwenden(s) {
-  config.userName = s.anrede || ENV_WERTE.anrede;
+  config.userName = (nameOk(s.anrede) && s.anrede) || (nameOk(ENV_WERTE.anrede) && ENV_WERTE.anrede) || "Boss";
   config.city = s.stadt || ENV_WERTE.stadt;
 }
 export const TEMPI = ["blitz", "schnell", "gruendlich"];
@@ -39,7 +42,7 @@ export function setSettings(patch = {}) {
   for (const k of ["anrede", "stadt"]) {
     if (typeof patch[k] === "string") {
       const v = patch[k].replace(/\s+/g, " ").trim();
-      if (TEXT_OK.test(v)) s[k] = v;
+      if (TEXT_OK.test(v) && (k !== "anrede" || !v || nameOk(v))) s[k] = v;
     }
   }
   textAnwenden(s);

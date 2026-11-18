@@ -107,7 +107,7 @@
       msg(k, "…");
       const r = await json(post(`/api/dienste/${id}/befehl`, { action }));
       btn.classList.remove("busy");
-      if (!r.ok) { msg(k, r.error || "Hat nicht geklappt.", true); return; }
+      if (!r.ok) { msg(k, r.error || "Hat nicht geklappt.", true); if (/^test/.test(action)) F.say?.(r.error || "Das hat nicht geklappt."); return; }
       if (r.link) { window.open(r.link, "_blank", "noopener"); msg(k, "Spotify öffnet sich. Danach hier auf ↻ tippen."); return; }
       msg(k, r.text || "Erledigt.");
       if (r.sprechen || action === "probe" || action === "jetzt" || action === "heute") F.say?.(r.text);

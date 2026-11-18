@@ -43,6 +43,11 @@
     refreshAll();
   }
 
+  function tagesGruss(h = new Date().getHours()) {
+    return h >= 4 && h < 11 ? "Guten Morgen" : h >= 11 && h < 18 ? "Guten Tag" : "Guten Abend";
+  }
+  window.Friday = Object.assign(window.Friday || {}, { tagesGruss });
+
   $("login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     $("login-error").textContent = "";
@@ -58,7 +63,7 @@
       storage.set("friday_token", token);
       $("password").value = "";
       showApp();
-      say(`Willkommen zurück, Boss.`);
+      say(`${tagesGruss()}, ${data.name || "Boss"}. Willkommen zurück.`);
     } catch (err) {
       $("login-error").textContent = err.message;
     }
@@ -502,7 +507,7 @@
   });
 
   // Für das Lagezentrum (lagezentrum.js).
-  window.Friday = { api, say, send, escapeHtml, relTime, refreshStatus: () => refreshStatus() };
+  window.Friday = Object.assign(window.Friday || {}, { api, say, send, escapeHtml, relTime, refreshStatus: () => refreshStatus() });
 
   // ---------- Seitenleiste: Einstellungen & Gehirn ----------
   const openSheet = (id) => $(id)?.classList.remove("hidden");
@@ -782,7 +787,7 @@
   $("voice-rate")?.addEventListener("input", (e) => storage.set("friday_rate", e.target.value));
   $("voice-pitch")?.addEventListener("input", (e) => storage.set("friday_pitch", e.target.value));
   { const r = storage.get("friday_rate"); if (r && $("voice-rate")) $("voice-rate").value = r; const p = storage.get("friday_pitch"); if (p && $("voice-pitch")) $("voice-pitch").value = p; }
-  $("voice-test")?.addEventListener("click", () => say("Hallo Boss, so klinge ich jetzt."));
+  $("voice-test")?.addEventListener("click", () => say(`${tagesGruss()}, ${status.name || "Boss"}. So klinge ich jetzt.`));
   $("brain-btn")?.addEventListener("click", () => { openSheet("brain"); loadBrain(); });
   $("brain-x")?.addEventListener("click", () => closeSheet("brain"));
   $("apps-btn")?.addEventListener("click", () => { openSheet("apps"); buildApps(); });
@@ -843,11 +848,10 @@
   }));
 
   // ---------- Begrüßung nach Tageszeit ----------
+  // Morgens (4–11 Uhr) „Guten Morgen“, mittags/nachmittags (11–18 Uhr) „Guten Tag“, abends und nachts „Guten Abend“.
   function setGreeting() {
     const g = $("greeting"); if (!g) return;
-    const h = new Date().getHours();
-    const teil = h < 5 ? "Gute Nacht" : h < 11 ? "Guten Morgen" : h < 18 ? "Guten Tag" : "Guten Abend";
-    g.textContent = `${teil}, ${status.name || "Boss"}.`;
+    g.textContent = `${tagesGruss()}, ${status.name || "Boss"}.`;
   }
   setGreeting(); setInterval(setGreeting, 10 * 60000);
   window.addEventListener("friday-status", setGreeting);
