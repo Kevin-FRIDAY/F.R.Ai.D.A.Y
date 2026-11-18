@@ -80,3 +80,41 @@ Wenn Friday ein Land zeigt, dreht sich der Globus hin und zoomt so weit hinein, 
 - Kommt der Befehl per Stimme, verlangt der Browser manchmal einen Tipp: Dann erscheint unten ein Knopf „Vollbild – einmal tippen“.
 - Einstellungen → Glow & Werkzeuge → **„Friday immer im Vollbild“**: schaltet beim ersten Klick nach dem Öffnen um.
 - Auf dem iPhone ist Friday als App vom Home-Bildschirm schon im Vollbild.
+
+## Neu in 1.91.0: noch mehr Befehle ohne Guthaben
+
+| Sag zum Beispiel | Friday antwortet |
+|---|---|
+| „Wie spät ist es in Tokio?“ | Uhrzeit dort und wie viele Stunden Unterschied (rund 70 Städte und Länder) |
+| „10 km in Meilen“, „30 Grad Celsius in Fahrenheit“, „5 kg in Pfund“, „100 mph in km/h“ | Einheiten umrechnen (Länge, Gewicht, Liter, Tempo, Temperatur, GB/MB) |
+| „Trinkgeld für 45 Euro“ | 10 % und 15 % plus Vorschlag zum Aufrunden |
+| „Wie viele Tage bis Weihnachten?“, „Wann ist Ostern?“, „Wie lange noch bis zum 24.12.?“, „… bis zum Wochenende?“ | Tage bis zum Anlass oder Datum |
+| „Welche Kalenderwoche haben wir?“ | aktuelle KW |
+| „Welcher Wochentag ist der 3.5.2027?“ | Wochentag und KW des Datums |
+| „Mondphase“, „Wann ist Vollmond?“ | Mondphase, Beleuchtung, nächster Voll- und Neumond |
+| „Wann geht die Sonne unter?“, „Wie lange ist es heute hell?“ | Sonnenauf- und -untergang für deine Stadt |
+| „Zufallszahl zwischen 1 und 50“ | eine Zufallszahl |
+| „Soll ich Pizza oder Sushi essen?“ | Friday entscheidet für dich |
+| „Motivier mich“, „Zitat des Tages“ | ein Zitat |
+| „Erzähl mir einen Fakt“, „Überrasch mich“ | ein spannender Fakt |
+| „Atemübung“, „Ich bin gestresst“ | kurze Atemübung zum Mitmachen |
+| „Wie geht es dem Mac?“, „Wie viel Speicher ist frei?“ | Prozessor, Arbeitsspeicher, Festplatte, Laufzeit |
+| „Buchstabiere Friday“ | Buchstabieren mit Anton, Berta, Cäsar … |
+
+## System-Zentrale (ab 1.91.0)
+
+Das Menü **System** in der Seitenleiste ist jetzt die **System-Zentrale**:
+
+- **Übersicht:** Live-Ringe für Prozessor, Arbeitsspeicher, Festplatte und Fridays eigenen Speicher, Verlauf der letzten 5 Minuten, Laufzeit, Version, letzte Sicherung.
+- **Dienste:** jeder Dienst als Kachel mit Lämpchen (grün = läuft, grau = aus, rot = Störung).
+- **Gedächtnis:** was Friday sich dauerhaft merkt (hinzufügen und löschen).
+- **Werkzeuge:** System-Check, Jetzt sichern, Sicherungen, Update suchen und installieren, Energie, Verbindungen, Datenbank, Einstellungen, Dashboard neu laden, Zwischenspeicher leeren.
+
+## Neue Einstellungen (ab 1.91.0)
+
+- **Suchfeld** oben und **Gruppen zum Auf- und Zuklappen**.
+- **Profil:** wie Friday dich nennt und welche Stadt fürs Wetter gilt (gilt auch für Telegram und Briefing).
+- **Uhr & Startseite:** 12 oder 24 Stunden, Sekunden an/aus, Datum lang/kurz/aus, jede Karte der Startseite einzeln ein- oder ausblenden (auch Gesprächsverlauf und Befehls-Vorschläge).
+- **Darstellung:** eigene Akzentfarbe (Regenbogen-Knopf), Glas-Deckkraft, Ecken rund/sehr rund/kantig, HUD-Raster.
+- **Stimme:** Lautstärke, Signalton bei Timern an/aus und seine Lautstärke.
+- **Einstellungen sichern:** als Datei speichern, aus Datei laden, alles zurücksetzen.

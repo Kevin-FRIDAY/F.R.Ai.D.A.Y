@@ -8,6 +8,7 @@ import { getCrypto, getExchange, getHolidays, getISS, getWiki } from "./extras.j
 import { findCountry, getCountryNews, getOverview } from "./lagezentrum.js";
 import { isAgentOnline, sendToAgent } from "./agent-hub.js";
 import { getEnergie } from "./energie.js";
+import { extraAnswer, EXTRA_HILFE } from "./offline-extra.js";
 
 // JavaScript kennt bei \b nur englische Buchstaben. U() macht daraus echte Wortgrenzen (auch für ä, ö, ü, ß).
 const WB = "(?:(?<![\\p{L}\\p{N}])(?=[\\p{L}\\p{N}])|(?<=[\\p{L}\\p{N}])(?![\\p{L}\\p{N}]))";
@@ -220,7 +221,7 @@ function hilfeText() {
   return `Auch ohne Guthaben kann ich dir sagen, wie spät es ist, wie das Wetter wird und welcher Feiertag kommt. ` +
     `Ich stelle Timer und Erinnerungen, führe deine Aufgaben- und Einkaufsliste, merke mir Dinge, rechne, ` +
     `nenne Bitcoin- und Wechselkurse, schlage Begriffe bei Wikipedia nach und lese dir die Schlagzeilen zu jedem Land vor. ` +
-    `Und ich steuere Mac, Fernseher und Alexa. Sobald sie verbunden sind, auch Kalender, Spotify, Hue-Lampen, Home Assistant, Todoist und Notion.`;
+    `Und ich steuere Mac, Fernseher und Alexa. Sobald sie verbunden sind, auch Kalender, Spotify, Hue-Lampen, Home Assistant, Todoist und Notion. ` + EXTRA_HILFE;
 }
 
 // Mini-Briefing ohne Claude: Wetter, Termine, Aufgaben, eine Schlagzeile.
@@ -301,6 +302,10 @@ export async function offlineAnswer(text, { notfall = false } = {}) {
   if (has(U(/\b(wirf|werfe|wirft) (eine )?münze\b|\bkopf oder zahl\b/))) return ok(pick(["Kopf.", "Zahl."]) + " Die Münze hat entschieden.");
   if (has(U(/\b(würfel|wuerfel|würfle|wuerfle)\b/)) && t.length < 30) return ok(`Eine ${["Eins", "Zwei", "Drei", "Vier", "Fünf", "Sechs"][Math.floor(Math.random() * 6)]}.`);
   if (/^(gute nacht)$/.test(t)) return ok(`Gute Nacht, ${name()}. Ich halte die Stellung.`);
+
+  // --- Mehr Befehle ohne Claude (Weltzeit, Einheiten, Tage bis, Mond, Sonne, Zitate ...) ---
+  const extra = await extraAnswer(t, ok).catch(() => null);
+  if (extra) return extra;
 
   // --- Uhrzeit und Datum ---
   if (has(/\bwie spät\b|\bwie spaet\b|\bwie viel uhr\b|\bwieviel uhr\b|^uhrzeit$|\bwelche uhrzeit\b|\bdie uhrzeit\b/) && !has(/\b(in|auf|im)\b/)) {

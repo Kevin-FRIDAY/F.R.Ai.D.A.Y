@@ -50,6 +50,7 @@
     "Wie spät ist es?", "Wie wird das Wetter morgen?", "Timer 5 Minuten", "Was kostet Bitcoin?", "Was ist in der Welt los?",
     "Was steht auf der Einkaufsliste?", "Was kannst du?", "Wann ist der nächste Feiertag?", "100 Euro in Dollar", "Zeig mir USA", "Erzähl mir was über Japan", "Wo ist die ISS?",
     "Erzähl mir einen Witz", "Brauche ich einen Schirm?", "Welche Erinnerungen habe ich?", "Was ist 15 Prozent von 80?",
+    "Wie spät ist es in Tokio?", "10 km in Meilen", "Wie viele Tage bis Weihnachten?", "Mondphase", "Wann geht die Sonne unter?", "Motivier mich", "Wie geht es dem Mac?", "Trinkgeld für 40 Euro",
   ];
   function chipsZeigen() {
     const state = $("state");
@@ -147,6 +148,11 @@
 
   let ton = null;
   function piepen() {
+    let laut = 0.6;
+    try {
+      if (localStorage.getItem("friday_toene") === "0") return;
+      laut = Number(localStorage.getItem("friday_tonlaut") ?? 0.6) || 0.6;
+    } catch { /* egal */ }
     try {
       ton = ton || new (window.AudioContext || window.webkitAudioContext)();
       const t0 = ton.currentTime;
@@ -155,7 +161,7 @@
         o.type = "sine";
         o.frequency.value = i % 3 === 2 ? 1320 : 880;
         g.gain.setValueAtTime(0.0001, t0 + d);
-        g.gain.exponentialRampToValueAtTime(0.18, t0 + d + 0.02);
+        g.gain.exponentialRampToValueAtTime(Math.max(0.01, 0.3 * laut), t0 + d + 0.02);
         g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + 0.18);
         o.connect(g).connect(ton.destination);
         o.start(t0 + d); o.stop(t0 + d + 0.2);
