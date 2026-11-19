@@ -624,18 +624,31 @@
   const menuPop = $("menu-pop");
   $("menu-fab")?.addEventListener("click", (e) => { e.stopPropagation(); menuPop?.classList.toggle("hidden"); });
   $("menu-side")?.addEventListener("click", (e) => { e.stopPropagation(); menuPop?.classList.toggle("hidden"); });
-  // Osiris läuft selbst gehostet auf dem Mac (Port 3100). Lokal direkt, von unterwegs über Tailscale (HTTPS, Port 8443).
+  // Osiris: lokal auf dem Mac (Port 3100), wenn diese Kopie läuft und Friday am Mac selbst offen ist.
+  // Sonst (iPhone, unterwegs, oder Mac-Kopie aus) die öffentliche Online-Version osirisai.live.
+  // Die Online-Version lässt sich nicht einbetten, darum öffnet sie in einem eigenen Tab.
   const OSIRIS_LAYERS = "flights,private,jets,military,maritime,transit,satellites,cctv,cctv_previews,live_news,earthquakes,fires,weather,infrastructure,global_incidents,alert_pins,day_night,cables,sdk_sea,sdk_air,sdk_naval,live_clouds,wind,rain,wind_controls,rain_controls,wind_particles,terrain_3d,terrain_elevation,malware,cyber_attacks,gdelt_events";
-  function osirisBase() {
-    const h = location.hostname;
-    if (h === "localhost" || h === "127.0.0.1") return "http://localhost:3100";
-    return "https://" + h + ":8443"; // Tailscale stellt Osiris hier bereit
+  const OSIRIS_ONLINE = "https://osirisai.live/?layers=" + OSIRIS_LAYERS;
+  const amMac = () => location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  let osirisLokal = false;
+  async function pruefeOsiris() {
+    if (!amMac()) { osirisLokal = false; return; }
+    try { const r = await api("/api/osiris"); if (r.ok) osirisLokal = Boolean((await r.json()).lokal); } catch { osirisLokal = false; }
   }
-  const OSIRIS_URL = () => osirisBase() + "/?layers=" + OSIRIS_LAYERS;
-  window.openOsiris = () => { const u = OSIRIS_URL(); try { window.open(u, "_blank", "noopener"); } catch { location.href = u; } };
-  // Osiris direkt im Lagezentrum als eingebettete Vollkarte ein-/ausblenden.
+  setTimeout(pruefeOsiris, 1500);
+  setInterval(pruefeOsiris, 60_000);
+  const OSIRIS_URL = () => (amMac() && osirisLokal) ? "http://localhost:3100/?layers=" + OSIRIS_LAYERS : OSIRIS_ONLINE;
+  // Direkt im Klick aufrufen, sonst blockt Safari (iPhone) das neue Fenster.
+  window.openOsiris = () => {
+    const u = OSIRIS_URL();
+    let w = null;
+    try { w = window.open(u, "_blank"); if (w) w.opener = null; } catch { w = null; }
+    if (!w) { try { location.href = u; } catch {} } // Popup blockiert → im selben Fenster öffnen
+  };
+  // Lokale Osiris-Kopie direkt im Lagezentrum einbetten; Online-Version im eigenen Tab.
   function showOsirisEmbed(on) {
     const box = $("lage-osiris"); if (!box) return;
+    if (on && !(amMac() && osirisLokal)) { window.openOsiris(); return; }
     if (on) {
       const f = $("lage-osiris-frame"); if (f && !f.getAttribute("src")) f.setAttribute("src", OSIRIS_URL());
       const open = $("lage-osiris-open"); if (open) open.href = OSIRIS_URL();
@@ -652,7 +665,10 @@
     const row = e.target.closest(".menu-row");
     if (!row) return;
     menuPop.classList.add("hidden");
-    if (row.hasAttribute("data-osiris")) { document.getElementById("lage-btn")?.click(); setTimeout(() => showOsirisEmbed(true), 60); return; }
+    if (row.hasAttribute("data-osiris")) {
+      if (!(amMac() && osirisLokal)) { window.openOsiris(); return; } // sofort im Klick öffnen (Popup-Blocker)
+      document.getElementById("lage-btn")?.click(); setTimeout(() => showOsirisEmbed(true), 60); return;
+    }
     document.getElementById(row.dataset.target)?.click();
   });
   document.addEventListener("click", (e) => { if (menuPop && !menuPop.classList.contains("hidden") && !menuPop.contains(e.target) && e.target.id !== "menu-fab" && !e.target.closest("#menu-side")) menuPop.classList.add("hidden"); });
@@ -870,7 +886,7 @@
   $("globe-style")?.addEventListener("change", (e) => applyGlobeStyle(e.target.value));
   applyGlobeStyle(storage.get("friday_globestyle") || "echt");
   // Lagezentrum optional direkt mit Osiris öffnen
-  document.getElementById("lage-btn")?.addEventListener("click", () => { if (storage.get("friday_osiris_default") === "1") setTimeout(() => window.showOsirisEmbed && window.showOsirisEmbed(true), 90); });
+  document.getElementById("lage-btn")?.addEventListener("click", () => { if (storage.get("friday_osiris_default") === "1" && amMac() && osirisLokal) setTimeout(() => window.showOsirisEmbed && window.showOsirisEmbed(true), 90); });
 
   // Gespeicherte Vorlieben anwenden.
   // Einmalige Umstellung auf Mockup-Orange (falls noch ein altes Theme gespeichert war).

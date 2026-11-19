@@ -45,6 +45,8 @@ function gueltigerStandort(s) {
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus, updateProgress, runningVersion, githubTokenStatus, setGithubToken, forgetGithubToken } from "./updater.js";
 import { archivUebersicht, speichereFoto, einsortieren, dateiPfad, fotoWegwerfen, oeffneOrdner, archivStart } from "./archiv.js";
 import { zentraleRouten, zentraleStart } from "./zentrale.js";
+import { lagebildRouten } from "./lagebild.js";
+import { osirisStatus } from "./osiris.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
 const missing = checkConfig();
@@ -210,6 +212,8 @@ app.post("/api/tts", asyncRoute(async (req, res) => {
   if (!r.ok) return res.status(503).json({ error: r.error, grund: r.error });
   res.type("audio/mpeg").send(r.audio);
 }));
+
+app.get("/api/osiris", async (req, res) => { res.json(await osirisStatus()); });
 
 app.get("/api/status", (req, res) => {
   res.json({
@@ -397,6 +401,7 @@ app.get("/api/lage-ereignisse", asyncRoute(async (req, res) => res.json(await ge
 app.get("/api/lage-satelliten", asyncRoute(async (req, res) => res.json(await getSatellites())));
 app.get("/api/lage-infra", asyncRoute(async (req, res) => res.json(getInfra(String(req.query.typ || "")))));
 app.get("/api/lage-videos", asyncRoute(async (req, res) => res.json(await getWorldVideos())));
+lagebildRouten(app, asyncRoute);
 app.get("/api/lage-alarm", asyncRoute(async (req, res) => res.json(await getAlarm())));
 // Fernseher (Samsung-TV im WLAN)
 app.get("/api/fernseher", asyncRoute(async (req, res) => res.json(await fernseher.status())));

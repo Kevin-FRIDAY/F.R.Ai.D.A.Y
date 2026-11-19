@@ -1042,6 +1042,7 @@
       <div class="brand">LAGE<span>ZENTRUM</span></div>
       <div id="lage-stand" class="muted small-text">Lade Weltlage...</div>
       <button id="lage-alarm-btn" class="ghost small alarm-btn" title="Größte aktuelle Katastrophen">⚠ Welt-Alarm</button>
+      <button id="lage-lb-btn" class="ghost small" title="Lagebild: alles auf einen Blick">📡<span class="lb-btn-txt"> Lagebild</span></button>
       <button id="lage-videos-btn" class="ghost small" title="Welt-Videos ansehen">📺 Videos</button>
       <button id="osiris-btn" class="ghost small" title="Osiris Live-Karte öffnen">◎ Osiris Live</button>
       <button id="lage-close" class="ghost small" title="Schließen">✕</button>
@@ -1094,22 +1095,19 @@
               <span><i class="dot gut"></i>gut</span><span><i class="dot gemischt"></i>gemischt</span>
               <span><i class="dot schlecht"></i>schlecht</span><span><i class="dot aktiv"></i>Aktivität</span>
             </div>
-            <div class="legend-switches">
-              <label class="switch small-switch"><input type="checkbox" id="lage-quakes-on" checked><span>Erdbeben</span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-ships-on" checked><span>Schiffe</span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-planes-on" checked><span>Flugzeuge</span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-fires-on" checked><span>Feuer<i id="cnt-fires"></i></span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-volc-on" checked><span>Vulkane<i id="cnt-volc"></i></span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-storms-on" checked><span>Unwetter<i id="cnt-storms"></i></span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-weitere-on" checked><span>Weitere<i id="cnt-weitere"></i></span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-sats-on" checked><span>Satelliten</span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-city-on"><span>Städte</span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-air-on"><span>Flughäfen</span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-kw-on"><span>Kraftwerke</span></label>
-              <label class="switch small-switch"><input type="checkbox" id="lage-night-on"><span>Tag/Nacht-Schatten</span></label>
+            <div class="legend-groups">
+              <div class="legend-group"><div class="lg-head"><i>⚠</i>Gefahren</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-quakes-on" checked><span>Erdbeben</span></label><label class="switch small-switch"><input type="checkbox" id="lage-fires-on" checked><span>Feuer<i id="cnt-fires"></i></span></label><label class="switch small-switch"><input type="checkbox" id="lage-volc-on" checked><span>Vulkane<i id="cnt-volc"></i></span></label><label class="switch small-switch"><input type="checkbox" id="lage-storms-on" checked><span>Unwetter<i id="cnt-storms"></i></span></label><label class="switch small-switch"><input type="checkbox" id="lage-weitere-on" checked><span>Weitere<i id="cnt-weitere"></i></span></label></div></div>
+              <div class="legend-group"><div class="lg-head"><i>⚔</i>Konflikte &amp; Netz</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-lb-konflikt-on" checked><span>Konflikt-Meldungen<i id="cnt-konflikt"></i></span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-netz-on" checked><span>Internet-Störungen<i id="cnt-netz"></i></span></label></div></div>
+              <div class="legend-group"><div class="lg-head"><i>☁</i>Wetter &amp; Luft</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-lb-wind-on"><span>Wind</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-temp-on"><span>Temperatur</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-regen-on"><span>Regen</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-luft-on"><span>Luftqualität<i id="cnt-luft"></i></span></label></div></div>
+              <div class="legend-group"><div class="lg-head"><i>✦</i>Weltraum</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-sats-on" checked><span>Satelliten</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-raketen-on" checked><span>Raketenstarts<i id="cnt-raketen"></i></span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-polar-on"><span>Polarlicht</span></label><label class="switch small-switch"><input type="checkbox" id="lage-night-on"><span>Tag/Nacht</span></label></div></div>
+              <div class="legend-group"><div class="lg-head"><i>➤</i>Verkehr</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-ships-on" checked><span>Schiffe</span></label><label class="switch small-switch"><input type="checkbox" id="lage-planes-on" checked><span>Flugzeuge</span></label></div></div>
+              <div class="legend-group"><div class="lg-head"><i>▦</i>Infrastruktur</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-city-on"><span>Städte</span></label><label class="switch small-switch"><input type="checkbox" id="lage-air-on"><span>Flughäfen</span></label><label class="switch small-switch"><input type="checkbox" id="lage-kw-on"><span>Kraftwerke</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-kabel-on"><span>Seekabel</span></label></div></div>
+              <div class="legend-group"><div class="lg-head"><i>◱</i>Detailkarte (beim Land)</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-lb-radar-on"><span>Regenradar</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-wolken-on"><span>Wolken heute</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-lichter-on"><span>Nachtlichter</span></label></div></div>
+              <details class="legend-grenzen"><summary>Was Friday bewusst nicht zeigt</summary><ul id="lage-lb-grenzen"><li>Militär live, fremde Kameras, Cyber-Angriffe live, weltweite Stromausfälle, 3D-Gelände</li></ul></details>
             </div>
           </div>
         </div>
+        <div id="lage-lb" class="lage-lb hidden" aria-label="Lagebild"></div>
         <div id="lage-ticker" class="lage-ticker" aria-hidden="true"></div>
         <div class="lage-zoom">
           <button id="lage-zoom-in" title="Näher">+</button>
@@ -1168,6 +1166,7 @@
   <script src="gegenrede.js"></script>
   <script src="ideen.js"></script>
   <script src="klangraum.js"></script>
+  <script src="lagebild.js"></script>
   <script src="vollbild.js"></script>
   <script src="hud.js"></script>
   <script src="status-ring.js"></script>
