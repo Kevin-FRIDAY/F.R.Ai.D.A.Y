@@ -34,6 +34,13 @@ import { alleDokumente, dokument, antwortenSpeichern } from "./dokumente.js";
 import { auftragStand } from "./auftrag.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
 import { getLandInfo, findeLand } from "./laenderinfo.js";
+import { plane, getOrte, setzeOrt, holeErgebnis, letzteRouteId } from "./routen.js";
+
+// Standort vom Gerät (nur wenn im Routen-Fenster erlaubt): { lat, lon }
+function gueltigerStandort(s) {
+  const lat = Number(s?.lat), lon = Number(s?.lon);
+  return Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180 ? { lat, lon } : undefined;
+}
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus, updateProgress, runningVersion, githubTokenStatus, setGithubToken, forgetGithubToken } from "./updater.js";
 import { archivUebersicht, speichereFoto, einsortieren, dateiPfad, fotoWegwerfen, oeffneOrdner, archivStart } from "./archiv.js";
 import { zentraleRouten, zentraleStart } from "./zentrale.js";
@@ -182,7 +189,7 @@ const validImage = (img) =>
   img && typeof img.data === "string" && /^image\/(jpeg|png|webp|gif)$/.test(img.mediaType) ? img : undefined;
 
 app.post("/api/chat", asyncRoute(async (req, res) => {
-  const { text = "", image, mode, targetLang } = req.body || {};
+  const { text = "", image, mode, targetLang, standort } = req.body || {};
   if (!text.trim() && !validImage(image)) return res.status(400).json({ error: "Keine Nachricht" });
   const result = await ask({
     text: String(text).slice(0, 4000),
@@ -190,6 +197,7 @@ app.post("/api/chat", asyncRoute(async (req, res) => {
     mode: mode === "translate" ? "translate" : "normal",
     targetLang: typeof targetLang === "string" ? targetLang.slice(0, 40) : undefined,
     channel: "web",
+    standort: gueltigerStandort(standort),
   });
   res.json(result);
 }));
@@ -524,6 +532,31 @@ app.get("/api/lage/:id/medien", asyncRoute(async (req, res) => {
   if (!country) return res.status(404).json({ error: "Land nicht gefunden" });
   res.json(await getMedia(country));
 }));
+// Routen & Verbindungen: Auto, Fahrrad, zu Fuß, Bahn & Bus (alles kostenlos, ohne Claude)
+app.get("/api/routen/orte", (req, res) => res.json(getOrte()));
+app.post("/api/routen/orte", asyncRoute(async (req, res) => {
+  const { art, text } = req.body || {};
+  try { res.json({ ok: true, ort: await setzeOrt(art, text), orte: getOrte() }); } catch (err) { res.status(400).json({ error: err.message }); }
+}));
+app.get("/api/routen/ergebnis/:id", (req, res) => {
+  const e = req.params.id === "neuestes" ? holeErgebnis(letzteRouteId()) : holeErgebnis(req.params.id);
+  if (!e) return res.status(404).json({ error: "Diese Route ist nicht mehr da. Bitte neu berechnen." });
+  res.json(e);
+});
+app.post("/api/routen/planen", asyncRoute(async (req, res) => {
+  const b = req.body || {};
+  const zeit = b.zeit && !Number.isNaN(new Date(b.zeit).getTime()) ? new Date(b.zeit) : null;
+  try {
+    res.json(await plane({
+      nach: String(b.nach || "").slice(0, 160), von: b.von ? String(b.von).slice(0, 160) : "",
+      standort: gueltigerStandort(b.standort), zeit, ankunft: Boolean(b.ankunft),
+      modus: ["auto", "rad", "fuss", "oepnv"].includes(b.modus) ? b.modus : "",
+    }));
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+}));
+
 // Länder-Fenster ("zeig mir USA"): Steckbrief, Wikipedia, Fotos, Schlagzeilen in einem Rutsch
 app.get("/api/land/:id", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id) || findeLand(req.params.id);
