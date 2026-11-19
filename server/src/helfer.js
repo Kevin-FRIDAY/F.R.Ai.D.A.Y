@@ -5,6 +5,7 @@ import * as kuehl from "./kuehlschrank.js";
 import * as kauf from "./kaufberater.js";
 import * as gegen from "./gegenrede.js";
 import * as ideen from "./ideenschmiede.js";
+import * as lernen from "./lernen.js";
 import { denke } from "./denker.js";
 import { notifyAll } from "./notify.js";
 import { U } from "./datum.js";
@@ -39,7 +40,8 @@ function klangQuick(text) {
 
 /** Ein Schnellbefehl für brain.js (alles ohne Claude). */
 export async function quickCommand(text) {
-  return klangQuick(text)
+  return lernen.quickCommand(text)
+    || klangQuick(text)
     || kuehl.quickCommand(text)
     || gegen.quickCommand(text)
     || ideen.quickCommand(text)
@@ -52,6 +54,7 @@ export function helferStart() {
     kuehl.taeglichPruefen(notifyAll).catch?.(() => {});
     kauf.garantiePruefen(notifyAll).catch?.(() => {});
   };
+  lernen.lernenStart();
   setTimeout(lauf, 60 * 1000);
   setInterval(lauf, 30 * 60 * 1000);
 }
@@ -59,6 +62,9 @@ export function helferStart() {
 const fehler = (res, err, code = 400) => res.status(code).json({ error: err.message || String(err) });
 
 export function helferRouten(app, asyncRoute) {
+  // --- Carlas Lernecke (v1.108.0) ---
+  lernen.lernenRouten(app, asyncRoute);
+
   // --- Kühlschrank ---
   app.get("/api/kuehlschrank", (req, res) => res.json({ vorrat: kuehl.vorrat(), rezepte: kuehl.rezepte({ limit: 8 }), statistik: kuehl.statistik(), lebensmittel: kuehl.LEBENSMITTEL.map(({ key, name, icon, tage }) => ({ key, name, icon, tage })) }));
   app.post("/api/kuehlschrank/bon", (req, res) => res.json(kuehl.bonLesen(String(req.body?.text || "").slice(0, 20000))));
