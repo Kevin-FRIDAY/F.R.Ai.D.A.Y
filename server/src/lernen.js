@@ -492,7 +492,8 @@ export function bildDatei(id) {
   return fs.existsSync(p) ? p : null;
 }
 /** Foto speichern und (auf dem Mac) Text erkennen. */
-export async function scannen(image, { ocr = true } = {}) {
+export async function scannen(image, opts = {}) {
+  const { ocr = true } = opts;
   if (!image?.data) throw new Error("Kein Foto.");
   const buf = Buffer.from(String(image.data), "base64");
   if (buf.length > 9 * 1024 * 1024) throw new Error("Das Foto ist zu groß.");
@@ -502,11 +503,28 @@ export async function scannen(image, { ocr = true } = {}) {
   if (!ocr) return { bild: id, text: null };
   try {
     const prog = await programmBereit();
-    const text = await new Promise((ok, nein) => execFile(prog, [bildPfad(id)], { timeout: 60000, maxBuffer: 4 * 1024 * 1024 }, (err, out, stderr) => (err ? nein(new Error(String(stderr || err.message).trim().slice(0, 160))) : ok(String(out)))));
-    return { bild: id, text: text.trim(), quelle: "mac", ...kartenAusText(text) };
+    const lies = (spiegeln) => new Promise((ok, nein) => execFile(prog, [bildPfad(id), ...(spiegeln ? ["--spiegeln"] : [])], { timeout: 60000, maxBuffer: 4 * 1024 * 1024 }, (err, out, stderr) => (err ? nein(new Error(String(stderr || err.message).trim().slice(0, 160))) : ok(String(out).trim()))));
+    // Frontkamera (Mac): Schrift kann spiegelverkehrt sein. Sieht der Text nicht nach echten Wörtern aus,
+    // liest Friday das Bild zusätzlich gespiegelt und nimmt das bessere Ergebnis.
+    let text = await lies(Boolean(opts.spiegeln));
+    let gespiegelt = Boolean(opts.spiegeln);
+    if (!opts.spiegeln && textGuete(text) < 0.6) {
+      const andersrum = await lies(true).catch(() => "");
+      if (textGuete(andersrum) > textGuete(text) + 0.1) { text = andersrum; gespiegelt = true; }
+    }
+    return { bild: id, text, quelle: "mac", gespiegelt, ...kartenAusText(text) };
   } catch (err) {
     return { bild: id, text: null, quelle: null, grund: err.message };
   }
+}
+
+/** Wie sehr sieht ein Text nach echten Wörtern aus? 0 = Buchstabensalat, 1 = sauberer Text. */
+export function textGuete(text) {
+  const w = String(text || "").split(/\s+/).filter((x) => /[A-Za-zÄÖÜäöüß]/.test(x));
+  if (!w.length) return 0;
+  const gut = w.filter((x) => { const b = x.replace(/[^A-Za-zÄÖÜäöüß]/g, ""); return b.length >= 2 && /[aeiouäöüy]/i.test(b) && !/[bcdfghjklmnpqrstvwxz]{5,}/i.test(b) && b.length / x.length > 0.7; }).length;
+  const buchstaben = String(text).replace(/[^A-Za-zÄÖÜäöüß]/g, "").length;
+  return (gut / w.length) * Math.min(1, buchstaben / 12);
 }
 
 // ---------- Optional mit Claude (braucht Guthaben) ----------
@@ -550,11 +568,13 @@ export function quickCommand(text) {
   const lern = U(/\b(lernmodus|lern-modus|lernecke|lern-ecke|lernbereich|lernkarten?|karteikarten?|karteikasten|lernkartei|lehrermodus|lehrer-modus|lernhilfe)\b/);
   const carla = U(/\b(carla|karla)\b.*\b(lernen|abfragen|lernecke|lernmodus)\b|\b(lernen|abfragen)\b.*\b(carla|karla)\b/);
   if (!lern.test(t) && !carla.test(t) && !U(/^(frag mich ab|lass uns lernen|ich will lernen|ich möchte lernen|ich moechte lernen|wir lernen)\b/).test(t)) return null;
-  if (U(/\b(scann|scanne|scannen|fotografier|einlesen|abfotografieren)\w*/).test(t)) return { answer: "Die Lernecke ist offen. Halt die Karte oder das Blatt vor die Kamera.", actions: ["lernen:scannen"] };
-  if (U(/\b(frag|fragen|abfragen|abfrage|prüf|pruef|test)\w*/).test(t)) { begruessung(); return { answer: `Okay ${NAME}, ich frag dich ab.`, actions: ["lernen:abfragen"] }; }
-  if (U(/\b(plan|lernplan)\b/).test(t)) return { answer: "Hier ist dein Lernplan.", actions: ["lernen:plan"] };
-  // Friday begrüßt Carla selbst (beim ersten Mal ausführlich), danach hört die Lernecke auf ihre Antwort.
-  return { answer: begruessung().text, actions: ["lernen:begruesst"] };
+  // Kevin will nur testen/verbessern: keine Carla-Begrüßung, nichts zählt für Carlas Fortschritt.
+  if (U(/\b(testen|testmodus|test-modus|ausprobieren|probieren)\b/).test(t) && lern.test(t)) return { answer: "Lernecke im Testmodus. Carla wird nicht begrüßt und ihr Fortschritt bleibt unverändert.", actions: ["lernen:test"] };
+  // Die Begrüßung macht die Lernecke selbst, weil nur sie weiß, wer am Gerät ist (Carla oder Kevin).
+  if (U(/\b(scann|scanne|scannen|fotografier|einlesen|abfotografieren)\w*/).test(t)) return { answer: "", actions: ["lernen:scannen"] };
+  if (U(/\b(frag|fragen|abfragen|abfrage|prüf|pruef|test)\w*/).test(t)) return { answer: "", actions: ["lernen:abfragen"] };
+  if (U(/\b(plan|lernplan)\b/).test(t)) return { answer: "", actions: ["lernen:plan"] };
+  return { answer: "", actions: ["lernen:start"] };
 }
 
 // ---------- Server-Routen ----------
@@ -569,7 +589,7 @@ export function lernenRouten(app, asyncRoute) {
   app.patch("/api/lernen/stapel/:sid/karte/:kid", (req, res) => res.json(karteAendern(req.params.sid, req.params.kid, req.body || {}) || {}));
   app.delete("/api/lernen/stapel/:sid/karte/:kid", (req, res) => res.json({ ok: karteLoeschen(req.params.sid, req.params.kid) }));
   app.post("/api/lernen/text", (req, res) => res.json(kartenAusText(String(req.body?.text || "").slice(0, 30000))));
-  app.post("/api/lernen/scan", asyncRoute(async (req, res) => { try { res.json(await scannen(req.body?.image, { ocr: req.body?.ocr !== false })); } catch (err) { fehler(res, err); } }));
+  app.post("/api/lernen/scan", asyncRoute(async (req, res) => { try { res.json(await scannen(req.body?.image, { ocr: req.body?.ocr !== false, spiegeln: req.body?.spiegeln === true })); } catch (err) { fehler(res, err); } }));
   app.get("/api/lernen/bild/:id", (req, res) => { const p = bildDatei(req.params.id); return p ? res.sendFile(p) : res.status(404).end(); });
   app.post("/api/lernen/pruefen", (req, res) => {
     const { stapel, karte, antwort, reihenfolge } = req.body || {};

@@ -1,5 +1,6 @@
 // Fridays kostenlose Texterkennung auf dem Mac (Apple Vision, auch für Handschrift).
-// Aufruf: vision-ocr <bild.jpg>  → gibt den erkannten Text Zeile für Zeile aus.
+// Aufruf: vision-ocr <bild.jpg> [--spiegeln]  → gibt den erkannten Text Zeile für Zeile aus.
+// --spiegeln: Bild vorher waagerecht spiegeln (Frontkamera am Mac liefert manchmal Spiegelschrift).
 import Foundation
 import Vision
 import AppKit
@@ -16,7 +17,8 @@ anfrage.usesLanguageCorrection = true
 anfrage.recognitionLanguages = ["de-DE", "en-US"]
 if #available(macOS 13.0, *) { anfrage.automaticallyDetectsLanguage = false }
 do {
-  try VNImageRequestHandler(cgImage: cg, options: [:]).perform([anfrage])
+  let richtung: CGImagePropertyOrientation = args.contains("--spiegeln") ? .upMirrored : .up
+  try VNImageRequestHandler(cgImage: cg, orientation: richtung, options: [:]).perform([anfrage])
 } catch {
   FileHandle.standardError.write("Fehler: \(error)\n".data(using: .utf8)!)
   exit(3)

@@ -10,7 +10,18 @@ Ein eigener Lernbereich nur für Carla. Friday scannt Lernkarten, speichert sie 
 - Auf Carlas eigenem Handy: in der Lernecke unten den Haken „Auf diesem Gerät immer direkt mit der Lernecke starten“ setzen.
   Dann geht Friday dort immer gleich in die Lernecke (gilt nur für dieses Gerät).
 
-Beim allerersten Mal stellt Friday sich vor:
+## Carla oder Kevin?
+
+Friday kann im Browser Stimmen nicht zuverlässig auseinanderhalten (die Spracherkennung liefert nur den Text,
+nicht die Stimme). Darum merkt sich **jedes Gerät, wem es gehört**:
+
+- Beim ersten Öffnen auf einem Gerät fragt die Lernecke: „Ich bin Carla“ oder „Ich bin Kevin“ (Haken „merken“).
+- **Kevin-Testmodus**: keine Begrüßung, Abfrage-Ergebnisse zählen nicht für Carlas Fortschritt. Gescannte und
+  bearbeitete Karten werden aber gespeichert (so kann Kevin Karten für Carla vorbereiten).
+- Ändern: auf der Startseite der Lernecke „Dieses Gerät gehört: …“ oder oben „Als Carla starten“.
+- Per Stimme: „Friday, Lernmodus testen“ startet immer den Testmodus.
+
+Beim allerersten Mal (als Carla) stellt Friday sich vor:
 „Hi Carla, ich bin Friday, die künstliche Assistentin von Kevin. Er hat mich gebeten, dir beim Lernen zu helfen. Was wollen wir machen: Soll ich dich abfragen, oder soll ich dir generell beim Lernen helfen?“
 Ab dem zweiten Mal: „Hi Carla, freut mich, dass du da bist. Wie kann ich dir beim Lernen helfen?“
 Carla kann dann einfach „abfragen“, „lernen“ oder „scannen“ sagen.
@@ -23,6 +34,10 @@ Carla kann dann einfach „abfragen“, „lernen“ oder „scannen“ sagen.
    Auch „Begriff: Erklärung“ pro Zeile oder „Frage: … / Antwort: …“ klappt.
 3. **Karteikarte (vorne + hinten)**: erst die Vorderseite fotografieren, dann die Rückseite, dann „Karte übernehmen“.
 4. Karten kurz prüfen (man kann alles korrigieren), Stapel wählen oder neu benennen, **Speichern**.
+
+**Am Mac (nur Frontkamera):** „🎥 Live-Kamera (Mac)“ → Karte vor die Kamera halten → „📸 Aufnehmen“.
+In der Vorschau ist die Schrift spiegelverkehrt (wie bei FaceTime), das ist normal. Friday erkennt Spiegelschrift
+auch selbst und dreht sie um. Falls doch Buchstabensalat kommt: „⇋ Spiegelverkehrt? Andersrum lesen“.
 
 Die Texterkennung ist kostenlos: Am Mac liest Apples Schrifterkennung (kann auch Handschrift).
 Beim allerersten Scan richtet der Mac sie einmal ein, das dauert ca. 40 Sekunden.

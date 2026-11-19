@@ -511,7 +511,9 @@
     try {
       const res = await api("/api/chat", { method: "POST", body: JSON.stringify(body) });
       const data = await res.json();
-      let answer = data.answer || data.error || "Keine Antwort.";
+      // Lernecke: Begrüßung macht das Fenster selbst (es weiß, ob Carla oder Kevin da ist), darum hier ohne Text.
+      const stillLernen = !data.answer && !data.error && data.actions?.some((a) => typeof a === "string" && a.startsWith("lernen"));
+      let answer = data.answer || data.error || (stillLernen ? "" : "Keine Antwort.");
       const hat = (a) => data.actions?.includes(a);
       window.FridayAuftrag?.ende(res.ok && !data.error);
       // Friday hat ein Dokument oder einen Fragebogen erstellt: gleich zeigen.
@@ -524,7 +526,7 @@
       // Nur vorlesen: Bei erfolgreicher Antwort und aktivem Vorlesen keinen Text zeigen.
       const voiceOn = $("voice-toggle").checked && "speechSynthesis" in window;
       if (data.answer && voiceOn) addSpeaking();
-      else addMessage("friday", answer);
+      else if (answer) addMessage("friday", answer);
       busy = false;
       if (data.actions?.some((a) => a === "set_reminder")) { refreshReminders(); window.FridayHud?.refresh(); }
       if (data.actions?.includes("werkstatt")) window.FridayWerkstatt?.showLatest();
@@ -583,7 +585,7 @@
       clearSpeaking();
       // Carlas Lernecke (v1.108.0): erst begrüßen bzw. ansagen, dann öffnet sich die Lernecke und hört selbst zu.
       const lernA = aktion("lernen");
-      if (lernA) window.FridayLernen?.open({ modus: lernA.split(":")[1] || "start", begruesst: true, stimme: Boolean(opts.stimme) });
+      if (lernA) window.FridayLernen?.open({ modus: lernA.split(":")[1] || "start", stimme: Boolean(opts.stimme) });
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
       // Gesprächsmodus: Kam der Befehl per Stimme, hört Friday danach weiter zu, ohne "Friday" davor.
       const weiter = !bargeFang && !unterbrochenEben() && !lernA && !window.FridayLernen?.offen() && (hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer));

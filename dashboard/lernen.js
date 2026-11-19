@@ -35,9 +35,19 @@
         <button class="hf-tab" data-tab="plan">📅 Lernplan</button>
       </div>
       <div id="ln-status" class="hf-status"></div>
+      <div id="ln-testband" class="ln-test" style="display:none"><span>🧪 <b>Kevin-Testmodus:</b> Carla wird nicht begrüßt, Abfrage-Ergebnisse zählen nicht für ihren Fortschritt. Gescannte Karten werden aber gespeichert.</span>
+        <button class="hf-mini" data-wer-wahl="carla" type="button">Als Carla starten</button></div>
 
       <section data-seite="start">
-        <div class="ln-gruss hf-karte">
+        <div id="ln-wer-k" class="hf-karte" style="display:none">
+          <h3>Wer ist da?</h3>
+          <div class="ln-wer">
+            <button class="ln-kachel" data-wer-wahl="carla" type="button"><b>👩</b><span>Ich bin Carla</span><small>Friday begrüßt dich und merkt sich deinen Fortschritt</small></button>
+            <button class="ln-kachel" data-wer-wahl="kevin" type="button"><b>🧑</b><span>Ich bin Kevin</span><small>Nur testen oder verbessern, ohne Begrüßung</small></button>
+          </div>
+          <label class="hf-hinweis ln-check" style="margin-top:8px"><input type="checkbox" id="ln-wer-merken" checked> Auf diesem Gerät merken</label>
+        </div>
+        <div class="ln-gruss hf-karte" id="ln-gruss-k">
           <div class="ln-gruss-text" id="ln-gruss">Hi ${NAME} …</div>
           <div class="ln-gross">
             <button class="ln-kachel" data-go="abfragen"><b>🎯</b><span>Abfragen</span><small>Ich lese vor, du antwortest</small></button>
@@ -51,7 +61,10 @@
         </div>
         <div id="ln-heute" class="hf-karte" style="display:none"><h3>Heute dran</h3><div id="ln-heute-liste"></div></div>
         <div id="ln-stand" class="hf-hinweis"></div>
-        <label class="hf-hinweis ln-check"><input type="checkbox" id="ln-immer"> Auf diesem Gerät immer direkt mit der Lernecke starten</label>
+        <div class="hf-reihe hf-hinweis">
+          <label class="ln-check">Dieses Gerät gehört: <select id="ln-geraet" class="hf-input" style="width:auto"><option value="">jedes Mal fragen</option><option value="carla">Carla</option><option value="kevin">Kevin (Testmodus)</option></select></label>
+          <label class="ln-check"><input type="checkbox" id="ln-immer"> Auf diesem Gerät immer direkt mit der Lernecke starten</label>
+        </div>
       </section>
 
       <section data-seite="scannen" class="hidden">
@@ -65,10 +78,16 @@
             <div class="hf-reihe">
               <label class="hf-btn haupt">📷 Foto aufnehmen<input id="ln-kamera" type="file" accept="image/*" capture="environment" hidden></label>
               <label class="hf-btn">🖼 Aus Fotos<input id="ln-datei" type="file" accept="image/*" hidden></label>
+              <button id="ln-cam-an" class="hf-btn" type="button">🎥 Live-Kamera (Mac)</button>
+            </div>
+            <div id="ln-cam-box" class="ln-cam-box" style="display:none">
+              <video id="ln-cam" autoplay playsinline muted></video>
+              <div class="hf-hinweis" id="ln-cam-hinweis"></div>
+              <div class="hf-reihe"><button id="ln-cam-foto" class="hf-btn haupt" type="button">📸 Aufnehmen</button><button id="ln-cam-wechsel" class="hf-btn leise" type="button">🔄 Andere Kamera</button><button id="ln-cam-zu" class="hf-btn leise" type="button">✕ Kamera aus</button></div>
             </div>
             <img id="ln-vor" alt="" class="ln-vor" style="display:none">
             <div class="hf-balken" style="margin-top:10px"><i id="ln-ocr" style="width:0%"></i></div>
-            <div class="hf-reihe" style="margin-top:10px"><button id="ln-ki-lesen" class="hf-btn ki" type="button" disabled>🤖 KI liest die Schrift</button></div>
+            <div class="hf-reihe" style="margin-top:10px"><button id="ln-spiegeln" class="hf-btn leise" type="button" disabled title="Falls die Schrift spiegelverkehrt war">⇋ Spiegelverkehrt? Andersrum lesen</button><button id="ln-ki-lesen" class="hf-btn ki" type="button" disabled>🤖 KI liest die Schrift</button></div>
             <p class="hf-hinweis">Tipp: gerade von oben, gutes Licht, ganze Karte im Bild. Die Texterkennung ist kostenlos (am Mac mit Apple-Schrifterkennung, die auch Handschrift liest). Klappt es bei krakeliger Schrift schlecht, nimm „KI liest die Schrift“.</p>
           </div>
           <div class="hf-karte">
@@ -179,6 +198,7 @@
     w.$$("[data-tab]").forEach((b) => b.classList.toggle("an", b.dataset.tab === t));
     w.$$("[data-seite]").forEach((s) => s.classList.toggle("hidden", s.dataset.seite !== t));
     if (t !== "abfragen" && quiz?.laeuft) quizEnde(true);
+    if (t !== "scannen") kameraAus();
     if (t === "karten") zeichneStapel();
     if (t === "hilfe") hilfeLaden();
     status("");
@@ -233,23 +253,57 @@
     zeichneStart();
     return info;
   }
+  // Wer ist am Gerät? Friday kann Stimmen im Browser nicht zuverlässig unterscheiden, darum merkt sich
+  // jedes Gerät, wem es gehört (oder fragt kurz). Kevin landet im Testmodus: keine Begrüßung, nichts zählt.
+  let test = false;
+  let letzteOpts = {};
+  const geraetWer = () => lsGet("lernecke_wer") || "";
+  function zeigeTestband() {
+    $("#ln-testband").style.display = test ? "" : "none";
+    $("#ln-geraet").value = geraetWer();
+  }
   async function oeffnen(o) {
+    letzteOpts = o;
     mikroBelegen(false);
+    const wer = o.wer || (o.modus === "test" ? "kevin" : geraetWer());
+    test = wer === "kevin";
     zeigeTab(o.modus === "abfragen" ? "abfragen" : o.modus === "scannen" ? "scannen" : o.modus === "plan" ? "plan" : "start");
+    zeigeTestband();
+    $("#ln-wer-k").style.display = "none";
+    $("#ln-gruss-k").style.display = "";
     try {
-      if (!o.begruesst) {
-        const g = await json("/api/lernen/start", { body: {} });
-        info = g;
-        fuelleAuswahl();
-        zeichneStart(g.text);
-        if (o.modus === "start" || !o.modus) { if (!g.wiederholt) { await sag(g.text); waehleMitStimme(); } }
-      } else {
+      if (!wer) {
+        // Unbekanntes Gerät: erst fragen, dann (bei Carla) begrüßen.
         await laden();
+        zeigeTab("start");
+        $("#ln-wer-k").style.display = ""; $("#ln-gruss-k").style.display = "none";
+        return;
       }
+      if (test) {
+        await laden();
+        zeichneStart("Hi Kevin, du bist im Testmodus. Carla wird nicht begrüßt und ihr Fortschritt bleibt, wie er ist.");
+        if (o.modus === "abfragen") quizStart();
+        return;
+      }
+      const g = await json("/api/lernen/start", { body: {} });
+      info = g;
+      fuelleAuswahl();
+      zeichneStart(g.text);
+      const startseite = !o.modus || o.modus === "start" || o.modus === "carla";
+      if (startseite && !g.wiederholt) { await sag(g.text); waehleMitStimme(); }
+      else if (startseite && o.stimme) waehleMitStimme();
       if (o.modus === "abfragen") quizStart();
-      else if (o.begruesst && (o.modus === "begruesst" || o.modus === "start") && o.stimme) waehleMitStimme();
     } catch (err) { status(err.message, true); }
   }
+  w.sheet.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-wer-wahl]");
+    if (!b) return;
+    const wer = b.dataset.werWahl;
+    if (b.closest("#ln-wer-k") && $("#ln-wer-merken").checked) lsSet("lernecke_wer", wer);
+    const modus = letzteOpts.modus && !["test", "start", "carla"].includes(letzteOpts.modus) ? letzteOpts.modus : "start";
+    oeffnen({ ...letzteOpts, wer, modus });
+  });
+  $("#ln-geraet").addEventListener("change", (e) => { lsSet("lernecke_wer", e.target.value); status(e.target.value ? `Gemerkt: Dieses Gerät gehört ${e.target.value === "kevin" ? "Kevin (Testmodus)" : "Carla"}.` : "Friday fragt auf diesem Gerät jedes Mal."); });
   function zeichneStart(gruss) {
     const erstes = !info.profil?.besuche || info.profil.besuche <= 1;
     $("#ln-gruss").textContent = gruss || (erstes
@@ -263,7 +317,11 @@
       : "Noch keine Karten. Fang mit „Neue Karten scannen“ an.";
     $("#ln-immer").checked = lsGet("lernecke_start") === "1";
   }
-  $("#ln-immer").addEventListener("change", (e) => lsSet("lernecke_start", e.target.checked ? "1" : "0"));
+  $("#ln-immer").addEventListener("change", (e) => {
+    lsSet("lernecke_start", e.target.checked ? "1" : "0");
+    // Wer die Lernecke immer direkt startet, ist Carla (auf ihrem Gerät).
+    if (e.target.checked && !geraetWer()) { lsSet("lernecke_wer", "carla"); $("#ln-geraet").value = "carla"; }
+  });
   $("#ln-heute-liste").addEventListener("click", (e) => {
     const b = e.target.closest("[data-heute]");
     if (!b) return;
@@ -370,10 +428,17 @@
     const datei = e.target.files?.[0];
     e.target.value = "";
     if (!datei) return;
+    try { await bildLesen(await verkleinern(datei)); } catch (err) { status(err.message, true); }
+  }
+  const spiegelCanvas = (c) => { const g = document.createElement("canvas"); g.width = c.width; g.height = c.height; const x = g.getContext("2d"); x.translate(c.width, 0); x.scale(-1, 1); x.drawImage(c, 0, 0); return g; };
+  // Grobe Prüfung wie auf dem Server: sieht der Text nach echten Wörtern aus?
+  const guete = (t) => { const w = String(t || "").split(/\s+/).filter((x) => /[A-Za-zÄÖÜäöüß]/.test(x)); if (!w.length) return 0; const gut = w.filter((x) => { const b = x.replace(/[^A-Za-zÄÖÜäöüß]/g, ""); return b.length >= 2 && /[aeiouäöüy]/i.test(b) && b.length / x.length > 0.7; }).length; return (gut / w.length) * Math.min(1, String(t).replace(/[^A-Za-zÄÖÜäöüß]/g, "").length / 12); };
+  /** Bild (Canvas) lesen. nochmal = dasselbe Bild gespiegelt erneut lesen und das letzte Ergebnis ersetzen. */
+  async function bildLesen(c, { nochmal = false } = {}) {
     const bar = $("#ln-ocr");
     bar.classList.add("laeuft");
     try {
-      const c = await verkleinern(datei);
+      scan.canvas = c;
       const daten = c.toDataURL("image/jpeg", 0.86);
       $("#ln-vor").src = daten; $("#ln-vor").style.display = "block";
       status("Lese die Schrift …");
@@ -381,24 +446,71 @@
       const r = await json("/api/lernen/scan", { body: { image: { mediaType: "image/jpeg", data: daten.split(",")[1] } } });
       scan.bild = r.bild;
       $("#ln-ki-lesen").disabled = false;
+      $("#ln-spiegeln").disabled = false;
       let text = r.text;
-      if (text == null) { status("Lese im Browser (beim ersten Mal lädt die Texterkennung kurz) …"); text = await browserOcr(c, bar); }
+      if (text == null) {
+        status("Lese im Browser (beim ersten Mal lädt die Texterkennung kurz) …");
+        text = await browserOcr(c, bar);
+        if (guete(text) < 0.6) { const t2 = await browserOcr(spiegelCanvas(c), bar).catch(() => ""); if (guete(t2) > guete(text) + 0.1) { text = t2; r.gespiegelt = true; } }
+        r.karten = null;
+      }
       bar.style.width = "100%";
       text = String(text || "").trim();
       if (!text) { status("Ich konnte keinen Text erkennen. Versuch's mit mehr Licht, oder nimm „KI liest die Schrift“.", true); return; }
+      const spiegelHinweis = r.gespiegelt ? " Die Schrift war spiegelverkehrt, ich habe sie umgedreht." : "";
       if (scan.modus === "karte") {
         const fl = text.replace(/\n{2,}/g, "\n").trim();
-        if (!$("#ln-vorne").value.trim()) { $("#ln-vorne").value = fl.replace(/\n/g, " "); status("Vorderseite gelesen. Jetzt umdrehen und die Rückseite fotografieren."); sag("Vorderseite gelesen. Jetzt die Rückseite."); }
-        else { $("#ln-hinten").value = fl; status("Rückseite gelesen. Prüf kurz und tipp auf „Karte übernehmen“."); }
+        const seite = nochmal ? scan.letzteSeite : !$("#ln-vorne").value.trim() ? "vorne" : "hinten";
+        scan.letzteSeite = seite;
+        if (seite === "vorne") { $("#ln-vorne").value = fl.replace(/\n/g, " "); status(`Vorderseite gelesen.${spiegelHinweis} Jetzt umdrehen und die Rückseite fotografieren.`); if (!nochmal) sag("Vorderseite gelesen. Jetzt die Rückseite."); }
+        else { $("#ln-hinten").value = fl; status(`Rückseite gelesen.${spiegelHinweis} Prüf kurz und tipp auf „Karte übernehmen“.`); }
         seiteHinweis();
       } else {
         $("#ln-text").value = text;
-        status(r.quelle === "mac" ? "Text erkannt (Mac-Schrifterkennung)." : "Text erkannt.");
+        status(`${r.quelle === "mac" ? "Text erkannt (Mac-Schrifterkennung)." : "Text erkannt."}${spiegelHinweis}`);
         await erkennen(r.karten ? r : null);
       }
-    } catch (err) { status(err.message, true); }
-    finally { bar.classList.remove("laeuft"); setTimeout(() => { bar.style.width = "0%"; }, 1500); }
+    } finally { bar.classList.remove("laeuft"); setTimeout(() => { bar.style.width = "0%"; }, 1500); }
   }
+  $("#ln-spiegeln").addEventListener("click", async () => {
+    if (!scan.canvas) return;
+    try { await bildLesen(spiegelCanvas(scan.canvas), { nochmal: true }); } catch (err) { status(err.message, true); }
+  });
+
+  // ---------- Live-Kamera (für den Mac mit Frontkamera, geht auch am iPhone) ----------
+  let camStream = null, camRichtung = "user";
+  async function kameraAn() {
+    if (!navigator.mediaDevices?.getUserMedia) { status("Dieser Browser kann die Kamera nicht direkt nutzen. Nimm „Foto aufnehmen“.", true); return; }
+    kameraAus();
+    try {
+      camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: camRichtung, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+      const v = $("#ln-cam");
+      v.srcObject = camStream;
+      await v.play().catch(() => {});
+      // Vorschau wie ein Spiegel (natürlicher beim Hinhalten); das Foto selbst ist ungespiegelt.
+      const vorn = (camStream.getVideoTracks()[0]?.getSettings?.().facingMode || camRichtung) !== "environment";
+      v.classList.toggle("ln-spiegel", vorn);
+      $("#ln-cam-box").style.display = "";
+      $("#ln-cam-hinweis").textContent = vorn ? "Halt die Karte vor die Kamera. In der Vorschau ist die Schrift spiegelverkehrt, das ist normal. Friday liest sie richtig herum." : "Karte ins Bild, dann „Aufnehmen“.";
+    } catch (err) { status(err.name === "NotAllowedError" ? "Kamera nicht erlaubt. Bitte im Browser die Kamera freigeben." : `Kamera geht nicht: ${err.message}`, true); }
+  }
+  function kameraAus() {
+    if (camStream) camStream.getTracks().forEach((t) => t.stop());
+    camStream = null;
+    const box = $("#ln-cam-box"); if (box) box.style.display = "none";
+  }
+  $("#ln-cam-an").addEventListener("click", kameraAn);
+  $("#ln-cam-zu").addEventListener("click", kameraAus);
+  $("#ln-cam-wechsel").addEventListener("click", () => { camRichtung = camRichtung === "user" ? "environment" : "user"; kameraAn(); });
+  $("#ln-cam-foto").addEventListener("click", async () => {
+    const v = $("#ln-cam");
+    if (!v.videoWidth) return;
+    const f = Math.min(1, 2200 / Math.max(v.videoWidth, v.videoHeight));
+    const c = document.createElement("canvas");
+    c.width = Math.round(v.videoWidth * f); c.height = Math.round(v.videoHeight * f);
+    c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
+    try { await bildLesen(c); } catch (err) { status(err.message, true); }
+  });
   $("#ln-kamera").addEventListener("change", fotoDa);
   $("#ln-datei").addEventListener("change", fotoDa);
   $("#ln-ki-lesen").addEventListener("click", async () => {
@@ -693,7 +805,7 @@
     const k = quiz.offen, erg = quiz.ergebnis, eintrag = quiz.liste[quiz.i];
     quiz.offen = null;
     quiz[erg]++;
-    try { await json("/api/lernen/bewerten", { body: { stapel: k.sid, karte: k.id, ergebnis: erg } }); } catch (err) { status(err.message, true); }
+    if (!test) { try { await json("/api/lernen/bewerten", { body: { stapel: k.sid, karte: k.id, ergebnis: erg } }); } catch (err) { status(err.message, true); } }
     // Falsch oder nur halb: kommt in dieser Runde nach ein paar Karten nochmal (höchstens zweimal).
     if (erg !== "richtig" && eintrag.nochmal < 2) quiz.liste.splice(Math.min(quiz.liste.length, quiz.i + 4), 0, { k, nochmal: eintrag.nochmal + 1 });
     quiz.i++;
@@ -721,12 +833,12 @@
     q.nr++;
     hoerAuf();
     if (eingabe) { const f = eingabe; eingabe = null; f({ typ: "ende" }); }
-    if (q.offen) { q[q.ergebnis]++; json("/api/lernen/bewerten", { body: { stapel: q.offen.sid, karte: q.offen.id, ergebnis: q.ergebnis } }).catch(() => {}); q.offen = null; }
+    if (q.offen) { q[q.ergebnis]++; if (!test) json("/api/lernen/bewerten", { body: { stapel: q.offen.sid, karte: q.offen.id, ergebnis: q.ergebnis } }).catch(() => {}); q.offen = null; }
     mikroBelegen(false);
     const sum = q.richtig + q.teilweise + q.falsch;
     $("#ln-q").style.display = "none"; $("#ln-q-setup").style.display = "";
-    if (sum) json("/api/lernen/sitzung", { body: { stapel: q.sid === "alle" ? "" : q.sid, richtig: q.richtig, teilweise: q.teilweise, falsch: q.falsch, dauer: (Date.now() - q.start) / 1000 } }).catch(() => {});
-    const text = !sum ? "Okay, wir hören auf." : q.falsch + q.teilweise === 0 ? `Super, ${NAME}! Alle ${sum} richtig.` : `Fertig! ${q.richtig} von ${sum} richtig${q.teilweise ? `, ${q.teilweise} fast` : ""}. Die anderen frage ich dich morgen nochmal ab.`;
+    if (sum && !test) json("/api/lernen/sitzung", { body: { stapel: q.sid === "alle" ? "" : q.sid, richtig: q.richtig, teilweise: q.teilweise, falsch: q.falsch, dauer: (Date.now() - q.start) / 1000 } }).catch(() => {});
+    const text = test && sum ? `Test fertig: ${q.richtig} von ${sum} richtig. Im Testmodus wird nichts gespeichert.` : !sum ? "Okay, wir hören auf." : q.falsch + q.teilweise === 0 ? `Super, ${NAME}! Alle ${sum} richtig.` : `Fertig! ${q.richtig} von ${sum} richtig${q.teilweise ? `, ${q.teilweise} fast` : ""}. Die anderen frage ich dich morgen nochmal ab.`;
     const e = $("#ln-q-ende");
     e.style.display = "";
     e.innerHTML = `<h3>Ergebnis</h3><p style="font-size:17px;margin:4px 0 10px">${esc(text)}</p>
@@ -868,7 +980,7 @@
 
   // Fenster zu → Mikrofon wieder freigeben, Abfrage beenden.
   new MutationObserver(() => {
-    if (!w.offen()) { if (quiz?.laeuft) quizEnde(true); hoerAuf(); mikroBelegen(false); }
+    if (!w.offen()) { if (quiz?.laeuft) quizEnde(true); hoerAuf(); mikroBelegen(false); kameraAus(); }
   }).observe(w.sheet, { attributes: true, attributeFilter: ["class"] });
 
   // Direkt-Link /?lernen und „immer mit der Lernecke starten“.
@@ -902,6 +1014,11 @@
 .ln-kachel:hover { box-shadow: 0 0 22px color-mix(in srgb, var(--cyan) 40%, transparent); }
 .ln-kachel b { font-size: 30px; } .ln-kachel span { font-size: 17px; font-weight: 700; } .ln-kachel small { font-size: 12.5px; color: var(--muted); }
 .ln-check { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--muted); cursor: pointer; }
+.ln-cam-box { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.ln-cam-box video { width: 100%; max-height: 320px; object-fit: contain; background: #000; border-radius: 12px; border: 1px solid var(--u-rand, var(--cyan)); }
+.ln-cam-box video.ln-spiegel { transform: scaleX(-1); }
+.ln-test { border: 1px dashed #ffc44d; color: #ffc44d; border-radius: 12px; padding: 8px 12px; font-size: 13.5px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.ln-wer { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
 .ln-vor { max-width: 100%; max-height: 260px; margin-top: 10px; border-radius: 10px; border: 1px solid var(--u-rand-soft, var(--line)); }
 .ln-vz { align-items: flex-start; }
 .ln-vz .name { display: flex; flex-direction: column; gap: 6px; }
