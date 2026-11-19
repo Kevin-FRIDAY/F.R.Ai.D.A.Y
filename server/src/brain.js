@@ -17,6 +17,7 @@ import { quickCommand as weltQuick, vollbildQuick } from "./weltgespraech.js";
 import { quickCommand as satQuick } from "./satelliten.js";
 import { quickCommand as schiffQuick } from "./ships.js";
 import { quickCommand as flugQuick } from "./flugzeuge.js";
+import { quickCommand as tourQuick } from "./welttour.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 import { getSettings } from "./einstellungen.js";
 import { setzeAuftrag, auftragFertig, werkzeugName } from "./auftrag.js";
@@ -256,6 +257,8 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     try {
       const v = vollbildQuick(text);
       if (v) { actions.push(...v.actions); return finish(v.answer); }
+      const tq = tourQuick(text, channel);
+      if (tq) { actions.push(...tq.actions); return finish(tq.answer); }
       const sq = await satQuick(text).catch((err) => { console.error("Satelliten:", err.message); return null; });
       if (sq) { actions.push(...sq.actions); return finish(sq.answer); }
       const schq = schiffQuick(text);
