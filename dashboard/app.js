@@ -565,6 +565,12 @@
       if (satA) window.FridaySatelliten?.zeigeNr(Number(satA.slice(9)));
       else if (satG) window.FridaySatelliten?.gruppe(satG.slice(10));
       else if (hat("satelliten")) window.FridaySatelliten?.oeffne();
+      // Schiffe (v1.114.0)
+      const schiffA = data.actions?.find((a) => typeof a === "string" && a.startsWith("schiff:"));
+      const schiffG = data.actions?.find((a) => typeof a === "string" && a.startsWith("schiffgruppe:"));
+      if (schiffA) window.FridaySchiffe?.zeigeNr(Number(schiffA.slice(7)));
+      else if (schiffG) window.FridaySchiffe?.gruppe(schiffG.slice(13));
+      else if (hat("schiffe")) window.FridaySchiffe?.oeffne();
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       if (hat("archiv")) window.FridayArchiv?.open();
       if (hat("oekosystem")) window.FridayOekosystem?.open();

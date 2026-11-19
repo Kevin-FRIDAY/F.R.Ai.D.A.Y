@@ -3020,7 +3020,7 @@ html.perf-fluessig .lage-lb { backdrop-filter: none; background: rgba(10,6,3,.9)
 /* ---------- Satelliten im Weltgeschehen (v1.113.0) ---------- */
 .lage-satcanvas { position: absolute; pointer-events: none; z-index: 2; }
 .sat-filter-btn { font-size: 11px; padding: 3px 9px; margin: 2px 0 0; }
-#cnt-sats { font-style: normal; opacity: .75; margin-left: 4px; }
+#cnt-sats, .cnt-ebene { font-style: normal; opacity: .75; margin-left: 4px; }
 .sat-panel, .lage-satcard {
   position: absolute; z-index: 6; background: rgba(12, 7, 3, .9); border: 1px solid var(--u-kante, var(--cyan));
   border-radius: 14px; padding: 12px 14px; color: var(--text); backdrop-filter: blur(12px);

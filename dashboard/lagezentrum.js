@@ -989,6 +989,8 @@
   // ---------- Schiffe (AIS, braucht Gratis-Schlüssel) ----------
   let shipAktiv = true;
   async function loadShipsFor(params) {
+    // Seit v1.114.0 zeigt schiffe.js ALLE Schiffe weltweit auf der Globus-Leinwand.
+    if (window.FridaySchiffe) return;
     const g = $("lage-ships");
     if (g) g.replaceChildren();
     if (!$("lage-ships-on")?.checked) return;

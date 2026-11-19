@@ -269,20 +269,16 @@
   }
 
   // ---------- Antippen ----------
-  let druck = null;
+  // Antippen: über FridayLeinwand, damit Satelliten, Schiffe und Flugzeuge sich nicht in die Quere kommen.
+  let tippBereit = false;
   function antippenEinrichten() {
-    const svg = $("lage-map");
-    if (!svg || svg.dataset.satTipp) return;
-    svg.dataset.satTipp = "1";
-    svg.addEventListener("pointerdown", (e) => { druck = { x: e.clientX, y: e.clientY }; }, true);
-    svg.addEventListener("click", (e) => {
-      if (!an() || !pos || !sx || !canvas) return;
-      if (druck && Math.hypot(e.clientX - druck.x, e.clientY - druck.y) > 6) return; // war Ziehen
-      // Andere Marker (Erdbeben, Feuer …) haben Vorrang
-      if (e.target.closest?.(".quake, .fire, .volcano, .storm, .eevent, .city, .airport, .plant, .iss, .lb-punkt, .ship, .plane")) return;
+    if (tippBereit || !window.FridayLeinwand || !$("lage-map")) return;
+    tippBereit = true;
+    window.FridayLeinwand.registriere({ kandidat: (cx, cy, radiusCss) => {
+      if (!an() || !pos || !sx || !canvas) return null;
       const r = canvas.getBoundingClientRect();
-      const px = (e.clientX - r.left) * dpr, py = (e.clientY - r.top) * dpr;
-      const radius = (e.pointerType === "touch" || matchMedia("(pointer: coarse)").matches ? 18 : 10) * dpr;
+      const px = (cx - r.left) * dpr, py = (cy - r.top) * dpr;
+      const radius = radiusCss * dpr;
       let best = -1, bd = radius * radius;
       for (let i = 0; i < sx.length; i++) {
         if (!sichtbar[i]) continue;
@@ -291,10 +287,10 @@
         const w = d * (sichtbar[i] === 2 ? 1 : 1.6) * (sats[i].gruppe === "station" ? 0.5 : 1);
         if (w < bd) { bd = w; best = i; }
       }
-      if (best < 0) return;
-      e.stopPropagation(); e.preventDefault();
-      waehle(best, { fliegen: false });
-    }, true);
+      if (best < 0) return null;
+      // Satelliten leicht benachteiligt, damit Schiffe/Flugzeuge darunter auch antippbar sind
+      return { d2: (bd / (dpr * dpr)) * 1.3, nimm: () => waehle(best, { fliegen: false }) };
+    } });
   }
 
   function waehle(i, { fliegen = true } = {}) {
