@@ -326,32 +326,72 @@ const WEATHER_CODES = {
   95: "Gewitter", 96: "Gewitter mit Hagel", 99: "Gewitter mit Hagel",
 };
 
+// Wetter wird 10 Minuten zwischengespeichert (schneller, schont die Dienste). Fällt das Netz aus,
+// nimmt Friday bis zu 6 Stunden den letzten bekannten Stand und sagt dazu, wie alt er ist.
+const wetterCache = new Map(); // ort -> { zeit, daten }
+const ortCache = new Map(); // ort -> { name, latitude, longitude }
+const WETTER_FRISCH = 10 * 60 * 1000;
+const WETTER_NOTFALL = 6 * 3600 * 1000;
+
+async function holeJson(url, versuche = 2) {
+  let letzter;
+  for (let i = 0; i < versuche; i++) {
+    try {
+      const r = await fetch(url, { signal: AbortSignal.timeout(10000) });
+      if (!r.ok) throw new Error(`Wetterdienst antwortet mit ${r.status}`);
+      return await r.json();
+    } catch (err) {
+      letzter = err;
+      if (i + 1 < versuche) await new Promise((ok) => setTimeout(ok, 600));
+    }
+  }
+  throw letzter;
+}
+
 export async function getWeather(city = config.city) {
-  const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?count=1&language=de&name=${encodeURIComponent(city)}`, { signal: AbortSignal.timeout(12000) }).then((r) => r.json());
-  const place = geo.results?.[0];
-  if (!place) return { error: `Ort "${city}" nicht gefunden` };
-  const url =
-    `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}` +
-    `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m` +
-    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=3&timezone=auto`;
-  const w = await fetch(url, { signal: AbortSignal.timeout(12000) }).then((r) => r.json());
-  return {
-    ort: place.name,
-    jetzt: {
-      temperatur: w.current.temperature_2m,
-      gefuehlt: w.current.apparent_temperature,
-      wetter: WEATHER_CODES[w.current.weather_code] ?? "unbekannt",
-      wind_kmh: w.current.wind_speed_10m,
-      luftfeuchte: w.current.relative_humidity_2m,
-    },
-    tage: w.daily.time.map((day, i) => ({
-      tag: day,
-      wetter: WEATHER_CODES[w.daily.weather_code[i]] ?? "unbekannt",
-      max: w.daily.temperature_2m_max[i],
-      min: w.daily.temperature_2m_min[i],
-      regen_prozent: w.daily.precipitation_probability_max[i],
-    })),
-  };
+  const schluessel = String(city || "").trim().toLowerCase();
+  const alt = wetterCache.get(schluessel);
+  if (alt && Date.now() - alt.zeit < WETTER_FRISCH) return alt.daten;
+  try {
+    let place = ortCache.get(schluessel);
+    if (!place) {
+      const geo = await holeJson(`https://geocoding-api.open-meteo.com/v1/search?count=1&language=de&name=${encodeURIComponent(city)}`);
+      place = geo.results?.[0];
+      if (!place) return { error: `Ort "${city}" nicht gefunden` };
+      ortCache.set(schluessel, { name: place.name, latitude: place.latitude, longitude: place.longitude });
+    }
+    const url =
+      `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}` +
+      `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=3&timezone=auto`;
+    const w = await holeJson(url);
+    if (!w?.current || !Array.isArray(w?.daily?.time)) throw new Error(w?.reason || "Wetterdienst lieferte keine Daten");
+    const daten = {
+      ort: place.name,
+      jetzt: {
+        temperatur: w.current.temperature_2m,
+        gefuehlt: w.current.apparent_temperature,
+        wetter: WEATHER_CODES[w.current.weather_code] ?? "unbekannt",
+        wind_kmh: w.current.wind_speed_10m,
+        luftfeuchte: w.current.relative_humidity_2m,
+      },
+      tage: w.daily.time.map((day, i) => ({
+        tag: day,
+        wetter: WEATHER_CODES[w.daily.weather_code?.[i]] ?? "unbekannt",
+        max: w.daily.temperature_2m_max?.[i],
+        min: w.daily.temperature_2m_min?.[i],
+        regen_prozent: w.daily.precipitation_probability_max?.[i],
+      })),
+    };
+    wetterCache.set(schluessel, { zeit: Date.now(), daten });
+    return daten;
+  } catch (err) {
+    if (alt && Date.now() - alt.zeit < WETTER_NOTFALL) {
+      const min = Math.round((Date.now() - alt.zeit) / 60000);
+      return { ...alt.daten, stand_vor_minuten: min, hinweis: `Letzter bekannter Stand von vor ${min} Minuten (Wetterdienst gerade nicht erreichbar).` };
+    }
+    throw err;
+  }
 }
 
 // --- Protokolle ---

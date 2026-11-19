@@ -303,7 +303,11 @@
     f.setAttribute("sandbox", "allow-scripts allow-pointer-lock");
     f.setAttribute("allow", "autoplay; gamepad; fullscreen");
     f.setAttribute("title", titel || "Spiel");
-    f.srcdoc = html;
+    // Fehler-Melder: Stürzt das Spiel ab (z. B. schwarzes Bild), sagt Friday, was los ist, statt still zu bleiben.
+    const melder = "<script>(function(){var n=0;function m(t){if(n++<3)try{parent.postMessage({fridaySpielFehler:String(t).slice(0,200)},'*')}catch(e){}}" +
+      "window.addEventListener('error',function(e){m(e.message||'Unbekannter Fehler')});window.addEventListener('unhandledrejection',function(e){m(e.reason&&e.reason.message||e.reason)})})();<\/script>";
+    f.srcdoc = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, (k) => k + melder) : melder + html;
+    spielFrame = f;
     f.addEventListener("load", () => { try { f.focus(); f.contentWindow?.focus(); } catch { /* egal */ } });
     $("sp-rahmen").appendChild(f);
     $("sp-warten").classList.add("aus");
@@ -312,6 +316,12 @@
     b.classList.toggle("ohne-code", !codeAn && innerWidth > 900);
     b.classList.toggle("mit-code", codeAn);
   }
+  let spielFrame = null;
+  window.addEventListener("message", (e) => {
+    if (!spielFrame || e.source !== spielFrame.contentWindow || !e.data?.fridaySpielFehler) return;
+    hinweis(`Das Spiel meldet einen Fehler: ${e.data.fridaySpielFehler}. Mit Guthaben sag einfach: Mach das Spiel fehlerfrei.`, true);
+    status("⚠ Fehler im Spiel", "fehler");
+  });
   async function spielOeffnen(id) {
     oeffnen();
     stopPoll(); jobId = null; jobInfo = { status: "fertig" };

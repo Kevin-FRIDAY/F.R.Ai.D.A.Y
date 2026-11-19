@@ -1,5 +1,6 @@
 // F.R.Ai.D.A.Y System-Check: prüft alle wichtigen Dienste und Datenquellen.
 import { config } from "./config.js";
+import { telegramZustand } from "./telegram.js";
 import { isAgentOnline } from "./agent-hub.js";
 import { mailConfigured } from "./mail.js";
 import { shipsStatus } from "./ships.js";
@@ -61,7 +62,11 @@ export async function runSystemCheck() {
     // Postfach
     timed("iCloud-Postfach", async () => ({ ok: mailConfigured(), detail: mailConfigured() ? "verbunden" : "nicht verbunden" })),
     // Telegram
-    timed("Telegram", async () => ({ ok: Boolean(config.telegramToken), detail: config.telegramToken ? "eingerichtet" : "nicht eingerichtet" })),
+    timed("Telegram", async () => {
+      if (!config.telegramToken) return { ok: false, detail: "nicht eingerichtet" };
+      if (telegramZustand.problem) return { ok: false, detail: telegramZustand.problem };
+      return { ok: true, detail: telegramZustand.aktiv ? "Bot verbunden" : "eingerichtet" };
+    }),
     // Fernseher
     timed("Fernseher (Samsung)", async () => {
       const s = await tvStatus();

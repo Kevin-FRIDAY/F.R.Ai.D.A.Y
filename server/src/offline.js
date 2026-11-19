@@ -9,6 +9,7 @@ import { findCountry, getCountryNews, getOverview } from "./lagezentrum.js";
 import { isAgentOnline, sendToAgent } from "./agent-hub.js";
 import { getEnergie } from "./energie.js";
 import { extraAnswer, EXTRA_HILFE } from "./offline-extra.js";
+import { plusAnswer, plusNotfall, naechsteFeiertageOffline } from "./offline-plus.js";
 
 // JavaScript kennt bei \b nur englische Buchstaben. U() macht daraus echte Wortgrenzen (auch für ä, ö, ü, ß).
 const WB = "(?:(?<![\\p{L}\\p{N}])(?=[\\p{L}\\p{N}])|(?<=[\\p{L}\\p{N}])(?![\\p{L}\\p{N}]))";
@@ -179,6 +180,7 @@ function wetterSatz(w, welcherTag = 0) {
     let s = `In ${w.ort} sind es gerade ${grad(j.temperatur)}, ${j.wetter}.`;
     if (Math.abs(j.gefuehlt - j.temperatur) >= 3) s += ` Gefühlt ${grad(j.gefuehlt)}.`;
     if (heute) s += ` Heute bis ${grad(heute.max)}${heute.regen_prozent >= 40 ? `, Regenrisiko ${heute.regen_prozent} Prozent – nimm lieber einen Schirm mit` : ""}.`;
+    if (w.stand_vor_minuten) s += ` Das ist der Stand von vor ${w.stand_vor_minuten} Minuten, der Wetterdienst ist gerade nicht erreichbar.`;
     return s;
   }
   const d = w.tage?.[welcherTag];
@@ -226,7 +228,8 @@ function hilfeText() {
   return `Auch ohne Guthaben kann ich dir sagen, wie spät es ist, wie das Wetter wird und welcher Feiertag kommt. ` +
     `Ich stelle Timer und Erinnerungen, führe deine Aufgaben- und Einkaufsliste, merke mir Dinge, rechne, ` +
     `nenne Bitcoin- und Wechselkurse, schlage Begriffe bei Wikipedia nach und lese dir die Schlagzeilen zu jedem Land vor. ` +
-    `Und ich steuere Mac, Fernseher und Alexa. Sobald sie verbunden sind, auch Kalender, Spotify, Hue-Lampen, Home Assistant, Todoist und Notion. ` + EXTRA_HILFE;
+    `Und ich steuere Mac, Fernseher und Alexa. Sobald sie verbunden sind, auch Kalender, Spotify, Hue-Lampen, Home Assistant, Todoist und Notion. ` + EXTRA_HILFE +
+    ` Sag auch: Systemstatus, Wie viel Guthaben hast du, Starte Snake, Zeig mir Japan oder Wie lange brauche ich nach Hamburg.`;
 }
 
 // Mini-Briefing ohne Claude: Wetter, Termine, Aufgaben, eine Schlagzeile.
@@ -281,7 +284,22 @@ function macNichtDa() {
  * @param {{notfall?: boolean}} opts - notfall: auch unsichere Treffer (Claude ist nicht erreichbar)
  * @returns {Promise<{answer: string, actions: string[]} | null>}
  */
-export async function offlineAnswer(text, { notfall = false } = {}) {
+// Ohne Internet sollen Wetter, Kurse & Co. ehrlich sagen, was los ist, statt still zu scheitern.
+function istNetzFehler(err) {
+  const m = `${err?.name || ""} ${err?.message || ""} ${err?.cause?.code || ""}`;
+  return /fetch failed|timeout|timed out|abort|ENOTFOUND|ECONNREFUSED|ECONNRESET|EAI_AGAIN|ETIMEDOUT|network/i.test(m);
+}
+export async function offlineAnswer(text, opts = {}) {
+  try {
+    return await offlineAnswerIntern(text, opts);
+  } catch (err) {
+    if (!istNetzFehler(err)) throw err;
+    console.error("Offline-Gehirn (kein Netz):", err.message);
+    return { answer: `Dafür brauche ich Internet, ${name()}, und das ist gerade nicht erreichbar. Uhrzeit, Timer, Listen und Rechnen gehen trotzdem.`, actions: ["offline", "netzfehler"] };
+  }
+}
+
+async function offlineAnswerIntern(text, { notfall = false } = {}) {
   const t = normalize(text);
   const tGross = normalize(text, { gross: true });
   // Ein Stück aus t in der Original-Schreibweise zurückholen ("die wäsche" -> "die Wäsche").
@@ -311,6 +329,8 @@ export async function offlineAnswer(text, { notfall = false } = {}) {
   // --- Mehr Befehle ohne Claude (Weltzeit, Einheiten, Tage bis, Mond, Sonne, Zitate ...) ---
   const extra = await extraAnswer(t, ok).catch(() => null);
   if (extra) return extra;
+  const plus = plusAnswer(t);
+  if (plus) return plus;
 
   // --- Uhrzeit und Datum ---
   if (has(/\bwie spät\b|\bwie spaet\b|\bwie viel uhr\b|\bwieviel uhr\b|^uhrzeit$|\bwelche uhrzeit\b|\bdie uhrzeit\b/) && !has(/\b(in|auf|im)\b/)) {
@@ -376,7 +396,7 @@ export async function offlineAnswer(text, { notfall = false } = {}) {
   }
 
   // --- Aufgaben ---
-  if (has(/^(was steht (auf|in) (meiner|der|meinen|den) (aufgaben|to ?do|todo)( ?liste)?|(lies|zeig)( mir)? (meine|die) (aufgaben|to ?dos?|todos?)( ?liste)?|(meine|offene|die) (aufgaben|to ?dos?|todos?)( ?liste)?|welche aufgaben (habe|hab) ich( noch)?( offen)?|aufgaben( ?liste)?|to ?dos?|todo ?liste|was muss ich (heute )?(noch )?(machen|erledigen|tun))$/)) {
+  if (has(/^((was sind|welche sind|zeig|lies|nenn)( mir)? (meine|die) (offenen )?aufgaben( heute)?|welche aufgaben (stehen an|sind offen|gibt es)|was steht (auf|in) (meiner|der|meinen|den) (aufgaben|to ?do|todo)( ?liste)?|(lies|zeig)( mir)? (meine|die) (aufgaben|to ?dos?|todos?)( ?liste)?|(meine|offene|die) (aufgaben|to ?dos?|todos?)( ?liste)?|welche aufgaben (habe|hab) ich( noch)?( offen)?|aufgaben( ?liste)?|to ?dos?|todo ?liste|was muss ich (heute )?(noch )?(machen|erledigen|tun))$/)) {
     return ok(listeVorlesen(store.getTasks(), "Du hast keine offenen Aufgaben. Stark.", "Offen sind", "Offen ist nur:"));
   }
   const auf = t.match(/^(?:neue aufgabe|aufgabe|notiere aufgabe|to ?do)[: ]+(.+)$/) || t.match(/^(?:setz|setze|schreib|schreibe|trag|trage|füg|füge|fueg|fuege) (.+?) (?:auf|in|zu) (?:meine|die) (?:aufgaben|to ?do)(?: ?liste)?(?: hinzu)?$/);
@@ -452,9 +472,10 @@ export async function offlineAnswer(text, { notfall = false } = {}) {
 
   // --- Feiertage, ISS ---
   if (has(U(/\b(nächste[rn]?|naechste[rn]?|wann ist der nächste|kommender?) feiertag\b|^feiertage?$/))) {
-    const r = await getHolidays("DE");
-    if (r.error || !r.naechste_feiertage?.length) return ok("Die Feiertage konnte ich gerade nicht abrufen.");
-    const f = r.naechste_feiertage[0];
+    // Ohne Internet rechnet Friday die bundesweiten Feiertage selbst aus.
+    const r = await getHolidays("DE").catch(() => ({ error: true }));
+    const liste = !r.error && r.naechste_feiertage?.length ? r.naechste_feiertage : naechsteFeiertageOffline();
+    const f = liste[0];
     const d = new Date(`${f.datum}T12:00:00Z`);
     return ok(`Der nächste Feiertag ist ${f.name}, am ${d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })}.`, "holidays");
   }
@@ -569,6 +590,9 @@ export async function offlineAnswer(text, { notfall = false } = {}) {
   if (!notfall) return null;
 
   if (has(/briefing|lagebericht|guten morgen/)) return ok(await offlineBriefing(), "briefing");
+  const pn = plusNotfall(t);
+  if (pn) return pn;
+  if (/^(was gibt('s| es)|gibt('s| es) was) (neues|neue nachrichten)( heute| in der welt)?$|^was ist (heute |gerade )?(los|passiert)$/.test(t)) return weltlage(ok);
   const wiki = t.match(/^(?:wer|was) (?:ist|war|sind|waren) (?:eigentlich )?(?:der |die |das |ein |eine )?(.{2,60}?)$/)
     || t.match(/^(?:erzähl|erzaehl|sag) (?:mir )?(?:etwas|was|mehr) (?:über|ueber|zu) (?:der |die |das |den )?(.{2,60})$/)
     || t.match(/^(?:schlag|schlage) (.{2,60}?) nach$|^(?:wikipedia|lexikon) (.{2,60})$|^was weißt du über (?:der |die |das |den )?(.{2,60})$/);
