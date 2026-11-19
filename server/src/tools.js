@@ -26,8 +26,9 @@ import { command as haCommand } from "./homeassistant.js";
 import { routeFuerClaude } from "./routen.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
-// Osiris Live-Lagekarte: selbst gehostet auf dem Mac (Port 3100). Der Mac-Agent öffnet lokal.
-const OSIRIS_URL = "http://localhost:3100/?layers=flights,private,jets,military,maritime,transit,satellites,cctv,cctv_previews,live_news,earthquakes,fires,weather,infrastructure,global_incidents,alert_pins,day_night,cables,sdk_sea,sdk_air,sdk_naval,live_clouds,wind,rain,wind_controls,rain_controls,wind_particles,terrain_3d,terrain_elevation,malware,cyber_attacks,gdelt_events";
+// Osiris Live-Lagekarte: lokal auf dem Mac (Port 3100), sonst automatisch osirisai.live.
+import { osirisUrl } from "./osiris.js";
+const OSIRIS_URL = "osiris:"; // Platzhalter, wird beim Öffnen durch die passende Adresse ersetzt
 
 const MAC_ACTIONS = [
   "open_app", "quit_app", "open_url", "volume_set", "volume_up", "volume_down", "mute",
@@ -671,7 +672,8 @@ async function runToolIntern(name, input = {}, wer = {}) {
         lagezentrum: OSIRIS_URL, "lage zentrum": OSIRIS_URL,
       };
       const key = String(input.name || "").trim().toLowerCase();
-      const url = APP_URLS[key];
+      let url = APP_URLS[key];
+      if (url === OSIRIS_URL) url = await osirisUrl();
       if (url) return sendToAgent("open_url", { value: url });
       // Unbekannt: als Mac-App mit diesem Namen öffnen.
       return sendToAgent("open_app", { value: String(input.name || "").trim() });
