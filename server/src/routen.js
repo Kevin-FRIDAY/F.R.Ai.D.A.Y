@@ -172,7 +172,7 @@ function abschnitt(l) {
     linie: fuss ? "" : (l.displayName || l.tripShortName || l.routeShortName || modusName),
     richtung: l.headsign || "",
     betreiber: l.agencyName || "",
-    farbe: l.routeColor ? `#${l.routeColor}` : "",
+    farbe: /^[0-9a-f]{6}$/i.test(l.routeColor || "") && !/^0{6}$/.test(l.routeColor) ? `#${l.routeColor}` : "",
     von: haltName(l.from?.name), nach: haltName(l.to?.name),
     ab: l.startTime, an: l.endTime,
     abPlan: l.scheduledStartTime, anPlan: l.scheduledEndTime,
@@ -290,14 +290,30 @@ export async function plane(w) {
 }
 
 // ---------- Vorlesen ----------
+// Haltestellen so, wie man sie spricht: "S+U Alexanderplatz Bhf (Berlin)" → "Alexanderplatz Bahnhof"
+export function haltSprech(n) {
+  return String(n || "").replace(/\s*\([^)]*\)/g, "").replace(/^(S\+U|S|U)\s+(?=\S)/, "")
+    .replace(/\bHbf\b/g, "Hauptbahnhof").replace(/\bBhf\b/g, "Bahnhof").replace(/\bStr\b\.?/g, "Straße").trim();
+}
+function inMinuten(iso) {
+  const min = Math.round((new Date(iso) - Date.now()) / 60000);
+  if (min <= 0) return " – jetzt gleich";
+  if (min === 1) return ", in einer Minute";
+  return min < 60 ? `, in ${min} Minuten` : "";
+}
+
 function verbindungSatz(v, mitAlternative) {
   const fahrt = v.abschnitte.filter((a) => !a.fuss);
   const linien = [...new Set(fahrt.map((a) => a.linie))].slice(0, 3);
   const umst = v.umstiege === 0 ? "ohne Umsteigen" : v.umstiege === 1 ? "einmal umsteigen" : `${v.umstiege}-mal umsteigen`;
   const erste = v.erste;
-  let s = `Abfahrt um ${uhr(erste?.ab || v.ab)} Uhr`;
-  if (erste?.von && erste.von !== "Start") s += ` ab ${erste.von}`;
-  if (erste?.gleis) s += `, ${/^\d/.test(erste.gleis) ? "Gleis " : ""}${erste.gleis}`;
+  const hinweg = v.abschnitte[0]?.fuss ? v.abschnitte[0] : null;
+  let s = "";
+  if (hinweg && hinweg.dauer >= 180) s += `Losgehen um ${uhr(v.ab)} Uhr${inMinuten(v.ab)}. `;
+  s += `Abfahrt um ${uhr(erste?.ab || v.ab)} Uhr${hinweg && hinweg.dauer >= 180 ? "" : inMinuten(erste?.ab || v.ab)}`;
+  if (erste?.von && erste.von !== "Start") s += ` ab ${haltSprech(erste.von)}`;
+  const gleis = String(erste?.gleis || "").replace(/\s*\([^)]*\)/g, "").trim();
+  if (gleis) s += `, ${/^\d/.test(gleis) ? "Gleis " : ""}${gleis}`;
   s += ` mit ${linien.join(", dann ")}. Ankunft ${uhr(v.an)} Uhr, ${umst}, Dauer ${dauerText(v.dauer)}.`;
   if (erste?.verspaetung >= 3) s += ` Achtung, ${erste.verspaetung} Minuten Verspätung.`;
   if (v.ausfall) s += " Achtung, ein Teil fällt aus.";
@@ -306,7 +322,7 @@ function verbindungSatz(v, mitAlternative) {
 }
 
 export function sprechText(e) {
-  const ziel = e.nach.art === "heim" ? "Nach Hause" : `Nach ${e.nach.name}`;
+  const ziel = e.nach.art === "heim" ? "Nach Hause" : `Nach ${haltSprech(e.nach.name)}`;
   const teile_ = [];
   const s = (r) => r && !r.fehler && !r.zuWeit && r.dauer;
   const vs = (e.oepnv.verbindungen || []).filter((v) => !v.ausfall);

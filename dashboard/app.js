@@ -495,6 +495,9 @@
     addMessage("user", pendingImage ? `📷 ${text}` : text);
     setState("Denkt nach", "thinking");
     const body = { text, image: pendingImage || undefined };
+    // Routen: Standort mitschicken, wenn im Routen-Fenster erlaubt ("wie lange brauche ich nach …" ab hier).
+    const standort = window.FridayRouten?.standort?.();
+    if (standort) body.standort = standort;
     if ($("translate-toggle").checked) {
       body.mode = "translate";
       body.targetLang = $("translate-lang").value;
@@ -531,6 +534,13 @@
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       if (hat("archiv")) window.FridayArchiv?.open();
       if (hat("oekosystem")) window.FridayOekosystem?.open();
+      // Routen & Verbindungen: Karte mit Auto, Rad, zu Fuß und Bahn/Bus zeigen.
+      const routeAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("route:"));
+      const routeZiel = data.actions?.find((a) => typeof a === "string" && a.startsWith("route_ziel:"));
+      if (routeAktion) window.FridayRouten?.zeige(routeAktion.slice(6));
+      else if (hat("route_planen")) window.FridayRouten?.neueste();
+      else if (routeZiel) window.FridayRouten?.open({ ziel: decodeURIComponent(routeZiel.slice(11)) });
+      else if (hat("routen")) window.FridayRouten?.open();
       // Spiele-Werkstatt: live zuschauen, wie Friday programmiert, oder ein gespeichertes Spiel starten.
       const spielBau = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel_bauen:"));
       const spielStart = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel:"));
