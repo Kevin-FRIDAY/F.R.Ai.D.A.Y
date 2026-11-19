@@ -665,7 +665,7 @@
   (() => {
     const sel = $("set-kopfstil");
     if (!sel) return;
-    sel.value = storage.get("friday_kopfstil") || window.FridayFace?.standardStil || "kristall";
+    sel.value = storage.get("friday_kopfstil") || window.FridayFace?.standardStil || "neuronen";
     sel.addEventListener("change", () => { storage.set("friday_kopfstil", sel.value); location.reload(); });
   })();
   // Leistungsmodus (leistung.js): Automatisch / Schön / Flüssig – gilt nur für dieses Gerät
