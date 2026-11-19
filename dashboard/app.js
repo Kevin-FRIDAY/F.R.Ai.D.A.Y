@@ -571,6 +571,12 @@
       if (schiffA) window.FridaySchiffe?.zeigeNr(Number(schiffA.slice(7)));
       else if (schiffG) window.FridaySchiffe?.gruppe(schiffG.slice(13));
       else if (hat("schiffe")) window.FridaySchiffe?.oeffne();
+      // Flugzeuge (v1.115.0)
+      const flugA = data.actions?.find((a) => typeof a === "string" && a.startsWith("flugzeug:"));
+      const flugG = data.actions?.find((a) => typeof a === "string" && a.startsWith("fluggruppe:"));
+      if (flugA) window.FridayFlugzeuge?.zeigeNr(flugA.slice(9));
+      else if (flugG) window.FridayFlugzeuge?.gruppe(flugG.slice(11));
+      else if (hat("flugzeuge")) window.FridayFlugzeuge?.oeffne();
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       if (hat("archiv")) window.FridayArchiv?.open();
       if (hat("oekosystem")) window.FridayOekosystem?.open();

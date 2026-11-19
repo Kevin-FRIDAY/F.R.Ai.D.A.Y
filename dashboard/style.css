@@ -3069,3 +3069,11 @@ html.perf-fluessig .sat-panel, html.perf-fluessig .lage-satcard { backdrop-filte
   .lage-satcard { left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 46vh; }
   #sat-suche { font-size: 16px; }
 }
+
+/* Flugzeuge im Weltgeschehen (v1.115.0) */
+.lage-satcard .fl-strecke { font-size: 12px; color: var(--text, #fff); opacity: .9; margin-top: 2px; }
+.lage-satcard .fl-strecke b { color: #ffd34d; }
+.lage-satcard .fl-foto { display: block; margin: 8px 0 2px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,179,71,.25); }
+.lage-satcard .fl-foto img { display: block; width: 100%; max-height: 150px; object-fit: cover; }
+.lage-satcard .fl-notfall { color: #ff3b4f; font-weight: 700; }
+@media (max-width: 900px) { .lage-satcard .fl-foto img { max-height: 90px; } }
