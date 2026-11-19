@@ -23,6 +23,7 @@ import { command as alexaCommand } from "./alexa.js";
 import { toolDefinitions as dienstTools, smartHomeTool } from "./dienste-werkzeuge.js";
 import { istDienstTool, runDienstTool } from "./dienste.js";
 import { command as haCommand } from "./homeassistant.js";
+import { routeFuerClaude } from "./routen.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
 
 // Osiris Live-Lagekarte: selbst gehostet auf dem Mac (Port 3100). Der Mac-Agent öffnet lokal.
@@ -122,6 +123,21 @@ export const toolDefinitions = [
     name: "lookup",
     description: "Schlägt einen Begriff, eine Person oder einen Ort kurz bei Wikipedia nach (deutsche Zusammenfassung). Für Faktenfragen günstiger als die Websuche.",
     input_schema: { type: "object", properties: { term: { type: "string" } }, required: ["term"] },
+  },
+  {
+    name: "route_planen",
+    description: "Routen & Verbindungen: rechnet aus, wie lange man mit Auto, Fahrrad und zu Fuß wohin braucht, und sucht Bahn- und Busverbindungen mit Abfahrtszeiten, Gleis und Umstiegen. Ohne 'von' startet die Route zu Hause (im Routen-Fenster hinterlegt). Kostenlos, nimm es für jede Frage nach Weg, Fahrzeit, Entfernung oder Zug/Bus. Das Dashboard zeigt danach die Karte.",
+    input_schema: {
+      type: "object",
+      properties: {
+        nach: { type: "string", description: "Ziel: Stadt, Adresse, Haltestelle oder Ort, z. B. 'Hamburg Hbf' oder 'Hauptstraße 5, Köln'. 'zuhause' und 'arbeit' gehen auch." },
+        von: { type: "string", description: "Optionaler Startort, sonst Zuhause" },
+        modus: { type: "string", enum: ["auto", "rad", "fuss", "oepnv"], description: "Welches Verkehrsmittel im Vordergrund steht (optional)" },
+        zeit: { type: "string", description: "Optionale Abfahrtszeit als ISO-Zeit (Ortszeit), z. B. 2026-11-20T08:00" },
+        ankunft: { type: "boolean", description: "true = 'zeit' ist die gewünschte Ankunftszeit" },
+      },
+      required: ["nach"],
+    },
   },
   {
     name: "country_info",
@@ -419,6 +435,7 @@ const LOGTITEL = {
   crypto: (i) => `Krypto-Kurs: ${i.coin || i.coins || ""}`,
   holidays: () => "Feiertage nachgesehen",
   iss: () => "ISS-Position abgefragt",
+  route_planen: (i) => `Route geplant: ${i.von ? `${i.von} → ` : ""}${i.nach || ""}`,
   welt_alarm: () => "Welt-Alarm abgefragt",
   markt_radar: (i) => `Markt-Radar: ${i.action || ""} ${i.asset || ""}`,
   dokument_erstellen: (i) => `Dokument erstellt: ${i.titel || ""}`,
@@ -636,6 +653,8 @@ async function runToolIntern(name, input = {}, wer = {}) {
       return getISS();
     case "lookup":
       return getWiki(input.term || "");
+    case "route_planen":
+      return routeFuerClaude(input);
     case "country_info": {
       const country = findCountry(input.country);
       if (!country) return { error: `Land "${input.country}" nicht gefunden.` };

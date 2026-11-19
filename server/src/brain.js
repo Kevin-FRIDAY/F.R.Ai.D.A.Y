@@ -23,6 +23,7 @@ import { tempoFuerFrage } from "./denker.js";
 import { quickCommand as kommandoQuick } from "./kommando.js";
 import { quickCommand as zentraleQuick } from "./zentrale.js";
 import { quickCommand as spielQuick } from "./spiele.js";
+import { quickCommand as routenQuick } from "./routen.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -55,6 +56,7 @@ Werkzeuge:
 - Erinnerungen: Rechne relative Angaben ("in 20 Minuten", "morgen um 8") anhand der aktuellen Zeit in eine genaue Zeit um.
 - Für den Fernseher (Samsung-TV im WLAN) nutze fernseher. "Öffne YouTube" heißt Mac (open_app); "mach Netflix an", "auf dem Fernseher" oder "TV" heißt Fernseher.
 - Für Alexa (Routinen wie "Licht an", Ansagen auf dem Echo) nutze alexa. Geräte, die nur an Alexa hängen, steuerst du über deren Alexa-Routinen. Sätze, die mit "Alexa" beginnen, gehen an Alexa, nicht an den Fernseher.
+- Für Wege, Fahrzeiten, Entfernungen und Bahn-/Busverbindungen nutze route_planen (kostenlos, zeigt die Karte im Dashboard).
 - Termine und Apple-Erinnerungen: kalender (Fridays eigene Erinnerungen mit Wecker: set_reminder). Musik: spotify, wenn verbunden, sonst mac. Lampen: hue für Philips Hue, smart_home für Home Assistant (Heizung, Steckdosen, Rollos, Sensoren). Aufgaben: todoist, wenn verbunden. Notizen und Wissen: notion.
 - Nachrichten und Anrufe an die Frau des Nutzers, ihn selbst oder hinterlegte Kontakte: anrufe. Wer "ruf meine Frau an und sag ihr …" sagt, hat damit bestätigt: direkt ausführen. Den Text in der Ich-Form des Nutzers formulieren.
 - Mac-Aktionen gehen nur, wenn der Mac verbunden ist. Wenn nicht, sag es kurz.
@@ -143,7 +145,7 @@ function logbuchBefehl(opts, res, dauer) {
   });
 }
 
-async function askIntern({ text, channel = "web", image, mode = "normal", targetLang, keepHistory = true }) {
+async function askIntern({ text, channel = "web", image, mode = "normal", targetLang, keepHistory = true, standort }) {
   const history = keepHistory ? store.getHistory(channel) : [];
 
   const userContent = [];
@@ -262,6 +264,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (a) { actions.push(...a.actions); return finish(a.answer); }
     } catch (err) {
       console.error("Archiv:", err.message);
+    }
+  }
+
+  // Routen & Verbindungen ("wie lange brauche ich nach Hamburg?", "nächster Zug nach Köln") – ohne Claude.
+  // Vor der Länder-Info, damit "zeig mir den Weg nach Paris" hier landet.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const r = await routenQuick(text, { standort });
+      if (r) { actions.push(...r.actions); return finish(r.answer); }
+    } catch (err) {
+      console.error("Routen:", err.message);
     }
   }
 
