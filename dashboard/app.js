@@ -581,9 +581,12 @@
       window.FridayRing?.melde("auftrag", null);
       await say(answer);
       clearSpeaking();
+      // Carlas Lernecke (v1.108.0): erst begrüßen bzw. ansagen, dann öffnet sich die Lernecke und hört selbst zu.
+      const lernA = aktion("lernen");
+      if (lernA) window.FridayLernen?.open({ modus: lernA.split(":")[1] || "start", begruesst: true, stimme: Boolean(opts.stimme) });
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
       // Gesprächsmodus: Kam der Befehl per Stimme, hört Friday danach weiter zu, ohne "Friday" davor.
-      const weiter = !bargeFang && !unterbrochenEben() && (hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer));
+      const weiter = !bargeFang && !unterbrochenEben() && !lernA && !window.FridayLernen?.offen() && (hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer));
       if (weiter && Recognition && !callActive && !window.FridayDokumente?.offen()) {
         setTimeout(() => { if (!busy && !speaking) listenOnce({ folge: true, frage: hat("zuhoeren") }); }, 250);
       }
@@ -1502,7 +1505,7 @@
 
   function wakeDarf() {
     return wakeActive && !speaking && !busy && !gespraechRec && !bargeRec
-      && !callActive
+      && !callActive && !window.Friday?.mikroBelegt
       && document.visibilityState !== "hidden";
   }
 
@@ -1558,6 +1561,9 @@
   function resumeWake() {
     if (wakeActive) wakeSpaeter(500); // nach dem Gesprächsmodus-Zuhören (250 ms), damit sich beide nicht stören
   }
+  // Für die Lernecke (lernen.js): eigenes Mikrofon, solange sie abfragt.
+  window.Friday.wakePause = pauseWake;
+  window.Friday.wakeWeiter = resumeWake;
 
   $("wake-toggle").checked = true;
   wakeActive = !!Recognition;

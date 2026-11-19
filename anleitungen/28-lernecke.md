@@ -1,0 +1,56 @@
+# Carlas Lernecke (ab Version 1.108.0)
+
+Ein eigener Lernbereich nur für Carla. Friday scannt Lernkarten, speichert sie und fragt sie ab.
+
+## So öffnet Carla die Lernecke
+
+- Werkzeug-Menü → **Alltag** → **Carlas Lernecke**
+- oder per Stimme: „Friday, Lernmodus“, „Friday, öffne die Lernecke“, „Carla will lernen“, „Friday, frag mich ab“
+- oder direkt mit dem Link: `https://<deine-friday-adresse>/?lernen`
+- Auf Carlas eigenem Handy: in der Lernecke unten den Haken „Auf diesem Gerät immer direkt mit der Lernecke starten“ setzen.
+  Dann geht Friday dort immer gleich in die Lernecke (gilt nur für dieses Gerät).
+
+Beim allerersten Mal stellt Friday sich vor:
+„Hi Carla, ich bin Friday, die künstliche Assistentin von Kevin. Er hat mich gebeten, dir beim Lernen zu helfen. Was wollen wir machen: Soll ich dich abfragen, oder soll ich dir generell beim Lernen helfen?“
+Ab dem zweiten Mal: „Hi Carla, freut mich, dass du da bist. Wie kann ich dir beim Lernen helfen?“
+Carla kann dann einfach „abfragen“, „lernen“ oder „scannen“ sagen.
+
+## Karten scannen
+
+1. Reiter **📷 Scannen**.
+2. **Blatt / Zettel / Buchseite**: ein Foto, Friday macht daraus mehrere Karten.
+   Am besten so aufgeschrieben: Überschrift, darunter die Punkte. Karten mit einer Leerzeile trennen.
+   Auch „Begriff: Erklärung“ pro Zeile oder „Frage: … / Antwort: …“ klappt.
+3. **Karteikarte (vorne + hinten)**: erst die Vorderseite fotografieren, dann die Rückseite, dann „Karte übernehmen“.
+4. Karten kurz prüfen (man kann alles korrigieren), Stapel wählen oder neu benennen, **Speichern**.
+
+Die Texterkennung ist kostenlos: Am Mac liest Apples Schrifterkennung (kann auch Handschrift).
+Beim allerersten Scan richtet der Mac sie einmal ein, das dauert ca. 40 Sekunden.
+Bei sehr krakeliger Schrift: „🤖 KI liest die Schrift“ (braucht Guthaben).
+
+## Abfragen
+
+Reiter **🎯 Abfragen** → Stapel wählen → **Los geht's**.
+Friday liest die Überschrift vor und hört zu. Danach sagt sie, ob es richtig war, was gefehlt hat
+oder ob die Reihenfolge nicht stimmte (bei nummerierten Punkten).
+
+Carla kann sagen: „weiß ich nicht“, „nochmal“, „Tipp“, „später“, „Stopp“. Bei langen Antworten am Ende „fertig“.
+Hat Friday sich verhört: **Doch richtig ✓**. Unsicher? **🤖 KI prüft nochmal** (braucht Guthaben).
+
+Wiederholung: Jede Karte liegt in einem von 5 Fächern. Richtig → ein Fach weiter (kommt erst nach 1, 3, 7, 14 Tagen wieder).
+Falsch → zurück ins erste Fach, kommt in derselben Runde nach ein paar Karten nochmal und morgen wieder.
+
+## Lernhilfe
+
+Karten durchblättern und umdrehen, vorlesen lassen, Eselsbrücke (Anfangsbuchstaben), Lückentext,
+nur eine Karte abfragen. „🤖 Erklär's mir“ erklärt eine Karte oder beantwortet eine Frage dazu (braucht Guthaben).
+
+## Lernplan
+
+Stapel wählen, Prüfungsdatum und Minuten pro Tag eintragen → Friday verteilt die Karten auf die Tage,
+wiederholt nach 1, 3 und 7 Tagen und lässt die letzten Tage nur zum Wiederholen. Auf der Startseite steht dann „Heute dran“.
+
+## Wo liegen Carlas Daten?
+
+Getrennt von Kevins Sachen: `server/data/lernen.json` (Karten, Fortschritt) und `server/data/lernen-bilder/` (Fotos).
+Beides ist in der Sicherung dabei und wird von Updates nicht angefasst.
