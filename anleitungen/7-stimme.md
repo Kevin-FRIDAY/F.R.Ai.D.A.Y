@@ -2,6 +2,17 @@
 
 Ohne Einrichtung spricht Friday mit der eingebauten deutschen Stimme deines Geräts. Kostenlos, aber etwas robotisch.
 
+## Mehr Apple-Stimmen (kostenlos)
+
+Unter Einstellungen → Stimme → **Gerätestimme** zeigt Friday alle Stimmen deines Geräts, sortiert nach Sprache. ★ = Premium, ☆ = Erweitert (klingen am natürlichsten). Beim Auswählen hörst du die Stimme sofort, "▶ Probehören" spielt sie noch mal ab. Die Wahl gilt pro Gerät (Mac und iPhone getrennt).
+
+Neue Stimmen laden:
+
+- **Mac:** Systemeinstellungen → Bedienungshilfen → Gesprochene Inhalte → bei "Systemstimme" auf ⓘ bzw. "Stimmen verwalten …" → Deutsch → z. B. *Anna (Premium)*, *Helena*, *Petra*, *Markus*, *Yannick* mit ⬇ laden.
+- **iPhone:** Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch → Stimme antippen → "Premium" oder "Erweitert" laden.
+
+Danach Friday neu laden (oder "↻ Liste neu laden"). Siri-Stimmen gibt Apple für Webseiten nicht frei. "Retro" (Eddy, Flo, Grandpa …) und "Spaß" (Bubbles, Zarvox …) sind Apples Spielerei-Stimmen.
+
 ## Echte Friday-Stimme mit ElevenLabs
 
 1. Konto auf [elevenlabs.io](https://elevenlabs.io) anlegen. Es gibt einen kleinen kostenlosen Monatsvorrat, für viel Nutzung ein Abo.

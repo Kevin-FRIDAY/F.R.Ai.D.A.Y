@@ -340,13 +340,34 @@
   }
 
   // ---------- Stimme (Ausgabe) ----------
+  // Alle Apple-/Systemstimmen des Geräts: Qualität erkennen (Premium > Erweitert > Standard), Spaß-/Retro-Stimmen markieren.
+  const SPASS_STIMMEN = /^(albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|junior|ralph|fred|kathy)\b/i;
+  const RETRO_STIMMEN = /^(eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley)\b/i;
+  function stimmArt(v) {
+    const s = `${v.voiceURI || ""} ${v.name || ""}`.toLowerCase();
+    if (/premium/.test(s)) return { rang: 3, text: "Premium" };
+    if (/enhanced|erweitert|verbessert/.test(s)) return { rang: 2, text: "Erweitert" };
+    if (/siri/.test(s)) return { rang: 2, text: "Siri" };
+    if (SPASS_STIMMEN.test(v.name)) return { rang: -1, text: "Spaß" };
+    if (/eloquence/.test(s) || RETRO_STIMMEN.test(v.name)) return { rang: 0, text: "Retro" };
+    if (v.localService === false) return { rang: 1, text: "Online" };
+    return { rang: 1, text: "Standard" };
+  }
+  const stimmKey = (v) => v.voiceURI || v.name;
+  const stimmName = (v) => String(v.name || "").replace(/\s*\((premium|enhanced|erweitert|verbessert)\)\s*/i, "").trim();
+  window.Friday = window.Friday || {};
+  window.Friday.stimmArt = stimmArt;
   let germanVoice = null;
+  function besteDeutsche(all) {
+    const de = all.filter((v) => /^de/i.test(v.lang));
+    const wert = (v) => stimmArt(v).rang * 10 + (/anna|helena|petra|marlene|katja|vicki/i.test(v.name) ? 1 : 0);
+    return de.sort((a, b) => wert(b) - wert(a))[0] || null;
+  }
   function pickVoice() {
     const all = speechSynthesis.getVoices();
     const saved = storage.get("friday_voice");
-    const de = all.filter((v) => v.lang.startsWith("de"));
-    germanVoice = (saved && all.find((v) => v.name === saved))
-      || de.find((v) => /anna|helena|petra|katja|marlene|vicki/i.test(v.name)) || de[0] || all[0] || null;
+    germanVoice = (saved && (all.find((v) => v.voiceURI === saved) || all.find((v) => v.name === saved)))
+      || besteDeutsche(all) || all[0] || null;
   }
   if ("speechSynthesis" in window) {
     pickVoice();
@@ -457,7 +478,7 @@
       if ("speechSynthesis" in window) {
         await new Promise((resolve) => {
           const u = new SpeechSynthesisUtterance(text);
-          u.lang = "de-DE";
+          u.lang = germanVoice?.lang || "de-DE";
           if (germanVoice) u.voice = germanVoice;
           u.rate = Number(storage.get("friday_rate")) || 1.05;
           u.pitch = Number(storage.get("friday_pitch")) || 1;
@@ -899,13 +920,57 @@
     const sel = $("voice-select");
     if (!sel || !("speechSynthesis" in window)) return;
     const voices = speechSynthesis.getVoices();
-    const de = voices.filter((v) => v.lang.startsWith("de"));
-    const list = de.length ? de : voices.slice(0, 12);
-    const saved = storage.get("friday_voice");
-    sel.innerHTML = list.map((v) => `<option value="${escapeHtml(v.name)}"${v.name === saved ? " selected" : ""}>${escapeHtml(v.name)}</option>`).join("");
+    pickVoice();
+    const aktiv = germanVoice ? stimmKey(germanVoice) : "";
+    let sprachName = (c) => c;
+    try { const dn = new Intl.DisplayNames(["de"], { type: "language" }); sprachName = (c) => dn.of(c) || c; } catch { /* alter Browser */ }
+    const gruppen = new Map();
+    for (const v of voices) {
+      const code = String(v.lang || "?").replace("_", "-").split("-")[0].toLowerCase();
+      if (!gruppen.has(code)) gruppen.set(code, []);
+      gruppen.get(code).push(v);
+    }
+    const reihe = (c) => (c === "de" ? 0 : c === "en" ? 1 : 2);
+    const codes = [...gruppen.keys()].sort((a, b) => reihe(a) - reihe(b) || sprachName(a).localeCompare(sprachName(b), "de"));
+    const option = (v) => {
+      const art = stimmArt(v);
+      const land = String(v.lang || "").replace("_", "-").split("-")[1];
+      const extra = [art.rang >= 2 || art.rang <= 0 || art.text === "Online" ? art.text : "", land && land !== "DE" ? land : ""].filter(Boolean).join(", ");
+      const stern = art.rang >= 3 ? "★ " : art.rang === 2 ? "☆ " : "";
+      return `<option value="${escapeHtml(stimmKey(v))}"${stimmKey(v) === aktiv ? " selected" : ""}>${stern}${escapeHtml(stimmName(v))}${extra ? ` · ${escapeHtml(extra)}` : ""}</option>`;
+    };
+    sel.innerHTML = codes.map((c) => {
+      const liste = gruppen.get(c).sort((a, b) => stimmArt(b).rang - stimmArt(a).rang || stimmName(a).localeCompare(stimmName(b), "de"));
+      const titel = c === "de" ? `Deutsch (${liste.length})` : `${sprachName(c)} (${liste.length})${c === "en" ? "" : " – spricht mit Akzent"}`;
+      return `<optgroup label="${escapeHtml(titel)}">${liste.map(option).join("")}</optgroup>`;
+    }).join("");
+    const info = $("voice-info");
+    if (info) {
+      const de = gruppen.get("de") || [];
+      const gut = de.filter((v) => stimmArt(v).rang >= 2).length;
+      info.innerHTML = voices.length
+        ? `${voices.length} Stimmen auf diesem Gerät, davon <b>${de.length} auf Deutsch</b>${gut ? ` (${gut} in Premium/Erweitert ★)` : " – noch keine Premium-Stimme geladen"}.`
+        : "Dieses Gerät meldet noch keine Stimmen. Tippe auf „Liste neu laden“.";
+    }
   }
   if ("speechSynthesis" in window) { fillVoices(); speechSynthesis.addEventListener?.("voiceschanged", fillVoices); }
-  $("voice-select")?.addEventListener("change", (e) => { storage.set("friday_voice", e.target.value); pickVoice(); });
+  $("voice-reload")?.addEventListener("click", () => { fillVoices(); setTimeout(fillVoices, 600); });
+  // Gerätestimme kurz probehören (auch wenn ElevenLabs die Hauptstimme ist).
+  function probeGeraet() {
+    if (!("speechSynthesis" in window) || !germanVoice) return;
+    try {
+      speechSynthesis.cancel();
+      const de = /^de/i.test(germanVoice.lang);
+      const u = new SpeechSynthesisUtterance(de ? `Hallo ${status.name || "Boss"}, ich bin ${stimmName(germanVoice)}.` : `Hello, I am ${stimmName(germanVoice)}.`);
+      u.voice = germanVoice; u.lang = germanVoice.lang;
+      u.rate = Number(storage.get("friday_rate")) || 1.05;
+      u.pitch = Number(storage.get("friday_pitch")) || 1;
+      u.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
+      speechSynthesis.speak(u);
+    } catch { /* egal */ }
+  }
+  $("voice-select")?.addEventListener("change", (e) => { storage.set("friday_voice", e.target.value); pickVoice(); probeGeraet(); });
+  $("voice-probe")?.addEventListener("click", probeGeraet);
   $("voice-rate")?.addEventListener("input", (e) => storage.set("friday_rate", e.target.value));
   $("voice-pitch")?.addEventListener("input", (e) => storage.set("friday_pitch", e.target.value));
   { const r = storage.get("friday_rate"); if (r && $("voice-rate")) $("voice-rate").value = r; const p = storage.get("friday_pitch"); if (p && $("voice-pitch")) $("voice-pitch").value = p; }

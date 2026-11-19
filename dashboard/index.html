@@ -528,7 +528,17 @@
           <div class="set-g-head"><span class="set-g-ico">🔊</span><div class="set-g-txt"><h3>Stimme</h3><small>Vorlesen, Stimme, Tempo</small></div></div>
           <div class="set-g-body">
             <label class="switch"><input type="checkbox" id="voice-toggle" checked><span>Vorlesen</span></label>
-            <label class="row-field"><span>Stimme</span><select id="voice-select"></select></label>
+            <label class="row-field"><span>Gerätestimme</span><select id="voice-select"></select></label>
+            <div class="voice-info-box">
+              <p id="voice-info">Stimmen werden geladen …</p>
+              <div class="voice-knoepfe"><button type="button" id="voice-probe" class="chip">▶ Probehören</button><button type="button" id="voice-reload" class="chip">↻ Liste neu laden</button></div>
+              <details class="voice-mehr">
+                <summary>Mehr Apple-Stimmen laden (kostenlos)</summary>
+                <p><b>Mac:</b> Systemeinstellungen → Bedienungshilfen → Gesprochene Inhalte → bei „Systemstimme“ auf ⓘ bzw. „Stimmen verwalten …“ → Deutsch → z. B. <i>Anna (Premium)</i>, <i>Helena</i>, <i>Petra</i>, <i>Markus</i>, <i>Yannick</i> mit ⬇ laden.</p>
+                <p><b>iPhone:</b> Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch → Stimme antippen → „Premium“ oder „Erweitert“ laden.</p>
+                <p>Danach Friday neu laden (oder „Liste neu laden“). ★ = Premium, ☆ = Erweitert, klingen am natürlichsten. Siri-Stimmen gibt Apple für Webseiten leider nicht frei. Ist ElevenLabs eingerichtet, spricht Friday damit, die Gerätestimme springt nur ein, wenn ElevenLabs Pause hat.</p>
+              </details>
+            </div>
             <label class="row-field"><span>Tempo</span><input type="range" id="voice-rate" min="0.6" max="1.6" step="0.05" value="1.05"></label>
             <label class="row-field"><span>Tonhöhe</span><input type="range" id="voice-pitch" min="0.6" max="1.6" step="0.05" value="1"></label>
             <label class="row-field"><span>Lautstärke</span><input type="range" id="set-lautstaerke" min="0.1" max="1" step="0.05" value="1"></label>
