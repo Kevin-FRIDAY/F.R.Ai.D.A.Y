@@ -91,6 +91,18 @@ Agenten, die "noch nicht aktiv" sind, brauchen erst eine Einrichtung – sag das
   return text;
 }
 
+// Fehler 400 "Invalid signature in thinking block": ein Denk-Block passt nicht mehr zum Gespräch.
+function istDenkBlockFehler(err) {
+  return err?.status === 400 && /thinking/i.test(String(err?.message || "")) && /signature|block/i.test(String(err?.message || ""));
+}
+function ohneDenkBloecke(messages) {
+  for (const m of messages) {
+    if (m.role !== "assistant" || !Array.isArray(m.content)) continue;
+    m.content = m.content.filter((b) => b.type !== "thinking" && b.type !== "redacted_thinking");
+    if (!m.content.length) m.content = [{ type: "text", text: "…" }];
+  }
+}
+
 function isoAgentText() {
   return isAgentOnline() ? "ja" : "nein";
 }
@@ -319,16 +331,20 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   const mitWebsuche = !sparen && tempo.websuche;
   let nachgehakt = false;
   setzeAuftrag(channel, "verstehen", 8, "Friday liest den Auftrag …");
+  // Der System-Text bleibt für die ganze Anfrage gleich. Würde er sich zwischen zwei Runden ändern
+  // (neue Minute, neue Notiz im Gedächtnis), lehnt Claude die Denk-Blöcke der vorigen Runde ab (Fehler 400).
+  const system = [
+    { type: "text", text: PERSONA, cache_control: { type: "ephemeral" } },
+    { type: "text", text: contextBlock({ channel, mode, targetLang }) },
+  ];
+  let denkBloeckeEntfernt = false;
   for (let round = 0; round < 8; round++) {
     const params = {
       model,
       max_tokens: sparen ? 4000 : 16000,
       ...(ohneFallback ? {} : { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" }),
       output_config: { effort: sparen ? "low" : tempo.effort },
-      system: [
-        { type: "text", text: PERSONA, cache_control: { type: "ephemeral" } },
-        { type: "text", text: contextBlock({ channel, mode, targetLang }) },
-      ],
+      system,
       messages,
     };
     if (mode !== "translate") params.tools = mitWebsuche ? [...toolDefinitions, WEB_SEARCH] : [...toolDefinitions];
@@ -336,6 +352,13 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     try {
       response = ohneFallback ? await client.messages.create(params) : await client.beta.messages.create(params);
     } catch (err) {
+      // Sicherheitsnetz: passt ein Denk-Block nicht mehr zum Gespräch, ohne Denk-Blöcke noch einmal fragen.
+      if (!denkBloeckeEntfernt && istDenkBlockFehler(err)) {
+        denkBloeckeEntfernt = true;
+        ohneDenkBloecke(messages);
+        round--;
+        continue;
+      }
       // Claude nicht erreichbar (Guthaben leer, falscher Schlüssel, kein Netz): Offline-Gehirn springt ein.
       const leer = isCreditError(err);
       if (leer) markEmpty();

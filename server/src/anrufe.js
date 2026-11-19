@@ -197,7 +197,7 @@ async function ausfuehrenIntern({ an, text = "", art = "nachricht" } = {}) {
     if (w === "facetime" && k.rolle !== "ich") {
       const f = await starteFaceTime(k);
       if (!f.ok) return teil ? { ok: true, text: `${teil} Den FaceTime-Anruf konnte ich nicht starten.` } : f;
-      return { ok: true, text: `${teil ? teil + " " : ""}Und ich starte am Mac einen FaceTime-Anruf. Tipp dort auf Anrufen, dann kannst du selbst sprechen.`.trim(), aktion: "facetime" };
+      return { ok: true, text: `${teil ? teil + " Und ich starte" : "Ich starte"} am Mac einen FaceTime-Anruf. Tipp dort auf Anrufen, dann kannst du selbst sprechen.`.trim(), aktion: "facetime" };
     }
     if (!satz) return { ok: false, error: `Was soll ich ${ihr(k)} sagen?` };
     return { ok: true, text: `${teil} Echt anrufen kann ich erst mit Twilio, darum kam es als Nachricht.`, aktion: "nachricht" };
@@ -377,14 +377,19 @@ export function verstehe(t) {
 /** @returns {Promise<{answer:string, actions:string[]} | null>} */
 export async function quickCommand(text, channel = "web") {
   const { normalize } = await import("./offline.js");
-  const t = normalize(text);
+  // Doppelte Wörter aus der Spracherkennung ("ruf meine Frau an an und …") entfernen.
+  const t = normalize(text).replace(/(^| )(an|und|ihr|ihm|mir) \2(?= |$)/g, "$1$2");
   if (!t || t.length > 400) return null;
-  const roh = normalize(text, { gross: true });
+  const roh = normalize(text, { gross: true }).replace(/(^| )(an|und|ihr|ihm|mir) \2(?= |$)/gi, "$1$2");
 
   // Antwort auf "Was soll ich ihr sagen?"
   const w = wartet.get(channel);
   if (w && w.bis > Date.now()) {
     wartet.delete(channel);
+    // Eine Rückfrage an Friday ("Hast du sie angerufen?") ist keine Nachricht – nicht verschicken.
+    if (/^(hast du (sie|ihn|es|ihr|ihm)|hat (es|das) (geklappt|funktioniert)|klappt (es|das)|wurde (sie|er|es)|ist (sie|er|es) (angekommen|raus|verschickt))\b/.test(t)) {
+      return { answer: `Ich habe noch nichts geschickt, ${boss()}. Sag einfach, was ich ${ihr(w.kontakt)} sagen soll, oder: Ruf ${w.kontakt.rolle === "frau" ? "meine Frau" : w.kontakt.name} an.`, actions: ["anrufe"] };
+    }
     if (/^(nichts|egal|vergiss es|abbrechen|stopp|stop|nein|doch nicht|lass es)$/.test(t)) return { answer: `Alles klar, ${boss()}. Ich schicke nichts.`, actions: ["anrufe"] };
     if (!verstehe(t)) {
       const nur = /^(einfach anrufen|nur anrufen|ruf (sie|ihn|einfach) an|nur anruf)$/.test(t);

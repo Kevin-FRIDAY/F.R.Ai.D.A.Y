@@ -26,7 +26,13 @@ if (!AGENT_TOKEN) {
 function run(cmd, args, timeout = 15000) {
   return new Promise((resolve, reject) => {
     execFile(cmd, args, { timeout, maxBuffer: 20 * 1024 * 1024 }, (err, stdout, stderr) => {
-      if (err) reject(new Error(stderr?.trim() || err.message));
+      if (err) {
+        // Verständliche Fehlermeldung statt des ganzen AppleScript-Textes.
+        let text = stderr?.trim();
+        if (!text && err.killed) text = `Zeitüberschreitung nach ${Math.round(timeout / 1000)} s (fragt der Mac vielleicht nach einer Erlaubnis? Systemeinstellungen → Datenschutz & Sicherheit → Automation)`;
+        if (!text) text = `${cmd} ist fehlgeschlagen (Code ${err.code ?? "?"})`;
+        reject(new Error(text.replace(/\s+/g, " ").slice(0, 300)));
+      }
       else resolve(stdout.trim());
     });
   });
@@ -36,6 +42,8 @@ function run(cmd, args, timeout = 15000) {
 function osa(script, ...args) {
   return run("osascript", ["-e", `on run argv\n${script}\nend run`, ...args.map(String)]);
 }
+
+const LEISE_AKTIONEN = new Set(["system_info"]);
 
 const clampVolume = (v) => Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
 
@@ -430,7 +438,14 @@ const actions = {
   async screenshot_look() {
     const file = path.join(os.tmpdir(), `friday-${Date.now()}.jpg`);
     try {
-      await run("screencapture", ["-x", "-t", "jpg", file]);
+      try {
+        await run("screencapture", ["-x", "-t", "jpg", file]);
+      } catch (err) {
+        if (/could not create image|display/i.test(err.message)) {
+          throw new Error("Der Mac liefert kein Bildschirmbild. Entweder ist der Bildschirm gesperrt bzw. aus, oder Node darf keine Bildschirmaufnahmen machen (Systemeinstellungen → Datenschutz & Sicherheit → Bildschirm- & Systemaudioaufnahme → node einschalten).");
+        }
+        throw err;
+      }
       await run("sips", ["-Z", "1600", file]);
       return { image: fs.readFileSync(file).toString("base64") };
     } finally {
@@ -469,7 +484,8 @@ function connect() {
         reply = { ok: false, error: err.message };
       }
     }
-    console.log(`${msg.action}: ${reply.ok ? "ok" : reply.error}`);
+    // Routine-Abfragen (alle paar Sekunden) nur bei Fehlern ins Protokoll, sonst wird es riesig.
+    if (!reply.ok || !LEISE_AKTIONEN.has(msg.action)) console.log(`${msg.action}: ${reply.ok ? "ok" : reply.error}`);
     ws.send(JSON.stringify({ type: "result", id: msg.id, ...reply }));
   });
 

@@ -318,6 +318,21 @@ export function quickCommand(text, kanal = "web") {
     return { answer: n ? `Hier ist deine Spiele-Werkstatt, Boss. ${n === 1 ? "Ein Spiel" : `${n} Spiele`} liegen bereit.` : "Hier ist die Spiele-Werkstatt, Boss. Noch leer. Sag einfach: Bau mir ein Spiel.", actions: ["spiele"] };
   }
 
+  // Eingebaute Spiele direkt starten: "starte Snake", "spiel Memory", "lass uns Breakout spielen" – auch ohne Guthaben.
+  const direkt = t.match(/^(?:starte|start|spiel|spiele|öffne|oeffne|lass uns|ich will|ich möchte|ich moechte)(?: mal)?(?: eine runde| ne runde| eine partie)? (?:das |ein |eine |mein |meine |dein )?(snake|schlange|breakout|ziegel ?brecher|memory|paare|meteor ?abwehr|meteor|asteroiden?|space ?shooter)(?: ?-?spiel)?(?: spielen)?$/);
+  if (direkt) {
+    const w = direkt[1];
+    const v = VORLAGEN.find((x) => x.woerter.test(w));
+    if (v) {
+      const gespeichert = findeSpiel(w);
+      const passt = gespeichert && (gespeichert.vorlage === v.id || slug(`${gespeichert.titel} ${gespeichert.auftrag || ""}`).includes(slug(w)));
+      if (passt) return { answer: `${gespeichert.titel} startet, Boss. Viel Spaß!`, actions: [`spiel:${gespeichert.id}`] };
+      const r = starteSpiel(`Vorlage ${v.titel}`, { vorlage: v.id, kanal });
+      if (r.laeuftSchon) return antwortStart(r, kanal);
+      return { answer: `${v.titel} startet, Boss. Viel Spaß!`, actions: [`spiel_bauen:${r.jobId}`] };
+    }
+  }
+
   // Vorhandenes Spiel öffnen: "öffne mein Snake-Spiel", "lass uns Snake spielen", "starte das Weltraumspiel"
   const oeffnen = t.match(/^(?:öffne|oeffne|starte|start|zeig|zeige|lade)(?: mir)?(?: mal)? (?:mein|meine|meinen|das|dein|unser) (.+)$/)
     || t.match(/^(?:lass uns|ich will|ich möchte|ich moechte) (?:mein |das |nochmal |noch mal |wieder )*(.+?) spielen$/);
