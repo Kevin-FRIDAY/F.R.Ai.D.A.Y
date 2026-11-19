@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Ziegel-Brecher</title>
+<style>
+  :root { --neon: #ff8a1e; --cyan: #2ee6d0; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: #050505; color: #ffe7cc; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .wrap { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 10px; }
+  .hud { display: flex; gap: 18px; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; }
+  .hud b { color: var(--neon); text-shadow: 0 0 8px var(--neon); font-size: 18px; }
+  canvas { border: 1px solid rgba(255,138,30,.6); border-radius: 10px; box-shadow: 0 0 24px rgba(255,138,30,.25); background: #090604; max-width: 100%; touch-action: none; }
+  .overlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(0,0,0,.72); text-align: center; padding: 20px; }
+  .overlay h1 { margin: 0; color: var(--neon); letter-spacing: .2em; text-shadow: 0 0 14px var(--neon); font-size: 30px; }
+  .overlay p { margin: 0; opacity: .85; line-height: 1.5; }
+  .overlay button { margin-top: 8px; padding: 12px 26px; border-radius: 999px; border: 1px solid var(--neon); background: rgba(255,138,30,.18); color: #fff; font-size: 16px; letter-spacing: .1em; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hud"><span>Punkte <b id="punkte">0</b></span><span>Leben <b id="leben">3</b></span><span>Level <b id="level">1</b></span></div>
+  <canvas id="feld" width="480" height="600"></canvas>
+</div>
+<div class="overlay" id="overlay">
+  <h1>ZIEGEL-BRECHER</h1>
+  <p id="info">Halte den Ball im Spiel und zerschlage alle Ziegel.<br>Maus, Finger oder Pfeiltasten bewegen den Schläger.</p>
+  <button id="start">Start</button>
+</div>
+<script>
+(() => {
+  const feld = document.getElementById("feld");
+  const ctx = feld.getContext("2d");
+  const W = feld.width, H = feld.height;
+  const overlay = document.getElementById("overlay");
+  const schlaeger = { x: W / 2, w: 90, h: 12, y: H - 36 };
+  let ball, ziegel, punkte, leben, level, laeuft = false, klebt = true, tasten = {};
+  const FARBEN = ["#ff8a1e", "#ffb15c", "#2ee6d0", "#4f8dff", "#a978ff"];
+
+  function groesse() {
+    const s = Math.min((window.innerWidth - 20) / W, (window.innerHeight - 70) / H, 1.2);
+    feld.style.width = W * s + "px"; feld.style.height = H * s + "px";
+  }
+  window.addEventListener("resize", groesse); groesse();
+
+  function baueLevel() {
+    ziegel = [];
+    const reihen = Math.min(4 + level, 8), spalten = 8, bw = (W - 40) / spalten;
+    for (let r = 0; r < reihen; r++) for (let c = 0; c < spalten; c++) ziegel.push({ x: 20 + c * bw, y: 60 + r * 24, w: bw - 6, h: 18, farbe: FARBEN[r % FARBEN.length], hp: r < level - 1 ? 2 : 1 });
+  }
+  function neuerBall() { klebt = true; ball = { x: schlaeger.x, y: schlaeger.y - 10, r: 7, vx: 0, vy: 0, v: 5 + level * 0.5 }; }
+  function neu() { punkte = 0; leben = 3; level = 1; baueLevel(); neuerBall(); hud(); }
+  function hud() { document.getElementById("punkte").textContent = punkte; document.getElementById("leben").textContent = leben; document.getElementById("level").textContent = level; }
+  function abschiessen() { if (!klebt || !laeuft) return; klebt = false; const w = -Math.PI / 2 + (Math.random() - 0.5) * 0.8; ball.vx = Math.cos(w) * ball.v; ball.vy = Math.sin(w) * ball.v; }
+
+  function update() {
+    if (tasten.arrowleft || tasten.a) schlaeger.x -= 9;
+    if (tasten.arrowright || tasten.d) schlaeger.x += 9;
+    schlaeger.x = Math.max(schlaeger.w / 2, Math.min(W - schlaeger.w / 2, schlaeger.x));
+    if (klebt) { ball.x = schlaeger.x; ball.y = schlaeger.y - 10; return; }
+    ball.x += ball.vx; ball.y += ball.vy;
+    if (ball.x < ball.r || ball.x > W - ball.r) { ball.vx *= -1; ball.x = Math.max(ball.r, Math.min(W - ball.r, ball.x)); }
+    if (ball.y < ball.r) { ball.vy = Math.abs(ball.vy); }
+    if (ball.vy > 0 && ball.y + ball.r >= schlaeger.y && ball.y < schlaeger.y + schlaeger.h && Math.abs(ball.x - schlaeger.x) < schlaeger.w / 2 + ball.r) {
+      const t = (ball.x - schlaeger.x) / (schlaeger.w / 2);
+      const w = -Math.PI / 2 + t * 1.05;
+      ball.vx = Math.cos(w) * ball.v; ball.vy = Math.sin(w) * ball.v;
+    }
+    for (const z of ziegel) {
+      if (z.hp <= 0) continue;
+      if (ball.x + ball.r > z.x && ball.x - ball.r < z.x + z.w && ball.y + ball.r > z.y && ball.y - ball.r < z.y + z.h) {
+        z.hp--; punkte += 10; hud();
+        const ueberX = Math.min(ball.x + ball.r - z.x, z.x + z.w - (ball.x - ball.r));
+        const ueberY = Math.min(ball.y + ball.r - z.y, z.y + z.h - (ball.y - ball.r));
+        if (ueberX < ueberY) ball.vx *= -1; else ball.vy *= -1;
+        break;
+      }
+    }
+    if (ziegel.every((z) => z.hp <= 0)) { level++; baueLevel(); neuerBall(); hud(); }
+    if (ball.y > H + 20) { leben--; hud(); if (leben <= 0) return ende(); neuerBall(); }
+  }
+  function ende() {
+    laeuft = false;
+    document.getElementById("info").innerHTML = "Game Over – " + punkte + " Punkte (Level " + level + ").";
+    document.getElementById("start").textContent = "Nochmal";
+    overlay.classList.remove("hidden");
+  }
+  function zeichne() {
+    ctx.fillStyle = "#090604"; ctx.fillRect(0, 0, W, H);
+    for (const z of ziegel) {
+      if (z.hp <= 0) continue;
+      ctx.shadowBlur = 12; ctx.shadowColor = z.farbe; ctx.fillStyle = z.farbe; ctx.globalAlpha = z.hp > 1 ? 1 : 0.8;
+      ctx.fillRect(z.x, z.y, z.w, z.h);
+    }
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 20; ctx.shadowColor = "#ff8a1e"; ctx.fillStyle = "#ff8a1e";
+    ctx.fillRect(schlaeger.x - schlaeger.w / 2, schlaeger.y, schlaeger.w, schlaeger.h);
+    ctx.shadowColor = "#2ee6d0"; ctx.fillStyle = "#e9fffb";
+    ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    if (klebt && laeuft) { ctx.fillStyle = "rgba(255,231,204,.7)"; ctx.font = "15px system-ui"; ctx.textAlign = "center"; ctx.fillText("Tippen oder Leertaste zum Abschießen", W / 2, H / 2 + 60); }
+  }
+  function schleife() { if (laeuft) update(); zeichne(); requestAnimationFrame(schleife); }
+  function start() { neu(); laeuft = true; overlay.classList.add("hidden"); }
+
+  function zeigerX(clientX) { const r = feld.getBoundingClientRect(); schlaeger.x = (clientX - r.left) * (W / r.width); }
+  feld.addEventListener("pointermove", (e) => zeigerX(e.clientX));
+  feld.addEventListener("pointerdown", (e) => { zeigerX(e.clientX); abschiessen(); });
+  document.addEventListener("keydown", (e) => {
+    const k = e.key.toLowerCase(); tasten[k] = true;
+    if (k.startsWith("arrow")) e.preventDefault();
+    if (k === " " || k === "enter") { e.preventDefault(); if (!laeuft) start(); else abschiessen(); }
+  });
+  document.addEventListener("keyup", (e) => { tasten[e.key.toLowerCase()] = false; });
+  document.getElementById("start").addEventListener("click", start);
+  neu(); schleife();
+})();
+</script>
+</body>
+</html>

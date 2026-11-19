@@ -8,7 +8,7 @@
   const esc = F.escapeHtml || ((s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])));
   const tok = () => { try { return localStorage.getItem("friday_token") || ""; } catch { return ""; } };
   const url = (datei) => `/api/archiv/datei/${datei}?t=${encodeURIComponent(tok())}`;
-  const TYP = { foto: ["📸", "Fotos"], video: ["🎬", "Videos"], webseite: ["🌐", "Webseiten"], dokument: ["📄", "Dokumente"] };
+  const TYP = { foto: ["📸", "Fotos"], video: ["🎬", "Videos"], webseite: ["🌐", "Webseiten"], spiel: ["🎮", "Spiele"], dokument: ["📄", "Dokumente"] };
 
   const sheet = document.createElement("section");
   sheet.id = "archiv";
@@ -23,6 +23,7 @@
           <button type="button" data-typ="foto">📸 Fotos</button>
           <button type="button" data-typ="video">🎬 Videos</button>
           <button type="button" data-typ="webseite">🌐 Webseiten</button>
+          <button type="button" data-typ="spiel">🎮 Spiele</button>
           <button type="button" data-typ="dokument">📄 Dokumente</button>
         </div>
         <div class="arc-knoepfe">
@@ -90,7 +91,7 @@
     if (e.typ === "foto") return `<button type="button" class="arc-k arc-foto" data-i="${i}" title="${esc(e.name)}"><img loading="lazy" src="${url(e.datei)}" alt="Foto vom ${datum(e.zeit)}"><span class="arc-k-txt"><b>${esc(e.titel)}</b>${zeit}</span></button>`;
     if (e.typ === "video") return `<button type="button" class="arc-k arc-video" data-i="${i}"><video preload="metadata" muted playsinline src="${url(e.datei)}#t=0.5"></video><span class="arc-play">▶</span><span class="arc-k-txt"><b>${esc(e.titel)}</b>${zeit}</span></button>`;
     const [ic] = TYP[e.typ];
-    const extra = e.typ === "webseite" ? (e.status === "verkauft" ? "✓ verkauft" : "Entwurf") : e.art === "fragebogen" ? "Fragebogen" : "Dokument";
+    const extra = e.typ === "webseite" ? (e.status === "verkauft" ? "✓ verkauft" : "Entwurf") : e.typ === "spiel" ? (e.quelle === "vorlage" ? "Spiel · Vorlage" : "Spiel") : e.art === "fragebogen" ? "Fragebogen" : "Dokument";
     return `<button type="button" class="arc-k arc-symbol" data-i="${i}"><span class="arc-ic">${ic}</span><span class="arc-k-txt"><b>${esc(e.titel)}</b><small>${extra} · ${datum(e.zeit)}</small></span></button>`;
   }
 
@@ -140,6 +141,7 @@
     if (e.typ === "foto" || e.typ === "video") return gross(i);
     if (e.typ === "webseite") { try { window.open(url(e.datei), "_blank", "noopener"); } catch { /* egal */ } return; }
     if (e.typ === "dokument") window.FridayDokumente?.oeffne(e.dokId);
+    if (e.typ === "spiel") window.FridaySpiele?.spiel(e.spielId);
   }
 
   // ---------- Fotos hinzufügen ----------

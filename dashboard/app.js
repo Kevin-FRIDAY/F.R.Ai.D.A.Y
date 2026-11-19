@@ -155,7 +155,7 @@
     reloadPending = true;
     setState(`Update auf ${v} – lade neu …`);
     const tryReload = () => {
-      const openTool = document.querySelector("#call:not(.hidden), #werkstatt:not(.hidden), #schnitt:not(.hidden), #vision:not(.hidden), #webseiten:not(.hidden), #markt:not(.hidden)");
+      const openTool = document.querySelector("#call:not(.hidden), #werkstatt:not(.hidden), #schnitt:not(.hidden), #vision:not(.hidden), #webseiten:not(.hidden), #markt:not(.hidden), #spiele:not(.hidden)");
       if (busy || speaking || openTool) { setTimeout(tryReload, 15000); return; }
       location.reload();
     };
@@ -531,6 +531,13 @@
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       if (hat("archiv")) window.FridayArchiv?.open();
       if (hat("oekosystem")) window.FridayOekosystem?.open();
+      // Spiele-Werkstatt: live zuschauen, wie Friday programmiert, oder ein gespeichertes Spiel starten.
+      const spielBau = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel_bauen:"));
+      const spielStart = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel:"));
+      if (spielBau) window.FridaySpiele?.verfolge(spielBau.slice(12));
+      else if (hat("spiel_bauen")) window.FridaySpiele?.neuester();
+      else if (spielStart) window.FridaySpiele?.spiel(spielStart.slice(6));
+      else if (hat("spiele")) window.FridaySpiele?.open();
       const zentraleAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("zentrale:"));
       if (zentraleAktion) window.FridayZentrale?.open(zentraleAktion.slice(9));
       else window.FridayZentrale?.refresh();
