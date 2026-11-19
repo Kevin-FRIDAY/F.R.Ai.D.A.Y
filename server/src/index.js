@@ -48,6 +48,7 @@ import { zentraleRouten, zentraleStart } from "./zentrale.js";
 import { lagebildRouten } from "./lagebild.js";
 import { satellitenRouten } from "./satelliten.js";
 import { flugzeugeRouten } from "./flugzeuge.js";
+import { welttourRouten } from "./welttour.js";
 import { osirisStatus } from "./osiris.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
@@ -407,6 +408,7 @@ lagebildRouten(app, asyncRoute);
 satellitenRouten(app, asyncRoute);
 schiffeRouten(app, asyncRoute);
 flugzeugeRouten(app, asyncRoute);
+welttourRouten(app, asyncRoute);
 app.get("/api/lage-alarm", asyncRoute(async (req, res) => res.json(await getAlarm())));
 // Fernseher (Samsung-TV im WLAN)
 app.get("/api/fernseher", asyncRoute(async (req, res) => res.json(await fernseher.status())));

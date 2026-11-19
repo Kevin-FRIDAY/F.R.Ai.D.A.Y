@@ -577,6 +577,11 @@
       if (flugA) window.FridayFlugzeuge?.zeigeNr(flugA.slice(9));
       else if (flugG) window.FridayFlugzeuge?.gruppe(flugG.slice(11));
       else if (hat("flugzeuge")) window.FridayFlugzeuge?.oeffne();
+      // Welt-Runde (v1.116.0): "Zeig mir, was in der Welt passiert"
+      if (hat("welttour")) window.FridayWelttour?.start();
+      if (hat("welttour_weiter")) window.FridayWelttour?.weiter();
+      if (hat("welttour_zurueck")) window.FridayWelttour?.zurueck();
+      if (hat("welttour_stopp")) window.FridayWelttour?.stopp(true);
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       if (hat("archiv")) window.FridayArchiv?.open();
       if (hat("oekosystem")) window.FridayOekosystem?.open();
@@ -1522,6 +1527,7 @@
   let bargeZeit = 0;
   let bargeNr = -1;
   const unterbrochenEben = () => Date.now() - bargeZeit < 4000;
+  window.Friday.unterbrochen = () => unterbrochenEben() || bargeFang;
   const bargeNorm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9ß ]+/g, " ").replace(/\s+/g, " ").trim();
   // Stammt das Gehörte aus Fridays eigenem Satz? (Echo aus dem Lautsprecher)

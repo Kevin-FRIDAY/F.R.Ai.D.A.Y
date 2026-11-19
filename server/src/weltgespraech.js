@@ -18,7 +18,7 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
 // So spricht man die Länder aus (statt "Vereinigte Staaten").
 const SPRECHNAME = { "840": "die USA", "826": "Großbritannien", "784": "die Emirate", "180": "der Kongo", "528": "die Niederlande" };
-const sprechName = (c) => SPRECHNAME[c.id] || c.name;
+export const sprechName = (c) => SPRECHNAME[c.id] || c.name;
 const gross1 = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 function vorbereiten(text) {
@@ -61,7 +61,7 @@ function landAusAntwort(t) {
 }
 
 // Schlagzeilen kürzen und doppelte Themen weglassen.
-function schlagzeilen(items, anzahl) {
+export function schlagzeilen(items, anzahl) {
   const gesehen = new Set();
   const out = [];
   for (const n of items) {
