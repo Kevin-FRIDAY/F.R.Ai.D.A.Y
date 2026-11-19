@@ -14,6 +14,7 @@ import { quickCommand as hausQuick } from "./werkstatt.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
 import { quickCommand as archivQuick } from "./archiv.js";
 import { quickCommand as weltQuick, vollbildQuick } from "./weltgespraech.js";
+import { quickCommand as satQuick } from "./satelliten.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 import { getSettings } from "./einstellungen.js";
 import { setzeAuftrag, auftragFertig, werkzeugName } from "./auftrag.js";
@@ -253,6 +254,8 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     try {
       const v = vollbildQuick(text);
       if (v) { actions.push(...v.actions); return finish(v.answer); }
+      const sq = await satQuick(text).catch((err) => { console.error("Satelliten:", err.message); return null; });
+      if (sq) { actions.push(...sq.actions); return finish(sq.answer); }
       const w = await weltQuick(text, channel);
       if (w) { actions.push(...w.actions); return finish(w.answer); }
     } catch (err) {

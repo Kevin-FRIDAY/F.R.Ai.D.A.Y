@@ -559,6 +559,12 @@
       if (lageLand) window.FridayLage?.showCountry(lageLand.slice(10), { stumm: true, bewertung: lageWert?.slice(15) });
       else if (hat("weltgeschehen") && !window.FridayLage?.offen()) window.FridayLage?.open({ stumm: true });
       if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
+      // Satelliten (v1.113.0): einzelner Satellit mit Steckbrief, eine Gruppe oder alle.
+      const satA = data.actions?.find((a) => typeof a === "string" && a.startsWith("satellit:"));
+      const satG = data.actions?.find((a) => typeof a === "string" && a.startsWith("satgruppe:"));
+      if (satA) window.FridaySatelliten?.zeigeNr(Number(satA.slice(9)));
+      else if (satG) window.FridaySatelliten?.gruppe(satG.slice(10));
+      else if (hat("satelliten")) window.FridaySatelliten?.oeffne();
       if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
       if (hat("archiv")) window.FridayArchiv?.open();
       if (hat("oekosystem")) window.FridayOekosystem?.open();
