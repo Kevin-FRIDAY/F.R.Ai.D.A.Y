@@ -1044,6 +1044,8 @@
   let planeParams = null;
   async function loadPlanesFor(params) {
     planeParams = params;
+    // Seit v1.115.0 zeigt flugzeuge.js ALLE Flugzeuge weltweit auf der Globus-Leinwand.
+    if (window.FridayFlugzeuge) return;
     const g = $("lage-planes");
     if (g) g.replaceChildren();
     if (!$("lage-planes-on")?.checked) return;
@@ -1090,7 +1092,7 @@
     }
     if (e.target?.id === "lage-planes-on") {
       if (!e.target.checked) $("lage-planes")?.replaceChildren();
-      else if (planeParams) loadPlanesFor(planeParams);
+      else if (planeParams && !window.FridayFlugzeuge) loadPlanesFor(planeParams);
     }
     if (["lage-fires-on", "lage-volc-on", "lage-storms-on", "lage-weitere-on"].includes(e.target?.id)) renderEvents();
     if (e.target?.id === "lage-night-on") drawNight();
