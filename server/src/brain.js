@@ -24,6 +24,7 @@ import { quickCommand as kommandoQuick } from "./kommando.js";
 import { quickCommand as zentraleQuick } from "./zentrale.js";
 import { quickCommand as spielQuick } from "./spiele.js";
 import { quickCommand as routenQuick } from "./routen.js";
+import { quickCommand as helferQuick } from "./helfer.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -223,6 +224,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (tvAnswer) { actions.push("fernseher"); return finish(tvAnswer); }
     } catch (err) {
       console.error("Fernseher-Schnellbefehl:", err.message);
+    }
+  }
+
+  // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Stimmungs-Sound, Ideen-Schmiede – ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const hf = await helferQuick(text);
+      if (hf) { actions.push(...hf.actions); return finish(hf.answer); }
+    } catch (err) {
+      console.error("Helfer-Paket:", err.message);
     }
   }
 

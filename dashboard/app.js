@@ -424,6 +424,7 @@
     hueSprechen(true);
     pauseWake();
     setState("Spricht", "speaking");
+    startBarge(text, nr);
     try {
       if (status.voice) {
         const teile = text.length > 160 ? haeppchen(text) : [text];
@@ -473,7 +474,8 @@
       speaking = false;
       hueSprechen(false);
       window.FridayFace?.stop();
-      setState("Bereit, Boss.");
+      if (!bargeFang && bargeNr === nr) stopBarge();
+      setState(bargeFang ? "Ich höre" : "Bereit, Boss.", bargeFang ? "listening" : undefined);
       resumeWake();
     }
   }
@@ -491,6 +493,8 @@
       return;
     }
     busy = true;
+    // Für den Stimmungs-Sound (Automatik): nur was Boss gerade in Friday sagt/tippt.
+    try { window.dispatchEvent(new CustomEvent("friday-eingabe", { detail: { text } })); } catch { /* egal */ }
     window.FridayAuftrag?.start();
     if (gespraechRec) { try { gespraechRec.abort(); } catch { /* egal */ } } // getippt statt gesprochen
     addMessage("user", pendingImage ? `📷 ${text}` : text);
@@ -542,6 +546,24 @@
       else if (hat("route_planen")) window.FridayRouten?.neueste();
       else if (routeZiel) window.FridayRouten?.open({ ziel: decodeURIComponent(routeZiel.slice(11)) });
       else if (hat("routen")) window.FridayRouten?.open();
+      // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede, Stimmungs-Sound.
+      const aktion = (p) => data.actions?.find((a) => typeof a === "string" && a.startsWith(p));
+      if (hat("kuehlschrank")) window.FridayKuehl?.open({ tab: hat("kuehlschrank:rezepte") ? "rezepte" : "vorrat" });
+      else window.FridayKuehl?.refresh();
+      const kaufA = aktion("kauf:");
+      if (kaufA) window.FridayKauf?.open({ id: kaufA.slice(5) });
+      else if (hat("kaufberater")) window.FridayKauf?.open();
+      const gegenA = aktion("gegenrede:");
+      if (gegenA) window.FridayGegen?.open({ id: gegenA.slice(10) });
+      else if (hat("gegenrede")) window.FridayGegen?.open();
+      const ideeA = aktion("idee:");
+      if (ideeA) { try { window.FridayIdeen?.open({ wurf: JSON.parse(decodeURIComponent(ideeA.slice(5))) }); } catch { window.FridayIdeen?.open(); } }
+      else if (hat("ideen")) window.FridayIdeen?.open();
+      const klangA = aktion("klang:");
+      if (klangA === "klang:aus") window.FridayKlang?.aus();
+      else if (klangA === "klang:auto") { window.FridayKlang?.auto(true); window.FridayKlang?.open(); }
+      else if (klangA) window.FridayKlang?.spiele(klangA.slice(6));
+      else if (hat("klang")) window.FridayKlang?.open();
       // Spiele-Werkstatt: live zuschauen, wie Friday programmiert, oder ein gespeichertes Spiel starten.
       const spielBau = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel_bauen:"));
       const spielStart = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel:"));
@@ -561,7 +583,7 @@
       clearSpeaking();
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
       // Gesprächsmodus: Kam der Befehl per Stimme, hört Friday danach weiter zu, ohne "Friday" davor.
-      const weiter = hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer);
+      const weiter = !bargeFang && !unterbrochenEben() && (hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer));
       if (weiter && Recognition && !callActive && !window.FridayDokumente?.offen()) {
         setTimeout(() => { if (!busy && !speaking) listenOnce({ folge: true, frage: hat("zuhoeren") }); }, 250);
       }
@@ -682,6 +704,7 @@
   bindFlag("set-mouth", "friday_mouth", true);
   bindFlag("set-vollbild", "friday_vollbild", false);
   bindFlag("set-gespraech", "friday_gespraech", true);
+  bindFlag("set-unterbrechen", "friday_unterbrechen", true);
   // Kopf-Stil: wird beim Laden von face.js gelesen, darum nach dem Wechsel neu laden
   (() => {
     const sel = $("set-kopfstil");
@@ -1381,6 +1404,91 @@
     listenOnce();
   });
 
+  // ---------- Unterbrechen mit "Friday" (v1.106.0) ----------
+  // Während Friday spricht, hört ein zweites Ohr mit. Nur wenn darin "Friday" vorkommt, hört sie sofort
+  // auf zu reden und nimmt den Befehl an ("Friday, stopp" / "Friday, wie spät ist es?").
+  // Normales Reden ohne "Friday" wird ignoriert. Hört das Mikrofon Fridays eigene Stimme aus dem
+  // Lautsprecher (Echo), erkennt sie das am Text und unterbricht sich nicht selbst.
+  const unterbrechenAn = () => storage.get("friday_unterbrechen") !== "0";
+  const NUR_STOPP = /^(stopp?|halt|ruhe|still|sei still|schluss|aus|warte|moment|danke|ok(ay)?|genug|pause)[ .!]*$/i;
+  let bargeRec = null;     // das zweite Ohr
+  let bargeText = "";      // was Friday gerade sagt (für den Echo-Vergleich)
+  let bargeFang = false;   // "Friday" wurde gehört, Friday ist still und wartet auf den Befehl
+  let bargeTimer = null;
+  let bargeZeit = 0;
+  let bargeNr = -1;
+  const unterbrochenEben = () => Date.now() - bargeZeit < 4000;
+  const bargeNorm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9ß ]+/g, " ").replace(/\s+/g, " ").trim();
+  // Stammt das Gehörte aus Fridays eigenem Satz? (Echo aus dem Lautsprecher)
+  function bargeEcho(said) {
+    const gesagt = bargeNorm(bargeText);
+    if (!/\b(friday|freitag)\b/.test(gesagt)) return false; // Friday sagt das Wort gar nicht → muss Boss sein
+    const woerter = bargeNorm(said).split(" ").filter((w) => w.length > 2);
+    if (woerter.length <= 1) return false;
+    const menge = new Set(gesagt.split(" "));
+    const treffer = woerter.filter((w) => menge.has(w)).length;
+    return treffer / woerter.length >= 0.6;
+  }
+  function stopBarge() {
+    clearTimeout(bargeTimer);
+    const r = bargeRec;
+    bargeRec = null;
+    bargeFang = false;
+    if (r) { r.onend = null; try { r.abort(); } catch { /* egal */ } }
+  }
+  function bargeBefehl(cmd) {
+    stopBarge();
+    bargeZeit = Date.now();
+    cmd = String(cmd || "").replace(/^[,.!\s]+/, "").trim();
+    window.FridayRing?.melde?.("unterbrechen", null);
+    if (cmd.length > 2 && !NUR_STOPP.test(cmd)) { setTimeout(() => send(cmd, { stimme: true }), 120); return; }
+    if (NUR_STOPP.test(cmd)) { setState("Bereit, Boss."); resumeWake(); return; }
+    setTimeout(() => { if (!busy && !speaking) listenOnce({ folge: true }); }, 200);
+  }
+  function startBarge(text, nr) {
+    stopBarge();
+    bargeNr = nr;
+    if (!Recognition || !unterbrechenAn() || callActive || document.visibilityState === "hidden") return;
+    bargeText = String(text || "");
+    let rec;
+    try { rec = new Recognition(); } catch { return; }
+    rec.lang = "de-DE";
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.maxAlternatives = 1;
+    rec.onresult = (e) => {
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const said = String(e.results[i][0]?.transcript || "");
+        const fertig = e.results[i].isFinal;
+        const m = said.match(WAKE);
+        if (!m) continue;
+        if (!bargeFang) {
+          // Zwischenergebnis: nur sofort stoppen, wenn Friday das Wort selbst gar nicht sagt (dann kann es kein Echo sein).
+          if (!fertig && /\b(friday|freitag)\b/.test(bargeNorm(bargeText))) continue;
+          if (bargeEcho(said)) continue;
+          bargeFang = true;
+          bargeZeit = Date.now();
+          window.Friday.stopSpeaking?.();
+          setState("Ich höre", "listening");
+          // Kommt kein fertiger Satz mehr, einfach normal zuhören.
+          bargeTimer = setTimeout(() => bargeBefehl(""), 3500);
+        }
+        if (fertig) { clearTimeout(bargeTimer); bargeBefehl(said.slice(m.index + m[0].length)); return; }
+      }
+    };
+    rec.onerror = () => { /* still: Unterbrechen ist ein Extra */ };
+    rec.onend = () => {
+      // Der Browser beendet das Zuhören manchmal von selbst: solange Friday spricht, neu starten.
+      if (bargeRec !== rec) return;
+      if (bargeFang) { bargeBefehl(""); return; }
+      if (speaking) { try { rec.start(); } catch { bargeRec = null; } } else bargeRec = null;
+    };
+    bargeRec = rec;
+    try { rec.start(); } catch { bargeRec = null; }
+  }
+  window.Friday.unterbrechen = { an: unterbrechenAn, aktiv: () => !!bargeRec };
+
   // Dauerhaft auf "Friday" hören (klappt, solange das Dashboard offen ist).
   // v1.102.0: Das Weckwort ist IMMER an. Früher wurde die Einstellung zwar gespeichert,
   // beim Neuladen aber nie wieder gelesen – darum war es nach jedem Start aus.
@@ -1393,7 +1501,7 @@
   storage.remove("friday_wake"); // alter, nie gelesener Wert
 
   function wakeDarf() {
-    return wakeActive && !speaking && !busy && !gespraechRec
+    return wakeActive && !speaking && !busy && !gespraechRec && !bargeRec
       && !callActive
       && document.visibilityState !== "hidden";
   }
