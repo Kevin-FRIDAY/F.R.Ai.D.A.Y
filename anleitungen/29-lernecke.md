@@ -65,7 +65,39 @@ nur eine Karte abfragen. „🤖 Erklär's mir“ erklärt eine Karte oder beant
 Stapel wählen, Prüfungsdatum und Minuten pro Tag eintragen → Friday verteilt die Karten auf die Tage,
 wiederholt nach 1, 3 und 7 Tagen und lässt die letzten Tage nur zum Wiederholen. Auf der Startseite steht dann „Heute dran“.
 
+## Fortschritt (ab Version 1.109.0)
+
+Auf der Startseite der Lernecke steht **Dein Fortschritt**: Für jedes Thema (jeden Kartenstapel) gibt es drei grüne Ringe
+mit Prozent in der Mitte. Ein neues Thema bekommt automatisch eigene Ringe.
+
+- **Geübt**: So viele Karten hat Carla schon mindestens einmal beantwortet.
+- **Gemerkt**: So oft lag sie beim Abfragen richtig (fast richtig zählt halb).
+- **Auswendig**: Diese Karten sitzen, sie waren mehrmals hintereinander richtig (Fach 4 und 5).
+
+Die Ringe stehen auch auf jedem Stapel unter „Meine Karten“ und am Ende jeder Abfrage.
+Antippen eines Themas springt direkt zum Abfragen. Im Kevin-Testmodus ändern sich die Ringe nicht.
+
+## Archiv (ab Version 1.109.0)
+
+Reiter **📚 Archiv** (oder Kachel „Mein Archiv“, oder „Friday, zeig meine Lernunterlagen“, oder Link `/?lernen=archiv`).
+Hier liegt alles dauerhaft:
+
+- **Jedes gescannte Foto** landet automatisch hier, mit dem erkannten Text. Auch wenn keine Karten daraus wurden
+  und auch, wenn der Kartenstapel später gelöscht wird.
+- **📷 Foto ablegen**: Blatt fotografieren, Friday liest die Schrift und legt es ab (ohne Karten zu machen).
+- **📎 Datei ablegen**: PDF, Word, PowerPoint, Excel, Pages, Keynote, Bilder, Text, Sprachaufnahmen (bis 8 MB pro Datei).
+- **📝 Notiz**: eigene Mitschrift tippen.
+- Ordner nach **Fach** (Feld „Fach für neue Unterlagen“ oder beim Öffnen ändern), **Suche** auch im erkannten Text,
+  **☆ Favoriten** stehen oben.
+- Öffnen zeigt Fotos, PDFs und Ton direkt an, alles andere über **⬇ Herunterladen**.
+- **🃏 Karten daraus machen** macht aus dem Text einer Unterlage neue Lernkarten.
+- **🗑 Papierkorb**: Gelöschtes kann zurückgeholt werden. Erst „Endgültig löschen“ entfernt es.
+- Unten: **Meine Karteikarten zum Mitnehmen**, jeder Stapel als Textdatei zum Ausdrucken.
+
+Hinweis: In PDFs und Word-Dateien sucht Friday nur im Titel, nicht im Inhalt.
+
 ## Wo liegen Carlas Daten?
 
-Getrennt von Kevins Sachen: `server/data/lernen.json` (Karten, Fortschritt) und `server/data/lernen-bilder/` (Fotos).
+Getrennt von Kevins Sachen: `server/data/lernen.json` (Karten, Fortschritt), `server/data/lernen-bilder/` (Fotos),
+`server/data/lernen-archiv.json` und `server/data/lernen-unterlagen/` (Archiv).
 Beides ist in der Sicherung dabei und wird von Updates nicht angefasst.

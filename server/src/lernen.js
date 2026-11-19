@@ -11,6 +11,7 @@ import * as logbuch from "./logbuch.js";
 import { DATA_DIR, ROOT } from "./config.js";
 import { teile, tagPlus, U } from "./datum.js";
 import { denke, jsonAus } from "./denker.js";
+import * as archiv from "./lernarchiv.js";
 
 const DATEI = "lernen";
 const BILDER = path.join(DATA_DIR, "lernen-bilder");
@@ -252,6 +253,22 @@ function fertig(karten, titel) {
   return { titel, karten: k.map((x) => ({ ...x, reihenfolge: reihenfolgeWichtig(x) })) };
 }
 
+// ---------- Fortschritt (Ringe pro Thema) ----------
+// Geübt = Anteil der Karten, die schon mindestens einmal abgefragt wurden.
+// Gemerkt = Trefferquote aller Abfragen (richtig zählt voll, teilweise halb).
+// Auswendig = Anteil der Karten in Fach 4 oder 5 (mehrmals hintereinander richtig).
+function ringeVon(karten) {
+  const n = karten.length;
+  if (!n) return { geuebt: 0, gemerkt: 0, auswendig: 0 };
+  const versuche = karten.reduce((a, k) => a + (k.richtig || 0) + (k.teilweise || 0) + (k.falsch || 0), 0);
+  const punkte = karten.reduce((a, k) => a + (k.richtig || 0) + (k.teilweise || 0) / 2, 0);
+  return {
+    geuebt: Math.round((karten.filter((k) => k.gesehen).length / n) * 100),
+    gemerkt: versuche ? Math.round((punkte / versuche) * 100) : 0,
+    auswendig: Math.round((karten.filter((k) => (k.fach || 1) >= 4).length / n) * 100),
+  };
+}
+
 // ---------- Stapel & Karten ----------
 function stapelInfo(s) {
   const h = heute();
@@ -263,6 +280,7 @@ function stapelInfo(s) {
     faellig: karten.filter((k) => !k.faellig || k.faellig <= h).length,
     neu: karten.filter((k) => !k.gesehen).length,
     gelernt: karten.filter((k) => (k.fach || 1) >= 4).length,
+    ringe: ringeVon(karten),
     faechern, plan: s.plan || null, bilder: (s.bilder || []).length,
   };
 }
@@ -275,6 +293,8 @@ export function uebersicht() {
     karten: stapel.reduce((a, s) => a + s.anzahl, 0),
     heute: heutePlan(d),
     letzte: (d.sitzungen || []).slice(-8).reverse(),
+    ringe: ringeVon(d.stapel.flatMap((s) => s.karten || [])),
+    unterlagen: archiv.liste().anzahl,
     ocr: { mac: process.platform === "darwin" },
   };
 }
@@ -310,6 +330,7 @@ export function kartenSpeichern({ stapel, titel, fach, karten = [], quelle, bild
   if (bild && !(s.bilder ||= []).includes(bild)) s.bilder.push(bild);
   s.geaendert = new Date().toISOString();
   speichern(d);
+  try { archiv.mitStapelVerknuepfen([bild, ...neu.map((k) => k.bild)], s); } catch { /* egal */ }
   if (neu.length) logbuch.eintragen({ bereich: "lernen", titel: `Lernecke: ${neu.length} Karte${neu.length === 1 ? "" : "n"} in „${s.titel}“ gespeichert`, quelle: quelle || "hand" });
   return { stapel: stapelInfo(s), neu: neu.length };
 }
@@ -332,7 +353,7 @@ export function stapelLoeschen(id) {
   // Fotos, die kein anderer Stapel braucht, in den Papierkorb-Ordner schieben (nicht hart löschen).
   const nochGebraucht = new Set(d.stapel.flatMap((x) => [...(x.bilder || []), ...x.karten.map((k) => k.bild).filter(Boolean)]));
   for (const b of new Set([...(s.bilder || []), ...s.karten.map((k) => k.bild).filter(Boolean)])) {
-    if (nochGebraucht.has(b)) continue;
+    if (nochGebraucht.has(b) || archiv.bildImArchiv(b)) continue;
     try { fs.mkdirSync(path.join(BILDER, "papierkorb"), { recursive: true }); fs.renameSync(bildPfad(b), path.join(BILDER, "papierkorb", `${b}.jpg`)); } catch { /* egal */ }
   }
   logbuch.eintragen({ bereich: "lernen", titel: `Lernecke: Stapel „${s.titel}“ gelöscht` });
@@ -500,7 +521,9 @@ export async function scannen(image, opts = {}) {
   fs.mkdirSync(BILDER, { recursive: true });
   const id = neueId();
   fs.writeFileSync(bildPfad(id), buf);
-  if (!ocr) return { bild: id, text: null };
+  // Jedes Foto kommt sofort ins Lern-Archiv, damit nichts verloren geht (Text wird nachgetragen).
+  const ablegen = (text) => { try { return archiv.scanAblegen({ bild: id, text, titel: opts.titel, fach: opts.fach, vorschau: opts.vorschau }); } catch { return null; } };
+  if (!ocr) return { bild: id, text: null, unterlage: ablegen("") };
   try {
     const prog = await programmBereit();
     const lies = (spiegeln) => new Promise((ok, nein) => execFile(prog, [bildPfad(id), ...(spiegeln ? ["--spiegeln"] : [])], { timeout: 60000, maxBuffer: 4 * 1024 * 1024 }, (err, out, stderr) => (err ? nein(new Error(String(stderr || err.message).trim().slice(0, 160))) : ok(String(out).trim()))));
@@ -512,9 +535,9 @@ export async function scannen(image, opts = {}) {
       const andersrum = await lies(true).catch(() => "");
       if (textGuete(andersrum) > textGuete(text) + 0.1) { text = andersrum; gespiegelt = true; }
     }
-    return { bild: id, text, quelle: "mac", gespiegelt, ...kartenAusText(text) };
+    return { bild: id, text, quelle: "mac", gespiegelt, unterlage: ablegen(text), ...kartenAusText(text) };
   } catch (err) {
-    return { bild: id, text: null, quelle: null, grund: err.message };
+    return { bild: id, text: null, quelle: null, grund: err.message, unterlage: ablegen("") };
   }
 }
 
@@ -565,11 +588,12 @@ export async function kiErklaeren(karte, frage) {
 // ---------- Sprachbefehle ohne Claude ----------
 export function quickCommand(text) {
   const t = String(text || "").toLowerCase().replace(/^(hey |hallo |ok )?(friday|freitag)[ ,.]*/, "").replace(/[!?.]/g, "").trim();
-  const lern = U(/\b(lernmodus|lern-modus|lernecke|lern-ecke|lernbereich|lernkarten?|karteikarten?|karteikasten|lernkartei|lehrermodus|lehrer-modus|lernhilfe)\b/);
+  const lern = U(/\b(lernmodus|lern-modus|lernecke|lern-ecke|lernbereich|lernkarten?|karteikarten?|karteikasten|lernkartei|lehrermodus|lehrer-modus|lernhilfe|lernarchiv|lern-archiv|lernunterlagen|lern-unterlagen)\b/);
   const carla = U(/\b(carla|karla)\b.*\b(lernen|abfragen|lernecke|lernmodus)\b|\b(lernen|abfragen)\b.*\b(carla|karla)\b/);
   if (!lern.test(t) && !carla.test(t) && !U(/^(frag mich ab|lass uns lernen|ich will lernen|ich möchte lernen|ich moechte lernen|wir lernen)\b/).test(t)) return null;
   // Kevin will nur testen/verbessern: keine Carla-Begrüßung, nichts zählt für Carlas Fortschritt.
   if (U(/\b(testen|testmodus|test-modus|ausprobieren|probieren)\b/).test(t) && lern.test(t)) return { answer: "Lernecke im Testmodus. Carla wird nicht begrüßt und ihr Fortschritt bleibt unverändert.", actions: ["lernen:test"] };
+  if (U(/\b(archiv|lernarchiv|lern-archiv|unterlagen|lernunterlagen|dokumente|mitschriften?|skripte?)\b/).test(t)) return { answer: "", actions: ["lernen:archiv"] };
   // Die Begrüßung macht die Lernecke selbst, weil nur sie weiß, wer am Gerät ist (Carla oder Kevin).
   if (U(/\b(scann|scanne|scannen|fotografier|einlesen|abfotografieren)\w*/).test(t)) return { answer: "", actions: ["lernen:scannen"] };
   if (U(/\b(frag|fragen|abfragen|abfrage|prüf|pruef|test)\w*/).test(t)) return { answer: "", actions: ["lernen:abfragen"] };
@@ -582,6 +606,7 @@ export function lernenRouten(app, asyncRoute) {
   const fehler = (res, err, code) => res.status(err.status || code || 400).json({ error: err.message || String(err) });
   app.get("/api/lernen", (req, res) => res.json(uebersicht()));
   app.post("/api/lernen/start", (req, res) => res.json(begruessung()));
+  archiv.archivRouten(app);
   app.get("/api/lernen/stapel/:id", (req, res) => { const s = stapelHolen(req.params.id); return s ? res.json(s) : res.status(404).json({ error: "Stapel nicht gefunden." }); });
   app.patch("/api/lernen/stapel/:id", (req, res) => res.json(stapelAendern(req.params.id, req.body || {}) || {}));
   app.delete("/api/lernen/stapel/:id", (req, res) => res.json({ ok: stapelLoeschen(req.params.id) }));
@@ -589,7 +614,7 @@ export function lernenRouten(app, asyncRoute) {
   app.patch("/api/lernen/stapel/:sid/karte/:kid", (req, res) => res.json(karteAendern(req.params.sid, req.params.kid, req.body || {}) || {}));
   app.delete("/api/lernen/stapel/:sid/karte/:kid", (req, res) => res.json({ ok: karteLoeschen(req.params.sid, req.params.kid) }));
   app.post("/api/lernen/text", (req, res) => res.json(kartenAusText(String(req.body?.text || "").slice(0, 30000))));
-  app.post("/api/lernen/scan", asyncRoute(async (req, res) => { try { res.json(await scannen(req.body?.image, { ocr: req.body?.ocr !== false, spiegeln: req.body?.spiegeln === true })); } catch (err) { fehler(res, err); } }));
+  app.post("/api/lernen/scan", asyncRoute(async (req, res) => { try { const b = req.body || {}; res.json(await scannen(b.image, { ocr: b.ocr !== false, spiegeln: b.spiegeln === true, titel: b.titel, fach: b.fach, vorschau: b.vorschau })); } catch (err) { fehler(res, err); } }));
   app.get("/api/lernen/bild/:id", (req, res) => { const p = bildDatei(req.params.id); return p ? res.sendFile(p) : res.status(404).end(); });
   app.post("/api/lernen/pruefen", (req, res) => {
     const { stapel, karte, antwort, reihenfolge } = req.body || {};

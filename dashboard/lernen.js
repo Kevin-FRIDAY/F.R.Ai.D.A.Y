@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y – Carlas Lernecke (v1.108.0)
+// F.R.Ai.D.A.Y – Carlas Lernecke (v1.108.0, Archiv + Fortschritts-Ringe ab v1.109.0)
 // Lernkarten oder Blätter (gedruckt oder handgeschrieben) mit der Kamera scannen → Karten speichern →
 // Friday fragt ab: Sie liest die Überschrift vor, hört Carlas Antwort, vergleicht mit der Karte und sagt,
 // was gefehlt hat oder ob die Reihenfolge falsch war. Falsche Karten kommen wieder (Lernkartei).
@@ -30,6 +30,7 @@
         <button class="hf-tab an" data-tab="start">🏠 Start</button>
         <button class="hf-tab" data-tab="scannen">📷 Scannen</button>
         <button class="hf-tab" data-tab="karten">🗂 Meine Karten</button>
+        <button class="hf-tab" data-tab="archiv">📚 Archiv</button>
         <button class="hf-tab" data-tab="abfragen">🎯 Abfragen</button>
         <button class="hf-tab" data-tab="hilfe">💡 Lernhilfe</button>
         <button class="hf-tab" data-tab="plan">📅 Lernplan</button>
@@ -53,6 +54,7 @@
             <button class="ln-kachel" data-go="abfragen"><b>🎯</b><span>Abfragen</span><small>Ich lese vor, du antwortest</small></button>
             <button class="ln-kachel" data-go="hilfe"><b>💡</b><span>Hilf mir beim Lernen</span><small>Karten ansehen, Eselsbrücken, erklären</small></button>
             <button class="ln-kachel" data-go="scannen"><b>📷</b><span>Neue Karten scannen</span><small>Karteikarte, Zettel oder Buchseite</small></button>
+            <button class="ln-kachel" data-go="archiv"><b>📚</b><span>Mein Archiv</span><small id="ln-archiv-zahl">Alle deine Lernunterlagen</small></button>
           </div>
           <div class="hf-reihe" style="margin-top:10px">
             <button id="ln-mikro-start" class="hf-btn" type="button">🎤 Per Stimme sagen, was wir machen</button>
@@ -60,6 +62,8 @@
           </div>
         </div>
         <div id="ln-heute" class="hf-karte" style="display:none"><h3>Heute dran</h3><div id="ln-heute-liste"></div></div>
+        <div id="ln-fortschritt" class="hf-karte" style="display:none"><h3>Dein Fortschritt</h3><div id="ln-fortschritt-liste" class="ln-themen"></div>
+          <p class="hf-hinweis">Pro Thema drei Ringe: <b>Geübt</b> = so viele Karten hast du schon mindestens einmal beantwortet. <b>Gemerkt</b> = so oft lagst du beim Abfragen richtig. <b>Auswendig</b> = diese Karten sitzen (mehrmals hintereinander richtig).</p></div>
         <div id="ln-stand" class="hf-hinweis"></div>
         <div class="hf-reihe hf-hinweis">
           <label class="ln-check">Dieses Gerät gehört: <select id="ln-geraet" class="hf-input" style="width:auto"><option value="">jedes Mal fragen</option><option value="carla">Carla</option><option value="kevin">Kevin (Testmodus)</option></select></label>
@@ -120,6 +124,32 @@
       <section data-seite="karten" class="hidden">
         <div id="ln-stapel" class="hf-raster"></div>
         <div id="ln-detail" class="hf-karte" style="display:none"></div>
+      </section>
+
+      <section data-seite="archiv" class="hidden">
+        <div class="hf-karte">
+          <div class="hf-reihe">
+            <input id="ln-a-suche" class="hf-input grow" type="search" placeholder="🔎 Suchen, auch im Text der Unterlagen …" aria-label="Im Archiv suchen">
+            <select id="ln-a-fach" class="hf-input" style="width:auto" aria-label="Fach"></select>
+          </div>
+          <div class="hf-reihe" style="margin-top:8px">
+            <label class="hf-btn haupt">📷 Foto ablegen<input id="ln-a-foto" type="file" accept="image/*" capture="environment" hidden></label>
+            <label class="hf-btn">📎 Datei ablegen<input id="ln-a-datei" type="file" multiple hidden></label>
+            <button id="ln-a-notiz" class="hf-btn" type="button">📝 Notiz</button>
+            <button id="ln-a-korb" class="hf-btn leise" type="button">🗑 Papierkorb</button>
+          </div>
+          <div class="hf-reihe" style="margin-top:8px">
+            <input id="ln-a-neu-fach" class="hf-input grow" list="ln-a-faecher" type="text" placeholder="Fach für neue Unterlagen, z. B. Biologie (freiwillig)">
+            <datalist id="ln-a-faecher"></datalist>
+          </div>
+          <div class="hf-balken" style="margin-top:8px"><i id="ln-a-balken" style="width:0%"></i></div>
+          <p class="hf-hinweis">Hier liegt alles, was du je gescannt oder abgelegt hast: Fotos mit erkanntem Text, PDFs, Word-Dateien, Präsentationen, Sprachaufnahmen und Notizen. Es bleibt gespeichert, auch wenn du einen Kartenstapel löschst, und ist in jeder Friday-Sicherung enthalten.</p>
+        </div>
+        <div id="ln-a-ordner" class="ln-ordner"></div>
+        <div id="ln-a-detail" class="hf-karte" style="display:none"></div>
+        <div id="ln-a-liste" class="ln-a-raster"></div>
+        <div class="hf-karte" style="margin-top:12px"><h3>🗂 Meine Karteikarten zum Mitnehmen</h3><div id="ln-a-stapel" class="hf-liste"></div>
+          <p class="hf-hinweis">Jeder Stapel als Textdatei, zum Ausdrucken oder Weitergeben.</p></div>
       </section>
 
       <section data-seite="abfragen" class="hidden">
@@ -200,6 +230,7 @@
     if (t !== "abfragen" && quiz?.laeuft) quizEnde(true);
     if (t !== "scannen") kameraAus();
     if (t === "karten") zeichneStapel();
+    if (t === "archiv") archivLaden();
     if (t === "hilfe") hilfeLaden();
     status("");
   }
@@ -267,7 +298,7 @@
     mikroBelegen(false);
     const wer = o.wer || (o.modus === "test" ? "kevin" : geraetWer());
     test = wer === "kevin";
-    zeigeTab(o.modus === "abfragen" ? "abfragen" : o.modus === "scannen" ? "scannen" : o.modus === "plan" ? "plan" : "start");
+    zeigeTab(["abfragen", "scannen", "plan", "archiv"].includes(o.modus) ? o.modus : "start");
     zeigeTestband();
     $("#ln-wer-k").style.display = "none";
     $("#ln-gruss-k").style.display = "";
@@ -316,7 +347,28 @@
       ? `${info.stapel.length} Stapel · ${info.karten} Karten · ${info.faellig} heute fällig${info.letzte?.[0] ? ` · zuletzt: ${info.letzte[0].richtig} von ${info.letzte[0].richtig + info.letzte[0].teilweise + info.letzte[0].falsch} richtig` : ""}`
       : "Noch keine Karten. Fang mit „Neue Karten scannen“ an.";
     $("#ln-immer").checked = lsGet("lernecke_start") === "1";
+    $("#ln-archiv-zahl").textContent = info.unterlagen ? `${info.unterlagen} Unterlage${info.unterlagen === 1 ? "" : "n"} gespeichert` : "Alle deine Lernunterlagen";
+    const mitKarten = (info.stapel || []).filter((x) => x.anzahl);
+    $("#ln-fortschritt").style.display = mitKarten.length ? "" : "none";
+    $("#ln-fortschritt-liste").innerHTML = mitKarten.map((x) => themaHtml(x)).join("");
   }
+  // ---------- Fortschritts-Ringe ----------
+  // Grüner Ring mit Prozent in der Mitte. Pro Thema (Stapel) drei Stück.
+  function ring(pct, name, klein = false) {
+    const p = Math.max(0, Math.min(100, Math.round(pct || 0)));
+    const r = 42, u = 2 * Math.PI * r;
+    return `<div class="ln-ring${klein ? " klein" : ""}" role="img" aria-label="${esc(name)}: ${p} Prozent">
+      <svg viewBox="0 0 100 100"><circle class="bahn" cx="50" cy="50" r="${r}"/><circle class="wert" cx="50" cy="50" r="${r}" stroke-dasharray="${u.toFixed(1)}" stroke-dashoffset="${(u * (1 - p / 100)).toFixed(1)}" style="--u:${u.toFixed(1)}"/></svg>
+      <b>${p}<small>%</small></b><span>${esc(name)}</span></div>`;
+  }
+  const ringeHtml = (r = {}, klein = false) => `<div class="ln-ringe">${ring(r.geuebt, "Geübt", klein)}${ring(r.gemerkt, "Gemerkt", klein)}${ring(r.auswendig, "Auswendig", klein)}</div>`;
+  const themaHtml = (x) => `<button class="ln-thema" type="button" data-thema="${esc(x.id)}"><div class="ln-thema-kopf"><b>${esc(x.titel)}</b><span class="klein">${x.anzahl} Karten${x.faellig ? ` · ${x.faellig} fällig` : ""}</span></div>${ringeHtml(x.ringe, true)}</button>`;
+  $("#ln-fortschritt-liste").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-thema]");
+    if (!b) return;
+    zeigeTab("abfragen");
+    $("#ln-q-stapel").value = b.dataset.thema;
+  });
   $("#ln-immer").addEventListener("change", (e) => {
     lsSet("lernecke_start", e.target.checked ? "1" : "0");
     // Wer die Lernecke immer direkt startet, ist Carla (auf ihrem Gerät).
@@ -443,7 +495,7 @@
       $("#ln-vor").src = daten; $("#ln-vor").style.display = "block";
       status("Lese die Schrift …");
       bar.style.width = "15%";
-      const r = await json("/api/lernen/scan", { body: { image: { mediaType: "image/jpeg", data: daten.split(",")[1] } } });
+      const r = await json("/api/lernen/scan", { body: { image: { mediaType: "image/jpeg", data: daten.split(",")[1] }, vorschau: miniBild(c) } });
       scan.bild = r.bild;
       $("#ln-ki-lesen").disabled = false;
       $("#ln-spiegeln").disabled = false;
@@ -453,6 +505,8 @@
         text = await browserOcr(c, bar);
         if (guete(text) < 0.6) { const t2 = await browserOcr(spiegelCanvas(c), bar).catch(() => ""); if (guete(t2) > guete(text) + 0.1) { text = t2; r.gespiegelt = true; } }
         r.karten = null;
+        // Im Browser erkannten Text auch im Archiv nachtragen (damit die Suche ihn findet).
+        if (r.unterlage?.id && String(text || "").trim()) json(`/api/lernen/archiv/${r.unterlage.id}`, { method: "PATCH", body: { text: String(text).trim() } }).catch(() => {});
       }
       bar.style.width = "100%";
       text = String(text || "").trim();
@@ -569,6 +623,9 @@
     if (!karten.length) { status("Keine Karte ausgewählt.", true); return; }
     try {
       const r = await json("/api/lernen/karten", { body: { stapel: $("#ln-ziel").value || null, titel: $("#ln-neu-titel").value, karten, quelle: "scan", bild: scan.bild } });
+      // Getippter oder eingefügter Text ohne Foto kommt als Notiz ins Archiv.
+      const eigenText = $("#ln-text").value.trim();
+      if (!scan.bild && eigenText) json("/api/lernen/archiv", { body: { titel: r.stapel.titel, text: eigenText } }).catch(() => {});
       status(`✓ ${r.neu} Karte${r.neu === 1 ? "" : "n"} in „${r.stapel.titel}“ gespeichert.`);
       sag(`Gespeichert. ${r.neu} neue Karte${r.neu === 1 ? "" : "n"} im Stapel ${r.stapel.titel}.`);
       scan = { ...scan, bild: null, vorschau: [] };
@@ -585,7 +642,7 @@
       <button class="hf-karte ln-stapel" data-stapel="${esc(s.id)}">
         <h3>🗂 ${esc(s.titel)}</h3>
         <div class="hf-hinweis">${s.anzahl} Karten · ${s.faellig} fällig · ${s.gelernt} sitzen</div>
-        <div class="ln-faecher">${s.faechern.map((n, i) => `<i title="Fach ${i + 1}: ${n}" style="--h:${s.anzahl ? Math.max(6, (n / s.anzahl) * 100) : 6}%"><b>${n}</b></i>`).join("")}</div>
+        ${ringeHtml(s.ringe, true)}
       </button>`).join("") : `<div class="hf-leer">Noch keine Stapel. Scann zuerst ein paar Karten.</div>`;
     $("#ln-detail").style.display = "none";
   }
@@ -843,7 +900,13 @@
     e.style.display = "";
     e.innerHTML = `<h3>Ergebnis</h3><p style="font-size:17px;margin:4px 0 10px">${esc(text)}</p>
       <div class="hf-reihe"><button class="hf-btn haupt" data-n="nochmal" type="button">🔁 Nochmal abfragen</button><button class="hf-btn" data-n="falsch" type="button">✗ Nur die falschen</button><button class="hf-btn leise" data-n="hilfe" type="button">💡 Zur Lernhilfe</button></div>`;
-    laden().catch(() => {});
+    // Kurz warten, bis die letzte Bewertung gespeichert ist, dann die Ringe des Themas zeigen.
+    setTimeout(() => laden().then(() => {
+      if (test || !sum) return;
+      const st = info.stapel.find((x) => x.id === q.sid);
+      const r = st ? st.ringe : info.ringe;
+      if (r && e.isConnected) e.querySelector(".hf-reihe")?.insertAdjacentHTML("beforebegin", `<div class="hf-hinweis">${st ? `Dein Stand bei „${esc(st.titel)}“:` : "Dein Stand insgesamt:"}</div>${ringeHtml(r)}`);
+    }).catch(() => {}), 500);
     if (!stumm) sag(text);
   }
   $("#ln-q-ende").addEventListener("click", (e) => {
@@ -983,13 +1046,226 @@
     if (!w.offen()) { if (quiz?.laeuft) quizEnde(true); hoerAuf(); mikroBelegen(false); kameraAus(); }
   }).observe(w.sheet, { attributes: true, attributeFilter: ["class"] });
 
+  // ---------- Archiv: alle Lernunterlagen dauerhaft ----------
+  /** Kleines Vorschaubild (für die Archiv-Kacheln), max. 240 px. */
+  function miniBild(quelle) {
+    try {
+      const b = quelle.videoWidth || quelle.naturalWidth || quelle.width, h = quelle.videoHeight || quelle.naturalHeight || quelle.height;
+      if (!b || !h) return null;
+      const f = Math.min(1, 240 / Math.max(b, h));
+      const c = document.createElement("canvas"); c.width = Math.round(b * f); c.height = Math.round(h * f);
+      c.getContext("2d").drawImage(quelle, 0, 0, c.width, c.height);
+      return c.toDataURL("image/jpeg", 0.7);
+    } catch { return null; }
+  }
+  const groesse = (n) => (n > 1048576 ? `${(n / 1048576).toFixed(1).replace(".", ",")} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
+  const datum = (iso) => { try { return new Date(iso).toLocaleDateString("de-DE", { day: "numeric", month: "short", year: "numeric" }); } catch { return ""; } };
+  let arch = { q: "", fach: "", korb: false, daten: null, offen: null, url: null };
+  let suchTimer = null;
+  async function archivLaden() {
+    try {
+      const p = new URLSearchParams({ q: arch.q, fach: arch.fach, ...(arch.korb ? { papierkorb: "1" } : {}) });
+      arch.daten = await json(`/api/lernen/archiv?${p}`);
+    } catch (err) { status(err.message, true); return; }
+    zeichneArchiv();
+  }
+  function zeichneArchiv() {
+    const d = arch.daten;
+    if (!d) return;
+    const fs = d.faecher || [];
+    const sel = $("#ln-a-fach");
+    sel.innerHTML = `<option value="">Alle Fächer (${d.anzahl})</option>${fs.map((f) => `<option value="${esc(f.name || "-")}">${esc(f.name || "Ohne Fach")} (${f.n})</option>`).join("")}`;
+    sel.value = arch.fach;
+    $("#ln-a-faecher").innerHTML = fs.filter((f) => f.name).map((f) => `<option value="${esc(f.name)}">`).join("");
+    $("#ln-a-korb").textContent = arch.korb ? "← Zurück zum Archiv" : `🗑 Papierkorb${d.papierkorb ? ` (${d.papierkorb})` : ""}`;
+    $("#ln-a-ordner").innerHTML = arch.korb ? `<div class="hf-hinweis">🗑 Papierkorb: Hier kannst du Unterlagen zurückholen oder endgültig löschen.</div>`
+      : fs.length > 1 ? fs.map((f) => `<button class="ln-ordner-k${arch.fach === (f.name || "-") ? " an" : ""}" data-ordner="${esc(f.name || "-")}" type="button">📁 ${esc(f.name || "Ohne Fach")} <small>${f.n}</small></button>`).join("") : "";
+    const liste = d.unterlagen || [];
+    $("#ln-a-liste").innerHTML = liste.length ? liste.map((u) => `
+      <button class="ln-a-k${arch.offen === u.id ? " an" : ""}" data-u="${esc(u.id)}" type="button">
+        <div class="ln-a-bild">${u.vorschau ? `<img src="${esc(u.vorschau)}" alt="">` : `<span>${u.icon}</span>`}${u.favorit ? `<i class="ln-a-stern">★</i>` : ""}</div>
+        <b>${esc(u.titel)}</b>
+        <small>${u.icon} ${esc(u.fach || (u.typ === "scan" ? "Scan" : u.typ === "notiz" ? "Notiz" : "Datei"))} · ${esc(datum(u.erstellt))}${u.datei ? ` · ${groesse(u.datei.groesse)}` : ""}</small>
+        ${arch.q && u.auszug ? `<small class="ln-a-auszug">${esc(u.auszug)}</small>` : ""}
+      </button>`).join("")
+      : `<div class="hf-leer">${arch.korb ? "Der Papierkorb ist leer." : arch.q ? "Nichts gefunden." : "Noch nichts im Archiv. Alles, was du scannst, landet automatisch hier. Du kannst auch Dateien und Notizen ablegen."}</div>`;
+    const st = info.stapel || [];
+    $("#ln-a-stapel").innerHTML = st.length ? st.map((x) => `<div class="hf-zeile"><span class="icon">🗂</span><span class="name">${esc(x.titel)}<br><span class="klein">${x.anzahl} Karten</span></span><button class="hf-mini" data-export="${esc(x.id)}" type="button">⬇ Als Text</button></div>`).join("") : `<div class="hf-leer">Noch keine Karteikarten.</div>`;
+  }
+  $("#ln-a-suche").addEventListener("input", (e) => { clearTimeout(suchTimer); suchTimer = setTimeout(() => { arch.q = e.target.value.trim(); archivLaden(); }, 250); });
+  $("#ln-a-fach").addEventListener("change", (e) => { arch.fach = e.target.value; archivLaden(); });
+  $("#ln-a-ordner").addEventListener("click", (e) => { const b = e.target.closest("[data-ordner]"); if (!b) return; arch.fach = arch.fach === b.dataset.ordner ? "" : b.dataset.ordner; archivLaden(); });
+  $("#ln-a-korb").addEventListener("click", () => { arch.korb = !arch.korb; arch.offen = null; $("#ln-a-detail").style.display = "none"; archivLaden(); });
+  $("#ln-a-liste").addEventListener("click", (e) => { const b = e.target.closest("[data-u]"); if (b) archivOeffnen(b.dataset.u); });
+
+  async function blobVon(id) {
+    const r = await F().api(`/api/lernen/archiv/${encodeURIComponent(id)}/datei`);
+    if (!r.ok) throw new Error("Die Datei ist nicht mehr da.");
+    return r.blob();
+  }
+  function urlFrei() { if (arch.url) { URL.revokeObjectURL(arch.url); arch.url = null; } }
+  async function archivOeffnen(id) {
+    let u;
+    try { u = await json(`/api/lernen/archiv/${encodeURIComponent(id)}`); } catch (err) { status(err.message, true); return; }
+    arch.offen = id;
+    urlFrei();
+    const d = $("#ln-a-detail");
+    d.style.display = "";
+    const stapel = (u.stapel || []).map((sid) => info.stapel.find((x) => x.id === sid)).filter(Boolean);
+    d.innerHTML = `
+      <div class="hf-reihe">
+        <input id="ln-a-titel" class="hf-input grow" value="${esc(u.titel)}" aria-label="Titel">
+        <input id="ln-a-dfach" class="hf-input" list="ln-a-faecher" value="${esc(u.fach)}" placeholder="Fach" aria-label="Fach" style="width:180px">
+        <button class="hf-mini" data-a="zu" type="button" title="Schließen">✕</button>
+      </div>
+      <div class="hf-hinweis" style="margin:6px 0">${u.icon} ${u.typ === "scan" ? "Gescanntes Foto" : u.typ === "notiz" ? "Notiz" : esc(u.datei?.name || "Datei")} · ${esc(datum(u.erstellt))}${u.datei ? ` · ${groesse(u.datei.groesse)}` : ""}${stapel.length ? ` · Karten in ${stapel.map((x) => `„${esc(x.titel)}“`).join(", ")}` : ""}</div>
+      <div id="ln-a-ansicht" class="ln-a-ansicht">${u.zeigen && u.typ !== "notiz" && u.zeigen !== "text" ? `<div class="hf-hinweis">Lade …</div>` : ""}</div>
+      ${u.typ === "notiz" || u.hatText || u.zeigen === "text" || u.typ === "scan" ? `<label class="hf-feld" style="margin-top:8px">${u.typ === "notiz" ? "Text" : "Erkannter Text (zum Suchen, du kannst ihn verbessern)"}<textarea id="ln-a-text" rows="${u.typ === "notiz" ? 10 : 6}">${esc(u.text)}</textarea></label>` : ""}
+      <div class="hf-reihe" style="margin-top:10px">
+        ${u.geloescht ? `<button class="hf-btn haupt" data-a="zurueck" type="button">↩ Zurückholen</button><button class="hf-btn leise" data-a="weg" type="button">🗑 Endgültig löschen</button>` : `
+        ${u.typ !== "notiz" ? `<button class="hf-btn" data-a="laden" type="button">⬇ Herunterladen</button>` : ""}
+        ${u.zeigen === "pdf" ? `<button class="hf-btn" data-a="neu" type="button">↗ Groß öffnen</button>` : ""}
+        ${u.typ === "notiz" || u.hatText ? `<button class="hf-btn" data-a="karten" type="button">🃏 Karten daraus machen</button><button class="hf-btn leise" data-a="vorlesen" type="button">🔊 Vorlesen</button>` : ""}
+        ${stapel[0] ? `<button class="hf-btn leise" data-a="stapel" data-sid="${esc(stapel[0].id)}" type="button">🗂 Zu den Karten</button>` : ""}
+        <button class="hf-btn leise" data-a="stern" type="button">${u.favorit ? "★ Favorit" : "☆ Favorit"}</button>
+        <button class="hf-btn leise" data-a="korb" type="button">🗑 Papierkorb</button>`}
+      </div>`;
+    zeichneArchiv();
+    d.scrollIntoView({ behavior: "smooth", block: "start" });
+    arch.u = u;
+    if (!u.zeigen || u.zeigen === "text" || u.typ === "notiz") return;
+    try {
+      const blob = await blobVon(id);
+      if (arch.offen !== id) return;
+      // Nur harmlose Arten anzeigen (Bild, PDF, Ton); alles andere nur herunterladen.
+      const typ = { bild: blob.type.startsWith("image/") ? blob.type : "image/jpeg", pdf: "application/pdf", audio: blob.type.startsWith("audio/") ? blob.type : "audio/mpeg" }[u.zeigen];
+      arch.url = URL.createObjectURL(new Blob([blob], { type: typ }));
+      const a = $("#ln-a-ansicht");
+      if (u.zeigen === "bild") {
+        a.innerHTML = `<img id="ln-a-img" src="${arch.url}" alt="${esc(u.titel)}">`;
+        if (!u.vorschau) $("#ln-a-img").addEventListener("load", (e) => { const v = miniBild(e.target); if (v) json(`/api/lernen/archiv/${id}`, { method: "PATCH", body: { vorschau: v } }).then(() => archivLaden()).catch(() => {}); }, { once: true });
+      } else if (u.zeigen === "pdf") a.innerHTML = `<iframe src="${arch.url}" title="${esc(u.titel)}"></iframe>`;
+      else if (u.zeigen === "audio") a.innerHTML = `<audio controls src="${arch.url}"></audio>`;
+    } catch (err) { $("#ln-a-ansicht").innerHTML = `<div class="hf-leer">${esc(err.message)}</div>`; }
+  }
+  $("#ln-a-detail").addEventListener("change", async (e) => {
+    const id = arch.offen;
+    if (!id) return;
+    const feld = { "ln-a-titel": "titel", "ln-a-dfach": "fach", "ln-a-text": "text" }[e.target.id];
+    if (!feld) return;
+    try { await json(`/api/lernen/archiv/${id}`, { method: "PATCH", body: { [feld]: e.target.value } }); status("✓ Gespeichert"); archivLaden(); } catch (err) { status(err.message, true); }
+  });
+  $("#ln-a-detail").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-a]");
+    const u = arch.u;
+    if (!b || !u) return;
+    const was = b.dataset.a;
+    try {
+      if (was === "zu") { arch.offen = null; urlFrei(); $("#ln-a-detail").style.display = "none"; zeichneArchiv(); return; }
+      if (was === "laden") {
+        const blob = await blobVon(u.id);
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([blob], { type: "application/octet-stream" }));
+        a.download = u.datei?.name || `${u.titel}.jpg`;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        return;
+      }
+      if (was === "neu") { if (arch.url) window.open(arch.url, "_blank", "noopener"); return; }
+      if (was === "vorlesen") { const t = $("#ln-a-text")?.value || u.text; if (t) sag(t.slice(0, 3000)); return; }
+      if (was === "karten") {
+        zeigeTab("scannen");
+        $("#ln-text").value = $("#ln-a-text")?.value || u.text || "";
+        scan.bild = u.typ === "scan" ? u.bild : null;
+        $("#ln-ziel").value = ""; $("#ln-neu-titel").style.display = ""; $("#ln-neu-titel").value = u.titel;
+        await erkennen();
+        return;
+      }
+      if (was === "stapel") { zeigeTab("karten"); zeigeDetail(b.dataset.sid); return; }
+      if (was === "stern") { await json(`/api/lernen/archiv/${u.id}`, { method: "PATCH", body: { favorit: !u.favorit } }); await archivLaden(); archivOeffnen(u.id); return; }
+      if (was === "zurueck") { await json(`/api/lernen/archiv/${u.id}`, { method: "PATCH", body: { zurueck: true } }); status("↩ Zurückgeholt."); }
+      if (was === "korb") { await json(`/api/lernen/archiv/${u.id}`, { method: "DELETE" }); status("In den Papierkorb gelegt. Du kannst es dort zurückholen."); }
+      if (was === "weg") {
+        if (!b.dataset.sicher) { b.dataset.sicher = "1"; b.textContent = "Wirklich für immer löschen? Nochmal tippen"; setTimeout(() => { if (b.isConnected) { delete b.dataset.sicher; b.textContent = "🗑 Endgültig löschen"; } }, 4000); return; }
+        await json(`/api/lernen/archiv/${u.id}`, { method: "DELETE" }); status("Endgültig gelöscht.");
+      }
+      arch.offen = null; urlFrei(); $("#ln-a-detail").style.display = "none";
+      await archivLaden(); laden().catch(() => {});
+    } catch (err) { status(err.message, true); }
+  });
+  $("#ln-a-notiz").addEventListener("click", async () => {
+    try {
+      const u = await json("/api/lernen/archiv", { body: { titel: "Neue Notiz", text: " ", fach: $("#ln-a-neu-fach").value } });
+      arch.korb = false; await archivLaden(); await archivOeffnen(u.id);
+      const t = $("#ln-a-titel"); t?.focus(); t?.select();
+    } catch (err) { status(err.message, true); }
+  });
+  const alsBase64 = (datei) => new Promise((ok, nein) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1] || ""); r.onerror = () => nein(new Error("Datei ließ sich nicht lesen.")); r.readAsDataURL(datei); });
+  $("#ln-a-datei").addEventListener("change", async (e) => {
+    const dateien = [...(e.target.files || [])];
+    e.target.value = "";
+    const bar = $("#ln-a-balken");
+    let n = 0;
+    for (const datei of dateien) {
+      try {
+        if (datei.size > 8.5 * 1024 * 1024) { status(`„${datei.name}“ ist zu groß (höchstens 8 MB).`, true); continue; }
+        status(`Lege „${datei.name}“ ab …`);
+        bar.style.width = `${Math.round(((n + 0.5) / dateien.length) * 100)}%`;
+        let vorschau = null;
+        if (/^image\/(jpeg|png|webp|gif)$/.test(datei.type)) { try { const bm = await createImageBitmap(datei); vorschau = miniBild(bm); } catch { /* egal */ } }
+        await json("/api/lernen/archiv", { body: { fach: $("#ln-a-neu-fach").value, vorschau, datei: { name: datei.name, data: await alsBase64(datei) } } });
+        n++;
+      } catch (err) { status(err.message, true); }
+    }
+    bar.style.width = "100%"; setTimeout(() => { bar.style.width = "0%"; }, 1200);
+    if (n) { status(`✓ ${n} Datei${n === 1 ? "" : "en"} im Archiv abgelegt.`); arch.korb = false; await archivLaden(); laden().catch(() => {}); }
+  });
+  $("#ln-a-foto").addEventListener("change", async (e) => {
+    const datei = e.target.files?.[0];
+    e.target.value = "";
+    if (!datei) return;
+    const bar = $("#ln-a-balken");
+    try {
+      bar.classList.add("laeuft"); bar.style.width = "40%";
+      status("Lege das Foto ab und lese die Schrift …");
+      const c = await verkleinern(datei);
+      const r = await json("/api/lernen/scan", { body: { image: { mediaType: "image/jpeg", data: c.toDataURL("image/jpeg", 0.86).split(",")[1] }, vorschau: miniBild(c), fach: $("#ln-a-neu-fach").value } });
+      if (r.text == null && r.unterlage?.id) {
+        status("Lese die Schrift im Browser …");
+        const t = String(await browserOcr(c, bar).catch(() => "")).trim();
+        if (t) await json(`/api/lernen/archiv/${r.unterlage.id}`, { method: "PATCH", body: { text: t } });
+      }
+      bar.style.width = "100%";
+      status("✓ Foto im Archiv abgelegt.");
+      arch.korb = false; await archivLaden(); laden().catch(() => {});
+      if (r.unterlage?.id) archivOeffnen(r.unterlage.id);
+    } catch (err) { status(err.message, true); }
+    finally { bar.classList.remove("laeuft"); setTimeout(() => { bar.style.width = "0%"; }, 1200); }
+  });
+  $("#ln-a-stapel").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-export]");
+    if (!b) return;
+    try {
+      const st = await json(`/api/lernen/stapel/${encodeURIComponent(b.dataset.export)}`);
+      const text = `${st.titel}\n${"=".repeat(Math.min(60, st.titel.length))}\n\n${st.karten.map((k, i) => `${i + 1}. ${k.frage}\n${String(k.antwort || "").split("\n").map((z) => `   ${z}`).join("\n")}`).join("\n\n")}\n`;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
+      a.download = `${st.titel.replace(/[\\/:*?"<>|]+/g, "_")}.txt`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    } catch (err) { status(err.message, true); }
+  });
+
   // Direkt-Link /?lernen und „immer mit der Lernecke starten“.
   // (Die Einstellungs-Synchronisierung lädt die Seite beim ersten Start evtl. einmal neu, darum merkt sich
   // die Lernecke den Wunsch kurz in der Sitzung und entfernt ?lernen erst, wenn sie offen ist.)
   const perLink = new URLSearchParams(location.search).has("lernen");
-  try { if (perLink) sessionStorage.setItem("lernecke_direkt", "1"); } catch { /* egal */ }
+  // /?lernen=archiv öffnet direkt das Archiv (z. B. als Lesezeichen auf Carlas iPhone).
+  let linkModus = (new URLSearchParams(location.search).get("lernen") || "").toLowerCase();
+  try { if (perLink) sessionStorage.setItem("lernecke_direkt", linkModus || "1"); } catch { /* egal */ }
   let gemerkt = false;
-  try { gemerkt = sessionStorage.getItem("lernecke_direkt") === "1"; } catch { /* egal */ }
+  try { const g = sessionStorage.getItem("lernecke_direkt"); gemerkt = Boolean(g); if (g && g !== "1" && !linkModus) linkModus = g; } catch { /* egal */ }
+  if (!["archiv", "abfragen", "scannen", "plan"].includes(linkModus)) linkModus = "";
   if (perLink || gemerkt || lsGet("lernecke_start") === "1") {
     let n = 0;
     const t = setInterval(() => {
@@ -1000,7 +1276,7 @@
         if (!bereit) return;
         try { sessionStorage.removeItem("lernecke_direkt"); } catch { /* egal */ }
         if (new URLSearchParams(location.search).has("lernen")) { try { history.replaceState(null, "", location.pathname); } catch { /* egal */ } }
-        w.auf({});
+        w.auf(linkModus ? { modus: linkModus } : {});
       }
     }, 500);
   }
@@ -1009,7 +1285,7 @@
   style.textContent = `
 .ln-box { width: min(1080px, 100%); }
 .ln-gruss-text { font-size: 19px; line-height: 1.45; color: var(--text); margin-bottom: 14px; }
-.ln-gross { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.ln-gross { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
 .ln-kachel { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; padding: 16px; border-radius: 16px; border: 1px solid var(--u-rand, var(--cyan)); background: linear-gradient(160deg, color-mix(in srgb, var(--cyan) 18%, transparent), rgba(0,0,0,.25)); color: var(--text); font: inherit; cursor: pointer; }
 .ln-kachel:hover { box-shadow: 0 0 22px color-mix(in srgb, var(--cyan) 40%, transparent); }
 .ln-kachel b { font-size: 30px; } .ln-kachel span { font-size: 17px; font-weight: 700; } .ln-kachel small { font-size: 12.5px; color: var(--muted); }
@@ -1045,8 +1321,49 @@
 .ln-hilfe { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
 .ln-luecke { border: 0; border-bottom: 2px solid var(--cyan); background: color-mix(in srgb, var(--cyan) 10%, transparent); color: var(--cyan); font: inherit; letter-spacing: 2px; cursor: pointer; padding: 0 4px; border-radius: 4px; }
 .ln-heute { border-color: var(--cyan) !important; box-shadow: 0 0 14px color-mix(in srgb, var(--cyan) 30%, transparent); }
+.ln-ringe { display: flex; gap: 14px; justify-content: space-around; margin-top: 10px; flex-wrap: wrap; }
+.ln-ring { position: relative; width: 104px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.ln-ring svg { width: 104px; height: 104px; transform: rotate(-90deg); overflow: visible; }
+.ln-ring circle { fill: none; stroke-width: 9; }
+.ln-ring .bahn { stroke: rgba(61,220,132,.14); }
+.ln-ring .wert { stroke: #3ddc84; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(61,220,132,.75)); animation: ln-ring-auf 1.1s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes ln-ring-auf { from { stroke-dashoffset: var(--u); } }
+.ln-ring b { position: absolute; top: 0; left: 0; width: 104px; height: 104px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #eafff2; text-shadow: 0 0 12px rgba(61,220,132,.6); font-variant-numeric: tabular-nums; }
+.ln-ring b small { font-size: 13px; margin-left: 1px; }
+.ln-ring span { font-size: 12.5px; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; }
+.ln-stapel .ln-ringe, .ln-thema .ln-ringe { flex-wrap: nowrap; gap: 4px; justify-content: space-between; }
+.ln-ring.klein, .ln-ring.klein svg, .ln-ring.klein b { width: 74px; } .ln-ring.klein svg, .ln-ring.klein b { height: 74px; }
+.ln-ring.klein b { font-size: 17px; } .ln-ring.klein b small { font-size: 10px; } .ln-ring.klein span { font-size: 10.5px; }
+.ln-themen { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.ln-thema { text-align: left; font: inherit; color: var(--text); padding: 12px 14px; border-radius: 16px; border: 1px solid var(--u-rand-soft, var(--line)); background: rgba(0,0,0,.25); cursor: pointer; }
+.ln-thema:hover { border-color: #3ddc84; box-shadow: 0 0 16px rgba(61,220,132,.25); }
+.ln-thema-kopf { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.ln-thema-kopf .klein { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.ln-ordner { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.ln-ordner-k { font: inherit; font-size: 13.5px; color: var(--text); padding: 7px 12px; border-radius: 999px; border: 1px solid var(--u-rand-soft, var(--line)); background: rgba(0,0,0,.25); cursor: pointer; }
+.ln-ordner-k small { color: var(--muted); margin-left: 4px; }
+.ln-ordner-k.an { border-color: var(--cyan); background: color-mix(in srgb, var(--cyan) 18%, transparent); }
+.ln-a-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; margin-top: 10px; }
+.ln-a-k { display: flex; flex-direction: column; gap: 4px; text-align: left; font: inherit; color: var(--text); padding: 8px; border-radius: 14px; border: 1px solid var(--u-rand-soft, var(--line)); background: rgba(0,0,0,.25); cursor: pointer; min-width: 0; }
+.ln-a-k:hover, .ln-a-k.an { border-color: var(--cyan); box-shadow: 0 0 14px color-mix(in srgb, var(--cyan) 30%, transparent); }
+.ln-a-k b { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ln-a-k small { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ln-a-k .ln-a-auszug { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ln-a-bild { position: relative; height: 110px; border-radius: 10px; overflow: hidden; display: grid; place-items: center; background: color-mix(in srgb, var(--cyan) 8%, rgba(0,0,0,.35)); }
+.ln-a-bild img { width: 100%; height: 100%; object-fit: cover; }
+.ln-a-bild span { font-size: 42px; }
+.ln-a-stern { position: absolute; top: 6px; right: 8px; color: #ffc44d; font-style: normal; text-shadow: 0 0 6px rgba(0,0,0,.8); }
+.ln-a-ansicht img { max-width: 100%; max-height: 70vh; border-radius: 10px; display: block; margin: 0 auto; }
+.ln-a-ansicht iframe { width: 100%; height: 70vh; border: 0; border-radius: 10px; background: #fff; }
+.ln-a-ansicht audio { width: 100%; }
+#ln-a-text { width: 100%; resize: vertical; line-height: 1.45; }
 @media (max-width: 900px) {
   .ln-gross { grid-template-columns: 1fr; }
+  .ln-a-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ln-a-bild { height: 96px; }
+  .ln-themen { grid-template-columns: 1fr; }
+  .ln-ringe { gap: 6px; }
+  #ln-a-dfach { width: 100% !important; }
   .ln-kachel { flex-direction: row; flex-wrap: wrap; align-items: center; padding: 12px 14px; }
   .ln-kachel b { font-size: 24px; } .ln-kachel small { flex-basis: 100%; }
   .ln-frage { font-size: 21px; }
