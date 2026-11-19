@@ -3008,3 +3008,11 @@ html.perf-fluessig .lage-lb { backdrop-filter: none; background: rgba(10,6,3,.9)
   .lage-legend .legend-body { width: calc(100vw - 32px); max-height: 56vh; }
   .lage-top .lb-btn-txt { display: none; }
 }
+
+/* v1.111.0 – Apple-Stimmen: Info, Probehören, Anleitung zum Nachladen */
+.voice-info-box { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border: 1px solid var(--u-kante, rgba(255,140,40,.35)); border-radius: 12px; background: var(--u-glas, rgba(255,140,40,.06)); font-size: 13px; }
+.voice-info-box p { margin: 0; line-height: 1.45; }
+.voice-knoepfe { display: flex; gap: 8px; flex-wrap: wrap; }
+.voice-mehr summary { cursor: pointer; color: var(--cyan); font-weight: 600; }
+.voice-mehr p { margin-top: 6px; opacity: .9; }
+#voice-select optgroup { font-weight: 700; }
