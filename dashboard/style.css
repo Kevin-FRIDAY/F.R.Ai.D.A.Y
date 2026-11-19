@@ -2859,3 +2859,56 @@ div.zt-karte { cursor: default; }
 #auftrag-bar .ub-fuell { border-radius: 2px; box-shadow: 0 0 calc(8px * var(--glow, 1)) rgba(255, 138, 30, 0.9); }
 #auftrag-bar .ub-fuell::after, #auftrag-bar .ub-glanz { display: none; }
 #auftrag-bar .ub-prozent { order: 2; font-size: 11px; font-weight: 600; min-width: 34px; text-align: right; text-shadow: 0 0 8px rgba(255, 138, 30, 0.6); }
+
+/* ===================== v1.105.0 Status-Ring um Fridays Kopf ===================== */
+/* grün = spricht, rot = Fehler, gelb = Hinweis/Update, ohne Farbe = alles okay */
+.reactor { --ring-c: var(--cyan); }
+.reactor[data-ring="spricht"] { --ring-c: #46e0a0; }
+.reactor[data-ring="bad"] { --ring-c: #ff4d5e; }
+.reactor[data-ring="warn"] { --ring-c: #ffd23f; }
+.status-ring {
+  position: absolute; inset: -1.5%; border-radius: 50%; pointer-events: none; z-index: 2;
+  border: 2px solid var(--ring-c);
+  box-shadow: 0 0 18px var(--ring-c), 0 0 46px color-mix(in srgb, var(--ring-c) 45%, transparent), inset 0 0 26px color-mix(in srgb, var(--ring-c) 35%, transparent);
+  opacity: 0; transform: scale(.985);
+  transition: opacity .9s ease, transform .9s ease, border-color .9s ease, box-shadow .9s ease;
+}
+.reactor[data-ring] .status-ring { opacity: 1; transform: scale(1); }
+.reactor[data-ring="spricht"] .status-ring { animation: ring-atmen 1.3s ease-in-out infinite alternate; }
+.reactor[data-ring="bad"] .status-ring { animation: ring-atmen 1.8s ease-in-out infinite alternate; }
+.reactor[data-ring="warn"] .status-ring { animation: ring-atmen 3.2s ease-in-out infinite alternate; }
+@keyframes ring-atmen { from { opacity: .55; } to { opacity: 1; } }
+/* Die drehenden HUD-Bögen nehmen die Status-Farbe mit an */
+.hud-rings .hr-arc, .hud-rings .hr-ticks { transition: stroke .9s ease, filter .9s ease, opacity .9s ease; }
+.reactor[data-ring] .hr-arc { stroke: var(--ring-c); filter: drop-shadow(0 0 4px var(--ring-c)); }
+.reactor[data-ring] .hr-ticks { stroke: var(--ring-c); opacity: .5; }
+.reactor[data-ring] .hr-arc.a2 { opacity: .55; }
+/* Zuhören/Denken bleibt in Fridays Farbe (Gelb heißt jetzt "Hinweis") */
+.reactor.listening:not([data-ring]) .hr-arc.a1, .reactor.thinking:not([data-ring]) .hr-arc.a1 { stroke: var(--cyan); }
+/* Notstrom macht Friday grau, aber der rote Ring soll trotzdem leuchten */
+body.friday-tot #reactor[data-ring], body.friday-spar #reactor[data-ring] { filter: none; }
+
+/* Schild unter dem Kopf: warum der Ring leuchtet */
+.ring-schild {
+  position: absolute; left: 50%; bottom: 3%; z-index: 3; transform: translate(-50%, 8px);
+  display: inline-flex; align-items: center; gap: 8px; max-width: 92%;
+  padding: 5px 8px 5px 11px; border-radius: 999px; white-space: nowrap;
+  font-size: 12px; letter-spacing: .02em; color: #fff;
+  background: color-mix(in srgb, var(--ring-c) 16%, rgba(10, 8, 6, .82));
+  border: 1px solid color-mix(in srgb, var(--ring-c) 70%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--ring-c) 40%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  opacity: 0; pointer-events: none; transition: opacity .6s ease, transform .6s ease;
+}
+.ring-schild.an { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+.ring-schild.klickbar { cursor: pointer; }
+.ring-schild .rs-punkt { width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--ring-c); box-shadow: 0 0 8px var(--ring-c); }
+.ring-schild .rs-text { overflow: hidden; text-overflow: ellipsis; }
+.ring-schild .rs-x { font-weight: 400; font-size: 11px; opacity: .65; padding: 2px 4px; cursor: pointer; }
+.ring-schild .rs-x:hover { opacity: 1; }
+.ring-schild .rs-x[hidden] { display: none; }
+@media (max-width: 900px) { .ring-schild { font-size: 11px; bottom: 1%; } }
+html.perf-fluessig .ring-schild { backdrop-filter: none; -webkit-backdrop-filter: none; }
+html.perf-fluessig .status-ring { box-shadow: 0 0 12px var(--ring-c); }
+body.reduce-anim .status-ring { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .status-ring { animation: none !important; } }

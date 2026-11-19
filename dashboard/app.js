@@ -181,6 +181,7 @@
       window.dispatchEvent(new CustomEvent("friday-status", { detail: status }));
     } catch {
       updateHudBar(false);
+      window.dispatchEvent(new Event("friday-status-fehler"));
       $("st-server").textContent = "offline";
       $("st-server").className = "bad";
     }
@@ -555,6 +556,7 @@
       if (logbuchAktion) window.FridayLogbuch?.open(logbuchAktion.slice(8));
       else window.FridayLogbuch?.refresh();
       window.FridayEnergie?.refresh();
+      window.FridayRing?.melde("auftrag", null);
       await say(answer);
       clearSpeaking();
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
@@ -567,6 +569,7 @@
       window.FridayAuftrag?.ende(false);
       addMessage("friday", `Verbindung gestört: ${err.message}`);
       setState("Fehler", "");
+      window.FridayRing?.melde("auftrag", "bad", "Auftrag fehlgeschlagen: Verbindung gestört", 2 * 60000);
     } finally {
       busy = false;
       if (!speaking) setState("Bereit, Boss.");
