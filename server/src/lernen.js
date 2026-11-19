@@ -269,6 +269,38 @@ function ringeVon(karten) {
   };
 }
 
+// ---------- Lob, wenn ein Ring voll ist (v1.112.0) ----------
+// Pro Thema und Ring nur einmal. Fällt ein Ring wieder unter 100 % (z. B. neue Karten dazu),
+// darf Friday beim nächsten Vollwerden wieder loben.
+// „Gemerkt“ zählt erst als voll, wenn auch alle Karten geübt sind (sonst wäre 1 von 1 schon 100 %).
+const RING_NAME = { geuebt: "Geübt", gemerkt: "Gemerkt", auswendig: "Auswendig" };
+export function lobPruefen(sid) {
+  const d = laden();
+  const neu = [];
+  let geaendert = false;
+  for (const s of d.stapel) {
+    if (sid && s.id !== sid) continue;
+    if (!(s.karten || []).length) continue;
+    const r = ringeVon(s.karten);
+    const voll = { geuebt: r.geuebt >= 100, gemerkt: r.gemerkt >= 100 && r.geuebt >= 100, auswendig: r.auswendig >= 100 };
+    s.gelobt ||= {};
+    for (const ring of Object.keys(RING_NAME)) {
+      if (voll[ring] && !s.gelobt[ring]) { s.gelobt[ring] = new Date().toISOString(); neu.push({ stapel: s.id, titel: s.titel, ring, name: RING_NAME[ring] }); geaendert = true; }
+      else if (!voll[ring] && s.gelobt[ring]) { delete s.gelobt[ring]; geaendert = true; }
+    }
+  }
+  if (geaendert) speichern(d);
+  if (!neu.length) return { lob: [] };
+  // Der größte Erfolg zuerst: Auswendig > Gemerkt > Geübt.
+  const rang = { auswendig: 3, gemerkt: 2, geuebt: 1 };
+  neu.sort((a, b) => rang[b.ring] - rang[a.ring]);
+  const top = neu[0];
+  const was = { auswendig: `Du kannst „${top.titel}“ jetzt komplett auswendig!`, gemerkt: `Bei „${top.titel}“ war alles richtig!`, geuebt: `Du hast alle Karten von „${top.titel}“ geübt!` }[top.ring];
+  const text = `Wow, ${NAME}! ${was} Hast du richtig gut gemacht. Ich bin stolz auf dich!`;
+  for (const n of neu) logbuch.eintragen({ bereich: "lernen", titel: `Lernecke: Ring „${n.name}“ bei „${n.titel}“ voll – Carla gelobt` });
+  return { lob: neu, text };
+}
+
 // ---------- Stapel & Karten ----------
 function stapelInfo(s) {
   const h = heute();
@@ -628,6 +660,7 @@ export function lernenRouten(app, asyncRoute) {
     return r ? res.json(r) : res.status(404).json({ error: "Karte nicht gefunden." });
   });
   app.post("/api/lernen/sitzung", (req, res) => res.json(sitzungSpeichern(req.body || {})));
+  app.post("/api/lernen/lob", (req, res) => res.json(lobPruefen(typeof req.body?.stapel === "string" && req.body.stapel !== "alle" ? req.body.stapel : null)));
   app.post("/api/lernen/plan/:id", (req, res) => { try { res.json(lernplan(req.params.id, req.body || {})); } catch (err) { fehler(res, err); } });
   app.post("/api/lernen/ki/karten", asyncRoute(async (req, res) => { try { res.json(await kiKarten(req.body || {})); } catch (err) { fehler(res, err, 502); } }));
   app.post("/api/lernen/ki/pruefen", asyncRoute(async (req, res) => {

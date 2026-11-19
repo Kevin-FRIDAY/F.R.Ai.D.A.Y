@@ -77,6 +77,11 @@ mit Prozent in der Mitte. Ein neues Thema bekommt automatisch eigene Ringe.
 Die Ringe stehen auch auf jedem Stapel unter „Meine Karten“ und am Ende jeder Abfrage.
 Antippen eines Themas springt direkt zum Abfragen. Im Kevin-Testmodus ändern sich die Ringe nicht.
 
+**Lob (ab Version 1.112.0):** Wird ein Ring nach einer Abfrage voll (100 %), lobt Friday Carla laut und mit einer kleinen
+Feier (grüner Ring, Konfetti): „Hast du richtig gut gemacht. Ich bin stolz auf dich!“ Das passiert einmal pro Ring und Thema.
+Kommen neue Karten dazu und der Ring ist wieder unter 100 %, lobt sie beim nächsten Vollwerden erneut.
+„Gemerkt“ zählt erst als voll, wenn auch alle Karten geübt sind. Im Kevin-Testmodus gibt es kein Lob.
+
 ## Archiv (ab Version 1.109.0)
 
 Reiter **📚 Archiv** (oder Kachel „Mein Archiv“, oder „Friday, zeig meine Lernunterlagen“, oder Link `/?lernen=archiv`).

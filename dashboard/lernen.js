@@ -914,14 +914,47 @@
     e.style.display = "";
     e.innerHTML = `<h3>Ergebnis</h3><p style="font-size:17px;margin:4px 0 10px">${esc(text)}</p>
       <div class="hf-reihe"><button class="hf-btn haupt" data-n="nochmal" type="button">🔁 Nochmal abfragen</button><button class="hf-btn" data-n="falsch" type="button">✗ Nur die falschen</button><button class="hf-btn leise" data-n="hilfe" type="button">💡 Zur Lernhilfe</button></div>`;
+    const gesagt = stumm ? Promise.resolve() : sag(text);
     // Kurz warten, bis die letzte Bewertung gespeichert ist, dann die Ringe des Themas zeigen.
-    setTimeout(() => laden().then(() => {
+    setTimeout(() => laden().then(async () => {
       if (test || !sum) return;
       const st = info.stapel.find((x) => x.id === q.sid);
       const r = st ? st.ringe : info.ringe;
       if (r && e.isConnected) e.querySelector(".hf-reihe")?.insertAdjacentHTML("beforebegin", `<div class="hf-hinweis">${st ? `Dein Stand bei „${esc(st.titel)}“:` : "Dein Stand insgesamt:"}</div>${ringeHtml(r)}`);
-    }).catch(() => {}), 500);
-    if (!stumm) sag(text);
+      // Ist ein Ring gerade voll geworden? Dann lobt Friday (einmal pro Ring und Thema, nie im Testmodus).
+      const l = await json("/api/lernen/lob", { body: { stapel: q.sid } }).catch(() => null);
+      if (!l?.lob?.length) return;
+      await gesagt;
+      for (const x of l.lob) e.querySelectorAll(".ln-ring").forEach((el) => { if (el.querySelector("span")?.textContent === x.name) el.classList.add("voll"); });
+      feiern(l);
+    }).catch(() => {}), 600);
+  }
+
+  // ---------- Lob mit kleiner Feier ----------
+  let feierTimer = null;
+  function feiern(l) {
+    w.sheet.querySelector(".ln-feier")?.remove();
+    const top = l.lob[0];
+    const farben = ["#3ddc84", "#ff8a1e", "#ffd59a", "#7cf2b4", "#ffb066"];
+    const konfetti = Array.from({ length: 36 }, (_, i) => `<i style="--x:${(Math.random() * 2 - 1).toFixed(2)};--y:${(Math.random() * -1 - 0.2).toFixed(2)};--r:${Math.round(Math.random() * 720 - 360)}deg;--d:${(Math.random() * 0.4).toFixed(2)}s;background:${farben[i % farben.length]}"></i>`).join("");
+    const box = document.createElement("div");
+    box.className = "ln-feier";
+    box.setAttribute("role", "dialog");
+    box.setAttribute("aria-label", "Lob");
+    box.innerHTML = `<div class="ln-feier-karte">
+        <div class="ln-konfetti" aria-hidden="true">${konfetti}</div>
+        ${ring(100, top.name)}
+        <div class="ln-feier-titel">Hast du gut gemacht, ${NAME}!</div>
+        <div class="ln-feier-text">${esc(l.text)}</div>
+        ${l.lob.length > 1 ? `<div class="hf-hinweis">Auch voll: ${l.lob.slice(1).map((x) => `${esc(x.name)} bei „${esc(x.titel)}“`).join(", ")}</div>` : ""}
+        <button class="hf-btn haupt" type="button">💚 Danke, Friday</button>
+      </div>`;
+    const zu = () => { clearTimeout(feierTimer); box.classList.add("weg"); setTimeout(() => box.remove(), 400); };
+    box.addEventListener("click", (ev) => { if (ev.target === box || ev.target.closest("button")) zu(); });
+    w.sheet.appendChild(box);
+    clearTimeout(feierTimer);
+    feierTimer = setTimeout(zu, 15000);
+    sag(l.text);
   }
   $("#ln-q-ende").addEventListener("click", (e) => {
     const b = e.target.closest("[data-n]");
@@ -1523,6 +1556,25 @@
   .ln-box .ln-q-knoepfe .hf-btn[data-q="hoeren"] { flex-basis: 100%; padding: 13px; font-size: 16px; }
   .ln-legende { gap: 4px 12px; }
 }
+
+/* Lob-Feier (v1.112.0) */
+.ln-feier { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Helvetica Neue", system-ui, sans-serif; position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 16px; background: rgba(3,6,3,.86); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: ln-feier-ein .35s ease both; }
+.ln-feier.weg { animation: ln-feier-aus .35s ease both; }
+@keyframes ln-feier-ein { from { opacity: 0; } } @keyframes ln-feier-aus { to { opacity: 0; } }
+.ln-feier-karte { position: relative; width: min(440px, 100%); display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding: 30px 24px 22px; border-radius: 26px;
+  border: 1px solid rgba(61,220,132,.7); background: radial-gradient(120% 90% at 50% 0%, rgba(61,220,132,.22), rgba(10,14,8,.92) 70%); box-shadow: 0 0 60px rgba(61,220,132,.35), inset 0 0 40px rgba(61,220,132,.12); animation: ln-hupf .6s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes ln-hupf { from { transform: scale(.7); opacity: 0; } }
+.ln-feier-karte .ln-ring, .ln-feier-karte .ln-ring svg, .ln-feier-karte .ln-ring b { width: 140px; } .ln-feier-karte .ln-ring svg, .ln-feier-karte .ln-ring b { height: 140px; }
+.ln-feier-karte .ln-ring b { font-size: 34px; } .ln-feier-karte .ln-ring span { font-size: 13px; color: #b8f5d2; }
+.ln-feier-karte .ln-ring .wert { animation: ln-ring-auf 1.4s cubic-bezier(.2,.8,.2,1) both, ln-leuchten 1.6s ease-in-out 1.4s infinite alternate; }
+@keyframes ln-leuchten { to { filter: drop-shadow(0 0 14px rgba(61,220,132,1)); } }
+.ln-feier-titel { font-family: var(--ln-gross, sans-serif); font-size: 26px; font-weight: 800; color: #eafff2; text-shadow: 0 0 20px rgba(61,220,132,.7); }
+.ln-feier-text { font-size: 16px; line-height: 1.45; color: var(--text); }
+.ln-konfetti { position: absolute; left: 50%; top: 38%; width: 0; height: 0; pointer-events: none; }
+.ln-konfetti i { position: absolute; width: 8px; height: 13px; border-radius: 2px; opacity: 0; animation: ln-konfetti 1.8s cubic-bezier(.15,.7,.3,1) var(--d) both; }
+@keyframes ln-konfetti { 0% { opacity: 1; transform: translate(0,0) rotate(0); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(calc(var(--x) * 230px), calc(var(--y) * 230px + 160px)) rotate(var(--r)); } }
+.ln-ring.voll .wert { animation: ln-ring-auf 1.1s cubic-bezier(.2,.8,.2,1) both, ln-leuchten 1.2s ease-in-out infinite alternate; }
+@media (prefers-reduced-motion: reduce) { .ln-konfetti { display: none; } .ln-feier-karte, .ln-feier, .ln-feier-karte .ln-ring .wert { animation: none; } }
 `;
   document.head.appendChild(style);
 
