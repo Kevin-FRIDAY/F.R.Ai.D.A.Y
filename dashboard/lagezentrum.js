@@ -22,6 +22,7 @@
   let issTrail = [];
   let issTimer = null;
   let eventsTimer = null;
+  const redrawHooks = [];
 
   const ALIASES = {
     "england": "826", "uk": "826", "großbritannien": "826", "vereinigtes königreich": "826",
@@ -99,6 +100,7 @@
     loadInfra("kraftwerke", "lage-powerplants", "plant", "lage-kw-on");
     loadBrennpunkte();
     startISS();
+    window.dispatchEvent(new CustomEvent("friday-lage", { detail: { offen: true } }));
     // Optional: Welt-Alarm direkt abspielen (höchstens alle 30 Minuten).
     try {
       if (!opts.stumm && !schonOffen && localStorage.getItem("friday_alarm_auto") === "1" && Date.now() - Number(localStorage.getItem("friday_alarm_last") || 0) > 30 * 60 * 1000) {
@@ -123,6 +125,7 @@
     clearTimeout(satTimer); satTimer = null;
     $("lage-world")?.classList.add("hidden");
     stopAlarm();
+    window.dispatchEvent(new CustomEvent("friday-lage", { detail: { offen: false } }));
   }
 
   // ---------- ISS: schwebt live über der Erde ----------
@@ -338,6 +341,7 @@
     placePoints();
     placeSats();
     placeISS();
+    for (const fn of redrawHooks) { try { fn(); } catch { /* Ebene optional */ } }
   }
 
   // ISS schwebt leicht über der Oberfläche (nach außen versetzt), Bahn als Spur.
@@ -516,6 +520,7 @@
         L.control.zoom({ position: "bottomright" }).addTo(detailMap);
         try { detailStil = localStorage.getItem("friday_lage_detailstil") || "sat"; } catch { /* egal */ }
         detailStilSetzen(detailStil);
+        window.FridayLagebild?.detailKarte?.(detailMap);
       }
       detailMap.invalidateSize();
       if (detailUmriss) { detailMap.removeLayer(detailUmriss); detailUmriss = null; }
@@ -545,6 +550,20 @@
     if (id) { const teil = hauptteil(landFeature(id)); if (teil) animateGlobe(projection.rotate(), Math.min(projection.scale(), baseScale * 2.2), 700); }
   });
   $("lage-dm-stil")?.addEventListener("click", (e) => { const b = e.target.closest("button[data-stil]"); if (b) detailStilSetzen(b.dataset.stil); });
+
+  // Schnittstelle für Zusatz-Ebenen (lagebild.js): eigene Gruppen im Globus, Neuzeichnen, Hinfliegen.
+  window.FridayGlobus = {
+    bereit: () => mapReady || Promise.resolve(),
+    el, visible,
+    projektion: () => projection,
+    pfad: () => geoPath,
+    basis: () => baseScale,
+    onRedraw: (fn) => redrawHooks.push(fn),
+    neu: () => redrawGlobe(),
+    land: (lon, lat) => nearestCountry(lon, lat),
+    zu: (lon, lat, faktor = 3) => { if (!projection) return; detailAus(); $("lage-world")?.classList.remove("hidden"); animateGlobe([-lon, -lat, 0], baseScale * faktor, 1200); },
+    landWaehlen: (id) => select(id),
+  };
 
   function flyToWorld() {
     detailAus();

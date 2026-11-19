@@ -138,6 +138,11 @@ export function startAutoScan() {
   setInterval(() => { if (!scanning) scanWorld(); }, 12 * 60 * 1000);
 }
 
+// Alle zwischengespeicherten Schlagzeilen (für das Lagebild: Konflikt-Meldungen).
+export function newsSnapshot() {
+  return [...newsCache.entries()].map(([id, n]) => [id, n.items]);
+}
+
 // Übersicht für die Weltkarte: aus dem Zwischenspeicher, plus Anstoß zum Nachladen.
 export function getOverview() {
   const stale = Date.now() - lastScanDone > CACHE_MS;

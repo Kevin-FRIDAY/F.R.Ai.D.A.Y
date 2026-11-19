@@ -428,13 +428,13 @@ body.lage-open { overflow: hidden; }
 
 /* Info-Karte beim Antippen */
 #lage-markercard { position: absolute; right: 16px; bottom: 16px; z-index: 6; min-width: 220px; max-width: 300px; border: 1px solid var(--cyan); border-radius: 10px; padding: 12px 14px; background: var(--panel); backdrop-filter: blur(10px); }
-#lage-markercard .mc-type { font-size: 11px; color: var(--muted); letter-spacing: .04em; margin-right: 18px; }
-#lage-markercard .mc-dot { color: var(--ok); }
-#lage-markercard .mc-title { font-size: 14px; font-weight: 600; line-height: 1.3; margin: 3px 18px 8px 0; color: var(--text); }
-#lage-markercard .mc-rows { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 12px; }
-#lage-markercard .mc-rows span { color: var(--muted); }
-#lage-markercard .mc-rows b { text-align: right; font-weight: 600; }
-#lage-markercard .mc-live { margin-top: 2px; }
+#lage-markercard .mc-type, #lage-lbcard .mc-type { font-size: 11px; color: var(--muted); letter-spacing: .04em; margin-right: 18px; }
+#lage-markercard .mc-dot, #lage-lbcard .mc-dot { color: var(--ok); }
+#lage-markercard .mc-title, #lage-lbcard .mc-title { font-size: 14px; font-weight: 600; line-height: 1.3; margin: 3px 18px 8px 0; color: var(--text); }
+#lage-markercard .mc-rows, #lage-lbcard .mc-rows { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 12px; }
+#lage-markercard .mc-rows span, #lage-lbcard .mc-rows span { color: var(--muted); }
+#lage-markercard .mc-rows b, #lage-lbcard .mc-rows b { text-align: right; font-weight: 600; }
+#lage-markercard .mc-live, #lage-lbcard .mc-live { margin-top: 2px; }
 #lage-markercard .chip { display: inline-block; margin-top: 10px; }
 .marker.aktiv { --c: var(--cyan); }
 .dot.aktiv { background: var(--cyan); } .dot.offen { background: var(--muted); }
@@ -2912,3 +2912,99 @@ html.perf-fluessig .ring-schild { backdrop-filter: none; -webkit-backdrop-filter
 html.perf-fluessig .status-ring { box-shadow: 0 0 12px var(--ring-c); }
 body.reduce-anim .status-ring { animation: none !important; }
 @media (prefers-reduced-motion: reduce) { .status-ring { animation: none !important; } }
+
+/* ===== v1.107.0 Lagebild: eigene OSINT-Ebenen im Weltgeschehen ===== */
+.lage-legend .legend-body { max-height: min(62vh, 520px); overflow-y: auto; overscroll-behavior: contain; width: min(78vw, 520px); }
+.lage-legend .legend-groups { display: flex; flex-direction: column; gap: 9px; }
+.lage-legend .legend-group { border-top: 1px solid color-mix(in srgb, var(--line) 70%, transparent); padding-top: 8px; }
+.lage-legend .legend-group:first-child { border-top: 0; padding-top: 0; }
+.lage-legend .lg-head { font: 700 10px/1 var(--font-ui, system-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; display: flex; gap: 6px; align-items: center; }
+.lage-legend .lg-head i { font-style: normal; width: 14px; text-align: center; opacity: .85; }
+.lage-legend .legend-switches { gap: 6px; }
+.lage-legend i[id^="cnt-"]:not(:empty) { margin-left: 3px; color: var(--cyan); font-weight: 700; }
+.legend-grenzen { font-size: 11px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; }
+.legend-grenzen summary { cursor: pointer; color: var(--text); }
+.legend-grenzen ul { margin: 6px 0 0; padding-left: 16px; display: grid; gap: 4px; max-width: 470px; }
+.legend-grenzen b { color: var(--text); }
+
+/* Lagebild-Leiste (oben links über dem Globus) */
+#lage-lb-btn.active { border-color: var(--cyan); color: var(--cyan); }
+.lage-lb { position: absolute; left: 12px; top: 12px; z-index: 3; width: min(300px, 46%); padding: 9px 10px 10px; background: rgba(10,6,3,.7); border: 1px solid var(--line); border-radius: 14px; backdrop-filter: blur(12px); box-shadow: 0 10px 26px rgba(0,0,0,.45); }
+.lage-lb.hidden { display: none; }
+.lb-head { display: flex; align-items: center; gap: 8px; font: 700 10px/1 var(--font-ui, system-ui); letter-spacing: .18em; color: var(--cyan); text-shadow: 0 0 8px color-mix(in srgb, var(--cyan) 60%, transparent); margin-bottom: 8px; }
+.lb-head em { font-style: normal; letter-spacing: .04em; font-weight: 500; color: var(--muted); text-shadow: none; flex: 1; }
+.lb-head em::before { content: "●"; color: #3ddc84; margin-right: 4px; animation: lb-blink 2s infinite; }
+@keyframes lb-blink { 50% { opacity: .25; } }
+.lb-zu { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 8px; width: 22px; height: 20px; cursor: pointer; line-height: 1; }
+.lb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.lb-k { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: auto 1fr; grid-template-areas: "i t" "b b" "s s"; column-gap: 6px; padding: 7px 8px; border-radius: 10px; background: rgba(255,255,255,.035); border: 1px solid var(--line); border-left: 3px solid var(--cyan); transition: border-color .15s, background .15s; min-width: 0; }
+.lb-k:hover { background: rgba(255,255,255,.07); border-color: var(--cyan); }
+.lb-k i { grid-area: i; font-style: normal; font-size: 12px; }
+.lb-k .lb-t { grid-area: t; font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; align-self: center; }
+.lb-k b { grid-area: b; font-size: 16px; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lb-k small { grid-area: s; font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lb-k.gruen { border-left-color: #3ddc84; }
+.lb-k.gelb { border-left-color: #ffd04d; }
+.lb-k.rot { border-left-color: #ff4a4a; }
+.lb-k.rot b { color: #ff7a7a; }
+
+/* Globus-Ebenen */
+.lb-p { cursor: pointer; }
+.lb-p-konflikt .lb-kern { fill: rgba(255,59,59,.32); stroke: #ff4a4a; stroke-width: 1.4; }
+.lb-p-konflikt.unruhe .lb-kern { fill: rgba(255,170,40,.28); stroke: #ffaa28; }
+.lb-p-konflikt .lb-x { stroke: #ffd0d0; stroke-width: 1.6; stroke-linecap: round; }
+.lb-p-konflikt .lb-puls { fill: none; stroke: #ff4a4a; stroke-width: 1; opacity: .55; transform-box: fill-box; transform-origin: center; animation: lb-puls 2.4s ease-out infinite; }
+.lb-p-konflikt.unruhe .lb-puls { stroke: #ffaa28; }
+@keyframes lb-puls { 0% { transform: scale(.45); opacity: .7; } 100% { transform: scale(1.15); opacity: 0; } }
+.lb-p-netz .lb-ring { fill: rgba(176,60,255,.18); stroke: #c77dff; stroke-width: 1.3; stroke-dasharray: 3 2; }
+.lb-p-netz.stark .lb-ring { fill: rgba(176,60,255,.32); stroke: #e0a3ff; }
+.lb-p-netz.behoben .lb-ring { fill: none; stroke: #8a7a99; opacity: .6; }
+.lb-p-netz .lb-wlan { fill: none; stroke: #f1dcff; stroke-width: 1.5; stroke-linecap: round; }
+.lb-p-netz .lb-wlan-p { fill: #f1dcff; }
+.lb-p-netz.behoben .lb-wlan, .lb-p-netz.behoben .lb-wlan-p { opacity: .5; }
+.lb-p-wind path { fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: .9; }
+.lb-p-temp circle { opacity: .5; stroke: rgba(0,0,0,.35); stroke-width: .5; }
+.lb-p-regen circle { fill: rgba(70,150,255,.45); stroke: #6fb4ff; stroke-width: .8; }
+.lb-p-regen.wolke circle { fill: rgba(220,230,240,.22); stroke: rgba(220,230,240,.4); }
+.lb-p-luft rect { stroke: rgba(0,0,0,.6); stroke-width: .8; }
+.lb-p-polar circle { fill: #3dff8f; pointer-events: none; }
+.lb-polar { filter: blur(2px); }
+.lb-p-polar { pointer-events: none; }
+.lb-p-raketen .lb-ring { fill: rgba(255,255,255,.06); stroke: #9fe8ff; stroke-width: 1.2; }
+.lb-p-raketen.bald .lb-ring { stroke: #ffd04d; fill: rgba(255,208,77,.15); animation: lb-blink 1.6s infinite; }
+.lb-p-raketen .lb-rakete { fill: #e9f7ff; stroke: #0b1520; stroke-width: .5; }
+.lb-kabel-pfad { fill: none; stroke: #39d0ff; stroke-width: .7; opacity: .45; }
+.globe-holo .lb-kabel-pfad { stroke: var(--cyan); }
+
+/* Info-Karte */
+.lb-card { max-height: 60vh; overflow-y: auto; z-index: 6; width: min(310px, 78vw); background: rgba(12,8,4,.95); }
+.lb-card .chip { display: inline-block; margin-top: 8px; }
+.lb-news { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 6px; font-size: 12.5px; }
+.lb-news li { border-left: 2px solid var(--line); padding-left: 8px; }
+.lb-news a { color: var(--text); text-decoration: none; }
+.lb-news a:hover { color: var(--cyan); }
+.lb-news small { display: block; color: var(--muted); font-size: 10.5px; }
+.lb-hinweis { font-size: 10.5px; color: var(--muted); margin: 6px 0; }
+.lb-mission { font-size: 12px; color: var(--muted); margin: 6px 0; }
+.lb-start + .lb-start { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 8px; }
+.lb-cd { font-style: normal; color: var(--cyan); font-variant-numeric: tabular-nums; }
+.lb-spark { display: flex; align-items: flex-end; gap: 2px; height: 34px; margin: 8px 0 2px; }
+.lb-spark i { flex: 1; background: #3ddc84; border-radius: 2px 2px 0 0; opacity: .8; }
+.lb-spark i.gelb { background: #ffd04d; } .lb-spark i.rot { background: #ff4a4a; }
+
+html.perf-fluessig .lb-p-konflikt .lb-puls, html.perf-fluessig .lb-p-raketen.bald .lb-ring { animation: none; }
+html.perf-fluessig .lb-polar { filter: none; }
+html.perf-fluessig .lage-lb { backdrop-filter: none; background: rgba(10,6,3,.9); }
+
+@media (max-width: 900px) {
+  .lage-lb { left: 6px; top: 6px; width: calc(100% - 58px); padding: 5px 6px 6px; border-radius: 12px; }
+  .lb-head { margin-bottom: 4px; font-size: 9px; }
+  .lb-grid { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .lb-grid::-webkit-scrollbar { display: none; }
+  .lb-k { flex: 0 0 auto; min-width: 78px; max-width: 110px; padding: 4px 6px; grid-template-areas: "i b" "t t"; }
+  .lb-k b { font-size: 13px; margin-top: 0; }
+  .lb-k .lb-t { font-size: 9px; }
+  .lb-k small { display: none; }
+  .lage-legend .legend-body { width: calc(100vw - 32px); max-height: 56vh; }
+  .lage-top .lb-btn-txt { display: none; }
+}
