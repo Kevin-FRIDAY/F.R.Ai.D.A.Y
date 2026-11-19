@@ -560,6 +560,7 @@
     } finally {
       busy = false;
       if (!speaking) setState("Bereit, Boss.");
+      resumeWake();
     }
   }
 
@@ -1368,13 +1369,29 @@
   });
 
   // Dauerhaft auf "Friday" hören (klappt, solange das Dashboard offen ist).
-  function startWake() {
-    if (!Recognition) return;
-    wakeRec = new Recognition();
-    wakeRec.lang = "de-DE";
-    wakeRec.continuous = true;
-    wakeRec.interimResults = false;
-    wakeRec.onresult = (e) => {
+  // v1.102.0: Das Weckwort ist IMMER an. Früher wurde die Einstellung zwar gespeichert,
+  // beim Neuladen aber nie wieder gelesen – darum war es nach jedem Start aus.
+  // Der Schalter pausiert jetzt nur bis zum nächsten Neuladen.
+  let wakeLaeuft = false;     // Erkennung läuft gerade
+  let wakeBrauchtTipp = false; // Browser (v. a. iPhone/Safari) will erst einen Tipp aufs Display
+  let wakeSchnellEnden = 0;   // wie oft die Erkennung direkt wieder aufgehört hat
+  let wakeGestartet = 0;
+  let wakeTimer = null;
+  storage.remove("friday_wake"); // alter, nie gelesener Wert
+
+  function wakeDarf() {
+    return wakeActive && !speaking && !busy && !gespraechRec
+      && !callActive
+      && document.visibilityState !== "hidden";
+  }
+
+  function wakeBauen() {
+    const rec = new Recognition();
+    rec.lang = "de-DE";
+    rec.continuous = true;
+    rec.interimResults = false;
+    rec.onstart = () => { wakeLaeuft = true; wakeBrauchtTipp = false; wakeGestartet = Date.now(); };
+    rec.onresult = (e) => {
       const said = e.results[e.results.length - 1][0].transcript;
       const match = said.match(WAKE);
       if (!match || busy || speaking) return;
@@ -1382,32 +1399,70 @@
       if (command.length > 2) send(command, { stimme: true });
       else listenOnce();
     };
-    wakeRec.onend = () => {
-      if (wakeActive && !speaking && !busy) setTimeout(() => { try { wakeRec.start(); } catch { /* läuft schon */ } }, 300);
+    rec.onerror = (e) => {
+      // Mikrofon nicht freigegeben oder Start ohne Tipp: beim nächsten Tipp neu versuchen.
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        wakeBrauchtTipp = true;
+        if (wakeActive && !busy && !speaking) setState('Einmal tippen, dann höre ich auf "Friday"');
+      }
     };
-    try { wakeRec.start(); } catch { /* läuft schon */ }
+    rec.onend = () => {
+      wakeLaeuft = false;
+      if (wakeBrauchtTipp || !wakeDarf()) return;
+      // Hört der Browser sofort wieder auf, etwas länger warten (sonst Dauerschleife).
+      wakeSchnellEnden = Date.now() - wakeGestartet < 1500 ? Math.min(wakeSchnellEnden + 1, 6) : 0;
+      wakeSpaeter(wakeSchnellEnden ? 400 * 2 ** wakeSchnellEnden : 300);
+    };
+    return rec;
+  }
+
+  function wakeSpaeter(ms) {
+    clearTimeout(wakeTimer);
+    wakeTimer = setTimeout(startWake, ms);
+  }
+
+  function startWake() {
+    if (!Recognition || !wakeDarf() || wakeLaeuft) return;
+    if (!wakeRec) wakeRec = wakeBauen();
+    try { wakeRec.start(); wakeLaeuft = true; } catch { /* läuft schon */ }
+    if (!busy && !speaking) setState('Höre auf "Friday"');
   }
 
   function pauseWake() {
+    clearTimeout(wakeTimer);
     if (wakeRec) { try { wakeRec.abort(); } catch { /* egal */ } }
+    wakeLaeuft = false;
   }
 
   function resumeWake() {
-    if (wakeActive && wakeRec && !speaking) { try { wakeRec.start(); } catch { /* läuft schon */ } }
+    if (wakeActive) wakeSpaeter(500); // nach dem Gesprächsmodus-Zuhören (250 ms), damit sich beide nicht stören
   }
 
+  $("wake-toggle").checked = true;
+  wakeActive = !!Recognition;
   $("wake-toggle").addEventListener("change", (e) => {
     wakeActive = e.target.checked;
-    storage.set("friday_wake", wakeActive ? "1" : "0");
     if (wakeActive) {
+      wakeBrauchtTipp = false;
       startWake();
-      setState('Höre auf "Friday"');
     } else {
       pauseWake();
-      wakeRec = null;
       setState("Bereit, Boss.");
     }
   });
+
+  // iPhone/Safari: Mikrofon darf oft erst nach einem Tipp starten – dann beim ersten Tipp anwerfen.
+  const wakeNachTipp = () => { if (wakeActive && !wakeLaeuft) { wakeBrauchtTipp = false; wakeSpaeter(400); } };
+  document.addEventListener("pointerdown", wakeNachTipp, true);
+  document.addEventListener("keydown", wakeNachTipp, true);
+  // App wieder im Vordergrund (iPhone beendet das Zuhören im Hintergrund): neu starten.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") { wakeBrauchtTipp = false; resumeWake(); }
+    else pauseWake();
+  });
+  window.addEventListener("pageshow", () => resumeWake());
+  // Gleich beim Start anwerfen (nach dem Aufbau der Seite).
+  setTimeout(startWake, 800);
 
   // ---------- Friday anrufen (freihändiges Gespräch: zuhören ↔ antworten) ----------
   let callActive = false, callRec = null, callMuted = false, callVoicePrev = null;

@@ -20,7 +20,7 @@ Jetzt hast du die Friday-App mit dem Neon-Logo. Sie startet im Vollbild ohne Saf
 | Was | Wie |
 |---|---|
 | Sprechen | Auf den Arc-Reactor tippen, sprechen. Er leuchtet gold, solange Friday zuhört. |
-| Weckwort | Schalter **"Friday" zuhören**. Dann reicht "Friday, wie wird das Wetter?". Funktioniert, solange das Dashboard offen ist (am besten am Mac in Chrome). |
+| Weckwort | **Immer an** (ab v1.102.0). "Friday, wie wird das Wetter?" reicht, solange das Dashboard offen ist. Am iPhone einmal aufs Display tippen und das Mikrofon erlauben, dann hört Friday zu. Der Schalter **"Friday" zuhören** pausiert nur bis zum nächsten Neuladen. |
 | Unterbrechen | Während Friday spricht, auf den Reactor tippen. |
 | Foto zeigen | Kamera-Knopf links neben dem Textfeld, Foto machen, Frage dazuschreiben. |
 | Übersetzer | Schalter **Übersetzer**, Zielsprache wählen. Deutsch wird übersetzt, andere Sprachen werden ins Deutsche übersetzt. |
