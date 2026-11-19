@@ -16,6 +16,7 @@ import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { getEnergie, aufladen, einnahme } from "./energie.js";
 import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } from "./einstellungen.js";
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webseiten.js";
+import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, VORLAGEN } from "./spiele.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
@@ -108,7 +109,7 @@ app.get("/api/spotify/callback", asyncRoute(async (req, res) => {
 
 // Alles ab hier braucht eine Anmeldung.
 // Archiv-Dateien (Fotos, Videos, Webseiten) für <img>/<video>: Anmeldung per Kopfzeile, Cookie oder ?t=
-app.get(/^\/api\/archiv\/datei\/(foto|video|webseite)\/(.+)$/, (req, res) => {
+app.get(/^\/api\/archiv\/datei\/(foto|video|webseite|spiel)\/(.+)$/, (req, res) => {
   const kopf = (req.headers.authorization || "").replace(/^Bearer /, "");
   const cookie = (req.headers.cookie || "").match(/(?:^|;\s*)friday_session=([^;]+)/)?.[1];
   if (![kopf, cookie && decodeURIComponent(cookie), String(req.query.t || "")].some((t) => t && verifyToken(t))) return res.status(401).json({ error: "Nicht angemeldet" });
@@ -118,7 +119,7 @@ app.get(/^\/api\/archiv\/datei\/(foto|video|webseite)\/(.+)$/, (req, res) => {
   res.setHeader("Cache-Control", "private, max-age=86400");
   res.setHeader("X-Content-Type-Options", "nosniff");
   // Webseiten laufen abgeschottet, damit sie nicht an Fridays Anmeldung kommen.
-  if (req.params[0] === "webseite") res.setHeader("Content-Security-Policy", "sandbox allow-scripts allow-forms allow-popups allow-modals");
+  if (req.params[0] === "webseite" || req.params[0] === "spiel") res.setHeader("Content-Security-Policy", "sandbox allow-scripts allow-forms allow-popups allow-modals");
   res.type(p.mime);
   res.sendFile(p.voll, { dotfiles: "deny" });
 });
@@ -478,6 +479,12 @@ app.post("/api/archiv/einsortieren", asyncRoute(async (req, res) => res.json(awa
 app.post("/api/archiv/wegwerfen", (req, res) => { const r = fotoWegwerfen(req.body?.datei); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/api/archiv/ordner", (req, res) => res.json(oeffneOrdner(req.body?.jahr, req.body?.monat)));
 app.get("/api/webseiten", (req, res) => res.json(listSites()));
+// Spiele-Werkstatt: bauen (Code kommt live), Stand abfragen, spielen, wegwerfen.
+app.get("/api/spiele", (req, res) => res.json({ spiele: listeSpiele(), claude: claudeBereit(), vorlagen: VORLAGEN.map((v) => ({ id: v.id, titel: v.titel })), aktuell: aktuellerJob() }));
+app.post("/api/spiel", (req, res) => res.json(starteSpiel(req.body?.auftrag, { basis: req.body?.basis || null, vorlage: req.body?.vorlage || null, kanal: "web" })));
+app.get("/api/spiel/job/:id", (req, res) => { const j = jobStand(req.params.id, req.query.ab); if (!j) return res.status(404).json({ error: "Auftrag nicht gefunden" }); res.json(j); });
+app.get("/api/spiel/:id/html", (req, res) => { const html = spielHtml(req.params.id); if (html == null) return res.status(404).json({ error: "Nicht gefunden" }); res.json({ html }); });
+app.post("/api/spiel/:id/weg", (req, res) => { const r = spielWegwerfen(req.params.id); res.status(r.ok ? 200 : 404).json(r); });
 app.post("/api/webseite", asyncRoute(async (req, res) => { const r = await buildSite(req.body?.auftrag, req.body?.basis || null); res.status(r.ok ? 200 : 400).json(r); }));
 app.get("/api/webseite/:id/html", (req, res) => { const html = getSiteHtml(req.params.id); if (html == null) return res.status(404).json({ error: "Nicht gefunden" }); res.json({ html }); });
 app.post("/api/webseite/:id/verkauft", asyncRoute(async (req, res) => { const r = await markSold(req.params.id, req.body?.betrag); res.status(r.ok ? 200 : 400).json(r); }));

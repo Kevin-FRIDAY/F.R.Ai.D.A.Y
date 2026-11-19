@@ -17,6 +17,7 @@ import { getForecast, getDepot, MAERKTE } from "./markt.js";
 import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { getAlarm } from "./lagezentrum.js";
 import { buildSite, listSites } from "./webseiten.js";
+import { starteSpiel, listeSpiele } from "./spiele.js";
 import { command as tvCommand } from "./fernseher.js";
 import { command as alexaCommand } from "./alexa.js";
 import { toolDefinitions as dienstTools, smartHomeTool } from "./dienste-werkzeuge.js";
@@ -34,6 +35,11 @@ const MAC_ACTIONS = [
 ];
 
 export const toolDefinitions = [
+  {
+    name: "spiel_bauen",
+    description: "Programmiert ein spielbares Browser-Spiel für Boss (Spiele-Werkstatt). Das Dashboard zeigt live, wie der Code entsteht, und startet das Spiel danach automatisch; es wird gespeichert und ist später wieder spielbar. Benutze es immer, wenn Boss ein Spiel will – schreib den Code nie selbst in die Antwort oder in ein Dokument. Mit basis_id änderst du ein vorhandenes Spiel.",
+    input_schema: { type: "object", properties: { auftrag: { type: "string", description: "Was für ein Spiel, möglichst genau in Boss' Worten (Spielidee, Steuerung, Besonderheiten)" }, basis_id: { type: "string", description: "Optional: id eines vorhandenen Spiels, das geändert werden soll" } }, required: ["auftrag"] },
+  },
   {
     name: "dokument_erstellen",
     description: "Speichert einen fertigen Text für Boss als Dokument im Dashboard (Liste, Plan, Brief, Rezept, Zusammenfassung, Ideen …). Benutze es immer, wenn Boss dich bittet, etwas zu erstellen, zu schreiben oder auszuarbeiten, das länger als drei Sätze ist. Schreib den vollständigen Inhalt direkt hinein.",
@@ -421,7 +427,7 @@ const LOGTITEL = {
   update: (i) => `Update: ${i.action || "prüfen"}`,
 };
 // Diese Bereiche schreiben ihr Logbuch selbst (mit genauerem Ergebnis).
-const LOGBUCH_SELBST = new Set(["anrufe", "werkstatt", "add_task", "add_shopping", "set_reminder", "remember", "forget"]);
+const LOGBUCH_SELBST = new Set(["spiel_bauen", "anrufe", "werkstatt", "add_task", "add_shopping", "set_reminder", "remember", "forget"]);
 
 /**
  * Führt ein Werkzeug aus und hält es im Logbuch fest.
@@ -441,7 +447,7 @@ export async function runTool(name, input = {}, wer = {}) {
   }
   let result;
   try {
-    result = await runToolIntern(name, input);
+    result = await runToolIntern(name, input, wer);
   } catch (err) {
     logWerkzeug(name, input, wer, { error: err.message }, Date.now() - start);
     throw err;
@@ -464,7 +470,7 @@ function logWerkzeug(name, input, wer, result, dauer) {
   } catch { /* egal */ }
 }
 
-async function runToolIntern(name, input = {}) {
+async function runToolIntern(name, input = {}, wer = {}) {
   if (istDienstTool(name)) return runDienstTool(name, input);
   switch (name) {
     case "world_news": {
@@ -506,6 +512,10 @@ async function runToolIntern(name, input = {}) {
       const v = getVideoJob();
       if (!v.job) return { status: "frei", clips_im_eingang: v.clips.length, ordner: v.dirs.eingang };
       return { status: v.job.status, agenten: Object.fromEntries(Object.entries(v.job.agents).map(([k, a]) => [k, `${a.status}: ${a.text}`])), ergebnis: v.job.result?.name, fehler: v.job.error };
+    }
+    case "spiel_bauen": {
+      const r = starteSpiel(input.auftrag, { basis: input.basis_id, kanal: wer.kanal || "web" });
+      return { gestartet: true, quelle: r.quelle === "claude" ? "Claude programmiert" : "eingebaute Vorlage (kein Guthaben)", vorhandene_spiele: listeSpiele().slice(0, 8).map((s) => ({ id: s.id, titel: s.titel })), hinweis: "Das Dashboard zeigt jetzt live, wie du programmierst, und startet das Spiel automatisch. Sag nur kurz, dass du loslegst. Schreib keinen Code in die Antwort." };
     }
     case "dokument_erstellen": {
       const d = dokumentErstellen(input);

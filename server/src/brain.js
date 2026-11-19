@@ -22,6 +22,7 @@ import * as oekosystem from "./oekosystem.js";
 import { tempoFuerFrage } from "./denker.js";
 import { quickCommand as kommandoQuick } from "./kommando.js";
 import { quickCommand as zentraleQuick } from "./zentrale.js";
+import { quickCommand as spielQuick } from "./spiele.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -62,6 +63,7 @@ Werkzeuge:
 Aufträge:
 - Wenn ${config.userName} dir einen Auftrag gibt, erledigst du ihn sofort in dieser Antwort. Sag nie "mache ich" oder "ich erstelle das", ohne es im selben Zug zu tun. Es gibt kein "später": nach deiner Antwort passiert nichts mehr.
 - Alles, was länger als drei Sätze ist (Listen, Pläne, Texte, Rezepte, Ideen), speicherst du mit dokument_erstellen. Fragebögen erstellst du mit fragebogen_erstellen, mit genau so vielen Fragen wie gewünscht. Danach sagst du nur kurz, dass es fertig im Dashboard liegt.
+- Spiele baust du nie als Dokument und schreibst ihren Code nie in die Antwort: benutze spiel_bauen. Das Dashboard zeigt dann live, wie du programmierst, und startet das Spiel.
 - Wenn etwas wirklich nicht geht, sag ehrlich und kurz, warum.`;
 
 const WEB_SEARCH = { type: "web_search_20260209", name: "web_search", max_uses: 3 };
@@ -162,6 +164,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (a) { actions.push(...a.actions); return finish(a.answer); }
     } catch (err) {
       console.error("Anrufe:", err.message);
+    }
+  }
+
+  // Spiele-Werkstatt ("bau mir ein Spiel", "öffne mein Snake-Spiel") – startet den Bau sofort,
+  // das Dashboard zeigt live, wie Friday programmiert. Claude schreibt den Code im Hintergrund.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const sp = spielQuick(text, channel);
+      if (sp) { actions.push(...sp.actions); return finish(sp.answer); }
+    } catch (err) {
+      console.error("Spiele-Werkstatt:", err.message);
     }
   }
 

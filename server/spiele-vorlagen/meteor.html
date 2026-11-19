@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Meteor-Abwehr</title>
+<style>
+  :root { --neon: #ff8a1e; --cyan: #2ee6d0; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: #020203; color: #ffe7cc; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  .hud { position: fixed; top: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 18px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; pointer-events: none; }
+  .hud b { color: var(--neon); text-shadow: 0 0 8px var(--neon); font-size: 17px; }
+  .overlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(0,0,0,.7); text-align: center; padding: 20px; }
+  .overlay h1 { margin: 0; color: var(--neon); letter-spacing: .2em; text-shadow: 0 0 14px var(--neon); font-size: 30px; }
+  .overlay p { margin: 0; opacity: .85; line-height: 1.5; }
+  .overlay button { margin-top: 8px; padding: 12px 26px; border-radius: 999px; border: 1px solid var(--neon); background: rgba(255,138,30,.18); color: #fff; font-size: 16px; letter-spacing: .1em; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<canvas id="feld"></canvas>
+<div class="hud"><span>Punkte <b id="punkte">0</b></span><span>Schild <b id="schild">3</b></span></div>
+<div class="overlay" id="overlay">
+  <h1>METEOR-ABWEHR</h1>
+  <p id="info">Schütze die Station vor dem Meteorschauer.<br>Finger ziehen oder Pfeiltasten. Dein Schiff feuert automatisch.</p>
+  <button id="start">Start</button>
+</div>
+<script>
+(() => {
+  const feld = document.getElementById("feld");
+  const ctx = feld.getContext("2d");
+  const overlay = document.getElementById("overlay");
+  let W = 0, H = 0, dpr = 1;
+  let schiff, schuesse, meteore, funken, sterne, punkte, schild, laeuft = false, letzt = 0, feuer = 0, spawn = 0, tasten = {}, ziel = null;
+
+  function groesse() {
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = window.innerWidth; H = window.innerHeight;
+    feld.width = W * dpr; feld.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    sterne = Array.from({ length: 90 }, () => ({ x: Math.random() * W, y: Math.random() * H, v: 0.3 + Math.random() * 1.4 }));
+    if (schiff) schiff.y = H - 70;
+  }
+  window.addEventListener("resize", groesse); groesse();
+
+  function neu() {
+    schiff = { x: W / 2, y: H - 70 }; schuesse = []; meteore = []; funken = []; punkte = 0; schild = 3; spawn = 0; hud();
+  }
+  function hud() { document.getElementById("punkte").textContent = punkte; document.getElementById("schild").textContent = schild; }
+  function knall(x, y, farbe) { for (let i = 0; i < 14; i++) { const w = Math.random() * Math.PI * 2, v = 1 + Math.random() * 3; funken.push({ x, y, vx: Math.cos(w) * v, vy: Math.sin(w) * v, t: 40, farbe }); } }
+
+  function update(dt) {
+    const tempo = 0.45 * dt;
+    if (tasten.arrowleft || tasten.a) schiff.x -= tempo;
+    if (tasten.arrowright || tasten.d) schiff.x += tempo;
+    if (ziel != null) schiff.x += (ziel - schiff.x) * Math.min(1, dt / 60);
+    schiff.x = Math.max(20, Math.min(W - 20, schiff.x));
+    feuer -= dt;
+    if (feuer <= 0) { schuesse.push({ x: schiff.x, y: schiff.y - 22 }); feuer = 170; }
+    spawn -= dt;
+    const schwer = 1 + punkte / 400;
+    if (spawn <= 0) { const r = 12 + Math.random() * 22; meteore.push({ x: r + Math.random() * (W - 2 * r), y: -r, r, v: (0.06 + Math.random() * 0.08) * schwer, hp: r > 26 ? 3 : r > 18 ? 2 : 1, dreh: Math.random() * 6 }); spawn = Math.max(260, 900 / schwer); }
+    schuesse.forEach((s) => { s.y -= 0.7 * dt; });
+    schuesse = schuesse.filter((s) => s.y > -10);
+    meteore.forEach((m) => { m.y += m.v * dt; m.dreh += 0.002 * dt; });
+    for (const m of meteore) for (const s of schuesse) {
+      if (!s.weg && Math.hypot(m.x - s.x, m.y - s.y) < m.r + 3) { s.weg = true; m.hp--; if (m.hp <= 0) { m.weg = true; punkte += Math.round(m.r); hud(); knall(m.x, m.y, "#ff8a1e"); } }
+    }
+    for (const m of meteore) {
+      if (m.weg) continue;
+      if (Math.hypot(m.x - schiff.x, m.y - schiff.y) < m.r + 16 || m.y - m.r > H) {
+        m.weg = true; schild--; hud(); knall(m.x, Math.min(m.y, H - 10), "#ff3b3b");
+        if (schild <= 0) return ende();
+      }
+    }
+    schuesse = schuesse.filter((s) => !s.weg); meteore = meteore.filter((m) => !m.weg);
+    funken.forEach((f) => { f.x += f.vx; f.y += f.vy; f.t--; }); funken = funken.filter((f) => f.t > 0);
+  }
+  function ende() {
+    laeuft = false;
+    document.getElementById("info").innerHTML = "Station getroffen! " + punkte + " Punkte.";
+    document.getElementById("start").textContent = "Nochmal";
+    overlay.classList.remove("hidden");
+  }
+  function zeichne() {
+    ctx.fillStyle = "#020203"; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(255,231,204,.7)";
+    sterne.forEach((s) => { s.y += s.v; if (s.y > H) { s.y = 0; s.x = Math.random() * W; } ctx.fillRect(s.x, s.y, s.v, s.v); });
+    ctx.shadowBlur = 14; ctx.shadowColor = "#2ee6d0"; ctx.fillStyle = "#2ee6d0";
+    schuesse.forEach((s) => ctx.fillRect(s.x - 1.5, s.y - 8, 3, 14));
+    meteore.forEach((m) => {
+      ctx.save(); ctx.translate(m.x, m.y); ctx.rotate(m.dreh);
+      ctx.shadowColor = "#ff8a1e"; ctx.shadowBlur = 16; ctx.strokeStyle = "#ff8a1e"; ctx.lineWidth = 2; ctx.fillStyle = "rgba(255,138,30,.14)";
+      ctx.beginPath(); for (let i = 0; i < 8; i++) { const w = (i / 8) * Math.PI * 2, rr = m.r * (0.78 + ((i * 37) % 10) / 40); ctx.lineTo(Math.cos(w) * rr, Math.sin(w) * rr); } ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.restore();
+    });
+    funken.forEach((f) => { ctx.globalAlpha = f.t / 40; ctx.fillStyle = f.farbe; ctx.fillRect(f.x, f.y, 3, 3); }); ctx.globalAlpha = 1;
+    if (schiff) {
+      ctx.shadowColor = "#ff8a1e"; ctx.shadowBlur = 20; ctx.fillStyle = "#ffd2a0";
+      ctx.beginPath(); ctx.moveTo(schiff.x, schiff.y - 22); ctx.lineTo(schiff.x + 16, schiff.y + 14); ctx.lineTo(schiff.x, schiff.y + 6); ctx.lineTo(schiff.x - 16, schiff.y + 14); ctx.closePath(); ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+  }
+  function schleife(t) { const dt = Math.min(50, t - (letzt || t)); letzt = t; if (laeuft) update(dt); zeichne(); requestAnimationFrame(schleife); }
+  function start() { neu(); laeuft = true; overlay.classList.add("hidden"); }
+
+  feld.addEventListener("pointerdown", (e) => { ziel = e.clientX; });
+  feld.addEventListener("pointermove", (e) => { if (e.pointerType === "mouse" || e.buttons) ziel = e.clientX; });
+  feld.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") ziel = null; });
+  document.addEventListener("keydown", (e) => { const k = e.key.toLowerCase(); tasten[k] = true; ziel = null; if (k.startsWith("arrow")) e.preventDefault(); if ((k === " " || k === "enter") && !laeuft) { e.preventDefault(); start(); } });
+  document.addEventListener("keyup", (e) => { tasten[e.key.toLowerCase()] = false; });
+  document.getElementById("start").addEventListener("click", start);
+  neu(); requestAnimationFrame(schleife);
+})();
+</script>
+</body>
+</html>

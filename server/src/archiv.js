@@ -10,6 +10,7 @@ import { execFile } from "node:child_process";
 import { WEB_DIR, listSites } from "./webseiten.js";
 import { VIDEO_DIRS } from "./videoteam.js";
 import { alleDokumente } from "./dokumente.js";
+import { listeSpiele, spielPfad } from "./spiele.js";
 
 export const ARCHIV_DIR = process.env.FRIDAY_ARCHIV_DIR || path.join(os.homedir(), "Friday-Archiv");
 const FOTO_DIR = path.join(ARCHIV_DIR, "Fotos");
@@ -133,6 +134,12 @@ function webseiten() {
   } catch { return []; }
 }
 
+function spiele() {
+  try {
+    return listeSpiele().map((s) => ({ typ: "spiel", id: `spiel:${s.id}`, spielId: s.id, titel: s.titel, zeit: s.erstellt || s.geaendert, quelle: s.quelle, datei: `spiel/${encodeURIComponent(s.id)}` }));
+  } catch { return []; }
+}
+
 function dokumente() {
   try {
     return alleDokumente().map((d) => ({ typ: "dokument", id: `dokument:${d.id}`, dokId: d.id, titel: d.titel || "Dokument", art: d.art, zeit: d.erstellt }));
@@ -141,7 +148,7 @@ function dokumente() {
 
 // Alles nach Jahr → Monat gruppiert, neueste zuerst.
 export function archivUebersicht() {
-  const alle = [...fotos(), ...videos(), ...webseiten(), ...dokumente()]
+  const alle = [...fotos(), ...videos(), ...webseiten(), ...spiele(), ...dokumente()]
     .filter((e) => e.zeit && !Number.isNaN(new Date(e.zeit).getTime()))
     .sort((a, b) => String(b.zeit).localeCompare(String(a.zeit)));
   const jahre = new Map();
@@ -176,6 +183,7 @@ export function dateiPfad(art, rel) {
   if (art === "foto" && BILD_EXT.test(r)) voll = innerhalb(FOTO_DIR, r);
   else if (art === "video" && VIDEO_EXT.test(r) && !r.includes("/")) voll = innerhalb(VIDEO_DIRS.fertig, r);
   else if (art === "webseite" && /^[\w-]{1,80}$/.test(r)) voll = innerhalb(WEB_DIR, path.join(r, "index.html"));
+  else if (art === "spiel") voll = spielPfad(r);
   if (!voll || !fs.existsSync(voll) || !fs.statSync(voll).isFile()) return null;
   return { voll, mime: MIME[path.extname(voll).slice(1).toLowerCase()] || "application/octet-stream" };
 }

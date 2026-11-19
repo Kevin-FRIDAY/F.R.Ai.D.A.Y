@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Neon-Paare</title>
+<style>
+  :root { --neon: #ff8a1e; --cyan: #2ee6d0; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: #050505; color: #ffe7cc; font-family: system-ui, -apple-system, sans-serif; user-select: none; -webkit-user-select: none; }
+  .wrap { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 14px; }
+  h1 { margin: 0; font-size: 22px; letter-spacing: .25em; color: var(--neon); text-shadow: 0 0 12px var(--neon); }
+  .hud { display: flex; gap: 18px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; }
+  .hud b { color: var(--neon); font-size: 17px; }
+  .brett { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: min(92vw, 62vh, 460px); }
+  .karte { aspect-ratio: 1; perspective: 600px; border: 0; background: none; padding: 0; cursor: pointer; }
+  .innen { position: relative; width: 100%; height: 100%; transition: transform .35s; transform-style: preserve-3d; }
+  .karte.auf .innen, .karte.weg .innen { transform: rotateY(180deg); }
+  .seite { position: absolute; inset: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1px solid rgba(255,138,30,.55); }
+  .vorne { background: radial-gradient(circle at 30% 25%, rgba(255,138,30,.28), rgba(255,138,30,.05)); box-shadow: inset 0 0 16px rgba(255,138,30,.2); }
+  .vorne::after { content: "F"; font-weight: 800; color: rgba(255,138,30,.55); font-size: 26px; }
+  .hinten { transform: rotateY(180deg); background: rgba(46,230,208,.08); border-color: var(--cyan); font-size: clamp(26px, 8vw, 44px); }
+  .karte.weg .hinten { box-shadow: 0 0 18px rgba(46,230,208,.6); }
+  button.neu { padding: 10px 24px; border-radius: 999px; border: 1px solid var(--neon); background: rgba(255,138,30,.15); color: #fff; font-size: 15px; letter-spacing: .1em; }
+  .info { min-height: 1.4em; color: var(--cyan); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>NEON-PAARE</h1>
+  <div class="hud"><span>Züge <b id="zuege">0</b></span><span>Paare <b id="paare">0</b>/8</span><span>Zeit <b id="zeit">0</b>s</span></div>
+  <div class="brett" id="brett"></div>
+  <div class="info" id="info">Finde alle Paare. Tippe zwei Karten an.</div>
+  <button class="neu" id="neu">Neu mischen</button>
+</div>
+<script>
+(() => {
+  const SYMBOLE = ["🚀", "🛰", "⚡", "🧠", "🌍", "🔭", "🤖", "💎"];
+  const brett = document.getElementById("brett");
+  let offen = [], zuege = 0, paare = 0, sperre = false, start = 0, uhr = null;
+
+  function mischen(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function neu() {
+    clearInterval(uhr); uhr = null; offen = []; zuege = 0; paare = 0; sperre = false; start = 0;
+    document.getElementById("zuege").textContent = 0; document.getElementById("paare").textContent = 0; document.getElementById("zeit").textContent = 0;
+    document.getElementById("info").textContent = "Finde alle Paare. Tippe zwei Karten an.";
+    brett.innerHTML = "";
+    mischen([...SYMBOLE, ...SYMBOLE]).forEach((s) => {
+      const k = document.createElement("button");
+      k.className = "karte"; k.dataset.s = s; k.setAttribute("aria-label", "Karte");
+      k.innerHTML = '<div class="innen"><div class="seite vorne"></div><div class="seite hinten">' + s + '</div></div>';
+      k.addEventListener("click", () => tippe(k));
+      brett.appendChild(k);
+    });
+  }
+  function tippe(k) {
+    if (sperre || k.classList.contains("auf") || k.classList.contains("weg")) return;
+    if (!start) { start = Date.now(); uhr = setInterval(() => { document.getElementById("zeit").textContent = Math.round((Date.now() - start) / 1000); }, 500); }
+    k.classList.add("auf"); offen.push(k);
+    if (offen.length < 2) return;
+    zuege++; document.getElementById("zuege").textContent = zuege;
+    const [a, b] = offen;
+    if (a.dataset.s === b.dataset.s) {
+      a.classList.add("weg"); b.classList.add("weg"); offen = []; paare++;
+      document.getElementById("paare").textContent = paare;
+      if (paare === SYMBOLE.length) { clearInterval(uhr); document.getElementById("info").textContent = "Geschafft! " + zuege + " Züge in " + Math.round((Date.now() - start) / 1000) + " Sekunden."; }
+    } else {
+      sperre = true;
+      setTimeout(() => { a.classList.remove("auf"); b.classList.remove("auf"); offen = []; sperre = false; }, 750);
+    }
+  }
+  document.getElementById("neu").addEventListener("click", neu);
+  neu();
+})();
+</script>
+</body>
+</html>
