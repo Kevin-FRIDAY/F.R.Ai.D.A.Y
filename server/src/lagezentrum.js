@@ -185,18 +185,22 @@ export async function getPlanes(lat, lon, distNm = 180) {
 // --- Erdbeben (USGS, öffentlich, kein Schlüssel) ---
 let quakeCache = null;
 export async function getQuakes() {
-  if (quakeCache && Date.now() - quakeCache.at < 10 * 60 * 1000) return quakeCache.list;
+  if (quakeCache && Date.now() - quakeCache.at < 5 * 60 * 1000) return quakeCache.list;
   const res = await fetch("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson", { signal: AbortSignal.timeout(15000) });
   if (!res.ok) throw new Error(`USGS ${res.status}`);
   const data = await res.json();
   const list = (data.features || [])
-    .filter((f) => f.geometry?.coordinates?.length >= 2)
+    .filter((f) => f.geometry?.coordinates?.length >= 2 && Date.now() - f.properties.time <= MAX_ALTER_MS)
     .map((f) => ({ ort: f.properties.place || "", staerke: f.properties.mag, lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1], zeit: new Date(f.properties.time).toISOString() }))
     .sort((a, b) => b.staerke - a.staerke)
     .slice(0, 60);
   quakeCache = { at: Date.now(), list };
   return list;
 }
+
+// Auf dem Globus nur Aktuelles: Ereignisse, deren letzte Meldung älter als 48 Stunden ist, fliegen raus (v1.117.0).
+export const MAX_ALTER_MS = 48 * 3600 * 1000;
+const frisch = (iso) => { const t = Date.parse(iso || ""); return Number.isFinite(t) && Date.now() - t <= MAX_ALTER_MS; };
 
 // --- NASA EONET: weltweite Naturereignisse (Feuer, Vulkane, Unwetter, Fluten) ---
 // Kostenlos, kein Schlüssel. https://eonet.gsfc.nasa.gov/
@@ -221,11 +225,12 @@ function alarmTitle(type, lon, lat, sev) {
   return { EQ: "ERDBEBEN", FL: "ÜBERSCHWEMMUNG", VO: "VULKANAUSBRUCH", WF: "WALDBRAND", DR: "DÜRRE" }[type] || "KATASTROPHE";
 }
 export async function getAlarm() {
-  if (alarmCache && Date.now() - alarmCache.at < 30 * 60 * 1000) return alarmCache.data;
+  if (alarmCache && Date.now() - alarmCache.at < 15 * 60 * 1000) return alarmCache.data;
   const day = (d) => new Date(Date.now() - d * 86400000).toISOString().slice(0, 10);
   const list = async (types, levels) => {
     const r = await gdacsGet(`${GDACS}/events/geteventlist/SEARCH?eventlist=${types}&alertlevel=${levels}&fromdate=${day(21)}&todate=${day(-1)}`);
-    return (await r.json()).features || [];
+    // Nur Ereignisse, zu denen es in den letzten 48 Stunden noch eine Meldung gab (laufende Stürme bleiben drin).
+    return ((await r.json()).features || []).filter((f) => frisch(f.properties?.todate || f.properties?.fromdate));
   };
   const [ernst, beben] = await Promise.all([list("EQ;TC;FL;VO;WF", "Orange;Red"), list("EQ", "Green;Orange;Red").catch(() => [])]);
   const seen = new Set();
@@ -272,11 +277,11 @@ export async function getAlarm() {
 }
 
 export async function getEonet() {
-  if (eonetCache && Date.now() - eonetCache.at < 15 * 60 * 1000) return eonetCache.data;
+  if (eonetCache && Date.now() - eonetCache.at < 10 * 60 * 1000) return eonetCache.data;
   const out = { feuer: [], vulkane: [], stuerme: [], fluten: [], erdrutsch: [], staub: [], duerre: [], eis: [] };
   await Promise.all(Object.entries(EONET_CATS).map(async ([key, cat]) => {
     try {
-      const res = await fetch(`https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=${cat}&limit=400`, { signal: AbortSignal.timeout(15000) });
+      const res = await fetch(`https://eonet.gsfc.nasa.gov/api/v3/events?status=open&days=2&category=${cat}&limit=400`, { signal: AbortSignal.timeout(15000) });
       if (!res.ok) return;
       const data = await res.json();
       const list = [];
@@ -287,13 +292,52 @@ export async function getEonet() {
         if (g.type === "Point") { [lon, lat] = g.coordinates; }
         else if (g.type === "Polygon") { const c = g.coordinates?.[0]?.[0]; if (c) [lon, lat] = c; }
         if (!Number.isFinite(lon) || !Number.isFinite(lat)) continue;
+        if (!frisch(g.date)) continue; // älter als 48 Stunden
         list.push({ titel: ev.title || "", lon, lat, zeit: g.date || "", link: ev.sources?.[0]?.url || "" });
       }
       out[key] = list.slice(0, key === "feuer" ? 300 : 120);
     } catch { /* Kategorie optional */ }
   }));
+  // Feuer: EONET meldet Brände erst Tage später. Darum aktive Brände der letzten 24 Stunden direkt von den
+  // NASA-Satelliten (FIRMS, MODIS, frei ohne Schlüssel), zu Brandgebieten zusammengefasst.
+  const firms = await getFirmsFeuer().catch(() => null);
+  if (firms?.length) out.feuer = firms;
   eonetCache = { at: Date.now(), data: out };
   return out;
+}
+
+let firmsCache = null;
+async function getFirmsFeuer() {
+  if (firmsCache && Date.now() - firmsCache.at < 30 * 60 * 1000) return firmsCache.list;
+  const res = await fetch("https://firms.modaps.eosdis.nasa.gov/data/active_fire/modis-c6.1/csv/MODIS_C6_1_Global_24h.csv", { signal: AbortSignal.timeout(30000) });
+  if (!res.ok) throw new Error(`FIRMS ${res.status}`);
+  const zeilen = (await res.text()).split("\n");
+  const kopf = zeilen.shift().split(",");
+  const ix = (n) => kopf.indexOf(n);
+  const [iLa, iLo, iDa, iTi, iCo, iFr] = ["latitude", "longitude", "acq_date", "acq_time", "confidence", "frp"].map(ix);
+  const zellen = new Map();
+  for (const z of zeilen) {
+    const f = z.split(",");
+    const lat = Number(f[iLa]), lon = Number(f[iLo]), conf = Number(f[iCo]);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) || !(conf >= 60)) continue;
+    const t = f[iTi] || "0000";
+    const zeit = `${f[iDa]}T${t.padStart(4, "0").slice(0, 2)}:${t.padStart(4, "0").slice(2)}:00Z`;
+    if (!frisch(zeit)) continue;
+    const key = `${Math.round(lat * 2)},${Math.round(lon * 2)}`; // ca. 50-km-Raster
+    const c = zellen.get(key) || { lat: 0, lon: 0, n: 0, frp: 0, zeit: "" };
+    c.lat += lat; c.lon += lon; c.n++; c.frp += Number(f[iFr]) || 0;
+    if (zeit > c.zeit) c.zeit = zeit;
+    zellen.set(key, c);
+  }
+  const list = [...zellen.values()].sort((a, b) => b.frp - a.frp).slice(0, 300).map((c) => {
+    const lat = +(c.lat / c.n).toFixed(3), lon = +(c.lon / c.n).toFixed(3);
+    return {
+      titel: `Aktiver Brand · ${c.n} Hitzepunkt${c.n === 1 ? "" : "e"} vom NASA-Satelliten · ${Math.round(c.frp)} MW Feuerkraft`,
+      lon, lat, zeit: new Date(c.zeit).toISOString(), link: `https://firms.modaps.eosdis.nasa.gov/map/#d:24hrs;@${lon},${lat},8z`,
+    };
+  });
+  firmsCache = { at: Date.now(), list };
+  return list;
 }
 
 // --- Satelliten: TLE-Bahndaten (Celestrak, kostenlos). Client rechnet Positionen. ---

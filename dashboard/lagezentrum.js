@@ -93,7 +93,8 @@
     loadQuakes();
     loadEvents();
     clearInterval(eventsTimer);
-    eventsTimer = setInterval(loadEvents, 5 * 60 * 1000);
+    // Ständig aktuell halten: Erdbeben + Naturereignisse alle 5 Minuten neu (v1.117.0)
+    eventsTimer = setInterval(() => { if (document.hidden || $("lage").classList.contains("hidden")) return; loadEvents(); loadQuakes(); }, 5 * 60 * 1000);
     loadSats();
     loadInfra("staedte", "lage-cities", "city", "lage-city-on");
     loadInfra("flughaefen", "lage-airports", "airport", "lage-air-on");
@@ -795,6 +796,7 @@
     if (!$(toggleId)?.checked) return 0;
     let n = 0;
     for (const ev of list || []) {
+      if (zuAlt(ev.zeit)) continue;
       const pos = project?.(ev.lon, ev.lat);
       if (!pos) continue;
       const node = el("circle", { cx: pos[0].toFixed(1), cy: pos[1].toFixed(1), r: cls === "fire" ? 2.6 : 3.6, class: cls });
@@ -806,16 +808,19 @@
     }
     return n;
   }
+  // Nur Aktuelles: alles, dessen letzte Meldung älter als 48 Stunden ist, bleibt weg (v1.117.0).
+  const zuAlt = (iso) => { const t = Date.parse(iso || ""); return !Number.isFinite(t) || Date.now() - t > 48 * 3600 * 1000; };
+  const frische = (l) => (l || []).filter((e) => !zuAlt(e.zeit));
   const setCount = (id, n) => { const e = $(id); if (e) e.textContent = n ? ` (${n})` : ""; };
   function renderEvents() {
     renderEventGroup("lage-fires", "fire", events.feuer, "lage-fires-on");
     renderEventGroup("lage-volcanoes", "volcano", events.vulkane, "lage-volc-on");
     renderEventGroup("lage-storms", "storm", [...(events.stuerme || []), ...(events.fluten || [])], "lage-storms-on");
     renderEventGroup("lage-weitere", "eevent", [...(events.erdrutsch || []), ...(events.staub || []), ...(events.duerre || []), ...(events.eis || [])], "lage-weitere-on");
-    setCount("cnt-fires", (events.feuer || []).length);
-    setCount("cnt-volc", (events.vulkane || []).length);
-    setCount("cnt-storms", (events.stuerme || []).length + (events.fluten || []).length);
-    setCount("cnt-weitere", (events.erdrutsch || []).length + (events.staub || []).length + (events.duerre || []).length + (events.eis || []).length);
+    setCount("cnt-fires", frische(events.feuer).length);
+    setCount("cnt-volc", frische(events.vulkane).length);
+    setCount("cnt-storms", frische(events.stuerme).length + frische(events.fluten).length);
+    setCount("cnt-weitere", frische(events.erdrutsch).length + frische(events.staub).length + frische(events.duerre).length + frische(events.eis).length);
   }
 
   // ---------- Infrastruktur: große Flughäfen + Kraftwerke ----------
