@@ -105,9 +105,11 @@ export function getInternet() {
       const c = byCca2.get(e.code);
       if (!c) continue;
       const aktiv = e.stufe !== "normal";
-      liste.push({ id: c.id, land: c.name, flag: c.flag || "", lat: c.lat, lon: c.lon, aktiv, stufe: aktiv ? (e.stufe === "critical" ? "stark" : "leicht") : "behoben", quellen: e.quellen, einbruch_prozent: e.einbruch || null, seit: e.seit ? new Date(e.seit * 1000).toISOString() : null });
+      // Nur Google-Verkehr gesunken (schwankt bei kleinen Ländern stark) -> höchstens "leicht".
+      const nurGoogle = e.quellen.length === 1 && e.quellen[0] === QUELLEN.gtr;
+      liste.push({ id: c.id, land: c.name, flag: c.flag || "", lat: c.lat, lon: c.lon, aktiv, stufe: aktiv ? (e.stufe === "critical" && !nurGoogle ? "stark" : "leicht") : "behoben", quellen: e.quellen, einbruch_prozent: e.einbruch || null, seit: e.seit ? new Date(e.seit * 1000).toISOString() : null });
     }
-    liste.sort((a, b) => (b.aktiv - a.aktiv) || ((b.einbruch_prozent || 0) - (a.einbruch_prozent || 0)));
+    liste.sort((a, b) => (b.aktiv - a.aktiv) || ((b.stufe === "stark") - (a.stufe === "stark")) || ((b.einbruch_prozent || 0) - (a.einbruch_prozent || 0)));
     return { stoerungen: liste, aktiv: liste.filter((x) => x.aktiv).length, stand: new Date().toISOString(), quelle: "IODA (Georgia Tech)" };
   });
 }
@@ -269,4 +271,57 @@ export function lagebildRouten(app, asyncRoute) {
   app.get("/api/lagebild/seekabel", asyncRoute(async (req, res) => res.json(await getSeekabel())));
   app.get("/api/lagebild/radar", asyncRoute(async (req, res) => res.json(await getRadar())));
   app.get("/api/lagebild/grenzen", (req, res) => res.json(NICHT_MOEGLICH));
+}
+
+// ---------- Sprachbefehle ohne Claude ("Friday, wie ist das Weltraumwetter?") ----------
+const dauer = (iso) => {
+  const ms = new Date(iso).getTime() - Date.now();
+  if (!Number.isFinite(ms)) return "";
+  if (ms < 0) return "gerade eben";
+  const h = Math.floor(ms / 3600e3), m = Math.floor((ms % 3600e3) / 60e3);
+  return h >= 48 ? `in ${Math.round(h / 24)} Tagen` : h ? `in ${h} Stunden und ${m} Minuten` : `in ${m} Minuten`;
+};
+const aufzaehlen = (l) => l.length <= 1 ? l.join("") : l.slice(0, -1).join(", ") + " und " + l.at(-1);
+export async function lagebildAnswer(t) {
+  t = String(t || "").toLowerCase();
+  if (/weltraumwetter|sonnensturm|magnetsturm|polarlicht|nordlicht|kp[- ]?index|sonnenwind/.test(t)) {
+    const w = await getWeltraum();
+    if (w.kp == null) return { text: "Die Weltraumwetter-Daten der NOAA kommen gerade nicht durch, Boss." };
+    const kp = w.kp.toLocaleString("de-DE", { maximumFractionDigits: 1 });
+    const polar = w.kp >= 7 ? "Polarlichter sind heute Nacht sogar in Süddeutschland möglich." : w.kp >= 5 ? "In Norddeutschland könnten heute Nacht Polarlichter zu sehen sein." : "Polarlichter gibt es nur hoch im Norden, in Deutschland eher nicht.";
+    return { text: `Weltraumwetter: Kp-Index ${kp}, ${w.kp_text}.${w.sonnenwind_kms ? ` Der Sonnenwind weht mit ${Math.round(w.sonnenwind_kms)} Kilometern pro Sekunde.` : ""} ${polar}`, zeigen: true };
+  }
+  if (/(rakete|raketenstart|weltraumstart|nächste[rn]? start|naechste[rn]? start)/.test(t) && /(wann|nächst|naechst|start)/.test(t)) {
+    const r = await getRaketen();
+    const n = r.starts.find((s) => new Date(s.zeit).getTime() > Date.now() - 30 * 60e3);
+    if (!n) return { text: "Ich finde gerade keinen geplanten Raketenstart, Boss." };
+    return { text: `Der nächste Raketenstart ist ${n.name.replace("|", "mit")} von ${n.ort.split(",")[0]}, ${dauer(n.zeit)}.${n.anbieter ? ` Betreiber: ${n.anbieter}.` : ""}`, zeigen: true };
+  }
+  if (/internet.{0,3}(störung|stoerung|ausfall|ausfälle|ausfaelle|abschaltung)|wo ist das internet (weg|aus)/.test(t)) {
+    const d = await getInternet();
+    const a = d.stoerungen.filter((s) => s.aktiv);
+    if (!a.length) return { text: "Gerade melden die Messstellen keine größeren Internet-Störungen, Boss.", zeigen: true };
+    return { text: `Internet-Störungen gerade in ${a.length} ${a.length === 1 ? "Land" : "Ländern"}: ${aufzaehlen(a.slice(0, 5).map((s) => s.land))}.`, zeigen: true };
+  }
+  if (/(konfliktherde|krisenherde|wo (gibt es|ist|herrscht) (gerade )?(krieg|kämpfe|konflikt)|welche konflikte|wo wird gekämpft)/.test(t)) {
+    const k = getKonflikte().laender;
+    if (!k.length) return { text: "Ich lese die Schlagzeilen noch ein, Boss. Frag mich gleich nochmal.", zeigen: true };
+    return { text: `Die meisten Konflikt-Meldungen gerade aus ${aufzaehlen(k.slice(0, 5).map((x) => x.land))}. Das zähle ich aus öffentlichen Schlagzeilen.`, zeigen: true };
+  }
+  if (/(luft|luftqualität|luftqualitaet).{0,25}(weltweit|am schlechtesten|am dreckigsten)|wo ist die luft am schlechtesten/.test(t)) {
+    const l = await getLuft();
+    const s = l.staedte.filter((x) => x.aqi != null).sort((a, b) => b.aqi - a.aqi).slice(0, 3);
+    if (!s.length) return null;
+    return { text: `Die schlechteste Luft gerade in ${aufzaehlen(s.map((x) => `${x.name} (Index ${x.aqi})`))}.`, zeigen: true };
+  }
+  if (/^(zeig( mir)? )?(das )?lagebild$|wie ist das lagebild|lagebild (zeigen|bitte)/.test(t)) {
+    const u = await getUebersicht();
+    const teile = [];
+    if (u.konflikt_laender) teile.push(`Konflikt-Meldungen aus ${u.konflikt_laender} Ländern`);
+    if (u.internet_aktiv != null) teile.push(u.internet_aktiv ? `Internet-Störungen in ${u.internet_aktiv} Ländern` : "keine Internet-Störungen");
+    if (u.weltraum?.kp != null) teile.push(`Weltraumwetter ${u.weltraum.kp_text}`);
+    if (u.naechster_start) teile.push(`nächster Raketenstart ${dauer(u.naechster_start.zeit)}`);
+    return { text: `Lagebild: ${aufzaehlen(teile) || "die Daten laden noch"}.`, zeigen: true };
+  }
+  return null;
 }

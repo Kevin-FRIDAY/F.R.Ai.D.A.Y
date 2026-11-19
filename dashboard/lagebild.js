@@ -152,8 +152,9 @@
       }
       zaehler(k, d.starts?.length ? ` ${d.starts.length}` : "");
     } else if (k === "polar") {
-      for (const [lon, lat, v] of d.punkte || []) {
-        const n = punkt(k, lon, lat, { class: "lb-p lb-p-polar" }, [el("circle", { r: 4.5, opacity: Math.min(0.85, 0.15 + v / 60) })]);
+      // Jeder zweite Punkt reicht für das Leuchtband (schont das iPhone).
+      for (const [lon, lat, v] of (d.punkte || []).filter((p) => p[0] % 6 === 0)) {
+        const n = punkt(k, lon, lat, { class: "lb-p lb-p-polar" }, [el("circle", { r: 8, opacity: Math.min(0.5, 0.06 + v / 80) })]);
         kinder.push(n);
       }
     } else if (k === "kabel") {
@@ -186,7 +187,7 @@
         n.style.display = "";
         const p = proj([lon, lat]);
         const rot = n.dataset.rot ? ` rotate(${n.dataset.rot})` : "";
-        const sk = k === "polar" ? Math.max(1, s * 0.9) : k === "temp" || k === "regen" || k === "wind" ? Math.max(0.8, Math.min(2.5, s * 0.75)) : zoom;
+        const sk = k === "polar" ? Math.max(1, Math.min(2.2, s * 0.9)) : k === "temp" || k === "regen" || k === "wind" ? Math.max(0.8, Math.min(2.5, s * 0.75)) : zoom;
         n.setAttribute("transform", `translate(${p[0].toFixed(1)},${p[1].toFixed(1)})${rot} scale(${sk.toFixed(2)})`);
       }
     }
@@ -279,7 +280,7 @@
           dLayer[k] = L.tileLayer(`${r.host}${r.pfad}/256/{z}/{x}/{y}/2/1_1.png`, { opacity: 0.75, maxNativeZoom: 7, maxZoom: 19, zIndex: 30, attribution: "Regen © RainViewer" }).addTo(dmap);
         } catch { /* Radar optional */ }
       } else if (k === "wolken") {
-        dLayer[k] = L.tileLayer(`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/${gestern()}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`, { opacity: 0.7, maxNativeZoom: 9, maxZoom: 19, zIndex: 20, attribution: "Wolken © NASA GIBS" }).addTo(dmap);
+        dLayer[k] = L.tileLayer(`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_NOAA21_CorrectedReflectance_TrueColor/default/${gestern()}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`, { opacity: 0.7, maxNativeZoom: 9, maxZoom: 19, zIndex: 20, attribution: "Wolken © NASA GIBS" }).addTo(dmap);
       } else if (k === "lichter") {
         dLayer[k] = L.tileLayer("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_Black_Marble/default/2016-01-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png", { opacity: 0.85, maxNativeZoom: 8, maxZoom: 19, zIndex: 25, attribution: "Nachtlichter © NASA" }).addTo(dmap);
       }
@@ -302,11 +303,12 @@
     try {
       const u = lbDaten && !frisch && Date.now() - lbDaten.at < 5 * 60 * 1000 ? lbDaten.d : await (await api("/api/lagebild")).json();
       lbDaten = { at: Date.now(), d: u };
-      const [beben, ereig] = await Promise.all([
+      let [beben, ereig] = await Promise.all([
         api("/api/lage-beben").then((r) => r.json()).catch(() => []),
         api("/api/lage-ereignisse").then((r) => r.json()).catch(() => ({})),
       ]);
-      const starke = (beben || []).filter((q) => q.staerke >= 5);
+      const starke = (Array.isArray(beben) ? beben : []).filter((q) => q.staerke >= 5);
+      if (!ereig || typeof ereig !== "object") ereig = {};
       const w = u.weltraum;
       const kp = w?.kp;
       const n = u.naechster_start;
