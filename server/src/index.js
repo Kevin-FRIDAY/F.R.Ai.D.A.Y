@@ -46,6 +46,7 @@ import { localVersion, checkForUpdate, startUpdate, getUpdateStatus, updateProgr
 import { archivUebersicht, speichereFoto, einsortieren, dateiPfad, fotoWegwerfen, oeffneOrdner, archivStart } from "./archiv.js";
 import { zentraleRouten, zentraleStart } from "./zentrale.js";
 import { lagebildRouten } from "./lagebild.js";
+import { osirisStatus } from "./osiris.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
 const missing = checkConfig();
@@ -211,6 +212,8 @@ app.post("/api/tts", asyncRoute(async (req, res) => {
   if (!r.ok) return res.status(503).json({ error: r.error, grund: r.error });
   res.type("audio/mpeg").send(r.audio);
 }));
+
+app.get("/api/osiris", async (req, res) => { res.json(await osirisStatus()); });
 
 app.get("/api/status", (req, res) => {
   res.json({
