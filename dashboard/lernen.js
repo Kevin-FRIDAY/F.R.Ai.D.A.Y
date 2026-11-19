@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y – Carlas Lernecke (v1.108.0, Archiv + Fortschritts-Ringe ab v1.109.0)
+// F.R.Ai.D.A.Y – Carlas Lernecke (v1.108.0, Archiv + Ringe ab v1.109.0, neue Optik ab v1.110.0)
 // Lernkarten oder Blätter (gedruckt oder handgeschrieben) mit der Kamera scannen → Karten speichern →
 // Friday fragt ab: Sie liest die Überschrift vor, hört Carlas Antwort, vergleicht mit der Karte und sagt,
 // was gefehlt hat oder ob die Reihenfolge falsch war. Falsche Karten kommen wieder (Lernkartei).
@@ -49,26 +49,34 @@
           <label class="hf-hinweis ln-check" style="margin-top:8px"><input type="checkbox" id="ln-wer-merken" checked> Auf diesem Gerät merken</label>
         </div>
         <div class="ln-gruss hf-karte" id="ln-gruss-k">
-          <div class="ln-gruss-text" id="ln-gruss">Hi ${NAME} …</div>
+          <div class="ln-hero">
+            <div class="ln-orb" aria-hidden="true"><i></i><b>F</b></div>
+            <div class="ln-hero-text">
+              <div class="ln-gruss-text" id="ln-gruss">Hi ${NAME} …</div>
+              <div id="ln-stand" class="ln-chips"></div>
+            </div>
+          </div>
           <div class="ln-gross">
             <button class="ln-kachel" data-go="abfragen"><b>🎯</b><span>Abfragen</span><small>Ich lese vor, du antwortest</small></button>
             <button class="ln-kachel" data-go="hilfe"><b>💡</b><span>Hilf mir beim Lernen</span><small>Karten ansehen, Eselsbrücken, erklären</small></button>
             <button class="ln-kachel" data-go="scannen"><b>📷</b><span>Neue Karten scannen</span><small>Karteikarte, Zettel oder Buchseite</small></button>
             <button class="ln-kachel" data-go="archiv"><b>📚</b><span>Mein Archiv</span><small id="ln-archiv-zahl">Alle deine Lernunterlagen</small></button>
           </div>
-          <div class="hf-reihe" style="margin-top:10px">
+          <div class="hf-reihe ln-stimme-reihe">
             <button id="ln-mikro-start" class="hf-btn" type="button">🎤 Per Stimme sagen, was wir machen</button>
             <span id="ln-live-start" class="hf-hinweis"></span>
           </div>
         </div>
         <div id="ln-heute" class="hf-karte" style="display:none"><h3>Heute dran</h3><div id="ln-heute-liste"></div></div>
         <div id="ln-fortschritt" class="hf-karte" style="display:none"><h3>Dein Fortschritt</h3><div id="ln-fortschritt-liste" class="ln-themen"></div>
-          <p class="hf-hinweis">Pro Thema drei Ringe: <b>Geübt</b> = so viele Karten hast du schon mindestens einmal beantwortet. <b>Gemerkt</b> = so oft lagst du beim Abfragen richtig. <b>Auswendig</b> = diese Karten sitzen (mehrmals hintereinander richtig).</p></div>
-        <div id="ln-stand" class="hf-hinweis"></div>
-        <div class="hf-reihe hf-hinweis">
-          <label class="ln-check">Dieses Gerät gehört: <select id="ln-geraet" class="hf-input" style="width:auto"><option value="">jedes Mal fragen</option><option value="carla">Carla</option><option value="kevin">Kevin (Testmodus)</option></select></label>
-          <label class="ln-check"><input type="checkbox" id="ln-immer"> Auf diesem Gerät immer direkt mit der Lernecke starten</label>
-        </div>
+          <p class="hf-hinweis ln-legende"><span><b>Geübt</b> schon mal beantwortet</span><span><b>Gemerkt</b> so oft richtig</span><span><b>Auswendig</b> sitzt sicher</span></p></div>
+        <details class="ln-geraet hf-karte">
+          <summary>⚙ Einstellungen für dieses Gerät</summary>
+          <div class="hf-reihe" style="margin-top:10px">
+            <label class="ln-check">Dieses Gerät gehört: <select id="ln-geraet" class="hf-input" style="width:auto"><option value="">jedes Mal fragen</option><option value="carla">Carla</option><option value="kevin">Kevin (Testmodus)</option></select></label>
+            <label class="ln-check"><input type="checkbox" id="ln-immer"> Immer direkt mit der Lernecke starten</label>
+          </div>
+        </details>
       </section>
 
       <section data-seite="scannen" class="hidden">
@@ -226,6 +234,9 @@
   function zeigeTab(t) {
     tab = t;
     w.$$("[data-tab]").forEach((b) => b.classList.toggle("an", b.dataset.tab === t));
+    // Am iPhone den gewählten Reiter in der Leiste sichtbar machen (nur waagerecht).
+    const reiter = w.sheet.querySelector(`.hf-tabs [data-tab="${t}"]`), leiste = reiter?.parentElement;
+    if (reiter && leiste && leiste.scrollWidth > leiste.clientWidth) leiste.scrollTo({ left: reiter.offsetLeft - (leiste.clientWidth - reiter.offsetWidth) / 2, behavior: "smooth" });
     w.$$("[data-seite]").forEach((s) => s.classList.toggle("hidden", s.dataset.seite !== t));
     if (t !== "abfragen" && quiz?.laeuft) quizEnde(true);
     if (t !== "scannen") kameraAus();
@@ -343,9 +354,12 @@
     const h = info.heute || [];
     $("#ln-heute").style.display = h.length ? "" : "none";
     $("#ln-heute-liste").innerHTML = h.map((x) => `<div class="hf-zeile"><span class="icon">📅</span><span class="name">${esc(x.titel)}<br><span class="klein">${esc(x.text)}</span></span><button class="hf-mini" data-heute="${esc(x.stapel)}">▶ Jetzt lernen</button></div>`).join("");
-    $("#ln-stand").textContent = info.karten
-      ? `${info.stapel.length} Stapel · ${info.karten} Karten · ${info.faellig} heute fällig${info.letzte?.[0] ? ` · zuletzt: ${info.letzte[0].richtig} von ${info.letzte[0].richtig + info.letzte[0].teilweise + info.letzte[0].falsch} richtig` : ""}`
-      : "Noch keine Karten. Fang mit „Neue Karten scannen“ an.";
+    const chip = (zahl, wort, extra = "") => `<span class="ln-chip${extra}"><b>${zahl}</b> ${esc(wort)}</span>`;
+    const l = info.letzte?.[0];
+    $("#ln-stand").innerHTML = info.karten
+      ? chip(info.stapel.length, info.stapel.length === 1 ? "Thema" : "Themen") + chip(info.karten, "Karten") + chip(info.faellig, "heute fällig", info.faellig ? " heiss" : "")
+        + (l ? chip(`${l.richtig}/${l.richtig + l.teilweise + l.falsch}`, "zuletzt richtig") : "")
+      : `<span class="ln-chip">Noch keine Karten. Fang mit „Neue Karten scannen“ an.</span>`;
     $("#ln-immer").checked = lsGet("lernecke_start") === "1";
     $("#ln-archiv-zahl").textContent = info.unterlagen ? `${info.unterlagen} Unterlage${info.unterlagen === 1 ? "" : "n"} gespeichert` : "Alle deine Lernunterlagen";
     const mitKarten = (info.stapel || []).filter((x) => x.anzahl);
@@ -753,7 +767,7 @@
     const nr = quiz.nr;
     const { k } = quiz.liste[quiz.i];
     $("#ln-q-nr").textContent = `Karte ${quiz.i + 1} von ${quiz.liste.length}${info.stapel.length > 1 ? ` · ${k.stitel}` : ""}`;
-    $("#ln-q-score").textContent = `✓ ${quiz.richtig}  ~ ${quiz.teilweise}  ✗ ${quiz.falsch}`;
+    $("#ln-q-score").innerHTML = `<span class="ln-s gut">✓ ${quiz.richtig}</span><span class="ln-s fast">~ ${quiz.teilweise}</span><span class="ln-s falsch">✗ ${quiz.falsch}</span>`;
     $("#ln-q-balken").style.width = `${Math.round((quiz.i / quiz.liste.length) * 100)}%`;
     $("#ln-q-frage").textContent = k.frage;
     $("#ln-q-ergebnis").style.display = "none";
@@ -1373,7 +1387,143 @@
   .ln-vz .name { flex: 1 1 calc(100% - 36px) !important; }
   #ln-q-form { flex-wrap: nowrap; }
   #ln-q-form .grow { min-width: 0; }
-}`;
+}
+/* ---------- Optik v1.110.0: klare Schrift, ruhiger Aufbau ---------- */
+.ln-box {
+  --ln-schrift: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Helvetica Neue", "Saira", system-ui, sans-serif;
+  --ln-gross: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", "Helvetica Neue", "Saira", system-ui, sans-serif;
+  --ln-hud: var(--font-head, "Orbitron"), sans-serif;
+  --ln-gruen: #3ddc84;
+  width: min(1120px, 100%);
+}
+.ln-box .hf-inhalt { font-family: var(--ln-schrift); font-size: 15px; line-height: 1.5; letter-spacing: 0; gap: 16px; -webkit-font-smoothing: antialiased; }
+.ln-box .hf-inhalt :is(button, input, select, textarea, label, summary) { font-family: var(--ln-schrift); letter-spacing: 0; }
+.ln-box .hf-inhalt section { display: flex; flex-direction: column; gap: 16px; flex: none; }
+.ln-box .hf-inhalt > * { flex-shrink: 0; }
+.ln-box .hf-inhalt section.hidden { display: none; }
+.ln-box #ln-status:empty { display: none; }
+.ln-box #ln-status { font-size: 14px; padding: 8px 12px; border-radius: 10px; background: color-mix(in srgb, var(--cyan) 8%, transparent); border: 1px solid var(--u-rand-soft, var(--line)); color: var(--text); }
+.ln-box #ln-status.fehler { color: #ffb3a8; border-color: rgba(255,90,74,.5); background: rgba(255,90,74,.08); }
+
+/* Reiter: eine Zeile, wie eine Leiste */
+.ln-box .hf-inhalt > .hf-tabs { flex: none; position: sticky; top: 0; z-index: 5; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 4px; padding: 5px; margin: 0 -2px; border-radius: 16px;
+  background: linear-gradient(180deg, rgba(20,11,4,.96), rgba(12,7,2,.96)); border: 1px solid var(--u-rand-soft, var(--line)); box-shadow: 0 8px 22px rgba(0,0,0,.45); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.ln-box .hf-inhalt > .hf-tabs::-webkit-scrollbar { display: none; }
+.ln-box .hf-inhalt > .hf-tabs .hf-tab { flex: 1 0 auto; border: 1px solid transparent !important; background: transparent; box-shadow: none; border-radius: 11px; padding: 9px 14px; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; transition: background .2s, color .2s; }
+.ln-box .hf-inhalt > .hf-tabs .hf-tab:hover { color: var(--text); background: color-mix(in srgb, var(--cyan) 8%, transparent); }
+.ln-box .hf-inhalt > .hf-tabs .hf-tab.an { color: #1a0c00; background: linear-gradient(135deg, var(--cyan), color-mix(in srgb, var(--cyan) 55%, #ffd59a)); box-shadow: 0 0 16px color-mix(in srgb, var(--cyan) 45%, transparent); }
+.ln-box .ln-modus { align-self: flex-start; }
+
+/* Karten & Überschriften */
+.ln-box .hf-karte { border-radius: 18px; padding: 18px 20px; background: linear-gradient(160deg, color-mix(in srgb, var(--cyan) 9%, rgba(18,10,4,.7)), rgba(10,6,2,.55)); box-shadow: inset 0 1px 0 rgba(255,220,180,.07); }
+.ln-box .hf-karte h3 { font-family: var(--ln-hud); font-size: 11.5px; font-weight: 700; letter-spacing: .2em; margin: 0 0 12px !important; display: flex; align-items: center; gap: 8px; }
+.ln-box .hf-karte h3::before { content: ""; width: 6px; height: 6px; border-radius: 2px; transform: rotate(45deg); background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+.ln-box .hf-hinweis { font-size: 13px; line-height: 1.5; }
+.ln-box .hf-btn { border-radius: 12px; padding: 10px 16px; font-size: 14.5px; font-weight: 600; }
+.ln-box .hf-btn.haupt { font-weight: 700; }
+.ln-box .hf-input, .ln-box .hf-feld :is(input, textarea, select) { border-radius: 12px; padding: 10px 12px; font-size: 15px; }
+.ln-box .hf-feld { font-size: 13px; font-weight: 600; }
+.ln-box .hf-zeile { border-radius: 14px; padding: 10px 12px; font-size: 15px; }
+.ln-box .hf-leer { font-size: 15px; padding: 26px; }
+
+/* Startseite: Begrüßung */
+.ln-box .ln-gruss { padding: 22px 24px; background: radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--cyan) 20%, transparent), transparent 55%), linear-gradient(160deg, rgba(22,12,4,.85), rgba(8,5,2,.7)); }
+.ln-hero { display: flex; gap: 18px; align-items: center; margin-bottom: 18px; }
+.ln-hero-text { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.ln-orb { position: relative; flex: none; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, #ffd9a8, var(--cyan) 45%, #6a2c00 100%); box-shadow: 0 0 26px color-mix(in srgb, var(--cyan) 60%, transparent), inset 0 0 14px rgba(0,0,0,.35); }
+.ln-orb i { position: absolute; inset: -7px; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--cyan) 60%, transparent); border-top-color: transparent; border-left-color: transparent; animation: ln-dreh 6s linear infinite; }
+.ln-orb b { font-family: var(--ln-hud); font-size: 24px; color: #2a1200; }
+@keyframes ln-dreh { to { transform: rotate(360deg); } }
+.ln-box .ln-gruss-text { font-family: var(--ln-gross); font-size: 24px; font-weight: 600; line-height: 1.3; letter-spacing: -.01em; margin: 0; color: #fff3e6; text-shadow: 0 0 22px color-mix(in srgb, var(--cyan) 30%, transparent); }
+.ln-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ln-chip { font-size: 12.5px; color: var(--muted); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--u-rand-soft, var(--line)); background: rgba(0,0,0,.25); }
+.ln-chip b { color: var(--text); font-weight: 700; }
+.ln-chip.heiss { border-color: var(--cyan); color: var(--text); }
+.ln-chip.heiss b { color: var(--cyan); }
+
+/* Kacheln */
+.ln-box .ln-gross { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.ln-box .ln-kachel { position: relative; overflow: hidden; gap: 6px; padding: 18px 16px 16px; border-radius: 18px; border: 1px solid var(--u-rand-soft, var(--line)); background: linear-gradient(165deg, color-mix(in srgb, var(--cyan) 14%, rgba(20,11,4,.8)), rgba(8,5,2,.7)); transition: transform .18s, border-color .18s, box-shadow .18s; }
+.ln-box .ln-kachel:hover { transform: translateY(-2px); border-color: var(--cyan); box-shadow: 0 10px 26px rgba(0,0,0,.4), 0 0 22px color-mix(in srgb, var(--cyan) 30%, transparent); }
+.ln-box .ln-kachel b { font-size: 22px; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 6px; background: color-mix(in srgb, var(--cyan) 16%, rgba(0,0,0,.3)); border: 1px solid color-mix(in srgb, var(--cyan) 40%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--cyan) 25%, transparent); }
+.ln-box .ln-kachel span { font-family: var(--ln-gross); font-size: 16.5px; font-weight: 700; letter-spacing: -.005em; }
+.ln-box .ln-kachel small { font-size: 13px; line-height: 1.35; }
+.ln-stimme-reihe { margin-top: 14px; }
+.ln-box #ln-mikro-start { border-radius: 999px; }
+
+/* Fortschritt */
+.ln-box .ln-themen { gap: 12px; }
+.ln-box .ln-thema { border-radius: 16px; padding: 14px 16px 12px; background: rgba(0,0,0,.28); transition: border-color .18s, box-shadow .18s; }
+.ln-box .ln-thema-kopf b { font-family: var(--ln-gross); font-size: 15.5px; font-weight: 700; }
+.ln-box .ln-ring b { font-family: var(--ln-gross); font-weight: 700; }
+.ln-box .ln-ring span { font-family: var(--ln-schrift); font-size: 11px; font-weight: 600; letter-spacing: .08em; }
+.ln-legende { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 12px 0 0; }
+.ln-legende span { display: inline-flex; gap: 6px; align-items: center; }
+.ln-legende span::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ln-gruen); box-shadow: 0 0 6px var(--ln-gruen); }
+.ln-legende b { color: var(--text); }
+.ln-geraet summary { cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--muted); list-style: none; }
+.ln-geraet summary::-webkit-details-marker { display: none; }
+.ln-geraet[open] summary { color: var(--text); }
+.ln-box .ln-geraet { padding: 12px 18px; background: transparent; }
+
+/* Stapel-Kacheln */
+.ln-box .ln-stapel h3 { font-family: var(--ln-gross); font-size: 16px; letter-spacing: 0; text-transform: none; color: var(--text); }
+.ln-box .ln-stapel h3::before { display: none; }
+.ln-box .ln-stapel { transition: border-color .18s, box-shadow .18s; }
+.ln-box .ln-stapel:hover { border-color: var(--cyan); box-shadow: 0 0 18px color-mix(in srgb, var(--cyan) 25%, transparent); }
+
+/* Abfrage */
+.ln-box .ln-quiz { gap: 14px; }
+.ln-box .ln-q-kopf { font-size: 13.5px; align-items: center; }
+.ln-box #ln-q-score { display: flex; gap: 6px; flex: none; }
+.ln-s { white-space: nowrap; font-weight: 700; font-size: 12.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid currentColor; }
+.ln-s.gut { color: var(--ln-gruen); } .ln-s.fast { color: #ffc44d; } .ln-s.falsch { color: #ff6b5a; }
+.ln-box .ln-quiz .hf-balken { height: 6px; }
+.ln-box .ln-quiz .hf-balken > i { background: linear-gradient(90deg, var(--cyan), var(--ln-gruen)); }
+.ln-box .ln-frage { font-family: var(--ln-gross); font-size: 30px; font-weight: 700; line-height: 1.25; letter-spacing: -.015em; text-align: center; padding: 36px 26px; border-radius: 22px; color: #fff3e6;
+  border: 1px solid var(--u-rand, var(--cyan)); background: radial-gradient(130% 120% at 50% 0%, color-mix(in srgb, var(--cyan) 18%, transparent), rgba(0,0,0,.35)); box-shadow: inset 0 0 40px color-mix(in srgb, var(--cyan) 10%, transparent), 0 0 30px color-mix(in srgb, var(--cyan) 12%, transparent); }
+.ln-box .ln-mikro { border-radius: 999px; padding: 10px 16px; font-size: 15px; justify-content: center; }
+.ln-box #ln-q-form .hf-input { border-radius: 999px; padding-left: 18px; }
+.ln-box #ln-q-form .hf-btn { border-radius: 999px; width: 46px; padding: 10px 0; }
+.ln-box .ln-q-knoepfe { justify-content: center; }
+.ln-box .ln-q-knoepfe .hf-btn { border-radius: 999px; padding: 9px 15px; }
+.ln-box .ln-q-knoepfe .hf-btn[data-q="hoeren"] { background: linear-gradient(135deg, var(--cyan), color-mix(in srgb, var(--cyan) 55%, #ffd59a)); color: #1a0c00; border-color: transparent; font-weight: 700; padding: 11px 22px; box-shadow: 0 0 18px color-mix(in srgb, var(--cyan) 40%, transparent); }
+.ln-box #ln-q-ergebnis { font-size: 16px; }
+.ln-box .ln-antwort { font-size: 15px; }
+.ln-box .ln-punkte { font-size: 16px; }
+
+/* Lernhilfe */
+.ln-box .ln-karteikarte { border-radius: 22px; padding: 26px 26px; font-size: 17px; line-height: 1.5; }
+
+/* Archiv */
+.ln-box .ln-a-k { border-radius: 16px; padding: 10px; gap: 5px; transition: border-color .18s, box-shadow .18s, transform .18s; }
+.ln-box .ln-a-k:hover { transform: translateY(-2px); }
+.ln-box .ln-a-k b { font-family: var(--ln-gross); font-size: 14.5px; }
+.ln-box .ln-a-bild { border-radius: 12px; height: 118px; }
+
+@media (max-width: 900px) {
+  .ln-box .hf-inhalt { font-size: 15.5px; gap: 14px; }
+  .ln-box .hf-inhalt section { gap: 14px; }
+  .ln-box .hf-inhalt > .hf-tabs { position: relative; top: auto; margin: 0; padding: 4px; }
+  .ln-box .ln-q-kopf { gap: 10px; }
+  .ln-box .hf-inhalt > .hf-tabs .hf-tab { flex: 0 0 auto; padding: 9px 13px; font-size: 14.5px; }
+  .ln-box .hf-karte { padding: 16px; border-radius: 18px; }
+  .ln-box .ln-gruss { padding: 18px 16px; }
+  .ln-hero { gap: 14px; align-items: flex-start; margin-bottom: 16px; }
+  .ln-orb { width: 48px; height: 48px; } .ln-orb b { font-size: 18px; } .ln-orb i { inset: -5px; }
+  .ln-box .ln-gruss-text { font-size: 20px; }
+  .ln-box .ln-gross { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ln-box .ln-kachel { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; padding: 14px 13px; gap: 4px; }
+  .ln-box .ln-kachel b { width: 40px; height: 40px; font-size: 20px; margin-bottom: 4px; }
+  .ln-box .ln-kachel span { font-size: 15.5px; line-height: 1.25; }
+  .ln-box .ln-kachel small { flex-basis: auto; font-size: 12.5px; }
+  .ln-box #ln-mikro-start { width: 100%; }
+  .ln-box .ln-frage { font-size: 23px; padding: 26px 16px; }
+  .ln-box .ln-q-knoepfe .hf-btn { flex: 1 1 calc(50% - 8px); white-space: nowrap; font-size: 14px; padding: 10px 8px; }
+  .ln-box .ln-q-knoepfe .hf-btn[data-q="hoeren"] { flex-basis: 100%; padding: 13px; font-size: 16px; }
+  .ln-legende { gap: 4px 12px; }
+}
+`;
   document.head.appendChild(style);
 
   window.FridayLernen = { open: (o) => w.auf(o || {}), offen: w.offen };
