@@ -19,7 +19,7 @@ import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webs
 import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, VORLAGEN } from "./spiele.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { helferRouten, helferStart } from "./helfer.js";
-import { startShips, getShips, shipsStatus } from "./ships.js";
+import { startShips, getShips, shipsStatus, schiffeRouten } from "./ships.js";
 import { getISS } from "./extras.js";
 import * as alexa from "./alexa.js";
 import * as fernseher from "./fernseher.js";
@@ -404,6 +404,7 @@ app.get("/api/lage-infra", asyncRoute(async (req, res) => res.json(getInfra(Stri
 app.get("/api/lage-videos", asyncRoute(async (req, res) => res.json(await getWorldVideos())));
 lagebildRouten(app, asyncRoute);
 satellitenRouten(app, asyncRoute);
+schiffeRouten(app, asyncRoute);
 app.get("/api/lage-alarm", asyncRoute(async (req, res) => res.json(await getAlarm())));
 // Fernseher (Samsung-TV im WLAN)
 app.get("/api/fernseher", asyncRoute(async (req, res) => res.json(await fernseher.status())));
