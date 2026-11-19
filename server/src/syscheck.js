@@ -10,6 +10,7 @@ import { marktReady } from "./markt.js";
 import { status as alexaStatus } from "./alexa.js";
 import { status as tvStatus } from "./fernseher.js";
 import { alleStatus } from "./dienste.js";
+import { osirisLokalAktiv } from "./osiris.js";
 
 async function timed(label, fn) {
   const t0 = Date.now();
@@ -50,7 +51,11 @@ export async function runSystemCheck() {
     timed("Markt-Radar (Kronos)", async () => ({ ok: marktReady(), detail: marktReady() ? "installiert" : "Kronos fehlt" })),
     timed("Welt-Alarm (GDACS)", async () => { await ping("https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP", { timeout: 9000 }); return { ok: true, detail: "erreichbar" }; }),
     // Osiris
-    timed("Osiris", async () => { await ping("http://127.0.0.1:3100/", { timeout: 6000 }); return { ok: true, detail: "läuft (Port 3100)" }; }),
+    timed("Osiris", async () => {
+      if (await osirisLokalAktiv()) return { ok: true, detail: "läuft auf dem Mac (Port 3100)" };
+      await ping("https://osirisai.live/", { timeout: 8000 });
+      return { ok: true, detail: "Online-Version osirisai.live (Mac-Kopie aus)" };
+    }),
     // Lagezentrum-Quellen
     timed("Lagezentrum: Erdbeben (USGS)", async () => { await ping("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson", { timeout: 8000 }); return { ok: true, detail: "erreichbar" }; }),
     timed("Lagezentrum: Ereignisse (NASA EONET)", async () => { await ping("https://eonet.gsfc.nasa.gov/api/v3/categories", { timeout: 8000 }); return { ok: true, detail: "erreichbar" }; }),
