@@ -340,7 +340,7 @@ export async function quickCommand(text) {
   const t = String(text || "").toLowerCase().replace(/[?!.]+$/, "").trim();
   if (!t) return null;
   const zeig = /\b(zeig|zeige|zeigen|öffne|oeffne|finde|such|suche)\b/.test(t);
-  const satWort = /\bsatellit/.test(t);
+  const satWort = /satellit/.test(t);
   // Anzahl
   if (satWort && /\bwie ?viele\b/.test(t)) {
     const zahlen = await satellitenZahlen();

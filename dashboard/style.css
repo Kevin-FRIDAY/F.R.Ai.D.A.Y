@@ -3047,7 +3047,7 @@ html.perf-fluessig .lage-lb { backdrop-filter: none; background: rgba(10,6,3,.9)
 .sat-g b { font-weight: 600; font-size: 10.5px; opacity: .8; }
 .sat-ehrlich { margin: 10px 0 0; font-size: 10.5px; line-height: 1.45; color: var(--muted); }
 .lage-satcard { right: 16px; bottom: 16px; width: min(330px, calc(100% - 32px)); max-height: min(72vh, calc(100% - 32px)); }
-.lage-satcard .sc-kopf { display: flex; gap: 9px; align-items: flex-start; margin-right: 20px; }
+.lage-satcard .sc-kopf { display: flex; gap: 9px; align-items: flex-start; margin-right: 30px; }
 .lage-satcard .sc-dot { margin-top: 5px; width: 11px; height: 11px; }
 .lage-satcard .mc-type { font-size: 11px; color: var(--muted); letter-spacing: .04em; }
 .lage-satcard .mc-dot { color: #46e0a0; }
