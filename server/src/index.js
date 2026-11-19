@@ -18,6 +18,7 @@ import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } fr
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webseiten.js";
 import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, VORLAGEN } from "./spiele.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
+import { helferRouten, helferStart } from "./helfer.js";
 import { startShips, getShips, shipsStatus } from "./ships.js";
 import { getISS } from "./extras.js";
 import * as alexa from "./alexa.js";
@@ -604,6 +605,9 @@ app.post("/api/protocols/:name/run", asyncRoute(async (req, res) => res.json(awa
 // Modul-Zentrale: Kontrolle, Missionen, Automationen, Labor, Rechnen, Sicherheit, Module, Netzwerk.
 zentraleRouten(app, asyncRoute);
 
+// Helfer-Paket: Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede (v1.106.0).
+helferRouten(app, asyncRoute);
+
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
 
@@ -614,6 +618,7 @@ server.listen(config.port, config.host, () => {
 });
 logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
+helferStart();
 zentraleStart(ask);
 startTelegram();
 startShips();
