@@ -58,7 +58,7 @@ export async function finde(text, bias = null) {
   const key = `${q.toLowerCase()}|${bias ? `${bias.lat.toFixed(2)},${bias.lon.toFixed(2)}` : ""}`;
   const hit = geoCache.get(key);
   if (hit && Date.now() - hit.at < 24 * 3600 * 1000) return hit.ort;
-  let ort = null;
+  let ort = null, netzFehler = 0;
   try {
     const b = bias ? `&lat=${bias.lat}&lon=${bias.lon}&location_bias_scale=0.4` : "";
     const j = await holeJson(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=1&lang=de${b}`, 8000);
@@ -67,20 +67,25 @@ export async function finde(text, bias = null) {
       const p = f.properties || {};
       ort = { name: p.name || p.street || q, label: photonLabel(p) || q, lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0] };
     }
-  } catch { /* Ersatz unten */ }
+  } catch { netzFehler++; }
   if (!ort) {
     try {
       const v = bias ? `&viewbox=${bias.lon - 0.6},${bias.lat + 0.4},${bias.lon + 0.6},${bias.lat - 0.4}` : "";
       const j = await holeJson(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=jsonv2&limit=1&accept-language=de${v}`, 8000);
       const n = j[0];
       if (n) ort = { name: n.name || q, label: String(n.display_name || q).split(", ").slice(0, 4).join(", "), lat: +n.lat, lon: +n.lon };
-    } catch { /* nichts gefunden */ }
+    } catch { netzFehler++; }
   }
+  if (!ort && netzFehler === 2) throw new Error("Der Kartendienst ist gerade nicht erreichbar. Hat der Mac Internet?");
   if (ort) geoCache.set(key, { at: Date.now(), ort });
   return ort;
 }
 
 // ---------- Hilfen ----------
+// "frankfurt am main" → "Frankfurt am Main" (nur für Ansagen)
+const KLEIN = new Set(["am", "an", "der", "die", "das", "im", "in", "bei", "ob", "und", "von", "vor", "zum", "zur", "auf"]);
+export const schoen = (s) => String(s || "").split(" ").map((w, i) => (i && KLEIN.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1))).join(" ");
+
 export function luftlinie(a, b) {
   const R = 6371000, r = Math.PI / 180;
   const dLat = (b.lat - a.lat) * r, dLon = (b.lon - a.lon) * r;
@@ -227,7 +232,7 @@ async function startOrt({ vonText, standort }) {
     if (/^(hier|meinem standort|mein standort|standort)$/.test(t) && standort) return { name: "Dein Standort", label: "Aktueller Standort", lat: standort.lat, lon: standort.lon, art: "standort" };
     const o = await finde(vonText, standort || orte.heim);
     if (o) return { ...o, art: "adresse" };
-    throw new Error(`Den Startort „${vonText}“ habe ich nicht gefunden.`);
+    throw new Error(`Den Startort „${schoen(vonText)}“ habe ich nicht gefunden.`);
   }
   if (standort && Number.isFinite(standort.lat) && Number.isFinite(standort.lon)) {
     return { name: "Dein Standort", label: "Aktueller Standort", lat: standort.lat, lon: standort.lon, art: "standort" };
@@ -250,7 +255,7 @@ async function zielOrt(nachText, start) {
     throw new Error("Deine Arbeitsadresse kenne ich noch nicht. Trag sie im Routen-Fenster unter Orte ein.");
   }
   const o = await finde(nachText, start);
-  if (!o) throw new Error(`„${nachText}“ habe ich auf der Karte nicht gefunden.`);
+  if (!o) throw new Error(`„${schoen(nachText)}“ habe ich auf der Karte nicht gefunden.`);
   return { ...o, art: "adresse" };
 }
 
@@ -435,7 +440,7 @@ export async function quickCommand(text, opts = {}) {
     const e = await plane({ ...w, standort: opts.standort });
     return { answer: e.sprechText, actions: ["routen", `route:${e.id}`] };
   } catch (err) {
-    return { answer: err.message, actions: ["routen", `route_ziel:${encodeURIComponent(w.nach)}`] };
+    return { answer: err.message, actions: ["routen", `route_ziel:${encodeURIComponent(schoen(w.nach))}`] };
   }
 }
 

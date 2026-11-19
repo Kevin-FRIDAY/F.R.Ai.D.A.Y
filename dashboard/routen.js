@@ -72,7 +72,7 @@
 .rt-felder { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
 .rt-feld { display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 8px; border: 1px solid var(--u-rand-soft, var(--line)); border-radius: 12px; background: rgba(255,140,30,.05); min-width: 0; }
 .rt-feld:focus-within { border-color: var(--u-rand, var(--cyan)); box-shadow: 0 0 14px color-mix(in srgb, var(--cyan) 30%, transparent); }
-.rt-feld input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: var(--text); font: inherit; font-size: 15px; padding: 8px 2px; }
+.rt-feld input, .rt-feld input:focus { flex: 1; min-width: 0; background: transparent !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; outline: 0; color: var(--text); font: inherit; font-size: 15px; padding: 8px 2px; }
 .rt-punkt { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #120800; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
 .rt-punkt.b { background: #fff3e6; box-shadow: 0 0 12px rgba(255,220,180,.7); }
 .rt-mini, .rt-tausch { flex: none; border: 1px solid var(--u-rand-soft, var(--line)); background: transparent; color: var(--text); border-radius: 9px; width: 34px; height: 34px; cursor: pointer; font-size: 15px; }
@@ -143,10 +143,10 @@
 .rt-check { display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; font-size: 13px; }
 .rt-klein { font-size: 11px; margin: 10px 0 0; }
 @media (max-width: 900px) {
-  .rt-box { max-height: none; }
   .rt-form { grid-template-columns: 1fr; }
   .rt-felder { grid-template-columns: 1fr; }
-  .rt-tausch { justify-self: end; margin: -6px 6px; height: 28px; width: 28px; }
+  .rt-felder { position: relative; gap: 10px; }
+  .rt-tausch { position: absolute; right: 54px; top: 50%; transform: translateY(-50%); z-index: 2; height: 30px; width: 30px; border-radius: 50%; background: rgba(14,8,3,.96); }
   .rt-zeile { justify-content: stretch; }
   .rt-zeile > * { flex: 1; }
   .rt-feld input, .rt-zeile select, .rt-zeile input, .rt-ort input { font-size: 16px; }
