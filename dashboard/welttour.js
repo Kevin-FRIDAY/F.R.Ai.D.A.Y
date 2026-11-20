@@ -104,7 +104,11 @@
     api("/api/welttour/ende", { method: "POST" }).catch(() => {});
   }
 
+  let startZeit = 0;
   async function start() {
+    // Derselbe Befehl kommt doppelt an (z. B. Echo vom Mikrofon): laufende Runde nicht neu starten.
+    if (Date.now() - startZeit < 10000 && (tour || $("welttour"))) return;
+    startZeit = Date.now();
     const nr = ++lauf;
     F().stopSpeaking?.();
     pause = false;
@@ -112,6 +116,8 @@
     leiste();
     $("wt-land").textContent = "Nachrichten der Weltmächte werden geladen …";
     $("wt-news").innerHTML = ""; $("wt-punkte").innerHTML = "";
+    // Sofort etwas sagen, während die Nachrichten aus sechs Ländern geladen werden (kann ein paar Sekunden dauern).
+    const moment = stimmeAn() && F().say ? F().say("Einen Moment, Boss. Ich hole die Nachrichten der Weltmächte.").catch(() => {}) : Promise.resolve();
     let daten = null;
     try {
       const r = await api("/api/welttour");
@@ -124,7 +130,14 @@
       if (nr === lauf) aufraeumen();
       return;
     }
-    if (nr !== lauf || !daten?.stationen?.length) return;
+    await moment;
+    if (nr !== lauf) return;
+    if (!daten?.stationen?.length) {
+      $("wt-land").textContent = "Gerade kamen keine Nachrichten an.";
+      await sprich("Gerade kommen keine Weltnachrichten an. Versuch es gleich nochmal.", nr);
+      if (nr === lauf) aufraeumen();
+      return;
+    }
     tour = { stationen: daten.stationen, i: 0 };
     zeige(0);
     const namen = daten.stationen.map((s) => s.name.replace("Vereinigte Staaten", "USA").replace("Vereinigtes Königreich", "Großbritannien"));

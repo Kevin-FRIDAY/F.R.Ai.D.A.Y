@@ -544,7 +544,9 @@
       const data = await res.json();
       // Lernecke: Begrüßung macht das Fenster selbst (es weiß, ob Carla oder Kevin da ist), darum hier ohne Text.
       const stillLernen = !data.answer && !data.error && data.actions?.some((a) => typeof a === "string" && a.startsWith("lernen"));
-      let answer = data.answer || data.error || (stillLernen ? "" : "Keine Antwort.");
+      // v1.121.2: Nur Aktionen ohne Text (z. B. Welt-Runde) → nichts sagen, statt "Keine Antwort." vorzulesen.
+      const nurAktion = !data.answer && !data.error && data.actions?.length > 0;
+      let answer = data.answer || data.error || (stillLernen || nurAktion ? "" : "Keine Antwort.");
       const hat = (a) => data.actions?.includes(a);
       window.FridayAuftrag?.ende(res.ok && !data.error);
       // Friday hat ein Dokument oder einen Fragebogen erstellt: gleich zeigen.

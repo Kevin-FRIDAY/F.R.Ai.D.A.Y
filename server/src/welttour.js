@@ -42,8 +42,18 @@ export async function getWelttour() {
   return { stand: new Date().toISOString(), stationen };
 }
 
-const START = /^(?:(?:zeig|zeige|sag|erzähl|erzaehl)(?: mir| uns)?(?: mal)?(?: bitte)? ?)?(?:was (?:gerade |heute |aktuell )?(?:in|auf) der welt (?:so )?(?:passiert|los ist|geschieht)|was (?:passiert|ist los|geschieht) (?:gerade |heute )?(?:in|auf) der welt|was (?:ist|geht) (?:gerade |heute |so )?(?:in|auf) der welt (?:so )?los)$/;
-const START2 = /^(?:(?:zeig|zeige|starte|mach|lies|lese)(?: mir| uns)?(?: mal)?(?: bitte)? )?(?:die |eine )?(?:welt ?tour|weltreise|welt ?runde|weltnachrichten|nachrichten (?:der|aller) weltmächte|nachrichten aus aller welt|top ?nachrichten der welt)(?: vor| an| starten| bitte)?$/;
+// Erkennt viele Formen: "was passiert in der Welt (heute/gerade/so)", "zeig mir, was in der Welt gerade passiert",
+// "was gibt's Neues in der Welt", "Nachrichten aus der Welt", "Welt-Runde" …
+const ZEIT = "(?:gerade |heute |aktuell |so |denn |eigentlich |momentan |jetzt )*";
+const IN_WELT = "(?:in|auf) der (?:ganzen )?welt";
+const START = new RegExp("^(?:(?:zeig|zeige|sag|erzähl|erzaehl|erzähle|erzaehle)(?: mir| uns)?(?: mal)?(?: bitte)? ?)?(?:"
+  + `was ${ZEIT}${IN_WELT} ${ZEIT}(?:passiert|los ist|geschieht|abgeht|vor sich geht)`
+  + `|was (?:passiert|ist los|geschieht|geht ab|ist passiert) ${ZEIT}${IN_WELT}`
+  + `|was (?:ist|geht) ${ZEIT}${IN_WELT} ${ZEIT}los`
+  + `|was gibt(?: es|s) ${ZEIT}neues ${ZEIT}${IN_WELT}`
+  + `|was ist ${ZEIT}${IN_WELT} ${ZEIT}(?:passiert|geschehen)`
+  + ")(?: (?:gerade|heute|aktuell|so|jetzt|momentan))?(?: bitte)?$");
+const START2 = /^(?:(?:zeig|zeige|starte|mach|lies|lese)(?: mir| uns)?(?: mal)?(?: bitte)? )?(?:die |eine )?(?:welt ?tour|weltreise|welt ?runde|weltnachrichten|nachrichten (?:der|aller) weltmächte|nachrichten (?:aus|der|in) (?:aller |der )?welt|top ?nachrichten (?:der|aus der) welt|welt ?news)(?: vor| an| starten| bitte)?$/;
 const WEITER = /^(?:weiter|nächstes?|naechstes?|nächstes land|naechstes land|das nächste|überspring(?:en)?|ueberspring(?:en)?|skip)(?: bitte| land)?$/;
 const ZURUECK = /^(?:zurück|zurueck|vorheriges?(?: land)?|nochmal|noch ?mal)(?: bitte)?$/;
 const STOPP = /^(?:stopp?|halt|genug|aufhören|aufhoeren|ende|beenden|abbrechen|schluss|danke|das reicht|das war's|das wars)(?: bitte| danke| friday| boss)*$/;
