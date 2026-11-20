@@ -679,6 +679,7 @@
         if (hat("welttour_stopp")) window.FridayWelttour?.stopp(true);
         if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
         if (hat("archiv")) window.FridayArchiv?.open();
+        if (hat("gehirn")) window.FridayGehirn?.open();
         if (hat("oekosystem")) window.FridayOekosystem?.open();
         // Routen & Verbindungen: Karte mit Auto, Rad, zu Fuß und Bahn/Bus zeigen.
         const routeAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("route:"));
