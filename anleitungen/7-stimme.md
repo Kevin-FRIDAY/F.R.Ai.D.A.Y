@@ -94,3 +94,6 @@ Moment wieder zu (so klappt „Friday, stopp“ weiterhin).
 **v1.122.3 (iPhone stumm):** Das iPhone erlaubt Ton erst, wenn einmal durch einen Fingertipp etwas abgespielt
 wurde. Friday spielt darum beim ersten Tipp (irgendwo auf dem Bildschirm) kurz „Stille“ ab. Nach dem Öffnen
 der App also **einmal auf den Bildschirm tippen**, dann kann sie auf Zuruf sprechen.
+
+**v1.122.4:** Sagst du nur „Friday“, antwortet sie hörbar („Ja, Boss?“) und wartet 8 Sekunden auf deinen Befehl.
+Auf dem iPhone kurz abwarten, bis sie „Ja?“ gesagt hat, dann sprechen.
