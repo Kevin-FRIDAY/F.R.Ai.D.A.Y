@@ -265,7 +265,7 @@ html.perf-fluessig .oe-kabel path.fluss { animation-duration: 2.4s; }
     const fehler = logbuch?.fehler || 0;
     $("oe-werte").innerHTML = [
       w("Mac-Agent", s.agent?.online ? "verbunden" : "offline", s.agent?.online ? "gut" : "aus"),
-      w("Stimme", s.voice ? "ElevenLabs" : "Gerät", s.voice ? "gut" : "aus"),
+      w("Stimme", "Apple-Stimme", "gut"),
       w("Agenten", agenten ? `${agenten.aktiv}/${agenten.gesamt}` : "–"),
       w("Heute", logbuch ? `${logbuch.gesamt} Aktionen` : "–"),
       w("Fehler heute", String(fehler), fehler ? "rot" : "gut"),

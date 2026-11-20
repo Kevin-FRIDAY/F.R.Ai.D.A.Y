@@ -1,9 +1,8 @@
-// Fridays Verbindungen an einem Ort: Kalender, Stimme, Spotify, Home Assistant, Hue, Todoist, Notion.
+// Fridays Verbindungen an einem Ort: Kalender, Spotify, Home Assistant, Hue, Todoist, Notion.
 // - Sprachbefehle ohne Claude (laufen auch ohne Guthaben)
 // - Werkzeuge für Claude
 // - Daten für das Fenster "Verbindungen"
 import * as kalender from "./kalender.js";
-import * as stimme from "./stimme.js";
 import * as spotify from "./spotify.js";
 import * as homeassistant from "./homeassistant.js";
 import * as hue from "./hue.js";
@@ -13,8 +12,8 @@ import * as anrufe from "./anrufe.js";
 import { normalize } from "./offline.js";
 import { U, findeTag } from "./datum.js";
 
-export const DIENSTE = { anrufe, kalender, stimme, spotify, homeassistant, hue, todoist, notion };
-export const REIHENFOLGE = ["anrufe", "kalender", "stimme", "spotify", "homeassistant", "hue", "todoist", "notion"];
+export const DIENSTE = { anrufe, kalender, spotify, homeassistant, hue, todoist, notion };
+export const REIHENFOLGE = ["anrufe", "kalender", "spotify", "homeassistant", "hue", "todoist", "notion"];
 
 export async function alleStatus() {
   const liste = await Promise.all(
@@ -54,7 +53,6 @@ export async function quickCommand(text) {
   const roh = normalize(text, { gross: true });
   const versuche = [
     ["kalender", () => tagesUeberblick(t)],
-    ["stimme", () => stimme.quick(t)],
     ["kalender", () => kalender.quick(t, roh)],
     ["hue", () => hue.quick(t)],
     ["smarthome", () => homeassistant.quick(t)],

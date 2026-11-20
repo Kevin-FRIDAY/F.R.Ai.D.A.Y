@@ -8,7 +8,6 @@ import { marktReady } from "./markt.js";
 import { alexaConfigured } from "./alexa.js";
 import { tvPaired } from "./fernseher.js";
 import { kalenderBereit } from "./kalender.js";
-import { stimmeAktiv } from "./stimme.js";
 import { spotifyVerbunden } from "./spotify.js";
 import { haBereit } from "./homeassistant.js";
 import { hueBereit } from "./hue.js";
@@ -29,7 +28,7 @@ export const AGENTS = [
   { id: "wissen", name: "Wissens-Agent", emoji: "🧠", cat: "Organisation", purpose: "Notizen und Wissen in Notion.", examples: ["Notiz: Idee für das neue HUD", "Such in Notion nach Projekt X", "Lies meine letzten Notizen"], need: { type: "check", ok: () => notionBereit(), label: "Notion (Werkzeug-Menü → Verbindungen)" } },
 
   // --- Stimme & Medien ---
-  { id: "stimme", name: "Stimm-Agent", emoji: "🗣️", cat: "Stimme & Medien", purpose: "Gibt Friday ihre echte Stimme (ElevenLabs), sonst Gerätestimme.", examples: ["Wie viele Zeichen habe ich noch?", "Wechsel die Stimme zu Lily"], need: { type: "check", ok: () => stimmeAktiv(), label: "ElevenLabs (Werkzeug-Menü → Verbindungen)" } },
+  { id: "stimme", name: "Stimm-Agent", emoji: "🗣️", cat: "Stimme & Medien", purpose: "Friday spricht mit der Apple-Stimme deines Geräts (Einstellungen → Stimme).", examples: ["Lies mir das vor", "Sprich langsamer"], need: { type: "frei" } },
   { id: "musik", name: "Musik-Agent", emoji: "🎵", cat: "Stimme & Medien", purpose: "Spotify: Playlists, Songs, Künstler, Pause, Lautstärke.", examples: ["Spiel meine Playlist Workout", "Spiel Musik von Adele", "Was läuft gerade?"], need: { type: "check", ok: () => spotifyVerbunden(), label: "Spotify (Werkzeug-Menü → Verbindungen)" } },
 
   // --- Lagezentrum ---
