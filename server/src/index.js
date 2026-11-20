@@ -12,7 +12,7 @@ import { getWeather, getProtocols, runTool } from "./tools.js";
 import { agentsWithStatus } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
 import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
-import { planBuild, getLatestBuild } from "./werkstatt.js";
+import { planBuild, getLatestBuild, getBuildJob } from "./werkstatt.js";
 import { getEnergie, aufladen, einnahme } from "./energie.js";
 import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } from "./einstellungen.js";
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webseiten.js";
@@ -494,6 +494,7 @@ app.post("/api/werkstatt", asyncRoute(async (req, res) => {
   res.status(r.ok ? 200 : 400).json(r);
 }));
 app.get("/api/werkstatt/latest", (req, res) => res.json(getLatestBuild() || {}));
+app.get("/api/werkstatt/job/:id", (req, res) => { const j = getBuildJob(req.params.id); if (!j) return res.status(404).json({ error: "Unbekannter Bau." }); res.json(j); });
 app.get("/api/energie", (req, res) => res.json(getEnergie()));
 app.get("/api/einstellungen", (req, res) => res.json(getSettings()));
 app.post("/api/einstellungen", (req, res) => res.json(setSettings(req.body || {})));

@@ -554,7 +554,7 @@ async function runToolIntern(name, input = {}, wer = {}) {
       const basis = input.erweitern ? getLatestBuild()?.plan : null;
       const r = await planBuild(input.wunsch, basis);
       if (!r.ok) return { error: r.error };
-      return { gebaut: r.plan.titel, schritte: r.plan.schritte.length, hinweis: "Die Werkstatt zeigt und erklärt das Modell gerade selbst. Antworte nur kurz." };
+      return { baut: r.plan.titel || r.wunsch, hinweis: "Die Werkstatt baut das Modell jetzt live und sagt selbst den Status an. Antworte nur mit einem ganz kurzen Satz wie 'Läuft, Chef.' – keine Details, keine Zahlen." };
     }
     case "markt_radar": {
       if (input.action === "depot") return getDepot();

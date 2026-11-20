@@ -3125,3 +3125,32 @@ html.friday-verdeckt body::before, html.friday-verdeckt body::after { animation-
 /* 3) Wanderndes Raster: verschieben statt neu malen (der Grafikchip schiebt nur, nichts wird neu gemalt) */
 .grid-bg { inset: -54px; animation-name: hud-gridpan-t; will-change: transform; }
 @keyframes hud-gridpan-t { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(54px, 54px, 0); } }
+/* Werkstatt v1.120: Infokarte (Steckbrief) + Bauteil-Details beim Antippen statt Schilder im Modell */
+.werkstatt-side { width: 250px; max-height: calc(100% - 200px); overflow-y: auto; scrollbar-width: none; }
+.werkstatt-facts li { border-left-color: var(--cyan, #ff8a1e); }
+.werkstatt-facts .ws-steck { border: 1px solid color-mix(in srgb, var(--cyan, #ff8a1e) 55%, transparent); border-left-width: 3px; border-radius: 10px; background: rgba(12,8,2,.78); padding: 10px 12px; box-shadow: 0 0 18px color-mix(in srgb, var(--cyan, #ff8a1e) 22%, transparent); }
+.werkstatt-facts .ws-steck p { margin: 4px 0 8px; font: 13px/1.35 var(--font-ui, sans-serif); color: #e8eef4; }
+.ws-steck-row { display: flex; gap: 10px; }
+.ws-steck-row span { flex: 1; min-width: 0; }
+.ws-steck-row b { font-size: 13px !important; color: var(--cyan, #ff8a1e) !important; }
+.werkstatt-info { position: absolute; right: 16px; bottom: 140px; max-width: 260px; padding: 10px 14px; border-radius: 12px; background: rgba(2,10,20,.86); border: 1px solid color-mix(in srgb, var(--cyan, #ff8a1e) 60%, transparent); box-shadow: 0 0 18px color-mix(in srgb, var(--cyan, #ff8a1e) 25%, transparent); font: 12px ui-monospace, Menlo, monospace; color: #cfeaf5; pointer-events: none; }
+.werkstatt-info.hidden { display: none; }
+.werkstatt-info small { display: block; letter-spacing: .12em; text-transform: uppercase; color: #8fc7de; }
+.werkstatt-info b { display: block; font-size: 15px; color: #fff; margin: 2px 0; }
+.werkstatt-caption { font-size: 15px; letter-spacing: .04em; }
+@media (max-width: 700px) {
+  .werkstatt-top { gap: 10px; padding: 10px 12px; }
+  .werkstatt-brand { display: none; }
+  .werkstatt-title { font-size: 12px; letter-spacing: .08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .werkstatt-side { top: 52px; left: 8px; width: 158px; max-height: 46%; gap: 6px; }
+  .werkstatt-facts { gap: 4px; }
+  .werkstatt-facts li { padding: 4px 8px; }
+  .werkstatt-facts small { font-size: 9px; }
+  .werkstatt-facts b { font-size: 12px; }
+  .werkstatt-facts .ws-steck { padding: 7px 9px; }
+  .werkstatt-facts li:nth-child(n+5) { display: none; }
+  .werkstatt-side .switch { font-size: 11px; }
+  .werkstatt-facts .ws-steck p { display: none; }
+  .ws-steck-row { flex-direction: column; gap: 4px; }
+  .werkstatt-info { right: 8px; bottom: 190px; max-width: 200px; }
+}

@@ -8,7 +8,7 @@
   if (!box || !window.THREE) return;
   const THREE = window.THREE;
 
-  const COLORS = { cyan: 0x4fd8ff, weiss: 0xf2f6ff, rot: 0xff4d5e, orange: 0xff8a1e, gelb: 0xffd84d, gruen: 0x4dffa6, blau: 0x3d7dff, lila: 0xb57bff, grau: 0x9aa4b2, schwarz: 0x2a2f38, glas: 0x9fe8ff, braun: 0xc08850, hellorange: 0xffc078 };
+  const COLORS = { cyan: 0x4fd8ff, weiss: 0xf2f6ff, rot: 0xff4d5e, orange: 0xff8a1e, gelb: 0xffd84d, gruen: 0x4dffa6, blau: 0x3d7dff, lila: 0xb57bff, grau: 0x9aa4b2, schwarz: 0x2a2f38, glas: 0x9fe8ff, chrom: 0xd8e2ee, braun: 0xc08850, hellorange: 0xffc078 };
   // Hausmodus: wie durchsichtig die Ebenen im Hologramm sind (viele Wände sollen nicht alles überstrahlen).
   const ALPHA = { struktur: 0.05, raeume: 0.1 };
   const EDGE = { struktur: 0.22, raeume: 0.18, moebel: 0.5 };
@@ -51,13 +51,18 @@
 
   function enableOrbit(el) {
     let drag = null;
-    el.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, y: e.clientY, yaw, pitch }; autoSpin = false; el.setPointerCapture(e.pointerId); });
+    el.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, y: e.clientY, yaw, pitch }; el.setPointerCapture(e.pointerId); });
     el.addEventListener("pointermove", (e) => {
       if (!drag) return;
+      if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) >= 6) autoSpin = false;
       yaw = drag.yaw - (e.clientX - drag.x) * 0.006;
       pitch = Math.max(0.05, Math.min(1.45, drag.pitch + (e.clientY - drag.y) * 0.005));
     });
-    el.addEventListener("pointerup", () => { drag = null; });
+    el.addEventListener("pointerup", (e) => {
+      // Kurz tippen ohne Ziehen = Bauteil-Details zeigen; Ziehen dreht die Ansicht.
+      if (drag && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) antippen(e);
+      drag = null;
+    });
     el.addEventListener("wheel", (e) => { e.preventDefault(); dist = Math.max(2, Math.min(80, dist * (e.deltaY > 0 ? 1.1 : 0.9))); }, { passive: false });
   }
 
@@ -70,7 +75,7 @@
     camera.lookAt(target);
     // Teile fahren beim Erscheinen von unten ein und leuchten kurz auf.
     for (const b of built) {
-      const k = Math.min(1, (t - b.born) / 700);
+      const k = Math.max(0, Math.min(1, (t - b.born) / 700)); // noch nicht "geborene" Teile bleiben winzig (sonst riesig/negativ skaliert)
       const e = 1 - Math.pow(1 - k, 3);
       b.obj.scale.copy(b.base).multiplyScalar(0.001 + e * 0.999);
       b.obj.position.y = b.y + (1 - e) * 0.6;
@@ -112,10 +117,16 @@
     }
     let geo;
     const v = (a, i, d) => (Array.isArray(a) && Number.isFinite(a[i]) ? Math.max(0.005, a[i]) : d);
-    if (p.form === "box") geo = new THREE.BoxGeometry(v(p.groesse, 0, 1), v(p.groesse, 1, 1), v(p.groesse, 2, 1));
+    let usePos = true;
+    if (p.form === "profil") {
+      geo = profilGeo(p);
+      if (!geo) return null;
+      usePos = false;
+    } else if (p.form === "box") geo = new THREE.BoxGeometry(v(p.groesse, 0, 1), v(p.groesse, 1, 1), v(p.groesse, 2, 1));
     else if (p.form === "kugel") geo = new THREE.SphereGeometry(p.radius || 0.5, 20, 14);
     else if (p.form === "zylinder") {
-      geo = new THREE.CylinderGeometry(p.radius || 0.3, p.radius || 0.3, p.hoehe || 1, 28);
+      const r1 = Math.max(0.002, Number(p.radius) || 0.3), r2 = Number.isFinite(p.radius2) ? Math.max(0, p.radius2) : r1;
+      geo = new THREE.CylinderGeometry(r2, r1, p.hoehe || 1, 36);
       if (p.achse === "x") geo.rotateZ(Math.PI / 2);
       if (p.achse === "z") geo.rotateX(Math.PI / 2);
     } else if (p.form === "rohr" && Array.isArray(p.punkte) && p.punkte.length >= 2) {
@@ -132,23 +143,37 @@
     group.add(fill);
     let edge = null;
     if (p.form !== "rohr" && p.form !== "kugel") {
-      edge = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), new THREE.LineBasicMaterial({ color: hex, transparent: true, opacity: 1 }));
+      // Schwarze Teile im Hologramm sonst unsichtbar: Kanten in hellem Graphit.
+      const kante = !solid && p.farbe === "schwarz" ? 0x8c97a8 : hex;
+      edge = new THREE.LineSegments(new THREE.EdgesGeometry(geo, p.form === "profil" ? 32 : 25), new THREE.LineBasicMaterial({ color: kante, transparent: true, opacity: 1 }));
       edge.userData.base = EDGE[p.ebene] ?? 0.35;
       group.add(edge);
     }
-    const pos = p.form === "rohr" ? [0, 0, 0] : (p.pos || [0, 0.5, 0]);
+    const pos = p.form === "rohr" ? [0, 0, 0] : !usePos ? [0, 0, Array.isArray(p.pos) && Number.isFinite(p.pos[2]) ? p.pos[2] : 0] : (p.pos || [0, 0.5, 0]);
     group.position.fromArray(pos);
     if (Array.isArray(p.drehung)) group.rotation.set(...p.drehung.map((d) => (Number(d) || 0) * Math.PI / 180));
     return { obj: group, edge, edgeBase: edge ? edge.userData.base : 0.35 };
   }
 
-  function addParts(teile, t0) {
-    const gap = Math.min(35, 4000 / Math.max(1, teile.length)); // große Bauabschnitte schneller einblenden
+  // Seitenansicht als Umriss, in der Breite (z) ausgezogen, mit leicht gerundeten Kanten.
+  function profilGeo(p) {
+    const pts = (p.punkte2d || []).filter((q) => Array.isArray(q) && Number.isFinite(q[0]) && Number.isFinite(q[1]));
+    if (pts.length < 3) return null;
+    const shape = new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2(x, y)));
+    const breite = Math.max(0.02, Number(p.breite) || 1);
+    const r = Math.max(0, Math.min(0.12, Number(p.rundung) || 0, breite / 4));
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: Math.max(0.01, breite - 2 * r), bevelEnabled: r > 0, bevelThickness: r, bevelSize: r * 0.8, bevelSegments: 3, curveSegments: 6 });
+    geo.translate(0, 0, -(breite - 2 * r) / 2);
+    return geo;
+  }
+
+  function addParts(teile, t0, status = "") {
+    const gap = Math.min(18, 1500 / Math.max(1, teile.length)); // große Bauabschnitte schneller einblenden
     teile.forEach((p, i) => {
       const part = makePart(p);
       if (!part) return;
       root.add(part.obj);
-      built.push({ edgeBase: 0.35, ...part, y: part.obj.position.y, base: part.obj.scale.clone(), born: t0 + i * gap, src: p });
+      built.push({ edgeBase: 0.35, ...part, y: part.obj.position.y, base: part.obj.scale.clone(), born: t0 + i * gap, src: p, status });
     });
     applyHaus();
   }
@@ -161,6 +186,7 @@
     const size = bb.getSize(new THREE.Vector3()), center = bb.getCenter(new THREE.Vector3());
     target.copy(center);
     dist = Math.max(4, Math.max(size.x, size.y, size.z) * 1.9);
+    if (camera.aspect < 1) dist *= Math.min(2, 1.15 / camera.aspect); // Hochformat (Handy): weiter weg, damit alles reinpasst
   }
 
   // Gesamtmaße als Maßlinien mit Beschriftung.
@@ -174,7 +200,7 @@
     const dims = new THREE.Group();
     const line = (a, b, text, at) => {
       dims.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([a, b]), mat));
-      const s = labelSprite(text, "#ffffff"); s.position.copy(at); dims.add(s);
+      const s = labelSprite(text, "#ffffff"); s.scale.multiplyScalar(0.7); s.position.copy(at); dims.add(s);
     };
     const { min, max } = bb, off = 0.4;
     line(new THREE.Vector3(min.x, 0.02, max.z + off), new THREE.Vector3(max.x, 0.02, max.z + off), fmt(max.x - min.x), new THREE.Vector3((min.x + max.x) / 2, 0.25, max.z + off));
@@ -188,69 +214,155 @@
   function setCaption(text) { $("werkstatt-caption").textContent = text || ""; }
   function setState(text, cls = "") { const s = $("werkstatt-state"); s.textContent = text; s.className = `werkstatt-state ${cls}`; }
 
+  // Infokarte: Steckbrief (Typ, Baujahr, Preis) + Eckdaten. Keine Schilder mehr im Modell.
   function showFacts(p) {
     $("werkstatt-title").textContent = (p.titel || "Werkstatt").toUpperCase();
-    $("werkstatt-facts").innerHTML = (p.kennzahlen || []).map((k) => `<li><small>${escapeHtml(k.label)}</small><b>${escapeHtml(k.wert)}</b></li>`).join("");
+    const sb = p.steckbrief;
+    let html = "";
+    if (sb && (sb.typ || sb.baujahr || sb.preis)) {
+      html += `<li class="ws-steck">${sb.typ ? `<small>${escapeHtml(sb.typ)}</small>` : ""}${sb.kurz ? `<p>${escapeHtml(sb.kurz)}</p>` : ""}`
+        + `<div class="ws-steck-row"><span><small>Baujahr</small><b>${escapeHtml(sb.baujahr || "–")}</b></span><span><small>Preis</small><b>${escapeHtml(sb.preis || "–")}</b></span></div></li>`;
+    }
+    html += (p.kennzahlen || []).map((k) => `<li><small>${escapeHtml(k.label)}</small><b>${escapeHtml(k.wert)}</b></li>`).join("");
+    $("werkstatt-facts").innerHTML = html;
   }
 
   const pause = (ms) => new Promise((r) => setTimeout(r, ms));
-  async function speak(text) {
-    setCaption(text);
-    const voiceOn = $("voice-toggle")?.checked;
-    if (voiceOn) await say(text); else await pause(Math.min(6000, 1200 + text.length * 45));
+  // Ansagen blockieren den Bau nie: läuft schon eine, wird nur die neueste nachgeholt.
+  let sprichtGerade = false, naechsteAnsage = "";
+  function ansage(text) {
+    if (!text || !$("voice-toggle")?.checked) return;
+    if (sprichtGerade) { naechsteAnsage = text; return; }
+    sprichtGerade = true;
+    Promise.resolve(say(text)).catch(() => {}).finally(() => {
+      sprichtGerade = false;
+      const n = naechsteAnsage; naechsteAnsage = "";
+      if (n && !box.classList.contains("hidden")) ansage(n);
+    });
   }
 
   async function play(entry) {
     const run = ++running;
-    const p = entry.plan;
-    if (!entry.erweiterung || !plan) {
-      root.clear(); built = []; plan = { ...p, schritte: [...p.schritte] }; autoSpin = true;
-      setupHaus(p.haus || null);
+    let job = entry;
+    const neu = !entry.erweiterung || !plan;
+    if (neu) {
+      root.clear(); built = []; autoSpin = true;
+      plan = { titel: "", kennzahlen: [], schritte: [] };
+      setupHaus(entry.plan?.haus || null);
     } else {
       root.getObjectByName("masse")?.removeFromParent();
-      plan.schritte.push(...p.schritte);
-      if (p.kennzahlen?.length) plan.kennzahlen = p.kennzahlen;
     }
-    showFacts(plan);
-    setState("BAUT", "busy");
-    if (p.einleitung) await speak(p.einleitung);
-    for (const [i, s] of p.schritte.entries()) {
+    infoAus();
+    naechsteAnsage = "";
+    let gezeigt = 0, angesagt = false, fehlversuche = 0;
+    const t0 = Date.now();
+    setState("PLANT …", "busy");
+    setCaption(entry.erweiterung ? "Ergänze das Modell …" : "Entwurf läuft …");
+    while (run === running) {
+      const p = job.plan || {};
+      if (p.titel && neu) plan.titel = p.titel;
+      if (p.steckbrief) plan.steckbrief = p.steckbrief;
+      if (p.kennzahlen?.length) plan.kennzahlen = p.kennzahlen;
+      if (p.titel || p.kennzahlen?.length) showFacts(plan);
+      if (!angesagt && plan.titel) { angesagt = true; ansage(`${entry.erweiterung ? "Ergänze" : "Baue"} ${plan.titel}.`); }
+      const schritte = p.schritte || [];
+      while (gezeigt < schritte.length && run === running) {
+        const s = schritte[gezeigt++];
+        if (!s?.teile?.length) continue;
+        plan.schritte.push(s);
+        setState("BAUT", "busy");
+        $("werkstatt-step").textContent = `ABSCHNITT ${gezeigt}${job.status === "fertig" ? ` / ${schritte.length}` : ""}`;
+        setCaption(s.status || `Abschnitt ${gezeigt}`);
+        addParts(s.teile, performance.now(), s.status);
+        frameModel();
+        ansage(s.status);
+        await pause(job.status === "fertig" ? 600 : 200);
+      }
       if (run !== running) return;
-      $("werkstatt-step").textContent = `ABSCHNITT ${i + 1} / ${p.schritte.length}`;
-      addParts(s.teile, performance.now());
-      frameModel();
-      await speak(s.sagen);
+      if (job.status === "fertig" || job.ohneClaude) break;
+      if (job.status === "fehler") { setState("FEHLER", "error"); setCaption(job.error || "Das hat nicht geklappt."); return; }
+      if (Date.now() - t0 > 240000) { setState("FEHLER", "error"); setCaption("Der Bau dauert zu lange. Versuch es noch einmal."); return; }
+      if (!gezeigt) setCaption(`${entry.erweiterung ? "Ergänze" : "Entwurf läuft"} … ${Math.round((Date.now() - t0) / 1000)} s`);
+      await pause(500);
+      if (run !== running) return;
+      try {
+        const res = await api(`/api/werkstatt/job/${entry.id}`);
+        if (res.status === 404) { setState("FEHLER", "error"); setCaption("Friday wurde neu gestartet. Bitte noch einmal bauen."); return; }
+        job = await res.json();
+        fehlversuche = 0;
+      } catch {
+        if (++fehlversuche > 12) { setState("FEHLER", "error"); setCaption("Friday ist gerade nicht erreichbar."); return; }
+      }
     }
     if (run !== running) return;
-    addDimensions();
+    if (haus) addDimensions(); // Fahrzeuge & Co.: echte Maße stehen in der Infokarte, keine Extra-Schilder
     frameModel();
-    $("werkstatt-step").textContent = `${built.filter((b) => b.src.form !== "text").length} TEILE`;
+    setTimeout(() => { if (run === running) frameModel(); }, 900); // nach dem Einblenden der letzten Teile nachjustieren
+    $("werkstatt-step").textContent = `${built.filter((b) => b.src.form !== "text").length} TEILE · ${Math.max(1, Math.round((Date.now() - t0) / 1000))} S`;
     setState("FERTIG", "done");
-    if (p.fazit) await speak(p.fazit);
+    setCaption(haus ? "Fertig. Etagen und Leitungen rechts umschalten." : "Fertig. Teil antippen für Details.");
+    ansage("Fertig.");
   }
 
   function rebuildMaterials() {
     if (!plan) return;
-    const steps = plan.schritte;
     root.clear(); built = [];
-    steps.forEach((s) => addParts(s.teile, performance.now() - 2000));
-    addDimensions();
+    plan.schritte.forEach((s) => addParts(s.teile, performance.now() - 2000, s.status));
+    if (haus) addDimensions();
     applyHaus();
+    infoAus();
   }
 
   async function request(wunsch, { neu = false } = {}) {
     wunsch = String(wunsch || "").trim();
     if (!wunsch) return;
     const erweitern = !neu && $("werkstatt-extend").checked && plan;
+    running++;
     setState("PLANT …", "busy");
-    setCaption(erweitern ? "Ich ergänze das Modell …" : "Ich entwerfe den Bauplan …");
+    setCaption(erweitern ? "Ergänze das Modell …" : "Entwurf läuft …");
     try {
-      const res = await api("/api/werkstatt", { method: "POST", body: JSON.stringify({ wunsch, basis: erweitern ? { titel: plan.titel, kennzahlen: plan.kennzahlen, schritte: plan.schritte.map((s) => ({ sagen: s.sagen })) } : null }) });
+      const res = await api("/api/werkstatt", { method: "POST", body: JSON.stringify({ wunsch, basis: erweitern ? { titel: plan.titel, kennzahlen: plan.kennzahlen, schritte: plan.schritte.map((s) => ({ status: s.status || s.sagen || "" })) } : null }) });
       const r = await res.json();
       if (!r.ok) { setState("FEHLER", "error"); setCaption(r.error || "Das hat nicht geklappt."); return; }
       lastId = r.id;
       play(r);
     } catch { setState("FEHLER", "error"); setCaption("Friday ist gerade nicht erreichbar."); }
+  }
+
+  // ---------- Antippen: Details zu einem Teil ----------
+  const ray = new THREE.Raycaster();
+  let auswahl = null;
+  function infoAus() {
+    if (auswahl?.edge) { auswahl.edge.material.color.setHex(auswahl.farbe); }
+    auswahl = null;
+    $("werkstatt-info")?.classList.add("hidden");
+  }
+  function antippen(e) {
+    if (!renderer || !built.length) return;
+    const r = renderer.domElement.getBoundingClientRect();
+    const m = new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(m, camera);
+    const ziele = built.filter((b) => b.obj.visible && b.src.form !== "text");
+    const hits = ray.intersectObjects(ziele.map((b) => b.obj), true);
+    infoAus();
+    if (!hits.length) return;
+    let o = hits[0].object;
+    const b = ziele.find((x) => { let k = o; while (k) { if (k === x.obj) return true; k = k.parent; } return false; });
+    if (!b) return;
+    if (b.edge) { auswahl = { edge: b.edge, farbe: b.edge.material.color.getHex() }; b.edge.material.color.setHex(0xffffff); b.edge.material.opacity = 1; }
+    else auswahl = null;
+    const el = $("werkstatt-info");
+    if (!el) return;
+    el.innerHTML = `<small>${escapeHtml(b.status || "Bauteil")}</small><b>${escapeHtml(b.src.name || formName(b.src))}</b>${masse(b.src)}`;
+    el.classList.remove("hidden");
+  }
+  const formName = (p) => ({ box: "Bauteil", zylinder: "Rundteil", kugel: "Kugel", rohr: "Leitung", profil: "Hülle" }[p.form] || "Bauteil");
+  function masse(p) {
+    const f = (n) => Number(n).toLocaleString("de-DE", { maximumFractionDigits: 2 });
+    if (p.form === "box" && Array.isArray(p.groesse)) return `<span>${p.groesse.map(f).join(" × ")} m</span>`;
+    if (p.form === "zylinder" && p.radius) return `<span>Ø ${f(p.radius * 2)} m</span>`;
+    if (p.form === "profil" && Array.isArray(p.punkte2d)) { const xs = p.punkte2d.map((q) => q[0]), ys = p.punkte2d.map((q) => q[1]); return `<span>${f(Math.max(...xs) - Math.min(...xs))} × ${f(p.breite || 0)} × ${f(Math.max(...ys) - Math.min(...ys))} m</span>`; }
+    return "";
   }
 
   // ---------- Öffnen / Schließen ----------
@@ -265,6 +377,7 @@
   }
   function close() {
     box.classList.add("hidden");
+    infoAus();
     cancelAnimationFrame(raf);
     running++; // laufende Ansage beenden
     try { speechSynthesis?.cancel(); } catch { /* egal */ }
