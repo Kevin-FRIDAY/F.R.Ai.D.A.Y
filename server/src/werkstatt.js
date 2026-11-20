@@ -7,6 +7,7 @@ import { recordUsage, isCreditError, markEmpty, brainModel, SPAR_MODELL, getEner
 import { getSettings } from "./einstellungen.js";
 import { isHausWunsch, isHausBefehl, planHouse } from "./haus.js";
 import { erkenneArt, erkenneFarbe, baueVorlage, istVorlagenBefehl, masseAusKennzahlen } from "./bauvorlagen.js";
+import { findeLokal, holeModell, sketchfabToken, suchwort } from "./modelle.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
 
@@ -136,10 +137,10 @@ export function quickCommand(text) {
     const r = planHaus(String(text).trim().slice(0, 1000));
     return { answer: "Einen Moment, Chef.", actions: ["werkstatt"], titel: r.plan.titel };
   }
-  const v = istVorlagenBefehl(text);
-  if (!v) return null;
-  const r = planVorlage(String(text).trim().slice(0, 1000), v.art, { farbe: v.farbe, elektro: v.elektro });
-  return { answer: "Einen Moment, Chef.", actions: ["werkstatt"], titel: r.plan.titel };
+  if (!istVorlagenBefehl(text)) return null;
+  const r = startBuild(String(text).trim().slice(0, 1000)); // echtes Modell, falls vorhanden – sonst Vorlage
+  if (!r.ok) return null;
+  return { answer: "Einen Moment, Chef.", actions: ["werkstatt"], titel: r.plan?.titel || "" };
 }
 
 // Fürs Logbuch: die ersten Eckdaten als kurzer Text ("Wohnfläche: ca. 420 m², …").
@@ -226,6 +227,12 @@ export function startBuild(wunsch, basis = null) {
   if (!basis && isHausWunsch(text)) return planHaus(text);
   const art = erkenneArt(text);
   const optAusText = { farbe: erkenneFarbe(text), elektro: /elektro|e-auto|tesla|taycan|e-tron|\bid\.? ?[3-7]\b/i.test(text) };
+  // v1.125.0: Echte 3D-Modelle zuerst – aus der eigenen Bibliothek oder (mit Schlüssel) frisch von Sketchfab.
+  if (!basis) {
+    const lokal = findeLokal(text);
+    if (lokal) return planModell(text, lokal, art);
+    if (sketchfabToken()) return planSketchfab(text, art, optAusText);
+  }
   // Ein schlichtes "bau mir einen Kampfjet" braucht kein Claude: die Vorlage ist sofort da.
   if (!basis && istVorlagenBefehl(text)) return planVorlage(text, art, optAusText);
   if (!config.anthropicKey) {
@@ -246,6 +253,106 @@ export function startBuild(wunsch, basis = null) {
       ? { bereich: "werkstatt", titel: `${job.erweiterung ? "Modell ergänzt" : "3D-Modell entworfen"}: ${job.plan.titel || job.wunsch}`, details: `Wunsch: ${job.wunsch}${eckdaten(job.plan)} · ${Math.round(job.dauer_ms / 1000)} s`, claude: true, dauer_ms: job.dauer_ms }
       : { bereich: "werkstatt", titel: `Werkstatt: ${job.wunsch.slice(0, 120)}`, details: job.error, ok: false });
   });
+  return { ok: true, ...job };
+}
+
+// ---------- Echte Modelle ----------
+const INFO_TOOL = {
+  name: "steckbrief",
+  description: "Gibt Infokarte und Ansagen zu einem Fahrzeug/Objekt zurück.",
+  input_schema: {
+    type: "object",
+    properties: {
+      titel: BAUPLAN_TOOL.input_schema.properties.titel,
+      einleitung: BAUPLAN_TOOL.input_schema.properties.einleitung,
+      steckbrief: BAUPLAN_TOOL.input_schema.properties.steckbrief,
+      kennzahlen: BAUPLAN_TOOL.input_schema.properties.kennzahlen,
+      laenge_m: { type: "number", description: "Echte Gesamtlänge in Metern (bei Raketen/Türmen: Höhe)" },
+      fazit: { type: "string", description: "1 Satz zum Schluss, mit einer echten Zahl, z. B. 'So, Chef: 610 PS, null auf hundert in 3,2 Sekunden.'" },
+    },
+    required: ["titel", "einleitung", "steckbrief", "kennzahlen", "laenge_m", "fazit"],
+  },
+};
+
+// Infokarte (Baujahr, Preis, Eckdaten) zum Modell – schnell und günstig, notfalls ohne.
+async function infoHolen(text) {
+  if (!config.anthropicKey || getEnergie().zustand === "leer") return null;
+  try {
+    const model = brainModel("claude-haiku-5-5");
+    const msg = await client.messages.create({
+      model, max_tokens: 1500,
+      system: "Du bist die Werkstatt von F.R.Ai.D.A.Y. Zum Wunsch lieferst du echte Daten für die Infokarte über das Werkzeug \"steckbrief\" (genau einmal, kein Text daneben). Natürliches Deutsch, sprich Kevin mit \"Chef\" an. Schätzungen mit \"ca.\" kennzeichnen.",
+      tools: [INFO_TOOL], tool_choice: { type: "auto" },
+      messages: [{ role: "user", content: `Wunsch: ${text}` }],
+    }, { timeout: 20000 });
+    recordUsage(msg.model || model, msg.usage, "werkstatt");
+    return (msg.content || []).find((b) => b.type === "tool_use")?.input || null;
+  } catch (err) {
+    if (isCreditError(err)) markEmpty();
+    return null;
+  }
+}
+
+function modellPlan(m, info, text, vorlaeufig = false) {
+  const i = info && typeof info === "object" ? info : {};
+  const sb = ausText(i.steckbrief);
+  const kz = ausText(i.kennzahlen);
+  return {
+    titel: i.titel || m.name || suchwort(text),
+    einleitung: i.einleitung || (vorlaeufig ? "" : `Sehr gern, Chef. Hier ist ${m.name}.`),
+    steckbrief: sb && typeof sb === "object" ? sb : { typ: m.quelle ? `Echtes 3D-Modell · ${m.quelle}` : "Echtes 3D-Modell", baujahr: "–", preis: "–", kurz: m.name },
+    kennzahlen: Array.isArray(kz) ? kz.filter((k) => k && k.label && k.wert) : [],
+    fazit: i.fazit || "So, Chef. Dreh es mit dem Finger, dann siehst du es von allen Seiten.",
+    schritte: [],
+    modell: { id: m.id, name: m.name, autor: m.autor || "", lizenz: m.lizenz || "", link: m.link || "", quelle: m.quelle || "", laenge: Number(i.laenge_m) > 0 ? Number(i.laenge_m) : m.laenge || null },
+  };
+}
+
+function planModell(text, m, art) {
+  const job = neuerJob(text, false);
+  job.plan = modellPlan(m, null, text, true);
+  job.phase = "Lade echtes Modell …";
+  const fertig = (info) => {
+    job.plan = modellPlan(m, info, text);
+    job.planNr += 1;
+    job.status = "fertig";
+    job.dauer_ms = Date.now() - job.start;
+    eintragen({ bereich: "werkstatt", titel: `Echtes 3D-Modell gezeigt: ${job.plan.titel}`, details: `Wunsch: ${text} · Modell: ${m.name}${m.autor ? ` von ${m.autor}` : ""}${m.lizenz ? ` (${m.lizenz})` : ""}` });
+  };
+  infoHolen(text).then(fertig, () => fertig(null));
+  return { ok: true, ...job };
+}
+
+function planSketchfab(text, art, opt) {
+  const job = neuerJob(text, false);
+  job.phase = "Suche ein echtes 3D-Modell …";
+  (async () => {
+    const [m, info] = await Promise.all([holeModell(text, { art }).catch((e) => { job.sfFehler = e.message; return null; }), infoHolen(text)]);
+    if (m) {
+      job.plan = modellPlan(m, info, text);
+      job.planNr += 1;
+      job.status = "fertig";
+      eintragen({ bereich: "werkstatt", titel: `Echtes 3D-Modell geladen: ${job.plan.titel}`, details: `Wunsch: ${text} · ${m.name}${m.autor ? ` von ${m.autor}` : ""} (${m.lizenz || "Lizenz unbekannt"}) · Sketchfab` });
+      return;
+    }
+    // Nichts Passendes gefunden: wie bisher Vorlage oder Claude-Entwurf.
+    job.phase = "";
+    if (art && istVorlagenBefehl(text)) {
+      const v = baueVorlage(art, opt);
+      Object.assign(job, { plan: v, status: "fertig", ohneClaude: true, vorlage: art, hinweis: "Kein passendes echtes Modell gefunden – Friday zeigt ihre Vorlage." });
+      job.planNr += 1;
+      return;
+    }
+    if (config.anthropicKey && getEnergie().zustand !== "leer") {
+      await bauen(job, null).catch((err) => { job.status = "fehler"; job.error = String(err?.message || err).slice(0, 300); });
+    } else if (art) {
+      Object.assign(job, { plan: baueVorlage(art, opt), status: "fertig", ohneClaude: true, vorlage: art });
+      job.planNr += 1;
+    } else {
+      Object.assign(job, { status: "fehler", error: "Dazu habe ich kein Modell gefunden, Chef." });
+    }
+  })().catch((err) => { job.status = "fehler"; job.error = String(err?.message || err).slice(0, 300); })
+    .finally(() => { job.dauer_ms = Date.now() - job.start; });
   return { ok: true, ...job };
 }
 

@@ -3213,3 +3213,12 @@ html.perf-fluessig .lage-legend .legend-body { background: rgba(10,6,3,.96); }
 .werkstatt-vorlagen button:hover, .werkstatt-vorlagen button:focus-visible { background: rgba(255,138,30,.3); border-color: #ff8a1e; outline: none; }
 @media (max-width: 700px) { .werkstatt-vorlagen { bottom: 130px; grid-template-columns: repeat(2, 1fr); max-height: 52vh; } }
 .werkstatt-vorlagen:not(.hidden) ~ .werkstatt-caption { display: none; }
+
+/* ===== v1.125.0: Werkstatt – echtes 3D-Modell (Quelle/Lizenz) und Sketchfab-Schlüssel ===== */
+.werkstatt-facts li.ws-quelle span { display: block; font: 12px var(--font-ui, sans-serif); color: #cfe3ee; margin-top: 2px; }
+.werkstatt-facts li.ws-quelle a { display: inline-block; margin-top: 4px; font: 600 12px var(--font-ui, sans-serif); color: #ff8a1e; }
+.werkstatt-vorlagen .ws-echt { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(79,216,255,.4); background: rgba(4,20,32,.75); font: 13px var(--font-ui, sans-serif); color: #cfe3ee; }
+.werkstatt-vorlagen .ws-echt b { color: #fff; }
+.werkstatt-vorlagen .ws-echt input { flex: 1 1 180px; min-width: 0; padding: 9px 10px; border-radius: 10px; border: 1px solid rgba(79,216,255,.5); background: rgba(2,10,20,.85); color: #fff; font: 16px var(--font-ui, sans-serif); }
+.werkstatt-vorlagen .ws-echt button { flex: 0 0 auto; }
+.werkstatt-vorlagen .ws-echt a { color: #ff8a1e; }

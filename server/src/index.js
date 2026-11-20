@@ -13,6 +13,7 @@ import { agentsWithStatus } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
 import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
 import { planBuild, getLatestBuild, getBuildJob } from "./werkstatt.js";
+import { status as modelleStatus, modellDatei, sketchfabVerbinden, sketchfabTrennen, startmodelleLaden } from "./modelle.js";
 import { getEnergie, aufladen, einnahme } from "./energie.js";
 import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } from "./einstellungen.js";
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webseiten.js";
@@ -489,6 +490,17 @@ app.post("/api/werkstatt", asyncRoute(async (req, res) => {
 }));
 app.get("/api/werkstatt/latest", (req, res) => res.json(getLatestBuild() || {}));
 app.get("/api/werkstatt/job/:id", (req, res) => { const j = getBuildJob(req.params.id); if (!j) return res.status(404).json({ error: "Unbekannter Bau." }); res.json(j); });
+// v1.125.0: Modell-Bibliothek (echte 3D-Modelle in ~/Friday-Modelle, optional frisch von Sketchfab).
+app.get("/api/modelle", (req, res) => res.json(modelleStatus()));
+app.post("/api/modelle/sketchfab", asyncRoute(async (req, res) => { const r = await sketchfabVerbinden(req.body?.token); res.status(r.ok ? 200 : 400).json(r); }));
+app.delete("/api/modelle/sketchfab", (req, res) => res.json(sketchfabTrennen()));
+app.get("/api/modelle/datei/:id", (req, res) => {
+  const f = modellDatei(req.params.id);
+  if (!f) return res.status(404).json({ error: "Modell nicht gefunden." });
+  res.set("Cache-Control", "private, max-age=86400");
+  res.type("model/gltf-binary").sendFile(f);
+});
+setTimeout(() => startmodelleLaden().catch(() => {}), 20000); // Startmodell still im Hintergrund holen
 app.get("/api/energie", (req, res) => res.json(getEnergie()));
 app.get("/api/einstellungen", (req, res) => res.json(getSettings()));
 app.post("/api/einstellungen", (req, res) => res.json(setSettings(req.body || {})));
