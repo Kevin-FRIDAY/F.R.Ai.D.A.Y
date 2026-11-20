@@ -1568,8 +1568,9 @@
     gestoppt: 0,        // wann das Mikrofon zuletzt aus ging (iPhone braucht danach eine kurze Pause)
     schnell: 0,         // wie oft es direkt wieder aufgehört hat (sonst Dauerschleife)
     brauchtTipp: false, // Safari will erst einen Tipp aufs Display
-    erledigt: new Set(),// schon verarbeitete Satz-Nummern dieser Mikrofon-Runde
+    verbraucht: new Map(), // Satz-Nr. → wie viele Zeichen davon schon verarbeitet sind
     verstummt: new Set(),
+    stabil: new Map(),     // Satz-Nr. → Zeitschalter: Zwischenstand gilt als fertig, wenn er sich nicht mehr ändert
     wartend: "",        // Befehl, der kam, während Friday noch nachdachte
   };
   let wakeActive = !!Recognition;
@@ -1622,7 +1623,8 @@
   }
   function zeigeRuhe() {
     if (busy || speaking || ohr.modus === "befehl") return;
-    if (ohr.brauchtTipp) setState('Einmal tippen, dann höre ich auf "Friday"');
+    if (ohr.brauchtTipp && ohr.sperrText && ohr.verweigert >= 2) setState(ohr.sperrText);
+    else if (ohr.brauchtTipp) setState('Einmal tippen, dann höre ich auf "Friday"');
     else setState(wakeActive && Recognition ? 'Höre auf "Friday"' : "Bereit, Boss.");
   }
 
@@ -1643,20 +1645,37 @@
     rec.interimResults = true;
     rec.maxAlternatives = 1;
     ohr.rec = rec; ohr.laeuft = true; ohr.gestartet = ohr.lebenszeichen = Date.now();
-    ohr.erledigt = new Set(); ohr.verstummt = new Set();
-    rec.onstart = () => { if (ohr.rec === rec) { ohr.lebenszeichen = Date.now(); zeigeRuhe(); } };
+    ohrRundeNeu();
+    rec.onstart = () => { if (ohr.rec === rec) { ohr.lebenszeichen = Date.now(); ohr.verweigert = 0; zeigeRuhe(); } };
     rec.onresult = (e) => {
       if (ohr.rec !== rec) return;
       ohr.lebenszeichen = Date.now();
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const r = e.results[i];
-        try { hoeren(String(r[0]?.transcript || "").trim(), r.isFinal, i); } catch { /* ein Satz darf das Ohr nie anhalten */ }
+        const text = String(r[0]?.transcript || "").trim();
+        clearTimeout(ohr.stabil.get(i));
+        // v1.122.2: Safari auf dem iPhone meldet im Dauer-Zuhören oft NIE "fertig" (isFinal) und hängt
+        // alles Gesagte an denselben Satz an. Darum: Ändert sich ein Zwischenstand eine Weile nicht mehr,
+        // gilt er als fertig. Schon verarbeitete Teile werden übersprungen.
+        if (!r.isFinal) ohr.stabil.set(i, setTimeout(() => { if (ohr.rec === rec) { try { hoeren(text, true, i); } catch { /* egal */ } } }, IST_IOS ? 1200 : 1500));
+        try { hoeren(text, r.isFinal, i); } catch { /* ein Satz darf das Ohr nie anhalten */ }
       }
     };
     rec.onerror = (e) => {
       if (ohr.rec !== rec) return;
       const f = e?.error || "";
-      if (f === "not-allowed" || f === "service-not-allowed") { ohr.brauchtTipp = true; zeigeRuhe(); }
+      if (f === "not-allowed" || f === "service-not-allowed") {
+        ohr.brauchtTipp = true;
+        ohr.verweigert = (ohr.verweigert || 0) + 1;
+        zeigeRuhe();
+        // Home-Bildschirm-App auf dem iPhone: Manche iOS-Versionen erlauben dort gar keine Spracherkennung.
+        const app = window.navigator.standalone || window.matchMedia?.("(display-mode: standalone)").matches;
+        if (ohr.verweigert >= 2 && IST_IOS) {
+          ohr.sperrText = (app ? "Mikrofon gesperrt: Einstellungen → Safari → Mikrofon „Erlauben“, oder Friday in Safari öffnen"
+            : "Mikrofon gesperrt: aA in der Adressleiste → Website-Einstellungen → Mikrofon „Erlauben“");
+          setState(ohr.sperrText);
+        }
+      }
       // Safari schickt nach einem Fehler manchmal kein Ende-Signal mehr: dann selbst beenden.
       setTimeout(() => { if (ohr.rec === rec) ohrEnde(rec); }, 1200);
     };
@@ -1673,6 +1692,10 @@
     // iPhone: Ein Mikrofon-Neustart schneidet Friday kurz das Wort ab (say() spricht danach an der Stelle weiter).
     if (speaking && IST_IOS) ms = Math.max(ms, 1500);
     ohrSpaeter(ms);
+  }
+  function ohrRundeNeu() {
+    for (const t of ohr.stabil?.values?.() || []) clearTimeout(t);
+    ohr.verbraucht = new Map(); ohr.verstummt = new Set(); ohr.stabil = new Map();
   }
   function ohrStopp() {
     clearTimeout(ohr.timer);
@@ -1705,18 +1728,33 @@
     bargeZeit = Date.now();
   }
 
+  // Text nach dem Weckwort; "Friday, Friday, stopp" → "stopp".
+  function nachWeckwort(said, m) {
+    let rest = said.slice(m.index + m[0].length).replace(/^[,.!?\s]+/, "");
+    for (let k = 0; k < 3; k++) {
+      const w = rest.match(WAKE_WORT);
+      if (!w || w.index > 0) break;
+      rest = rest.slice(w[0].length).replace(/^[,.!?\s]+/, "");
+    }
+    return rest.trim();
+  }
+
   // Ein erkannter Satz (Zwischenstand oder fertig). Nummer i: Satz in dieser Mikrofon-Runde.
-  function hoeren(said, fertig, i) {
-    if (!said || ohr.erledigt.has(i)) return;
+  function hoeren(ganz, fertig, i) {
+    // Nur den Teil nehmen, der noch nicht verarbeitet wurde (iPhone hängt alles an einen Satz an).
+    const ab = ohr.verbraucht.get(i) || 0;
+    const said = String(ganz || "").slice(ab).replace(/^[\s,.!?]+/, "").trim();
+    if (!/[a-zäöüß0-9]/i.test(said)) return;
+    const erledigt = () => ohr.verbraucht.set(i, String(ganz).length);
     const m = said.match(WAKE);
     // Befehl-Modus: der nächste fertige Satz zählt, auch ohne "Friday".
     if (ohr.modus === "befehl" && !speaking && !busy) {
       if (!fertig) { clearTimeout(ohr.befehlTimer); ohr.befehlTimer = setTimeout(befehlEnde, 8000); return; }
-      if (!m && istEcho(said)) return; // Fridays eigene letzte Worte
-      ohr.erledigt.add(i);
+      if (!m && istEcho(said)) { erledigt(); return; } // Fridays eigene letzte Worte
+      erledigt();
       const { folge, frage } = ohr.befehl;
       befehlEnde();
-      const cmd = (m ? said.slice(m.index + m[0].length) : said).replace(/^[,.!\s]+/, "").trim();
+      const cmd = m ? nachWeckwort(said, m) : said.replace(/^[,.!\s]+/, "").trim();
       if (folge && !frage && GESPRAECH_ENDE.test(cmd)) {
         addMessage("user", said);
         say(["Gern, Boss.", "Jederzeit, Boss.", "Alles klar, Boss."][Math.floor(Math.random() * 3)]);
@@ -1727,17 +1765,17 @@
       return;
     }
     // Sonst zählt nur, was mit "Friday" angesprochen wird. Nebengespräche, TV und Geräusche: ignorieren.
-    if (!m) return;
+    if (!m) { if (fertig) erledigt(); return; }
     if (speaking) {
       if (!unterbrechenAn()) return;
       // Sagt Friday das Wort gerade selbst, erst den fertigen Satz abwarten (könnte ihr Echo sein).
       if (!fertig && sagtFridaySelbst()) return;
-      if (sagtFridaySelbst() && istEcho(said)) return;
+      if (sagtFridaySelbst() && istEcho(said)) { if (fertig) erledigt(); return; }
       if (!ohr.verstummt.has(i)) { ohr.verstummt.add(i); stilleJetzt(); setState("Ich höre", "listening"); }
     }
     if (!fertig) return;
-    ohr.erledigt.add(i);
-    ausfuehren(said.slice(m.index + m[0].length).replace(/^[,.!\s]+/, "").trim());
+    erledigt();
+    ausfuehren(nachWeckwort(said, m));
   }
 
   // Was nach "Friday" kam, ausführen.
