@@ -26,11 +26,11 @@
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...(options.headers || {}) },
       });
     } catch (err) {
-      if (err?.name !== "AbortError") window.FridayDiag?.schritt(`Mac nicht erreichbar bei ${kurz} (${err?.message || err})`, "bad");
+      if (err?.name !== "AbortError" && kurz !== "/api/tts") window.FridayDiag?.schritt(`Mac nicht erreichbar bei ${kurz} (${err?.message || err})`, "bad");
       throw err;
     }
     const ms = Date.now() - t0;
-    if (!res.ok && res.status !== 401) window.FridayDiag?.schritt(`Mac meldet Fehler ${res.status} bei ${kurz}`, "bad");
+    if (!res.ok && res.status !== 401 && kurz !== "/api/tts") window.FridayDiag?.schritt(`Mac meldet Fehler ${res.status} bei ${kurz}`, "bad");
     else if (ms > 8000 && kurz !== "/api/chat") window.FridayDiag?.schritt(`${kurz} hat ${Math.round(ms / 1000)} s gebraucht`, "warn");
     if (res.status === 401) {
       showLogin();
@@ -476,13 +476,32 @@
     return out.length ? out : [text];
   }
   let sprechNr = 0; // jede neue Ansage / jedes Stoppen bricht die alte ab
+  // v1.122.8: Klappt ElevenLabs nicht, 10 Minuten lang gleich die Gerätestimme nehmen (kein Warten bei
+  // jedem Satz). Antwortet der Mac nicht binnen 8 s, ebenfalls Gerätestimme.
+  let stimmePauseBis = 0, stimmeGrund = "";
   async function stimmeHolen(t) {
-    const res = await api("/api/tts", { method: "POST", body: JSON.stringify({ text: t }) });
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      throw new Error(j.grund || j.error || `ElevenLabs antwortet nicht (Fehler ${res.status}), deshalb spreche ich mit der Gerätestimme.`);
+    if (Date.now() < stimmePauseBis) throw new Error(stimmeGrund);
+    const ab = new AbortController();
+    const zeit = setTimeout(() => ab.abort(), 8000);
+    let res;
+    try {
+      res = await api("/api/tts", { method: "POST", body: JSON.stringify({ text: t }), signal: ab.signal });
+    } catch (e) {
+      clearTimeout(zeit);
+      stimmePauseBis = Date.now() + 2 * 60000;
+      stimmeGrund = "ElevenLabs antwortet gerade nicht, deshalb spreche ich mit der Gerätestimme.";
+      diag.schritt("ElevenLabs antwortet nicht → Gerätestimme", "warn");
+      throw new Error(stimmeGrund);
     }
-    return URL.createObjectURL(await res.blob());
+    if (!res.ok) {
+      clearTimeout(zeit);
+      const j = await res.json().catch(() => ({}));
+      stimmeGrund = j.grund || j.error || `ElevenLabs antwortet nicht (Fehler ${res.status}), deshalb spreche ich mit der Gerätestimme.`;
+      stimmePauseBis = Date.now() + 10 * 60000;
+      diag.schritt(`ElevenLabs-Stimme gerade aus: ${stimmeGrund.replace(/, deshalb.*$/, "")} → Gerätestimme`, "warn");
+      throw new Error(stimmeGrund);
+    }
+    try { return URL.createObjectURL(await res.blob()); } finally { clearTimeout(zeit); }
   }
 
   // Wenn ElevenLabs nicht spricht: kleines Schild unten rechts und einmal hörbar sagen, warum.
@@ -530,7 +549,7 @@
     try { window.FridayRing?.melde?.(quelle, stufe, text, dauer); } catch { /* egal */ }
   };
 
-  async function say(text) {
+  async function say(text, { hinweis = true } = {}) {
     if (!$("voice-toggle").checked || !text) return;
     const nr = ++sprechNr;
     speaking = true;
@@ -549,7 +568,7 @@
         let ok = false;
         for (let i = 0; i < teile.length; i++) {
           let url;
-          try { url = await naechstes; } catch (e) { if (!ok && stimmHinweis(e?.message) && !text.includes(e.message)) text = `Kurzer Hinweis: ${e.message} ${text}`; break; }
+          try { url = await naechstes; } catch (e) { if (!ok && hinweis && stimmHinweis(e?.message) && !text.includes(e.message)) text = `Kurzer Hinweis: ${e.message} ${text}`; break; }
           if (nr !== sprechNr) { URL.revokeObjectURL(url); return; }
           if (i + 1 < teile.length) { naechstes = stimmeHolen(teile[i + 1]); naechstes.catch(() => {}); }
           audio.src = url;
@@ -1882,6 +1901,7 @@
       if (!m && (istEcho(said) || /^(ja|ja boss|ich hore|boss)$/.test(norm(said)))) { erledigt(); return; }
       if (speaking) stilleJetzt(); // Boss redet schon, während sie noch "Ja?" sagt
       erledigt();
+      ohr.jaOffen = false;
       diag.schritt(`Gehört (Befehl): „${said.slice(0, 80)}“`);
       const { folge, frage } = ohr.befehl;
       befehlEnde();
@@ -1913,6 +1933,7 @@
   // Was nach "Friday" kam, ausführen.
   function ausfuehren(cmd) {
     cmd = String(cmd || "").trim();
+    ohr.jaOffen = false;
     if (NUR_STOPP.test(cmd)) {
       diag.schritt(`Stopp erkannt („${cmd}“)`);
       stilleJetzt();
@@ -1928,9 +1949,12 @@
     }
     if (cmd.length < 2) { // nur "Friday": kurz antworten und auf den Befehl warten
       befehlModus({});
+      // Solange sie "Ja?" sagt, läuft die Zeit nicht (die Stimme kann ein paar Sekunden brauchen).
       // Danach läuft das 8-Sekunden-Fenster für den Befehl neu.
-      Promise.resolve(say(["Ja, Boss?", "Ja?", "Ich höre."][Math.floor(Math.random() * 3)]))
-        .finally(() => { if (ohr.modus === "befehl") befehlModus(ohr.befehl); });
+      clearTimeout(ohr.befehlTimer);
+      ohr.jaOffen = true;
+      Promise.resolve(say(["Ja, Boss?", "Ja?", "Ich höre."][Math.floor(Math.random() * 3)], { hinweis: false }))
+        .finally(() => { if (ohr.jaOffen) { ohr.jaOffen = false; befehlModus({}); } });
       return;
     }
     if (busy) { ohr.wartend = cmd; diag.schritt(`Wartet, bis die letzte Antwort fertig ist: „${cmd}“`, "warn"); setState("Kommt gleich dran …", "thinking"); return; }

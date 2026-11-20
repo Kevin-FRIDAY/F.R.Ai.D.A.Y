@@ -3203,4 +3203,4 @@ html.perf-fluessig .lage-legend .legend-body { background: rgba(10,6,3,.96); }
 .diag.gross { max-height: 60vh; overflow: auto; opacity: 1; }
 .diag b { color: #ff9a3c; font-weight: 600; }
 .diag .d-ok { color: #9dffb0; } .diag .d-warn { color: #ffe27a; } .diag .d-bad { color: #ff8a8a; }
-@media (max-width: 900px) { .diag { bottom: calc(84px + env(safe-area-inset-bottom)); } }
+@media (max-width: 900px) { .diag { bottom: auto; top: calc(6px + env(safe-area-inset-top)); font-size: 10px; } }

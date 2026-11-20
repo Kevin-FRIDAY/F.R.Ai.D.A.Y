@@ -122,3 +122,10 @@ Bleibt das Mikrofon trotzdem blockiert (Anruf, Siri, andere App), steht oben „
 Hilft auch das nicht: App ganz schließen (nach oben wischen) und neu öffnen.
 Die Diagnose-Zeile zeigt jetzt außerdem Programmfehler, Fenster auf/zu, Lagezentrum und jeden Fehler bei der
 Verbindung zum Mac.
+
+**v1.122.8 (ElevenLabs-Fehler 503):** Kann der Mac keine ElevenLabs-Stimme liefern (meist: Gratis-Guthaben
+aufgebraucht), nimmt Friday sofort die Gerätestimme und fragt ElevenLabs 10 Minuten lang nicht erneut. So gibt
+es kein Warten mehr vor jedem Satz. Die Diagnose zeigt den Grund in Gelb („ElevenLabs-Stimme gerade aus: …“).
+Antwortet ElevenLabs nicht binnen 8 s, spricht sie ebenfalls mit der Gerätestimme. Nach „Friday“ läuft das
+Befehlsfenster erst los, wenn sie „Ja?“ fertig gesagt hat. Auf dem iPhone steht die Diagnose jetzt oben,
+damit sie keine Knöpfe verdeckt.
