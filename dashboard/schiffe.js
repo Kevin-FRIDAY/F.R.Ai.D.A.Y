@@ -18,6 +18,7 @@
   let gruppen = [], schiffe = [], aktiv = new Set(), stand = "", info = { aktiv: true, verbunden: false };
   let gewaehlt = 0;           // MMSI des angetippten Schiffs
   let detail = null;          // Steckbrief vom Server
+  let extra = null;           // Ziel-Hafen, Foto, Text (freie Quellen, v1.121.0)
   let treffer = null;         // Set von MMSI aus der Suche
   let ladeTimer = null, karteTimer = null, laedt = false;
   let L = null;               // Leinwand
@@ -158,6 +159,26 @@
         if (i >= 0 && sicht[i] && auf) ctx.lineTo(sx[i], sy[i]);
         ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
       }
+      // Weg zum Ziel-Hafen (Luftlinie, gestrichelt) + Hafen-Anker (v1.121.0)
+      const h = extra?.mmsi === gewaehlt ? extra.hafen : null;
+      if (h && detail) {
+        const R = Math.PI / 180, v = (la, lo) => [Math.cos(la * R) * Math.cos(lo * R), Math.cos(la * R) * Math.sin(lo * R), Math.sin(la * R)];
+        const a = v(detail.lat, detail.lon), b = v(h.lat, h.lon);
+        const om = Math.acos(Math.max(-1, Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2])));
+        ctx.strokeStyle = "#ffd04d"; ctx.lineWidth = 1.3 * dpr; ctx.globalAlpha = 0.85; ctx.setLineDash([2 * dpr, 4 * dpr]);
+        ctx.beginPath(); let auf = false;
+        const n = Math.max(2, Math.ceil(om / (2 * R)));
+        for (let k = 0; k <= n; k++) {
+          const t = k / n, s1 = om ? Math.sin((1 - t) * om) / Math.sin(om) : 1 - t, s2 = om ? Math.sin(t * om) / Math.sin(om) : t;
+          const x = s1 * a[0] + s2 * b[0], y = s1 * a[1] + s2 * b[1], z = s1 * a[2] + s2 * b[2];
+          if (p(Math.asin(z) / R, Math.atan2(y, x) / R, out)) { if (auf) ctx.lineTo(out[0], out[1]); else { ctx.moveTo(out[0], out[1]); auf = true; } } else auf = false;
+        }
+        ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+        if (p(h.lat, h.lon, out)) {
+          ctx.font = `${13 * dpr}px system-ui, sans-serif`; ctx.fillStyle = "#ffd04d"; ctx.shadowColor = "rgba(0,0,0,.9)"; ctx.shadowBlur = 4 * dpr;
+          ctx.fillText("⚓ " + h.name, out[0] - 6 * dpr, out[1] + 5 * dpr); ctx.shadowBlur = 0;
+        }
+      }
       if (i >= 0 && sicht[i]) {
         ctx.strokeStyle = farbe; ctx.lineWidth = 1.6 * dpr;
         ctx.beginPath(); ctx.arc(sx[i], sy[i], 8 * dpr, 0, 7); ctx.stroke();
@@ -186,13 +207,14 @@
   }
 
   async function waehle(mmsi, fliegen = true) {
-    gewaehlt = mmsi; detail = null;
+    gewaehlt = mmsi; detail = null; extra = null;
     $("lage-satcard")?.remove(); $("lage-markercard")?.remove(); $("lage-shipcard")?.remove();
     const s = schiffe.find((x) => x[0] === mmsi);
     if (fliegen && s) { const g = G(), pr = g?.projektion?.(); if (pr) g.zu(s[2], s[1], Math.max(4, pr.scale() / g.basis())); }
     zeigeKarte(s);
     zeichneBald();
     await ladeDetail();
+    ladeExtra(mmsi);
     clearInterval(karteTimer);
     karteTimer = setInterval(() => { if (!$("lage-planecard-schiff")) { clearInterval(karteTimer); return; } ladeDetail(); }, 30000);
   }
@@ -210,6 +232,39 @@
     } catch { if (mmsi === gewaehlt) fuelleKarte(null, "Gerade nicht erreichbar."); }
   }
 
+  // Mehr zum Schiff aus freien Quellen: Ziel-Hafen (UN/LOCODE), Foto + Text (Wikidata/Wikipedia)
+  async function ladeExtra(mmsi) {
+    try {
+      const r = await api(`/api/schiffe/${mmsi}/extra`);
+      if (!r.ok || mmsi !== gewaehlt) return;
+      extra = { mmsi, ...(await r.json()) };
+      zeigeExtra();
+      zeichneBald();
+    } catch { /* ohne Extras */ }
+  }
+  function zeigeExtra() {
+    const card = $("lage-planecard-schiff");
+    if (!card || !extra || extra.mmsi !== gewaehlt) return;
+    card.querySelector(".sc-extra")?.remove();
+    const div = document.createElement("div");
+    div.className = "sc-extra";
+    const h = extra.hafen, w = extra.wiki;
+    const std = h?.restzeit_h;
+    const rest = std == null ? "" : std < 1 ? "unter 1 Stunde" : std < 48 ? `ca. ${Math.round(std)} Std.` : `ca. ${Math.round(std / 24)} Tage`;
+    let html = "";
+    if (h) html += `<div class="sc-abschnitt">Ziel-Hafen</div><div class="mc-rows"><span>Hafen</span><b>⚓ ${esc(h.name)} <small>(${esc(h.code)})</small></b><span>Land</span><b>${esc(h.land)}</b>${h.entfernung_km != null ? `<span>Entfernung</span><b>${zahl(h.entfernung_km)} km Luftlinie</b>` : ""}${rest ? `<span>Noch unterwegs</span><b>${rest} <small>(bei jetzigem Tempo)</small></b>` : ""}</div>`;
+    if (w) {
+      html += `<div class="sc-abschnitt">Über das Schiff</div>`;
+      if (w.bild) html += `<a class="sc-foto" href="${esc(w.quelle)}" target="_blank" rel="noopener noreferrer"><img src="${esc(w.bild)}" alt="${esc(w.name)}" loading="lazy" onerror="this.parentNode.remove()"><small>Foto: Wikimedia Commons</small></a>`;
+      html += `<div class="mc-rows">${[["Baujahr", w.baujahr], ["Werft", w.werft], ["Art", w.typ]].filter(([, v]) => v).map(([k, v]) => `<span>${k}</span><b>${esc(v)}</b>`).join("")}</div>`;
+      if (w.text) html += `<p class="sc-text">${esc(w.text)}</p>`;
+    }
+    if (extra.links?.length) html += `<div class="sc-links">${extra.links.map((l) => `<a class="chip" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.name)} ↗</a>`).join("")}</div>`;
+    div.innerHTML = html;
+    card.querySelector(".sc-inhalt")?.append(div);
+    card.querySelector(".sc-hafen")?.classList.toggle("hidden", !h);
+  }
+
   function zeigeKarte(s) {
     let card = $("lage-planecard-schiff");
     if (!card) {
@@ -223,10 +278,11 @@
       <div><div class="mc-type">🚢 Schiff · ${esc(g?.name || "")} · <span class="mc-dot">● live</span></div>
       <div class="mc-title">${esc(s?.[6] || "Schiff " + gewaehlt)}</div></div></div>
       <div class="sc-inhalt"><div class="mc-rows"><span>MMSI</span><b>${gewaehlt}</b><span>Angaben</span><b>werden geladen …</b></div></div>
-      <div class="sc-knoepfe"><button type="button" class="chip" data-a="hin">◎ Hinfliegen</button><a class="chip sc-mehr hidden" target="_blank" rel="noopener noreferrer">Foto & mehr ↗</a></div>`;
+      <div class="sc-knoepfe"><button type="button" class="chip" data-a="hin">◎ Hinfliegen</button><button type="button" class="chip sc-hafen hidden" data-a="hafen">⚓ Ziel-Hafen</button></div>`;
     card.onclick = (e) => {
       const a = e.target.closest("[data-a]")?.dataset.a;
       if (a === "zu") karteZu();
+      else if (a === "hafen" && extra?.hafen) { const gg = G(), pr = gg?.projektion?.(); if (pr) gg.zu(extra.hafen.lon, extra.hafen.lat, Math.max(4, pr.scale() / gg.basis())); }
       else if (a === "hin" && detail) { const gg = G(), pr = gg?.projektion?.(); if (pr) gg.zu(detail.lon, detail.lat, Math.max(4, pr.scale() / gg.basis())); }
     };
   }
@@ -256,15 +312,14 @@
       ["Typ", d.typ], ["Flagge", d.flagge], ["Länge", d.laenge_m ? `${d.laenge_m} m` : null], ["Breite", d.breite_m ? `${d.breite_m} m` : null],
       ["Tiefgang", d.tiefgang_m ? `${zahl(d.tiefgang_m, 1)} m` : null], ["IMO-Nr.", d.imo], ["MMSI", d.mmsi], ["Rufzeichen", d.rufzeichen], ["AIS-Klasse", d.klasse],
     ])}</div>`;
-    const a = card.querySelector(".sc-mehr");
-    if (a && d.mehr) { a.href = d.mehr; a.classList.remove("hidden"); }
+    zeigeExtra();
   }
   const himmel = (k) => ["(Nord)", "(Nordost)", "(Ost)", "(Südost)", "(Süd)", "(Südwest)", "(West)", "(Nordwest)"][Math.round(k / 45) % 8];
 
   function karteZu() {
     $("lage-planecard-schiff")?.remove();
     clearInterval(karteTimer);
-    gewaehlt = 0; detail = null;
+    gewaehlt = 0; detail = null; extra = null;
     zeichneBald();
   }
 

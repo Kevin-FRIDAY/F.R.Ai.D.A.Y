@@ -17,6 +17,7 @@ import { quickCommand as weltQuick, vollbildQuick } from "./weltgespraech.js";
 import { quickCommand as satQuick } from "./satelliten.js";
 import { quickCommand as schiffQuick } from "./ships.js";
 import { quickCommand as flugQuick } from "./flugzeuge.js";
+import { quickCommand as klimaQuick } from "./klima.js";
 import { quickCommand as tourQuick } from "./welttour.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty } from "./energie.js";
 import { getSettings } from "./einstellungen.js";
@@ -261,6 +262,8 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (tq) { actions.push(...tq.actions); return finish(tq.answer); }
       const sq = await satQuick(text).catch((err) => { console.error("Satelliten:", err.message); return null; });
       if (sq) { actions.push(...sq.actions); return finish(sq.answer); }
+      const kq = klimaQuick(text);
+      if (kq) { actions.push(...kq.actions); return finish(kq.answer); }
       const schq = schiffQuick(text);
       if (schq) { actions.push(...schq.actions); return finish(schq.answer); }
       const fq = await flugQuick(text).catch((err) => { console.error("Flugzeuge:", err.message); return null; });

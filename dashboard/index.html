@@ -1081,11 +1081,13 @@
         <div class="alarm-sweep" aria-hidden="true"></div>
         <div id="lage-detailmap" class="lage-detailmap hidden">
           <div id="lage-dm-map"></div>
+          <div id="lage-dm-3dmap" class="hidden"></div>
           <div class="lage-dm-bar">
             <div id="lage-dm-stil" class="lage-dm-stil">
               <button type="button" data-stil="sat">🛰 Satellit</button>
               <button type="button" data-stil="karte">🗺 Karte</button>
             </div>
+            <button type="button" id="lage-dm-3d" class="lage-dm-3d" title="Berge und Täler in 3D (nur am Mac)">⛰ 3D</button>
             <button type="button" id="lage-dm-globus" class="lage-dm-globus" title="Zurück zum Globus">◎ Globus</button>
           </div>
         </div>
@@ -1100,8 +1102,9 @@
           <div id="alarm-sub2" class="alarm-sub2"></div>
         </div>
         <div class="lage-legend" id="lage-legend">
-          <button type="button" class="legend-toggle" aria-label="Ebenen ein- und ausblenden" title="Ebenen">⚙ <span>Ebenen</span></button>
-          <div class="legend-body">
+          <button type="button" class="legend-toggle" aria-label="Ebenen-Fenster öffnen oder schließen" aria-expanded="false" title="Ebenen">⚙ <span>Ebenen</span></button>
+          <div class="legend-body" role="dialog" aria-label="Ebenen">
+            <div class="legend-kopf"><b>Ebenen</b><button type="button" class="legend-zu" aria-label="Ebenen schließen" title="Schließen (Esc)">✕</button></div>
             <div class="legend-keys">
               <span><i class="dot gut"></i>gut</span><span><i class="dot gemischt"></i>gemischt</span>
               <span><i class="dot schlecht"></i>schlecht</span><span><i class="dot aktiv"></i>Aktivität</span>
@@ -1109,12 +1112,13 @@
             <div class="legend-groups">
               <div class="legend-group"><div class="lg-head"><i>⚠</i>Gefahren</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-quakes-on" checked><span>Erdbeben</span></label><label class="switch small-switch"><input type="checkbox" id="lage-fires-on" checked><span>Feuer<i id="cnt-fires"></i></span></label><label class="switch small-switch"><input type="checkbox" id="lage-volc-on" checked><span>Vulkane<i id="cnt-volc"></i></span></label><label class="switch small-switch"><input type="checkbox" id="lage-storms-on" checked><span>Unwetter<i id="cnt-storms"></i></span></label><label class="switch small-switch"><input type="checkbox" id="lage-weitere-on" checked><span>Weitere<i id="cnt-weitere"></i></span></label></div></div>
               <div class="legend-group"><div class="lg-head"><i>⚔</i>Konflikte &amp; Netz</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-lb-konflikt-on" checked><span>Konflikt-Meldungen<i id="cnt-konflikt"></i></span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-netz-on" checked><span>Internet-Störungen<i id="cnt-netz"></i></span></label></div></div>
+              <div class="legend-group"><div class="lg-head"><i>◐</i>Klima &amp; Gelände</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-klima-on"><span>Klimazonen</span></label><label class="switch small-switch nur-mac-switch"><input type="checkbox" id="lage-3d-on"><span>3D-Gelände beim Land <small>(Mac)</small></span></label></div><div id="klima-keys" class="klima-keys"></div></div>
               <div class="legend-group"><div class="lg-head"><i>☁</i>Wetter &amp; Luft</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-lb-wind-on"><span>Wind</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-temp-on"><span>Temperatur</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-regen-on"><span>Regen</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-luft-on"><span>Luftqualität<i id="cnt-luft"></i></span></label></div></div>
               <div class="legend-group"><div class="lg-head"><i>✦</i>Weltraum</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-sats-on" checked><span>Satelliten</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-raketen-on" checked><span>Raketenstarts<i id="cnt-raketen"></i></span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-polar-on"><span>Polarlicht</span></label><label class="switch small-switch"><input type="checkbox" id="lage-night-on"><span>Tag/Nacht</span></label></div></div>
               <div class="legend-group"><div class="lg-head"><i>➤</i>Verkehr</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-ships-on" checked><span>Schiffe</span></label><label class="switch small-switch"><input type="checkbox" id="lage-planes-on" checked><span>Flugzeuge</span></label></div></div>
               <div class="legend-group"><div class="lg-head"><i>▦</i>Infrastruktur</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-city-on"><span>Städte</span></label><label class="switch small-switch"><input type="checkbox" id="lage-air-on"><span>Flughäfen</span></label><label class="switch small-switch"><input type="checkbox" id="lage-kw-on"><span>Kraftwerke</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-kabel-on"><span>Seekabel</span></label></div></div>
               <div class="legend-group"><div class="lg-head"><i>◱</i>Detailkarte (beim Land)</div><div class="legend-switches"><label class="switch small-switch"><input type="checkbox" id="lage-lb-radar-on"><span>Regenradar</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-wolken-on"><span>Wolken heute</span></label><label class="switch small-switch"><input type="checkbox" id="lage-lb-lichter-on"><span>Nachtlichter</span></label></div></div>
-              <details class="legend-grenzen"><summary>Was Friday bewusst nicht zeigt</summary><ul id="lage-lb-grenzen"><li>Militär live, fremde Kameras, Cyber-Angriffe live, weltweite Stromausfälle, 3D-Gelände</li></ul></details>
+              <details class="legend-grenzen"><summary>Was Friday bewusst nicht zeigt</summary><ul id="lage-lb-grenzen"><li>Militär live, fremde Kameras, Cyber-Angriffe live, weltweite Stromausfälle</li></ul></details>
             </div>
           </div>
         </div>
@@ -1178,6 +1182,8 @@
   <script src="ideen.js"></script>
   <script src="klangraum.js"></script>
   <script src="lagebild.js"></script>
+  <script src="klimazonen.js"></script>
+  <script src="gelaende.js"></script>
   <script src="globus-leinwand.js"></script>
   <script src="satelliten.js"></script>
   <script src="schiffe.js"></script>
