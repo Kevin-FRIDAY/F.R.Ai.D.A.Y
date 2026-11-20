@@ -9,7 +9,8 @@ Dafür braucht es den kostenlosen Schlüssel von aisstream.io (`AISSTREAM_API_KE
   Behörden & Rettung, Schnellboote, Sonstige. Suche nach Schiffsname oder MMSI.
 - **Schiff antippen** → Steckbrief: Position, Tempo (Knoten + km/h), Kurs, Status (fährt, ankert, festgemacht …),
   Ziel, geplante Ankunft, Typ, Flagge, Länge, Breite, Tiefgang, IMO, Rufzeichen und die Spur der letzten Stunde.
-  „Foto & mehr“ öffnet die Seite des Schiffs bei VesselFinder.
+  Ab 1.119.0 außerdem: **Ziel-Hafen** (Name, Land, Entfernung, ungefähre Restzeit, gelbe Linie auf dem Globus),
+  **Foto und Kurztext** (bei bekannten Schiffen, aus Wikipedia/Wikimedia) und ein Link zur Schiffsseite bei VesselFinder.
 
 ## Sprachbefehle (ohne Claude-Guthaben)
 - „Friday, zeig mir alle Schiffe“ · „Friday, wie viele Schiffe sind unterwegs?“

@@ -8,6 +8,7 @@ import path from "node:path";
 import zlib from "node:zlib";
 import WebSocket from "ws";
 import { config, DATA_DIR } from "./config.js";
+import { schiffExtra, haefenUm } from "./schiffsinfo.js";
 
 const vessels = new Map(); // MMSI -> Datensatz (siehe merke())
 let ws = null;
@@ -342,6 +343,19 @@ export function schiffeRouten(app, asyncRoute) {
     const s = getSchiff(req.params.mmsi);
     if (!s) return res.status(404).json({ error: "Dieses Schiff meldet sich gerade nicht." });
     res.json(s);
+  }));
+  // Mehr zum Schiff aus freien Quellen: Ziel-Hafen, Foto + Text (Wikidata/Wikipedia), Links
+  app.get("/api/schiffe/:mmsi/extra", asyncRoute(async (req, res) => {
+    const s = getSchiff(req.params.mmsi);
+    if (!s) return res.status(404).json({ error: "Dieses Schiff meldet sich gerade nicht." });
+    res.json(await schiffExtra(s));
+  }));
+  // Häfen in der Nähe (UN/LOCODE), für die Häfen-Ebene beim Hineinzoomen
+  app.get("/api/haefen", asyncRoute(async (req, res) => {
+    const lat = Number(req.query.lat), lon = Number(req.query.lon), r = Math.min(3000, Math.max(50, Number(req.query.r) || 800));
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return res.status(400).json({ error: "lat/lon fehlen" });
+    res.set("Cache-Control", "private, max-age=86400");
+    res.json({ haefen: haefenUm(lat, lon, r, 400) });
   }));
 }
 

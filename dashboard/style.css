@@ -1172,8 +1172,6 @@ a.lz-n-link:hover { border-color: var(--cyan); background: var(--cyan-soft); tra
   opacity: 0; transform: translateY(8px) scale(.98); transform-origin: bottom left; pointer-events: none;
   transition: opacity .16s ease, transform .16s ease;
 }
-.lage-legend:hover .legend-body,
-.lage-legend:focus-within .legend-body,
 .lage-legend.open .legend-body { opacity: 1; transform: none; pointer-events: auto; }
 .lage-legend .legend-keys { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 11px; color: var(--muted); }
 .lage-legend .legend-switches { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -3102,3 +3100,44 @@ html.perf-fluessig .sat-panel, html.perf-fluessig .lage-satcard { backdrop-filte
   .welttour .wt-news { font-size: 12px; max-height: 26vh; overflow: auto; list-style-position: inside; padding-left: 0; }
   .welttour .wt-knoepfe .chip { flex: 1; min-height: 40px; }
 }
+
+/* v1.119.0 – Ebenen-Fenster: nur per Knopf auf/zu (kein Hover mehr), ✕ oben, Tippen daneben schließt */
+.lage-legend .legend-body { visibility: hidden; transition: opacity .16s ease, transform .16s ease, visibility 0s linear .16s; }
+.lage-legend.open .legend-body { visibility: visible; transition: opacity .16s ease, transform .16s ease, visibility 0s; }
+.lage-legend.open .legend-toggle { border-color: var(--cyan); background: rgba(255,138,30,.18); }
+.legend-kopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; position: sticky; top: -12px; margin: -12px -12px 0; padding: 10px 12px 8px; background: rgba(10,6,3,.92); z-index: 1; border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
+.legend-kopf b { font: 700 11px/1 var(--font-ui, system-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--cyan); }
+.legend-zu { font: 600 15px/1 system-ui; color: var(--text); background: rgba(255,255,255,.06); border: 1px solid var(--line); border-radius: 50%; width: 30px; height: 30px; min-height: 0; padding: 0; cursor: pointer; display: grid; place-items: center; }
+.legend-zu:hover { border-color: var(--cyan); color: var(--cyan); }
+html.ist-handy .lage-legend .nur-mac-switch { display: none; }
+
+/* v1.119.0 – Klimazonen */
+#lage-klima path { stroke: none; opacity: .78; }
+#lage-klima { pointer-events: none; }
+.klima-keys { display: none; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 10px; margin-top: 8px; font-size: 11px; color: var(--muted); }
+.klima-keys.an { display: grid; }
+.klima-keys span { display: flex; align-items: center; gap: 6px; }
+.klima-keys i { width: 12px; height: 12px; border-radius: 3px; flex: none; background: var(--k); }
+.klima-card { position: absolute; z-index: 7; left: 50%; bottom: 64px; transform: translateX(-50%); max-width: min(92%, 420px); padding: 10px 14px 10px 12px; border-radius: 14px; background: rgba(10,6,3,.86); border: 1px solid var(--line); box-shadow: 0 10px 28px rgba(0,0,0,.5); font-size: 13px; color: var(--text); display: flex; gap: 10px; align-items: flex-start; }
+.klima-card i { width: 16px; height: 16px; border-radius: 4px; flex: none; margin-top: 2px; background: var(--k); }
+.klima-card b { color: var(--cyan); }
+.klima-card p { margin: 3px 0 0; color: var(--muted); line-height: 1.4; }
+.klima-card button { margin-left: auto; background: none; border: 0; color: var(--muted); font-size: 14px; cursor: pointer; min-height: 0; padding: 0 0 0 6px; }
+
+/* v1.119.0 – Schiff: Ziel-Hafen, Foto, Text */
+.sc-extra .sc-foto { display: block; margin: 6px 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); position: relative; }
+.sc-extra .sc-foto img { display: block; width: 100%; max-height: 200px; object-fit: cover; }
+.sc-extra .sc-foto small { position: absolute; right: 6px; bottom: 4px; font-size: 9px; color: #fff; text-shadow: 0 0 3px #000; }
+.sc-extra .sc-text { font-size: 12px; line-height: 1.45; color: var(--muted); margin: 6px 0 0; }
+.sc-extra .sc-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+/* v1.119.0 – 3D-Gelände (nur Mac) */
+.lage-dm-3d { background: rgba(10,6,3,.72); border: 1px solid rgba(255,138,30,.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font: inherit; font-size: 12px; color: var(--cyan, #ff8a1e); border-radius: 999px; padding: 6px 12px; cursor: pointer; min-height: 0; height: auto; }
+.lage-dm-3d.active { background: linear-gradient(135deg, rgba(255,138,30,.9), rgba(255,90,20,.85)); color: #120700; }
+html.ist-handy .lage-dm-3d { display: none; }
+#lage-dm-3dmap { position: absolute; inset: 0; z-index: 400; background: #050403; }
+#lage-dm-3dmap.hidden { display: none; }
+.lage-dm-3dhint { position: absolute; left: 10px; bottom: 10px; z-index: 450; font-size: 11px; color: var(--muted); background: rgba(10,6,3,.72); border-radius: 8px; padding: 4px 8px; pointer-events: none; }
+html.perf-fluessig .lage-legend .legend-body { background: rgba(10,6,3,.96); }
+.lage-detailmap.drei-an .leaflet-control-container { display: none; }
+#lage-klima.nah path { opacity: .58; }
