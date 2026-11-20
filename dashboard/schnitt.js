@@ -84,8 +84,9 @@
     if (!j) return;
     // Nur melden, wenn wir den Job laufen gesehen haben (nicht beim ersten Laden der Seite).
     if (j.id === lastJobId && lastStatus === "läuft" && j.status !== "läuft") {
-      if (j.status === "fertig") say(`Fertig, Chef. Dein Video ist ${Math.round(j.result?.dur || 0)} Sekunden lang und liegt im Ordner Fertig.`);
-      else say("Chef, beim Schneiden ist etwas schiefgegangen. Die Details stehen im Schnitt-Fenster.");
+      const sagS = (t, st) => (window.Friday.sagVonSelbst || say)(t, { quelle: "schnitt", stufe: st });
+      if (j.status === "fertig") sagS(`Fertig, Chef. Dein Video ist ${Math.round(j.result?.dur || 0)} Sekunden lang und liegt im Ordner Fertig.`, "warn");
+      else sagS("Chef, beim Schneiden ist etwas schiefgegangen. Die Details stehen im Schnitt-Fenster.", "bad");
     }
     lastJobId = j.id;
     lastStatus = j.status;

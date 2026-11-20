@@ -3,7 +3,8 @@
   "use strict";
 
   const $ = (id) => document.getElementById(id);
-  const { api, say, escapeHtml } = window.Friday;
+  const { api, escapeHtml } = window.Friday;
+  const say = (t) => (window.Friday.sagVonSelbst || window.Friday.say)(t, { quelle: "energie-ansage", stufe: "warn" });
   const box = $("energie");
   if (!box) return;
 
