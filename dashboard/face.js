@@ -708,6 +708,10 @@
     return syl.peak * Math.sin(Math.PI * Math.min(1, ph));
   }
 
+  // Spricht, hört oder denkt Friday gerade? Dann zeichnet der Kopf mit voller Bildrate.
+  const reaktor = document.getElementById("reactor");
+  const kopfAktiv = () => Boolean(talkMode) || open > 0.01 || (reaktor ? /\b(listening|speaking|thinking)\b/.test(reaktor.className) : false);
+
   // Blinzeln
   let nextBlink = performance.now() + 2500, blinkStart = -1;
 
@@ -719,7 +723,8 @@
       return;
     }
     // Bilder-Bremse: im flüssigen Modus 30 statt 60 Bilder pro Sekunde
-    const minAbstand = 1000 / LEISTUNG.fps - 3;
+    // v1.118.0: im Ruhezustand 30, im Hintergrund 12 Bilder/s – beim Sprechen/Zuhören volle Rate
+    const minAbstand = 1000 / (LEISTUNG.kopfFps ? LEISTUNG.kopfFps(kopfAktiv()) : LEISTUNG.fps) - 3;
     if (animate.last && now - animate.last < minAbstand) { requestAnimationFrame(animate); return; }
     const dt = Math.min(60, now - (animate.last || now)); animate.last = now;
     const t = now / 1000;

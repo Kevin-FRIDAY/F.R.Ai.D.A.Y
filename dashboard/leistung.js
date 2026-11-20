@@ -72,10 +72,83 @@
       }
       verdeckt = v;
     } catch { verdeckt = false; }
+    // v1.118.0: Startseite liegt komplett unter einem Fenster → ihre Dauer-Animationen anhalten (style.css)
+    root.classList.toggle("friday-verdeckt", verdeckt);
   }
   setInterval(pruefeVerdeckt, 400);
   document.addEventListener("click", () => setTimeout(pruefeVerdeckt, 30), true);
   document.addEventListener("keyup", () => setTimeout(pruefeVerdeckt, 30), true);
+
+  // ---- Ruhe (v1.118.0): Friday-Fenster im Hintergrund ----
+  // Arbeitet Kevin in einer anderen App, muss Friday nicht mit voller Kraft weiterzeichnen:
+  // CSS-Animationen halten an (html.friday-ruhe), Kopf und Globus laufen im Spar-Takt.
+  // Spricht oder hört Friday, läuft der Kopf trotzdem flüssig.
+  let fokus = true;
+  function pruefeFokus() {
+    let f = true;
+    try {
+      // Klick in ein eingebettetes Video/Spiel (iframe) zählt als "Friday ist vorne"
+      f = document.hasFocus() || document.activeElement?.tagName === "IFRAME";
+      if (document.hidden) f = false;
+    } catch { f = true; }
+    if (f === fokus) return;
+    fokus = f;
+    root.classList.toggle("friday-ruhe", !fokus);
+    melden();
+  }
+  window.addEventListener("focus", pruefeFokus);
+  window.addEventListener("blur", () => setTimeout(pruefeFokus, 50));
+  document.addEventListener("visibilitychange", pruefeFokus);
+  setInterval(pruefeFokus, 1500);
+
+  // Weltgeschehen: Sind Satelliten/Schiffe/Flugzeuge an, zeichnet jedes Globus-Bild zehntausende Punkte neu.
+  const SCHWERE_EBENEN = ["lage-sats-on", "lage-ships-on", "lage-planes-on"];
+  const schwereEbenen = () => SCHWERE_EBENEN.some((id) => document.getElementById(id)?.checked);
+
+  // ---- Animations-Takt (v1.118.0) ----
+  // Jede Dauer-Animation (pulsierende Punkte, drehende Ringe, Laufschrift, blinkende Lämpchen) zwingt den
+  // Browser zu 60 Bildern pro Sekunde – und jedes Bild setzt den ganzen Bildschirm samt Glas-Unschärfe,
+  // Globus und Punkte-Ebenen neu zusammen. Gemessen am Mac: Weltgeschehen (Globus steht still) 96 % Last,
+  // ohne diese Animationen 18 %. Darum schalten wir sie selbst weiter: Startseite 30× pro Sekunde
+  // (so oft zeichnet der Kopf ohnehin), sonst 20×. Sie sehen gleich aus und laufen gleich schnell,
+  // nur in etwas größeren Schritten. Ruhe/verdeckt: sie stehen (siehe style.css).
+  // Einmalige Effekte (Einblenden, Wackeln …) laufen unverändert.
+  let taktLetzt = 0;
+  const zurStartseite = (t) => {
+    try {
+      if (t === document.body || t === document.documentElement) return true;
+      if (t.classList && (t.classList.contains("grid-bg") || t.classList.contains("scanline"))) return true;
+      const app = document.getElementById("app");
+      if (!app || !app.contains(t)) return false;
+      for (const s of app.querySelectorAll(":scope > .sheet")) if (s.contains(t)) return false;
+      return true;
+    } catch { return false; }
+  };
+  function animTakt() {
+    if (document.hidden || !document.getAnimations) return;
+    const now = performance.now();
+    const fps = verdeckt ? 20 : 30;
+    if (now - taktLetzt < 1000 / fps - 8) return;
+    taktLetzt = now;
+    let liste;
+    try { liste = document.getAnimations(); } catch { return; }
+    for (const a of liste) {
+      try {
+        if (typeof CSSAnimation !== "undefined" && !(a instanceof CSSAnimation)) continue; // nur CSS-Animationen
+        if (a.effect.getComputedTiming().iterations !== Infinity) continue;
+        if (a.__fStart == null) {
+          if (a.playState !== "running") continue; // von CSS angehalten: nicht anfassen
+          a.__fStart = now - (Number(a.currentTime) || 0);
+          a.__fStartseite = zurStartseite(a.effect.target);
+          a.pause();
+        } else if (a.playState === "running") a.pause(); // CSS hat sie wieder angestoßen (z. B. nach Ruhe)
+        if (!fokus) continue;                                // Ruhe: stehen lassen
+        if (verdeckt && a.__fStartseite) continue;            // Startseite unter einem Fenster: stehen lassen
+        a.currentTime = now - a.__fStart;
+      } catch { /* einzelne Animation egal */ }
+    }
+  }
+  setInterval(animTakt, 25);
 
   // ---- Auto: selbst messen, ob es ruckelt (nur einmal kurz nach dem Start) ----
   function selbstTest() {
@@ -110,7 +183,21 @@
     get kantenglaettung() { return stufe !== "fluessig"; },
     get partikel() { return stufe === "fluessig" ? 0.45 : 1; },
     // Globus: Mindestabstand zwischen zwei Bildern beim Drehen (ms)
-    get globusMs() { return stufe === "fluessig" ? 66 : 30; },
+    // Ruhe: Globus dreht nur noch 4× pro Sekunde weiter. Viele Punkte: 22 statt 33 Bilder/s (sieht gleich ruhig aus).
+    get globusMs() {
+      if (!fokus) return 250;
+      const basis = stufe === "fluessig" ? 66 : 30;
+      return schwereEbenen() ? Math.max(basis, 45) : basis;
+    },
+    // Kopf: Spricht/hört Friday → volle Bilder/s. Sonst bewegt er sich nur langsam → 30 reichen.
+    // Fenster im Hintergrund → 12 Bilder/s (er bleibt lebendig, kostet aber kaum noch etwas).
+    kopfFps(aktiv) {
+      const voll = stufe === "fluessig" ? 30 : 60;
+      if (aktiv) return voll;
+      if (!fokus) return 12;
+      return Math.min(voll, 30);
+    },
+    get ruhe() { return !fokus; },
     get verdeckt() { return verdeckt; },
     istHandy,
     setzen(m) {
