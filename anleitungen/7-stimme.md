@@ -114,3 +114,11 @@ etwas länger (1,8 s), bevor der Satz als fertig gilt, damit eine kurze Denkpaus
 Fingertipp. Nach jedem Öffnen der App also einmal tippen; danach hört Friday auf „Friday“, solange die App
 vorne und das iPhone entsperrt ist. Im Hintergrund oder bei gesperrtem Bildschirm schaltet iOS das Mikrofon ab.
 Ganz ohne Tippen geht es nur über Siri (Kurzbefehl, z. B. „Hey Siri, Friday“).
+
+**v1.122.7 (iPhone: „Mikrofon-Fehler: audio-capture“):** Die Diagnose zeigte, dass Safari das Mikrofon nicht
+bekam. Ursache war das Freischalten des Tons beim ersten Tipp, während das Mikrofon schon lief. Jetzt geht das
+Mikrofon dafür kurz aus, die Wiedergabe wird danach wieder freigegeben, und erst dann hört Friday wieder zu.
+Bleibt das Mikrofon trotzdem blockiert (Anruf, Siri, andere App), steht oben „Mikrofon blockiert: einmal tippen“.
+Hilft auch das nicht: App ganz schließen (nach oben wischen) und neu öffnen.
+Die Diagnose-Zeile zeigt jetzt außerdem Programmfehler, Fenster auf/zu, Lagezentrum und jeden Fehler bei der
+Verbindung zum Mac.
