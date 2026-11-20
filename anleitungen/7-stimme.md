@@ -55,3 +55,29 @@ Auf dem iPhone hat iOS Fridays Stimme abgeschnitten, sobald ein Geräusch (z. B.
 ## iPhone: „Nicht verstanden“ und Friday reagiert nicht mehr (behoben in v1.121.5)
 
 Auf dem iPhone darf nur ein Mikrofon gleichzeitig laufen. Nach „Friday“ startete Friday das Zuhören, bevor das „Friday“-Ohr ganz aus war. Safari meldete dann einen Fehler, unten stand „Nicht verstanden“ und Friday hörte gar nicht mehr zu. Jetzt wartet sie kurz, versucht es still neu und räumt hängendes Zuhören selbst auf. Steht unten „Mikrofon erlauben“ oder „Mikrofon belegt“, einmal auf Fridays Kopf tippen.
+
+## Sprachsteuerung neu (v1.122.0)
+
+Friday hat jetzt **ein einziges Mikrofon**, das die ganze Zeit läuft. Es wird nie mehr umgeschaltet,
+darum klappt es auf dem iPhone (Safari / Home-Bildschirm-App) genauso wie am Mac.
+
+So läuft es ab:
+
+1. **Warten** – Friday hört zu, reagiert aber **nur**, wenn „Friday“ im Satz vorkommt.
+   Gespräche nebenbei (z. B. mit deiner Frau), Fernseher oder S-Bahn werden ignoriert.
+2. **Befehl** – „Friday, zeig mir das Wetter“ geht sofort los. Sagst du nur „Friday“, wartet sie
+   8 Sekunden auf den nächsten Satz (dann ohne „Friday“).
+3. **Denken** – „Friday, stopp“ bricht ab, die Antwort wird dann nicht vorgelesen.
+   Ein neuer „Friday …“-Befehl wird direkt danach erledigt.
+4. **Sprechen** – Friday redet, bis sie fertig ist. Nebengeräusche stören sie nicht.
+   **„Friday, stopp“** (auch „Friday, ruhe“, „Friday, das reicht“) macht sie sofort still.
+   „Friday, …“ mit einem neuen Befehl unterbricht sie und erledigt den neuen Befehl.
+
+Von sich aus redet Friday nicht los (Timer & Co. erscheinen still am Status-Ring).
+Antworten auf deine Fragen liest sie immer laut vor.
+
+Friday erzählt wieder, was sie tut:
+- **Werkstatt** („Friday, bau mir einen Audi A4“): Einleitung, dann zu jedem Bauabschnitt
+  „Das ist der Motor …“, „Hier sitzen die Räder …“, zum Schluss ein Fazit.
+- **Suchen** („Friday, such mir was zu Sushi for You“): „Das ist Sushi for You …“ mit den wichtigsten Infos.
+- **Welt-Runde** („Friday, was passiert in der Welt?“): „Ich bin jetzt in den USA …“ und liest die Nachrichten vor.

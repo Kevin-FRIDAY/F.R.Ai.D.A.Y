@@ -228,18 +228,27 @@
   }
 
   const pause = (ms) => new Promise((r) => setTimeout(r, ms));
-  // Ansagen blockieren den Bau nie: läuft schon eine, wird nur die neueste nachgeholt.
-  let sprichtGerade = false, naechsteAnsage = "";
+  // v1.122.0: Friday erzählt wieder, was sie baut ("Das ist der Motor …"). Die Sätze stehen in einer
+  // Warteschlange und werden nacheinander vorgelesen; der Bau wartet nie auf die Stimme.
+  // "Friday, stopp" (oder ein neuer Befehl) leert die Schlange.
+  let sprichtGerade = false, schlange = [];
   function ansage(text) {
+    text = String(text || "").trim();
     if (!text || !$("voice-toggle")?.checked) return;
-    if (sprichtGerade) { naechsteAnsage = text; return; }
+    schlange.push(text);
+    if (!sprichtGerade) naechste();
+  }
+  function naechste() {
+    const text = schlange.shift();
+    if (!text || box.classList.contains("hidden")) { schlange = []; sprichtGerade = false; return; }
     sprichtGerade = true;
     Promise.resolve(say(text)).catch(() => {}).finally(() => {
       sprichtGerade = false;
-      const n = naechsteAnsage; naechsteAnsage = "";
-      if (n && !box.classList.contains("hidden")) ansage(n);
+      if (window.Friday?.unterbrochen?.()) { schlange = []; return; }
+      naechste();
     });
   }
+  window.addEventListener("friday-stopp", () => { schlange = []; });
 
   async function play(entry) {
     const run = ++running;
@@ -253,7 +262,7 @@
       root.getObjectByName("masse")?.removeFromParent();
     }
     infoAus();
-    naechsteAnsage = "";
+    schlange = [];
     let gezeigt = 0, angesagt = false, fehlversuche = 0;
     const t0 = Date.now();
     setState("PLANT …", "busy");
@@ -264,7 +273,13 @@
       if (p.steckbrief) plan.steckbrief = p.steckbrief;
       if (p.kennzahlen?.length) plan.kennzahlen = p.kennzahlen;
       if (p.titel || p.kennzahlen?.length) showFacts(plan);
-      if (!angesagt && plan.titel) { angesagt = true; ansage(`${entry.erweiterung ? "Ergänze" : "Baue"} ${plan.titel}.`); }
+      if (p.einleitung) plan.einleitung = p.einleitung;
+      if (p.fazit) plan.fazit = p.fazit;
+      // Erst die Einleitung ("Sehr gern, Chef. Ein Audi A4 …"), sonst wenigstens der Titel.
+      if (!angesagt && (plan.einleitung || (plan.titel && (job.status !== "plant" || job.ohneClaude)))) {
+        angesagt = true;
+        ansage(plan.einleitung || `${entry.erweiterung ? "Ich ergänze" : "Ich baue"} ${plan.titel}.`);
+      }
       const schritte = p.schritte || [];
       while (gezeigt < schritte.length && run === running) {
         const s = schritte[gezeigt++];
@@ -275,7 +290,7 @@
         setCaption(s.status || `Abschnitt ${gezeigt}`);
         addParts(s.teile, performance.now(), s.status);
         frameModel();
-        ansage(s.status);
+        ansage(s.sagen || s.status);
         await pause(job.status === "fertig" ? 600 : 200);
       }
       if (run !== running) return;
@@ -301,7 +316,7 @@
     $("werkstatt-step").textContent = `${built.filter((b) => b.src.form !== "text").length} TEILE · ${Math.max(1, Math.round((Date.now() - t0) / 1000))} S`;
     setState("FERTIG", "done");
     setCaption(haus ? "Fertig. Etagen und Leitungen rechts umschalten." : "Fertig. Teil antippen für Details.");
-    ansage("Fertig.");
+    ansage(plan.fazit || "So, Chef. Fertig.");
   }
 
   function rebuildMaterials() {

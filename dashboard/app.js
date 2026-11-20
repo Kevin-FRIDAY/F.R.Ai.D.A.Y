@@ -453,9 +453,8 @@
     const nr = ++sprechNr;
     speaking = true;
     hueSprechen(true);
-    pauseWake();
+    gesagtText = String(text);
     setState("Spricht", "speaking");
-    startBarge(text, nr);
     try {
       if (status.voice) {
         const teile = text.length > 160 ? haeppchen(text) : [text];
@@ -551,9 +550,9 @@
       speaking = false;
       hueSprechen(false);
       window.FridayFace?.stop();
-      if (!bargeFang && bargeNr === nr) stopBarge();
-      setState(bargeFang ? "Ich höre" : "Bereit, Boss.", bargeFang ? "listening" : undefined);
-      resumeWake();
+      if (nr === sprechNr) gesagtEnde = Date.now();
+      if (ohr.modus === "befehl") setState("Ich höre", "listening");
+      else zeigeRuhe();
     }
   }
 
@@ -573,7 +572,8 @@
     // Für den Stimmungs-Sound (Automatik): nur was Boss gerade in Friday sagt/tippt.
     try { window.dispatchEvent(new CustomEvent("friday-eingabe", { detail: { text } })); } catch { /* egal */ }
     window.FridayAuftrag?.start();
-    if (gespraechRec) { try { gespraechRec.abort(); } catch { /* egal */ } } // getippt statt gesprochen
+    befehlEnde(); // getippt statt gesprochen
+    const meinAuftrag = ++auftragNr;
     addMessage("user", pendingImage ? `📷 ${text}` : text);
     setState("Denkt nach", "thinking");
     const body = { text, image: pendingImage || undefined };
@@ -588,6 +588,7 @@
     try {
       const res = await api("/api/chat", { method: "POST", body: JSON.stringify(body) });
       const data = await res.json();
+      if (meinAuftrag !== auftragNr) return; // "Friday, stopp" während sie nachdachte
       // Lernecke: Begrüßung macht das Fenster selbst (es weiß, ob Carla oder Kevin da ist), darum hier ohne Text.
       const stillLernen = !data.answer && !data.error && data.actions?.some((a) => typeof a === "string" && a.startsWith("lernen"));
       // v1.121.2: Nur Aktionen ohne Text (z. B. Welt-Runde) → nichts sagen, statt "Keine Antwort." vorzulesen.
@@ -686,16 +687,17 @@
       else window.FridayLogbuch?.refresh();
       window.FridayEnergie?.refresh();
       window.FridayRing?.melde("auftrag", null);
-      await say(answer);
+      // Die Werkstatt erzählt selbst, was sie baut (Einleitung, jedes Bauteil, Fazit): nicht doppelt reden.
+      if (!data.actions?.includes("werkstatt")) await say(answer);
       clearSpeaking();
       // Carlas Lernecke (v1.108.0): erst begrüßen bzw. ansagen, dann öffnet sich die Lernecke und hört selbst zu.
       const lernA = aktion("lernen");
       if (lernA) window.FridayLernen?.open({ modus: lernA.split(":")[1] || "start", suche: lernA.split(":").slice(2).join(" "), stimme: Boolean(opts.stimme) });
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
       // Gesprächsmodus: Kam der Befehl per Stimme, hört Friday danach weiter zu, ohne "Friday" davor.
-      const weiter = !bargeFang && !unterbrochenEben() && !lernA && !window.FridayLernen?.offen() && (hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer));
+      const weiter = ohr.modus !== "befehl" && !ohr.wartend && !unterbrochenEben() && !lernA && !window.FridayLernen?.offen() && (hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer));
       if (weiter && Recognition && !callActive && !window.FridayDokumente?.offen()) {
-        setTimeout(() => { if (!busy && !speaking) listenOnce({ folge: true, frage: hat("zuhoeren") }); }, 250);
+        setTimeout(() => { if (!busy && !speaking) listenOnce({ folge: true, frage: hat("zuhoeren") }); }, 150);
       }
     } catch (err) {
       window.FridayAuftrag?.ende(false);
@@ -704,8 +706,10 @@
       window.FridayRing?.melde("auftrag", "bad", "Auftrag fehlgeschlagen: Verbindung gestört", 2 * 60000);
     } finally {
       busy = false;
-      if (!speaking) setState("Bereit, Boss.");
-      resumeWake();
+      if (!speaking) zeigeRuhe();
+      // Kam während des Nachdenkens schon der nächste "Friday …"-Befehl: jetzt ausführen.
+      const naechster = ohr.wartend; ohr.wartend = "";
+      if (naechster) setTimeout(() => send(naechster, { stimme: true }), 50);
     }
   }
 
@@ -1517,9 +1521,17 @@
   window.Friday.askAboutImage = (frame, text) => { pendingImage = frame; return send(text); };
   window.Friday.stopSpeaking = () => { sprechNr++; try { speechSynthesis?.cancel(); } catch { /* egal */ } try { audio.pause(); } catch { /* egal */ } };
 
-  // ---------- Spracherkennung ----------
+  // ---------- Sprachsteuerung (v1.122.0): EIN Ohr, ein klarer Ablauf ----------
+  // Früher liefen bis zu drei Mikrofone nacheinander (Weckwort-Ohr, Zuhören, Unterbrechen-Ohr). Jeder Wechsel
+  // brauchte auf dem iPhone Zeit, schnitt die Stimme ab oder ließ Safari hängen ("Nicht verstanden", taub).
+  // Jetzt gibt es genau EIN Mikrofon, das durchgehend läuft, und einen Ablauf mit vier Schritten:
+  //   1. Warten:   Friday hört zu, reagiert aber NUR auf Sätze mit "Friday". Alles andere (Gespräche mit
+  //                deiner Frau, Fernseher, S-Bahn) wird ignoriert.
+  //   2. Befehl:   Nach "Friday" allein (oder wenn Friday etwas gefragt hat) zählt der nächste Satz auch ohne "Friday".
+  //   3. Denken:   Der Server arbeitet. "Friday, stopp" bricht ab, ein neuer "Friday …"-Befehl wartet so lange.
+  //   4. Sprechen: Friday redet. Nur "Friday …" unterbricht sie ("Friday, stopp" = sofort still), sonst redet sie weiter.
+  // Das Mikrofon wird dafür nie umgeschaltet. Endet es von selbst (Browser, Stille, Geräusch), startet es neu.
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  // v1.118.1: Friday reagiert NUR, wenn sie angesprochen wird.
   // "Friday" zählt überall im Satz (außer "Black Friday"). Das deutsche Wort "Freitag" zählt nur ganz am
   // Anfang ("Freitag, wie spät ist es?"), sonst springt sie bei "am Freitag fahren wir zu Oma" an.
   const WAKE_WORT = /(?<!black\s)\b(?:friday|fraidei|freiday|frei day)\b[,.!?]?\s*/i;
@@ -1531,331 +1543,249 @@
     },
   };
   window.Friday.weckwort = (said) => { const m = String(said || "").match(WAKE); return m ? { index: m.index, ende: m.index + m[0].length } : null; };
-  let wakeRec = null;
-  let wakeActive = false;
 
-  // Gesprächsmodus (Standard an): Nach einer gesprochenen Antwort hört Friday weiter zu.
-  // v1.118.1: Standard AUS. Sonst schickt Friday nach jeder Antwort auch das Gespräch mit anderen
-  // (z. B. mit deiner Frau) an sich selbst und redet dazwischen. Einschalten: Einstellungen → Assistent.
+  // Gesprächsmodus (Standard AUS): Nach einer gesprochenen Antwort zählt der nächste Satz auch ohne "Friday".
+  // Aus, weil Friday sonst das Gespräch mit anderen an sich selbst schickt. Einschalten: Einstellungen → Assistent.
   const gespraechAn = () => storage.get("friday_gespraech") === "1";
-  // Damit endet das Gespräch, ohne dass es an Friday geschickt wird.
-  const GESPRAECH_ENDE = /^(?:(?:ok(?:ay)?|gut|alles klar|super|perfekt)[ ,.!]*)?(?:danke(?: dir| schön| schoen| sehr)?|das wars?|das war's|das war es|das reicht|reicht|fertig|stopp?|ende|schluss|tschüss|tschuess|bis später|bis spaeter|nichts mehr|nein danke)(?: friday| boss)?[ .!]*$/i;
-  let gespraechRec = null;
-
-  // v1.121.5: Auf dem iPhone darf immer nur EIN Mikrofon laufen. Startet das Zuhören, bevor das
-  // "Friday"-Ohr ganz aus ist, meldet Safari einen Fehler ("audio-capture") und schickt danach oft
-  // kein Ende-Signal mehr. Dann stand unten "Nicht verstanden" und Friday reagierte gar nicht mehr.
-  // Jetzt: erst das alte Mikrofon ganz beenden lassen, bei Mikrofon-Fehlern still neu versuchen und
-  // nie wieder auf ein fehlendes Ende-Signal warten (Sicherheits-Zeitschalter).
-  let gespraechSeit = 0;
-  function listenOnce({ folge = false, frage = false, versuch = 1, mikroVersuch = 1 } = {}) {
-    if (!Recognition) {
-      addMessage("friday", "Dein Browser kann keine Sprache erkennen. Nutze Safari oder Chrome, oder tipp unten.");
-      return;
-    }
-    const andereAn = wakeLaeuft || !!bargeRec;
-    pauseWake();
-    stopBarge();
-    if (gespraechRec) { const alt = gespraechRec; gespraechRec = null; try { alt.abort(); } catch { /* egal */ } }
-    // Platzhalter, damit sich in der Wartezeit kein anderes Ohr einschaltet.
-    const platz = {};
-    gespraechRec = platz;
-    setState(folge ? "Ich höre weiter …" : "Ich höre", "listening");
-    document.body.classList.toggle("gespraech", folge);
-    gespraechSeit = Date.now();
-    const los = () => {
-      if (gespraechRec !== platz) return; // inzwischen abgebrochen oder neu gestartet
-      let rec;
-      try { rec = new Recognition(); } catch { gespraechRec = null; resumeWake(); return; }
-      gespraechRec = rec;
-      rec.lang = "de-DE";
-      rec.interimResults = false;
-      rec.maxAlternatives = 1;
-      let gehoert = false, stille = false, mikroFehler = false, beendet = false, notEnde = null;
-      rec.onresult = (e) => {
-        const said = String(e.results?.[0]?.[0]?.transcript || "").trim();
-        if (!said) return;
-        gehoert = true;
-        // "Danke" / "Das war's" beendet das Gespräch (außer Friday hat gerade etwas gefragt, dann entscheidet der Server).
-        if (folge && !frage && GESPRAECH_ENDE.test(said.replace(/^(?:hey |ok )?(?:friday|freitag)[,.!]?\s*/i, ""))) {
-          addMessage("user", said);
-          say(["Gern, Boss.", "Jederzeit, Boss.", "Alles klar, Boss."][Math.floor(Math.random() * 3)]);
-          return;
-        }
-        send(said, { stimme: true });
-      };
-      rec.onerror = (e) => {
-        const f = e?.error || "";
-        if (f === "no-speech" || f === "aborted") stille = true;
-        else if (f === "audio-capture" || f === "network") mikroFehler = true; // Mikrofon war noch belegt
-        else if (f === "not-allowed" || f === "service-not-allowed") {
-          wakeBrauchtTipp = true;
-          setState("Mikrofon erlauben: einmal auf Fridays Kopf tippen");
-        } else setState("Nicht verstanden");
-        // Safari schickt nach einem Fehler manchmal kein Ende-Signal mehr: selbst beenden.
-        clearTimeout(notEnde);
-        notEnde = setTimeout(() => ende(), 1200);
-      };
-      const ende = () => {
-        if (beendet) return;
-        beendet = true;
-        clearTimeout(notEnde);
-        if (gespraechRec !== rec) return; // ein neueres Zuhören hat übernommen
-        gespraechRec = null;
-        document.body.classList.remove("gespraech");
-        // Mikrofon war noch belegt: kurz warten und still nochmal versuchen.
-        if (mikroFehler && !gehoert && mikroVersuch < 3 && !busy && !speaking) {
-          setTimeout(() => { if (!busy && !speaking && !gespraechRec) listenOnce({ folge, frage, versuch, mikroVersuch: mikroVersuch + 1 }); }, 500);
-          return;
-        }
-        // Im Gespräch einmal nachhaken, falls der Browser zu früh aufgibt.
-        if (folge && !gehoert && stille && versuch < 2 && !busy && !speaking) {
-          setTimeout(() => { if (!busy && !speaking && !gespraechRec) listenOnce({ folge, frage, versuch: versuch + 1 }); }, 150);
-          return;
-        }
-        if (!busy && !speaking && !wakeBrauchtTipp) setState(wakeActive ? 'Höre auf "Friday"' : "Bereit, Boss.");
-        if (!busy && !speaking && mikroFehler && !gehoert) setState("Mikrofon belegt – tipp auf Fridays Kopf");
-        resumeWake();
-      };
-      rec.onend = ende;
-      // Hängt das Zuhören ohne Ende-Signal, nach 20 s aufräumen.
-      setTimeout(() => { if (!beendet && gespraechRec === rec) { try { rec.abort(); } catch { /* egal */ } setTimeout(ende, 800); } }, 20000);
-      try { rec.start(); } catch { mikroFehler = true; ende(); }
-    };
-    // Lief gerade ein anderes Ohr, ihm Zeit zum Ausgehen geben (iPhone braucht das).
-    if (andereAn) setTimeout(los, IST_IOS ? 450 : 200); else los();
-  }
-
-  $("reactor").addEventListener("click", () => {
-    if (speaking) {
-      sprechNr++;
-      speechSynthesis?.cancel();
-      audio.pause();
-      return;
-    }
-    listenOnce();
-  });
-
-  // ---------- Unterbrechen mit "Friday" (v1.106.0) ----------
-  // Während Friday spricht, hört ein zweites Ohr mit. Nur wenn darin "Friday" vorkommt, hört sie sofort
-  // auf zu reden und nimmt den Befehl an ("Friday, stopp" / "Friday, wie spät ist es?").
-  // Normales Reden ohne "Friday" wird ignoriert. Hört das Mikrofon Fridays eigene Stimme aus dem
-  // Lautsprecher (Echo), erkennt sie das am Text und unterbricht sich nicht selbst.
   const unterbrechenAn = () => storage.get("friday_unterbrechen") !== "0";
-  const NUR_STOPP = /^(stopp?|halt|ruhe|still|sei still|schluss|aus|warte|moment|danke|ok(ay)?|genug|pause)[ .!]*$/i;
-  let bargeRec = null;     // das zweite Ohr
-  let bargeText = "";      // was Friday gerade sagt (für den Echo-Vergleich)
-  let bargeFang = false;   // "Friday" wurde gehört, Friday ist still und wartet auf den Befehl
-  let bargeTimer = null;
-  let bargeZeit = 0;
-  let bargeNr = -1;
-  let bargeNeustarts = 0;
+  // Damit endet ein Gespräch, ohne dass es an Friday geschickt wird.
+  const GESPRAECH_ENDE = /^(?:(?:ok(?:ay)?|gut|alles klar|super|perfekt)[ ,.!]*)?(?:danke(?: dir| schön| schoen| sehr)?|das wars?|das war's|das war es|das reicht|reicht|fertig|stopp?|ende|schluss|tschüss|tschuess|bis später|bis spaeter|nichts mehr|nein danke)(?: friday| boss)?[ .!]*$/i;
+  // "Friday, stopp" & Co.: sofort still sein, nichts an den Server schicken.
+  const NUR_STOPP = /^(?:(?:bitte|jetzt|mal)\s+)?(?:stopp?|halt|ruhe|still|sei still|sei ruhig|schluss|aus|hör auf|hoer auf|aufhören|aufhoeren|warte|moment|danke|ok(?:ay)?|genug|pause|das reicht|reicht|es reicht)(?:\s+(?:bitte|jetzt|friday|boss))*[ .!]*$/i;
   const IST_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  const ohr = {
+    rec: null,          // das eine Mikrofon
+    laeuft: false,
+    modus: "warten",    // "warten" (nur "Friday …") oder "befehl" (nächster Satz zählt)
+    befehl: {},         // { folge, frage } im Befehl-Modus
+    befehlTimer: null,
+    timer: null,
+    gestartet: 0,
+    lebenszeichen: 0,
+    gestoppt: 0,        // wann das Mikrofon zuletzt aus ging (iPhone braucht danach eine kurze Pause)
+    schnell: 0,         // wie oft es direkt wieder aufgehört hat (sonst Dauerschleife)
+    brauchtTipp: false, // Safari will erst einen Tipp aufs Display
+    erledigt: new Set(),// schon verarbeitete Satz-Nummern dieser Mikrofon-Runde
+    verstummt: new Set(),
+    wartend: "",        // Befehl, der kam, während Friday noch nachdachte
+  };
+  let wakeActive = !!Recognition;
+  let bargeZeit = 0;        // wann Friday zuletzt per "Friday …" unterbrochen wurde
+  let gesagtText = "";      // was Friday gerade sagt oder zuletzt gesagt hat (Echo-Erkennung)
+  let gesagtEnde = 0;
+  let auftragNr = 0;        // "Friday, stopp" beim Nachdenken verwirft die laufende Antwort
   const unterbrochenEben = () => Date.now() - bargeZeit < 4000;
-  window.Friday.unterbrochen = () => unterbrochenEben() || bargeFang;
-  window.Friday.beschaeftigt = () => busy || speaking || bargeFang;
-  const bargeNorm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  window.Friday.unterbrochen = () => unterbrochenEben() || ohr.modus === "befehl";
+  window.Friday.beschaeftigt = () => busy || speaking || ohr.modus === "befehl";
+
+  const norm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9ß ]+/g, " ").replace(/\s+/g, " ").trim();
-  // Stammt das Gehörte aus Fridays eigenem Satz? (Echo aus dem Lautsprecher)
-  function bargeEcho(said) {
-    const gesagt = bargeNorm(bargeText);
-    if (!/\b(friday|freitag)\b/.test(gesagt)) return false; // Friday sagt das Wort gar nicht → muss Boss sein
-    const woerter = bargeNorm(said).split(" ").filter((w) => w.length > 2);
+  const sagtFridaySelbst = () => /\b(friday|freitag)\b/.test(norm(gesagtText));
+  // Hört das Mikrofon Fridays eigene Stimme aus dem Lautsprecher? (gleiche Wörter wie ihr Satz)
+  function istEcho(said) {
+    if (!speaking && Date.now() - gesagtEnde > 2500) return false;
+    const woerter = norm(said).split(" ").filter((w) => w.length > 2);
     if (woerter.length <= 1) return false;
-    const menge = new Set(gesagt.split(" "));
-    const treffer = woerter.filter((w) => menge.has(w)).length;
-    return treffer / woerter.length >= 0.6;
+    const menge = new Set(norm(gesagtText).split(" "));
+    return woerter.filter((w) => menge.has(w)).length / woerter.length >= 0.6;
   }
-  function stopBarge() {
-    clearTimeout(bargeTimer);
-    const r = bargeRec;
-    bargeRec = null;
-    bargeFang = false;
-    if (r) { r.onend = null; try { r.abort(); } catch { /* egal */ } }
+
+  function ohrDarf() {
+    return wakeActive && !ohr.brauchtTipp && !callActive && !window.Friday?.mikroBelegt
+      && document.visibilityState !== "hidden";
   }
-  function bargeBefehl(cmd) {
-    stopBarge();
-    bargeZeit = Date.now();
-    cmd = String(cmd || "").replace(/^[,.!\s]+/, "").trim();
-    window.FridayRing?.melde?.("unterbrechen", null);
-    if (cmd.length > 2 && !NUR_STOPP.test(cmd)) { setTimeout(() => send(cmd, { stimme: true }), 120); return; }
-    if (NUR_STOPP.test(cmd)) { setState("Bereit, Boss."); resumeWake(); return; }
-    setTimeout(() => { if (!busy && !speaking) listenOnce({ folge: true }); }, 200);
+  function zeigeRuhe() {
+    if (busy || speaking || ohr.modus === "befehl") return;
+    if (ohr.brauchtTipp) setState('Einmal tippen, dann höre ich auf "Friday"');
+    else setState(wakeActive && Recognition ? 'Höre auf "Friday"' : "Bereit, Boss.");
   }
-  function startBarge(text, nr) {
-    stopBarge();
-    bargeNr = nr;
-    if (!Recognition || !unterbrechenAn() || callActive || document.visibilityState === "hidden") return;
-    bargeText = String(text || "");
-    bargeNeustarts = 0;
+
+  function ohrSpaeter(ms) {
+    clearTimeout(ohr.timer);
+    ohr.timer = setTimeout(ohrStart, ms);
+  }
+  function ohrStart() {
+    clearTimeout(ohr.timer);
+    if (!Recognition || ohr.laeuft || !ohrDarf()) return;
+    // iPhone: direkt nach dem Ausschalten ist das Mikrofon noch belegt.
+    const pause = (IST_IOS ? 450 : 150) - (Date.now() - ohr.gestoppt);
+    if (pause > 0) { ohrSpaeter(pause); return; }
     let rec;
-    try { rec = new Recognition(); } catch { return; }
+    try { rec = new Recognition(); } catch { ohrSpaeter(2000); return; }
     rec.lang = "de-DE";
     rec.continuous = true;
     rec.interimResults = true;
     rec.maxAlternatives = 1;
+    ohr.rec = rec; ohr.laeuft = true; ohr.gestartet = ohr.lebenszeichen = Date.now();
+    ohr.erledigt = new Set(); ohr.verstummt = new Set();
+    rec.onstart = () => { if (ohr.rec === rec) { ohr.lebenszeichen = Date.now(); zeigeRuhe(); } };
     rec.onresult = (e) => {
+      if (ohr.rec !== rec) return;
+      ohr.lebenszeichen = Date.now();
       for (let i = e.resultIndex; i < e.results.length; i++) {
-        const said = String(e.results[i][0]?.transcript || "");
-        const fertig = e.results[i].isFinal;
-        const m = said.match(WAKE);
-        if (!m) continue;
-        if (!bargeFang) {
-          // Zwischenergebnis: nur sofort stoppen, wenn Friday das Wort selbst gar nicht sagt (dann kann es kein Echo sein).
-          if (!fertig && /\b(friday|freitag)\b/.test(bargeNorm(bargeText))) continue;
-          if (bargeEcho(said)) continue;
-          bargeFang = true;
-          bargeZeit = Date.now();
-          window.Friday.stopSpeaking?.();
-          setState("Ich höre", "listening");
-          // Kommt kein fertiger Satz mehr, einfach normal zuhören.
-          bargeTimer = setTimeout(() => bargeBefehl(""), 3500);
-        }
-        if (fertig) { clearTimeout(bargeTimer); bargeBefehl(said.slice(m.index + m[0].length)); return; }
+        const r = e.results[i];
+        try { hoeren(String(r[0]?.transcript || "").trim(), r.isFinal, i); } catch { /* ein Satz darf das Ohr nie anhalten */ }
       }
     };
     rec.onerror = (e) => {
-      // Still: Unterbrechen ist ein Extra. iPhone: Mikrofon war noch vom "Friday"-Ohr belegt → gleich nochmal.
-      if (e?.error === "audio-capture" && bargeRec === rec && speaking && bargeNeustarts < 3) {
-        bargeNeustarts++;
-        setTimeout(() => { if (bargeRec === rec && speaking) { try { rec.start(); } catch { /* läuft */ } } }, 500);
-      }
+      if (ohr.rec !== rec) return;
+      const f = e?.error || "";
+      if (f === "not-allowed" || f === "service-not-allowed") { ohr.brauchtTipp = true; zeigeRuhe(); }
+      // Safari schickt nach einem Fehler manchmal kein Ende-Signal mehr: dann selbst beenden.
+      setTimeout(() => { if (ohr.rec === rec) ohrEnde(rec); }, 1200);
     };
-    rec.onend = () => {
-      // Der Browser beendet das Zuhören manchmal von selbst: solange Friday spricht, neu starten.
-      if (bargeRec !== rec) return;
-      if (bargeFang) { bargeBefehl(""); return; }
-      // iPhone/iPad: Jeder Neustart des Mikrofons schaltet dort den Ton um und schneidet Friday das Wort ab.
-      // Darum dort nur selten neu starten (Geräusche wie die S-Bahn beenden das Zuhören oft).
-      if (speaking && IST_IOS) {
-        bargeNeustarts++;
-        if (bargeNeustarts <= 2) bargeTimer = setTimeout(() => { if (bargeRec === rec && speaking) { try { rec.start(); } catch { bargeRec = null; } } }, 4000);
-        else bargeRec = null;
+    rec.onend = () => ohrEnde(rec);
+    try { rec.start(); } catch { ohr.rec = null; ohr.laeuft = false; ohr.gestoppt = Date.now(); ohrSpaeter(1000); return; }
+    zeigeRuhe();
+  }
+  function ohrEnde(rec) {
+    if (ohr.rec !== rec) return;
+    ohr.rec = null; ohr.laeuft = false; ohr.gestoppt = Date.now();
+    if (!ohrDarf()) { zeigeRuhe(); return; }
+    ohr.schnell = Date.now() - ohr.gestartet < 1500 ? Math.min(ohr.schnell + 1, 5) : 0;
+    let ms = ohr.schnell ? 400 * 2 ** ohr.schnell : 250;
+    // iPhone: Ein Mikrofon-Neustart schneidet Friday kurz das Wort ab (say() spricht danach an der Stelle weiter).
+    if (speaking && IST_IOS) ms = Math.max(ms, 1500);
+    ohrSpaeter(ms);
+  }
+  function ohrStopp() {
+    clearTimeout(ohr.timer);
+    const r = ohr.rec;
+    ohr.rec = null;
+    if (ohr.laeuft) ohr.gestoppt = Date.now();
+    ohr.laeuft = false;
+    if (r) { r.onend = null; r.onresult = null; r.onerror = null; try { r.abort(); } catch { /* egal */ } }
+  }
+
+  // Befehl-Modus: der nächste Satz zählt auch ohne "Friday" (nach "Friday" allein, nach einer Frage von Friday).
+  function befehlModus({ folge = false, frage = false } = {}) {
+    clearTimeout(ohr.befehlTimer);
+    ohr.modus = "befehl";
+    ohr.befehl = { folge, frage };
+    document.body.classList.toggle("gespraech", folge);
+    setState(folge ? "Ich höre weiter …" : "Ich höre", "listening");
+    ohr.befehlTimer = setTimeout(befehlEnde, frage ? 12000 : 8000);
+  }
+  function befehlEnde() {
+    clearTimeout(ohr.befehlTimer);
+    if (ohr.modus !== "befehl") return;
+    ohr.modus = "warten";
+    ohr.befehl = {};
+    document.body.classList.remove("gespraech");
+    zeigeRuhe();
+  }
+  function stilleJetzt() {
+    window.Friday.stopSpeaking?.();
+    bargeZeit = Date.now();
+  }
+
+  // Ein erkannter Satz (Zwischenstand oder fertig). Nummer i: Satz in dieser Mikrofon-Runde.
+  function hoeren(said, fertig, i) {
+    if (!said || ohr.erledigt.has(i)) return;
+    const m = said.match(WAKE);
+    // Befehl-Modus: der nächste fertige Satz zählt, auch ohne "Friday".
+    if (ohr.modus === "befehl" && !speaking && !busy) {
+      if (!fertig) { clearTimeout(ohr.befehlTimer); ohr.befehlTimer = setTimeout(befehlEnde, 8000); return; }
+      if (!m && istEcho(said)) return; // Fridays eigene letzte Worte
+      ohr.erledigt.add(i);
+      const { folge, frage } = ohr.befehl;
+      befehlEnde();
+      const cmd = (m ? said.slice(m.index + m[0].length) : said).replace(/^[,.!\s]+/, "").trim();
+      if (folge && !frage && GESPRAECH_ENDE.test(cmd)) {
+        addMessage("user", said);
+        say(["Gern, Boss.", "Jederzeit, Boss.", "Alles klar, Boss."][Math.floor(Math.random() * 3)]);
         return;
       }
-      if (speaking) { try { rec.start(); } catch { bargeRec = null; } } else bargeRec = null;
-    };
-    bargeRec = rec;
-    // iPhone: erst starten, wenn das "Friday"-Ohr wirklich aus ist (nur ein Mikrofon gleichzeitig).
-    if (IST_IOS) setTimeout(() => { if (bargeRec === rec && speaking) { try { rec.start(); } catch { /* läuft */ } } }, 450);
-    else { try { rec.start(); } catch { bargeRec = null; } }
-  }
-  window.Friday.unterbrechen = { an: unterbrechenAn, aktiv: () => !!bargeRec };
-
-  // Dauerhaft auf "Friday" hören (klappt, solange das Dashboard offen ist).
-  // v1.102.0: Das Weckwort ist IMMER an. Früher wurde die Einstellung zwar gespeichert,
-  // beim Neuladen aber nie wieder gelesen – darum war es nach jedem Start aus.
-  // Der Schalter pausiert jetzt nur bis zum nächsten Neuladen.
-  let wakeLaeuft = false;     // Erkennung läuft gerade
-  let wakeBrauchtTipp = false; // Browser (v. a. iPhone/Safari) will erst einen Tipp aufs Display
-  let wakeSchnellEnden = 0;   // wie oft die Erkennung direkt wieder aufgehört hat
-  let wakeGestartet = 0;
-  let wakeTimer = null;
-  let wakeLetzterFehler = 0;
-  // Wächter (v1.121.5): Ist das "Friday"-Ohr aus, obwohl es laufen dürfte, wieder anwerfen.
-  // Hängt ein einmaliges Zuhören länger als 25 s, aufräumen – sonst reagiert Friday gar nicht mehr.
-  setInterval(() => {
-    if (gespraechRec && !busy && !speaking && Date.now() - gespraechSeit > 25000) {
-      const alt = gespraechRec; gespraechRec = null;
-      try { alt.abort?.(); } catch { /* egal */ }
-      document.body.classList.remove("gespraech");
-      setState(wakeActive ? 'Höre auf "Friday"' : "Bereit, Boss.");
+      if (!cmd && m) { befehlModus({}); return; }
+      ausfuehren(cmd);
+      return;
     }
-    if (wakeActive && !wakeLaeuft && !wakeBrauchtTipp && wakeDarf()) startWake();
+    // Sonst zählt nur, was mit "Friday" angesprochen wird. Nebengespräche, TV und Geräusche: ignorieren.
+    if (!m) return;
+    if (speaking) {
+      if (!unterbrechenAn()) return;
+      // Sagt Friday das Wort gerade selbst, erst den fertigen Satz abwarten (könnte ihr Echo sein).
+      if (!fertig && sagtFridaySelbst()) return;
+      if (sagtFridaySelbst() && istEcho(said)) return;
+      if (!ohr.verstummt.has(i)) { ohr.verstummt.add(i); stilleJetzt(); setState("Ich höre", "listening"); }
+    }
+    if (!fertig) return;
+    ohr.erledigt.add(i);
+    ausfuehren(said.slice(m.index + m[0].length).replace(/^[,.!\s]+/, "").trim());
+  }
+
+  // Was nach "Friday" kam, ausführen.
+  function ausfuehren(cmd) {
+    cmd = String(cmd || "").trim();
+    if (NUR_STOPP.test(cmd)) {
+      stilleJetzt();
+      if (busy) { auftragNr++; window.FridayAuftrag?.ende(false); }
+      ohr.wartend = "";
+      window.FridayWelttour?.stopp?.();
+      try { window.dispatchEvent(new CustomEvent("friday-stopp")); } catch { /* egal */ }
+      window.FridayRing?.melde?.("unterbrechen", null);
+      befehlEnde();
+      if (!busy) setState("Bereit, Boss.");
+      setTimeout(zeigeRuhe, 1200);
+      return;
+    }
+    if (cmd.length < 2) { befehlModus({}); return; } // nur "Friday": auf den Befehl warten
+    if (busy) { ohr.wartend = cmd; setState("Kommt gleich dran …", "thinking"); return; }
+    send(cmd, { stimme: true });
+  }
+
+  // Für andere Fenster und den Reaktor-Knopf: jetzt zuhören (ohne "Friday").
+  function listenOnce(opts = {}) {
+    if (!Recognition) {
+      addMessage("friday", "Dein Browser kann keine Sprache erkennen. Nutze Safari oder Chrome, oder tipp unten.");
+      return;
+    }
+    if (!wakeActive) { wakeActive = true; const t = $("wake-toggle"); if (t) t.checked = true; }
+    ohr.brauchtTipp = false;
+    befehlModus(opts);
+    ohrStart();
+  }
+  window.Friday.zuhoeren = listenOnce;
+
+  $("reactor").addEventListener("click", () => {
+    if (speaking) { stilleJetzt(); setTimeout(zeigeRuhe, 300); return; }
+    listenOnce();
+  });
+
+  window.Friday.unterbrechen = { an: unterbrechenAn, aktiv: () => ohr.laeuft && speaking };
+  // Für die Lernecke (lernen.js): eigenes Mikrofon, solange sie abfragt.
+  window.Friday.wakePause = () => { befehlEnde(); ohrStopp(); };
+  window.Friday.wakeWeiter = () => ohrSpaeter(300);
+  window.Friday.ohrZustand = () => ({ laeuft: ohr.laeuft, modus: ohr.modus, speaking, busy, tipp: ohr.brauchtTipp });
+
+  // Wächter: Ist das Ohr aus, obwohl es laufen dürfte, wieder anwerfen. Hängt es still (Chrome/Safari
+  // melden manchmal nichts mehr), nach 2 Minuten ohne Lebenszeichen frisch starten.
+  setInterval(() => {
+    if (!ohrDarf()) return;
+    if (!ohr.laeuft) { ohrStart(); return; }
+    if (!speaking && !busy && ohr.modus === "warten" && Date.now() - ohr.lebenszeichen > 120000) { ohrStopp(); ohrSpaeter(300); }
   }, 5000);
   storage.remove("friday_wake"); // alter, nie gelesener Wert
 
-  function wakeDarf() {
-    return wakeActive && !speaking && !busy && !gespraechRec && !bargeRec
-      && !callActive && !window.Friday?.mikroBelegt
-      && document.visibilityState !== "hidden";
-  }
-
-  function wakeBauen() {
-    const rec = new Recognition();
-    rec.lang = "de-DE";
-    rec.continuous = true;
-    rec.interimResults = false;
-    rec.onstart = () => { wakeLaeuft = true; wakeBrauchtTipp = false; wakeGestartet = Date.now(); };
-    rec.onresult = (e) => {
-      const said = e.results[e.results.length - 1][0].transcript;
-      const match = said.match(WAKE);
-      if (!match || busy || speaking) return;
-      const command = said.slice(match.index + match[0].length).trim();
-      if (command.length > 2) send(command, { stimme: true });
-      else listenOnce();
-    };
-    rec.onerror = (e) => {
-      // Mikrofon nicht freigegeben oder Start ohne Tipp: beim nächsten Tipp neu versuchen.
-      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
-        wakeBrauchtTipp = true;
-        if (wakeActive && !busy && !speaking) setState('Einmal tippen, dann höre ich auf "Friday"');
-      }
-      // iPhone: nach einem Fehler kommt manchmal kein Ende-Signal – dann gilt das Ohr als aus.
-      const fehlerZeit = Date.now();
-      setTimeout(() => { if (wakeLaeuft && wakeLetzterFehler === fehlerZeit) { wakeLaeuft = false; if (!wakeBrauchtTipp && wakeDarf()) wakeSpaeter(400); } }, 1500);
-      wakeLetzterFehler = fehlerZeit;
-    };
-    rec.onend = () => {
-      wakeLaeuft = false;
-      if (wakeBrauchtTipp || !wakeDarf()) return;
-      // Hört der Browser sofort wieder auf, etwas länger warten (sonst Dauerschleife).
-      wakeSchnellEnden = Date.now() - wakeGestartet < 1500 ? Math.min(wakeSchnellEnden + 1, 6) : 0;
-      wakeSpaeter(wakeSchnellEnden ? 400 * 2 ** wakeSchnellEnden : 300);
-    };
-    return rec;
-  }
-
-  function wakeSpaeter(ms) {
-    clearTimeout(wakeTimer);
-    wakeTimer = setTimeout(startWake, ms);
-  }
-
-  function startWake() {
-    if (!Recognition || !wakeDarf() || wakeLaeuft) return;
-    if (!wakeRec) wakeRec = wakeBauen();
-    try { wakeRec.start(); wakeLaeuft = true; } catch { /* läuft schon */ }
-    if (!busy && !speaking) setState('Höre auf "Friday"');
-  }
-
-  function pauseWake() {
-    clearTimeout(wakeTimer);
-    if (wakeRec) { try { wakeRec.abort(); } catch { /* egal */ } }
-    wakeLaeuft = false;
-  }
-
-  function resumeWake() {
-    if (wakeActive) wakeSpaeter(500); // nach dem Gesprächsmodus-Zuhören (250 ms), damit sich beide nicht stören
-  }
-  // Für die Lernecke (lernen.js): eigenes Mikrofon, solange sie abfragt.
-  window.Friday.wakePause = pauseWake;
-  window.Friday.wakeWeiter = resumeWake;
-
   $("wake-toggle").checked = true;
-  wakeActive = !!Recognition;
   $("wake-toggle").addEventListener("change", (e) => {
-    wakeActive = e.target.checked;
-    if (wakeActive) {
-      wakeBrauchtTipp = false;
-      startWake();
-    } else {
-      pauseWake();
-      setState("Bereit, Boss.");
-    }
+    wakeActive = e.target.checked && !!Recognition;
+    if (wakeActive) { ohr.brauchtTipp = false; ohrStart(); }
+    else { befehlEnde(); ohrStopp(); setState("Bereit, Boss."); }
   });
 
-  // iPhone/Safari: Mikrofon darf oft erst nach einem Tipp starten – dann beim ersten Tipp anwerfen.
-  const wakeNachTipp = () => { if (wakeActive && !wakeLaeuft) { wakeBrauchtTipp = false; wakeSpaeter(400); } };
-  document.addEventListener("pointerdown", wakeNachTipp, true);
-  document.addEventListener("keydown", wakeNachTipp, true);
-  // App wieder im Vordergrund (iPhone beendet das Zuhören im Hintergrund): neu starten.
+  // iPhone/Safari: Mikrofon darf oft erst nach einem Tipp starten – dann direkt beim Tipp anwerfen.
+  const ohrNachTipp = () => { if (wakeActive && !ohr.laeuft) { ohr.brauchtTipp = false; ohrStart(); } };
+  document.addEventListener("pointerdown", ohrNachTipp, true);
+  document.addEventListener("keydown", ohrNachTipp, true);
+  // App im Hintergrund: Mikrofon aus. Wieder vorne: neu starten.
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") { wakeBrauchtTipp = false; resumeWake(); }
-    else pauseWake();
+    if (document.visibilityState === "visible") { ohr.brauchtTipp = false; ohrSpaeter(400); }
+    else { befehlEnde(); ohrStopp(); }
   });
-  window.addEventListener("pageshow", () => resumeWake());
-  // Gleich beim Start anwerfen (nach dem Aufbau der Seite).
-  setTimeout(startWake, 800);
+  window.addEventListener("pageshow", () => ohrSpaeter(400));
+  setTimeout(ohrStart, 800);
 
   // ---------- Friday anrufen (freihändiges Gespräch: zuhören ↔ antworten) ----------
   let callActive = false, callRec = null, callMuted = false, callVoicePrev = null;
@@ -1871,9 +1801,9 @@
     $("call-mute")?.classList.remove("off");
     callText("");
     const vt = $("voice-toggle"); callVoicePrev = vt ? vt.checked : null; if (vt) vt.checked = true; // Vorlesen fürs Gespräch an
-    pauseWake();
+    befehlEnde(); ohrStopp();
     callOrb("listening"); callStatus("Verbunden – ich höre");
-    callListen();
+    setTimeout(callListen, IST_IOS ? 450 : 50); // iPhone: erst das Friday-Ohr ganz ausgehen lassen
   }
 
   function closeCall() {
@@ -1883,8 +1813,8 @@
     try { audio.pause(); } catch { /* egal */ }
     $("call")?.classList.add("hidden");
     const vt = $("voice-toggle"); if (vt && callVoicePrev !== null) vt.checked = callVoicePrev;
-    if (!busy && !speaking) setState("Bereit, Boss.");
-    resumeWake();
+    if (!busy && !speaking) zeigeRuhe();
+    ohrSpaeter(IST_IOS ? 500 : 250);
   }
 
   function callListen() {
