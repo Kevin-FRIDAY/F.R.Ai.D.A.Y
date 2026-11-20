@@ -32,7 +32,7 @@ Die Stimme spricht Deutsch mit Akzent der gewählten Stimme. Bitte keine Stimme 
 
 Wenn Friday etwas direkt am Mac sagt (z. B. in Protokollen), nutzt sie die macOS-Stimme aus `mac-agent/.env` (`SAY_VOICE=Anna`). Weitere Stimmen: Systemeinstellungen > Bedienungshilfen > Gesprochene Inhalte > Systemstimme > Stimmen verwalten.
 
-## Friday hört nur auf "Friday" (ab v1.117.1)
+## Friday hört nur auf "Friday" (ab v1.118.1)
 
 Friday reagiert nur, wenn du sie mit **"Friday"** ansprichst. Unterhältst du dich mit jemand anderem, bleibt sie still.
 

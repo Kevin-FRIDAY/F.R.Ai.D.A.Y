@@ -1,4 +1,5 @@
-// F.R.Ai.D.A.Y – Carlas Lernecke (v1.108.0, Archiv + Ringe ab v1.109.0, neue Optik ab v1.110.0)
+// F.R.Ai.D.A.Y – Carlas Lernecke (v1.108.0, Archiv + Ringe ab v1.109.0, neue Optik ab v1.110.0,
+// Foto-Check, Wissen aus dem Internet, Übungsaufgaben und Tabellen ab v1.115.0)
 // Lernkarten oder Blätter (gedruckt oder handgeschrieben) mit der Kamera scannen → Karten speichern →
 // Friday fragt ab: Sie liest die Überschrift vor, hört Carlas Antwort, vergleicht mit der Karte und sagt,
 // was gefehlt hat oder ob die Reihenfolge falsch war. Falsche Karten kommen wieder (Lernkartei).
@@ -32,6 +33,8 @@
         <button class="hf-tab" data-tab="karten">🗂 Meine Karten</button>
         <button class="hf-tab" data-tab="archiv">📚 Archiv</button>
         <button class="hf-tab" data-tab="abfragen">🎯 Abfragen</button>
+        <button class="hf-tab" data-tab="ueben">🧩 Üben</button>
+        <button class="hf-tab" data-tab="wissen">🌐 Wissen</button>
         <button class="hf-tab" data-tab="hilfe">💡 Lernhilfe</button>
         <button class="hf-tab" data-tab="plan">📅 Lernplan</button>
       </div>
@@ -61,6 +64,8 @@
             <button class="ln-kachel" data-go="hilfe"><b>💡</b><span>Hilf mir beim Lernen</span><small>Karten ansehen, Eselsbrücken, erklären</small></button>
             <button class="ln-kachel" data-go="scannen"><b>📷</b><span>Neue Karten scannen</span><small>Karteikarte, Zettel oder Buchseite</small></button>
             <button class="ln-kachel" data-go="archiv"><b>📚</b><span>Mein Archiv</span><small id="ln-archiv-zahl">Alle deine Lernunterlagen</small></button>
+            <button class="ln-kachel" data-go="ueben"><b>🧩</b><span>Aufgaben &amp; Tabellen</span><small>Friday macht Übungen aus deinen Karten</small></button>
+            <button class="ln-kachel" data-go="wissen"><b>🌐</b><span>Im Internet nachschauen</span><small>Mehr zum Thema, kostenlos</small></button>
           </div>
           <div class="hf-reihe ln-stimme-reihe">
             <button id="ln-mikro-start" class="hf-btn" type="button">🎤 Per Stimme sagen, was wir machen</button>
@@ -99,7 +104,8 @@
             </div>
             <img id="ln-vor" alt="" class="ln-vor" style="display:none">
             <div class="hf-balken" style="margin-top:10px"><i id="ln-ocr" style="width:0%"></i></div>
-            <div class="hf-reihe" style="margin-top:10px"><button id="ln-spiegeln" class="hf-btn leise" type="button" disabled title="Falls die Schrift spiegelverkehrt war">⇋ Spiegelverkehrt? Andersrum lesen</button><button id="ln-ki-lesen" class="hf-btn ki" type="button" disabled>🤖 KI liest die Schrift</button></div>
+            <div class="hf-reihe" style="margin-top:10px"><button id="ln-ki-lesen" class="hf-btn ki" type="button" disabled>🤖 KI liest die Schrift</button></div>
+            <p class="hf-hinweis">Nach dem Foto liest Friday die Schrift sofort, dreht spiegelverkehrte Schrift richtig herum und fragt dich: „Ist das richtig?“ Gespeichert wird erst nach deinem Ja.</p>
             <p class="hf-hinweis">Tipp: gerade von oben, gutes Licht, ganze Karte im Bild. Die Texterkennung ist kostenlos (am Mac mit Apple-Schrifterkennung, die auch Handschrift liest). Klappt es bei krakeliger Schrift schlecht, nimm „KI liest die Schrift“.</p>
           </div>
           <div class="hf-karte">
@@ -207,6 +213,50 @@
         <p class="hf-hinweis">Sprich einfach drauflos. Du kannst auch sagen: „weiß ich nicht“, „nochmal“, „Tipp“, „später“ oder „Stopp“. Bei langen Antworten sag am Ende „fertig“.</p>
       </section>
 
+      <section data-seite="ueben" class="hidden">
+        <div class="hf-karte" id="ln-u-setup">
+          <h3>🧩 Aufgaben, Tabellen und eigene Karten</h3>
+          <div class="hf-reihe">
+            <select id="ln-u-stapel" class="hf-input grow" aria-label="Stapel"></select>
+            <select id="ln-u-art" class="hf-input" style="width:auto" aria-label="Art der Aufgaben">
+              <option value="mix">Gemischt</option><option value="mc">Multiple Choice</option><option value="luecke">Lückentext</option>
+              <option value="wahrfalsch">Wahr oder falsch</option><option value="zuordnen">Zuordnen</option><option value="reihenfolge">Reihenfolge</option>
+            </select>
+            <select id="ln-u-anzahl" class="hf-input" style="width:auto" aria-label="Wie viele"><option value="5">5 Aufgaben</option><option value="10" selected>10 Aufgaben</option><option value="20">20 Aufgaben</option></select>
+          </div>
+          <div class="hf-reihe" style="margin-top:10px">
+            <button id="ln-u-los" class="hf-btn haupt" type="button">🧩 Aufgaben erstellen</button>
+            <button id="ln-u-tabelle" class="hf-btn" type="button">📊 Als Tabelle</button>
+            <button id="ln-u-karte" class="hf-btn" type="button">✍️ Eigene Karte</button>
+            <button id="ln-u-ki" class="hf-btn ki" type="button">🤖 KI-Aufgaben</button>
+          </div>
+          <p class="hf-hinweis">Friday macht die Aufgaben aus deinen Karten, kostenlos und sofort. In der Tabelle kannst du alles direkt ändern und neue Zeilen (= neue Karten) anlegen.</p>
+        </div>
+        <div id="ln-u-neu" class="hf-karte" style="display:none">
+          <h3>✍️ Eigene Karte schreiben</h3>
+          <div class="hf-reihe"><select id="ln-u-n-ziel" class="hf-input grow" aria-label="In welchen Stapel?"></select><input id="ln-u-n-titel" class="hf-input grow" type="text" placeholder="Name des neuen Stapels"></div>
+          <label class="hf-feld" style="margin-top:8px">Vorderseite (Frage oder Begriff)<input id="ln-u-n-vorne" class="hf-input" type="text"></label>
+          <label class="hf-feld" style="margin-top:8px">Rückseite (Antwort, mehrere Punkte je in eine Zeile)<textarea id="ln-u-n-hinten" rows="4"></textarea></label>
+          <label class="ln-check" style="margin-top:6px"><input type="checkbox" id="ln-u-n-reihe"> Reihenfolge ist wichtig</label>
+          <div class="hf-reihe" style="margin-top:8px"><button id="ln-u-n-ok" class="hf-btn haupt" type="button">✓ Karte speichern</button><button id="ln-u-n-zu" class="hf-btn leise" type="button">Fertig</button></div>
+        </div>
+        <div id="ln-u"></div>
+      </section>
+
+      <section data-seite="wissen" class="hidden">
+        <div class="hf-karte">
+          <h3>🌐 Im Internet nachschauen</h3>
+          <form id="ln-w-form" class="hf-reihe" autocomplete="off">
+            <input id="ln-w-q" class="hf-input grow" type="search" placeholder="Thema, z. B. Photosynthese oder Französische Revolution" enterkeyhint="search" aria-label="Thema">
+            <button class="hf-btn haupt" type="submit">🔎 Nachschauen</button>
+            <button id="ln-w-mikro" class="hf-btn" type="button" aria-label="Thema sagen">🎤</button>
+          </form>
+          <p class="hf-hinweis">Friday schaut bei Wikipedia nach (kostenlos, ohne Guthaben) und liest dir das Wichtigste vor. Daraus kannst du Karten, eine Tabelle oder Übungsaufgaben machen oder alles ins Archiv legen.</p>
+        </div>
+        <div id="ln-w"></div>
+        <div id="ln-w-extra"></div>
+      </section>
+
       <section data-seite="hilfe" class="hidden">
         <div class="hf-reihe"><select id="ln-h-stapel" class="hf-input grow" aria-label="Stapel"></select></div>
         <div id="ln-h" class="ln-hilfe"></div>
@@ -309,7 +359,8 @@
     mikroBelegen(false);
     const wer = o.wer || (o.modus === "test" ? "kevin" : geraetWer());
     test = wer === "kevin";
-    zeigeTab(["abfragen", "scannen", "plan", "archiv"].includes(o.modus) ? o.modus : "start");
+    zeigeTab(["abfragen", "scannen", "plan", "archiv", "ueben", "wissen"].includes(o.modus) ? o.modus : "start");
+    if (o.modus === "wissen" && o.suche) { $("#ln-w-q").value = o.suche; wissenSuchen(); }
     zeigeTestband();
     $("#ln-wer-k").style.display = "none";
     $("#ln-gruss-k").style.display = "";
@@ -423,15 +474,19 @@
   function fuelleAuswahl() {
     const st = info.stapel || [];
     const opts = st.map((s) => `<option value="${esc(s.id)}">${esc(s.titel)} (${s.anzahl}${s.faellig ? `, ${s.faellig} fällig` : ""})</option>`).join("");
-    for (const id of ["#ln-q-stapel", "#ln-h-stapel", "#ln-p-stapel"]) {
+    for (const id of ["#ln-q-stapel", "#ln-h-stapel", "#ln-p-stapel", "#ln-u-stapel"]) {
       const el = $(id); const alt = el.value;
-      el.innerHTML = (id === "#ln-q-stapel" && st.length > 1 ? `<option value="alle">Alle Stapel</option>` : "") + (opts || `<option value="">Noch keine Karten</option>`);
+      el.innerHTML = (["#ln-q-stapel", "#ln-u-stapel"].includes(id) && st.length > 1 ? `<option value="alle">Alle Stapel</option>` : "") + (opts || `<option value="">Noch keine Karten</option>`);
       if (alt && [...el.options].some((o) => o.value === alt)) el.value = alt;
     }
     const z = $("#ln-ziel"); const altZ = z.value;
     z.innerHTML = `<option value="">＋ Neuer Stapel</option>${st.map((s) => `<option value="${esc(s.id)}">In „${esc(s.titel)}“</option>`).join("")}`;
     if (altZ && [...z.options].some((o) => o.value === altZ)) z.value = altZ;
     $("#ln-neu-titel").style.display = z.value ? "none" : "";
+    const nz = $("#ln-u-n-ziel"); const altN = nz.value;
+    nz.innerHTML = `${st.map((s) => `<option value="${esc(s.id)}">In „${esc(s.titel)}“</option>`).join("")}<option value="">＋ Neuer Stapel</option>`;
+    if (altN !== "" && [...nz.options].some((o) => o.value === altN)) nz.value = altN;
+    $("#ln-u-n-titel").style.display = nz.value ? "none" : "";
   }
   $("#ln-ziel").addEventListener("change", () => { $("#ln-neu-titel").style.display = $("#ln-ziel").value ? "none" : ""; });
 
@@ -494,57 +549,155 @@
     const datei = e.target.files?.[0];
     e.target.value = "";
     if (!datei) return;
-    try { await bildLesen(await verkleinern(datei)); } catch (err) { status(err.message, true); }
+    try { await bildLesen(await verkleinern(datei)); } catch (err) { status(err.message, true); w.sheet.querySelector(".ln-fcheck")?.remove(); }
   }
   const spiegelCanvas = (c) => { const g = document.createElement("canvas"); g.width = c.width; g.height = c.height; const x = g.getContext("2d"); x.translate(c.width, 0); x.scale(-1, 1); x.drawImage(c, 0, 0); return g; };
   // Grobe Prüfung wie auf dem Server: sieht der Text nach echten Wörtern aus?
   const guete = (t) => { const w = String(t || "").split(/\s+/).filter((x) => /[A-Za-zÄÖÜäöüß]/.test(x)); if (!w.length) return 0; const gut = w.filter((x) => { const b = x.replace(/[^A-Za-zÄÖÜäöüß]/g, ""); return b.length >= 2 && /[aeiouäöüy]/i.test(b) && b.length / x.length > 0.7; }).length; return (gut / w.length) * Math.min(1, String(t).replace(/[^A-Za-zÄÖÜäöüß]/g, "").length / 12); };
-  /** Bild (Canvas) lesen. nochmal = dasselbe Bild gespiegelt erneut lesen und das letzte Ergebnis ersetzen. */
-  async function bildLesen(c, { nochmal = false } = {}) {
-    const bar = $("#ln-ocr");
-    bar.classList.add("laeuft");
-    try {
-      scan.canvas = c;
-      const daten = c.toDataURL("image/jpeg", 0.86);
-      $("#ln-vor").src = daten; $("#ln-vor").style.display = "block";
-      status("Lese die Schrift …");
-      bar.style.width = "15%";
-      const r = await json("/api/lernen/scan", { body: { image: { mediaType: "image/jpeg", data: daten.split(",")[1] }, vorschau: miniBild(c) } });
-      scan.bild = r.bild;
-      $("#ln-ki-lesen").disabled = false;
-      $("#ln-spiegeln").disabled = false;
-      let text = r.text;
-      if (text == null) {
-        status("Lese im Browser (beim ersten Mal lädt die Texterkennung kurz) …");
-        text = await browserOcr(c, bar);
-        if (guete(text) < 0.6) { const t2 = await browserOcr(spiegelCanvas(c), bar).catch(() => ""); if (guete(t2) > guete(text) + 0.1) { text = t2; r.gespiegelt = true; } }
-        r.karten = null;
-        // Im Browser erkannten Text auch im Archiv nachtragen (damit die Suche ihn findet).
-        if (r.unterlage?.id && String(text || "").trim()) json(`/api/lernen/archiv/${r.unterlage.id}`, { method: "PATCH", body: { text: String(text).trim() } }).catch(() => {});
-      }
-      bar.style.width = "100%";
-      text = String(text || "").trim();
-      if (!text) { status("Ich konnte keinen Text erkennen. Versuch's mit mehr Licht, oder nimm „KI liest die Schrift“.", true); return; }
-      const spiegelHinweis = r.gespiegelt ? " Die Schrift war spiegelverkehrt, ich habe sie umgedreht." : "";
-      if (scan.modus === "karte") {
-        const fl = text.replace(/\n{2,}/g, "\n").trim();
-        const seite = nochmal ? scan.letzteSeite : !$("#ln-vorne").value.trim() ? "vorne" : "hinten";
-        scan.letzteSeite = seite;
-        if (seite === "vorne") { $("#ln-vorne").value = fl.replace(/\n/g, " "); status(`Vorderseite gelesen.${spiegelHinweis} Jetzt umdrehen und die Rückseite fotografieren.`); if (!nochmal) sag("Vorderseite gelesen. Jetzt die Rückseite."); }
-        else { $("#ln-hinten").value = fl; status(`Rückseite gelesen.${spiegelHinweis} Prüf kurz und tipp auf „Karte übernehmen“.`); }
-        seiteHinweis();
-      } else {
-        $("#ln-text").value = text;
-        status(`${r.quelle === "mac" ? "Text erkannt (Mac-Schrifterkennung)." : "Text erkannt."}${spiegelHinweis}`);
-        await erkennen(r.karten ? r : null);
-      }
-    } finally { bar.classList.remove("laeuft"); setTimeout(() => { bar.style.width = "0%"; }, 1500); }
+  // ---------- Foto-Check (v1.115.0) ----------
+  // Foto → sofort lesen → spiegelverkehrte Schrift automatisch umdrehen → zeigen und fragen „Ist das richtig?“
+  // → erst bei Ja wird gespeichert (Foto + Text ins Archiv, bei Blättern auch gleich die Karten).
+  const jpeg = (c) => c.toDataURL("image/jpeg", 0.86).split(",")[1];
+  /** Liest ein Foto vorläufig (noch nichts gespeichert). auto = selbst prüfen, ob die Schrift spiegelverkehrt ist. */
+  async function fotoLesen(c, { auto = true, bar } = {}) {
+    const r = await json("/api/lernen/scan", { body: { image: { mediaType: "image/jpeg", data: jpeg(c) }, pruefen: true, auto } });
+    if (r.text == null) {
+      status("Lese die Schrift im Browser (beim ersten Mal lädt die Texterkennung kurz) …");
+      let text = await browserOcr(c, bar).catch(() => "");
+      r.gespiegelt = false;
+      if (auto && guete(text) < 0.6) { const t2 = await browserOcr(spiegelCanvas(c), bar).catch(() => ""); if (guete(t2) > guete(text) + 0.1) { text = t2; r.gespiegelt = true; } }
+      r.text = text; r.karten = null;
+    }
+    r.text = String(r.text || "").trim();
+    return r;
   }
-  $("#ln-spiegeln").addEventListener("click", async () => {
-    if (!scan.canvas) return;
-    try { await bildLesen(spiegelCanvas(scan.canvas), { nochmal: true }); } catch (err) { status(err.message, true); }
-  });
-
+  const verwerfen = (bild) => { if (bild) json(`/api/lernen/scan/${encodeURIComponent(bild)}`, { method: "DELETE" }).catch(() => {}); };
+  const jaWort = /\b(ja|jap|jo|genau|richtig|stimmt|passt|korrekt|speicher\w*|ok|okay|perfekt|super)\b/i;
+  const neinWort = /\b(nein|nee|falsch|nicht richtig|stimmt nicht|nochmal|noch mal|verwerfen|weg)\b/i;
+  const spiegelWort = /\b(spiegel\w*|andersrum|umdrehen|verkehrt)\b/i;
+  /** Zeigt das Foto mit dem gelesenen Text und fragt „Ist das richtig?“. */
+  function fotoCheck({ canvas, r, mitKarten }) {
+    return new Promise((fertig) => {
+      w.sheet.querySelector(".ln-fcheck")?.remove();
+      const st = info.stapel || [];
+      const box = document.createElement("div");
+      box.className = "ln-fcheck";
+      box.setAttribute("role", "dialog");
+      box.setAttribute("aria-label", "Foto prüfen");
+      box.innerHTML = `<div class="ln-check-karte">
+          <h3>📸 Ist das richtig?</h3>
+          <div class="ln-check-grid">
+            <div class="ln-check-bild"><img alt="Dein Foto" src="${canvas.toDataURL("image/jpeg", 0.8)}">
+              ${r.gespiegelt ? `<div class="ln-chip heiss">⇋ Die Schrift war spiegelverkehrt. Ich habe das Bild <b>richtig herum gedreht</b>.</div>` : ""}</div>
+            <div class="ln-check-rechts">
+              <label class="hf-feld">${r.text ? "So habe ich es gelesen (du kannst es verbessern):" : "Ich konnte nichts lesen. Du kannst den Text hier selbst eintippen:"}<textarea id="ln-c-text" rows="9">${esc(r.text)}</textarea></label>
+              ${mitKarten ? `<div id="ln-c-karten" class="ln-c-karten hf-hinweis"></div>
+              <div class="hf-reihe"><select id="ln-c-ziel" class="hf-input grow" aria-label="In welchen Stapel?"><option value="">＋ Neuer Stapel</option>${st.map((s) => `<option value="${esc(s.id)}">In „${esc(s.titel)}“</option>`).join("")}</select>
+              <input id="ln-c-titel" class="hf-input grow" type="text" placeholder="Name des neuen Stapels"></div>` : ""}
+            </div>
+          </div>
+          <div class="ln-mikro" id="ln-c-mikro" style="display:none"><i></i><span id="ln-c-live">Sag „Ja“ oder „Nein“ …</span></div>
+          <div class="hf-reihe ln-check-knoepfe">
+            <button data-c="ja" class="hf-btn haupt" type="button">✓ Ja, richtig – speichern</button>
+            <button data-c="spiegeln" class="hf-btn" type="button">⇋ Andersrum spiegeln</button>
+            <button data-c="nein" class="hf-btn leise" type="button">✕ Nein, verwerfen</button>
+          </div>
+        </div>`;
+      w.sheet.appendChild(box);
+      const q = (x) => box.querySelector(x);
+      if (mitKarten && $("#ln-ziel").value && [...q("#ln-c-ziel").options].some((o) => o.value === $("#ln-ziel").value)) q("#ln-c-ziel").value = $("#ln-ziel").value;
+      let karten = r.karten ? { titel: r.titel, karten: r.karten } : null, nr = 0, timer = null, zu = false;
+      const zeigeKarten = () => {
+        if (!mitKarten) return;
+        const k = karten?.karten || [];
+        q("#ln-c-titel").style.display = q("#ln-c-ziel").value ? "none" : "";
+        if (karten?.titel && !q("#ln-c-titel").value) q("#ln-c-titel").value = karten.titel;
+        q("#ln-c-karten").innerHTML = k.length ? `Daraus werden <b>${k.length} Karte${k.length === 1 ? "" : "n"}</b>: ${k.slice(0, 6).map((x) => `„${esc(x.frage)}“`).join(", ")}${k.length > 6 ? " …" : ""}` : "Daraus kann ich noch keine Karten machen. Das Foto kommt trotzdem ins Archiv.";
+      };
+      const neuBerechnen = async () => {
+        const text = q("#ln-c-text").value.trim(), meins = ++nr;
+        if (!text) { karten = { karten: [] }; return zeigeKarten(); }
+        try { const k = await json("/api/lernen/text", { body: { text } }); if (meins === nr) { karten = k; zeigeKarten(); } } catch { /* egal */ }
+      };
+      if (mitKarten) { if (karten) zeigeKarten(); else neuBerechnen(); q("#ln-c-ziel").addEventListener("change", zeigeKarten); q("#ln-c-text").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(neuBerechnen, 500); }); }
+      const ende = async (antwort) => {
+        if (zu) return;
+        zu = true; hoerAuf(); still(); mikroBelegen(false);
+        if (antwort === "ja" && mitKarten) { clearTimeout(timer); await neuBerechnen(); }
+        const erg = { antwort, text: q("#ln-c-text").value.trim(), karten: karten?.karten || [], ziel: mitKarten ? q("#ln-c-ziel").value : "", titel: mitKarten ? q("#ln-c-titel").value.trim() : "" };
+        box.classList.add("weg"); setTimeout(() => box.remove(), 250);
+        fertig(erg);
+      };
+      box.addEventListener("click", (e) => { const b = e.target.closest("[data-c]"); if (b) ende(b.dataset.c); });
+      box.addEventListener("keydown", (e) => { if (e.key === "Escape") ende("nein"); });
+      setTimeout(() => q('[data-c="ja"]')?.focus({ preventScroll: true }), 50);
+      // Friday fragt laut und hört kurz auf „Ja“ oder „Nein“ (Knöpfe gehen immer).
+      (async () => {
+        const erste = (r.text.split("\n").find((z) => z.trim().length > 2) || "").slice(0, 80);
+        await sag(erste ? `${r.gespiegelt ? "Die Schrift war spiegelverkehrt, ich habe sie umgedreht. " : ""}Ich habe gelesen: ${erste}. Ist das richtig?` : "Ich konnte leider nichts lesen. Tipp den Text selbst ein, oder sag Nein und mach ein neues Foto.");
+        if (zu || !Rec) return;
+        q("#ln-c-mikro").style.display = "";
+        const gehoert = await hoere({ live: (t) => { const l = q("#ln-c-live"); if (l) l.textContent = t; }, start: 7000, stille: 1300, max: 15000 }).catch(() => "");
+        if (zu) return;
+        q("#ln-c-mikro").style.display = "none";
+        mikroBelegen(false);
+        if (spiegelWort.test(gehoert)) ende("spiegeln");
+        else if (neinWort.test(gehoert)) ende("nein");
+        else if (jaWort.test(gehoert)) ende("ja");
+      })();
+    });
+  }
+  /** Foto lesen, prüfen lassen und erst nach dem Ja speichern. Gibt null zurück, wenn Carla Nein sagt. */
+  async function fotoPruefen(c, { mitKarten = false, fach = "" } = {}) {
+    const bar = $("#ln-ocr");
+    let roh = c, auto = true;
+    for (let runde = 0; runde < 6; runde++) {
+      bar.classList.add("laeuft"); bar.style.width = "15%";
+      status("Lese die Schrift …");
+      let r;
+      try { r = await fotoLesen(roh, { auto, bar }); } finally { bar.style.width = "100%"; bar.classList.remove("laeuft"); setTimeout(() => { bar.style.width = "0%"; }, 1200); }
+      const richtig = r.gespiegelt ? spiegelCanvas(roh) : roh;
+      status("Prüf kurz, ob ich richtig gelesen habe.");
+      const a = await fotoCheck({ canvas: richtig, r, mitKarten });
+      if (a.antwort === "spiegeln") { verwerfen(r.bild); roh = spiegelCanvas(richtig); auto = false; continue; }
+      if (a.antwort !== "ja") {
+        verwerfen(r.bild);
+        status("Okay, nicht gespeichert. Mach einfach nochmal ein Foto.");
+        sag("Okay, ich habe es nicht gespeichert. Mach einfach nochmal ein Foto.");
+        return null;
+      }
+      const ok = await json(`/api/lernen/scan/${encodeURIComponent(r.bild)}/ok`, { body: { text: a.text, fach, vorschau: miniBild(richtig), ...(richtig !== roh ? { image: { mediaType: "image/jpeg", data: jpeg(richtig) } } : {}) } });
+      return { ...r, ...a, bild: r.bild, canvas: richtig, unterlage: ok.unterlage };
+    }
+    return null;
+  }
+  /** Foto im Reiter „Scannen“: prüfen, dann speichern. */
+  async function bildLesen(c) {
+    const r = await fotoPruefen(c, { mitKarten: scan.modus === "seite" });
+    if (!r) return;
+    scan.bild = r.bild; scan.canvas = r.canvas; scan.quelle = "scan";
+    $("#ln-vor").src = r.canvas.toDataURL("image/jpeg", 0.8); $("#ln-vor").style.display = "block";
+    $("#ln-ki-lesen").disabled = false;
+    const text = r.text;
+    if (scan.modus === "karte") {
+      if (!text) { status("✓ Foto im Archiv gespeichert. Text habe ich keinen. Tipp ihn ein oder nimm „KI liest die Schrift“."); return; }
+      const fl = text.replace(/\n{2,}/g, "\n").trim();
+      const seite = !$("#ln-vorne").value.trim() ? "vorne" : "hinten";
+      if (seite === "vorne") { $("#ln-vorne").value = fl.replace(/\n/g, " "); status("✓ Vorderseite gespeichert. Jetzt umdrehen und die Rückseite fotografieren."); sag("Gespeichert. Jetzt die Rückseite."); }
+      else { $("#ln-hinten").value = fl; status("✓ Rückseite gespeichert. Tipp auf „Karte übernehmen“."); sag("Gespeichert. Tipp auf Karte übernehmen."); }
+      seiteHinweis();
+      return;
+    }
+    $("#ln-text").value = text;
+    if (!r.karten.length) {
+      status("✓ Foto im Archiv gespeichert. Karten habe ich darin keine gefunden. Du kannst den Text oben bearbeiten oder „KI liest die Schrift“ nehmen.");
+      sag("Das Foto ist im Archiv gespeichert. Karten habe ich darin keine gefunden.");
+      return;
+    }
+    $("#ln-ziel").value = r.ziel || ""; $("#ln-neu-titel").style.display = r.ziel ? "none" : ""; $("#ln-neu-titel").value = r.titel || "";
+    zeigeVorschau({ karten: r.karten });
+    await kartenSichern({ alleKarten: true, foto: true });
+  }
   // ---------- Live-Kamera (für den Mac mit Frontkamera, geht auch am iPhone) ----------
   let camStream = null, camRichtung = "user";
   async function kameraAn() {
@@ -630,24 +783,26 @@
       </div>`).join("") : `<div class="hf-leer">Keine Karten erkannt. Schreib pro Karte eine Überschrift und darunter die Antwort, Karten mit einer Leerzeile trennen.</div>`;
     status(scan.vorschau.length ? `${scan.vorschau.length} Karte${scan.vorschau.length === 1 ? "" : "n"} erkannt. Kurz prüfen, dann speichern.` : "Nichts erkannt.");
   }
-  $("#ln-speichern").addEventListener("click", async () => {
+  $("#ln-speichern").addEventListener("click", () => kartenSichern());
+  async function kartenSichern({ foto = false } = {}) {
     const karten = w.$$(".ln-vz").filter((z) => z.querySelector("[data-an]").checked).map((z) => ({
       frage: z.querySelector("[data-f]").value, antwort: z.querySelector("[data-a]").value, reihenfolge: z.querySelector("[data-r]").checked, bild: scan.vorschau[+z.dataset.i]?.bild,
     })).filter((k) => k.frage.trim());
     if (!karten.length) { status("Keine Karte ausgewählt.", true); return; }
     try {
-      const r = await json("/api/lernen/karten", { body: { stapel: $("#ln-ziel").value || null, titel: $("#ln-neu-titel").value, karten, quelle: "scan", bild: scan.bild } });
+      const r = await json("/api/lernen/karten", { body: { stapel: $("#ln-ziel").value || null, titel: $("#ln-neu-titel").value, karten, quelle: scan.quelle || "scan", bild: scan.bild } });
       // Getippter oder eingefügter Text ohne Foto kommt als Notiz ins Archiv.
       const eigenText = $("#ln-text").value.trim();
       if (!scan.bild && eigenText) json("/api/lernen/archiv", { body: { titel: r.stapel.titel, text: eigenText } }).catch(() => {});
-      status(`✓ ${r.neu} Karte${r.neu === 1 ? "" : "n"} in „${r.stapel.titel}“ gespeichert.`);
-      sag(`Gespeichert. ${r.neu} neue Karte${r.neu === 1 ? "" : "n"} im Stapel ${r.stapel.titel}.`);
-      scan = { ...scan, bild: null, vorschau: [] };
+      status(`✓ ${foto ? "Foto im Archiv und " : ""}${r.neu} Karte${r.neu === 1 ? "" : "n"} in „${r.stapel.titel}“ gespeichert.`);
+      const kn = `${r.neu} neue Karte${r.neu === 1 ? "" : "n"}`;
+      sag(foto ? `Gespeichert. Das Foto ist im Archiv, und ${kn} ${r.neu === 1 ? "ist" : "sind"} im Stapel ${r.stapel.titel}.` : `Gespeichert. ${kn} im Stapel ${r.stapel.titel}.`);
+      scan = { ...scan, bild: null, vorschau: [], quelle: "scan" };
       $("#ln-vorschau-k").style.display = "none"; $("#ln-text").value = ""; $("#ln-vor").style.display = "none"; $("#ln-ki-lesen").disabled = true;
       await laden();
       $("#ln-ziel").value = r.stapel.id; $("#ln-neu-titel").style.display = "none";
     } catch (err) { status(err.message, true); }
-  });
+  }
 
   // ---------- Meine Karten ----------
   function zeichneStapel() {
@@ -1006,6 +1161,7 @@
         <button class="hf-btn" data-h="esel" type="button">🧠 Eselsbrücke</button>
         <button class="hf-btn" data-h="luecke" type="button">✏ Lückentext</button>
         <button class="hf-btn" data-h="einzeln" type="button">🎯 Nur diese abfragen</button>
+        <button class="hf-btn" data-h="web" type="button">🌐 Mehr dazu im Internet</button>
       </div>
       <div class="hf-karte"><h3>Frag Friday dazu</h3>
         <form class="hf-reihe" id="ln-h-form" autocomplete="off"><input id="ln-h-frage" class="hf-input grow" type="text" placeholder="z. B. Was ist der Unterschied zwischen Mitose und Meiose?"><button class="hf-btn ki" type="submit">🤖 Erklär's mir</button></form>
@@ -1028,6 +1184,7 @@
       case "lesen": still(); return sag(`${k.frage}. ${punkte(k.antwort).join(". ")}`);
       case "esel": { const t = eselsbruecke(k); zeichneHilfe(`<h3>🧠 Eselsbrücke</h3><p>${esc(t)}</p>`); return sag(t); }
       case "luecke": return zeichneHilfe(`<h3>✏ Lückentext – tipp auf eine Lücke zum Aufdecken</h3><div class="ln-frage" style="font-size:16px">${esc(k.frage)}</div><p style="line-height:1.9">${lueckentext(punkte(k.antwort).join(" · "))}</p>`);
+      case "web": { zeigeTab("wissen"); $("#ln-w-q").value = k.frage.replace(/[?:]+$/, ""); return wissenSuchen(); }
       case "einzeln": {
         zeigeTab("abfragen");
         quiz = { sid: hilfe.stapel, liste: [{ k, nochmal: 0 }], i: 0, richtig: 0, teilweise: 0, falsch: 0, start: Date.now(), laeuft: true, nr: (quiz?.nr || 0) + 1 };
@@ -1052,6 +1209,343 @@
       sag(r.text);
     } catch (err) { status(kiFehler(err), true); b.disabled = false; }
   });
+
+  // ---------- Üben: Aufgaben, Tabellen, eigene Karten (v1.115.0) ----------
+  let ueb = null;      // { titel, aufgaben, quelle, stapel, start, erg: {} }
+  let tabelle = null;  // { titel, spalten, zeilen, ids, sid }
+  const nrm = (t) => String(t || "").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").replace(/[^a-z0-9]+/g, " ").trim();
+  const abstand = (a, b) => { const m = a.length, n = b.length; if (Math.abs(m - n) > 2) return 9; const d = Array.from({ length: m + 1 }, (_, i) => [i, ...Array(n).fill(0)]); for (let j = 1; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; };
+  const fastGleich = (a, b) => { const x = nrm(a), y = nrm(b); return x === y || (y.length >= 5 && abstand(x, y) <= 1) || (y.length >= 9 && abstand(x, y) <= 2); };
+  function aufgabeHtml(a, i) {
+    const kopf = `<div class="ln-aufg-kopf"><span class="ln-chip heiss"><b>${i + 1}</b> · ${esc(a.titel || "")}</span><button class="hf-btn leise klein" data-u="lesen" type="button" aria-label="Vorlesen">🔊</button></div>`;
+    let inhalt = "";
+    if (a.art === "mc") inhalt = `<div class="ln-aufg-frage">${esc(a.frage)}</div><div class="ln-opts">${a.optionen.map((o, j) => `<button class="ln-opt" data-u="wahl" data-o="${j}" type="button"><b>${"ABCDE"[j]}</b> ${esc(o)}</button>`).join("")}</div>`;
+    else if (a.art === "wahrfalsch") inhalt = `<div class="ln-aufg-frage">${esc(a.frage)}</div><div class="ln-aussage">„${esc(a.aussage)}“</div><div class="ln-opts zwei"><button class="ln-opt" data-u="wahl" data-o="wahr" type="button">✓ Wahr</button><button class="ln-opt" data-u="wahl" data-o="falsch" type="button">✕ Falsch</button></div>`;
+    else if (a.art === "luecke") { const [v, ...h] = String(a.satz).split("_____"); inhalt = `<div class="ln-aufg-frage">${esc(a.frage)}</div><div class="ln-luecken-satz">${esc(v)}<input class="hf-input ln-l-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lücke">${esc(h.join("_____"))}</div><div class="hf-reihe"><button class="hf-btn" data-u="pruef" type="button">✓ Prüfen</button><button class="hf-btn leise" data-u="tipp" type="button">💡 Tipp</button></div>`; }
+    else if (a.art === "zuordnen") inhalt = `<div class="ln-aufg-frage">${esc(a.frage)}</div><div class="ln-zuordnen">${a.paare.map((p, j) => `<div class="ln-z-zeile"><span>${esc(p.links)}</span><select class="hf-input" data-z="${j}" aria-label="Passt zu"><option value="">… wählen</option>${a.rechts.map((r, k) => `<option value="${k}">${esc(r)}</option>`).join("")}</select></div>`).join("")}</div><button class="hf-btn" data-u="pruef" type="button">✓ Prüfen</button>`;
+    else if (a.art === "reihenfolge") inhalt = `<div class="ln-aufg-frage">Bring in die richtige Reihenfolge: ${esc(a.frage)}</div><ol class="ln-reihe">${a.schritte.map((x) => `<li><span>${esc(x)}</span><button class="hf-btn leise klein" data-u="hoch" type="button" aria-label="nach oben">▲</button><button class="hf-btn leise klein" data-u="runter" type="button" aria-label="nach unten">▼</button></li>`).join("")}</ol><button class="hf-btn" data-u="pruef" type="button">✓ Prüfen</button>`;
+    else inhalt = `<div class="ln-aufg-frage">${esc(a.frage)}</div><textarea class="hf-input ln-frei" rows="3" aria-label="Deine Antwort"></textarea><div class="hf-reihe"><button class="hf-btn" data-u="loesung" type="button">👀 Lösung zeigen</button></div>`;
+    return `<div class="ln-aufg" data-a="${i}">${kopf}${inhalt}<div class="ln-aufg-fb"></div></div>`;
+  }
+  function zeichneAufgaben() {
+    if (!ueb) return;
+    const extra = [];
+    if (ueb.tabelle) extra.push(tabelleHtml(ueb.tabelle, { bearbeiten: false }));
+    if (ueb.karten?.length) extra.push(`<div class="hf-karte"><h3>🗂 ${ueb.karten.length} Karten von der KI</h3><div class="hf-hinweis">${ueb.karten.slice(0, 8).map((k) => `„${esc(k.frage)}“`).join(", ")}${ueb.karten.length > 8 ? " …" : ""}</div><div class="hf-reihe" style="margin-top:8px"><button class="hf-btn" data-u2="karten" type="button">🗂 Karten prüfen und speichern</button></div></div>`);
+    $("#ln-u").innerHTML = `
+      <div class="hf-karte ln-blatt">
+        <div class="ln-blatt-kopf"><h3>🧩 ${esc(ueb.titel)}</h3><span id="ln-u-stand" class="ln-s gut">0 / ${ueb.aufgaben.length}</span></div>
+        ${ueb.hinweis ? `<div class="hf-hinweis">${esc(ueb.hinweis)}</div>` : ""}
+        <div class="ln-aufgaben">${ueb.aufgaben.map(aufgabeHtml).join("")}</div>
+        <div id="ln-u-ende"></div>
+        <div class="hf-reihe" style="margin-top:12px">
+          <button class="hf-btn" data-u2="neu" type="button">🔄 Neue Aufgaben</button>
+          <button class="hf-btn" data-u2="archiv" type="button">📚 Arbeitsblatt ins Archiv</button>
+          <button class="hf-btn leise" data-u2="laden" type="button">⬇ Arbeitsblatt herunterladen</button>
+        </div>
+      </div>${extra.join("")}`;
+  }
+  function aufgabeErgebnis(el, a, richtig, text) {
+    const i = +el.dataset.a;
+    if (ueb.erg[i] !== undefined) return;
+    ueb.erg[i] = richtig;
+    el.classList.add(richtig ? "richtig" : "falsch");
+    el.querySelectorAll("button[data-u]:not([data-u=lesen]), input, select, textarea").forEach((x) => { x.disabled = true; });
+    el.querySelector(".ln-aufg-fb").innerHTML = `<b>${richtig ? "✓ Richtig!" : "✕ Nicht ganz."}</b> ${text || ""}${a.erklaerung ? ` <span class="hf-hinweis">${esc(a.erklaerung)}</span>` : ""}`;
+    const fertigN = Object.keys(ueb.erg).length, gut = Object.values(ueb.erg).filter(Boolean).length;
+    $("#ln-u-stand").textContent = `${gut} / ${ueb.aufgaben.length}`;
+    if (fertigN === ueb.aufgaben.length) uebenEnde(gut);
+  }
+  function uebenEnde(gut) {
+    const n = ueb.aufgaben.length, pct = Math.round((gut / n) * 100);
+    const text = pct === 100 ? `Wow, ${NAME}! Alle ${n} Aufgaben richtig. Hast du richtig gut gemacht!` : pct >= 70 ? `Super, ${gut} von ${n} richtig. Die anderen schauen wir uns nochmal an.` : `${gut} von ${n} richtig. Kein Problem, üb die Karten nochmal, dann klappt's beim nächsten Mal besser.`;
+    $("#ln-u-ende").innerHTML = `<div class="ln-u-ende">${ring(pct, "richtig")}<div><b>${esc(text)}</b></div></div>`;
+    sag(text);
+    if (!test && ueb.stapel) json("/api/lernen/sitzung", { body: { stapel: ueb.stapel === "alle" ? null : ueb.stapel, richtig: gut, falsch: n - gut, dauer: Math.round((Date.now() - ueb.start) / 1000), modus: "ueben" } }).catch(() => {});
+  }
+  $("#ln-u").addEventListener("click", async (e) => {
+    const b2 = e.target.closest("[data-u2]");
+    if (b2) return uebenAktion(b2.dataset.u2);
+    const t2 = e.target.closest("[data-t]");
+    if (t2) return tabelleAktion(t2.dataset.t);
+    const b = e.target.closest("[data-u]");
+    const el = e.target.closest(".ln-aufg");
+    if (!b || !el || !ueb) return;
+    const a = ueb.aufgaben[+el.dataset.a];
+    switch (b.dataset.u) {
+      case "lesen": {
+        still();
+        const t = a.art === "mc" ? `${a.frage}. ${a.optionen.map((o, j) => `${"ABCDE"[j]}: ${o}`).join(". ")}` : a.art === "wahrfalsch" ? `${a.frage}. Wahr oder falsch: ${a.aussage}` : a.art === "luecke" ? `${a.frage}. ${a.satz.replace("_____", " Lücke ")}` : a.art === "zuordnen" ? `Was gehört zusammen? ${a.paare.map((p) => p.links).join(", ")}` : a.art === "reihenfolge" ? `Bring in die richtige Reihenfolge: ${a.frage}` : a.frage;
+        return sag(t);
+      }
+      case "wahl": {
+        const o = b.dataset.o;
+        const wahl = a.art === "mc" ? a.optionen[+o] : o;
+        const ok = wahl === a.loesung;
+        b.classList.add(ok ? "richtig" : "falsch");
+        if (!ok && a.art === "mc") el.querySelectorAll(".ln-opt")[a.optionen.indexOf(a.loesung)]?.classList.add("richtig");
+        if (!ok && a.art === "wahrfalsch") el.querySelector(`.ln-opt[data-o="${a.loesung}"]`)?.classList.add("richtig");
+        return aufgabeErgebnis(el, a, ok, a.art === "wahrfalsch" && !ok ? `Die Aussage ist ${a.loesung}.${a.richtig && a.loesung === "falsch" ? ` Richtig wäre: „${esc(a.richtig)}“.` : ""}` : ok ? "" : `Richtig ist: „${esc(a.loesung)}“.`);
+      }
+      case "tipp": { const l = a.loesung; return status(`Tipp: Das Wort fängt mit „${l.slice(0, Math.max(1, Math.floor(l.length / 3)))}“ an und hat ${l.length} Buchstaben.`); }
+      case "hoch": case "runter": {
+        const li = b.closest("li"), ol = li.parentElement;
+        if (b.dataset.u === "hoch" && li.previousElementSibling) ol.insertBefore(li, li.previousElementSibling);
+        if (b.dataset.u === "runter" && li.nextElementSibling) ol.insertBefore(li.nextElementSibling, li);
+        return;
+      }
+      case "loesung": {
+        el.querySelector(".ln-aufg-fb").innerHTML = `<b>Musterlösung:</b> ${esc(a.loesung)}<div class="hf-reihe" style="margin-top:6px"><button class="hf-btn" data-u="selbst-ja" type="button">✓ Hatte ich richtig</button><button class="hf-btn leise" data-u="selbst-nein" type="button">✕ Nicht ganz</button></div>`;
+        return;
+      }
+      case "selbst-ja": case "selbst-nein": return aufgabeErgebnis(el, a, b.dataset.u === "selbst-ja", `Musterlösung: ${esc(a.loesung)}`);
+      case "pruef": {
+        if (a.art === "luecke") {
+          const v = el.querySelector(".ln-l-in").value.trim();
+          if (!v) return status("Schreib erst ein Wort in die Lücke.", true);
+          return aufgabeErgebnis(el, a, fastGleich(v, a.loesung), `Das Wort ist „${esc(a.loesung)}“.`);
+        }
+        if (a.art === "zuordnen") {
+          const sel = [...el.querySelectorAll("select[data-z]")];
+          if (sel.some((x) => x.value === "")) return status("Ordne erst alle zu.", true);
+          let gut = 0;
+          sel.forEach((x) => { const p = a.paare[+x.dataset.z]; const ok = a.rechts[+x.value] === p.rechts; if (ok) gut++; x.classList.add(ok ? "richtig" : "falsch"); });
+          return aufgabeErgebnis(el, a, gut === sel.length, gut === sel.length ? "" : `${gut} von ${sel.length} richtig. ${a.paare.map((p) => `${esc(p.links)} → ${esc(p.rechts)}`).join(" · ")}`);
+        }
+        if (a.art === "reihenfolge") {
+          const jetzt = [...el.querySelectorAll(".ln-reihe li span")].map((x) => x.textContent);
+          const ok = jetzt.join("|") === a.loesung.join("|");
+          return aufgabeErgebnis(el, a, ok, ok ? "" : `Richtig: ${a.loesung.map((x, i) => `${i + 1}. ${esc(x)}`).join(" · ")}`);
+        }
+        return;
+      }
+      default:
+    }
+  });
+  $("#ln-u").addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.classList.contains("ln-l-in")) { e.preventDefault(); e.target.closest(".ln-aufg").querySelector('[data-u="pruef"]')?.click(); } });
+  async function aufgabenErstellen() {
+    const sid = $("#ln-u-stapel").value;
+    if (!sid) { status("Erst Karten scannen oder eine eigene Karte schreiben.", true); return; }
+    try {
+      const r = await json("/api/lernen/aufgaben", { body: { stapel: sid, art: $("#ln-u-art").value, anzahl: +$("#ln-u-anzahl").value } });
+      if (!r.aufgaben.length) { $("#ln-u").innerHTML = `<div class="hf-leer">${esc(r.hinweis || "Keine Aufgaben.")}</div>`; return; }
+      ueb = { ...r, quelle: "karten", stapel: sid, start: Date.now(), erg: {} };
+      zeichneAufgaben();
+      status("");
+      sag(`Ich habe dir ${r.aufgaben.length} Aufgaben gemacht. Viel Spaß!`);
+    } catch (err) { status(err.message, true); }
+  }
+  $("#ln-u-los").addEventListener("click", aufgabenErstellen);
+  async function uebenAktion(was) {
+    if (!ueb) return;
+    if (was === "neu") { if (ueb.quelle === "karten") return aufgabenErstellen(); if (ueb.wissenKarten) return wissenAufgaben(); return; }
+    if (was === "karten") { zeigeTab("scannen"); scan.bild = null; scan.quelle = ueb.ki ? "ki" : "web"; $("#ln-ziel").value = ""; $("#ln-neu-titel").style.display = ""; $("#ln-neu-titel").value = ueb.titel; $("#ln-text").value = ""; zeigeVorschau({ karten: ueb.karten, titel: ueb.titel }); return; }
+    try {
+      const r = await json("/api/lernen/arbeitsblatt", { body: { titel: ueb.titel, aufgaben: ueb.aufgaben, ablegen: was === "archiv" } });
+      if (was === "archiv") { status("✓ Arbeitsblatt mit Lösungen im Archiv abgelegt."); sag("Das Arbeitsblatt ist in deinem Archiv."); return; }
+      herunterladen(`Arbeitsblatt ${ueb.titel}.txt`, r.text, "text/plain");
+    } catch (err) { status(err.message, true); }
+  }
+  function herunterladen(name, text, typ) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([typ === "text/csv" ? `﻿${text}` : text], { type: `${typ};charset=utf-8` }));
+    a.download = name.replace(/[\\/:*?"<>|]+/g, "_");
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+  // ----- Tabellen -----
+  function tabelleHtml(t, { bearbeiten = false } = {}) {
+    const ce = bearbeiten ? ` contenteditable="true"` : "";
+    return `<div class="hf-karte ln-tab-karte">
+      <h3>📊 ${esc(t.titel)}</h3>
+      ${bearbeiten ? `<div class="hf-hinweis">Tipp einfach in ein Feld, um es zu ändern. Jede Zeile ist eine Karte.</div>` : ""}
+      <div class="ln-tab-wrap"><table class="ln-tabelle"><thead><tr>${t.spalten.map((x) => `<th>${esc(x)}</th>`).join("")}${bearbeiten ? "<th></th>" : ""}</tr></thead>
+      <tbody>${t.zeilen.map((z, i) => `<tr data-z="${i}">${t.spalten.map((_, j) => `<td${ce} data-s="${j}">${esc(z[j] || "").replace(/\n/g, "<br>")}</td>`).join("")}${bearbeiten ? `<td class="ln-tab-x"><button class="hf-btn leise klein" data-t="weg" type="button" aria-label="Zeile löschen">🗑</button></td>` : ""}</tr>`).join("")}</tbody></table></div>
+      <div class="hf-reihe" style="margin-top:10px">
+        ${bearbeiten ? `<button class="hf-btn" data-t="zeile" type="button">＋ Neue Zeile</button><button class="hf-btn haupt" data-t="sichern" type="button">💾 Änderungen speichern</button>` : ""}
+        <button class="hf-btn" data-t="csv" type="button">⬇ Als Tabelle herunterladen (Excel)</button>
+        <button class="hf-btn" data-t="archiv" type="button">📚 Ins Archiv</button>
+        ${!bearbeiten && t.spalten.length === 2 ? `<button class="hf-btn" data-t="karten" type="button">🗂 Als Karten speichern</button>` : ""}
+      </div></div>`;
+  }
+  const tabelleLesen = (root) => [...root.querySelectorAll("tbody tr")].map((tr) => ({ i: tr.dataset.z, werte: [...tr.querySelectorAll("td[data-s]")].map((td) => td.innerText.replace(/ /g, " ").trim()) }));
+  const csvVon = (t) => [t.spalten, ...t.zeilen].map((z) => z.map((x) => `"${String(x ?? "").replace(/"/g, '""')}"`).join(";")).join("\r\n");
+  async function tabelleZeigen() {
+    const sid = $("#ln-u-stapel").value;
+    if (!sid) { status("Noch keine Karten.", true); return; }
+    try {
+      const t = await json(`/api/lernen/tabelle/${encodeURIComponent(sid)}`);
+      tabelle = { ...t, sid };
+      ueb = null;
+      $("#ln-u").innerHTML = tabelleHtml(tabelle, { bearbeiten: sid !== "alle" });
+      if (!t.zeilen.length && sid !== "alle") tabelleAktion("zeile");
+    } catch (err) { status(err.message, true); }
+  }
+  $("#ln-u-tabelle").addEventListener("click", tabelleZeigen);
+  function aktuelleTabelle(root) {
+    if (tabelle && root.closest("#ln-u") && !ueb) return { ...tabelle, zeilen: tabelleLesen(root).map((z) => z.werte) };
+    if (root.closest("#ln-w-extra") && wissenTab) return wissenTab;
+    return ueb?.tabelle || tabelle;
+  }
+  async function tabelleAktion(was, quelle) {
+    const root = (quelle || $("#ln-u")).querySelector(".ln-tab-karte") || $("#ln-u");
+    const t = aktuelleTabelle(root);
+    if (!t) return;
+    if (was === "zeile") {
+      const tb = root.querySelector("tbody");
+      tb.insertAdjacentHTML("beforeend", `<tr data-z="neu">${t.spalten.map((_, j) => `<td contenteditable="true" data-s="${j}"></td>`).join("")}<td class="ln-tab-x"><button class="hf-btn leise klein" data-t="weg" type="button" aria-label="Zeile löschen">🗑</button></td></tr>`);
+      tb.lastElementChild.querySelector("td")?.focus();
+      return;
+    }
+    if (was === "weg") return;
+    if (was === "csv") return herunterladen(`${t.titel}.csv`, csvVon(t), "text/csv");
+    if (was === "archiv") {
+      try {
+        const csv = `﻿${csvVon(t)}`;
+        await json("/api/lernen/archiv", { body: { titel: `Tabelle: ${t.titel}`, datei: { name: `${t.titel.replace(/[\\/:*?"<>|]+/g, "_")}.csv`, data: btoa(unescape(encodeURIComponent(csv))) } } });
+        status("✓ Tabelle im Archiv abgelegt."); sag("Die Tabelle ist in deinem Archiv.");
+      } catch (err) { status(err.message, true); }
+      return;
+    }
+    if (was === "karten") { zeigeTab("scannen"); scan.bild = null; scan.quelle = "web"; $("#ln-ziel").value = ""; $("#ln-neu-titel").style.display = ""; $("#ln-text").value = ""; zeigeVorschau({ karten: t.zeilen.filter((z) => z[0]).map((z) => ({ frage: z[0], antwort: z[1] || "" })), titel: t.titel }); return; }
+    if (was === "sichern" && tabelle?.sid) {
+      const zeilen = tabelleLesen(root);
+      const weg = tabelle.ids.filter((id, i) => !zeilen.some((z) => z.i === String(i)));
+      let geaendert = 0, neu = 0;
+      try {
+        for (const z of zeilen) {
+          if (z.i === "neu") continue;
+          const alt = tabelle.zeilen[+z.i], id = tabelle.ids[+z.i];
+          if (!z.werte[0]) continue;
+          if (alt[0] !== z.werte[0] || (alt[1] || "") !== z.werte[1]) { await json(`/api/lernen/stapel/${encodeURIComponent(tabelle.sid)}/karte/${encodeURIComponent(id)}`, { method: "PATCH", body: { frage: z.werte[0], antwort: z.werte[1] } }); geaendert++; }
+        }
+        const neue = zeilen.filter((z) => z.i === "neu" && z.werte[0]).map((z) => ({ frage: z.werte[0], antwort: z.werte[1] || "" }));
+        if (neue.length) { const r = await json("/api/lernen/karten", { body: { stapel: tabelle.sid, karten: neue, quelle: "hand" } }); neu = r.neu; }
+        for (const id of weg) await json(`/api/lernen/stapel/${encodeURIComponent(tabelle.sid)}/karte/${encodeURIComponent(id)}`, { method: "DELETE" });
+        status(`✓ Gespeichert: ${geaendert} geändert, ${neu} neu${weg.length ? `, ${weg.length} gelöscht` : ""}.`);
+        sag("Die Tabelle ist gespeichert.");
+        await laden();
+        await tabelleZeigen();
+      } catch (err) { status(err.message, true); }
+    }
+  }
+  w.sheet.addEventListener("click", (e) => {
+    const b = e.target.closest('[data-t="weg"]');
+    if (b) b.closest("tr")?.remove();
+  });
+  // ----- Eigene Karte -----
+  $("#ln-u-karte").addEventListener("click", () => { const k = $("#ln-u-neu"); k.style.display = ""; const sid = $("#ln-u-stapel").value; if (sid && sid !== "alle") { $("#ln-u-n-ziel").value = sid; $("#ln-u-n-titel").style.display = "none"; } $("#ln-u-n-vorne").focus(); });
+  $("#ln-u-n-zu").addEventListener("click", () => { $("#ln-u-neu").style.display = "none"; });
+  $("#ln-u-n-ziel").addEventListener("change", () => { $("#ln-u-n-titel").style.display = $("#ln-u-n-ziel").value ? "none" : ""; });
+  $("#ln-u-n-ok").addEventListener("click", async () => {
+    const frage = $("#ln-u-n-vorne").value.trim(), antwort = $("#ln-u-n-hinten").value.trim();
+    if (!frage) { status("Schreib erst etwas auf die Vorderseite.", true); return; }
+    try {
+      const r = await json("/api/lernen/karten", { body: { stapel: $("#ln-u-n-ziel").value || null, titel: $("#ln-u-n-titel").value, karten: [{ frage, antwort, reihenfolge: $("#ln-u-n-reihe").checked }], quelle: "hand" } });
+      $("#ln-u-n-vorne").value = ""; $("#ln-u-n-hinten").value = ""; $("#ln-u-n-reihe").checked = false;
+      status(`✓ Karte in „${r.stapel.titel}“ gespeichert. Schreib gleich die nächste.`);
+      await laden();
+      $("#ln-u-n-ziel").value = r.stapel.id; $("#ln-u-n-titel").style.display = "none"; $("#ln-u-stapel").value = r.stapel.id;
+      $("#ln-u-n-vorne").focus();
+      if (tabelle?.sid === r.stapel.id && !ueb && $("#ln-u .ln-tab-karte")) tabelleZeigen();
+    } catch (err) { status(err.message, true); }
+  });
+  // ----- KI-Aufgaben (braucht Guthaben) -----
+  async function kiAufgaben(body, knopf) {
+    if (knopf) knopf.disabled = true;
+    status("Friday denkt sich Aufgaben aus …");
+    try {
+      const r = await json("/api/lernen/ki/aufgaben", { body });
+      ueb = { ...r, quelle: "ki", stapel: body.stapel || null, start: Date.now(), erg: {} };
+      zeigeTab("ueben");
+      zeichneAufgaben();
+      sag(`Ich habe dir ${r.aufgaben.length} Aufgaben gemacht${r.tabelle ? ", dazu eine Tabelle" : ""}.`);
+    } catch (err) { status(kiFehler(err), true); }
+    finally { if (knopf) knopf.disabled = false; }
+  }
+  $("#ln-u-ki").addEventListener("click", (e) => { const sid = $("#ln-u-stapel").value; if (!sid) return status("Erst Karten scannen.", true); kiAufgaben({ stapel: sid, anzahl: +$("#ln-u-anzahl").value }, e.currentTarget); });
+
+  // ---------- Wissen aus dem Internet (v1.115.0) ----------
+  let wissenAkt = null, wissenTab = null;
+  async function wissenSuchen(titel) {
+    const q = $("#ln-w-q").value.trim();
+    if (!q && !titel) { status("Schreib oder sag ein Thema.", true); return; }
+    $("#ln-w").innerHTML = `<div class="hf-karte"><div class="hf-hinweis">🔎 Friday schaut nach …</div><div class="hf-balken"><i class="laeuft" style="width:60%"></i></div></div>`;
+    $("#ln-w-extra").innerHTML = ""; wissenTab = null;
+    try {
+      const r = await json(`/api/lernen/web?${titel ? `titel=${encodeURIComponent(titel)}` : `q=${encodeURIComponent(q)}`}`, { method: "GET" });
+      wissenAkt = r;
+      $("#ln-w").innerHTML = `<div class="hf-karte ln-wissen">
+        <div class="ln-w-kopf">${r.bild ? `<img src="${esc(r.bild)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ""}
+          <div><h3>${esc(r.titel)}</h3><div class="hf-hinweis">Quelle: <a href="${esc(r.link)}" target="_blank" rel="noopener">Wikipedia</a> · Lizenz CC BY-SA 4.0</div></div></div>
+        <p class="ln-w-text">${esc(r.zusammenfassung)}</p>
+        ${r.abschnitte.length ? `<div class="ln-w-teile">${r.abschnitte.map((a) => `<details><summary>${esc(a.titel)}</summary><p>${esc(a.text)}</p></details>`).join("")}</div>` : ""}
+        <div class="hf-reihe" style="margin-top:12px">
+          <button class="hf-btn" data-w="lesen" type="button">🔊 Vorlesen</button>
+          <button class="hf-btn haupt" data-w="karten" type="button">🗂 Karten daraus machen</button>
+          <button class="hf-btn" data-w="tabelle" type="button">📊 Als Tabelle</button>
+          <button class="hf-btn" data-w="aufgaben" type="button">🧩 Aufgaben daraus</button>
+          <button class="hf-btn" data-w="archiv" type="button">📚 Ins Archiv</button>
+          <button class="hf-btn ki" data-w="ki" type="button">🤖 KI-Aufgaben</button>
+        </div>
+        ${r.weitere?.length ? `<div class="hf-hinweis" style="margin-top:10px">Meintest du vielleicht:</div><div class="ln-chips">${r.weitere.map((x) => `<button class="ln-chip" data-w-titel="${esc(x.titel)}" type="button" title="${esc(x.text)}">${esc(x.titel)}</button>`).join("")}</div>` : ""}
+      </div>`;
+      status("");
+      sag(`${r.titel}. ${r.zusammenfassung.split(/(?<=[.!?])\s+/).slice(0, 2).join(" ")}`);
+    } catch (err) {
+      $("#ln-w").innerHTML = `<div class="hf-leer">${esc(err.message)}</div>`;
+    }
+  }
+  $("#ln-w-form").addEventListener("submit", (e) => { e.preventDefault(); still(); wissenSuchen(); });
+  $("#ln-w-mikro").addEventListener("click", async () => {
+    still();
+    try { $("#ln-w-q").placeholder = "Ich höre zu …"; const t = await hoere({ live: (x) => { $("#ln-w-q").value = x; }, start: 7000, stille: 1500, max: 20000 }); mikroBelegen(false); $("#ln-w-q").placeholder = "Thema"; if (t) { $("#ln-w-q").value = t.replace(/^(such|schau|zeig)\w*\s+(mir\s+)?(nach|über|ueber)?\s*/i, ""); wissenSuchen(); } } catch (err) { status(err.message, true); }
+  });
+  async function wissenAufgaben() {
+    if (!wissenAkt) return;
+    const k = await json("/api/lernen/web/karten", { body: wissenAkt });
+    const r = await json("/api/lernen/aufgaben", { body: { karten: k.karten, titel: wissenAkt.titel, art: "mix", anzahl: 10 } });
+    if (!r.aufgaben.length) { status(r.hinweis || "Keine Aufgaben möglich.", true); return; }
+    ueb = { ...r, quelle: "wissen", wissenKarten: true, stapel: null, start: Date.now(), erg: {} };
+    zeigeTab("ueben");
+    zeichneAufgaben();
+    sag(`Ich habe dir ${r.aufgaben.length} Aufgaben zu ${wissenAkt.titel} gemacht.`);
+  }
+  $("#ln-w").addEventListener("click", async (e) => {
+    const t = e.target.closest("[data-w-titel]");
+    if (t) { $("#ln-w-q").value = t.dataset.wTitel; return wissenSuchen(t.dataset.wTitel); }
+    const b = e.target.closest("[data-w]");
+    if (!b || !wissenAkt) return;
+    const r = wissenAkt;
+    try {
+      switch (b.dataset.w) {
+        case "lesen": still(); return sag(`${r.titel}. ${r.zusammenfassung} ${r.abschnitte.map((a) => `${a.titel}: ${a.text}`).join(" ")}`);
+        case "karten": {
+          const k = await json("/api/lernen/web/karten", { body: r });
+          zeigeTab("scannen"); scan.bild = null; scan.quelle = "web";
+          $("#ln-ziel").value = ""; $("#ln-neu-titel").style.display = ""; $("#ln-neu-titel").value = k.titel; $("#ln-text").value = "";
+          zeigeVorschau(k);
+          status(`${k.karten.length} Karten aus Wikipedia. Prüf sie kurz, streich weg, was du nicht brauchst, dann „Speichern“.`);
+          return sag(`Ich habe ${k.karten.length} Karten vorbereitet. Schau sie dir an und tipp auf Speichern.`);
+        }
+        case "tabelle": {
+          wissenTab = await json("/api/lernen/web/tabelle", { body: r });
+          $("#ln-w-extra").innerHTML = tabelleHtml(wissenTab);
+          $("#ln-w-extra").scrollIntoView({ behavior: "smooth", block: "nearest" });
+          return;
+        }
+        case "aufgaben": return wissenAufgaben();
+        case "archiv": {
+          const text = `${r.titel}\n\n${r.zusammenfassung}\n\n${r.abschnitte.map((a) => `${a.titel}\n${a.text}`).join("\n\n")}\n\nQuelle: ${r.link} (Wikipedia, CC BY-SA 4.0)`;
+          await json("/api/lernen/archiv", { body: { titel: `Wikipedia: ${r.titel}`, text } });
+          status("✓ Im Archiv abgelegt (mit Quelle)."); return sag("Ist in deinem Archiv.");
+        }
+        case "ki": return kiAufgaben({ thema: r.titel, text: `${r.einleitung}\n\n${r.abschnitte.map((a) => `${a.titel}: ${a.text}`).join("\n")}` }, b);
+        default:
+      }
+    } catch (err) { status(err.message, true); }
+  });
+  $("#ln-w-extra").addEventListener("click", (e) => { const t = e.target.closest("[data-t]"); if (t) tabelleAktion(t.dataset.t, $("#ln-w-extra")); });
 
   // ---------- Lernplan ----------
   async function zeigePlan(plan) {
@@ -1271,23 +1765,14 @@
     const datei = e.target.files?.[0];
     e.target.value = "";
     if (!datei) return;
-    const bar = $("#ln-a-balken");
     try {
-      bar.classList.add("laeuft"); bar.style.width = "40%";
-      status("Lege das Foto ab und lese die Schrift …");
-      const c = await verkleinern(datei);
-      const r = await json("/api/lernen/scan", { body: { image: { mediaType: "image/jpeg", data: c.toDataURL("image/jpeg", 0.86).split(",")[1] }, vorschau: miniBild(c), fach: $("#ln-a-neu-fach").value } });
-      if (r.text == null && r.unterlage?.id) {
-        status("Lese die Schrift im Browser …");
-        const t = String(await browserOcr(c, bar).catch(() => "")).trim();
-        if (t) await json(`/api/lernen/archiv/${r.unterlage.id}`, { method: "PATCH", body: { text: t } });
-      }
-      bar.style.width = "100%";
-      status("✓ Foto im Archiv abgelegt.");
+      const r = await fotoPruefen(await verkleinern(datei), { fach: $("#ln-a-neu-fach").value });
+      if (!r) return;
+      status("✓ Foto geprüft und im Archiv abgelegt.");
+      sag("Gespeichert. Das Foto ist in deinem Archiv.");
       arch.korb = false; await archivLaden(); laden().catch(() => {});
       if (r.unterlage?.id) archivOeffnen(r.unterlage.id);
-    } catch (err) { status(err.message, true); }
-    finally { bar.classList.remove("laeuft"); setTimeout(() => { bar.style.width = "0%"; }, 1200); }
+    } catch (err) { status(err.message, true); w.sheet.querySelector(".ln-fcheck")?.remove(); }
   });
   $("#ln-a-stapel").addEventListener("click", async (e) => {
     const b = e.target.closest("[data-export]");
@@ -1312,7 +1797,7 @@
   try { if (perLink) sessionStorage.setItem("lernecke_direkt", linkModus || "1"); } catch { /* egal */ }
   let gemerkt = false;
   try { const g = sessionStorage.getItem("lernecke_direkt"); gemerkt = Boolean(g); if (g && g !== "1" && !linkModus) linkModus = g; } catch { /* egal */ }
-  if (!["archiv", "abfragen", "scannen", "plan"].includes(linkModus)) linkModus = "";
+  if (!["archiv", "abfragen", "scannen", "plan", "ueben", "wissen"].includes(linkModus)) linkModus = "";
   if (perLink || gemerkt || lsGet("lernecke_start") === "1") {
     let n = 0;
     const t = setInterval(() => {
@@ -1575,6 +2060,83 @@
 @keyframes ln-konfetti { 0% { opacity: 1; transform: translate(0,0) rotate(0); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(calc(var(--x) * 230px), calc(var(--y) * 230px + 160px)) rotate(var(--r)); } }
 .ln-ring.voll .wert { animation: ln-ring-auf 1.1s cubic-bezier(.2,.8,.2,1) both, ln-leuchten 1.2s ease-in-out infinite alternate; }
 @media (prefers-reduced-motion: reduce) { .ln-konfetti { display: none; } .ln-feier-karte, .ln-feier, .ln-feier-karte .ln-ring .wert { animation: none; } }
+
+/* v1.115.0: Foto-Check, Üben, Tabellen, Wissen */
+.ln-box .ln-gross { grid-template-columns: repeat(3, 1fr); }
+.ln-fcheck { font-family: var(--ln-schrift, system-ui, sans-serif); position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 16px; background: rgba(4,3,2,.84); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: ln-feier-ein .25s ease both; }
+.ln-fcheck.weg { animation: ln-feier-aus .25s ease both; }
+.ln-check-karte { width: min(920px, 100%); max-height: calc(100dvh - 32px); overflow: auto; display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 22px; border: 1px solid var(--u-rand, var(--cyan)); background: linear-gradient(165deg, color-mix(in srgb, var(--cyan) 12%, rgba(16,9,3,.96)), rgba(6,4,2,.97)); box-shadow: 0 0 50px color-mix(in srgb, var(--cyan) 30%, transparent); }
+.ln-check-karte h3 { margin: 0; font-size: 22px; color: var(--text); }
+.ln-check-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; align-items: start; }
+.ln-check-bild { display: flex; flex-direction: column; gap: 8px; }
+.ln-check-bild img { width: 100%; max-height: 52vh; object-fit: contain; border-radius: 14px; border: 1px solid var(--u-rand-soft, var(--line)); background: #000; }
+.ln-check-rechts { display: flex; flex-direction: column; gap: 10px; }
+.ln-check-rechts textarea { min-height: 170px; }
+.ln-c-karten b { color: var(--cyan); }
+.ln-check-knoepfe .hf-btn.haupt { font-size: 16px; padding: 12px 18px; }
+.ln-aufgaben { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.ln-blatt-kopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ln-blatt-kopf h3 { margin: 0; }
+.ln-aufg { padding: 14px; border-radius: 16px; border: 1px solid var(--u-rand-soft, var(--line)); background: rgba(0,0,0,.28); display: flex; flex-direction: column; gap: 10px; transition: border-color .2s, box-shadow .2s; }
+.ln-aufg.richtig { border-color: rgba(61,220,132,.75); box-shadow: inset 0 0 22px rgba(61,220,132,.12); }
+.ln-aufg.falsch { border-color: rgba(255,92,92,.7); box-shadow: inset 0 0 22px rgba(255,92,92,.1); }
+.ln-aufg-kopf { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ln-aufg-frage { font-size: 17px; font-weight: 700; line-height: 1.35; color: var(--text); }
+.ln-aussage { font-size: 16px; line-height: 1.45; padding: 10px 12px; border-left: 3px solid var(--cyan); background: rgba(0,0,0,.25); border-radius: 8px; }
+.ln-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ln-opt { text-align: left; font: inherit; font-size: 15px; line-height: 1.35; color: var(--text); padding: 11px 12px; border-radius: 12px; border: 1px solid var(--u-rand-soft, var(--line)); background: rgba(255,255,255,.03); cursor: pointer; }
+.ln-opt b { color: var(--cyan); margin-right: 6px; }
+.ln-opt:hover:not(:disabled) { border-color: var(--cyan); }
+.ln-opt.richtig { border-color: #3ddc84; background: rgba(61,220,132,.16); }
+.ln-opt.falsch { border-color: #ff5c5c; background: rgba(255,92,92,.14); }
+.ln-opt:disabled { cursor: default; opacity: 1; }
+.ln-luecken-satz { font-size: 16px; line-height: 2.1; }
+.ln-l-in { display: inline-block; width: 11em; max-width: 60%; padding: 4px 8px; margin: 0 4px; font-size: 16px; }
+.ln-zuordnen { display: flex; flex-direction: column; gap: 8px; }
+.ln-z-zeile { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 8px; align-items: center; }
+.ln-z-zeile span { font-weight: 600; }
+.ln-z-zeile select.richtig { border-color: #3ddc84; } .ln-z-zeile select.falsch { border-color: #ff5c5c; }
+.ln-reihe { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+.ln-reihe li { display: flex; align-items: center; gap: 6px; } .ln-reihe li span { flex: 1; }
+.hf-btn.klein { padding: 4px 9px; font-size: 13px; }
+.ln-frei { width: 100%; }
+.ln-aufg-fb:empty { display: none; }
+.ln-aufg-fb { font-size: 14.5px; line-height: 1.45; }
+.ln-aufg.richtig .ln-aufg-fb b { color: #3ddc84; } .ln-aufg.falsch .ln-aufg-fb b { color: #ff8a8a; }
+.ln-u-ende { display: flex; align-items: center; gap: 16px; margin-top: 14px; padding: 14px; border-radius: 16px; border: 1px solid rgba(61,220,132,.5); background: rgba(61,220,132,.06); }
+.ln-tab-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; border: 1px solid var(--u-rand-soft, var(--line)); margin-top: 8px; }
+.ln-tabelle { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.ln-tabelle th { text-align: left; padding: 10px 12px; color: var(--cyan); font-weight: 700; background: color-mix(in srgb, var(--cyan) 10%, rgba(0,0,0,.4)); border-bottom: 1px solid var(--u-rand-soft, var(--line)); white-space: nowrap; }
+.ln-tabelle td { padding: 9px 12px; vertical-align: top; border-bottom: 1px solid rgba(255,255,255,.06); line-height: 1.4; min-width: 120px; }
+.ln-tabelle tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+.ln-tabelle td[contenteditable="true"] { outline: none; cursor: text; }
+.ln-tabelle td[contenteditable="true"]:focus { background: color-mix(in srgb, var(--cyan) 10%, transparent); box-shadow: inset 0 0 0 1px var(--cyan); }
+.ln-tabelle td.ln-tab-x { width: 1%; min-width: 0; }
+.ln-w-kopf { display: flex; gap: 14px; align-items: center; }
+.ln-w-kopf img { width: 110px; height: 110px; object-fit: cover; border-radius: 14px; border: 1px solid var(--u-rand-soft, var(--line)); flex: none; }
+.ln-w-kopf h3 { margin: 0 0 4px; font-size: 22px; }
+.ln-w-kopf a { color: var(--cyan); }
+.ln-w-text { font-size: 16px; line-height: 1.55; }
+.ln-w-teile { display: flex; flex-direction: column; gap: 6px; }
+.ln-w-teile details { border: 1px solid var(--u-rand-soft, var(--line)); border-radius: 12px; padding: 8px 12px; background: rgba(0,0,0,.2); }
+.ln-w-teile summary { cursor: pointer; font-weight: 700; }
+.ln-w-teile p { margin: 8px 0 2px; line-height: 1.5; }
+button.ln-chip { cursor: pointer; font: inherit; font-size: 12.5px; }
+@media (max-width: 900px) {
+  .ln-box .ln-gross { grid-template-columns: 1fr 1fr; }
+  .ln-fcheck { padding: 0; place-items: stretch; }
+  .ln-check-karte { max-height: 100dvh; border-radius: 0; padding: calc(14px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom)); }
+  .ln-check-grid { grid-template-columns: 1fr; }
+  .ln-check-bild img { max-height: 34vh; }
+  .ln-check-rechts textarea { min-height: 110px; font-size: 16px; }
+  .ln-check-knoepfe { position: sticky; bottom: calc(-14px - env(safe-area-inset-bottom)); margin: 0 -14px calc(-14px - env(safe-area-inset-bottom)); padding: 10px 14px calc(12px + env(safe-area-inset-bottom)); background: rgb(10,6,3); box-shadow: 0 -14px 18px rgb(10,6,3); z-index: 2; }
+  .ln-check-knoepfe .hf-btn.leise { background: rgb(22,13,6); }
+  .ln-check-knoepfe .hf-btn { flex: 1 1 100%; }
+  .ln-opts { grid-template-columns: 1fr; }
+  .ln-z-zeile { grid-template-columns: 1fr; gap: 4px; }
+  .ln-w-kopf img { width: 76px; height: 76px; }
+  .ln-l-in { width: 9em; }
+}
 `;
   document.head.appendChild(style);
 

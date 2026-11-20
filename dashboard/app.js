@@ -629,7 +629,7 @@
       clearSpeaking();
       // Carlas Lernecke (v1.108.0): erst begrüßen bzw. ansagen, dann öffnet sich die Lernecke und hört selbst zu.
       const lernA = aktion("lernen");
-      if (lernA) window.FridayLernen?.open({ modus: lernA.split(":")[1] || "start", stimme: Boolean(opts.stimme) });
+      if (lernA) window.FridayLernen?.open({ modus: lernA.split(":")[1] || "start", suche: lernA.split(":").slice(2).join(" "), stimme: Boolean(opts.stimme) });
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
       // Gesprächsmodus: Kam der Befehl per Stimme, hört Friday danach weiter zu, ohne "Friday" davor.
       const weiter = !bargeFang && !unterbrochenEben() && !lernA && !window.FridayLernen?.offen() && (hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer));
@@ -768,7 +768,7 @@
   }
   bindFlag("set-mouth", "friday_mouth", true);
   bindFlag("set-vollbild", "friday_vollbild", false);
-  // Einmalig umstellen (v1.117.1): Gesprächsmodus aus, damit Friday nur noch auf "Friday" hört.
+  // Einmalig umstellen (v1.118.1): Gesprächsmodus aus, damit Friday nur noch auf "Friday" hört.
   if (storage.get("friday_nur_weckwort") !== "1") {
     // Je zweimal setzen: Nur eine echte Änderung (alter Wert vorhanden) nimmt der Mac-Abgleich mit,
     // sonst würde ein alter Wert vom Mac die Umstellung gleich wieder überschreiben.
@@ -1457,7 +1457,7 @@
 
   // ---------- Spracherkennung ----------
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  // v1.117.1: Friday reagiert NUR, wenn sie angesprochen wird.
+  // v1.118.1: Friday reagiert NUR, wenn sie angesprochen wird.
   // "Friday" zählt überall im Satz (außer "Black Friday"). Das deutsche Wort "Freitag" zählt nur ganz am
   // Anfang ("Freitag, wie spät ist es?"), sonst springt sie bei "am Freitag fahren wir zu Oma" an.
   const WAKE_WORT = /(?<!black\s)\b(?:friday|fraidei|freiday|frei day)\b[,.!?]?\s*/i;
@@ -1473,7 +1473,7 @@
   let wakeActive = false;
 
   // Gesprächsmodus (Standard an): Nach einer gesprochenen Antwort hört Friday weiter zu.
-  // v1.117.1: Standard AUS. Sonst schickt Friday nach jeder Antwort auch das Gespräch mit anderen
+  // v1.118.1: Standard AUS. Sonst schickt Friday nach jeder Antwort auch das Gespräch mit anderen
   // (z. B. mit deiner Frau) an sich selbst und redet dazwischen. Einschalten: Einstellungen → Assistent.
   const gespraechAn = () => storage.get("friday_gespraech") === "1";
   // Damit endet das Gespräch, ohne dass es an Friday geschickt wird.
