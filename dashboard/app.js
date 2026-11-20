@@ -438,7 +438,7 @@
   window.Friday = window.Friday || {};
   window.Friday.stimmHinweis = stimmHinweis;
 
-  // v1.118.2: Friday redet nicht von allein. Meldungen, die keiner bestellt hat (Timer, Erinnerung,
+  // v1.121.1: Friday redet nicht von allein. Meldungen, die keiner bestellt hat (Timer, Erinnerung,
   // Energie, "Video fertig"), erscheinen still am Status-Ring statt vorgelesen zu werden.
   // Einschalten: Einstellungen → Assistent → "Friday darf von sich aus sprechen".
   const vonSelbstAn = () => storage.get("friday_vonselbst") === "1";
@@ -587,6 +587,9 @@
       if (flugA) window.FridayFlugzeuge?.zeigeNr(flugA.slice(9));
       else if (flugG) window.FridayFlugzeuge?.gruppe(flugG.slice(11));
       else if (hat("flugzeuge")) window.FridayFlugzeuge?.oeffne();
+      // Klimazonen (v1.119.0)
+      if (hat("klimazonen")) window.FridayKlima?.an();
+      if (hat("klimazonen_aus")) window.FridayKlima?.aus();
       // Welt-Runde (v1.116.0): "Zeig mir, was in der Welt passiert"
       if (hat("welttour")) window.FridayWelttour?.start();
       if (hat("welttour_weiter")) window.FridayWelttour?.weiter();

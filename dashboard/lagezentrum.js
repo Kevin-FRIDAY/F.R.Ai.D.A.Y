@@ -53,10 +53,27 @@
     const c = findLocal(v); if (c) { $("lage-q").value = c.name; select(c.id); }
   });
   $("lage-mic")?.addEventListener("click", listenCountry);
-  // Ebenen-Legende: klein, beim Tippen groß (zusätzlich zu Hover).
-  $("lage-legend")?.querySelector(".legend-toggle")?.addEventListener("click", () => $("lage-legend").classList.toggle("open"));
+  // Ebenen-Fenster (v1.119.0): nur per Knopf auf und zu – ✕, Tippen daneben oder Esc schließt es.
+  // Vorher ging es auch per Hover/Fokus auf und blieb dadurch offen, obwohl man es schließen wollte.
+  const legende = $("lage-legend");
+  const legendeZu = () => { legende?.classList.remove("open"); legende?.querySelector(".legend-toggle")?.setAttribute("aria-expanded", "false"); };
+  legende?.querySelector(".legend-toggle")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const auf = !legende.classList.contains("open");
+    legende.classList.toggle("open", auf);
+    e.currentTarget.setAttribute("aria-expanded", String(auf));
+    if (!auf) e.currentTarget.blur();
+  });
+  legende?.querySelector(".legend-zu")?.addEventListener("click", (e) => { e.stopPropagation(); legendeZu(); });
+  document.addEventListener("pointerdown", (e) => { if (legende?.classList.contains("open") && !legende.contains(e.target)) legendeZu(); }, true);
   // Einstellungen (Länder-Namen, Stil) sofort übernehmen.
   window.addEventListener("friday-settings", () => { if (projection) redrawGlobe(); });
+  // Esc schließt zuerst nur das Ebenen-Fenster (vor allen anderen Esc-Wächtern abgefangen), erst danach das Weltgeschehen.
+  window.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || !legende?.classList.contains("open")) return;
+    e.stopImmediatePropagation(); e.preventDefault();
+    legendeZu();
+  }, true);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("lage").classList.contains("hidden")) close(); });
 
   // Land per Stimme sagen (nutzt die Spracherkennung des Browsers).
@@ -112,6 +129,7 @@
   }
 
   function close() {
+    legendeZu();
     detailAus();
     showSide(false);
     $("lage").classList.add("hidden");
@@ -572,6 +590,9 @@
     },
     zu: (lon, lat, faktor = 3) => { if (!projection) return; detailAus(); $("lage-world")?.classList.remove("hidden"); animateGlobe([-lon, -lat, 0], baseScale * faktor, 1200); },
     landWaehlen: (id) => select(id),
+    // Detailkarte (Leaflet) + Umriss des gewählten Landes – für das 3D-Gelände (gelaende.js)
+    detailKarte: () => detailMap,
+    detailUmriss: () => (selected ? landFeature(selected) : null),
   };
 
   function flyToWorld() {

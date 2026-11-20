@@ -256,7 +256,7 @@ export const NICHT_MOEGLICH = [
   { was: "Fremde Kameras / CCTV", warum: "Kein Zugriff auf private oder Überwachungskameras. Öffentliche Webcams gibt es pro Land (Windy)." },
   { was: "Cyber-Angriffe live", warum: "Dafür gibt es keine freie, verlässliche Live-Quelle. Internet-Störungen je Land zeigt Friday über IODA." },
   { was: "Stromausfälle weltweit", warum: "Keine freie weltweite Quelle. Große Ausfälle erkennt man oft an den Internet-Störungen." },
-  { was: "3D-Gelände", warum: "Der Globus bleibt flach gezeichnet, damit er auf dem iPhone flüssig läuft. Gelände gibt es in der Satelliten-Detailkarte." },
+  { was: "3D-Gelände auf dem iPhone", warum: "Am Mac zeigt Friday Berge und Täler in 3D (Ebenen → 3D-Gelände oder Knopf ⛰ 3D in der Detailkarte). Auf dem iPhone bleibt es aus, damit Friday flüssig läuft." },
 ];
 
 export function lagebildRouten(app, asyncRoute) {
