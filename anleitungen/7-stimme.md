@@ -81,3 +81,7 @@ Friday erzählt wieder, was sie tut:
   „Das ist der Motor …“, „Hier sitzen die Räder …“, zum Schluss ein Fazit.
 - **Suchen** („Friday, such mir was zu Sushi for You“): „Das ist Sushi for You …“ mit den wichtigsten Infos.
 - **Welt-Runde** („Friday, was passiert in der Welt?“): „Ich bin jetzt in den USA …“ und liest die Nachrichten vor.
+
+**v1.122.1 (iPhone):** Läuft das Mikrofon schon, wenn Friday anfängt zu sprechen, bleibt Safari stumm.
+Darum schaltet Friday auf dem iPhone das Mikrofon kurz aus, startet die Stimme und hört nach einem
+Moment wieder zu (so klappt „Friday, stopp“ weiterhin).

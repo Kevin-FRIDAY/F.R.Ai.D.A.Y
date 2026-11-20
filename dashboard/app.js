@@ -455,6 +455,7 @@
     hueSprechen(true);
     gesagtText = String(text);
     setState("Spricht", "speaking");
+    ohrVorStimme();
     try {
       if (status.voice) {
         const teile = text.length > 160 ? haeppchen(text) : [text];
@@ -468,7 +469,7 @@
           audio.src = url;
           audio.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
           window.FridayFace?.talkWithAudio(audio);
-          try { await audio.play(); } catch (e) {
+          try { await audio.play(); ohrNachStimmstart(); } catch (e) {
             URL.revokeObjectURL(url);
             if (nr !== sprechNr) return;
             if (!ok) {
@@ -508,7 +509,7 @@
             u.rate = Number(storage.get("friday_rate")) || 1.05;
             u.pitch = Number(storage.get("friday_pitch")) || 1;
             u.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
-            u.onstart = () => window.FridayFace?.talk(true);
+            u.onstart = () => { window.FridayFace?.talk(true); ohrNachStimmstart(); };
             // Mund im Takt der gesprochenen Wörter bewegen
             u.onboundary = (e) => {
               if (e.charIndex > bisZeichen) bisZeichen = e.charIndex;
@@ -551,6 +552,7 @@
       hueSprechen(false);
       window.FridayFace?.stop();
       if (nr === sprechNr) gesagtEnde = Date.now();
+      ohrNachStimme();
       if (ohr.modus === "befehl") setState("Ich höre", "listening");
       else zeigeRuhe();
     }
@@ -1591,8 +1593,31 @@
     return woerter.filter((w) => menge.has(w)).length / woerter.length >= 0.6;
   }
 
+  // v1.122.1 iPhone: Läuft das Mikrofon schon, wenn Friday anfängt zu sprechen, bleibt Safari stumm
+  // (kein Ton, weder Gerätestimme noch ElevenLabs). Darum dort: Mikrofon kurz aus, Stimme starten,
+  // und erst wenn sie hörbar spricht, das Mikrofon wieder an (dann geht "Friday, stopp" weiter).
+  let stimmPause = false, stimmTimer = null;
+  function ohrVorStimme() {
+    if (!IST_IOS) return;
+    clearTimeout(stimmTimer);
+    if (!stimmPause) { stimmPause = true; ohrStopp(); }
+    // Notfall: kommt kein Start-Signal der Stimme, nach 4 s trotzdem wieder zuhören.
+    stimmTimer = setTimeout(ohrNachStimmstart, 4000);
+  }
+  function ohrNachStimmstart() {
+    if (!stimmPause) return;
+    clearTimeout(stimmTimer);
+    stimmTimer = setTimeout(() => { stimmPause = false; ohrStart(); }, 700);
+  }
+  function ohrNachStimme() {
+    if (!stimmPause) return;
+    clearTimeout(stimmTimer);
+    stimmPause = false;
+    ohrSpaeter(450);
+  }
+
   function ohrDarf() {
-    return wakeActive && !ohr.brauchtTipp && !callActive && !window.Friday?.mikroBelegt
+    return wakeActive && !stimmPause && !ohr.brauchtTipp && !callActive && !window.Friday?.mikroBelegt
       && document.visibilityState !== "hidden";
   }
   function zeigeRuhe() {
