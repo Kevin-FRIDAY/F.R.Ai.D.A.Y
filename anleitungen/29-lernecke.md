@@ -101,6 +101,41 @@ Hier liegt alles dauerhaft:
 
 Hinweis: In PDFs und Word-Dateien sucht Friday nur im Titel, nicht im Inhalt.
 
+## Foto-Check: erst prüfen, dann speichern (ab Version 1.118.0)
+
+Sobald Carla ein Foto macht (im Reiter „Scannen“ oder im Archiv), liest Friday die Schrift sofort.
+Ist die Schrift spiegelverkehrt (z. B. Frontkamera am Mac), dreht Friday das Bild automatisch richtig herum.
+Dann zeigt Friday das Foto und den gelesenen Text und fragt laut: **„Ist das richtig?“**
+
+- **Ja, richtig – speichern** (oder einfach „Ja“ sagen): Foto und Text kommen ins Archiv. Bei einem Blatt
+  werden auch gleich die Karten gespeichert (in den gewählten oder einen neuen Stapel).
+- **Andersrum spiegeln** (oder „spiegeln“ sagen): Friday liest das Bild nochmal andersherum.
+- **Nein, verwerfen** (oder „Nein“ sagen): Nichts wird gespeichert, einfach nochmal fotografieren.
+
+Den Text kann Carla im Fenster vorher noch verbessern. Unbestätigte Fotos räumt Friday nach einem Tag selbst weg.
+
+## Üben: Aufgaben, Tabellen, eigene Karten (ab Version 1.118.0)
+
+Reiter **🧩 Üben**:
+
+- **Aufgaben erstellen**: Friday macht aus den Karten eines Stapels Übungen – Multiple Choice, Lückentext,
+  Wahr oder falsch, Zuordnen und Reihenfolge. Kostenlos, ohne Guthaben. Am Ende gibt es die Auswertung.
+  Das Arbeitsblatt (mit Lösungen) kann ins Archiv oder heruntergeladen werden.
+- **Als Tabelle**: Der Stapel als Tabelle. Einfach in ein Feld tippen, um es zu ändern, „Neue Zeile“ = neue Karte,
+  🗑 = Karte löschen, dann „Änderungen speichern“. Herunterladen als Excel-Tabelle (CSV) oder ins Archiv.
+- **Eigene Karte**: Vorder- und Rückseite selbst schreiben.
+- **KI-Aufgaben** (braucht Guthaben): Claude denkt sich abwechslungsreiche Aufgaben, eine Tabelle und Karten aus.
+
+Sprachbefehl: „Friday, Lernecke Aufgaben“ oder „Friday, Lernecke üben“.
+
+## Wissen aus dem Internet (ab Version 1.118.0)
+
+Reiter **🌐 Wissen**: Thema eintippen oder per 🎤 sagen. Friday schaut bei Wikipedia nach (kostenlos) und liest
+das Wichtigste vor. Daraus kann Carla mit einem Tipp **Karten**, eine **Tabelle** oder **Aufgaben** machen oder alles
+mit Quellenangabe **ins Archiv** legen. In der Lernhilfe gibt es dazu den Knopf „🌐 Mehr dazu im Internet“.
+
+Sprachbefehl: „Friday, such in der Lernecke im Internet nach Photosynthese“.
+
 ## Wo liegen Carlas Daten?
 
 Getrennt von Kevins Sachen: `server/data/lernen.json` (Karten, Fortschritt), `server/data/lernen-bilder/` (Fotos),

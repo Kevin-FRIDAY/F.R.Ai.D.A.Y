@@ -3101,6 +3101,29 @@ html.perf-fluessig .sat-panel, html.perf-fluessig .lage-satcard { backdrop-filte
   .welttour .wt-knoepfe .chip { flex: 1; min-height: 40px; }
 }
 
+/* ======================= v1.118.0 Friday hängt nicht mehr am Mac (leistung.js) ======================= */
+/* 1) Friday im Hintergrund (andere App vorne): alle Dauer-Animationen halten an, sie laufen weiter,
+      sobald Friday wieder vorne ist. Kopf und Globus laufen dann im Spar-Takt (siehe leistung.js). */
+html.friday-ruhe *, html.friday-ruhe *::before, html.friday-ruhe *::after { animation-play-state: paused !important; }
+/*    Gleiches, wenn ein großes Fenster (Weltgeschehen, Einstellungen …) die Startseite ganz verdeckt:
+      Gemessen am Mac kosteten die unsichtbaren Animationen darunter rund 75 % Rechenlast. */
+html.friday-verdeckt #app > :not(.sheet), html.friday-verdeckt #app > :not(.sheet) *,
+html.friday-verdeckt #app > :not(.sheet) *::before, html.friday-verdeckt #app > :not(.sheet) *::after,
+html.friday-verdeckt .grid-bg, html.friday-verdeckt .scanline,
+html.friday-verdeckt body::before, html.friday-verdeckt body::after { animation-play-state: paused !important; }
+/* 2) Der Leucht-Schatten um den Kopf war ein CSS-Filter auf der 3D-Leinwand. Weil der Kopf
+      60× pro Sekunde neu gezeichnet wird, musste Safari den Filter jedes Mal neu rechnen (Grafik-Prozess >100 %).
+      Jetzt: fester Leucht-Schein hinter dem Kopf – sieht gleich aus, kostet nichts. */
+#face-host { filter: none; }
+.face-host::before {
+  content: ""; position: absolute; inset: 8% 14%; z-index: -1; pointer-events: none; border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--cyan) calc(26% * var(--glow, 1)), transparent) 0%,
+              color-mix(in srgb, var(--cyan) calc(10% * var(--glow, 1)), transparent) 55%, transparent 100%);
+}
+/* 3) Wanderndes Raster: verschieben statt neu malen (der Grafikchip schiebt nur, nichts wird neu gemalt) */
+.grid-bg { inset: -54px; animation-name: hud-gridpan-t; will-change: transform; }
+@keyframes hud-gridpan-t { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(54px, 54px, 0); } }
+
 /* v1.119.0 – Ebenen-Fenster: nur per Knopf auf/zu (kein Hover mehr), ✕ oben, Tippen daneben schließt */
 .lage-legend .legend-body { visibility: hidden; transition: opacity .16s ease, transform .16s ease, visibility 0s linear .16s; }
 .lage-legend.open .legend-body { visibility: visible; transition: opacity .16s ease, transform .16s ease, visibility 0s; }

@@ -218,7 +218,9 @@
     // Leistungsmodus: nicht zeichnen, wenn verdeckt/im Hintergrund; auf dem Handy 30 Bilder/s
     const L = window.FridayLeistung;
     if (document.hidden || (L && L.verdeckt)) { render.last = 0; setTimeout(() => requestAnimationFrame(render), 300); return; }
-    if (L && render.last && now - render.last < 1000 / L.fps - 3) { requestAnimationFrame(render); return; }
+    const aktiv2d = /\b(listening|speaking|thinking)\b/.test(document.getElementById("reactor")?.className || "");
+    const fps2d = L ? (L.kopfFps ? L.kopfFps(aktiv2d) : L.fps) : 60;
+    if (L && render.last && now - render.last < 1000 / fps2d - 3) { requestAnimationFrame(render); return; }
     render.last = now;
     const dt = Math.min(50, now - t0); t0 = now;
     const tsec = now / 1000;

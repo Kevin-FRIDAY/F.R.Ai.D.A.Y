@@ -35,7 +35,8 @@
 
   const an = () => Boolean($("lage-ships-on")?.checked);
   const offen = () => !$("lage")?.classList.contains("hidden");
-  const fluessig = () => document.documentElement.classList.contains("perf-fluessig");
+  // v1.118.0: Friday im Hintergrund (html.friday-ruhe) rechnet genauso sparsam wie der flüssige Modus
+  const fluessig = () => { const c = document.documentElement.classList; return c.contains("perf-fluessig") || c.contains("friday-ruhe"); };
   const zahl = (v, st = 0) => Number(v).toLocaleString("de-DE", { maximumFractionDigits: st, minimumFractionDigits: st });
 
   function ladeFilter() { try { const r = localStorage.getItem("friday_schiff_gruppen"); return r ? new Set(JSON.parse(r)) : null; } catch { return null; } }
