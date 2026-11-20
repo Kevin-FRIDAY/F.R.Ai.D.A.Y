@@ -14,7 +14,7 @@
   const EDGE = { struktur: 0.22, raeume: 0.18, moebel: 0.5 };
   let renderer, scene, camera, root, grid, raf = 0, plan = null, built = [], running = 0;
   let solid = (() => { try { return localStorage.getItem("friday_werkstatt_massiv") === "1"; } catch { return false; } })();
-  let yaw = 0.7, pitch = 0.42, dist = 9, target = new THREE.Vector3(0, 0.8, 0), autoSpin = true;
+  let zoomMax = 80, yaw = 0.7, pitch = 0.42, dist = 9, target = new THREE.Vector3(0, 0.8, 0), autoSpin = true;
 
   // ---------- Szene ----------
   function init() {
@@ -63,7 +63,7 @@
       if (drag && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) antippen(e);
       drag = null;
     });
-    el.addEventListener("wheel", (e) => { e.preventDefault(); dist = Math.max(2, Math.min(80, dist * (e.deltaY > 0 ? 1.1 : 0.9))); }, { passive: false });
+    el.addEventListener("wheel", (e) => { e.preventDefault(); dist = Math.max(2, Math.min(zoomMax, dist * (e.deltaY > 0 ? 1.1 : 0.9))); }, { passive: false });
   }
 
   function loop(t) {
@@ -122,6 +122,9 @@
       geo = profilGeo(p);
       if (!geo) return null;
       usePos = false;
+    } else if (p.form === "flaeche") {
+      geo = flaecheGeo(p);
+      if (!geo) return null;
     } else if (p.form === "box") geo = new THREE.BoxGeometry(v(p.groesse, 0, 1), v(p.groesse, 1, 1), v(p.groesse, 2, 1));
     else if (p.form === "kugel") geo = new THREE.SphereGeometry(p.radius || 0.5, 20, 14);
     else if (p.form === "zylinder") {
@@ -145,13 +148,14 @@
     if (p.form !== "rohr" && p.form !== "kugel") {
       // Schwarze Teile im Hologramm sonst unsichtbar: Kanten in hellem Graphit.
       const kante = !solid && p.farbe === "schwarz" ? 0x8c97a8 : hex;
-      edge = new THREE.LineSegments(new THREE.EdgesGeometry(geo, p.form === "profil" ? 32 : 25), new THREE.LineBasicMaterial({ color: kante, transparent: true, opacity: 1 }));
+      edge = new THREE.LineSegments(new THREE.EdgesGeometry(geo, p.form === "profil" || p.form === "flaeche" ? 32 : 25), new THREE.LineBasicMaterial({ color: kante, transparent: true, opacity: 1 }));
       edge.userData.base = EDGE[p.ebene] ?? 0.35;
       group.add(edge);
     }
     const pos = p.form === "rohr" ? [0, 0, 0] : !usePos ? [0, 0, Array.isArray(p.pos) && Number.isFinite(p.pos[2]) ? p.pos[2] : 0] : (p.pos || [0, 0.5, 0]);
     group.position.fromArray(pos);
     if (Array.isArray(p.drehung)) group.rotation.set(...p.drehung.map((d) => (Number(d) || 0) * Math.PI / 180));
+    if (Array.isArray(p.skala) && p.skala.length === 3 && p.skala.every((k) => Number.isFinite(k) && k > 0)) group.scale.set(...p.skala.map((k) => Math.min(20, k)));
     return { obj: group, edge, edgeBase: edge ? edge.userData.base : 0.35 };
   }
 
@@ -164,6 +168,18 @@
     const r = Math.max(0, Math.min(0.12, Number(p.rundung) || 0, breite / 4));
     const geo = new THREE.ExtrudeGeometry(shape, { depth: Math.max(0.01, breite - 2 * r), bevelEnabled: r > 0, bevelThickness: r, bevelSize: r * 0.8, bevelSegments: 3, curveSegments: 6 });
     geo.translate(0, 0, -(breite - 2 * r) / 2);
+    return geo;
+  }
+
+  // Draufsicht als Umriss (Flügel, Schiffsrumpf, Deck): Punkte [x, z], nach oben (y) um "dicke" ausgezogen.
+  function flaecheGeo(p) {
+    const pts = (p.punkte2d || []).filter((q) => Array.isArray(q) && Number.isFinite(q[0]) && Number.isFinite(q[1]));
+    if (pts.length < 3) return null;
+    const shape = new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(x, -z)));
+    const d = Math.max(0.01, Number(p.dicke) || 0.1);
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: d, bevelEnabled: false, curveSegments: 4 });
+    geo.translate(0, 0, -d / 2);
+    geo.rotateX(-Math.PI / 2); // Umriss liegt flach, Dicke zeigt nach oben
     return geo;
   }
 
@@ -187,6 +203,11 @@
     target.copy(center);
     dist = Math.max(4, Math.max(size.x, size.y, size.z) * 1.9);
     if (camera.aspect < 1) dist *= Math.min(2, 1.15 / camera.aspect); // Hochformat (Handy): weiter weg, damit alles reinpasst
+    // Große Modelle (Schiffe mit 300 m): Sichtweite der Kamera mitziehen, sonst bleibt das Bild leer.
+    zoomMax = Math.max(80, dist * 3);
+    grid.scale.setScalar(Math.max(1, Math.max(size.x, size.z) / 40)); // Raster wächst mit großen Modellen (Schiffe)
+    const weit = Math.max(200, dist * 4 + Math.max(size.x, size.y, size.z));
+    if (camera.far !== weit) { camera.far = weit; camera.near = Math.max(0.05, dist / 400); camera.updateProjectionMatrix(); }
   }
 
   // Gesamtmaße als Maßlinien mit Beschriftung.
@@ -263,11 +284,17 @@
     }
     infoAus();
     schlange = [];
-    let gezeigt = 0, angesagt = false, fehlversuche = 0;
+    let gezeigt = 0, angesagt = false, fehlversuche = 0, planNr = entry.planNr || 1;
     const t0 = Date.now();
     setState("PLANT …", "busy");
     setCaption(entry.erweiterung ? "Ergänze das Modell …" : "Entwurf läuft …");
     while (run === running) {
+      // Plan wurde auf dem Server neu gesetzt (z. B. Vorlage statt leerem Entwurf): von vorn aufbauen.
+      if ((job.planNr || 1) !== planNr) {
+        planNr = job.planNr || 1;
+        if (neu) { root.clear(); built = []; plan.schritte = []; }
+        gezeigt = 0;
+      }
       const p = job.plan || {};
       if (p.titel && neu) plan.titel = p.titel;
       if (p.steckbrief) plan.steckbrief = p.steckbrief;
@@ -315,7 +342,7 @@
     setTimeout(() => { if (run === running) frameModel(); }, 900); // nach dem Einblenden der letzten Teile nachjustieren
     $("werkstatt-step").textContent = `${built.filter((b) => b.src.form !== "text").length} TEILE · ${Math.max(1, Math.round((Date.now() - t0) / 1000))} S`;
     setState("FERTIG", "done");
-    setCaption(haus ? "Fertig. Etagen und Leitungen rechts umschalten." : "Fertig. Teil antippen für Details.");
+    setCaption(haus ? "Fertig. Etagen und Leitungen rechts umschalten." : job.hinweis ? `${job.hinweis} Teil antippen für Details.` : "Fertig. Teil antippen für Details.");
     ansage(plan.fazit || "So, Chef. Fertig.");
   }
 
@@ -371,11 +398,12 @@
     el.innerHTML = `<small>${escapeHtml(b.status || "Bauteil")}</small><b>${escapeHtml(b.src.name || formName(b.src))}</b>${masse(b.src)}`;
     el.classList.remove("hidden");
   }
-  const formName = (p) => ({ box: "Bauteil", zylinder: "Rundteil", kugel: "Kugel", rohr: "Leitung", profil: "Hülle" }[p.form] || "Bauteil");
+  const formName = (p) => ({ box: "Bauteil", zylinder: "Rundteil", kugel: "Kugel", rohr: "Leitung", profil: "Hülle", flaeche: "Fläche" }[p.form] || "Bauteil");
   function masse(p) {
     const f = (n) => Number(n).toLocaleString("de-DE", { maximumFractionDigits: 2 });
     if (p.form === "box" && Array.isArray(p.groesse)) return `<span>${p.groesse.map(f).join(" × ")} m</span>`;
     if (p.form === "zylinder" && p.radius) return `<span>Ø ${f(p.radius * 2)} m</span>`;
+    if (p.form === "flaeche" && Array.isArray(p.punkte2d)) { const xs = p.punkte2d.map((q) => q[0]), zs = p.punkte2d.map((q) => q[1]); return `<span>${f(Math.max(...xs) - Math.min(...xs))} × ${f(Math.max(...zs) - Math.min(...zs))} m</span>`; }
     if (p.form === "profil" && Array.isArray(p.punkte2d)) { const xs = p.punkte2d.map((q) => q[0]), ys = p.punkte2d.map((q) => q[1]); return `<span>${f(Math.max(...xs) - Math.min(...xs))} × ${f(p.breite || 0)} × ${f(Math.max(...ys) - Math.min(...ys))} m</span>`; }
     return "";
   }
@@ -402,7 +430,25 @@
   $("werkstatt-x")?.addEventListener("click", close);
   $("werkstatt-form")?.addEventListener("submit", (e) => { e.preventDefault(); const t = $("werkstatt-input"); request(t.value); t.value = ""; });
   $("werkstatt-solid")?.addEventListener("change", (e) => { solid = e.target.checked; rebuildMaterials(); });
-  $("werkstatt-beispiel")?.addEventListener("click", () => request("Mehrfamilienhaus mit 4 Etagen und 8 Wohnungen", { neu: true }));
+  // v1.124.0: Vorlagen-Knopf – Haus, Autos, Flugzeuge, Schiffe … sofort und ohne Claude-Guthaben.
+  const VORLAGEN = [
+    ["🏠", "Haus", "Mehrfamilienhaus mit 4 Etagen und 8 Wohnungen"], ["🏡", "Einfamilienhaus", "bau mir ein Einfamilienhaus"],
+    ["🏎️", "Sportwagen", "bau mir einen Sportwagen"], ["🚗", "Auto", "bau mir ein Auto"], ["🚙", "SUV", "bau mir einen SUV"], ["🔋", "E-Auto", "bau mir ein Elektroauto"],
+    ["🚛", "LKW", "bau mir einen LKW"], ["🚌", "Bus", "bau mir einen Bus"], ["🏍️", "Motorrad", "bau mir ein Motorrad"], ["🚄", "Zug", "bau mir einen Zug"],
+    ["✈️", "Flugzeug", "bau mir ein Flugzeug"], ["🛩️", "Kampfjet", "bau mir einen Kampfjet"], ["🚁", "Helikopter", "bau mir einen Helikopter"], ["🚀", "Rakete", "bau mir eine Rakete"],
+    ["🚢", "Containerschiff", "bau mir ein Containerschiff"], ["🛳️", "Kreuzfahrtschiff", "bau mir ein Kreuzfahrtschiff"], ["🛥️", "Motorboot", "bau mir ein Motorboot"], ["⛵", "Segelboot", "bau mir ein Segelboot"], ["🌊", "U-Boot", "bau mir ein U-Boot"],
+  ];
+  const vorlagenBox = $("werkstatt-vorlagen");
+  if (vorlagenBox) {
+    vorlagenBox.innerHTML = VORLAGEN.map(([ico, name, wunsch], i) => `<button type="button" data-i="${i}" title="${escapeHtml(wunsch)}">${ico} ${escapeHtml(name)}</button>`).join("");
+    vorlagenBox.addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-i]");
+      if (!b) return;
+      vorlagenBox.classList.add("hidden");
+      request(VORLAGEN[Number(b.dataset.i)][2], { neu: true });
+    });
+  }
+  $("werkstatt-beispiel")?.addEventListener("click", () => vorlagenBox ? vorlagenBox.classList.toggle("hidden") : request("Mehrfamilienhaus mit 4 Etagen und 8 Wohnungen", { neu: true }));
 
   // ---------- Hausmodus: Etagen, Ebenen, Schnitt, Grundriss ----------
   let haus = null, etageSel = "alle", ebeneOn = {}, schnittOn = false;

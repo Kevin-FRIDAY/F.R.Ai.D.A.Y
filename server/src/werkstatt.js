@@ -6,6 +6,7 @@ import { config } from "./config.js";
 import { recordUsage, isCreditError, markEmpty, brainModel, SPAR_MODELL, getEnergie } from "./energie.js";
 import { getSettings } from "./einstellungen.js";
 import { isHausWunsch, isHausBefehl, planHouse } from "./haus.js";
+import { erkenneArt, erkenneFarbe, baueVorlage, istVorlagenBefehl, masseAusKennzahlen } from "./bauvorlagen.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
 
@@ -15,10 +16,11 @@ const TEIL = {
   type: "object",
   properties: {
     name: { type: "string", description: "Kurzer Name des Bauteils, z. B. 'Singleframe-Grill' oder 'Hinterrad links'. Erscheint nur beim Antippen." },
-    form: { type: "string", enum: ["profil", "box", "zylinder", "kugel", "rohr"], description: "profil: Seitenansicht als Umriss (punkte2d), in der Breite ausgezogen – für Karosserie, Rumpf, Kabine; box: Quader; zylinder: Rad, Säule, Tank, Kegel; kugel; rohr: Leitung/Kabel entlang punkte" },
+    form: { type: "string", enum: ["profil", "flaeche", "box", "zylinder", "kugel", "rohr"], description: "profil: Seitenansicht als Umriss (punkte2d [x, y]), in der Breite ausgezogen – für Karosserie, Kabine, Leitwerk; flaeche: Draufsicht als Umriss (punkte2d [x, z] relativ zu pos), dicke in y – für Tragflächen, Schiffsrumpf, Deck; box: Quader; zylinder: Rad, Rumpf, Säule, Tank, Kegel; kugel (mit skala auch Ellipsoid, z. B. Cockpithaube); rohr: Leitung/Kabel/Stange entlang punkte" },
     pos: { ...point, description: "Mittelpunkt [x, y, z] in Metern. y ist oben, Boden y=0, Objekt mittig um x=0, z=0, Länge auf x (vorne = +x). profil: nur pos[2] zählt (Mitte in der Breite), die Umriss-Punkte sind schon absolut." },
     groesse: { ...point, description: "box: [Länge x, Höhe y, Breite z] in Metern" },
-    punkte2d: { type: "array", items: { type: "array", items: { type: "number" }, minItems: 2, maxItems: 2 }, description: "profil: 8 bis 30 Umriss-Punkte [x, y] in Metern, Seitenansicht, im Uhrzeigersinn, ohne Wiederholung des Startpunkts" },
+    punkte2d: { type: "array", items: { type: "array", items: { type: "number" }, minItems: 2, maxItems: 2 }, description: "profil: 8 bis 30 Umriss-Punkte [x, y] in Metern (Seitenansicht, absolut); flaeche: Punkte [x, z] (Draufsicht, relativ zu pos). Ohne Wiederholung des Startpunkts" },
+    skala: { ...point, description: "optionale Streckung [x, y, z], z. B. kugel mit [3, 1, 1] als längliche Haube" },
     breite: { type: "number", description: "profil: Breite in z (Meter)" },
     rundung: { type: "number", description: "profil/box: Kantenrundung in Metern (0 bis 0.12)" },
     radius: { type: "number" },
@@ -27,7 +29,7 @@ const TEIL = {
     achse: { type: "string", enum: ["x", "y", "z"], description: "zylinder: Richtung der Längsachse (Rad: z)" },
     drehung: { ...point, description: "optionale Drehung [x, y, z] in Grad" },
     punkte: { type: "array", items: point, description: "rohr: Eckpunkte der Leitung" },
-    dicke: { type: "number", description: "rohr: Durchmesser in Metern" },
+    dicke: { type: "number", description: "rohr: Durchmesser; flaeche: Dicke in y (Meter)" },
     farbe: { type: "string", enum: FARBEN },
   },
   required: ["form", "farbe"],
@@ -78,13 +80,19 @@ Koordinaten: Meter, echte Maße des Originals. y oben, Boden y=0, Objekt mittig 
 So wird es genau:
 - Die äußere Form IMMER mit "profil" bauen: Seitenansicht als Umriss mit 12 bis 30 Punkten, die die echte Silhouette nachzeichnen (Motorhaube, Neigung der Frontscheibe, Dachlinie, Heck, Radausschnitte angedeutet). Für Breite einen zweiten, schmaleren Umriss für den Aufbau (z. B. Fahrgastzelle mit farbe glas) darüberlegen.
 - Autos: (1) Unterbau-Profil in voller Breite mit rundung 0.06, Farbe nach Wunsch (sonst cyan); (2) Fahrgastzelle als glas-Profil, ca. 85 % der Breite, mit echter A-/C-Säulen-Neigung; (3) 4 Räder: Reifen (zylinder schwarz, achse z) plus Felge (zylinder chrom, etwas kleiner und dünner) an den echten Radpositionen (Radstand, Spurweite, Raddurchmesser); (4) Gesicht des Modells: typischer Kühlergrill in echter Form, Scheinwerfer, Rückleuchten (rot), Außenspiegel, Embleme als flache Teile; (5) erst danach Technik (Motor, Getriebe, Tank, Batterie) klein und innen.
-- Schiffe, Flugzeuge, Raketen, Gebäude genauso: Rumpf/Grundform als Profil oder Kegel, dann typische Erkennungsmerkmale.
+- Flugzeuge/Kampfjets: Rumpf als zylinder (achse x) mit Kegel-Nase (radius vorne klein, radius2 groß), Tragflächen und Höhenleitwerk als "flaeche" (Draufsicht mit echter Pfeilung und Spannweite), Seitenleitwerk als "profil", dann Triebwerke, Cockpit, Fahrwerk.
+- Helikopter: Kabine als profil, Heckausleger als zylinder, Rotorblätter als flache box (mit drehung), Kufen als rohr.
+- Schiffe und Boote: Rumpf als "flaeche" (Draufsicht, spitzer Bug, dicke = Rumpfhöhe), darauf Aufbauten, Brücke, Masten, Segel (dünnes profil).
+- Raketen, Türme: zylinder mit achse y, Spitze als Kegel.
+- Militärfahrzeuge (Kampfjet, Panzer, Kriegsschiff, U-Boot) baust du wie ein Museums-Modell: äußere Form, Cockpit, Triebwerk, Fahrwerk – ohne Waffen-Details.
 - 50 bis 140 Teile insgesamt, jedes Teil mit kurzem name. Keine Textschilder, keine Beschriftungen im Modell.
 - Farben: schwarz/grau/weiss/rot/blau usw. so wie das Original (Wunschfarbe des Nutzers beachten), glas = Scheiben, chrom = Felgen/Zierteile, gelb = Strom, orange = Mechanik, gruen = Batterie.
 - Erzählen: Friday liest einleitung, dann bei jedem Abschnitt "sagen" und am Ende fazit vor, während das Modell entsteht. Erkläre wie ein Ingenieur, der Kevin sein Modell zeigt: "Das ist der Motor …", "Hier sitzt die Batterie …", mit echten Werten. Natürliches Deutsch, sprich ihn mit "Chef" an.
 - steckbrief und kennzahlen: echte Werte des genannten Modells (Baujahr/Bauzeit, Neupreis, Leistung, Maße, Gewicht). Schätzungen mit "ca." kennzeichnen.
 
-Antworte nur, indem du das Werkzeug "bauplan" genau einmal aufrufst. Kein Text daneben. Nichts Gefährliches: keine Waffen, Sprengstoffe oder Anleitungen zum Schaden anderer – dann baust du etwas Harmloses.`;
+PFLICHT: "schritte" ist eine echte Liste (kein Text!) mit 4 bis 7 Abschnitten, und jeder Abschnitt hat in "teile" mindestens 5 Bauteile. Ein Bauplan ohne Teile ist wertlos. Schreib zuerst titel und einleitung kurz, dann sofort die schritte.
+
+Antworte nur, indem du das Werkzeug "bauplan" genau einmal aufrufst. Kein Text daneben. Keine Waffen-Konstruktion, keine Sprengstoffe, keine Anleitungen zum Schaden anderer.`;
 
 let latest = null;
 let seq = 0;
@@ -97,7 +105,7 @@ function compact(plan) {
 
 function neuerJob(wunsch, erweiterung) {
   seq += 1;
-  const job = { id: seq, wunsch, erweiterung, status: "plant", plan: { titel: "", kennzahlen: [], schritte: [] }, zeit: new Date().toISOString(), start: Date.now() };
+  const job = { id: seq, planNr: 1, wunsch, erweiterung, status: "plant", plan: { titel: "", kennzahlen: [], schritte: [] }, zeit: new Date().toISOString(), start: Date.now() };
   jobs.set(job.id, job);
   for (const id of jobs.keys()) if (id < seq - 10) jobs.delete(id);
   latest = job;
@@ -113,10 +121,24 @@ function planHaus(text) {
   return { ok: true, ...job };
 }
 
-// Sprachbefehl "Friday, bau mir ein Mehrfamilienhaus" – sofort und ohne Guthaben.
+// Fahrzeuge & Co. aus Fridays Vorlagen (server/src/bauvorlagen.js) – ohne Claude, sofort fertig.
+function planVorlage(text, art, opt = {}, grund = "") {
+  const plan = baueVorlage(art, opt);
+  const job = neuerJob(text, false);
+  Object.assign(job, { plan, status: "fertig", ohneClaude: true, vorlage: art, ...(grund ? { hinweis: grund } : {}) });
+  eintragen({ bereich: "werkstatt", titel: `Vorlage gebaut: ${plan.titel}`, details: `Wunsch: ${text}${eckdaten(plan)}${grund ? ` · ${grund}` : ""}` });
+  return { ok: true, ...job };
+}
+
+// Sprachbefehl "Friday, bau mir ein Mehrfamilienhaus" oder "bau mir einen Kampfjet" – sofort und ohne Guthaben.
 export function quickCommand(text) {
-  if (!isHausBefehl(text)) return null;
-  const r = planHaus(String(text).trim().slice(0, 1000));
+  if (isHausBefehl(text)) {
+    const r = planHaus(String(text).trim().slice(0, 1000));
+    return { answer: "Einen Moment, Chef.", actions: ["werkstatt"], titel: r.plan.titel };
+  }
+  const v = istVorlagenBefehl(text);
+  if (!v) return null;
+  const r = planVorlage(String(text).trim().slice(0, 1000), v.art, { farbe: v.farbe, elektro: v.elektro });
   return { answer: "Einen Moment, Chef.", actions: ["werkstatt"], titel: r.plan.titel };
 }
 
@@ -127,17 +149,43 @@ function eckdaten(plan) {
 }
 
 // Ein Bauabschnitt aus Claude: Textschilder raus (Kevin will keine Beschriftungs-Flut), Teile prüfen.
+// v1.124.0: Claude schickt verschachtelte Listen manchmal als Text ("[{...}]") oder Zahlen als "1,2" –
+// das wird jetzt aufgeräumt statt verworfen (Ursache für "Der Bauplan war leer.").
 const istZahl = (v) => typeof v === "number" && Number.isFinite(v);
+function ausText(v) {
+  if (typeof v !== "string") return v;
+  const t = v.trim();
+  if (!/^[[{]/.test(t)) return v;
+  try { return JSON.parse(t); } catch { return v; }
+}
+const zahl = (v) => (typeof v === "string" && v.trim() !== "" && Number.isFinite(Number(v.replace(",", "."))) ? Number(v.replace(",", ".")) : v);
+const zahlen = (a) => (Array.isArray(a) ? a.map((x) => (Array.isArray(x) ? zahlen(x) : zahl(x))) : a);
+const FORMEN = { quader: "box", wuerfel: "box", würfel: "box", cube: "box", cylinder: "zylinder", sphere: "kugel", tube: "rohr", leitung: "rohr", profile: "profil", flaech: "flaeche", fläche: "flaeche", plane: "flaeche", kegel: "zylinder", cone: "zylinder" };
+function teilAufraeumen(roh) {
+  const t = ausText(roh);
+  if (!t || typeof t !== "object" || Array.isArray(t)) return null;
+  const x = { ...t };
+  x.form = String(x.form || "").toLowerCase().trim();
+  x.form = FORMEN[x.form] || x.form;
+  for (const k of ["pos", "groesse", "punkte2d", "punkte", "drehung", "skala"]) if (x[k] !== undefined) x[k] = zahlen(ausText(x[k]));
+  for (const k of ["radius", "radius2", "hoehe", "breite", "rundung", "dicke"]) if (x[k] !== undefined) x[k] = zahl(x[k]);
+  if (x.form === "zylinder" && (roh?.form === "kegel" || roh?.form === "cone") && x.radius2 === undefined) x.radius2 = 0;
+  if (typeof x.farbe === "string") x.farbe = x.farbe.toLowerCase().replace("ß", "ss").replace("ü", "ue");
+  return x;
+}
 function teilOk(t) {
   if (!t || typeof t !== "object" || !t.form || t.form === "text") return false;
-  if (t.form === "profil") return Array.isArray(t.punkte2d) && t.punkte2d.filter((q) => Array.isArray(q) && istZahl(q[0]) && istZahl(q[1])).length >= 3;
+  if (t.form === "profil" || t.form === "flaeche") return Array.isArray(t.punkte2d) && t.punkte2d.filter((q) => Array.isArray(q) && istZahl(q[0]) && istZahl(q[1])).length >= 3;
   if (t.form === "rohr") return Array.isArray(t.punkte) && t.punkte.length >= 2 && t.punkte.every((q) => Array.isArray(q) && q.length === 3 && q.every(istZahl));
-  return true;
+  if (!["box", "zylinder", "kugel"].includes(t.form)) return false;
+  return !t.pos || (Array.isArray(t.pos) && t.pos.length === 3 && t.pos.every(istZahl));
 }
-function saeubereSchritt(s) {
-  const status = String(s?.status || s?.sagen || "").trim().slice(0, 40);
+function saeubereSchritt(roh) {
+  const s = ausText(roh) || {};
+  const status = String(s?.status || s?.name || s?.sagen || "").trim().slice(0, 40);
   const sagen = String(s?.sagen || "").trim().slice(0, 600);
-  return { status, sagen, teile: (Array.isArray(s?.teile) ? s.teile : []).filter(teilOk).slice(0, 120) };
+  const teile = ausText(s?.teile ?? s?.bauteile);
+  return { status, sagen, teile: (Array.isArray(teile) ? teile : []).map(teilAufraeumen).filter(teilOk).slice(0, 160) };
 }
 
 // Aus dem halbfertigen Werkzeug-Aufruf alles übernehmen, was schon sicher fertig ist:
@@ -148,10 +196,19 @@ function uebernimm(job, roh, alles = false) {
   // Die Einleitung erst übernehmen, wenn sie fertig geschrieben ist (danach kommt der Steckbrief).
   if (typeof roh.einleitung === "string" && (alles || roh.steckbrief)) job.plan.einleitung = roh.einleitung.slice(0, 400);
   if (typeof roh.fazit === "string" && alles) job.plan.fazit = roh.fazit.slice(0, 400);
-  if (roh.steckbrief && typeof roh.steckbrief === "object") job.plan.steckbrief = { ...roh.steckbrief };
-  if (Array.isArray(roh.kennzahlen)) job.plan.kennzahlen = roh.kennzahlen.filter((k) => k && k.label && k.wert);
-  const sch = Array.isArray(roh.schritte) ? roh.schritte : [];
+  const sb = ausText(roh.steckbrief);
+  if (sb && typeof sb === "object") job.plan.steckbrief = { ...sb };
+  const kz = ausText(roh.kennzahlen);
+  if (Array.isArray(kz)) job.plan.kennzahlen = kz.filter((k) => k && k.label && k.wert);
+  const schRoh = ausText(roh.schritte);
+  const sch = Array.isArray(schRoh) ? schRoh : [];
   const fertig = alles ? sch.length : Math.max(0, sch.length - 1);
+  if (alles) {
+    // Zum Schluss alles noch einmal sauber lesen: war ein Abschnitt beim Streamen leer (z. B. als Text
+    // geschickt) und ist jetzt voll, wird der Plan neu gesetzt und das Dashboard baut von vorn.
+    const frisch = sch.map(saeubereSchritt);
+    if (job.plan.schritte.some((s, i) => !s.teile.length && frisch[i]?.teile.length)) { job.plan.schritte = frisch; job.planNr = (job.planNr || 1) + 1; }
+  }
   while (job.plan.schritte.length < fertig) {
     const s = saeubereSchritt(sch[job.plan.schritte.length]);
     job.plan.schritte.push(s); // auch leere bleiben als Platzhalter, damit die Zählung stimmt
@@ -167,8 +224,18 @@ export function startBuild(wunsch, basis = null) {
   const text = String(wunsch || "").trim().slice(0, 1000);
   if (!text) return { ok: false, error: "Was soll ich bauen, Chef?" };
   if (!basis && isHausWunsch(text)) return planHaus(text);
-  if (!config.anthropicKey) return { ok: false, error: "Ohne Claude-Schlüssel kann die Werkstatt nichts entwerfen." };
-  if (getEnergie().zustand === "leer") return { ok: false, error: "Dein Claude-Guthaben ist leer, Chef. Lade es auf console.anthropic.com auf, dann baue ich wieder." };
+  const art = erkenneArt(text);
+  const optAusText = { farbe: erkenneFarbe(text), elektro: /elektro|e-auto|tesla|taycan|e-tron|\bid\.? ?[3-7]\b/i.test(text) };
+  // Ein schlichtes "bau mir einen Kampfjet" braucht kein Claude: die Vorlage ist sofort da.
+  if (!basis && istVorlagenBefehl(text)) return planVorlage(text, art, optAusText);
+  if (!config.anthropicKey) {
+    if (!basis && art) return planVorlage(text, art, optAusText, "Ohne Claude-Schlüssel: Fridays Vorlage.");
+    return { ok: false, error: "Ohne Claude-Schlüssel kann die Werkstatt nichts entwerfen." };
+  }
+  if (getEnergie().zustand === "leer") {
+    if (!basis && art) return planVorlage(text, art, optAusText, "Claude-Guthaben leer: Fridays Vorlage.");
+    return { ok: false, error: "Dein Claude-Guthaben ist leer, Chef. Lade es auf console.anthropic.com auf, dann baue ich wieder." };
+  }
   const job = neuerJob(text, Boolean(basis));
   bauen(job, basis).catch((err) => {
     job.status = "fehler";
@@ -209,16 +276,52 @@ async function bauen(job, basis) {
   } catch (err) {
     const m = String(err?.message || err);
     if (isCreditError(err)) markEmpty();
+    if (isCreditError(err) || /credit balance/i.test(m)) {
+      if (!basis && vorlageEinsetzen(job)) { job.hinweis = "Claude-Guthaben leer: Friday hat ihre Vorlage gebaut."; return; }
+    }
     if (/credit balance/i.test(m)) throw new Error("Dein Claude-Guthaben ist leer, Chef. Lade es auf console.anthropic.com auf, dann baue ich wieder.");
     if (/authentication|api[_ -]?key|401/i.test(m)) throw new Error("Der Claude-Schlüssel wird nicht angenommen.");
+    console.error("Werkstatt-Claude:", m.slice(0, 300));
+    if (!basis && job.plan.schritte.some((s) => s.teile.length)) { job.status = "fertig"; return; } // Teilplan reicht
+    if (!basis && vorlageEinsetzen(job)) return;
     throw new Error("Der Bauplan hat gerade nicht geklappt. Versuch es gleich noch einmal.");
   }
   recordUsage(msg.model || model, msg.usage, "werkstatt");
   const block = (msg.content || []).find((b) => b.type === "tool_use" && b.name === "bauplan");
-  if (!block) throw new Error(msg.stop_reason === "refusal" ? "Das baue ich nicht, Chef." : "Der Bauplan kam nicht zustande.");
-  uebernimm(job, block.input, true);
-  if (!job.plan.schritte.some((s) => s.teile.length)) throw new Error("Der Bauplan war leer.");
+  job.stop = msg.stop_reason;
+  if (!block && msg.stop_reason === "refusal") throw new Error("Das baue ich nicht, Chef.");
+  if (block) uebernimm(job, block.input, true);
+  if (!job.plan.schritte.some((s) => s.teile.length)) {
+    // Claude hat keine (brauchbaren) Bauteile geliefert. Statt "Der Bauplan war leer." baut Friday
+    // die passende Vorlage – mit Claudes Titel, Steckbrief und den echten Maßen aus den Kennzahlen.
+    const roh = block?.input && typeof block.input === "object" ? Object.keys(block.input).join(",") : "-";
+    console.error(`Werkstatt: Bauplan ohne Teile (stop=${msg.stop_reason}, Felder=${roh}, Abschnitte=${job.plan.schritte.length})`);
+    if (!basis && vorlageEinsetzen(job)) return;
+    throw new Error(basis ? "Die Ergänzung kam ohne Bauteile zurück. Versuch es bitte noch einmal." : "Der Bauplan war leer. Sag mir genauer, was ich bauen soll (z. B. Auto, Flugzeug, Schiff).");
+  }
   job.status = "fertig";
+}
+
+// Rettung: passende Vorlage einsetzen, Claudes Angaben (Titel, Steckbrief, Kennzahlen, Einleitung) behalten.
+function vorlageEinsetzen(job) {
+  const p = job.plan;
+  const art = erkenneArt(`${job.wunsch} ${p.titel || ""} ${p.steckbrief?.typ || ""}`);
+  if (!art) return false;
+  const text = `${job.wunsch} ${p.titel || ""}`;
+  const v = baueVorlage(art, { ...masseAusKennzahlen(p.kennzahlen), farbe: erkenneFarbe(job.wunsch) || erkenneFarbe(p.titel), elektro: /elektro|e-auto|tesla|taycan|e-tron/i.test(text), titel: p.titel || undefined });
+  job.plan = {
+    ...v,
+    titel: p.titel || v.titel,
+    einleitung: p.einleitung || v.einleitung,
+    steckbrief: p.steckbrief?.typ ? p.steckbrief : v.steckbrief,
+    kennzahlen: p.kennzahlen?.length ? p.kennzahlen : v.kennzahlen,
+    fazit: p.fazit || v.fazit,
+  };
+  job.vorlage = art;
+  job.planNr = (job.planNr || 1) + 1; // Dashboard baut neu auf
+  job.hinweis = "Claudes Entwurf kam ohne Bauteile – Friday hat die passende Vorlage mit den echten Maßen gebaut.";
+  job.status = "fertig";
+  return true;
 }
 
 /** Für das Claude-Werkzeug: startet den Bau und wartet höchstens kurz (die Werkstatt zeigt alles selbst). */
