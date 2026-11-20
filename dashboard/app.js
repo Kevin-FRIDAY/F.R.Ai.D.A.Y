@@ -500,7 +500,7 @@
         let rest = text, neuStarts = 0;
         while (rest && nr === sprechNr) {
           const teil = rest;
-          let bisZeichen = 0, fehler = "";
+          let bisZeichen = 0, fehler = "", zeitUm = false;
           const t0 = Date.now();
           await new Promise((resolve) => {
             const u = new SpeechSynthesisUtterance(teil);
@@ -515,11 +515,22 @@
               if (e.charIndex > bisZeichen) bisZeichen = e.charIndex;
               if (!e.name || e.name === "word") window.FridayFace?.boundary?.(e.charIndex, teil);
             };
-            u.onend = resolve;
-            u.onerror = (e) => { fehler = e?.error || "fehler"; resolve(); };
+            // v1.121.4: Safari auf dem iPhone meldet das Ende manchmal nie. Wächter: nach geschätzter
+            // Sprechdauer + 4 s weiter, oder wenn die Stimme 3 s lang sichtbar nicht mehr spricht.
+            let fertig = false;
+            const ende = () => { if (fertig) return; fertig = true; clearTimeout(waechter); clearInterval(pruef); resolve(); };
+            const waechter = setTimeout(() => { zeitUm = true; ende(); }, Math.min(90000, 4000 + teil.split(/\s+/).length * 550));
+            let still = 0;
+            const pruef = setInterval(() => {
+              try { still = (speechSynthesis.speaking || speechSynthesis.pending) ? 0 : still + 1; } catch { still++; }
+              if (still >= 3) ende();
+            }, 1000);
+            u.onend = ende;
+            u.onerror = (e) => { fehler = e?.error || "fehler"; ende(); };
             speechSynthesis.speak(u);
           });
           if (nr !== sprechNr) break; // absichtlich gestoppt ("Friday", Stopp, Tippen)
+          if (zeitUm) { try { speechSynthesis.cancel(); } catch { /* egal */ } break; } // hing: nicht noch mal von vorn
           const erwartetMs = (teil.length / 14) * 1000 / (Number(storage.get("friday_rate")) || 1.05);
           const zuFrueh = fehler === "interrupted" || fehler === "canceled"
             || (bisZeichen > 0 && bisZeichen < teil.length - 25)
@@ -1603,6 +1614,7 @@
   const IST_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const unterbrochenEben = () => Date.now() - bargeZeit < 4000;
   window.Friday.unterbrochen = () => unterbrochenEben() || bargeFang;
+  window.Friday.beschaeftigt = () => busy || speaking || bargeFang;
   const bargeNorm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9ß ]+/g, " ").replace(/\s+/g, " ").trim();
   // Stammt das Gehörte aus Fridays eigenem Satz? (Echo aus dem Lautsprecher)
