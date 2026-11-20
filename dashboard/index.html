@@ -94,6 +94,7 @@
     <div class="hidden" aria-hidden="true">
       <button id="lage-btn"></button>
       <button id="brain-btn"></button>
+      <button id="gehirn-open" type="button"></button>
       <button id="camera-live-btn"></button>
       <button id="look-btn"></button>
       <button id="briefing-btn"></button>
@@ -127,6 +128,7 @@
       <button class="menu-row" data-target="gegen-open"><svg viewBox="0 0 24 24" class="mi"><path d="M12 3v18M5 7h14"/><path d="M5 7l-3 6a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/><path d="M8 21h8"/></svg>Advocatus Diaboli</button>
       <button class="menu-row" data-target="schnitt-open"><svg viewBox="0 0 24 24" class="mi"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M8 5v4M16 5v4M10 12.5l4 2.5-4 2.5z"/></svg>Schnitt-Team</button>
       <div class="menu-sep" role="presentation">Friday</div>
+      <button class="menu-row" data-target="gehirn-open"><svg viewBox="0 0 24 24" class="mi"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V5a3 3 0 0 0-3-1z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1"/><path d="M12 9h2M12 14h3"/></svg>Fridays Gehirn</button>
       <button class="menu-row" data-target="hb-vollbild"><svg viewBox="0 0 24 24" class="mi"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Vollbild</button>
       <button class="menu-row" data-target="klang-open"><svg viewBox="0 0 24 24" class="mi"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>Stimmungs-Sound</button>
       <button class="menu-row" data-target="call-btn"><svg viewBox="0 0 24 24" class="mi"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Friday anrufen</button>
@@ -742,13 +744,74 @@
         </header>
 
         <nav class="sz-tabs" role="tablist">
-          <button type="button" class="active" data-sz="uebersicht" role="tab">◈ Übersicht</button>
+          <button type="button" class="active" data-sz="gehirn" role="tab">🧠 Gehirn</button>
+          <button type="button" data-sz="uebersicht" role="tab">◈ Übersicht</button>
           <button type="button" data-sz="dienste" role="tab">◉ Dienste</button>
           <button type="button" data-sz="gedaechtnis" role="tab">◆ Gedächtnis</button>
           <button type="button" data-sz="werkzeuge" role="tab">⚙ Werkzeuge</button>
         </nav>
 
-        <div class="sz-pane" data-pane="uebersicht">
+        <!-- Fridays Gehirn (KI-Kern): Glas-Bildschirm oben, Leitungen, leuchtendes Gehirn auf Sockel. Alle Zahlen echt (GET /api/gehirn). -->
+        <div class="sz-pane gh" data-pane="gehirn">
+          <div class="gh-stage" id="gh-stage">
+            <div class="gh-screen">
+              <div class="gh-screen-in">
+                <div class="gh-col gh-left">
+                  <div class="gh-logo"><b>AI CORE</b><span>F.R.Ai.D.A.Y · v<i id="gh-ver">–</i></span></div>
+                  <div class="gh-kachel" id="gh-k-akt"><span class="gh-ico"><svg viewBox="0 0 24 24"><path d="M2 12h4l2-5 4 10 3-7 2 2h5"/></svg></span><div><small>Neuronale Aktivität</small><b>–</b><em>–</em><i class="gh-bar"><s></s></i></div></div>
+                  <div class="gh-kachel" id="gh-k-wissen"><span class="gh-ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6M5 11.5v6c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-6"/></svg></span><div><small>Wissensspeicher</small><b>–</b><em>–</em></div></div>
+                  <div class="gh-kachel" id="gh-k-verb"><span class="gh-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><circle cx="4" cy="5" r="1.8"/><circle cx="20" cy="5" r="1.8"/><circle cx="4" cy="19" r="1.8"/><circle cx="20" cy="19" r="1.8"/><path d="M5.5 6.3l4.6 4M18.5 6.3l-4.6 4M5.5 17.7l4.6-4M18.5 17.7l-4.6-4"/></svg></span><div><small>Verbindung</small><b>–</b><em>–</em></div></div>
+                  <div class="gh-kachel" id="gh-k-lern"><span class="gh-ico"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg></span><div><small>Lernstatus</small><b>–</b><em>–</em></div></div>
+                </div>
+                <div class="gh-col gh-mid">
+                  <h4>Neuronale Pfade <span id="gh-synapsen" class="gh-klein"></span></h4>
+                  <svg id="gh-pfade" viewBox="0 0 420 210" aria-label="Neuronale Pfade"></svg>
+                  <h4>Automatischer Ablauf <span id="gh-phase-text" class="gh-klein">Bereit</span></h4>
+                  <div class="gh-flow" id="gh-flow">
+                    <div data-stufe="0"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg><span>Analyse</span></div>
+                    <i></i>
+                    <div data-stufe="1"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Verarbeitung</span></div>
+                    <i></i>
+                    <div data-stufe="2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg><span>Entscheidung</span></div>
+                    <i></i>
+                    <div data-stufe="3"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span>Aktion</span></div>
+                  </div>
+                </div>
+                <div class="gh-col gh-right">
+                  <h4>Aktivität heute <span id="gh-heute" class="gh-klein"></span></h4>
+                  <svg id="gh-stunden" viewBox="0 0 240 60" preserveAspectRatio="none"></svg>
+                  <div class="gh-achse"><span>0</span><span>6</span><span>12</span><span>18</span><span>24 Uhr</span></div>
+                  <h4>Mac-Auslastung <span id="gh-last-text" class="gh-klein"></span></h4>
+                  <svg id="gh-last" viewBox="0 0 240 46" preserveAspectRatio="none"><path class="gh-l-ram" d=""/><path class="gh-l-cpu" d=""/></svg>
+                  <h4>Datenstrom</h4>
+                  <ul id="gh-strom" class="gh-strom"><li class="muted">Lade …</li></ul>
+                </div>
+              </div>
+            </div>
+            <svg class="gh-kabel" viewBox="0 0 1000 110" preserveAspectRatio="none" aria-hidden="true">
+              <path class="k1" d="M120 0 C120 60, 300 50, 430 105"/><path class="k2" d="M200 0 C200 50, 360 60, 455 105"/>
+              <path class="k3" d="M880 0 C880 60, 700 50, 570 105"/><path class="k4" d="M800 0 C800 50, 640 60, 545 105"/>
+              <path class="k5" d="M500 0 L500 105"/>
+            </svg>
+            <div class="gh-unten">
+              <div class="gh-seite gh-links">
+                <div class="gh-ring" id="gh-ring"><svg viewBox="0 0 100 100"><circle class="gh-r-bg" cx="50" cy="50" r="42"/><circle class="gh-r-val" cx="50" cy="50" r="42"/></svg><div><b>–</b><small>KI-Leistung</small><em>Erfolg heute</em></div></div>
+                <div class="gh-zentren" id="gh-zentren-l"></div>
+              </div>
+              <div class="gh-kern">
+                <canvas id="gh-canvas" aria-label="Fridays Gehirn"></canvas>
+                <span class="gh-denkt" id="gh-denkt">denkt …</span>
+              </div>
+              <div class="gh-seite gh-rechts">
+                <div class="gh-zentren" id="gh-zentren-r"></div>
+                <div class="gh-energie" id="gh-energie"><span class="gh-ico"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span><div><small>Energie (Guthaben)</small><b>–</b><i class="gh-bar"><s></s></i></div></div>
+              </div>
+            </div>
+            <div class="gh-fuss"><span>DENKEN · LERNEN · HANDELN</span><span id="gh-modell"></span></div>
+          </div>
+        </div>
+
+        <div class="sz-pane hidden" data-pane="uebersicht">
           <div class="sz-gauges">
             <div class="sz-gauge" id="sz-g-cpu"><svg viewBox="0 0 100 100"><circle class="sz-g-bg" cx="50" cy="50" r="42"/><circle class="sz-g-val" cx="50" cy="50" r="42"/></svg><div class="sz-g-txt"><b>–</b><small>Prozessor</small></div></div>
             <div class="sz-gauge" id="sz-g-ram"><svg viewBox="0 0 100 100"><circle class="sz-g-bg" cx="50" cy="50" r="42"/><circle class="sz-g-val" cx="50" cy="50" r="42"/></svg><div class="sz-g-txt"><b>–</b><small>Arbeitsspeicher</small></div></div>
@@ -1166,6 +1229,7 @@
   <script src="postfach.js"></script>
   <script src="syscheck.js"></script>
   <script src="systemzentrale.js"></script>
+  <script src="gehirn.js"></script>
   <script src="einstellungen-plus.js"></script>
   <script src="fernseher.js"></script>
   <script src="sicherung.js"></script>

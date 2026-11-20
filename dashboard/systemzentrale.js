@@ -19,9 +19,18 @@
     tabs.forEach((b) => b.classList.toggle("active", b.dataset.sz === name));
     sheet.querySelectorAll(".sz-pane").forEach((p) => p.classList.toggle("hidden", p.dataset.pane !== name));
     try { localStorage.setItem("fsz_tab", name); } catch { /* egal */ }
+    const h2 = sheet.querySelector(".sz-title h2");
+    if (h2) h2.textContent = name === "gehirn" ? "Fridays Gehirn" : "System-Zentrale";
+    sheet.dataset.reiter = name;
+    window.dispatchEvent(new CustomEvent("friday-sz-reiter", { detail: name }));
   }
   tabs.forEach((b) => b.addEventListener("click", () => zeigeReiter(b.dataset.sz)));
-  try { const t = localStorage.getItem("fsz_tab"); if (t && sheet.querySelector(`[data-pane="${t}"]`)) zeigeReiter(t); } catch { /* egal */ }
+  // v1.126.0: Das Gehirn ist jetzt der erste Reiter. Einmalig dorthin wechseln, danach merkt sich Friday den letzten Reiter.
+  try {
+    if (localStorage.getItem("fsz_gehirn_v1") !== "1") { localStorage.setItem("fsz_gehirn_v1", "1"); localStorage.setItem("fsz_tab", "gehirn"); }
+    const t = localStorage.getItem("fsz_tab");
+    zeigeReiter(t && sheet.querySelector(`[data-pane="${t}"]`) ? t : "gehirn");
+  } catch { zeigeReiter("gehirn"); }
 
   // ---------- Hilfen ----------
   const dauer = (s) => {
@@ -182,5 +191,5 @@
     }
   }));
 
-  window.FridaySystem = { aktualisieren: ladeLive };
+  window.FridaySystem = { aktualisieren: ladeLive, reiter: zeigeReiter };
 })();
