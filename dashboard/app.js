@@ -253,8 +253,7 @@
       }
       setBadge("st-server", true, "online");
       setBadge("st-mac", status.agent?.online, status.agent?.name || "verbunden", "getrennt");
-      setBadge("st-voice", status.voice && !status.voiceHinweis, "ElevenLabs", status.voice ? "Gerät (ElevenLabs-Pause)" : "Gerät");
-      if ($("st-voice")) $("st-voice").title = status.voiceHinweis || "";
+      setBadge("st-voice", Boolean(germanVoice), germanVoice ? `Apple: ${stimmName(germanVoice)}` : "Apple-Stimme", "Apple-Stimme");
       setBadge("st-push", status.push);
       setBadge("st-telegram", status.telegram);
       setBadge("st-home", status.smartHome);
@@ -476,68 +475,9 @@
     return out.length ? out : [text];
   }
   let sprechNr = 0; // jede neue Ansage / jedes Stoppen bricht die alte ab
-  // v1.122.8: Klappt ElevenLabs nicht, 10 Minuten lang gleich die Gerätestimme nehmen (kein Warten bei
-  // jedem Satz). Antwortet der Mac nicht binnen 8 s, ebenfalls Gerätestimme.
-  let stimmePauseBis = 0, stimmeGrund = "";
-  async function stimmeHolen(t) {
-    if (Date.now() < stimmePauseBis) throw new Error(stimmeGrund);
-    const ab = new AbortController();
-    const zeit = setTimeout(() => ab.abort(), 8000);
-    let res;
-    try {
-      res = await api("/api/tts", { method: "POST", body: JSON.stringify({ text: t }), signal: ab.signal });
-    } catch (e) {
-      clearTimeout(zeit);
-      stimmePauseBis = Date.now() + 2 * 60000;
-      stimmeGrund = "ElevenLabs antwortet gerade nicht, deshalb spreche ich mit der Gerätestimme.";
-      diag.schritt("ElevenLabs antwortet nicht → Gerätestimme", "warn");
-      throw new Error(stimmeGrund);
-    }
-    if (!res.ok) {
-      clearTimeout(zeit);
-      const j = await res.json().catch(() => ({}));
-      stimmeGrund = j.grund || j.error || `ElevenLabs antwortet nicht (Fehler ${res.status}), deshalb spreche ich mit der Gerätestimme.`;
-      stimmePauseBis = Date.now() + 10 * 60000;
-      diag.schritt(`ElevenLabs-Stimme gerade aus: ${stimmeGrund.replace(/, deshalb.*$/, "")} → Gerätestimme`, "warn");
-      throw new Error(stimmeGrund);
-    }
-    try { return URL.createObjectURL(await res.blob()); } finally { clearTimeout(zeit); }
-  }
-
-  // Wenn ElevenLabs nicht spricht: kleines Schild unten rechts und einmal hörbar sagen, warum.
-  // v1.98.0: höchstens einmal pro Tag (gleicher Grund), mit "Nicht mehr zeigen".
-  const HINWEIS_AUS = "friday_stimmhinweis_aus";
-  const HINWEIS_TAG = "friday_stimmhinweis_tag";
-  const lies = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
-  const schreib = (k, v) => { try { localStorage.setItem(k, v); } catch { /* egal */ } };
-  function stimmHinweis(grund) {
-    if (!grund) return false;
-    const b = $("st-voice");
-    if (b) { b.textContent = "Gerät (ElevenLabs-Pause)"; b.title = grund; }
-    if (lies(HINWEIS_AUS) === "1") return false;
-    const art = grund.split(/[.,]/)[0]; // nur der Kern zählt (Datum o. ä. kann sich ändern)
-    const heute = new Date().toISOString().slice(0, 10);
-    const merk = `${heute}|${art}`;
-    if (lies(HINWEIS_TAG) === merk) return false;
-    schreib(HINWEIS_TAG, merk);
-    let el = document.getElementById("stimm-hinweis");
-    if (!el) {
-      el = document.createElement("div");
-      el.id = "stimm-hinweis";
-      el.setAttribute("role", "status");
-      el.innerHTML = '<b>🔊 Gerätestimme statt ElevenLabs</b><button type="button" class="sh-x" aria-label="Schließen">✕</button><span></span><button type="button" class="sh-nie">Nicht mehr zeigen</button>';
-      el.querySelector(".sh-x").onclick = () => el.classList.remove("an");
-      el.querySelector(".sh-nie").onclick = () => { schreib(HINWEIS_AUS, "1"); el.classList.remove("an"); };
-      document.body.appendChild(el);
-    }
-    el.querySelector("span").textContent = grund;
-    el.classList.add("an");
-    clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove("an"), 12000);
-    return true;
-  }
+  // v1.123.0: ElevenLabs ist entfernt. Friday spricht nur noch mit der Apple-Stimme des Geräts.
   window.Friday = window.Friday || {};
-  window.Friday.stimmHinweis = stimmHinweis;
+  window.Friday.stimmHinweis = () => false;
 
   // v1.121.1: Friday redet nicht von allein. Meldungen, die keiner bestellt hat (Timer, Erinnerung,
   // Energie, "Video fertig"), erscheinen still am Status-Ring statt vorgelesen zu werden.
@@ -562,43 +502,6 @@
       // iPhone: Das Mikrofon braucht einen Moment, bis es wirklich aus ist. Sonst bleibt die Stimme stumm.
       if (mikroWarAn) await new Promise((r) => setTimeout(r, 600));
       if (nr !== sprechNr) return;
-      if (status.voice) {
-        const teile = text.length > 160 ? haeppchen(text) : [text];
-        let naechstes = stimmeHolen(teile[0]);
-        let ok = false;
-        for (let i = 0; i < teile.length; i++) {
-          let url;
-          try { url = await naechstes; } catch (e) { if (!ok && hinweis && stimmHinweis(e?.message) && !text.includes(e.message)) text = `Kurzer Hinweis: ${e.message} ${text}`; break; }
-          if (nr !== sprechNr) { URL.revokeObjectURL(url); return; }
-          if (i + 1 < teile.length) { naechstes = stimmeHolen(teile[i + 1]); naechstes.catch(() => {}); }
-          audio.src = url;
-          audio.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
-          window.FridayFace?.talkWithAudio(audio);
-          try { await audio.play(); } catch (e) {
-            URL.revokeObjectURL(url);
-            if (nr !== sprechNr) return;
-            if (!ok) {
-              const grund = "Der Browser hat die ElevenLabs-Wiedergabe blockiert. Tipp einmal auf den Bildschirm, dann klappt es wieder.";
-              diag.schritt("Ton blockiert (ElevenLabs). Einmal auf den Bildschirm tippen.", "bad");
-              if (stimmHinweis(grund)) text = `Kurzer Hinweis: ${grund} ${text}`;
-            }
-            break;
-          }
-          ok = true;
-          for (let weiter = 0; ; weiter++) {
-            await new Promise((r) => { audio.onended = r; audio.onerror = r; audio.onpause = r; });
-            // iPhone: Ein Geräusch lässt das Mikrofon anspringen und iOS pausiert die Wiedergabe.
-            // Hat niemand gestoppt (sprechNr gleich), einfach weiterspielen.
-            if (nr !== sprechNr || audio.ended || !audio.paused || weiter >= 4) break;
-            await new Promise((r) => setTimeout(r, 200));
-            if (nr !== sprechNr) break;
-            try { await audio.play(); } catch { break; }
-          }
-          URL.revokeObjectURL(url);
-          if (nr !== sprechNr || (audio.paused && !audio.ended)) return; // gestoppt
-        }
-        if (ok) return;
-      }
       if ("speechSynthesis" in window) {
         // v1.121.3: Auf dem iPhone bricht iOS die Stimme ab, wenn ein Geräusch (S-Bahn) das Mikrofon
         // anspringen lässt. Hört Friday auf, ohne dass jemand "Friday"/Stopp gesagt hat, spricht sie
@@ -1180,7 +1083,7 @@
   }
   if ("speechSynthesis" in window) { fillVoices(); speechSynthesis.addEventListener?.("voiceschanged", fillVoices); }
   $("voice-reload")?.addEventListener("click", () => { fillVoices(); setTimeout(fillVoices, 600); });
-  // Gerätestimme kurz probehören (auch wenn ElevenLabs die Hauptstimme ist).
+  // Gerätestimme kurz probehören.
   function probeGeraet() {
     if (!("speechSynthesis" in window) || !germanVoice) return;
     try {
@@ -1799,6 +1702,7 @@
           ohr.brauchtTipp = true;
           ohr.sperrText = "Mikrofon blockiert: einmal auf den Bildschirm tippen";
           ohr.verweigert = 2;
+          befehlEnde(); zeigeRuhe();
           diag.schritt("Mikrofon ist blockiert. Einmal tippen, dann starte ich es neu. Hilft das nicht: App ganz schließen und neu öffnen.", "warn");
         }
       }
@@ -2035,13 +1939,7 @@
         speechSynthesis.speak(u);
       }
     } catch { /* egal */ }
-    try {
-      if (audio.paused) {
-        audio.src = STILLE;
-        const p = audio.play();
-        if (p?.catch) p.catch(() => { tonFrei = false; }); // nicht erlaubt: beim nächsten Tipp nochmal
-      }
-    } catch { tonFrei = false; }
+    // v1.123.0: Ohne ElevenLabs braucht es kein Audio-Element mehr, nur die Gerätestimme.
   }
   window.Friday.tonFrei = () => tonFrei;
   for (const ev of ["touchend", "click", "keydown"]) document.addEventListener(ev, tonFreischalten, true);

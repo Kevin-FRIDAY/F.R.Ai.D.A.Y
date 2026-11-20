@@ -24,7 +24,6 @@ import { getISS } from "./extras.js";
 import * as alexa from "./alexa.js";
 import * as fernseher from "./fernseher.js";
 import { DIENSTE, alleStatus } from "./dienste.js";
-import { sprich, stimmeAktiv, stimmeHinweis } from "./stimme.js";
 import { callback as spotifyCallback } from "./spotify.js";
 import { hueSprechenAn, sprechen as hueSprechen } from "./hue.js";
 import { haBereit } from "./homeassistant.js";
@@ -208,13 +207,8 @@ app.post("/api/chat", asyncRoute(async (req, res) => {
   res.json(result);
 }));
 
-// Fridays Stimme über ElevenLabs (wenn eingerichtet). Bei Fehler 404/503 nimmt das Dashboard die Gerätestimme.
-app.post("/api/tts", asyncRoute(async (req, res) => {
-  if (!stimmeAktiv()) return res.status(404).json({ error: "Keine ElevenLabs-Stimme eingerichtet" });
-  const r = await sprich(String(req.body?.text || ""));
-  if (!r.ok) return res.status(503).json({ error: r.error, grund: r.error });
-  res.type("audio/mpeg").send(r.audio);
-}));
+// v1.123.0: ElevenLabs ist entfernt. Friday spricht nur noch mit der Apple-Stimme des Geräts.
+app.post("/api/tts", (req, res) => res.status(410).json({ error: "ElevenLabs ist entfernt, Friday nutzt die Gerätestimme." }));
 
 app.get("/api/osiris", async (req, res) => { res.json(await osirisStatus()); });
 
@@ -222,8 +216,8 @@ app.get("/api/status", (req, res) => {
   res.json({
     name: config.userName,
     agent: { online: isAgentOnline(), ...getAgentInfo() },
-    voice: stimmeAktiv(),
-    voiceHinweis: stimmeHinweis(),
+    voice: false,
+    voiceHinweis: null,
     hueSprechen: hueSprechenAn(),
     telegram: Boolean(config.telegramToken),
     push: Boolean(config.ntfyTopic),

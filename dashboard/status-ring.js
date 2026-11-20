@@ -130,7 +130,7 @@
     statusFehler = 0;
     melde("server", null);
     const s = e.detail || {};
-    melde("stimme", s.voiceHinweis ? "warn" : null, "ElevenLabs-Stimme pausiert", 0, () => window.Friday?.stimmHinweis?.(s.voiceHinweis));
+    // v1.123.0: ElevenLabs entfernt, keine Stimm-Meldung mehr.
     const u = s.update;
     const frisch = u?.time && Date.now() - new Date(u.time).getTime() < 24 * 3600000;
     melde("update-fehler", u?.state === "fehler" && frisch ? "bad" : null, "Update fehlgeschlagen", 0, klick("update-btn"));

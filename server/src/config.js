@@ -29,8 +29,6 @@ export const config = {
   timezone: env("TIMEZONE", "Europe/Berlin"),
   model: env("CLAUDE_MODEL", "claude-opus-5-5"),
   effort: env("CLAUDE_EFFORT", "low"),
-  elevenKey: env("ELEVENLABS_API_KEY"),
-  elevenVoice: env("ELEVENLABS_VOICE_ID"),
   ntfyTopic: env("NTFY_TOPIC"),
   ntfyServer: env("NTFY_SERVER", "https://ntfy.sh"),
   briefingTime: env("BRIEFING_TIME"),

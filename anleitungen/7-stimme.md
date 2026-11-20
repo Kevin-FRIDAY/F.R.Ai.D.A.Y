@@ -13,20 +13,13 @@ Neue Stimmen laden:
 
 Danach Friday neu laden (oder "↻ Liste neu laden"). Siri-Stimmen gibt Apple für Webseiten nicht frei. "Retro" (Eddy, Flo, Grandpa …) und "Spaß" (Bubbles, Zarvox …) sind Apples Spielerei-Stimmen.
 
-## Echte Friday-Stimme mit ElevenLabs
+## ElevenLabs (entfernt seit v1.123.0)
 
-1. Konto auf [elevenlabs.io](https://elevenlabs.io) anlegen. Es gibt einen kleinen kostenlosen Monatsvorrat, für viel Nutzung ein Abo.
-2. In der **Voice Library** eine weibliche Stimme suchen, die dir gefällt. Für den Film-Vibe nach "Irish female" suchen. Mit "Add to my voices" hinzufügen.
-3. Bei der Stimme die **Voice ID** kopieren.
-4. Unter Profil > **API Keys** einen Schlüssel erstellen.
-5. In `~/Friday/server/.env`:
-   ```
-   ELEVENLABS_API_KEY=dein-schlüssel
-   ELEVENLABS_VOICE_ID=die-voice-id
-   ```
-6. **Friday starten.command** öffnen. Im Dashboard steht bei Stimme jetzt "ElevenLabs".
-
-Die Stimme spricht Deutsch mit Akzent der gewählten Stimme. Bitte keine Stimme echter Personen klonen ohne deren Erlaubnis.
+ElevenLabs ist aus Friday entfernt. Friday spricht nur noch mit den kostenlosen Apple-Stimmen.
+Bebilderte Anleitung zum Laden schönerer Stimmen: **[35-apple-stimmen.md](35-apple-stimmen.md)**,
+oder in Friday: Einstellungen → Stimme → „Mehr Apple-Stimmen laden“ → „📷 Anleitung mit Bildern öffnen“.
+Alte Einträge `ELEVENLABS_API_KEY` / `ELEVENLABS_VOICE_ID` in `~/Friday/server/.env` werden nicht mehr gelesen
+und können gelöscht werden.
 
 ## Mac-Stimme für "laut sagen"
 

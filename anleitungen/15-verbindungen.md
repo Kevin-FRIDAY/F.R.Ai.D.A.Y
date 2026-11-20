@@ -28,29 +28,9 @@ Gut zu wissen: Wiederkehrende Termine (jede Woche, jedes Jahr) werden mitgezähl
 
 ---
 
-## 🗣️ ElevenLabs-Stimme (Gratis-Kontingent)
+## 🗣️ Stimme
 
-1. Konto auf **elevenlabs.io** anlegen (kostenlos, ca. 10.000 Zeichen im Monat).
-2. Unten links auf dein Profil → **API Keys** → neuen Schlüssel erstellen.
-   Bei den Rechten: **Text to Speech → Zugriff**, **Voices → Lesen**, **User → Lesen** (am einfachsten: alle Rechte an lassen).
-   Den Schlüssel sofort kopieren – ElevenLabs zeigt ihn nur einmal.
-3. Verbindungen → ElevenLabs → Schlüssel einfügen → **Verbinden**.
-4. Stimme auswählen, **▶ Probe hören**.
-
-> Den Schlüssel nur in Friday eintragen, nie in einen Chat oder eine Nachricht schreiben.
-
-**Rote Fehlermeldung?**
-- „Dem Schlüssel fehlen Rechte“ → neuen Schlüssel mit den Rechten oben erstellen.
-- „ElevenLabs kennt diesen Schlüssel nicht“ → Schlüssel wurde gelöscht oder nicht ganz kopiert. Neu erstellen und komplett einfügen.
-- „Gratis-Konto vorübergehend gesperrt“ → ElevenLabs blockt Gratis-Konten bei VPN/ungewöhnlicher Nutzung. VPN aus, später nochmal.
-
-„Tempo: Schnell“ spart Zeichen und antwortet schneller, „Beste Qualität“ klingt noch etwas natürlicher.
-Ist das Monatskontingent aufgebraucht, spricht Friday automatisch mit der Gerätestimme weiter.
-Seit v1.95.0 sagt Friday dann einmal, **warum** (z. B. „Das ElevenLabs-Guthaben ist aufgebraucht“), und oben erscheint ein oranges Schild.
-In der System-Zentrale steht bei Stimme dann „Gerät (ElevenLabs-Pause)“. Das Gratis-Konto hat 10.000 Zeichen im Monat,
-„Beste Qualität“ verbraucht doppelt so viel wie „Schnell“.
-
-Sag: „Wie viele Zeichen habe ich noch?“, „Wechsel die Stimme zu Lily“.
+ElevenLabs ist seit v1.123.0 entfernt. Friday spricht mit den Apple-Stimmen, siehe [35-apple-stimmen.md](35-apple-stimmen.md).
 
 ---
 

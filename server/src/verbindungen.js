@@ -1,4 +1,4 @@
-// Gemeinsamer Speicher für Fridays Verbindungen (Spotify, ElevenLabs, Home Assistant, Hue, Todoist, Notion, Kalender).
+// Gemeinsamer Speicher für Fridays Verbindungen (Spotify, Home Assistant, Hue, Todoist, Notion, Kalender).
 // Alles liegt in data/verbindungen.json auf dem Mac. Diese Datei wird von Updates nie überschrieben
 // und landet mit in der Sicherung. Schlüssel werden nie ans Dashboard zurückgeschickt.
 import fs from "node:fs";

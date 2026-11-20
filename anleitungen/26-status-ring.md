@@ -25,7 +25,6 @@ Gelbe Hinweise kannst du mit **✕** ausblenden. Sie kommen erst wieder, wenn si
 - Der Mac-Agent ist getrennt (Mac-Befehle gehen dann nicht).
 - Sparmodus, weil das Guthaben knapp wird.
 - Die letzte Sicherung ist älter als eine Woche (oder es gibt noch keine).
-- Die ElevenLabs-Stimme pausiert (Friday spricht mit der Gerätestimme).
 
 Gibt es Rot und Gelb gleichzeitig, zeigt der Ring Rot. Sobald Friday spricht, wird er grün und danach wieder rot, gelb oder farblos.
 
