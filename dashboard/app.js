@@ -479,27 +479,62 @@
             break;
           }
           ok = true;
-          await new Promise((r) => { audio.onended = r; audio.onerror = r; audio.onpause = r; });
+          for (let weiter = 0; ; weiter++) {
+            await new Promise((r) => { audio.onended = r; audio.onerror = r; audio.onpause = r; });
+            // iPhone: Ein Geräusch lässt das Mikrofon anspringen und iOS pausiert die Wiedergabe.
+            // Hat niemand gestoppt (sprechNr gleich), einfach weiterspielen.
+            if (nr !== sprechNr || audio.ended || !audio.paused || weiter >= 4) break;
+            await new Promise((r) => setTimeout(r, 200));
+            if (nr !== sprechNr) break;
+            try { await audio.play(); } catch { break; }
+          }
           URL.revokeObjectURL(url);
           if (nr !== sprechNr || (audio.paused && !audio.ended)) return; // gestoppt
         }
         if (ok) return;
       }
       if ("speechSynthesis" in window) {
-        await new Promise((resolve) => {
-          const u = new SpeechSynthesisUtterance(text);
-          u.lang = germanVoice?.lang || "de-DE";
-          if (germanVoice) u.voice = germanVoice;
-          u.rate = Number(storage.get("friday_rate")) || 1.05;
-          u.pitch = Number(storage.get("friday_pitch")) || 1;
-          u.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
-          u.onstart = () => window.FridayFace?.talk(true);
-          // Mund im Takt der gesprochenen Wörter bewegen
-          u.onboundary = (e) => { if (!e.name || e.name === "word") window.FridayFace?.boundary?.(e.charIndex, text); };
-          u.onend = resolve;
-          u.onerror = resolve;
-          speechSynthesis.speak(u);
-        });
+        // v1.121.3: Auf dem iPhone bricht iOS die Stimme ab, wenn ein Geräusch (S-Bahn) das Mikrofon
+        // anspringen lässt. Hört Friday auf, ohne dass jemand "Friday"/Stopp gesagt hat, spricht sie
+        // ab der Stelle weiter, an der sie unterbrochen wurde (höchstens 4-mal).
+        let rest = text, neuStarts = 0;
+        while (rest && nr === sprechNr) {
+          const teil = rest;
+          let bisZeichen = 0, fehler = "";
+          const t0 = Date.now();
+          await new Promise((resolve) => {
+            const u = new SpeechSynthesisUtterance(teil);
+            u.lang = germanVoice?.lang || "de-DE";
+            if (germanVoice) u.voice = germanVoice;
+            u.rate = Number(storage.get("friday_rate")) || 1.05;
+            u.pitch = Number(storage.get("friday_pitch")) || 1;
+            u.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
+            u.onstart = () => window.FridayFace?.talk(true);
+            // Mund im Takt der gesprochenen Wörter bewegen
+            u.onboundary = (e) => {
+              if (e.charIndex > bisZeichen) bisZeichen = e.charIndex;
+              if (!e.name || e.name === "word") window.FridayFace?.boundary?.(e.charIndex, teil);
+            };
+            u.onend = resolve;
+            u.onerror = (e) => { fehler = e?.error || "fehler"; resolve(); };
+            speechSynthesis.speak(u);
+          });
+          if (nr !== sprechNr) break; // absichtlich gestoppt ("Friday", Stopp, Tippen)
+          const erwartetMs = (teil.length / 14) * 1000 / (Number(storage.get("friday_rate")) || 1.05);
+          const zuFrueh = fehler === "interrupted" || fehler === "canceled"
+            || (bisZeichen > 0 && bisZeichen < teil.length - 25)
+            || (bisZeichen === 0 && teil.length > 60 && Date.now() - t0 < erwartetMs * 0.5);
+          if (!zuFrueh || neuStarts >= 4) break;
+          neuStarts++;
+          // Ab dem Satz bzw. Wort weitermachen, in dem sie unterbrochen wurde.
+          let ab = bisZeichen;
+          if (!ab) ab = Math.min(teil.length, Math.round(((Date.now() - t0) / erwartetMs) * teil.length));
+          const satz = Math.max(teil.lastIndexOf(". ", ab), teil.lastIndexOf("! ", ab), teil.lastIndexOf("? ", ab));
+          ab = satz > 0 && ab - satz < 160 ? satz + 2 : Math.max(0, teil.lastIndexOf(" ", ab));
+          rest = teil.slice(ab).trim();
+          if (rest.length < 3) break;
+          await new Promise((r) => setTimeout(r, 250));
+        }
       }
     } catch { /* still */ } finally {
       speaking = false;
@@ -1564,6 +1599,8 @@
   let bargeTimer = null;
   let bargeZeit = 0;
   let bargeNr = -1;
+  let bargeNeustarts = 0;
+  const IST_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const unterbrochenEben = () => Date.now() - bargeZeit < 4000;
   window.Friday.unterbrochen = () => unterbrochenEben() || bargeFang;
   const bargeNorm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -1599,6 +1636,7 @@
     bargeNr = nr;
     if (!Recognition || !unterbrechenAn() || callActive || document.visibilityState === "hidden") return;
     bargeText = String(text || "");
+    bargeNeustarts = 0;
     let rec;
     try { rec = new Recognition(); } catch { return; }
     rec.lang = "de-DE";
@@ -1630,6 +1668,14 @@
       // Der Browser beendet das Zuhören manchmal von selbst: solange Friday spricht, neu starten.
       if (bargeRec !== rec) return;
       if (bargeFang) { bargeBefehl(""); return; }
+      // iPhone/iPad: Jeder Neustart des Mikrofons schaltet dort den Ton um und schneidet Friday das Wort ab.
+      // Darum dort nur selten neu starten (Geräusche wie die S-Bahn beenden das Zuhören oft).
+      if (speaking && IST_IOS) {
+        bargeNeustarts++;
+        if (bargeNeustarts <= 2) bargeTimer = setTimeout(() => { if (bargeRec === rec && speaking) { try { rec.start(); } catch { bargeRec = null; } } }, 4000);
+        else bargeRec = null;
+        return;
+      }
       if (speaking) { try { rec.start(); } catch { bargeRec = null; } } else bargeRec = null;
     };
     bargeRec = rec;

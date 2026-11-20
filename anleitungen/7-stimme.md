@@ -47,3 +47,7 @@ Friday reagiert nur, wenn du sie mit **"Friday"** ansprichst. Unterhältst du di
 - **Unterbrechen** geht nur mit „Friday“ („Friday, stopp“ oder „Friday, wie spät ist es?“). Reden andere dazwischen, spricht Friday einfach weiter.
 - Friday fängt **nicht von sich aus** an zu reden. Timer und Erinnerungen piepen und zeigen ein Fenster, Energie-Warnungen und „Video fertig“ erscheinen still als gelber Hinweis am Ring um ihren Kopf.
 - Willst du, dass sie solche Meldungen wieder vorliest: Einstellungen → Assistent → „Friday darf von sich aus sprechen“.
+
+## iPhone: Geräusche unterbrechen Friday nicht mehr (ab v1.121.3)
+
+Auf dem iPhone hat iOS Fridays Stimme abgeschnitten, sobald ein Geräusch (z. B. die S-Bahn) das Mikrofon kurz umgeschaltet hat. Jetzt merkt Friday das und spricht ab dem unterbrochenen Satz weiter. Aufhören tut sie nur, wenn du „Friday“ (z. B. „Friday, stopp“) sagst oder auf ihren Kopf tippst.
