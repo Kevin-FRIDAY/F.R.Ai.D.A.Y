@@ -2,7 +2,8 @@
 // Antwortet nur dir (TELEGRAM_CHAT_ID), alle anderen werden ignoriert.
 import { config } from "./config.js";
 import { ask } from "./brain.js";
-import { sendTelegram } from "./notify.js";
+import { sendTelegram, sendTelegramPhoto } from "./notify.js";
+import { telegramFoto } from "./wache.js";
 import * as store from "./store.js";
 
 const api = (method) => `https://api.telegram.org/bot${config.telegramToken}/${method}`;
@@ -31,6 +32,12 @@ async function handle(message) {
   if (!text && !image) return;
 
   try {
+    // Kamera-Wache: "Foto vom Wohnzimmer" → aktuelles Bild der eigenen Kamera.
+    if (text && !image) {
+      const foto = await telegramFoto(text).catch(() => null);
+      if (foto?.buf && await sendTelegramPhoto(foto.buf, foto.caption, chatId)) return;
+      if (foto?.text) { await sendTelegram(foto.text, chatId); return; }
+    }
     const { answer } = await ask({ text, channel: "telegram", image });
     await sendTelegram(answer, chatId);
   } catch (err) {
