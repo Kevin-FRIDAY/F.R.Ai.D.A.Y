@@ -41,3 +41,9 @@ Friday reagiert nur, wenn du sie mit **"Friday"** ansprichst. Unterhältst du di
 - Sagst du nur "Friday", hört sie genau einen Satz lang zu.
 - Stellt Friday dir selbst eine Frage ("Welches Land?"), hört sie für die Antwort einmal ohne "Friday" zu.
 - **Gesprächsmodus** (Einstellungen → Assistent) ist jetzt standardmäßig **aus**. Eingeschaltet hört Friday nach jeder Antwort weiter zu, ohne "Friday" – dann redet sie aber auch dazwischen, wenn du mit anderen sprichst.
+
+## Friday redet nicht von allein (ab v1.118.2)
+
+- **Unterbrechen** geht nur mit „Friday“ („Friday, stopp“ oder „Friday, wie spät ist es?“). Reden andere dazwischen, spricht Friday einfach weiter.
+- Friday fängt **nicht von sich aus** an zu reden. Timer und Erinnerungen piepen und zeigen ein Fenster, Energie-Warnungen und „Video fertig“ erscheinen still als gelber Hinweis am Ring um ihren Kopf.
+- Willst du, dass sie solche Meldungen wieder vorliest: Einstellungen → Assistent → „Friday darf von sich aus sprechen“.

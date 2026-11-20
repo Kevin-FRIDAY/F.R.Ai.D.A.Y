@@ -186,7 +186,7 @@
     el.querySelector(".alarm-ok").addEventListener("click", zu);
     el.addEventListener("click", (e) => { if (e.target === el) zu(); });
     piepen();
-    setTimeout(() => F.say?.(timer ? `Boss, dein Timer ist abgelaufen. ${text}` : `Boss, ich soll dich erinnern: ${text}`), 1700);
+    setTimeout(() => (F.sagVonSelbst || F.say)?.(timer ? `Boss, dein Timer ist abgelaufen. ${text}` : `Boss, ich soll dich erinnern: ${text}`, { quelle: "alarm", stufe: "warn", dauer: 5 * 60000 }), 1700); // Ton + Fenster immer, Stimme nur wenn erlaubt
     setTimeout(zu, 60000);
   }
 

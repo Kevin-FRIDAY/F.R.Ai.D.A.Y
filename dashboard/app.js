@@ -438,6 +438,16 @@
   window.Friday = window.Friday || {};
   window.Friday.stimmHinweis = stimmHinweis;
 
+  // v1.118.2: Friday redet nicht von allein. Meldungen, die keiner bestellt hat (Timer, Erinnerung,
+  // Energie, "Video fertig"), erscheinen still am Status-Ring statt vorgelesen zu werden.
+  // Einschalten: Einstellungen → Assistent → "Friday darf von sich aus sprechen".
+  const vonSelbstAn = () => storage.get("friday_vonselbst") === "1";
+  window.Friday.sagVonSelbst = (text, { quelle = "hinweis", stufe = "warn", dauer = 10 * 60000 } = {}) => {
+    if (!text) return;
+    if (vonSelbstAn()) return say(text);
+    try { window.FridayRing?.melde?.(quelle, stufe, text, dauer); } catch { /* egal */ }
+  };
+
   async function say(text) {
     if (!$("voice-toggle").checked || !text) return;
     const nr = ++sprechNr;
@@ -779,6 +789,7 @@
   }
   bindFlag("set-gespraech", "friday_gespraech", false);
   bindFlag("set-unterbrechen", "friday_unterbrechen", true);
+  bindFlag("set-vonselbst", "friday_vonselbst", false);
   // Kopf-Stil: wird beim Laden von face.js gelesen, darum nach dem Wechsel neu laden
   (() => {
     const sel = $("set-kopfstil");
