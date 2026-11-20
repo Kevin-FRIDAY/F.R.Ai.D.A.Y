@@ -1,4 +1,4 @@
-// Kamera-Wache (v1.126.0): Friday passt mit Kevins EIGENEN Kameras auf das Zuhause auf.
+// Kamera-Wache (v1.127.0): Friday passt mit Kevins EIGENEN Kameras auf das Zuhause auf.
 //
 // So funktioniert es:
 // - Die Erkennung (Bewegung, Personen, Hunde/Katzen, Gegenstände, Feuerschein/Rauch, Tür-Linie)

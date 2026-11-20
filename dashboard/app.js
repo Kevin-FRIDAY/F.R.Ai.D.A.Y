@@ -679,6 +679,7 @@
         if (hat("welttour_stopp")) window.FridayWelttour?.stopp(true);
         if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
         if (hat("archiv")) window.FridayArchiv?.open();
+        if (hat("gehirn")) window.FridayGehirn?.open();
         if (hat("oekosystem")) window.FridayOekosystem?.open();
         // Routen & Verbindungen: Karte mit Auto, Rad, zu Fuß und Bahn/Bus zeigen.
         const routeAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("route:"));
@@ -687,7 +688,7 @@
         else if (hat("route_planen")) window.FridayRouten?.neueste();
         else if (routeZiel) window.FridayRouten?.open({ ziel: decodeURIComponent(routeZiel.slice(11)) });
         else if (hat("routen")) window.FridayRouten?.open();
-        // Kamera-Wache (v1.126.0): Fenster öffnen, eine Kamera zeigen, Ereignisse zeigen.
+        // Kamera-Wache (v1.127.0): Fenster öffnen, eine Kamera zeigen, Ereignisse zeigen.
         const wacheA = aktion("wache:");
         if (wacheA === "wache:ereignisse") window.FridayWache?.open({ tab: "ereignisse" });
         else if (wacheA) window.FridayWache?.open({ kamera: wacheA.slice(6) });

@@ -1,4 +1,4 @@
-# Kamera-Wache (ab v1.126.0)
+# Kamera-Wache (ab v1.127.0)
 
 Friday passt mit deinen **eigenen** Kameras auf dein Zuhause auf und sagt dir, was passiert.
 

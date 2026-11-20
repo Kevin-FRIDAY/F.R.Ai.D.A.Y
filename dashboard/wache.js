@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Kamera-Wache (v1.126.0)
+// F.R.Ai.D.A.Y Kamera-Wache (v1.127.0)
 // Friday passt mit deinen EIGENEN Kameras auf dein Zuhause auf:
 //   🚶 Bewegung · 🧍 Personen · 🐕 Hunde & Katzen · 🔍 Gegenstände · 🔥 Feuerschein/Rauch (soweit sichtbar)
 //   🚪 Tür-Linie · 🏠 mehrere Räume · 🗣 "Was passiert zu Hause?" · 📸 Ereignisprotokoll · 🚨 Alarm (Telegram)
