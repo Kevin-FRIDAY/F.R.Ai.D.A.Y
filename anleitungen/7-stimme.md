@@ -31,3 +31,13 @@ Die Stimme spricht Deutsch mit Akzent der gewählten Stimme. Bitte keine Stimme 
 ## Mac-Stimme für "laut sagen"
 
 Wenn Friday etwas direkt am Mac sagt (z. B. in Protokollen), nutzt sie die macOS-Stimme aus `mac-agent/.env` (`SAY_VOICE=Anna`). Weitere Stimmen: Systemeinstellungen > Bedienungshilfen > Gesprochene Inhalte > Systemstimme > Stimmen verwalten.
+
+## Friday hört nur auf "Friday" (ab v1.118.1)
+
+Friday reagiert nur, wenn du sie mit **"Friday"** ansprichst. Unterhältst du dich mit jemand anderem, bleibt sie still.
+
+- "Friday" zählt überall im Satz ("Friday, wie spät ist es?" oder "Wie spät ist es, Friday?"). "Black Friday" zählt nicht.
+- Das deutsche Wort **"Freitag"** zählt nur ganz am Anfang ("Freitag, mach das Licht an"). "Am Freitag fahren wir zu Oma" weckt sie nicht.
+- Sagst du nur "Friday", hört sie genau einen Satz lang zu.
+- Stellt Friday dir selbst eine Frage ("Welches Land?"), hört sie für die Antwort einmal ohne "Friday" zu.
+- **Gesprächsmodus** (Einstellungen → Assistent) ist jetzt standardmäßig **aus**. Eingeschaltet hört Friday nach jeder Antwort weiter zu, ohne "Friday" – dann redet sie aber auch dazwischen, wenn du mit anderen sprichst.
