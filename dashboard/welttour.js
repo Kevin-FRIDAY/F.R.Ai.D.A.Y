@@ -128,6 +128,7 @@
     // Derselbe Befehl kommt doppelt an (z. B. Echo vom Mikrofon): laufende Runde nicht neu starten.
     if (Date.now() - startZeit < 10000 && (tour || $("welttour"))) return;
     startZeit = Date.now();
+    window.FridayDiag?.schritt("Welt-Runde startet");
     const nr = ++lauf;
     F().stopSpeaking?.();
     pause = false;
@@ -145,7 +146,8 @@
       const r = await api("/api/welttour", { signal: ab.signal }).finally(() => clearTimeout(t));
       if (!r.ok) throw new Error("Server");
       daten = await r.json();
-    } catch {
+    } catch (e) {
+      window.FridayDiag?.schritt("Welt-Runde: Nachrichten nicht geladen (" + (e?.name === "AbortError" ? "Zeitüberschreitung" : e?.message || "Fehler") + ")", "bad");
       if (nr !== lauf) return;
       $("wt-land").textContent = "Die Nachrichten kann ich gerade nicht laden.";
       await sprich("Die Weltnachrichten kann ich gerade nicht abrufen. Versuch es gleich nochmal.", nr);
@@ -161,9 +163,10 @@
       return;
     }
     tour = { stationen: daten.stationen, i: 0 };
+    window.FridayDiag?.schritt(`Welt-Runde: ${daten.stationen.length} Länder geladen`, "ok");
     zeige(0);
     const namen = daten.stationen.map((s) => s.name.replace("Vereinigte Staaten", "USA").replace("Vereinigtes Königreich", "Großbritannien"));
-    if (!(await sprich(`Hier ist, was gerade in der Welt passiert. Ich reise für dich zu ${namen.slice(0, -1).join(", ")} und ${namen.at(-1)}.`, nr))) return;
+    if (!(await sprich(`Hier ist, was gerade in der Welt passiert. Meine Stationen: ${namen.slice(0, -1).join(", ")} und ${namen.at(-1)}.`, nr))) return;
     gehe(0);
   }
 
