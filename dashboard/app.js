@@ -71,6 +71,48 @@
 
   $("logout").addEventListener("click", showLogin);
 
+  // ---------- v1.122.6: Diagnose-Zeile ----------
+  // Zeigt unten links kurz an, was gerade passiert: gehört → gesendet → Antwort → gesprochen.
+  // So sieht man auf dem iPhone, an welcher Stelle es hängt. Antippen = ganze Liste. Aus: Einstellungen
+  // → Assistent → "Diagnose anzeigen" (friday_diagnose = "0").
+  const diag = (() => {
+    const liste = [];
+    let el = null, versteck = null;
+    const an = () => storage.get("friday_diagnose") !== "0";
+    function box() {
+      if (el) return el;
+      el = document.createElement("div");
+      el.id = "diag"; el.className = "diag"; el.setAttribute("aria-live", "polite");
+      el.title = "Diagnose: antippen für alle Schritte";
+      el.addEventListener("click", () => { el.classList.toggle("gross"); zeichne(); zeigen(); });
+      document.body.append(el);
+      return el;
+    }
+    function zeichne() {
+      if (!el) return;
+      const n = el.classList.contains("gross") ? 40 : 4;
+      el.innerHTML = liste.slice(-n).map((x) => `<div class="d-${x.stufe}"><b>${x.zeit}</b> ${escapeHtml(x.text)}</div>`).join("");
+    }
+    function zeigen() {
+      clearTimeout(versteck);
+      el.classList.add("sichtbar");
+      versteck = setTimeout(() => { if (!el.classList.contains("gross")) el.classList.remove("sichtbar"); }, 25000);
+    }
+    function schritt(text, stufe = "info") {
+      text = String(text || "").slice(0, 160);
+      if (liste.length && liste.at(-1).text === text) return;
+      const d = new Date();
+      const zeit = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`;
+      liste.push({ zeit, text, stufe });
+      if (liste.length > 60) liste.shift();
+      try { console.log("[Friday]", zeit, text); } catch { /* egal */ }
+      if (!an()) return;
+      box(); zeichne(); zeigen();
+    }
+    return { schritt, liste: () => liste.slice() };
+  })();
+  window.FridayDiag = diag;
+
   // ---------- Anzeige ----------
   let coreMode = null;
   // v1.98.0: Ruhe-Zustand ("Bereit, Boss.") wird auf der Startseite nicht mehr angezeigt.
@@ -455,6 +497,7 @@
     hueSprechen(true);
     gesagtText = String(text);
     setState("Spricht", "speaking");
+    diag.schritt(`Spricht: „${String(text).slice(0, 50)}${String(text).length > 50 ? " …" : ""}“`);
     const mikroWarAn = ohrVorStimme(nr);
     try {
       // iPhone: Das Mikrofon braucht einen Moment, bis es wirklich aus ist. Sonst bleibt die Stimme stumm.
@@ -477,6 +520,7 @@
             if (nr !== sprechNr) return;
             if (!ok) {
               const grund = "Der Browser hat die ElevenLabs-Wiedergabe blockiert. Tipp einmal auf den Bildschirm, dann klappt es wieder.";
+              diag.schritt("Ton blockiert (ElevenLabs). Einmal auf den Bildschirm tippen.", "bad");
               if (stimmHinweis(grund)) text = `Kurzer Hinweis: ${grund} ${text}`;
             }
             break;
@@ -522,14 +566,14 @@
             // Sprechdauer + 4 s weiter, oder wenn die Stimme 3 s lang sichtbar nicht mehr spricht.
             let fertig = false;
             const ende = () => { if (fertig) return; fertig = true; clearTimeout(waechter); clearInterval(pruef); resolve(); };
-            const waechter = setTimeout(() => { zeitUm = true; ende(); }, Math.min(90000, 4000 + teil.split(/\s+/).length * 550));
+            const waechter = setTimeout(() => { zeitUm = true; diag.schritt("Stimme hing, übersprungen", "warn"); ende(); }, Math.min(90000, 4000 + teil.split(/\s+/).length * 550));
             let still = 0;
             const pruef = setInterval(() => {
               try { still = (speechSynthesis.speaking || speechSynthesis.pending) ? 0 : still + 1; } catch { still++; }
               if (still >= 3) ende();
             }, 1000);
             u.onend = ende;
-            u.onerror = (e) => { fehler = e?.error || "fehler"; ende(); };
+            u.onerror = (e) => { fehler = e?.error || "fehler"; if (fehler !== "interrupted" && fehler !== "canceled") diag.schritt(`Stimme: Fehler „${fehler}“${fehler === "not-allowed" ? " – einmal tippen" : ""}`, "bad"); ende(); };
             speechSynthesis.speak(u);
           });
           if (nr !== sprechNr) break; // absichtlich gestoppt ("Friday", Stopp, Tippen)
@@ -564,7 +608,7 @@
   // ---------- Senden ----------
   async function send(text, opts = {}) {
     text = (text || "").trim();
-    if ((!text && !pendingImage) || busy) return;
+    if ((!text && !pendingImage) || busy) { if (busy && text) diag.schritt(`Nicht gesendet, Friday ist noch beschäftigt: „${text}“`, "warn"); return; }
     // "System Check" / "System Status": lokal prüfen (ohne Guthaben)
     if (/^system\s*[- ]?\s*(check|status|pr[üu]fung|test)$/i.test(text)) {
       addMessage("user", text);
@@ -590,10 +634,21 @@
       body.targetLang = $("translate-lang").value;
     }
     clearPhoto();
+    const t0 = Date.now();
+    diag.schritt(`Gesendet an den Mac: „${text}“`);
+    // Hängt die Verbindung (Tailscale, WLAN), nicht ewig "Denkt nach" zeigen.
+    const abbruch = new AbortController();
+    const langsam = setTimeout(() => diag.schritt("Noch keine Antwort vom Mac (15 s) …", "warn"), 15000);
+    const zuLang = setTimeout(() => abbruch.abort(), 120000);
     try {
-      const res = await api("/api/chat", { method: "POST", body: JSON.stringify(body) });
-      const data = await res.json();
-      if (meinAuftrag !== auftragNr) return; // "Friday, stopp" während sie nachdachte
+      let res;
+      try { res = await api("/api/chat", { method: "POST", body: JSON.stringify(body), signal: abbruch.signal }); }
+      finally { clearTimeout(langsam); clearTimeout(zuLang); }
+      const sek = ((Date.now() - t0) / 1000).toFixed(1).replace(".", ",");
+      let data;
+      try { data = await res.json(); } catch { throw new Error(`Mac antwortet mit Status ${res.status}`); }
+      diag.schritt(`Antwort nach ${sek} s${data.error ? " – Fehler: " + data.error : ""}${data.answer ? ": „" + String(data.answer).slice(0, 60) + "“" : ""}${data.actions?.length ? " · Aktionen: " + data.actions.filter((a) => typeof a === "string").join(", ") : ""}`, data.error || !res.ok ? "bad" : "ok");
+      if (meinAuftrag !== auftragNr) { diag.schritt("Antwort verworfen (vorher „Stopp“ gehört)", "warn"); return; } // "Friday, stopp" während sie nachdachte
       // Lernecke: Begrüßung macht das Fenster selbst (es weiß, ob Carla oder Kevin da ist), darum hier ohne Text.
       const stillLernen = !data.answer && !data.error && data.actions?.some((a) => typeof a === "string" && a.startsWith("lernen"));
       // v1.121.2: Nur Aktionen ohne Text (z. B. Welt-Runde) → nichts sagen, statt "Keine Antwort." vorzulesen.
@@ -601,97 +656,99 @@
       let answer = data.answer || data.error || (stillLernen || nurAktion ? "" : "Keine Antwort.");
       const hat = (a) => data.actions?.includes(a);
       window.FridayAuftrag?.ende(res.ok && !data.error);
-      // Friday hat ein Dokument oder einen Fragebogen erstellt: gleich zeigen.
-      if (hat("fragebogen_erstellen") || hat("dokument_erstellen")) window.FridayDokumente?.neuestes();
-      // Vollbild: im Browser umschalten (auf dem iPhone ist die Home-Bildschirm-App schon Vollbild).
-      if (hat("vollbild") || hat("vollbild_aus")) {
-        const r = window.FridayVollbild?.sprachBefehl(hat("vollbild"));
-        if (r) answer = r;
-      }
-      // Nur vorlesen: Bei erfolgreicher Antwort und aktivem Vorlesen keinen Text zeigen.
-      const voiceOn = $("voice-toggle").checked && "speechSynthesis" in window;
-      if (data.answer && voiceOn) addSpeaking();
-      else if (answer) addMessage("friday", answer);
-      busy = false;
-      if (data.actions?.some((a) => a === "set_reminder")) { refreshReminders(); window.FridayHud?.refresh(); }
-      if (data.actions?.includes("werkstatt")) window.FridayWerkstatt?.showLatest();
-      const landAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("land:"));
-      if (landAktion) window.FridayLand?.open(landAktion.slice(5));
-      // Weltgeschehen als Gespräch: Globus öffnen, Land anfliegen, Bewertung zeigen.
-      const lageLand = data.actions?.find((a) => typeof a === "string" && a.startsWith("lage_land:"));
-      const lageWert = data.actions?.find((a) => typeof a === "string" && a.startsWith("lage_bewertung:"));
-      if (lageLand) window.FridayLage?.showCountry(lageLand.slice(10), { stumm: true, bewertung: lageWert?.slice(15) });
-      else if (hat("weltgeschehen") && !window.FridayLage?.offen()) window.FridayLage?.open({ stumm: true });
-      if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
-      // Satelliten (v1.113.0): einzelner Satellit mit Steckbrief, eine Gruppe oder alle.
-      const satA = data.actions?.find((a) => typeof a === "string" && a.startsWith("satellit:"));
-      const satG = data.actions?.find((a) => typeof a === "string" && a.startsWith("satgruppe:"));
-      if (satA) window.FridaySatelliten?.zeigeNr(Number(satA.slice(9)));
-      else if (satG) window.FridaySatelliten?.gruppe(satG.slice(10));
-      else if (hat("satelliten")) window.FridaySatelliten?.oeffne();
-      // Schiffe (v1.114.0)
-      const schiffA = data.actions?.find((a) => typeof a === "string" && a.startsWith("schiff:"));
-      const schiffG = data.actions?.find((a) => typeof a === "string" && a.startsWith("schiffgruppe:"));
-      if (schiffA) window.FridaySchiffe?.zeigeNr(Number(schiffA.slice(7)));
-      else if (schiffG) window.FridaySchiffe?.gruppe(schiffG.slice(13));
-      else if (hat("schiffe")) window.FridaySchiffe?.oeffne();
-      // Flugzeuge (v1.115.0)
-      const flugA = data.actions?.find((a) => typeof a === "string" && a.startsWith("flugzeug:"));
-      const flugG = data.actions?.find((a) => typeof a === "string" && a.startsWith("fluggruppe:"));
-      if (flugA) window.FridayFlugzeuge?.zeigeNr(flugA.slice(9));
-      else if (flugG) window.FridayFlugzeuge?.gruppe(flugG.slice(11));
-      else if (hat("flugzeuge")) window.FridayFlugzeuge?.oeffne();
-      // Klimazonen (v1.119.0)
-      if (hat("klimazonen")) window.FridayKlima?.an();
-      if (hat("klimazonen_aus")) window.FridayKlima?.aus();
-      // Welt-Runde (v1.116.0): "Zeig mir, was in der Welt passiert"
-      if (hat("welttour")) window.FridayWelttour?.start();
-      if (hat("welttour_weiter")) window.FridayWelttour?.weiter();
-      if (hat("welttour_zurueck")) window.FridayWelttour?.zurueck();
-      if (hat("welttour_stopp")) window.FridayWelttour?.stopp(true);
-      if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
-      if (hat("archiv")) window.FridayArchiv?.open();
-      if (hat("oekosystem")) window.FridayOekosystem?.open();
-      // Routen & Verbindungen: Karte mit Auto, Rad, zu Fuß und Bahn/Bus zeigen.
-      const routeAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("route:"));
-      const routeZiel = data.actions?.find((a) => typeof a === "string" && a.startsWith("route_ziel:"));
-      if (routeAktion) window.FridayRouten?.zeige(routeAktion.slice(6));
-      else if (hat("route_planen")) window.FridayRouten?.neueste();
-      else if (routeZiel) window.FridayRouten?.open({ ziel: decodeURIComponent(routeZiel.slice(11)) });
-      else if (hat("routen")) window.FridayRouten?.open();
-      // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede, Stimmungs-Sound.
       const aktion = (p) => data.actions?.find((a) => typeof a === "string" && a.startsWith(p));
-      if (hat("kuehlschrank")) window.FridayKuehl?.open({ tab: hat("kuehlschrank:rezepte") ? "rezepte" : "vorrat" });
-      else window.FridayKuehl?.refresh();
-      const kaufA = aktion("kauf:");
-      if (kaufA) window.FridayKauf?.open({ id: kaufA.slice(5) });
-      else if (hat("kaufberater")) window.FridayKauf?.open();
-      const gegenA = aktion("gegenrede:");
-      if (gegenA) window.FridayGegen?.open({ id: gegenA.slice(10) });
-      else if (hat("gegenrede")) window.FridayGegen?.open();
-      const ideeA = aktion("idee:");
-      if (ideeA) { try { window.FridayIdeen?.open({ wurf: JSON.parse(decodeURIComponent(ideeA.slice(5))) }); } catch { window.FridayIdeen?.open(); } }
-      else if (hat("ideen")) window.FridayIdeen?.open();
-      const klangA = aktion("klang:");
-      if (klangA === "klang:aus") window.FridayKlang?.aus();
-      else if (klangA === "klang:auto") { window.FridayKlang?.auto(true); window.FridayKlang?.open(); }
-      else if (klangA) window.FridayKlang?.spiele(klangA.slice(6));
-      else if (hat("klang")) window.FridayKlang?.open();
-      // Spiele-Werkstatt: live zuschauen, wie Friday programmiert, oder ein gespeichertes Spiel starten.
-      const spielBau = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel_bauen:"));
-      const spielStart = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel:"));
-      if (spielBau) window.FridaySpiele?.verfolge(spielBau.slice(12));
-      else if (hat("spiel_bauen")) window.FridaySpiele?.neuester();
-      else if (spielStart) window.FridaySpiele?.spiel(spielStart.slice(6));
-      else if (hat("spiele")) window.FridaySpiele?.open();
-      const zentraleAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("zentrale:"));
-      if (zentraleAktion) window.FridayZentrale?.open(zentraleAktion.slice(9));
-      else window.FridayZentrale?.refresh();
-      const logbuchAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("logbuch:"));
-      if (logbuchAktion) window.FridayLogbuch?.open(logbuchAktion.slice(8));
-      else window.FridayLogbuch?.refresh();
-      window.FridayEnergie?.refresh();
-      window.FridayRing?.melde("auftrag", null);
+      try {
+        // Friday hat ein Dokument oder einen Fragebogen erstellt: gleich zeigen.
+        if (hat("fragebogen_erstellen") || hat("dokument_erstellen")) window.FridayDokumente?.neuestes();
+        // Vollbild: im Browser umschalten (auf dem iPhone ist die Home-Bildschirm-App schon Vollbild).
+        if (hat("vollbild") || hat("vollbild_aus")) {
+          const r = window.FridayVollbild?.sprachBefehl(hat("vollbild"));
+          if (r) answer = r;
+        }
+        // Nur vorlesen: Bei erfolgreicher Antwort und aktivem Vorlesen keinen Text zeigen.
+        const voiceOn = $("voice-toggle").checked && "speechSynthesis" in window;
+        if (data.answer && voiceOn) addSpeaking();
+        else if (answer) addMessage("friday", answer);
+        busy = false;
+        if (data.actions?.some((a) => a === "set_reminder")) { refreshReminders(); window.FridayHud?.refresh(); }
+        if (data.actions?.includes("werkstatt")) window.FridayWerkstatt?.showLatest();
+        const landAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("land:"));
+        if (landAktion) window.FridayLand?.open(landAktion.slice(5));
+        // Weltgeschehen als Gespräch: Globus öffnen, Land anfliegen, Bewertung zeigen.
+        const lageLand = data.actions?.find((a) => typeof a === "string" && a.startsWith("lage_land:"));
+        const lageWert = data.actions?.find((a) => typeof a === "string" && a.startsWith("lage_bewertung:"));
+        if (lageLand) window.FridayLage?.showCountry(lageLand.slice(10), { stumm: true, bewertung: lageWert?.slice(15) });
+        else if (hat("weltgeschehen") && !window.FridayLage?.offen()) window.FridayLage?.open({ stumm: true });
+        if (data.actions?.includes("welt_alarm")) window.FridayAlarm?.play();
+        // Satelliten (v1.113.0): einzelner Satellit mit Steckbrief, eine Gruppe oder alle.
+        const satA = data.actions?.find((a) => typeof a === "string" && a.startsWith("satellit:"));
+        const satG = data.actions?.find((a) => typeof a === "string" && a.startsWith("satgruppe:"));
+        if (satA) window.FridaySatelliten?.zeigeNr(Number(satA.slice(9)));
+        else if (satG) window.FridaySatelliten?.gruppe(satG.slice(10));
+        else if (hat("satelliten")) window.FridaySatelliten?.oeffne();
+        // Schiffe (v1.114.0)
+        const schiffA = data.actions?.find((a) => typeof a === "string" && a.startsWith("schiff:"));
+        const schiffG = data.actions?.find((a) => typeof a === "string" && a.startsWith("schiffgruppe:"));
+        if (schiffA) window.FridaySchiffe?.zeigeNr(Number(schiffA.slice(7)));
+        else if (schiffG) window.FridaySchiffe?.gruppe(schiffG.slice(13));
+        else if (hat("schiffe")) window.FridaySchiffe?.oeffne();
+        // Flugzeuge (v1.115.0)
+        const flugA = data.actions?.find((a) => typeof a === "string" && a.startsWith("flugzeug:"));
+        const flugG = data.actions?.find((a) => typeof a === "string" && a.startsWith("fluggruppe:"));
+        if (flugA) window.FridayFlugzeuge?.zeigeNr(flugA.slice(9));
+        else if (flugG) window.FridayFlugzeuge?.gruppe(flugG.slice(11));
+        else if (hat("flugzeuge")) window.FridayFlugzeuge?.oeffne();
+        // Klimazonen (v1.119.0)
+        if (hat("klimazonen")) window.FridayKlima?.an();
+        if (hat("klimazonen_aus")) window.FridayKlima?.aus();
+        // Welt-Runde (v1.116.0): "Zeig mir, was in der Welt passiert"
+        if (hat("welttour")) window.FridayWelttour?.start();
+        if (hat("welttour_weiter")) window.FridayWelttour?.weiter();
+        if (hat("welttour_zurueck")) window.FridayWelttour?.zurueck();
+        if (hat("welttour_stopp")) window.FridayWelttour?.stopp(true);
+        if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
+        if (hat("archiv")) window.FridayArchiv?.open();
+        if (hat("oekosystem")) window.FridayOekosystem?.open();
+        // Routen & Verbindungen: Karte mit Auto, Rad, zu Fuß und Bahn/Bus zeigen.
+        const routeAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("route:"));
+        const routeZiel = data.actions?.find((a) => typeof a === "string" && a.startsWith("route_ziel:"));
+        if (routeAktion) window.FridayRouten?.zeige(routeAktion.slice(6));
+        else if (hat("route_planen")) window.FridayRouten?.neueste();
+        else if (routeZiel) window.FridayRouten?.open({ ziel: decodeURIComponent(routeZiel.slice(11)) });
+        else if (hat("routen")) window.FridayRouten?.open();
+        // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede, Stimmungs-Sound.
+        if (hat("kuehlschrank")) window.FridayKuehl?.open({ tab: hat("kuehlschrank:rezepte") ? "rezepte" : "vorrat" });
+        else window.FridayKuehl?.refresh();
+        const kaufA = aktion("kauf:");
+        if (kaufA) window.FridayKauf?.open({ id: kaufA.slice(5) });
+        else if (hat("kaufberater")) window.FridayKauf?.open();
+        const gegenA = aktion("gegenrede:");
+        if (gegenA) window.FridayGegen?.open({ id: gegenA.slice(10) });
+        else if (hat("gegenrede")) window.FridayGegen?.open();
+        const ideeA = aktion("idee:");
+        if (ideeA) { try { window.FridayIdeen?.open({ wurf: JSON.parse(decodeURIComponent(ideeA.slice(5))) }); } catch { window.FridayIdeen?.open(); } }
+        else if (hat("ideen")) window.FridayIdeen?.open();
+        const klangA = aktion("klang:");
+        if (klangA === "klang:aus") window.FridayKlang?.aus();
+        else if (klangA === "klang:auto") { window.FridayKlang?.auto(true); window.FridayKlang?.open(); }
+        else if (klangA) window.FridayKlang?.spiele(klangA.slice(6));
+        else if (hat("klang")) window.FridayKlang?.open();
+        // Spiele-Werkstatt: live zuschauen, wie Friday programmiert, oder ein gespeichertes Spiel starten.
+        const spielBau = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel_bauen:"));
+        const spielStart = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel:"));
+        if (spielBau) window.FridaySpiele?.verfolge(spielBau.slice(12));
+        else if (hat("spiel_bauen")) window.FridaySpiele?.neuester();
+        else if (spielStart) window.FridaySpiele?.spiel(spielStart.slice(6));
+        else if (hat("spiele")) window.FridaySpiele?.open();
+        const zentraleAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("zentrale:"));
+        if (zentraleAktion) window.FridayZentrale?.open(zentraleAktion.slice(9));
+        else window.FridayZentrale?.refresh();
+        const logbuchAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("logbuch:"));
+        if (logbuchAktion) window.FridayLogbuch?.open(logbuchAktion.slice(8));
+        else window.FridayLogbuch?.refresh();
+        window.FridayEnergie?.refresh();
+        window.FridayRing?.melde("auftrag", null);
+      } catch (e) { diag.schritt(`Fehler beim Anzeigen: ${e?.message || e}`, "bad"); busy = false; }
       // Die Werkstatt erzählt selbst, was sie baut (Einleitung, jedes Bauteil, Fazit): nicht doppelt reden.
       if (!data.actions?.includes("werkstatt")) await say(answer);
       clearSpeaking();
@@ -706,7 +763,11 @@
       }
     } catch (err) {
       window.FridayAuftrag?.ende(false);
-      addMessage("friday", `Verbindung gestört: ${err.message}`);
+      const weg = err?.name === "AbortError" || /load failed|failed to fetch|network/i.test(err?.message || "");
+      const grund = err?.name === "AbortError" ? "Der Mac hat 2 Minuten nicht geantwortet." : weg ? "Ich erreiche den Mac nicht." : err.message;
+      diag.schritt(`Fehler: ${grund} (${err?.message || err})`, "bad");
+      addMessage("friday", `Verbindung gestört: ${grund}`);
+      if (weg) say(`${grund} Prüfe am Mac, ob Tailscale an ist.`);
       setState("Fehler", "");
       window.FridayRing?.melde("auftrag", "bad", "Auftrag fehlgeschlagen: Verbindung gestört", 2 * 60000);
     } finally {
@@ -850,6 +911,7 @@
   bindFlag("set-gespraech", "friday_gespraech", false);
   bindFlag("set-unterbrechen", "friday_unterbrechen", true);
   bindFlag("set-vonselbst", "friday_vonselbst", false);
+  bindFlag("set-diagnose", "friday_diagnose", true);
   // Kopf-Stil: wird beim Laden von face.js gelesen, darum nach dem Wechsel neu laden
   (() => {
     const sel = $("set-kopfstil");
@@ -1647,7 +1709,7 @@
     rec.maxAlternatives = 1;
     ohr.rec = rec; ohr.laeuft = true; ohr.gestartet = ohr.lebenszeichen = Date.now();
     ohrRundeNeu();
-    rec.onstart = () => { if (ohr.rec === rec) { ohr.lebenszeichen = Date.now(); ohr.verweigert = 0; zeigeRuhe(); } };
+    rec.onstart = () => { if (ohr.rec === rec) { ohr.lebenszeichen = Date.now(); ohr.verweigert = 0; diag.schritt(ohr.modus === "befehl" ? "Mikrofon an, warte auf Befehl" : "Mikrofon an, warte auf „Friday“"); zeigeRuhe(); } };
     rec.onresult = (e) => {
       if (ohr.rec !== rec) return;
       ohr.lebenszeichen = Date.now();
@@ -1658,13 +1720,15 @@
         // v1.122.2: Safari auf dem iPhone meldet im Dauer-Zuhören oft NIE "fertig" (isFinal) und hängt
         // alles Gesagte an denselben Satz an. Darum: Ändert sich ein Zwischenstand eine Weile nicht mehr,
         // gilt er als fertig. Schon verarbeitete Teile werden übersprungen.
-        if (!r.isFinal) ohr.stabil.set(i, setTimeout(() => { if (ohr.rec === rec) { try { hoeren(text, true, i); } catch { /* egal */ } } }, IST_IOS ? 1200 : 1500));
+        // v1.122.6: Ein Befehl nach "Friday" bekommt mehr Zeit (kurze Denkpause mitten im Satz schneidet sonst ab).
+        if (!r.isFinal) ohr.stabil.set(i, setTimeout(() => { if (ohr.rec === rec) { try { hoeren(text, true, i); } catch { /* egal */ } } }, stabilMs(text, i)));
         try { hoeren(text, r.isFinal, i); } catch { /* ein Satz darf das Ohr nie anhalten */ }
       }
     };
     rec.onerror = (e) => {
       if (ohr.rec !== rec) return;
       const f = e?.error || "";
+      if (f && f !== "no-speech" && f !== "aborted") diag.schritt(`Mikrofon-Fehler: ${f}${f === "not-allowed" ? " (einmal tippen oder Mikrofon erlauben)" : ""}`, "bad");
       if (f === "not-allowed" || f === "service-not-allowed") {
         ohr.brauchtTipp = true;
         ohr.verweigert = (ohr.verweigert || 0) + 1;
@@ -1693,6 +1757,14 @@
     // iPhone: Ein Mikrofon-Neustart schneidet Friday kurz das Wort ab (say() spricht danach an der Stelle weiter).
     if (speaking && IST_IOS) ms = Math.max(ms, 1500);
     ohrSpaeter(ms);
+  }
+  function stabilMs(text, i) {
+    const rest = String(text || "").slice(ohr.verbraucht.get(i) || 0);
+    const m = rest.match(WAKE_WORT);
+    const nachWort = m ? rest.slice(m.index + m[0].length).trim() : rest.trim();
+    const befehl = ohr.modus === "befehl" || (m && nachWort.length > 1);
+    if (!befehl) return IST_IOS ? 1200 : 1500;
+    return IST_IOS ? 1800 : 2000;
   }
   function ohrRundeNeu() {
     for (const t of ohr.stabil?.values?.() || []) clearTimeout(t);
@@ -1755,6 +1827,7 @@
       if (!m && (istEcho(said) || /^(ja|ja boss|ich hore|boss)$/.test(norm(said)))) { erledigt(); return; }
       if (speaking) stilleJetzt(); // Boss redet schon, während sie noch "Ja?" sagt
       erledigt();
+      diag.schritt(`Gehört (Befehl): „${said.slice(0, 80)}“`);
       const { folge, frage } = ohr.befehl;
       befehlEnde();
       const cmd = m ? nachWeckwort(said, m) : said.replace(/^[,.!\s]+/, "").trim();
@@ -1778,6 +1851,7 @@
     }
     if (!fertig) return;
     erledigt();
+    diag.schritt(`Gehört: „${said.slice(0, 80)}“`);
     ausfuehren(nachWeckwort(said, m));
   }
 
@@ -1785,6 +1859,7 @@
   function ausfuehren(cmd) {
     cmd = String(cmd || "").trim();
     if (NUR_STOPP.test(cmd)) {
+      diag.schritt(`Stopp erkannt („${cmd}“)`);
       stilleJetzt();
       if (busy) { auftragNr++; window.FridayAuftrag?.ende(false); }
       ohr.wartend = "";
@@ -1803,7 +1878,7 @@
         .finally(() => { if (ohr.modus === "befehl") befehlModus(ohr.befehl); });
       return;
     }
-    if (busy) { ohr.wartend = cmd; setState("Kommt gleich dran …", "thinking"); return; }
+    if (busy) { ohr.wartend = cmd; diag.schritt(`Wartet, bis die letzte Antwort fertig ist: „${cmd}“`, "warn"); setState("Kommt gleich dran …", "thinking"); return; }
     send(cmd, { stimme: true });
   }
 

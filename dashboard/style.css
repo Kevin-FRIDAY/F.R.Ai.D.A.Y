@@ -3194,3 +3194,13 @@ html.ist-handy .lage-dm-3d { display: none; }
 html.perf-fluessig .lage-legend .legend-body { background: rgba(10,6,3,.96); }
 .lage-detailmap.drei-an .leaflet-control-container { display: none; }
 #lage-klima.nah path { opacity: .58; }
+
+/* v1.122.6 Diagnose-Zeile */
+.diag { position: fixed; left: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 9999; max-width: min(460px, calc(100vw - 20px));
+  font: 11px/1.35 ui-monospace, Menlo, monospace; color: #ffd9b0; background: rgba(10, 6, 2, .82); border: 1px solid rgba(255, 140, 40, .45);
+  border-radius: 8px; padding: 6px 8px; opacity: 0; pointer-events: none; transition: opacity .3s; }
+.diag.sichtbar { opacity: .92; pointer-events: auto; }
+.diag.gross { max-height: 60vh; overflow: auto; opacity: 1; }
+.diag b { color: #ff9a3c; font-weight: 600; }
+.diag .d-ok { color: #9dffb0; } .diag .d-warn { color: #ffe27a; } .diag .d-bad { color: #ff8a8a; }
+@media (max-width: 900px) { .diag { bottom: calc(84px + env(safe-area-inset-bottom)); } }

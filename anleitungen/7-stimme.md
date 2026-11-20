@@ -102,3 +102,15 @@ Auf dem iPhone kurz abwarten, bis sie „Ja?“ gesagt hat, dann sprechen.
 spricht, und geht danach sofort wieder an. So liest sie alles vor (auch die ganze Welt-Runde).
 Anhalten auf dem iPhone: in einer Sprechpause „Friday, stopp“ sagen, oder auf Fridays Kopf bzw. „Stopp“ tippen.
 Am Mac hört sie weiterhin auch mitten im Satz auf „Friday, stopp“.
+
+**v1.122.6 (Diagnose):** Unten links erscheint nach jedem Befehl kurz eine Diagnose-Zeile, z. B.
+„Gehört: …“ → „Gesendet an den Mac“ → „Antwort nach 0,4 s · Aktionen: …“ → „Spricht: …“.
+Antippen zeigt alle Schritte. So sieht man, wo es hängt (Mikrofon, Verbindung zum Mac, Ton).
+Ausschalten: Einstellungen → Assistent → „Diagnose anzeigen“. Antwortet der Mac nicht, sagt Friday das jetzt
+(„Ich erreiche den Mac nicht“) statt ewig „Denkt nach“ zu zeigen. Nach „Friday …“ wartet sie auf dem iPhone
+etwas länger (1,8 s), bevor der Satz als fertig gilt, damit eine kurze Denkpause den Befehl nicht abschneidet.
+
+**Weckwort auf dem iPhone ehrlich erklärt:** Safari erlaubt einer Web-App das Mikrofon erst nach einem
+Fingertipp. Nach jedem Öffnen der App also einmal tippen; danach hört Friday auf „Friday“, solange die App
+vorne und das iPhone entsperrt ist. Im Hintergrund oder bei gesperrtem Bildschirm schaltet iOS das Mikrofon ab.
+Ganz ohne Tippen geht es nur über Siri (Kurzbefehl, z. B. „Hey Siri, Friday“).
