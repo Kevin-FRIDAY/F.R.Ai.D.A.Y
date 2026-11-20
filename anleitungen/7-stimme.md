@@ -51,3 +51,7 @@ Friday reagiert nur, wenn du sie mit **"Friday"** ansprichst. Unterhältst du di
 ## iPhone: Geräusche unterbrechen Friday nicht mehr (ab v1.121.3)
 
 Auf dem iPhone hat iOS Fridays Stimme abgeschnitten, sobald ein Geräusch (z. B. die S-Bahn) das Mikrofon kurz umgeschaltet hat. Jetzt merkt Friday das und spricht ab dem unterbrochenen Satz weiter. Aufhören tut sie nur, wenn du „Friday“ (z. B. „Friday, stopp“) sagst oder auf ihren Kopf tippst.
+
+## iPhone: „Nicht verstanden“ und Friday reagiert nicht mehr (behoben in v1.121.5)
+
+Auf dem iPhone darf nur ein Mikrofon gleichzeitig laufen. Nach „Friday“ startete Friday das Zuhören, bevor das „Friday“-Ohr ganz aus war. Safari meldete dann einen Fehler, unten stand „Nicht verstanden“ und Friday hörte gar nicht mehr zu. Jetzt wartet sie kurz, versucht es still neu und räumt hängendes Zuhören selbst auf. Steht unten „Mikrofon erlauben“ oder „Mikrofon belegt“, einmal auf Fridays Kopf tippen.
