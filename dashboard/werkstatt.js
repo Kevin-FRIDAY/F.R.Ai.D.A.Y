@@ -12,6 +12,7 @@
   // Hausmodus: wie durchsichtig die Ebenen im Hologramm sind (viele Wände sollen nicht alles überstrahlen).
   const ALPHA = { struktur: 0.05, raeume: 0.1 };
   const EDGE = { struktur: 0.22, raeume: 0.18, moebel: 0.5 };
+  let ambient, sun, boden, umgebung = null, modellObj = null, modellId = "";
   let renderer, scene, camera, root, grid, raf = 0, plan = null, built = [], running = 0;
   let solid = (() => { try { return localStorage.getItem("friday_werkstatt_massiv") === "1"; } catch { return false; } })();
   let zoomMax = 80, yaw = 0.7, pitch = 0.42, dist = 9, target = new THREE.Vector3(0, 0.8, 0), autoSpin = true;
@@ -27,18 +28,76 @@
     scene.background = new THREE.Color(0x02060b);
     scene.fog = new THREE.Fog(0x02060b, 14, 46);
     camera = new THREE.PerspectiveCamera(45, 1, 0.05, 200);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.55));
-    const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+    ambient = new THREE.AmbientLight(0xffffff, 0.55);
+    scene.add(ambient);
+    sun = new THREE.DirectionalLight(0xffffff, 0.9);
     sun.position.set(6, 10, 4);
-    scene.add(sun);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.bias = -0.0004;
+    sun.shadow.normalBias = 0.02;
+    scene.add(sun, sun.target);
+    // v1.125.0: weicher Schatten unter dem Modell (nur "Massiv").
+    boden = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShadowMaterial({ opacity: 0.45 }));
+    boden.rotation.x = -Math.PI / 2; boden.position.y = 0.002; boden.receiveShadow = true; boden.scale.setScalar(200);
+    scene.add(boden);
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     grid = new THREE.GridHelper(80, 80, 0x4fd8ff, 0x0f5a75);
     grid.material.transparent = true; grid.material.opacity = 0.55;
     scene.add(grid);
     root = new THREE.Group();
     scene.add(root);
     enableOrbit(canvas);
+    stil();
     window.addEventListener("resize", resize);
     resize();
+  }
+
+  // ---------- v1.125.0: echte Optik ("Massiv") ----------
+  // Studio-Umgebung für Spiegelungen auf Lack, Chrom und Glas (selbst gerechnet, keine Datei nötig).
+  function studioUmgebung() {
+    if (umgebung) return umgebung;
+    const env = new THREE.Scene();
+    const raum = new THREE.Mesh(new THREE.BoxGeometry(20, 10, 20), new THREE.MeshBasicMaterial({ color: 0x2b3038, side: THREE.BackSide }));
+    raum.position.y = 4;
+    env.add(raum);
+    const licht = (w, h, pos, rot, k) => {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(1, 1, 1).multiplyScalar(k), side: THREE.DoubleSide }));
+      m.position.set(...pos); m.rotation.set(...rot); env.add(m);
+    };
+    licht(12, 4, [0, 8.9, 0], [Math.PI / 2, 0, 0], 4); // Deckenfeld
+    licht(6, 3, [-9.9, 4, 0], [0, Math.PI / 2, 0], 3); // Softbox links
+    licht(6, 3, [9.9, 4, 2], [0, -Math.PI / 2, 0], 2.2); // Softbox rechts
+    licht(10, 1.2, [0, 2.5, -9.9], [0, 0, 0], 2.5); // Lichtstreifen hinten
+    licht(20, 1, [0, 0.4, 9.9], [0, Math.PI, 0], 0.9); // Bodenlicht vorne
+    const pm = new THREE.PMREMGenerator(renderer);
+    umgebung = pm.fromScene(env, 0.035).texture;
+    pm.dispose();
+    return umgebung;
+  }
+  function stil() {
+    if (!renderer) return;
+    renderer.shadowMap.enabled = solid;
+    renderer.outputEncoding = solid ? THREE.sRGBEncoding : THREE.LinearEncoding;
+    renderer.toneMapping = solid ? THREE.ACESFilmicToneMapping : THREE.NoToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    scene.environment = solid ? studioUmgebung() : null;
+    ambient.intensity = solid ? 0.25 : 0.55;
+    sun.intensity = solid ? 1.6 : 0.9;
+    boden.visible = solid;
+    grid.material.opacity = solid ? 0.3 : 0.55;
+    grid.material.needsUpdate = true;
+  }
+  const lin = (hex) => new THREE.Color(hex).convertSRGBToLinear();
+  // Echte Materialien: Lack mit Klarlack, Chrom, getöntes Glas, Gummi.
+  function echtesMaterial(name, hex) {
+    if (name === "glas") return new THREE.MeshPhysicalMaterial({ color: lin(0x6f8798), metalness: 0, roughness: 0.04, transparent: true, opacity: 0.38, envMapIntensity: 1.6, clearcoat: 1, side: THREE.DoubleSide, depthWrite: false });
+    if (name === "chrom") return new THREE.MeshStandardMaterial({ color: lin(0xe8edf2), metalness: 1, roughness: 0.12, envMapIntensity: 1.3 });
+    if (name === "schwarz") return new THREE.MeshStandardMaterial({ color: lin(0x17191d), metalness: 0, roughness: 0.82 });
+    if (name === "grau") return new THREE.MeshStandardMaterial({ color: lin(0x8d939b), metalness: 0.55, roughness: 0.38 });
+    if (name === "braun") return new THREE.MeshStandardMaterial({ color: lin(0x8a5a32), metalness: 0, roughness: 0.6 });
+    // Lackfarben: metallic mit Klarlack-Schicht
+    return new THREE.MeshPhysicalMaterial({ color: lin(hex), metalness: 0.45, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 1.1 });
   }
 
   function resize() {
@@ -141,11 +200,12 @@
     const group = new THREE.Group();
     const glass = p.farbe === "glas";
     const fill = new THREE.Mesh(geo, solid
-      ? new THREE.MeshStandardMaterial({ color: hex, metalness: glass ? 0.1 : 0.35, roughness: glass ? 0.05 : 0.45, transparent: glass, opacity: glass ? 0.45 : 1 })
+      ? echtesMaterial(p.farbe, hex)
       : new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: p.form === "rohr" || p.form === "kugel" ? 0.85 : glass ? 0.08 : (ALPHA[p.ebene] ?? 0.14), depthWrite: false, blending: THREE.AdditiveBlending }));
     group.add(fill);
+    if (solid) { fill.castShadow = p.farbe !== "glas"; fill.receiveShadow = true; }
     let edge = null;
-    if (p.form !== "rohr" && p.form !== "kugel") {
+    if (p.form !== "rohr" && p.form !== "kugel" && !(solid && !haus)) { // Massiv: keine Drahtkanten, sieht echter aus
       // Schwarze Teile im Hologramm sonst unsichtbar: Kanten in hellem Graphit.
       const kante = !solid && p.farbe === "schwarz" ? 0x8c97a8 : hex;
       edge = new THREE.LineSegments(new THREE.EdgesGeometry(geo, p.form === "profil" || p.form === "flaeche" ? 32 : 25), new THREE.LineBasicMaterial({ color: kante, transparent: true, opacity: 1 }));
@@ -160,13 +220,28 @@
   }
 
   // Seitenansicht als Umriss, in der Breite (z) ausgezogen, mit leicht gerundeten Kanten.
+  // Ecken eines Umrisses weich runden (Chaikin), damit Karosserien nicht wie Klötze aussehen.
+  function glaetten(pts, runden = 2) {
+    let a = pts;
+    for (let r = 0; r < runden; r++) {
+      const b = [];
+      for (let i = 0; i < a.length; i++) {
+        const [x0, y0] = a[i], [x1, y1] = a[(i + 1) % a.length];
+        b.push([x0 * 0.75 + x1 * 0.25, y0 * 0.75 + y1 * 0.25], [x0 * 0.25 + x1 * 0.75, y0 * 0.25 + y1 * 0.75]);
+      }
+      a = b;
+    }
+    return a;
+  }
   function profilGeo(p) {
-    const pts = (p.punkte2d || []).filter((q) => Array.isArray(q) && Number.isFinite(q[0]) && Number.isFinite(q[1]));
+    let pts = (p.punkte2d || []).filter((q) => Array.isArray(q) && Number.isFinite(q[0]) && Number.isFinite(q[1]));
     if (pts.length < 3) return null;
+    if (p.glatt !== false && pts.length >= 5 && !p.ebene) pts = glaetten(pts, pts.length > 40 ? 1 : 2);
     const shape = new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2(x, y)));
     const breite = Math.max(0.02, Number(p.breite) || 1);
     const r = Math.max(0, Math.min(0.12, Number(p.rundung) || 0, breite / 4));
-    const geo = new THREE.ExtrudeGeometry(shape, { depth: Math.max(0.01, breite - 2 * r), bevelEnabled: r > 0, bevelThickness: r, bevelSize: r * 0.8, bevelSegments: 3, curveSegments: 6 });
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: Math.max(0.01, breite - 2 * r), bevelEnabled: r > 0, bevelThickness: r, bevelSize: r * 0.8, bevelSegments: solid ? 6 : 3, curveSegments: 6 });
+    geo.computeVertexNormals();
     geo.translate(0, 0, -(breite - 2 * r) / 2);
     return geo;
   }
@@ -205,6 +280,12 @@
     if (camera.aspect < 1) dist *= Math.min(2, 1.15 / camera.aspect); // Hochformat (Handy): weiter weg, damit alles reinpasst
     // Große Modelle (Schiffe mit 300 m): Sichtweite der Kamera mitziehen, sonst bleibt das Bild leer.
     zoomMax = Math.max(80, dist * 3);
+    // Schattenkamera passend zum Modell
+    const r = Math.max(size.x, size.y, size.z) * 0.8 + 0.5;
+    sun.position.set(center.x + r * 0.8, center.y + r * 1.6, center.z + r * 0.6);
+    sun.target.position.copy(center);
+    Object.assign(sun.shadow.camera, { left: -r, right: r, top: r, bottom: -r, near: 0.1, far: r * 5 });
+    sun.shadow.camera.updateProjectionMatrix();
     grid.scale.setScalar(Math.max(1, Math.max(size.x, size.z) / 40)); // Raster wächst mit großen Modellen (Schiffe)
     const weit = Math.max(200, dist * 4 + Math.max(size.x, size.y, size.z));
     if (camera.far !== weit) { camera.far = weit; camera.near = Math.max(0.05, dist / 400); camera.updateProjectionMatrix(); }
@@ -231,6 +312,87 @@
     root.add(dims);
   }
 
+  // ---------- v1.125.0: echte 3D-Modelle (GLB aus Fridays Modell-Bibliothek) ----------
+  const modellCache = new Map();
+  async function ladeModell(m) {
+    if (modellCache.has(m.id)) return modellCache.get(m.id).clone(true);
+    if (!THREE.GLTFLoader) throw new Error("GLTF-Lader fehlt");
+    const res = await api(`/api/modelle/datei/${encodeURIComponent(m.id)}`);
+    if (!res.ok) throw new Error("Modell-Datei fehlt");
+    const buf = await res.arrayBuffer();
+    const gltf = await new Promise((ok, fail) => new THREE.GLTFLoader().parse(buf, "", ok, fail));
+    const obj = gltf.scene || gltf.scenes?.[0];
+    if (!obj) throw new Error("Leeres Modell");
+    // Größe: auf die echte Länge bringen (falls bekannt), auf den Boden stellen, mittig ausrichten.
+    obj.updateMatrixWorld(true);
+    let bb = new THREE.Box3().setFromObject(obj);
+    const size = bb.getSize(new THREE.Vector3());
+    const lang = Math.max(size.x, size.z), hoch = size.y;
+    let ziel = Number(m.laenge) || 0;
+    let k = 1;
+    if (ziel > 0) k = ziel / Math.max(lang, hoch > lang * 2 ? hoch : 0, 1e-6);
+    else if (lang < 0.3 || lang > 500) k = 5 / Math.max(lang, 1e-6); // unbekannte Einheit: ca. 5 m
+    const wrap = new THREE.Group();
+    obj.scale.multiplyScalar(k);
+    wrap.add(obj);
+    wrap.updateMatrixWorld(true);
+    bb = new THREE.Box3().setFromObject(wrap);
+    const c = bb.getCenter(new THREE.Vector3());
+    obj.position.x -= c.x; obj.position.z -= c.z; obj.position.y -= bb.min.y;
+    let dreiecke = 0;
+    obj.traverse((o) => {
+      if (!o.isMesh) return;
+      o.castShadow = true; o.receiveShadow = true;
+      // Glas: three.js r128 kann echte Transmission nicht sauber (Scheiben werden weiß) → getöntes, durchsichtiges Glas.
+      for (const mat of Array.isArray(o.material) ? o.material : [o.material]) {
+        if (mat && mat.transmission > 0) {
+          mat.transmission = 0; mat.transparent = true; mat.opacity = Math.min(mat.opacity ?? 1, 0.32);
+          mat.color?.setRGB(0.05, 0.07, 0.09); mat.roughness = 0.03; mat.metalness = 0.2; mat.depthWrite = false; mat.needsUpdate = true;
+          o.castShadow = false;
+        }
+      }
+      const g = o.geometry;
+      dreiecke += g.index ? g.index.count / 3 : (g.attributes.position?.count || 0) / 3;
+    });
+    wrap.userData.dreiecke = dreiecke;
+    modellCache.set(m.id, wrap);
+    return wrap.clone(true);
+  }
+  // Hologramm oder echte Materialien auf das geladene Modell legen.
+  const holoMat = new THREE.MeshBasicMaterial({ color: COLORS.cyan, transparent: true, opacity: 0.07, depthWrite: false, blending: THREE.AdditiveBlending });
+  const holoKante = new THREE.LineBasicMaterial({ color: COLORS.cyan, transparent: true, opacity: 0.35 });
+  function modellStil(wrap) {
+    const kanten = (wrap.userData.dreiecke || 0) < 250000;
+    // Achtung: nichts in userData legen – clone() kopiert userData per JSON und macht Materialien kaputt.
+    const meshes = [];
+    wrap.traverse((o) => { if (o.isMesh && !o.isLineSegments) meshes.push(o); });
+    for (const o of meshes) {
+      if (!o._orig) Object.defineProperty(o, "_orig", { value: o.material, writable: true });
+      o.material = solid ? o._orig : holoMat;
+      if (!solid && kanten && !o._kante) {
+        Object.defineProperty(o, "_kante", { value: new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 35), holoKante), writable: true });
+        o.add(o._kante);
+      }
+      if (o._kante) o._kante.visible = !solid;
+    }
+  }
+  async function zeigeModell(m, t0) {
+    try {
+      setCaption("Lade echtes 3D-Modell …");
+      const wrap = await ladeModell(m);
+      modellStil(wrap);
+      modellObj = wrap; modellId = m.id;
+      root.add(wrap);
+      built.push({ obj: wrap, edge: null, edgeBase: 0, y: 0, base: wrap.scale.clone(), born: performance.now(), src: { form: "modell", name: m.name }, status: "Echtes 3D-Modell" });
+      frameModel();
+      return true;
+    } catch (err) {
+      console.warn("Werkstatt-Modell:", err);
+      setCaption("Das echte Modell ließ sich nicht laden.");
+      return false;
+    }
+  }
+
   // ---------- Ablauf ----------
   function setCaption(text) { $("werkstatt-caption").textContent = text || ""; }
   function setState(text, cls = "") { const s = $("werkstatt-state"); s.textContent = text; s.className = `werkstatt-state ${cls}`; }
@@ -245,6 +407,8 @@
         + `<div class="ws-steck-row"><span><small>Baujahr</small><b>${escapeHtml(sb.baujahr || "–")}</b></span><span><small>Preis</small><b>${escapeHtml(sb.preis || "–")}</b></span></div></li>`;
     }
     html += (p.kennzahlen || []).map((k) => `<li><small>${escapeHtml(k.label)}</small><b>${escapeHtml(k.wert)}</b></li>`).join("");
+    const m = p.modell;
+    if (m) html += `<li class="ws-quelle"><small>3D-Modell</small><b>${escapeHtml(m.name || "")}</b>${m.autor ? `<span>von ${escapeHtml(m.autor)}</span>` : ""}${m.lizenz ? `<span>${escapeHtml(m.lizenz)}${m.quelle ? ` · ${escapeHtml(m.quelle)}` : ""}</span>` : ""}${/^https:\/\//.test(m.link || "") ? `<a href="${escapeHtml(m.link)}" target="_blank" rel="noopener">Quelle ansehen</a>` : ""}</li>`;
     $("werkstatt-facts").innerHTML = html;
   }
 
@@ -284,7 +448,8 @@
     }
     infoAus();
     schlange = [];
-    let gezeigt = 0, angesagt = false, fehlversuche = 0, planNr = entry.planNr || 1;
+    let gezeigt = 0, angesagt = false, fehlversuche = 0, planNr = entry.planNr || 1, geladenId = "";
+    if (neu) { modellObj = null; modellId = ""; plan.modell = null; }
     const t0 = Date.now();
     setState("PLANT …", "busy");
     setCaption(entry.erweiterung ? "Ergänze das Modell …" : "Entwurf läuft …");
@@ -292,7 +457,7 @@
       // Plan wurde auf dem Server neu gesetzt (z. B. Vorlage statt leerem Entwurf): von vorn aufbauen.
       if ((job.planNr || 1) !== planNr) {
         planNr = job.planNr || 1;
-        if (neu) { root.clear(); built = []; plan.schritte = []; }
+        if (neu) { root.clear(); built = []; plan.schritte = []; if (modellObj && job.plan?.modell?.id === modellId) { root.add(modellObj); built.push({ obj: modellObj, edge: null, edgeBase: 0, y: 0, base: modellObj.scale.clone(), born: 0, src: { form: "modell", name: job.plan.modell.name }, status: "Echtes 3D-Modell" }); } else { modellObj = null; geladenId = ""; } }
         gezeigt = 0;
       }
       const p = job.plan || {};
@@ -301,6 +466,17 @@
       if (p.kennzahlen?.length) plan.kennzahlen = p.kennzahlen;
       if (p.titel || p.kennzahlen?.length) showFacts(plan);
       if (p.einleitung) plan.einleitung = p.einleitung;
+      if (p.modell) plan.modell = p.modell;
+      if (p.modell && p.modell.id !== geladenId && neu) {
+        geladenId = p.modell.id;
+        if (p.modell.laenge || job.status === "fertig") {
+          // mit echter Länge laden (kommt mit dem Steckbrief) – bis dahin kurz warten
+          setState("LÄDT MODELL", "busy");
+          await zeigeModell(p.modell, t0);
+          if (run !== running) return;
+        } else geladenId = "";
+      }
+      if (job.phase && !gezeigt && !geladenId) setCaption(job.phase);
       if (p.fazit) plan.fazit = p.fazit;
       // Erst die Einleitung ("Sehr gern, Chef. Ein Audi A4 …"), sonst wenigstens der Titel.
       if (!angesagt && (plan.einleitung || (plan.titel && (job.status !== "plant" || job.ohneClaude)))) {
@@ -324,7 +500,7 @@
       if (job.status === "fertig" || job.ohneClaude) break;
       if (job.status === "fehler") { setState("FEHLER", "error"); setCaption(job.error || "Das hat nicht geklappt."); return; }
       if (Date.now() - t0 > 240000) { setState("FEHLER", "error"); setCaption("Der Bau dauert zu lange. Versuch es noch einmal."); return; }
-      if (!gezeigt) setCaption(`${entry.erweiterung ? "Ergänze" : "Entwurf läuft"} … ${Math.round((Date.now() - t0) / 1000)} s`);
+      if (!gezeigt && !geladenId) setCaption(`${job.phase || (entry.erweiterung ? "Ergänze …" : "Entwurf läuft …")} ${Math.round((Date.now() - t0) / 1000)} s`);
       await pause(500);
       if (run !== running) return;
       try {
@@ -340,7 +516,7 @@
     if (haus) addDimensions(); // Fahrzeuge & Co.: echte Maße stehen in der Infokarte, keine Extra-Schilder
     frameModel();
     setTimeout(() => { if (run === running) frameModel(); }, 900); // nach dem Einblenden der letzten Teile nachjustieren
-    $("werkstatt-step").textContent = `${built.filter((b) => b.src.form !== "text").length} TEILE · ${Math.max(1, Math.round((Date.now() - t0) / 1000))} S`;
+    $("werkstatt-step").textContent = modellObj ? `ECHTES 3D-MODELL · ${Math.max(1, Math.round((Date.now() - t0) / 1000))} S` : `${built.filter((b) => b.src.form !== "text").length} TEILE · ${Math.max(1, Math.round((Date.now() - t0) / 1000))} S`;
     setState("FERTIG", "done");
     setCaption(haus ? "Fertig. Etagen und Leitungen rechts umschalten." : job.hinweis ? `${job.hinweis} Teil antippen für Details.` : "Fertig. Teil antippen für Details.");
     ansage(plan.fazit || "So, Chef. Fertig.");
@@ -349,6 +525,7 @@
   function rebuildMaterials() {
     if (!plan) return;
     root.clear(); built = [];
+    if (modellObj) { modellStil(modellObj); root.add(modellObj); built.push({ obj: modellObj, edge: null, edgeBase: 0, y: 0, base: modellObj.scale.clone(), born: 0, src: { form: "modell", name: plan.modell?.name || "3D-Modell" }, status: "Echtes 3D-Modell" }); }
     plan.schritte.forEach((s) => addParts(s.teile, performance.now() - 2000, s.status));
     if (haus) addDimensions();
     applyHaus();
@@ -414,6 +591,7 @@
     box.classList.remove("hidden");
     const sw = $("werkstatt-solid"); if (sw) sw.checked = solid;
     init();
+    stil();
     resize();
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(loop);
@@ -429,7 +607,7 @@
   $("werkstatt-open")?.addEventListener("click", open);
   $("werkstatt-x")?.addEventListener("click", close);
   $("werkstatt-form")?.addEventListener("submit", (e) => { e.preventDefault(); const t = $("werkstatt-input"); request(t.value); t.value = ""; });
-  $("werkstatt-solid")?.addEventListener("change", (e) => { solid = e.target.checked; rebuildMaterials(); });
+  $("werkstatt-solid")?.addEventListener("change", (e) => { solid = e.target.checked; try { localStorage.setItem("friday_werkstatt_massiv", solid ? "1" : "0"); } catch { /* egal */ } stil(); rebuildMaterials(); });
   // v1.124.0: Vorlagen-Knopf – Haus, Autos, Flugzeuge, Schiffe … sofort und ohne Claude-Guthaben.
   const VORLAGEN = [
     ["🏠", "Haus", "Mehrfamilienhaus mit 4 Etagen und 8 Wohnungen"], ["🏡", "Einfamilienhaus", "bau mir ein Einfamilienhaus"],
@@ -448,7 +626,39 @@
       request(VORLAGEN[Number(b.dataset.i)][2], { neu: true });
     });
   }
-  $("werkstatt-beispiel")?.addEventListener("click", () => vorlagenBox ? vorlagenBox.classList.toggle("hidden") : request("Mehrfamilienhaus mit 4 Etagen und 8 Wohnungen", { neu: true }));
+  // v1.125.0: Echte Modelle – Sketchfab-Schlüssel direkt im Vorlagen-Fenster eintragen.
+  async function echtZeile() {
+    if (!vorlagenBox) return;
+    let st = {};
+    try { st = await (await api("/api/modelle")).json(); } catch { /* egal */ }
+    vorlagenBox.querySelector(".ws-echt")?.remove();
+    const d = document.createElement("div");
+    d.className = "ws-echt";
+    const anzahl = (st.modelle || []).length;
+    d.innerHTML = st.sketchfab
+      ? `<span>✅ <b>Echte Modelle an</b> (Sketchfab${st.konto ? ` · ${escapeHtml(st.konto)}` : ""}) · ${anzahl} in deiner Bibliothek. Sag einfach, was du sehen willst, z. B. „Lamborghini Huracán“.</span><button type="button" class="ghost small" data-sf="aus">Trennen</button>`
+      : `<span>🔑 <b>Echte 3D-Modelle:</b> kostenlosen Sketchfab-Schlüssel einfügen (<a href="https://sketchfab.com/settings/password" target="_blank" rel="noopener">sketchfab.com → Einstellungen → Password &amp; API</a>).${anzahl ? ` ${anzahl} Modell${anzahl > 1 ? "e" : ""} schon da.` : ""}</span><input type="password" autocomplete="off" placeholder="API-Schlüssel"><button type="button" class="werkstatt-go" data-sf="an">Verbinden</button>`;
+    vorlagenBox.prepend(d);
+    d.addEventListener("click", async (e) => {
+      const b = e.target.closest("button[data-sf]");
+      if (!b) return;
+      e.stopPropagation();
+      b.disabled = true;
+      try {
+        const r = b.dataset.sf === "an"
+          ? await (await api("/api/modelle/sketchfab", { method: "POST", body: JSON.stringify({ token: d.querySelector("input")?.value || "" }) })).json()
+          : await (await api("/api/modelle/sketchfab", { method: "DELETE" })).json();
+        if (r.ok === false) { setCaption(r.error || "Das hat nicht geklappt."); b.disabled = false; return; }
+        setCaption(b.dataset.sf === "an" ? "Sketchfab verbunden. Ab jetzt baue ich mit echten Modellen, Chef." : "Sketchfab getrennt.");
+        echtZeile();
+      } catch { setCaption("Friday ist gerade nicht erreichbar."); b.disabled = false; }
+    });
+  }
+  $("werkstatt-beispiel")?.addEventListener("click", () => {
+    if (!vorlagenBox) return request("Mehrfamilienhaus mit 4 Etagen und 8 Wohnungen", { neu: true });
+    vorlagenBox.classList.toggle("hidden");
+    if (!vorlagenBox.classList.contains("hidden")) echtZeile();
+  });
 
   // ---------- Hausmodus: Etagen, Ebenen, Schnitt, Grundriss ----------
   let haus = null, etageSel = "alle", ebeneOn = {}, schnittOn = false;
