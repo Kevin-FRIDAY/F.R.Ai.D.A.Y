@@ -167,9 +167,11 @@
   const zahl = (n) => n == null ? "–" : Number(n).toLocaleString("de-DE");
   const SIGNAL = { konflikt: "⚔", internet: "📶", beben: "💥", katastrophe: "🚨", unwetter: "🌀", ausbruch: "🦠", notflug: "✈" };
   function karte(html) {
-    $("lage-markercard")?.remove(); $("lage-shipcard")?.remove(); $("lage-lbcard")?.remove();
-    let c = $("lage-lpcard");
-    if (!c) { c = document.createElement("div"); c.id = "lage-lpcard"; c.className = "lage-shipcard lb-card lp-card"; $("lage")?.append(c); }
+    // Gleiche Karte wie das Lagebild (#lage-lbcard), damit immer nur eine offen ist und alles gleich aussieht.
+    $("lage-markercard")?.remove(); $("lage-shipcard")?.remove();
+    let c = $("lage-lbcard");
+    if (!c) { c = document.createElement("div"); c.id = "lage-lbcard"; $("lage")?.append(c); }
+    c.className = "lage-shipcard lb-card lp-card";
     c.innerHTML = `<button class="ship-x" title="Schließen">✕</button>${html}`;
     c.querySelector(".ship-x").addEventListener("click", () => c.remove());
     c.querySelector("[data-land]")?.addEventListener("click", (e) => { c.remove(); G()?.landWaehlen(e.currentTarget.dataset.land); });
@@ -183,7 +185,7 @@
   }
   function zeigeInfo(i) {
     if (i.typ === "brenn") {
-      karte(`<div class="mc-type">🔥 Brennpunkt · ${i.anzahl} Ereignisse gleichzeitig</div>
+      karte(`<div class="mc-type">🔥 BRENNPUNKT · ${i.anzahl} EREIGNISSE</div>
         <div class="mc-title">${esc(i.flag)} ${esc(i.land)}</div>
         <ul class="lp-liste">${i.signale.map((s) => `<li><i>${SIGNAL[s.art] || "•"}</i>${esc(s.text)}</li>`).join("")}${i.reisewarnung ? `<li><i>🛂</i>${esc(i.reisewarnung)} (Auswärtiges Amt)</li>` : ""}</ul>
         <p class="lb-hinweis">Friday zählt verschiedene Ereignisse im selben Land zusammen. Ab zwei gleichzeitig wird es ein Brennpunkt.</p>${landKnopf(i.id)}`);
@@ -196,7 +198,7 @@
         <p class="lb-hinweis">Öffentliches ADS-B von adsb.lol. 7700 heißt Notfall, 7600 Funkausfall. Meist ist es Vorsicht, nicht Gefahr.</p>`);
     } else if (i.typ === "enge") {
       const t = i.trend_prozent;
-      karte(`<div class="mc-type">⚓ Meerenge · Schiffsverkehr</div>
+      karte(`<div class="mc-type">⚓ Meerenge · Schiffe pro Tag</div>
         <div class="mc-title">${esc(i.name)}</div>
         <div class="mc-rows"><span>Am ${datum(i.datum)}</span><b>${zahl(i.heute)} Schiffe</b>
           <span>Wochenschnitt</span><b>${zahl(i.schnitt7)} pro Tag</b>
