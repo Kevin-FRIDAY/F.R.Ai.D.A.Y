@@ -45,8 +45,9 @@ function naechstesLand(lon, lat, maxGrad = 9) {
   return bestD <= maxGrad ? best : null;
 }
 // Land aus einem englischen Ortstext ("45 km SW of Hualien, Taiwan").
+const vereinheitlichen = (s) => String(s || "").replace(/democratic republic of (the )?congo/gi, "DR Congo").replace(/\bUSA\b|United States of America/g, "United States");
 function landAusText(txt) {
-  const t = String(txt || "").toLowerCase();
+  const t = vereinheitlichen(txt).toLowerCase();
   if (!t) return null;
   const hits = COUNTRIES.filter((c) => c.en && new RegExp(`\\b${c.en.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(t));
   return hits.sort((a, b) => b.en.length - a.en.length)[0] || null;
@@ -220,7 +221,7 @@ export function getAusbrueche() {
       if (!Number.isFinite(zeit) || zeit < grenze) continue;
       const titel = String(m.Title || "");
       const teile = titel.split(/\s[-–—]\s|,\s(?=[A-Z])/);
-      const ortText = teile.length > 1 ? teile.slice(1).join(", ") : titel;
+      const ortText = vereinheitlichen(teile.length > 1 ? teile.slice(1).join(", ") : titel);
       const laender = COUNTRIES.filter((c) => c.en && new RegExp(`\\b${c.en.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(ortText));
       // "Democratic Republic of the Congo" enthält auch "Congo": längere Namen schlagen kürzere.
       const sauber = laender.filter((c) => !laender.some((o) => o !== c && o.en.length > c.en.length && o.en.toLowerCase().includes(c.en.toLowerCase())));
@@ -296,36 +297,24 @@ export async function getInfraPlus(typ) {
 }
 
 // ---------- 7. Strahlung (Safecast, freies Bürger-Messnetz) ----------
-// Geiger-Zähler in cpm → µSv/h: bei den Safecast-Geräten (LND 7317) etwa cpm / 334.
+// Letzter Messwert jedes festen Safecast-Geräts. Geiger-Zähler in cpm → µSv/h je Röhrentyp.
+const ROEHRE = { lnd_7318u: 334, lnd_7318c: 334, lnd_7317: 334, lnd_712u: 108, lnd_712c: 108, lnd_7128ec: 108, lnd_78017w: 334 };
 export function getStrahlung() {
   return cached("strahlung", 60 * 60 * 1000, async () => {
-    const seit = new Date(Date.now() - 36 * 3600 * 1000).toISOString().slice(0, 19);
-    const roh = [];
-    for (let seite = 1; seite <= 4; seite++) {
-      const d = await hol(`https://api.safecast.org/measurements.json?per_page=1000&page=${seite}&unit=cpm&captured_after=${encodeURIComponent(seit)}`, 25000);
-      if (!Array.isArray(d) || !d.length) break;
-      roh.push(...d);
-      if (d.length < 1000) break;
-    }
-    // Auf ein 1°-Raster zusammenfassen: Mittelwert (Median) je Zelle, Ausreißer zählen nicht.
-    const zellen = new Map();
-    for (const m of roh) {
-      if (!Number.isFinite(m.latitude) || !Number.isFinite(m.longitude) || !(m.value > 0) || m.value > 100000) continue;
-      const k = Math.round(m.latitude) + "," + Math.round(m.longitude);
-      if (!zellen.has(k)) zellen.set(k, { lat: 0, lon: 0, werte: [], ort: "" });
-      const z = zellen.get(k);
-      z.lat += m.latitude; z.lon += m.longitude; z.werte.push(m.value);
-      if (!z.ort && m.location_name) z.ort = m.location_name;
-    }
+    const d = await hol("https://tt.safecast.org/devices", 30000);
+    const grenze = Date.now() - 72 * 3600 * 1000;
     const punkte = [];
-    for (const z of zellen.values()) {
-      const w = z.werte.sort((a, b) => a - b);
-      const median = w[Math.floor(w.length / 2)];
-      const usv = Math.round((median / 334) * 1000) / 1000;
-      punkte.push({ lat: +(z.lat / w.length).toFixed(2), lon: +(z.lon / w.length).toFixed(2), usv, messungen: w.length, ort: z.ort, stufe: usv >= 1 ? "hoch" : usv >= 0.3 ? "erhoeht" : "normal" });
+    for (const g of Array.isArray(d) ? d : []) {
+      const zeit = Date.parse(g.when_captured || "");
+      if (!Number.isFinite(zeit) || zeit < grenze || !Number.isFinite(g.loc_lat) || !Number.isFinite(g.loc_lon)) continue;
+      const k = Object.keys(ROEHRE).find((x) => Number.isFinite(g[x]) && g[x] > 0);
+      if (!k) continue;
+      const usv = Math.round((g[k] / ROEHRE[k]) * 1000) / 1000;
+      if (usv > 100) continue; // offensichtlicher Messfehler
+      punkte.push({ lat: +g.loc_lat.toFixed(3), lon: +g.loc_lon.toFixed(3), usv, ort: g.loc_name || "", land: g.loc_country || "", zeit: new Date(zeit).toISOString(), stufe: usv >= 1 ? "hoch" : usv >= 0.3 ? "erhoeht" : "normal" });
     }
     punkte.sort((a, b) => b.usv - a.usv);
-    return { punkte: punkte.slice(0, 600), messungen: roh.length, stand: new Date().toISOString(), quelle: "Safecast (Bürger-Messnetz, CC0)", hinweis: "Normal sind 0,05 bis 0,3 µSv/h. Einzelne Geräte können falsch messen." };
+    return { punkte: punkte.slice(0, 800), messungen: punkte.length, stand: new Date().toISOString(), quelle: "Safecast (Bürger-Messnetz, CC0)", hinweis: "Normal sind 0,05 bis 0,3 µSv/h. In Japan stehen viele Geräte bei Fukushima, dort sind leicht erhöhte Werte bekannt. Einzelne Geräte können falsch messen." };
   });
 }
 
@@ -350,7 +339,8 @@ export async function getStabilitaet() {
     for (const c of COUNTRIES) {
       const w = wgi.get(String(c.cca2 || "").toUpperCase());
       if (!w) continue;
-      const basis = Math.max(0, Math.min(100, ((w.wert + 2.5) / 5) * 100));
+      // Weltbank-Skala reicht praktisch von −2,5 (Syrien, Jemen) bis +1,6 (Island, Liechtenstein).
+      const basis = Math.max(0, Math.min(100, ((w.wert + 2.5) / 4.1) * 100));
       const gruende = [];
       let abzug = 0;
       const k = kon.get(c.id);
@@ -375,7 +365,7 @@ export async function stabilitaetFuer(country) {
 // ---------- 8. Brennpunkt-Melder: mehrere Ereignisse gleichzeitig in einem Land ----------
 export async function getBrennpunkte() {
   return cached("brenn", 10 * 60 * 1000, async () => {
-    const safe = (p) => p.catch(() => null);
+    const safe = (p) => Promise.race([p.catch(() => null), new Promise((r) => setTimeout(() => r(null), 8000))]);
     const [beben, eonet, alarm, netz, reise, aus, nf, hu] = await Promise.all([safe(getQuakes()), safe(getEonet()), safe(getAlarm()), safe(getInternet()), safe(getReisewarnungen()), safe(getAusbrueche()), safe(getNotflug()), safe(getHurrikane())]);
     const sig = new Map(); // id -> { land, signale: Map(art -> text) }
     const add = (c, art, text) => {
@@ -513,7 +503,7 @@ export async function lageplusAnswer(t) {
   if (/strahlung|radioaktiv|geigerz(ä|ae)hler|mikrosievert/.test(t)) {
     const d = await getStrahlung();
     const hoch = d.punkte.filter((p) => p.stufe !== "normal");
-    return { text: hoch.length ? `Von ${zahl(d.messungen)} Messungen der letzten Stunden sind ${hoch.length} Orte erhöht, der höchste Wert ${hoch[0].usv.toLocaleString("de-DE")} Mikrosievert pro Stunde${hoch[0].ort ? ` bei ${hoch[0].ort}` : ""}. Einzelne Geräte messen manchmal falsch.` : `Die Strahlung ist überall normal, Boss. ${zahl(d.messungen)} Messungen der letzten Stunden, alle im üblichen Bereich.`, zeigen: true };
+    return { text: hoch.length ? `Von ${zahl(d.messungen)} Messgeräten zeigen ${hoch.length} erhöhte Werte, der höchste Wert ${hoch[0].usv.toLocaleString("de-DE")} Mikrosievert pro Stunde${hoch[0].ort ? ` bei ${hoch[0].ort}` : ""}. Viele Geräte stehen bei Fukushima, einzelne messen auch mal falsch.` : `Die Strahlung ist überall normal, Boss. ${zahl(d.messungen)} Messgeräte melden Werte im üblichen Bereich.`, zeigen: true };
   }
   if (/brennpunkt|wo brennt('s| es)|hotspots?\b|wo ist (gerade )?am meisten los/.test(t)) {
     const d = await getBrennpunkte();
