@@ -31,6 +31,7 @@ import { quickCommand as zentraleQuick } from "./zentrale.js";
 import { quickCommand as spielQuick } from "./spiele.js";
 import { quickCommand as routenQuick } from "./routen.js";
 import { quickCommand as helferQuick } from "./helfer.js";
+import { quickCommand as wacheQuick } from "./wache.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -231,6 +232,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (tvAnswer) { actions.push("fernseher"); return finish(tvAnswer); }
     } catch (err) {
       console.error("Fernseher-Schnellbefehl:", err.message);
+    }
+  }
+
+  // Kamera-Wache (v1.127.0): "Was passiert zu Hause?", "Wache an", "Ist jemand im Wohnzimmer?" – ohne Claude.
+  // Vor dem Helfer-Paket und der Länder-Info, damit "was passiert in der Küche" kein Land wird.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const wa = await wacheQuick(text);
+      if (wa) { actions.push(...wa.actions); return finish(wa.answer); }
+    } catch (err) {
+      console.error("Kamera-Wache:", err.message);
     }
   }
 

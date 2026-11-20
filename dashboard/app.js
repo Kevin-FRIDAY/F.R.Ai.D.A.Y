@@ -688,6 +688,12 @@
         else if (hat("route_planen")) window.FridayRouten?.neueste();
         else if (routeZiel) window.FridayRouten?.open({ ziel: decodeURIComponent(routeZiel.slice(11)) });
         else if (hat("routen")) window.FridayRouten?.open();
+        // Kamera-Wache (v1.127.0): Fenster öffnen, eine Kamera zeigen, Ereignisse zeigen.
+        const wacheA = aktion("wache:");
+        if (wacheA === "wache:ereignisse") window.FridayWache?.open({ tab: "ereignisse" });
+        else if (wacheA) window.FridayWache?.open({ kamera: wacheA.slice(6) });
+        else if (hat("wache")) window.FridayWache?.open();
+        else if (hat("wache_status")) window.FridayWache?.refresh();
         // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede, Stimmungs-Sound.
         if (hat("kuehlschrank")) window.FridayKuehl?.open({ tab: hat("kuehlschrank:rezepte") ? "rezepte" : "vorrat" });
         else window.FridayKuehl?.refresh();

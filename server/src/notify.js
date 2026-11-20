@@ -31,8 +31,24 @@ export async function sendTelegram(text, chatId = config.telegramChatId) {
   }
 }
 
+// Foto mit Text an Telegram (Kamera-Wache). Gibt false zurück, wenn Telegram fehlt oder es nicht klappt.
+export async function sendTelegramPhoto(jpeg, caption = "", chatId = config.telegramChatId) {
+  if (!config.telegramToken || !chatId || !jpeg?.length) return false;
+  try {
+    const form = new FormData();
+    form.append("chat_id", String(chatId));
+    form.append("caption", String(caption).slice(0, 1000));
+    form.append("photo", new Blob([jpeg], { type: "image/jpeg" }), "friday-wache.jpg");
+    const res = await fetch(`https://api.telegram.org/bot${config.telegramToken}/sendPhoto`, { method: "POST", body: form, signal: AbortSignal.timeout(20000) });
+    return res.ok;
+  } catch (err) {
+    console.error("Telegram-Foto fehlgeschlagen:", err.message);
+    return false;
+  }
+}
+
 // Schickt eine Nachricht über alle eingerichteten Wege.
-export async function notifyAll(title, message) {
-  const results = await Promise.all([sendPush(title, message), sendTelegram(`${title}\n${message}`)]);
+export async function notifyAll(title, message, { ohneTelegram = false } = {}) {
+  const results = await Promise.all([sendPush(title, message), ohneTelegram ? false : sendTelegram(`${title}\n${message}`)]);
   return results.some(Boolean);
 }

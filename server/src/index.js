@@ -21,6 +21,7 @@ import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webs
 import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, VORLAGEN } from "./spiele.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { helferRouten, helferStart } from "./helfer.js";
+import { wacheRouten, wacheStart } from "./wache.js";
 import { startShips, getShips, shipsStatus, schiffeRouten } from "./ships.js";
 import { getISS } from "./extras.js";
 import * as alexa from "./alexa.js";
@@ -641,6 +642,7 @@ zentraleRouten(app, asyncRoute);
 
 // Helfer-Paket: Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede (v1.106.0).
 helferRouten(app, asyncRoute);
+wacheRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
@@ -653,6 +655,7 @@ server.listen(config.port, config.host, () => {
 logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
 helferStart();
+wacheStart();
 zentraleStart(ask);
 startTelegram();
 startShips();
