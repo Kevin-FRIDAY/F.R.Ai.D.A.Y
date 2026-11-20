@@ -17,10 +17,21 @@
 
   // ---------- Server ----------
   async function api(path, options = {}) {
-    const res = await fetch(path, {
-      ...options,
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...(options.headers || {}) },
-    });
+    const t0 = Date.now();
+    const kurz = String(path).split("?")[0];
+    let res;
+    try {
+      res = await fetch(path, {
+        ...options,
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...(options.headers || {}) },
+      });
+    } catch (err) {
+      if (err?.name !== "AbortError") window.FridayDiag?.schritt(`Mac nicht erreichbar bei ${kurz} (${err?.message || err})`, "bad");
+      throw err;
+    }
+    const ms = Date.now() - t0;
+    if (!res.ok && res.status !== 401) window.FridayDiag?.schritt(`Mac meldet Fehler ${res.status} bei ${kurz}`, "bad");
+    else if (ms > 8000 && kurz !== "/api/chat") window.FridayDiag?.schritt(`${kurz} hat ${Math.round(ms / 1000)} s gebraucht`, "warn");
     if (res.status === 401) {
       showLogin();
       throw new Error("Nicht angemeldet");
@@ -112,6 +123,35 @@
     return { schritt, liste: () => liste.slice() };
   })();
   window.FridayDiag = diag;
+  // Diagnose für alles (v1.122.7): Programmfehler, Fenster auf/zu, Lagezentrum, Netz, Mac-Verbindung.
+  window.addEventListener("error", (e) => {
+    if (!e?.message || /ResizeObserver/.test(e.message)) return;
+    diag.schritt(`Programmfehler: ${e.message}${e.filename ? " (" + String(e.filename).split("/").pop() + ":" + e.lineno + ")" : ""}`, "bad");
+  });
+  window.addEventListener("unhandledrejection", (e) => {
+    const m = e?.reason?.message || String(e?.reason || "");
+    if (!m || /AbortError|aborted|play\(\)|NotAllowedError/i.test(m)) return;
+    diag.schritt(`Fehler im Hintergrund: ${m.slice(0, 100)}`, "bad");
+  });
+  window.addEventListener("friday-lage", (e) => diag.schritt(e.detail?.offen ? "Lagezentrum geöffnet" : "Lagezentrum geschlossen"));
+  window.addEventListener("online", () => diag.schritt("Internet wieder da", "ok"));
+  window.addEventListener("offline", () => diag.schritt("Kein Internet auf diesem Gerät", "bad"));
+  // Fenster: jedes große Fenster meldet, wenn es auf- oder zugeht.
+  try {
+    const namen = new Map();
+    const fensterName = (el) => el.getAttribute("aria-label") || el.querySelector("h2")?.textContent?.trim() || el.id;
+    new MutationObserver((liste) => {
+      for (const m of liste) {
+        const el = m.target;
+        if (!el.id || !(el.classList.contains("sheet") || el.id === "werkstatt" || el.id === "vision" || el.id === "camera")) continue;
+        const war = String(m.oldValue || "").split(/\s+/).includes("hidden");
+        const ist = el.classList.contains("hidden");
+        if (war === ist) continue;
+        if (!namen.has(el.id)) namen.set(el.id, String(fensterName(el)).slice(0, 40));
+        diag.schritt(`Fenster ${ist ? "zu" : "offen"}: ${namen.get(el.id)}`);
+      }
+    }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class"], attributeOldValue: true });
+  } catch { /* egal */ }
 
   // ---------- Anzeige ----------
   let coreMode = null;
@@ -599,6 +639,7 @@
       hueSprechen(false);
       window.FridayFace?.stop();
       if (nr === sprechNr) gesagtEnde = Date.now();
+      if (nr === sprechNr) audioFreigeben();
       ohrNachStimme(nr);
       if (ohr.modus === "befehl") setState("Ich höre", "listening");
       else zeigeRuhe();
@@ -1713,6 +1754,7 @@
     rec.onresult = (e) => {
       if (ohr.rec !== rec) return;
       ohr.lebenszeichen = Date.now();
+      ohr.kaputt = 0;
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const r = e.results[i];
         const text = String(r[0]?.transcript || "").trim();
@@ -1729,6 +1771,18 @@
       if (ohr.rec !== rec) return;
       const f = e?.error || "";
       if (f && f !== "no-speech" && f !== "aborted") diag.schritt(`Mikrofon-Fehler: ${f}${f === "not-allowed" ? " (einmal tippen oder Mikrofon erlauben)" : ""}`, "bad");
+      // v1.122.7: "audio-capture" = Safari bekommt das Mikrofon nicht (Ton-Wiedergabe, Anruf, Siri,
+      // andere App). Wiedergabe freigeben, länger warten; klappt es zweimal nicht, per Tipp neu starten.
+      if (f === "audio-capture") {
+        ohr.kaputt = (ohr.kaputt || 0) + 1;
+        if (!speaking) audioFreigeben();
+        if (ohr.kaputt >= 2 && IST_IOS) {
+          ohr.brauchtTipp = true;
+          ohr.sperrText = "Mikrofon blockiert: einmal auf den Bildschirm tippen";
+          ohr.verweigert = 2;
+          diag.schritt("Mikrofon ist blockiert. Einmal tippen, dann starte ich es neu. Hilft das nicht: App ganz schließen und neu öffnen.", "warn");
+        }
+      }
       if (f === "not-allowed" || f === "service-not-allowed") {
         ohr.brauchtTipp = true;
         ohr.verweigert = (ohr.verweigert || 0) + 1;
@@ -1754,6 +1808,7 @@
     if (!ohrDarf()) { zeigeRuhe(); return; }
     ohr.schnell = Date.now() - ohr.gestartet < 1500 ? Math.min(ohr.schnell + 1, 5) : 0;
     let ms = ohr.schnell ? 400 * 2 ** ohr.schnell : 250;
+    if (ohr.kaputt) ms = Math.max(ms, 1500); // Mikrofon war belegt: etwas länger warten
     // iPhone: Ein Mikrofon-Neustart schneidet Friday kurz das Wort ab (say() spricht danach an der Stelle weiter).
     if (speaking && IST_IOS) ms = Math.max(ms, 1500);
     ohrSpaeter(ms);
@@ -1923,7 +1978,11 @@
   });
 
   // iPhone/Safari: Mikrofon darf oft erst nach einem Tipp starten – dann direkt beim Tipp anwerfen.
-  const ohrNachTipp = () => { if (wakeActive && !ohr.laeuft) { ohr.brauchtTipp = false; ohrStart(); } };
+  const ohrNachTipp = () => {
+    if (!wakeActive) return;
+    if (ohr.kaputt >= 2) { ohr.kaputt = 0; ohr.verweigert = 0; ohr.sperrText = ""; ohrStopp(); }
+    if (!ohr.laeuft) { ohr.brauchtTipp = false; ohrStart(); }
+  };
   document.addEventListener("pointerdown", ohrNachTipp, true);
   document.addEventListener("keydown", ohrNachTipp, true);
 
@@ -1935,6 +1994,16 @@
   function tonFreischalten() {
     if (tonFrei || speaking) return;
     tonFrei = true;
+    // v1.122.7: Auf dem iPhone darf dabei das Mikrofon nicht laufen, sonst bekommt Safari es danach
+    // nicht mehr ("audio-capture", Friday hört nichts). Also: Mikro kurz aus, Stille abspielen,
+    // Audio wieder freigeben, Mikro neu starten.
+    if (IST_IOS) { clearTimeout(ohr.timer); stimmPause = true; ohrStopp(); diag.schritt("Ton wird freigeschaltet (Mikro kurz aus)"); }
+    const fertig = () => {
+      if (!IST_IOS) return;
+      try { if (audio.src === STILLE || audio.src.startsWith("data:")) { audio.pause(); audio.removeAttribute("src"); audio.load(); } } catch { /* egal */ }
+      if (!speaking) { stimmPause = false; ohrSpaeter(700); }
+    };
+    setTimeout(fertig, 900);
     try {
       if ("speechSynthesis" in window && !speechSynthesis.speaking) {
         const u = new SpeechSynthesisUtterance(" ");
@@ -1952,6 +2021,12 @@
   }
   window.Friday.tonFrei = () => tonFrei;
   for (const ev of ["touchend", "click", "keydown"]) document.addEventListener(ev, tonFreischalten, true);
+  // iPhone: Nach dem Abspielen über das Audio-Element die Wiedergabe ganz freigeben,
+  // damit das Mikrofon danach wieder aufnehmen darf.
+  function audioFreigeben() {
+    if (!IST_IOS) return;
+    try { audio.pause(); audio.removeAttribute("src"); audio.load(); } catch { /* egal */ }
+  }
   // App im Hintergrund: Mikrofon aus. Wieder vorne: neu starten.
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") { ohr.brauchtTipp = false; ohrSpaeter(400); }
