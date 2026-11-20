@@ -1748,9 +1748,11 @@
     const erledigt = () => ohr.verbraucht.set(i, String(ganz).length);
     const m = said.match(WAKE);
     // Befehl-Modus: der nächste fertige Satz zählt, auch ohne "Friday".
-    if (ohr.modus === "befehl" && !speaking && !busy) {
+    if (ohr.modus === "befehl" && !busy) {
       if (!fertig) { clearTimeout(ohr.befehlTimer); ohr.befehlTimer = setTimeout(befehlEnde, 8000); return; }
-      if (!m && istEcho(said)) { erledigt(); return; } // Fridays eigene letzte Worte
+      // Fridays eigene letzte Worte ("Ja, Boss?") aus dem Lautsprecher
+      if (!m && (istEcho(said) || /^(ja|ja boss|ich hore|boss)$/.test(norm(said)))) { erledigt(); return; }
+      if (speaking) stilleJetzt(); // Boss redet schon, während sie noch "Ja?" sagt
       erledigt();
       const { folge, frage } = ohr.befehl;
       befehlEnde();
@@ -1760,7 +1762,7 @@
         say(["Gern, Boss.", "Jederzeit, Boss.", "Alles klar, Boss."][Math.floor(Math.random() * 3)]);
         return;
       }
-      if (!cmd && m) { befehlModus({}); return; }
+      if (!cmd && m) { ausfuehren(""); return; }
       ausfuehren(cmd);
       return;
     }
@@ -1793,7 +1795,13 @@
       setTimeout(zeigeRuhe, 1200);
       return;
     }
-    if (cmd.length < 2) { befehlModus({}); return; } // nur "Friday": auf den Befehl warten
+    if (cmd.length < 2) { // nur "Friday": kurz antworten und auf den Befehl warten
+      befehlModus({});
+      // Danach läuft das 8-Sekunden-Fenster für den Befehl neu.
+      Promise.resolve(say(["Ja, Boss?", "Ja?", "Ich höre."][Math.floor(Math.random() * 3)]))
+        .finally(() => { if (ohr.modus === "befehl") befehlModus(ohr.befehl); });
+      return;
+    }
     if (busy) { ohr.wartend = cmd; setState("Kommt gleich dran …", "thinking"); return; }
     send(cmd, { stimme: true });
   }
