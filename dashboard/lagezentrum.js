@@ -523,8 +523,9 @@
     detailUmriss?.bringToFront();
     document.querySelectorAll("#lage-dm-stil button").forEach((b) => b.classList.toggle("active", b.dataset.stil === stil));
   }
+  let leicht = false; // v1.121.3: Welt-Runde auf dem Handy: ohne Detailkarte, Schiffe und Flugzeuge (spart Speicher)
   async function detailAn(id, teil, mitte) {
-    if (!detailErlaubt()) return;
+    if (!detailErlaubt() || leicht) return;
     const box = $("lage-detailmap");
     if (!box) return;
     try {
@@ -1359,6 +1360,8 @@
     open,
     offen: () => !$("lage").classList.contains("hidden"),
     showCountry: async (id, opts = {}) => {
+      leicht = Boolean(opts.leicht);
+      if (leicht) detailAus();
       open(opts); await mapReady; await select(String(id));
       if (opts.bewertung) zeigeBewertung(id, opts.bewertung);
     },
@@ -1494,8 +1497,10 @@
       box.querySelector(".lage-satview")?.addEventListener("click", () => { if (c) openSat(c.lon, c.lat, 6, c.name); });
       loadInfo(id);
       loadMedia(id);
-      loadShipsFor({ near: `${c?.lon},${c?.lat}` });
-      loadPlanesFor({ near: `${c?.lon},${c?.lat}` });
+      if (!leicht) {
+        loadShipsFor({ near: `${c?.lon},${c?.lat}` });
+        loadPlanesFor({ near: `${c?.lon},${c?.lat}` });
+      }
     } catch (err) {
       box.innerHTML = `<p class="error">${escapeHtml(err.message)}</p>`;
     }

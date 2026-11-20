@@ -17,11 +17,16 @@
   function stimmeAn() { return Boolean($("voice-toggle")?.checked); }
 
   // Vorlesen. Ohne Stimme (oder wenn das Vorlesen sofort fertig ist) bleibt Zeit zum Mitlesen.
+  // Handy (oder Leistungsmodus "Flüssig"): ohne Detailkarte, Schiffe und Flugzeuge, damit Safari nicht hängt.
+  const handy = () => window.matchMedia?.("(max-width: 900px)").matches || document.documentElement.classList.contains("perf-fluessig");
+
   async function sprich(text, nr) {
     const start = Date.now();
-    if (stimmeAn() && F().say) await F().say(text);
+    // Notbremse: hängt das Vorlesen (iPhone), geht die Runde trotzdem weiter.
+    const maxMs = 8000 + text.split(/\s+/).length * 600;
+    if (stimmeAn() && F().say) await Promise.race([F().say(text).catch(() => {}), warte(maxMs)]);
     if (nr !== lauf) return false;
-    if (F().unterbrochen?.()) { setzePause(true); return false; }
+    if (F().unterbrochen?.()) { setzePause(true); weiterNachStoerung(nr); return false; }
     const lesen = Math.min(20000, Math.max(5000, text.split(/\s+/).length * 330));
     const rest = lesen - (Date.now() - start);
     if (rest > 0 && (!stimmeAn() || Date.now() - start < 1500)) await warte(rest);
@@ -65,7 +70,20 @@
       : `<li class="muted">Gerade keine großen Meldungen.</li>`;
   }
 
+  // Wurde Friday durch ein Geräusch unterbrochen (z. B. S-Bahn) und kam kein neuer Befehl,
+  // läuft die Runde nach ein paar Sekunden von selbst weiter. Bei "Pause"-Knopf nicht.
+  let stoerTimer = null;
+  function weiterNachStoerung(nr, versuche = 0) {
+    clearTimeout(stoerTimer);
+    stoerTimer = setTimeout(() => {
+      if (!tour || !pause || nr !== lauf) return;
+      if (F().beschaeftigt?.() || F().unterbrochen?.()) { if (versuche < 20) weiterNachStoerung(nr, versuche + 1); return; }
+      setzePause(false);
+    }, 4000);
+  }
+
   function setzePause(an) {
+    clearTimeout(stoerTimer);
     pause = an;
     const b = $("wt-pause");
     if (b) b.textContent = an ? "▶ Weiter vorlesen" : "⏸ Pause";
@@ -84,7 +102,7 @@
     pause = false; setzePauseKnopf();
     zeige(i);
     const s = tour.stationen[i];
-    window.FridayLage?.showCountry(s.id, { stumm: true });
+    window.FridayLage?.showCountry(s.id, { stumm: true, leicht: handy() });
     await warte(1300); // Globus fliegt hin
     if (nr !== lauf) return;
     if (!(await sprich(s.text, nr))) return;
@@ -99,6 +117,7 @@
     if (nr === lauf) aufraeumen();
   }
   function aufraeumen() {
+    clearTimeout(stoerTimer);
     tour = null; lauf++;
     $("welttour")?.remove();
     api("/api/welttour/ende", { method: "POST" }).catch(() => {});
@@ -120,7 +139,10 @@
     const moment = stimmeAn() && F().say ? F().say("Einen Moment, Boss. Ich hole die Nachrichten der Weltmächte.").catch(() => {}) : Promise.resolve();
     let daten = null;
     try {
-      const r = await api("/api/welttour");
+      // Unterwegs (S-Bahn, schwaches Netz) nicht ewig warten.
+      const ab = new AbortController();
+      const t = setTimeout(() => ab.abort(), 30000);
+      const r = await api("/api/welttour", { signal: ab.signal }).finally(() => clearTimeout(t));
       if (!r.ok) throw new Error("Server");
       daten = await r.json();
     } catch {

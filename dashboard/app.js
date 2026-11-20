@@ -496,8 +496,19 @@
           u.onstart = () => window.FridayFace?.talk(true);
           // Mund im Takt der gesprochenen Wörter bewegen
           u.onboundary = (e) => { if (!e.name || e.name === "word") window.FridayFace?.boundary?.(e.charIndex, text); };
-          u.onend = resolve;
-          u.onerror = resolve;
+          // v1.121.3: Safari auf dem iPhone meldet das Ende manchmal nie (z. B. nach Unterbrechung
+          // oder wenn ein Video läuft). Dann hing alles, was auf das Vorlesen wartet. Wächter:
+          // nach geschätzter Sprechdauer + 4 s, oder wenn die Stimme sichtbar nicht mehr spricht, weiter.
+          let fertig = false;
+          const ende = () => { if (fertig) return; fertig = true; clearTimeout(waechter); clearInterval(pruef); resolve(); };
+          const waechter = setTimeout(ende, Math.min(90000, 4000 + text.split(/\s+/).length * 550));
+          let still = 0;
+          const pruef = setInterval(() => {
+            try { still = (speechSynthesis.speaking || speechSynthesis.pending) ? 0 : still + 1; } catch { still++; }
+            if (still >= 3) ende(); // 3 × 1 s nichts mehr zu hören
+          }, 1000);
+          u.onend = ende;
+          u.onerror = ende;
           speechSynthesis.speak(u);
         });
       }
@@ -1566,6 +1577,7 @@
   let bargeNr = -1;
   const unterbrochenEben = () => Date.now() - bargeZeit < 4000;
   window.Friday.unterbrochen = () => unterbrochenEben() || bargeFang;
+  window.Friday.beschaeftigt = () => busy || speaking || bargeFang;
   const bargeNorm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9ß ]+/g, " ").replace(/\s+/g, " ").trim();
   // Stammt das Gehörte aus Fridays eigenem Satz? (Echo aus dem Lautsprecher)
