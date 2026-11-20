@@ -3204,3 +3204,12 @@ html.perf-fluessig .lage-legend .legend-body { background: rgba(10,6,3,.96); }
 .diag b { color: #ff9a3c; font-weight: 600; }
 .diag .d-ok { color: #9dffb0; } .diag .d-warn { color: #ffe27a; } .diag .d-bad { color: #ff8a8a; }
 @media (max-width: 900px) { .diag { bottom: auto; top: calc(6px + env(safe-area-inset-top)); font-size: 10px; } }
+
+/* ===== v1.124.0: Werkstatt-Vorlagen (Autos, Flugzeuge, Schiffe … ohne Claude) ===== */
+.werkstatt-vorlagen { position: absolute; left: 50%; bottom: 82px; transform: translateX(-50%); width: min(92%, 640px); max-height: 46vh; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; padding: 12px; z-index: 6;
+  background: rgba(14,8,2,.88); border: 1px solid rgba(255,138,30,.55); border-radius: 16px; box-shadow: 0 0 24px rgba(255,138,30,.25); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.werkstatt-vorlagen.hidden { display: none; }
+.werkstatt-vorlagen button { padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,138,30,.45); background: rgba(255,138,30,.12); color: #fff; font: 600 14px var(--font-ui, sans-serif); text-align: left; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.werkstatt-vorlagen button:hover, .werkstatt-vorlagen button:focus-visible { background: rgba(255,138,30,.3); border-color: #ff8a1e; outline: none; }
+@media (max-width: 700px) { .werkstatt-vorlagen { bottom: 130px; grid-template-columns: repeat(2, 1fr); max-height: 52vh; } }
+.werkstatt-vorlagen:not(.hidden) ~ .werkstatt-caption { display: none; }
