@@ -39,6 +39,7 @@ const BAUPLAN_TOOL = {
     type: "object",
     properties: {
       titel: { type: "string", description: "Genaue Bezeichnung, z. B. 'Audi A4 Limousine (B9)'" },
+      einleitung: { type: "string", description: "Wird ZUERST vorgelesen, 1 bis 2 Sätze: was gebaut wird und was es besonders macht, z. B. 'Sehr gern, Chef. Ein Audi A4, die Mittelklasse-Limousine aus Ingolstadt, gebaut seit 2015.'" },
       steckbrief: {
         type: "object",
         description: "Infokarte. Echte Angaben; nur wenn wirklich unbekannt: '–'.",
@@ -58,13 +59,15 @@ const BAUPLAN_TOOL = {
           type: "object",
           properties: {
             status: { type: "string", description: "Nur der Name des Abschnitts, 1 bis 3 Wörter, z. B. 'Karosserie', 'Räder', 'Lichter', 'Antrieb'" },
+            sagen: { type: "string", description: "Was Friday vorliest, während dieser Abschnitt erscheint: 2 bis 3 gesprochene Sätze, die die Bauteile wie ein Ingenieur erklären, mit echten Zahlen. Z. B. 'Das ist der Motor: ein Zwei-Liter-Vierzylinder mit Turbo und 204 PS. Dahinter sitzt das Siebengang-Getriebe, das die Kraft an die Vorderräder bringt.' Zahlen so schreiben, wie man sie spricht. Kein Markdown." },
             teile: { type: "array", items: TEIL },
           },
-          required: ["status", "teile"],
+          required: ["status", "sagen", "teile"],
         },
       },
+      fazit: { type: "string", description: "Wird zum Schluss vorgelesen, 1 bis 2 Sätze, z. B. 'So, Chef. Fertig: viereinhalb Meter Audi, 204 PS, null auf hundert in 7,3 Sekunden.'" },
     },
-    required: ["titel", "steckbrief", "kennzahlen", "schritte"],
+    required: ["titel", "einleitung", "steckbrief", "kennzahlen", "schritte", "fazit"],
   },
 };
 
@@ -78,6 +81,7 @@ So wird es genau:
 - Schiffe, Flugzeuge, Raketen, Gebäude genauso: Rumpf/Grundform als Profil oder Kegel, dann typische Erkennungsmerkmale.
 - 50 bis 140 Teile insgesamt, jedes Teil mit kurzem name. Keine Textschilder, keine Beschriftungen im Modell.
 - Farben: schwarz/grau/weiss/rot/blau usw. so wie das Original (Wunschfarbe des Nutzers beachten), glas = Scheiben, chrom = Felgen/Zierteile, gelb = Strom, orange = Mechanik, gruen = Batterie.
+- Erzählen: Friday liest einleitung, dann bei jedem Abschnitt "sagen" und am Ende fazit vor, während das Modell entsteht. Erkläre wie ein Ingenieur, der Kevin sein Modell zeigt: "Das ist der Motor …", "Hier sitzt die Batterie …", mit echten Werten. Natürliches Deutsch, sprich ihn mit "Chef" an.
 - steckbrief und kennzahlen: echte Werte des genannten Modells (Baujahr/Bauzeit, Neupreis, Leistung, Maße, Gewicht). Schätzungen mit "ca." kennzeichnen.
 
 Antworte nur, indem du das Werkzeug "bauplan" genau einmal aufrufst. Kein Text daneben. Nichts Gefährliches: keine Waffen, Sprengstoffe oder Anleitungen zum Schaden anderer – dann baust du etwas Harmloses.`;
@@ -132,7 +136,8 @@ function teilOk(t) {
 }
 function saeubereSchritt(s) {
   const status = String(s?.status || s?.sagen || "").trim().slice(0, 40);
-  return { status, teile: (Array.isArray(s?.teile) ? s.teile : []).filter(teilOk).slice(0, 120) };
+  const sagen = String(s?.sagen || "").trim().slice(0, 600);
+  return { status, sagen, teile: (Array.isArray(s?.teile) ? s.teile : []).filter(teilOk).slice(0, 120) };
 }
 
 // Aus dem halbfertigen Werkzeug-Aufruf alles übernehmen, was schon sicher fertig ist:
@@ -140,6 +145,9 @@ function saeubereSchritt(s) {
 function uebernimm(job, roh, alles = false) {
   if (!roh || typeof roh !== "object") return;
   if (typeof roh.titel === "string") job.plan.titel = roh.titel;
+  // Die Einleitung erst übernehmen, wenn sie fertig geschrieben ist (danach kommt der Steckbrief).
+  if (typeof roh.einleitung === "string" && (alles || roh.steckbrief)) job.plan.einleitung = roh.einleitung.slice(0, 400);
+  if (typeof roh.fazit === "string" && alles) job.plan.fazit = roh.fazit.slice(0, 400);
   if (roh.steckbrief && typeof roh.steckbrief === "object") job.plan.steckbrief = { ...roh.steckbrief };
   if (Array.isArray(roh.kennzahlen)) job.plan.kennzahlen = roh.kennzahlen.filter((k) => k && k.label && k.wert);
   const sch = Array.isArray(roh.schritte) ? roh.schritte : [];

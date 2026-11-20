@@ -7,18 +7,20 @@ import { schlagzeilen, sprechName } from "./weltgespraech.js";
 
 // Reihenfolge der Reise. "rolle" wird vorgelesen, damit klar ist, warum das Land dabei ist.
 const STATIONEN = [
-  { id: "840", rolle: "Weltmacht Nummer eins" },
-  { id: "156", rolle: "die aufstrebende Supermacht" },
-  { id: "643", rolle: "die Atommacht im Osten" },
-  { id: "276", rolle: "für Europa und die EU" },
-  { id: "356", rolle: "das bevölkerungsreichste Land der Welt" },
-  { id: "826", rolle: "Atommacht und ständiges Mitglied im UN-Sicherheitsrat" },
+  { id: "840", rolle: "Weltmacht Nummer eins", sprich: "der Weltmacht Nummer eins" },
+  { id: "156", rolle: "die aufstrebende Supermacht", sprich: "der aufstrebenden Supermacht" },
+  { id: "643", rolle: "die Atommacht im Osten", sprich: "der Atommacht im Osten" },
+  { id: "276", rolle: "für Europa und die EU", sprich: "stellvertretend für Europa und die EU" },
+  { id: "356", rolle: "das bevölkerungsreichste Land der Welt", sprich: "dem bevölkerungsreichsten Land der Welt" },
+  { id: "826", rolle: "Atommacht und ständiges Mitglied im UN-Sicherheitsrat", sprich: "der Atommacht mit ständigem Sitz im UN-Sicherheitsrat" },
 ];
+// v1.122.0: Friday erzählt wie früher, wo sie gerade ist: "Ich bin jetzt in den USA, …".
+const IN_LAND = { "die USA": "in den USA", "die Emirate": "in den Emiraten", "die Niederlande": "in den Niederlanden", "der Kongo": "im Kongo" };
+const inLand = (name) => IN_LAND[name] || (/^die /.test(name) ? `in der ${name.slice(4)}` : `in ${name}`);
 const PRO_LAND = 3;
 const AKTIV_MS = 15 * 60 * 1000;
 const aktiv = new Map(); // Kanal -> bis wann die Reise läuft (damit "weiter"/"stopp" hier landen)
 
-const gross1 = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export async function getWelttour() {
   const laender = STATIONEN.map((s) => ({ ...s, c: COUNTRIES.find((x) => x.id === s.id) })).filter((s) => s.c);
@@ -28,15 +30,15 @@ export async function getWelttour() {
   // Dieselbe Meldung (z. B. ein Gipfel mit USA + China) nur einmal vorlesen: beim ersten Land.
   const schon = new Set();
   const schl = (t) => t.toLowerCase().replace(/[^a-zäöüß0-9 ]/g, "").split(" ").filter((w) => w.length > 3).slice(0, 5).join(" ");
-  const stationen = laender.map(({ c, rolle }, k) => {
+  const stationen = laender.map(({ c, rolle, sprich }, k) => {
     const { items, fehler } = roh[k];
     const top = schlagzeilen(items, 12).filter((t) => !schon.has(schl(t))).slice(0, PRO_LAND);
     for (const t of top) schon.add(schl(t));
     const link = (titel) => items.find((n) => String(n.title || "").startsWith(titel.slice(0, 30)))?.link || "";
-    const name = gross1(sprechName(c));
+    const ort = `Ich bin jetzt ${inLand(sprechName(c))}, ${sprich || rolle}.`;
     const text = top.length
-      ? `${name}, ${rolle}. ${top.join(". ")}.`
-      : `${name}. ${fehler ? "Die Nachrichten von dort kann ich gerade nicht abrufen." : "Aus den letzten 24 Stunden gibt es keine großen Meldungen."}`;
+      ? `${ort} ${top.length === 1 ? "Die wichtigste Meldung von dort" : `Die ${top.length === 2 ? "zwei" : "drei"} wichtigsten Meldungen von dort`}: ${top.join(". ")}.`
+      : `${ort} ${fehler ? "Die Nachrichten von dort kann ich gerade nicht abrufen." : "Aus den letzten 24 Stunden gibt es keine großen Meldungen."}`;
     return { id: c.id, name: c.name, flag: c.flag || "", rolle, lon: c.lon, lat: c.lat, schlagzeilen: top.map((t) => ({ titel: t, link: link(t) })), text };
   });
   return { stand: new Date().toISOString(), stationen };
