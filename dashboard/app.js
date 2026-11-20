@@ -253,7 +253,7 @@
       }
       setBadge("st-server", true, "online");
       setBadge("st-mac", status.agent?.online, status.agent?.name || "verbunden", "getrennt");
-      setBadge("st-voice", Boolean(germanVoice), germanVoice ? `Apple: ${stimmName(germanVoice)}` : "Apple-Stimme", "Apple-Stimme");
+      setBadge("st-voice", true, germanVoice ? `Apple: ${stimmName(germanVoice)}` : "Apple: Systemstimme", "Apple-Stimme");
       setBadge("st-push", status.push);
       setBadge("st-telegram", status.telegram);
       setBadge("st-home", status.smartHome);
@@ -444,9 +444,17 @@
     const wert = (v) => stimmArt(v).rang * 10 + (/anna|helena|petra|marlene|katja|vicki/i.test(v.name) ? 1 : 0);
     return de.sort((a, b) => wert(b) - wert(a))[0] || null;
   }
+  // v1.123.1: Das iPhone zeigt Webseiten oft nur einen Teil der geladenen Stimmen (Schutz vor
+  // Fingerprinting in Safari). "Systemstimme" gibt keine Stimme vor, nur Deutsch: dann spricht Friday mit
+  // der Stimme, die in den iPhone-Einstellungen für Deutsch ausgewählt ist (auch Premium-Stimmen).
+  const SYSTEMSTIMME = "__system__";
+  const AUF_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  let systemStimme = false;
   function pickVoice() {
     const all = speechSynthesis.getVoices();
-    const saved = storage.get("friday_voice");
+    const saved = storage.get("friday_voice") || (AUF_IOS ? SYSTEMSTIMME : "");
+    systemStimme = saved === SYSTEMSTIMME;
+    if (systemStimme) { germanVoice = null; return; }
     germanVoice = (saved && (all.find((v) => v.voiceURI === saved) || all.find((v) => v.name === saved)))
       || besteDeutsche(all) || all[0] || null;
   }
@@ -1049,7 +1057,7 @@
     if (!sel || !("speechSynthesis" in window)) return;
     const voices = speechSynthesis.getVoices();
     pickVoice();
-    const aktiv = germanVoice ? stimmKey(germanVoice) : "";
+    const aktiv = systemStimme ? SYSTEMSTIMME : germanVoice ? stimmKey(germanVoice) : "";
     let sprachName = (c) => c;
     try { const dn = new Intl.DisplayNames(["de"], { type: "language" }); sprachName = (c) => dn.of(c) || c; } catch { /* alter Browser */ }
     const gruppen = new Map();
@@ -1070,8 +1078,10 @@
     sel.innerHTML = codes.map((c) => {
       const liste = gruppen.get(c).sort((a, b) => stimmArt(b).rang - stimmArt(a).rang || stimmName(a).localeCompare(stimmName(b), "de"));
       const titel = c === "de" ? `Deutsch (${liste.length})` : `${sprachName(c)} (${liste.length})${c === "en" ? "" : " – spricht mit Akzent"}`;
-      return `<optgroup label="${escapeHtml(titel)}">${liste.map(option).join("")}</optgroup>`;
+      const sys = c === "de" ? `<option value="${SYSTEMSTIMME}"${aktiv === SYSTEMSTIMME ? " selected" : ""}>⚙︎ Systemstimme (wie in den ${AUF_IOS ? "iPhone" : "Mac"}-Einstellungen)</option>` : "";
+      return `<optgroup label="${escapeHtml(titel)}">${sys}${liste.map(option).join("")}</optgroup>`;
     }).join("");
+    if (!gruppen.has("de")) sel.insertAdjacentHTML("afterbegin", `<option value="${SYSTEMSTIMME}"${aktiv === SYSTEMSTIMME ? " selected" : ""}>⚙︎ Systemstimme</option>`);
     const info = $("voice-info");
     if (info) {
       const de = gruppen.get("de") || [];
@@ -1079,18 +1089,20 @@
       info.innerHTML = voices.length
         ? `${voices.length} Stimmen auf diesem Gerät, davon <b>${de.length} auf Deutsch</b>${gut ? ` (${gut} in Premium/Erweitert ★)` : " – noch keine Premium-Stimme geladen"}.`
         : "Dieses Gerät meldet noch keine Stimmen. Tippe auf „Liste neu laden“.";
+      if (AUF_IOS) info.innerHTML += `<br><b>iPhone:</b> Safari zeigt Webseiten nur einen Teil deiner geladenen Stimmen. Nimm oben <b>„⚙︎ Systemstimme“</b> und wähle die Stimme im iPhone aus: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch → Stimme antippen (Häkchen). Danach Friday ganz schließen und neu öffnen.`;
     }
   }
   if ("speechSynthesis" in window) { fillVoices(); speechSynthesis.addEventListener?.("voiceschanged", fillVoices); }
   $("voice-reload")?.addEventListener("click", () => { fillVoices(); setTimeout(fillVoices, 600); });
   // Gerätestimme kurz probehören.
   function probeGeraet() {
-    if (!("speechSynthesis" in window) || !germanVoice) return;
+    if (!("speechSynthesis" in window) || (!germanVoice && !systemStimme)) return;
     try {
       speechSynthesis.cancel();
-      const de = /^de/i.test(germanVoice.lang);
-      const u = new SpeechSynthesisUtterance(de ? `Hallo ${status.name || "Boss"}, ich bin ${stimmName(germanVoice)}.` : `Hello, I am ${stimmName(germanVoice)}.`);
-      u.voice = germanVoice; u.lang = germanVoice.lang;
+      const de = systemStimme || /^de/i.test(germanVoice.lang);
+      const name = germanVoice ? stimmName(germanVoice) : "Friday";
+      const u = new SpeechSynthesisUtterance(de ? `Hallo ${status.name || "Boss"}, ich bin ${name}.` : `Hello, I am ${name}.`);
+      if (germanVoice) { u.voice = germanVoice; u.lang = germanVoice.lang; } else u.lang = "de-DE";
       u.rate = Number(storage.get("friday_rate")) || 1.05;
       u.pitch = Number(storage.get("friday_pitch")) || 1;
       u.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));

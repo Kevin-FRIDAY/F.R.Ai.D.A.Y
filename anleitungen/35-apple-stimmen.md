@@ -24,3 +24,14 @@ In Friday gibt es dieselbe Anleitung unter Einstellungen → Stimme → „Mehr 
 
 Die Bilder sind nachgebaut und können je nach iOS-/macOS-Version leicht anders aussehen.
 Siri-Stimmen gibt Apple für Webseiten nicht frei.
+
+## iPhone zeigt nur 2 Stimmen? (v1.123.1)
+
+Safari gibt Webseiten auf dem iPhone nur einen Teil der geladenen Stimmen (Schutz vor Fingerprinting).
+Neustart hilft dabei nicht. Lösung:
+
+1. Friday → Einstellungen → Stimme → Gerätestimme **„⚙︎ Systemstimme (wie in den iPhone-Einstellungen)“** (auf dem iPhone ist das jetzt Standard).
+2. iPhone: Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch → gewünschte Stimme antippen, bis das **Häkchen** dort ist (z. B. Anna (Premium)).
+3. Friday ganz schließen (nach oben wischen) und neu öffnen, dann „▶ Probehören“.
+
+Friday spricht dann mit genau der Stimme, die im iPhone für Deutsch ausgewählt ist.
