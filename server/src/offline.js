@@ -11,6 +11,7 @@ import { getEnergie } from "./energie.js";
 import { extraAnswer, EXTRA_HILFE } from "./offline-extra.js";
 import { plusAnswer, plusNotfall, naechsteFeiertageOffline } from "./offline-plus.js";
 import { lagebildAnswer } from "./lagebild.js";
+import { lageplusAnswer } from "./lageplus.js";
 
 // JavaScript kennt bei \b nur englische Buchstaben. U() macht daraus echte Wortgrenzen (auch für ä, ö, ü, ß).
 const WB = "(?:(?<![\\p{L}\\p{N}])(?=[\\p{L}\\p{N}])|(?<=[\\p{L}\\p{N}])(?![\\p{L}\\p{N}]))";
@@ -335,6 +336,9 @@ async function offlineAnswerIntern(text, { notfall = false } = {}) {
   // Lagebild: Weltraumwetter, Raketenstarts, Internet-Störungen, Konfliktherde, Luft weltweit.
   const lb = await lagebildAnswer(t).catch(() => null);
   if (lb) return lb.zeigen ? ok(lb.text, "weltgeschehen") : ok(lb.text);
+  // Lage-Plus: Reisewarnungen, Stabilität, Notfall-Flugzeuge, Meerengen, Hurrikane, Ausbrüche, Strahlung, Brennpunkte.
+  const lp = await lageplusAnswer(t).catch(() => null);
+  if (lp) return lp.zeigen ? ok(lp.text, "weltgeschehen") : ok(lp.text);
 
   // --- Uhrzeit und Datum ---
   if (has(/\bwie spät\b|\bwie spaet\b|\bwie viel uhr\b|\bwieviel uhr\b|^uhrzeit$|\bwelche uhrzeit\b|\bdie uhrzeit\b/) && !has(/\b(in|auf|im)\b/)) {

@@ -46,6 +46,7 @@ import { localVersion, checkForUpdate, startUpdate, getUpdateStatus, updateProgr
 import { archivUebersicht, speichereFoto, einsortieren, dateiPfad, fotoWegwerfen, oeffneOrdner, archivStart } from "./archiv.js";
 import { zentraleRouten, zentraleStart } from "./zentrale.js";
 import { lagebildRouten } from "./lagebild.js";
+import { lageplusRouten, reisewarnungFuer, stabilitaetFuer } from "./lageplus.js";
 import { satellitenRouten } from "./satelliten.js";
 import { flugzeugeRouten } from "./flugzeuge.js";
 import { welttourRouten } from "./welttour.js";
@@ -412,6 +413,7 @@ app.get("/api/lage-satelliten", asyncRoute(async (req, res) => res.json(await ge
 app.get("/api/lage-infra", asyncRoute(async (req, res) => res.json(getInfra(String(req.query.typ || "")))));
 app.get("/api/lage-videos", asyncRoute(async (req, res) => res.json(await getWorldVideos())));
 lagebildRouten(app, asyncRoute);
+lageplusRouten(app, asyncRoute);
 satellitenRouten(app, asyncRoute);
 schiffeRouten(app, asyncRoute);
 flugzeugeRouten(app, asyncRoute);
@@ -593,7 +595,10 @@ app.post("/api/routen/planen", asyncRoute(async (req, res) => {
 app.get("/api/land/:id", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id) || findeLand(req.params.id);
   if (!country) return res.status(404).json({ error: "Land nicht gefunden" });
-  res.json(await getLandInfo(country));
+  // Reisewarnung (Auswärtiges Amt) + Fridays Stabilitäts-Wert gleich mitliefern (höchstens 4 s warten).
+  const kurz = (p) => Promise.race([p.catch(() => null), new Promise((r) => setTimeout(() => r(null), 4000))]);
+  const [info, reise, stabil] = await Promise.all([getLandInfo(country), kurz(reisewarnungFuer(country)), kurz(stabilitaetFuer(country))]);
+  res.json({ ...info, reisewarnung: reise, stabilitaet: stabil });
 }));
 app.get("/api/lage/:id/info", asyncRoute(async (req, res) => {
   const country = findCountry(req.params.id);
