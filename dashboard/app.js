@@ -455,8 +455,11 @@
     hueSprechen(true);
     gesagtText = String(text);
     setState("Spricht", "speaking");
-    ohrVorStimme();
+    const mikroWarAn = ohrVorStimme(nr);
     try {
+      // iPhone: Das Mikrofon braucht einen Moment, bis es wirklich aus ist. Sonst bleibt die Stimme stumm.
+      if (mikroWarAn) await new Promise((r) => setTimeout(r, 600));
+      if (nr !== sprechNr) return;
       if (status.voice) {
         const teile = text.length > 160 ? haeppchen(text) : [text];
         let naechstes = stimmeHolen(teile[0]);
@@ -469,7 +472,7 @@
           audio.src = url;
           audio.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
           window.FridayFace?.talkWithAudio(audio);
-          try { await audio.play(); ohrNachStimmstart(); } catch (e) {
+          try { await audio.play(); } catch (e) {
             URL.revokeObjectURL(url);
             if (nr !== sprechNr) return;
             if (!ok) {
@@ -509,7 +512,7 @@
             u.rate = Number(storage.get("friday_rate")) || 1.05;
             u.pitch = Number(storage.get("friday_pitch")) || 1;
             u.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
-            u.onstart = () => { window.FridayFace?.talk(true); ohrNachStimmstart(); };
+            u.onstart = () => window.FridayFace?.talk(true);
             // Mund im Takt der gesprochenen Wörter bewegen
             u.onboundary = (e) => {
               if (e.charIndex > bisZeichen) bisZeichen = e.charIndex;
@@ -552,7 +555,7 @@
       hueSprechen(false);
       window.FridayFace?.stop();
       if (nr === sprechNr) gesagtEnde = Date.now();
-      ohrNachStimme();
+      ohrNachStimme(nr);
       if (ohr.modus === "befehl") setState("Ich höre", "listening");
       else zeigeRuhe();
     }
@@ -1594,25 +1597,23 @@
     return woerter.filter((w) => menge.has(w)).length / woerter.length >= 0.6;
   }
 
-  // v1.122.1 iPhone: Läuft das Mikrofon schon, wenn Friday anfängt zu sprechen, bleibt Safari stumm
-  // (kein Ton, weder Gerätestimme noch ElevenLabs). Darum dort: Mikrofon kurz aus, Stimme starten,
-  // und erst wenn sie hörbar spricht, das Mikrofon wieder an (dann geht "Friday, stopp" weiter).
-  let stimmPause = false, stimmTimer = null;
-  function ohrVorStimme() {
-    if (!IST_IOS) return;
-    clearTimeout(stimmTimer);
-    if (!stimmPause) { stimmPause = true; ohrStopp(); }
-    // Notfall: kommt kein Start-Signal der Stimme, nach 4 s trotzdem wieder zuhören.
-    stimmTimer = setTimeout(ohrNachStimmstart, 4000);
+  // v1.122.5 iPhone: Läuft das Mikrofon, während Friday spricht, wird Safari stumm oder bricht ab
+  // (Kevins Video: erster Satz hörbar, danach Stille). Darum auf dem iPhone: Mikrofon aus, kurz warten,
+  // dann sprechen; erst wenn sie fertig ist (oder gestoppt wurde), wieder zuhören. "Friday, stopp" geht
+  // dort in den Pausen zwischen den Sätzen, oder per Tipp auf Fridays Kopf.
+  let stimmPause = false, stimmBesitzer = 0;
+  function ohrVorStimme(nr) {
+    if (!IST_IOS) return false;
+    stimmBesitzer = nr;
+    const warAn = ohr.laeuft || Date.now() - ohr.gestoppt < 500;
+    clearTimeout(ohr.timer);
+    stimmPause = true;
+    ohrStopp();
+    return warAn;
   }
-  function ohrNachStimmstart() {
-    if (!stimmPause) return;
-    clearTimeout(stimmTimer);
-    stimmTimer = setTimeout(() => { stimmPause = false; ohrStart(); }, 700);
-  }
-  function ohrNachStimme() {
-    if (!stimmPause) return;
-    clearTimeout(stimmTimer);
+  function ohrNachStimme(nr) {
+    // Nur die neueste Ansage gibt das Mikrofon wieder frei (sonst springt es mitten in der nächsten an).
+    if (!stimmPause || nr !== stimmBesitzer) return;
     stimmPause = false;
     ohrSpaeter(450);
   }

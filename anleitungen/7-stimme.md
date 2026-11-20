@@ -97,3 +97,8 @@ der App also **einmal auf den Bildschirm tippen**, dann kann sie auf Zuruf sprec
 
 **v1.122.4:** Sagst du nur „Friday“, antwortet sie hörbar („Ja, Boss?“) und wartet 8 Sekunden auf deinen Befehl.
 Auf dem iPhone kurz abwarten, bis sie „Ja?“ gesagt hat, dann sprechen.
+
+**v1.122.5 (iPhone hört nach dem ersten Satz auf):** Auf dem iPhone ist das Mikrofon jetzt aus, solange Friday
+spricht, und geht danach sofort wieder an. So liest sie alles vor (auch die ganze Welt-Runde).
+Anhalten auf dem iPhone: in einer Sprechpause „Friday, stopp“ sagen, oder auf Fridays Kopf bzw. „Stopp“ tippen.
+Am Mac hört sie weiterhin auch mitten im Satz auf „Friday, stopp“.
