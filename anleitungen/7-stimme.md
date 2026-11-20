@@ -90,3 +90,7 @@ Moment wieder zu (so klappt „Friday, stopp“ weiterhin).
 „fertig“. Darum kam kein Befehl an. Jetzt gilt ein Satz als fertig, wenn er sich gut eine Sekunde nicht mehr
 ändert. Sperrt das iPhone das Mikrofon, zeigt Friday unten, wo man es erlaubt
 (Safari: „aA“ → Website-Einstellungen → Mikrofon; Home-Bildschirm-App: Einstellungen → Safari → Mikrofon).
+
+**v1.122.3 (iPhone stumm):** Das iPhone erlaubt Ton erst, wenn einmal durch einen Fingertipp etwas abgespielt
+wurde. Friday spielt darum beim ersten Tipp (irgendwo auf dem Bildschirm) kurz „Stille“ ab. Nach dem Öffnen
+der App also **einmal auf den Bildschirm tippen**, dann kann sie auf Zuruf sprechen.

@@ -1842,6 +1842,32 @@
   const ohrNachTipp = () => { if (wakeActive && !ohr.laeuft) { ohr.brauchtTipp = false; ohrStart(); } };
   document.addEventListener("pointerdown", ohrNachTipp, true);
   document.addEventListener("keydown", ohrNachTipp, true);
+
+  // v1.122.3: Ton freischalten. Das iPhone spielt Stimme und Audio nur ab, wenn das erste Abspielen
+  // durch einen Fingertipp ausgelöst wurde. Ein Sprachbefehl zählt dafür nicht, darum blieb Friday dort
+  // stumm. Beim ersten Tipp (egal wo) spielen wir einmal "Stille" ab, danach darf sie jederzeit reden.
+  const STILLE = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+  let tonFrei = false;
+  function tonFreischalten() {
+    if (tonFrei || speaking) return;
+    tonFrei = true;
+    try {
+      if ("speechSynthesis" in window && !speechSynthesis.speaking) {
+        const u = new SpeechSynthesisUtterance(" ");
+        u.volume = 0;
+        speechSynthesis.speak(u);
+      }
+    } catch { /* egal */ }
+    try {
+      if (audio.paused) {
+        audio.src = STILLE;
+        const p = audio.play();
+        if (p?.catch) p.catch(() => { tonFrei = false; }); // nicht erlaubt: beim nächsten Tipp nochmal
+      }
+    } catch { tonFrei = false; }
+  }
+  window.Friday.tonFrei = () => tonFrei;
+  for (const ev of ["touchend", "click", "keydown"]) document.addEventListener(ev, tonFreischalten, true);
   // App im Hintergrund: Mikrofon aus. Wieder vorne: neu starten.
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") { ohr.brauchtTipp = false; ohrSpaeter(400); }
