@@ -85,3 +85,8 @@ Friday erzählt wieder, was sie tut:
 **v1.122.1 (iPhone):** Läuft das Mikrofon schon, wenn Friday anfängt zu sprechen, bleibt Safari stumm.
 Darum schaltet Friday auf dem iPhone das Mikrofon kurz aus, startet die Stimme und hört nach einem
 Moment wieder zu (so klappt „Friday, stopp“ weiterhin).
+
+**v1.122.2 (iPhone reagiert nicht):** Safari auf dem iPhone meldet beim Dauer-Zuhören einen Satz nie als
+„fertig“. Darum kam kein Befehl an. Jetzt gilt ein Satz als fertig, wenn er sich gut eine Sekunde nicht mehr
+ändert. Sperrt das iPhone das Mikrofon, zeigt Friday unten, wo man es erlaubt
+(Safari: „aA“ → Website-Einstellungen → Mikrofon; Home-Bildschirm-App: Einstellungen → Safari → Mikrofon).
