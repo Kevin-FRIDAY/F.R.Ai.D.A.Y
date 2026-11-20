@@ -629,7 +629,7 @@
       clearSpeaking();
       // Carlas Lernecke (v1.108.0): erst begrüßen bzw. ansagen, dann öffnet sich die Lernecke und hört selbst zu.
       const lernA = aktion("lernen");
-      if (lernA) window.FridayLernen?.open({ modus: lernA.split(":")[1] || "start", stimme: Boolean(opts.stimme) });
+      if (lernA) window.FridayLernen?.open({ modus: lernA.split(":")[1] || "start", suche: lernA.split(":").slice(2).join(" "), stimme: Boolean(opts.stimme) });
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
       // Gesprächsmodus: Kam der Befehl per Stimme, hört Friday danach weiter zu, ohne "Friday" davor.
       const weiter = !bargeFang && !unterbrochenEben() && !lernA && !window.FridayLernen?.offen() && (hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer));

@@ -12,6 +12,7 @@ import { DATA_DIR, ROOT } from "./config.js";
 import { teile, tagPlus, U } from "./datum.js";
 import { denke, jsonAus } from "./denker.js";
 import * as archiv from "./lernarchiv.js";
+import * as wissen from "./lernwissen.js";
 
 const DATEI = "lernen";
 const BILDER = path.join(DATA_DIR, "lernen-bilder");
@@ -214,7 +215,8 @@ export function kartenAusText(text) {
   if (b.length) bloecke.push(b);
   let titel = null;
   // Überschrift ganz oben, danach mehrere Blöcke → Titel des Stapels.
-  if (bloecke.length > 2 && bloecke[0].length === 1 && !PAAR.test(bloecke[0][0]) && bloecke[0][0].length < 60
+  // (auch bei nur einem Block darunter, wenn das ein Glossar „Begriff: Erklärung“ ist)
+  if ((bloecke.length > 2 || (bloecke.length === 2 && bloecke[1].length >= 2 && bloecke[1].every((z) => PAAR.test(z)))) && bloecke[0].length === 1 && !PAAR.test(bloecke[0][0]) && bloecke[0][0].length < 60
     && !bloecke[1].every((z) => AUFZ.test(z)) && !bloecke[0][0].endsWith("?")) titel = bloecke.shift()[0];
   for (let i = 0; i < bloecke.length; i++) {
     const bl = bloecke[i];
@@ -547,6 +549,7 @@ export function bildDatei(id) {
 /** Foto speichern und (auf dem Mac) Text erkennen. */
 export async function scannen(image, opts = {}) {
   const { ocr = true } = opts;
+  // pruefen = Foto-Check (v1.115.0): erst zeigen und fragen „Ist das richtig?“, gespeichert wird erst nach dem Ja.
   if (!image?.data) throw new Error("Kein Foto.");
   const buf = Buffer.from(String(image.data), "base64");
   if (buf.length > 9 * 1024 * 1024) throw new Error("Das Foto ist zu groß.");
@@ -554,7 +557,10 @@ export async function scannen(image, opts = {}) {
   const id = neueId();
   fs.writeFileSync(bildPfad(id), buf);
   // Jedes Foto kommt sofort ins Lern-Archiv, damit nichts verloren geht (Text wird nachgetragen).
-  const ablegen = (text) => { try { return archiv.scanAblegen({ bild: id, text, titel: opts.titel, fach: opts.fach, vorschau: opts.vorschau }); } catch { return null; } };
+  const ablegen = (text) => {
+    if (opts.pruefen) { vorlaeufigMerken(id); return null; }
+    try { return archiv.scanAblegen({ bild: id, text, titel: opts.titel, fach: opts.fach, vorschau: opts.vorschau }); } catch { return null; }
+  };
   if (!ocr) return { bild: id, text: null, unterlage: ablegen("") };
   try {
     const prog = await programmBereit();
@@ -563,14 +569,60 @@ export async function scannen(image, opts = {}) {
     // liest Friday das Bild zusätzlich gespiegelt und nimmt das bessere Ergebnis.
     let text = await lies(Boolean(opts.spiegeln));
     let gespiegelt = Boolean(opts.spiegeln);
-    if (!opts.spiegeln && textGuete(text) < 0.6) {
+    if (!opts.spiegeln && opts.auto !== false && textGuete(text) < 0.6) {
       const andersrum = await lies(true).catch(() => "");
       if (textGuete(andersrum) > textGuete(text) + 0.1) { text = andersrum; gespiegelt = true; }
     }
-    return { bild: id, text, quelle: "mac", gespiegelt, unterlage: ablegen(text), ...kartenAusText(text) };
+    return { bild: id, text, quelle: "mac", gespiegelt, vorlaeufig: Boolean(opts.pruefen), unterlage: ablegen(text), ...kartenAusText(text) };
   } catch (err) {
-    return { bild: id, text: null, quelle: null, grund: err.message, unterlage: ablegen("") };
+    return { bild: id, text: null, quelle: null, grund: err.message, vorlaeufig: Boolean(opts.pruefen), unterlage: ablegen("") };
   }
+}
+
+// ---------- Foto-Check: erst nach „Ja, richtig“ speichern (v1.115.0) ----------
+// Unbestätigte Fotos liegen nur vorläufig da und werden nach einem Tag weggeräumt.
+const TAG_MS = 24 * 3600 * 1000;
+const bildGebraucht = (d, b) => d.stapel.some((s) => (s.bilder || []).includes(b) || s.karten.some((k) => k.bild === b)) || archiv.bildImArchiv(b);
+function vorlaeufigAufraeumen(d) {
+  const grenze = Date.now() - TAG_MS;
+  d.vorlaeufig = (d.vorlaeufig || []).filter((v) => {
+    if (v.at > grenze) return true;
+    if (!bildGebraucht(d, v.bild)) { try { fs.unlinkSync(bildPfad(v.bild)); } catch { /* schon weg */ } }
+    return false;
+  });
+}
+function vorlaeufigMerken(id) {
+  const d = laden();
+  d.vorlaeufig = [...(d.vorlaeufig || []).filter((v) => v.bild !== id), { bild: id, at: Date.now() }];
+  vorlaeufigAufraeumen(d);
+  speichern(d);
+}
+const nichtDa = () => { const e = new Error("Dieses Foto ist nicht mehr da. Bitte nochmal fotografieren."); e.status = 404; return e; };
+/** Carla hat „Ja, richtig“ gesagt: Foto (ggf. richtig herum gedreht) und Text ins Archiv. */
+export function fotoBestaetigen(bild, { text, titel, fach, vorschau, image } = {}) {
+  const d = laden();
+  const id = String(bild || "").replace(/[^a-z0-9]/gi, "");
+  if (!(d.vorlaeufig || []).some((v) => v.bild === id) || !bildDatei(id)) throw nichtDa();
+  if (image?.data) {
+    const buf = Buffer.from(String(image.data), "base64");
+    if (!buf.length || buf.length > 9 * 1024 * 1024) throw new Error("Das Foto ist zu groß.");
+    fs.writeFileSync(bildPfad(id), buf);
+  }
+  d.vorlaeufig = d.vorlaeufig.filter((v) => v.bild !== id);
+  speichern(d);
+  const unterlage = archiv.scanAblegen({ bild: id, text: String(text || "").slice(0, 60000), titel, fach, vorschau });
+  logbuch.eintragen({ bereich: "lernen", titel: `Lernecke: Foto geprüft und gespeichert${image?.data ? " (richtig herum gedreht)" : ""}` });
+  return { bild: id, unterlage };
+}
+/** Carla hat „Nein“ gesagt: vorläufiges Foto wegwerfen. */
+export function fotoVerwerfen(bild) {
+  const d = laden();
+  const id = String(bild || "").replace(/[^a-z0-9]/gi, "");
+  if (!(d.vorlaeufig || []).some((v) => v.bild === id)) return false;
+  d.vorlaeufig = d.vorlaeufig.filter((v) => v.bild !== id);
+  speichern(d);
+  if (!bildGebraucht(d, id)) { try { fs.unlinkSync(bildPfad(id)); } catch { /* schon weg */ } }
+  return true;
 }
 
 /** Wie sehr sieht ein Text nach echten Wörtern aus? 0 = Buchstabensalat, 1 = sauberer Text. */
@@ -627,6 +679,12 @@ export function quickCommand(text) {
   if (U(/\b(testen|testmodus|test-modus|ausprobieren|probieren)\b/).test(t) && lern.test(t)) return { answer: "Lernecke im Testmodus. Carla wird nicht begrüßt und ihr Fortschritt bleibt unverändert.", actions: ["lernen:test"] };
   if (U(/\b(archiv|lernarchiv|lern-archiv|unterlagen|lernunterlagen|dokumente|mitschriften?|skripte?)\b/).test(t)) return { answer: "", actions: ["lernen:archiv"] };
   // Die Begrüßung macht die Lernecke selbst, weil nur sie weiß, wer am Gerät ist (Carla oder Kevin).
+  if (U(/\b(internet|wikipedia|nachschlagen|nachschauen|recherchier\w*|recherche|googeln|google)\b/).test(t)) {
+    const m = t.match(U(/\b(?:nach|über|ueber|zum thema|zu|von)\s+(.{2,80})$/));
+    const thema = m ? m[1].replace(U(/\b(in der |in meiner |für die |fuer die )?(lernecke|lern-ecke|lernmodus|lernkarten|im internet|bei wikipedia)\b/g), "").replace(/\s+/g, " ").trim() : "";
+    return { answer: "", actions: [`lernen:wissen${thema ? `:${thema.replace(/:/g, " ")}` : ""}`] };
+  }
+  if (U(/\b(aufgaben?|übungsaufgaben?|uebungsaufgaben?|übung|uebung|üben|ueben|arbeitsblatt|tabelle|quiz)\b/).test(t)) return { answer: "", actions: ["lernen:ueben"] };
   if (U(/\b(scann|scanne|scannen|fotografier|einlesen|abfotografieren)\w*/).test(t)) return { answer: "", actions: ["lernen:scannen"] };
   if (U(/\b(frag|fragen|abfragen|abfrage|prüf|pruef|test)\w*/).test(t)) return { answer: "", actions: ["lernen:abfragen"] };
   if (U(/\b(plan|lernplan)\b/).test(t)) return { answer: "", actions: ["lernen:plan"] };
@@ -646,7 +704,32 @@ export function lernenRouten(app, asyncRoute) {
   app.patch("/api/lernen/stapel/:sid/karte/:kid", (req, res) => res.json(karteAendern(req.params.sid, req.params.kid, req.body || {}) || {}));
   app.delete("/api/lernen/stapel/:sid/karte/:kid", (req, res) => res.json({ ok: karteLoeschen(req.params.sid, req.params.kid) }));
   app.post("/api/lernen/text", (req, res) => res.json(kartenAusText(String(req.body?.text || "").slice(0, 30000))));
-  app.post("/api/lernen/scan", asyncRoute(async (req, res) => { try { const b = req.body || {}; res.json(await scannen(b.image, { ocr: b.ocr !== false, spiegeln: b.spiegeln === true, titel: b.titel, fach: b.fach, vorschau: b.vorschau })); } catch (err) { fehler(res, err); } }));
+  app.post("/api/lernen/scan", asyncRoute(async (req, res) => { try { const b = req.body || {}; res.json(await scannen(b.image, { ocr: b.ocr !== false, spiegeln: b.spiegeln === true, auto: b.auto !== false, pruefen: b.pruefen === true, titel: b.titel, fach: b.fach, vorschau: b.vorschau })); } catch (err) { fehler(res, err); } }));
+  app.post("/api/lernen/scan/:bild/ok", (req, res) => { try { res.json(fotoBestaetigen(req.params.bild, req.body || {})); } catch (err) { fehler(res, err); } });
+  app.delete("/api/lernen/scan/:bild", (req, res) => res.json({ ok: fotoVerwerfen(req.params.bild) }));
+  // Wissen aus dem Internet, Übungsaufgaben und Tabellen (v1.115.0)
+  app.get("/api/lernen/web", asyncRoute(async (req, res) => { try { res.json(await wissen.webSuchen({ q: req.query.q, titel: req.query.titel })); } catch (err) { fehler(res, err, 502); } }));
+  app.post("/api/lernen/web/karten", (req, res) => res.json(wissen.kartenAusWissen(req.body || {})));
+  app.post("/api/lernen/web/tabelle", (req, res) => res.json(wissen.tabelleAusWissen(req.body || {})));
+  const kartenVon = (sid) => { const d = laden(); if (sid === "alle") return { titel: "Alle Stapel", karten: d.stapel.flatMap((s) => s.karten) }; return d.stapel.find((x) => x.id === sid) || null; };
+  app.post("/api/lernen/aufgaben", (req, res) => {
+    const b = req.body || {};
+    const s = Array.isArray(b.karten) ? { titel: kurz(sauber(b.titel), 120) || "Wissen", karten: b.karten.slice(0, 200) } : kartenVon(b.stapel);
+    if (!s) return res.status(404).json({ error: "Stapel nicht gefunden." });
+    res.json({ titel: s.titel, ...wissen.aufgabenAusKarten(s.karten, { art: b.art, anzahl: b.anzahl }) });
+  });
+  app.get("/api/lernen/tabelle/:id", (req, res) => { const s = kartenVon(req.params.id); return s ? res.json(wissen.tabelleAusKarten(s)) : res.status(404).json({ error: "Stapel nicht gefunden." }); });
+  app.post("/api/lernen/arbeitsblatt", (req, res) => {
+    const b = req.body || {};
+    const titel = kurz(sauber(b.titel), 100) || "Übung";
+    const text = wissen.arbeitsblattText(titel, Array.isArray(b.aufgaben) ? b.aufgaben.slice(0, 40) : []);
+    try { res.json({ text, unterlage: b.ablegen ? archiv.ablegen({ titel: `Arbeitsblatt: ${titel}`, fach: b.fach, text }) : null }); } catch (err) { fehler(res, err); }
+  });
+  app.post("/api/lernen/ki/aufgaben", asyncRoute(async (req, res) => {
+    const b = req.body || {};
+    const s = b.stapel ? kartenVon(b.stapel) : null;
+    try { res.json(await wissen.kiAufgaben({ thema: b.thema || s?.titel, karten: s?.karten || [], text: b.text, anzahl: b.anzahl })); } catch (err) { fehler(res, err, 502); }
+  }));
   app.get("/api/lernen/bild/:id", (req, res) => { const p = bildDatei(req.params.id); return p ? res.sendFile(p) : res.status(404).end(); });
   app.post("/api/lernen/pruefen", (req, res) => {
     const { stapel, karte, antwort, reihenfolge } = req.body || {};
