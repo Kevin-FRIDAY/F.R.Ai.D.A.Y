@@ -260,12 +260,24 @@ app.post("/api/backups", asyncRoute(async (req, res) => {
 }));
 app.post("/api/backups/:name/restore", (req, res) => res.json(startRestore(req.params.name, { programm: req.body?.programm === true })));
 
+// Mac und iPhone fragen alle paar Sekunden: ein Ergebnis für alle, höchstens alle 6 s neu messen.
+let systemCache = null, systemZeit = 0, systemLaeuft = null;
 app.get("/api/system", asyncRoute(async (req, res) => {
   if (!isAgentOnline()) return res.json({ online: false });
-  const r = await sendToAgent("system_info", {}, 12000);
-  if (!r || r.ok === false) return res.json({ online: false });
-  const { ok, ...info } = r;
-  res.json({ online: true, ...info });
+  if (systemCache && Date.now() - systemZeit < 6000) return res.json(systemCache);
+  if (!systemLaeuft) {
+    systemLaeuft = sendToAgent("system_info", {}, 12000)
+      .then((r) => {
+        if (!r || r.ok === false) return { online: false };
+        const { ok, ...info } = r;
+        systemCache = { online: true, ...info };
+        systemZeit = Date.now();
+        return systemCache;
+      })
+      .catch(() => ({ online: false }))
+      .finally(() => { systemLaeuft = null; });
+  }
+  res.json(await systemLaeuft);
 }));
 app.get("/api/weather", asyncRoute(async (req, res) => res.json(await getWeather())));
 // --- Organizer: Aufgaben + Einkaufsliste ---

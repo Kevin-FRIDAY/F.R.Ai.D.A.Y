@@ -1,4 +1,4 @@
-# 3D-Werkstatt: schneller, genauer, aufgeräumt (ab Version 1.119.0)
+# 3D-Werkstatt: schneller, genauer, aufgeräumt (ab Version 1.120.0)
 
 Sag zum Beispiel **„Friday, bau mir einen Audi A4 in Schwarz“** oder öffne Werkzeug-Menü → **Werkstatt (3D)** und tipp den Wunsch ein.
 

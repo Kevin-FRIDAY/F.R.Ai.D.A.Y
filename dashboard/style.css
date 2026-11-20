@@ -3125,7 +3125,7 @@ html.friday-verdeckt body::before, html.friday-verdeckt body::after { animation-
 /* 3) Wanderndes Raster: verschieben statt neu malen (der Grafikchip schiebt nur, nichts wird neu gemalt) */
 .grid-bg { inset: -54px; animation-name: hud-gridpan-t; will-change: transform; }
 @keyframes hud-gridpan-t { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(54px, 54px, 0); } }
-/* Werkstatt v1.119: Infokarte (Steckbrief) + Bauteil-Details beim Antippen statt Schilder im Modell */
+/* Werkstatt v1.120: Infokarte (Steckbrief) + Bauteil-Details beim Antippen statt Schilder im Modell */
 .werkstatt-side { width: 250px; max-height: calc(100% - 200px); overflow-y: auto; scrollbar-width: none; }
 .werkstatt-facts li { border-left-color: var(--cyan, #ff8a1e); }
 .werkstatt-facts .ws-steck { border: 1px solid color-mix(in srgb, var(--cyan, #ff8a1e) 55%, transparent); border-left-width: 3px; border-radius: 10px; background: rgba(12,8,2,.78); padding: 10px 12px; box-shadow: 0 0 18px color-mix(in srgb, var(--cyan, #ff8a1e) 22%, transparent); }
