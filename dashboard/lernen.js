@@ -2129,7 +2129,8 @@ button.ln-chip { cursor: pointer; font: inherit; font-size: 12.5px; }
   .ln-check-grid { grid-template-columns: 1fr; }
   .ln-check-bild img { max-height: 34vh; }
   .ln-check-rechts textarea { min-height: 110px; font-size: 16px; }
-  .ln-check-knoepfe { position: sticky; bottom: calc(-14px - env(safe-area-inset-bottom)); margin: 0 -14px calc(-14px - env(safe-area-inset-bottom)); padding: 10px 14px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(to top, rgba(8,5,2,.98) 75%, rgba(8,5,2,0)); z-index: 2; }
+  .ln-check-knoepfe { position: sticky; bottom: calc(-14px - env(safe-area-inset-bottom)); margin: 0 -14px calc(-14px - env(safe-area-inset-bottom)); padding: 10px 14px calc(12px + env(safe-area-inset-bottom)); background: rgb(10,6,3); box-shadow: 0 -14px 18px rgb(10,6,3); z-index: 2; }
+  .ln-check-knoepfe .hf-btn.leise { background: rgb(22,13,6); }
   .ln-check-knoepfe .hf-btn { flex: 1 1 100%; }
   .ln-opts { grid-template-columns: 1fr; }
   .ln-z-zeile { grid-template-columns: 1fr; gap: 4px; }
