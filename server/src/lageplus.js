@@ -67,7 +67,7 @@ export function getNotflug() {
       const sq = String(a.squawk || "");
       const land = naechstesLand(a.lon, a.lat, 6);
       flugzeuge.push({
-        hex: a.hex, rufzeichen: String(a.flight || "").trim(), kennung: a.r || "", typ: a.desc || a.t || "",
+        hex: a.hex, rufzeichen: String(a.flight || "").trim(), kennung: a.r || "", modell: a.desc || a.t || "",
         squawk: sq, art: SQUAWK[sq] || "Notfall", lat: a.lat, lon: a.lon,
         hoehe_m: Number.isFinite(a.alt_baro) ? Math.round(a.alt_baro * 0.3048) : a.alt_baro === "ground" ? 0 : null,
         tempo_kmh: Number.isFinite(a.gs) ? Math.round(a.gs * 1.852) : null, kurs: Number.isFinite(a.track) ? Math.round(a.track) : null,
@@ -160,6 +160,7 @@ export async function reisewarnungFuer(country) {
 // ---------- 4. Hurrikane mit Vorhersage-Kegel (NOAA National Hurricane Center) ----------
 const NHC_MAP = "https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/NHC_tropical_weather/MapServer";
 const KLASSE = { HU: "Hurrikan", MH: "starker Hurrikan", TS: "Tropensturm", TD: "Tropisches Tief", STS: "Subtropischer Sturm", STD: "Subtropisches Tief", PTC: "möglicher Tropensturm", PC: "Post-Tropisch" };
+const flaeche = (r) => r.reduce((a, p, i) => { const q = r[(i + 1) % r.length]; return a + (q[0] - p[0]) * (q[1] + p[1]); }, 0) * -0.5;
 const runde = (ring) => ring.map(([x, y]) => [Math.round(x * 100) / 100, Math.round(y * 100) / 100]);
 export function getHurrikane() {
   return cached("hurrikane", 20 * 60 * 1000, async () => {
@@ -184,7 +185,8 @@ export function getHurrikane() {
           for (const f of g.features || []) {
             const geo = f.geometry;
             const polys = geo?.type === "Polygon" ? [geo.coordinates] : geo?.type === "MultiPolygon" ? geo.coordinates : [];
-            for (const p of polys) sturm.kegel.push(p.map(runde));
+            // d3 (Globus) will den Außenring im Uhrzeigersinn, GeoJSON liefert ihn andersherum -> umdrehen.
+            for (const p of polys) sturm.kegel.push(p.map((ring) => { const r = runde(ring); return flaeche(r) > 0 ? r.reverse() : r; }));
           }
         }
         if (spur) {
@@ -479,7 +481,7 @@ export async function lageplusAnswer(t) {
     const d = await getNotflug();
     if (!d.flugzeuge.length) return { text: "Gerade sendet kein Flugzeug einen Notfall-Code, Boss. Der Himmel ist ruhig.", zeigen: true };
     const a = d.flugzeuge[0];
-    return { text: `${d.flugzeuge.length === 1 ? "Ein Flugzeug sendet" : `${d.flugzeuge.length} Flugzeuge senden`} gerade einen Notfall-Code. ${a.rufzeichen || a.kennung || "Eines"}${a.typ ? `, eine ${a.typ}` : ""}, meldet ${a.art}${a.nahe ? ` nahe ${a.nahe}` : ""}${a.hoehe_m ? ` in ${zahl(a.hoehe_m)} Metern Höhe` : ""}. Das ist oft nur Vorsicht.`, zeigen: true };
+    return { text: `${d.flugzeuge.length === 1 ? "Ein Flugzeug sendet" : `${d.flugzeuge.length} Flugzeuge senden`} gerade einen Notfall-Code. ${a.rufzeichen || a.kennung || "Eines"}${a.modell ? ` (${a.modell})` : ""}, meldet ${a.art}${a.nahe ? ` nahe ${a.nahe}` : ""}${a.hoehe_m ? ` in ${zahl(a.hoehe_m)} Metern Höhe` : ""}. Das ist oft nur Vorsicht.`, zeigen: true };
   }
   if (/meerenge|hormus|hormuz|suez|panamakanal|panama.?kanal|bosporus|malakka|bab.?el|rotes meer.{0,20}schiff|schiffe? (durch|im|in der)/.test(t)) {
     const d = await getMeerengen();

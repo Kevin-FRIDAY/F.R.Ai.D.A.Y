@@ -35,7 +35,9 @@
       kachel("👥", "Einwohner", d.einwohnerText ? `ca. ${d.einwohnerText}` : "") +
       kachel("💰", "Währung", d.waehrung) +
       kachel("🌍", "Region", d.region) +
-      kachel("🍃", "Luft", d.luft);
+      kachel("🍃", "Luft", d.luft) +
+      kachel("🛂", "Reise (AA)", d.reisewarnung ? d.reisewarnung.text : "") +
+      kachel("📊", "Stabilität", d.stabilitaet ? `${d.stabilitaet.wert} / 100 · ${d.stabilitaet.stufe}` : "");
 
     const fotos = (d.fotos || []).filter((f) => f.bild);
     const hero = fotos.length ? fotos : (d.wiki?.bild ? [{ bild: d.wiki.bild, titel: d.name }] : []);
