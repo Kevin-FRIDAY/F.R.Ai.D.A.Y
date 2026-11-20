@@ -771,7 +771,16 @@
   }
   bindFlag("set-mouth", "friday_mouth", true);
   bindFlag("set-vollbild", "friday_vollbild", false);
-  bindFlag("set-gespraech", "friday_gespraech", true);
+  // Einmalig umstellen (v1.118.1): Gesprächsmodus aus, damit Friday nur noch auf "Friday" hört.
+  if (storage.get("friday_nur_weckwort") !== "1") {
+    // Je zweimal setzen: Nur eine echte Änderung (alter Wert vorhanden) nimmt der Mac-Abgleich mit,
+    // sonst würde ein alter Wert vom Mac die Umstellung gleich wieder überschreiben.
+    storage.set("friday_gespraech", "1");
+    storage.set("friday_gespraech", "0");
+    storage.set("friday_nur_weckwort", "0");
+    storage.set("friday_nur_weckwort", "1");
+  }
+  bindFlag("set-gespraech", "friday_gespraech", false);
   bindFlag("set-unterbrechen", "friday_unterbrechen", true);
   // Kopf-Stil: wird beim Laden von face.js gelesen, darum nach dem Wechsel neu laden
   (() => {
@@ -1451,12 +1460,25 @@
 
   // ---------- Spracherkennung ----------
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const WAKE = /\b(friday|freitag|fraidei|frei day)\b[,.!]?\s*/i;
+  // v1.118.1: Friday reagiert NUR, wenn sie angesprochen wird.
+  // "Friday" zählt überall im Satz (außer "Black Friday"). Das deutsche Wort "Freitag" zählt nur ganz am
+  // Anfang ("Freitag, wie spät ist es?"), sonst springt sie bei "am Freitag fahren wir zu Oma" an.
+  const WAKE_WORT = /(?<!black\s)\b(?:friday|fraidei|freiday|frei day)\b[,.!?]?\s*/i;
+  const WAKE_START = /^\s*(?:(?:hey|hi|hallo|ok|okay|na)[,]?\s+)?freitag\b[,.!?]?\s*/i;
+  const WAKE = {
+    [Symbol.match](said) {
+      const t = String(said || "");
+      return t.match(WAKE_WORT) || t.match(WAKE_START);
+    },
+  };
+  window.Friday.weckwort = (said) => { const m = String(said || "").match(WAKE); return m ? { index: m.index, ende: m.index + m[0].length } : null; };
   let wakeRec = null;
   let wakeActive = false;
 
   // Gesprächsmodus (Standard an): Nach einer gesprochenen Antwort hört Friday weiter zu.
-  const gespraechAn = () => storage.get("friday_gespraech") !== "0";
+  // v1.118.1: Standard AUS. Sonst schickt Friday nach jeder Antwort auch das Gespräch mit anderen
+  // (z. B. mit deiner Frau) an sich selbst und redet dazwischen. Einschalten: Einstellungen → Assistent.
+  const gespraechAn = () => storage.get("friday_gespraech") === "1";
   // Damit endet das Gespräch, ohne dass es an Friday geschickt wird.
   const GESPRAECH_ENDE = /^(?:(?:ok(?:ay)?|gut|alles klar|super|perfekt)[ ,.!]*)?(?:danke(?: dir| schön| schoen| sehr)?|das wars?|das war's|das war es|das reicht|reicht|fertig|stopp?|ende|schluss|tschüss|tschuess|bis später|bis spaeter|nichts mehr|nein danke)(?: friday| boss)?[ .!]*$/i;
   let gespraechRec = null;

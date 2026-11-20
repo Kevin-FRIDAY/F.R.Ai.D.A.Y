@@ -12,7 +12,7 @@ import { getWeather, getProtocols, runTool } from "./tools.js";
 import { agentsWithStatus } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
 import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
-import { planBuild, getLatestBuild } from "./werkstatt.js";
+import { planBuild, getLatestBuild, getBuildJob } from "./werkstatt.js";
 import { getEnergie, aufladen, einnahme } from "./energie.js";
 import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } from "./einstellungen.js";
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webseiten.js";
@@ -260,12 +260,24 @@ app.post("/api/backups", asyncRoute(async (req, res) => {
 }));
 app.post("/api/backups/:name/restore", (req, res) => res.json(startRestore(req.params.name, { programm: req.body?.programm === true })));
 
+// Mac und iPhone fragen alle paar Sekunden: ein Ergebnis für alle, höchstens alle 6 s neu messen.
+let systemCache = null, systemZeit = 0, systemLaeuft = null;
 app.get("/api/system", asyncRoute(async (req, res) => {
   if (!isAgentOnline()) return res.json({ online: false });
-  const r = await sendToAgent("system_info", {}, 12000);
-  if (!r || r.ok === false) return res.json({ online: false });
-  const { ok, ...info } = r;
-  res.json({ online: true, ...info });
+  if (systemCache && Date.now() - systemZeit < 6000) return res.json(systemCache);
+  if (!systemLaeuft) {
+    systemLaeuft = sendToAgent("system_info", {}, 12000)
+      .then((r) => {
+        if (!r || r.ok === false) return { online: false };
+        const { ok, ...info } = r;
+        systemCache = { online: true, ...info };
+        systemZeit = Date.now();
+        return systemCache;
+      })
+      .catch(() => ({ online: false }))
+      .finally(() => { systemLaeuft = null; });
+  }
+  res.json(await systemLaeuft);
 }));
 app.get("/api/weather", asyncRoute(async (req, res) => res.json(await getWeather())));
 // --- Organizer: Aufgaben + Einkaufsliste ---
@@ -482,6 +494,7 @@ app.post("/api/werkstatt", asyncRoute(async (req, res) => {
   res.status(r.ok ? 200 : 400).json(r);
 }));
 app.get("/api/werkstatt/latest", (req, res) => res.json(getLatestBuild() || {}));
+app.get("/api/werkstatt/job/:id", (req, res) => { const j = getBuildJob(req.params.id); if (!j) return res.status(404).json({ error: "Unbekannter Bau." }); res.json(j); });
 app.get("/api/energie", (req, res) => res.json(getEnergie()));
 app.get("/api/einstellungen", (req, res) => res.json(getSettings()));
 app.post("/api/einstellungen", (req, res) => res.json(setSettings(req.body || {})));

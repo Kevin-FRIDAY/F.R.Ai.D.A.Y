@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Weltgeschehen: 3D-Gelände in der Detailkarte (v1.119.0) – NUR am Mac/PC.
+// F.R.Ai.D.A.Y Weltgeschehen: 3D-Gelände in der Detailkarte (v1.121.0) – NUR am Mac/PC.
 // Berge und Täler echt in 3D: Satellitenbild (Esri) auf Höhendaten (AWS Terrain Tiles, frei, ohne Schlüssel),
 // gezeichnet mit MapLibre GL (wird erst beim ersten Einschalten geladen).
 // Auf dem iPhone/Handy bleibt es aus (Knopf und Schalter ausgeblendet), damit Friday flüssig läuft.

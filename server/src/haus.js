@@ -638,7 +638,7 @@ export function buildHouse(p) {
   const titel = efh ? "Einfamilienhaus" : `Mehrfamilienhaus · ${anzahlWhg} Wohnungen`;
   const schritte = [];
   const n0 = p.notes.length ? ` ${p.notes.join(" ")}` : "";
-  if (p.keller) schritte.push({ sagen: `Zuerst Bodenplatte und Keller aus wasserdichtem Beton. ${efh ? "Dort sitzt die Haustechnik." : `${zt(slots.length)} Mieterkeller und ein Technikraum für Wasser, Heizung und Strom.`}`, teile: teileKeller });
+  if (p.keller) schritte.push({ status: "Keller", sagen: `Zuerst Bodenplatte und Keller aus wasserdichtem Beton. ${efh ? "Dort sitzt die Haustechnik." : `${zt(slots.length)} Mieterkeller und ein Technikraum für Wasser, Heizung und Strom.`}`, teile: teileKeller });
   for (let i = 0; i < E; i++) {
     const et = hausEtagen.find((e) => e.nr === i);
     let sagen;
@@ -646,13 +646,13 @@ export function buildHouse(p) {
     else if (i === 0) sagen = `${etagenName(i)}: ${zt(p.whgProEtage)} ${p.whgProEtage === 1 ? "Wohnung" : "Wohnungen"} mit je ${et.wohnungen[0]?.zimmer || 3} Zimmern, Küche und Bad, je rund ${fmt(et.wohnungen[0]?.flaeche || 0, 0)} Quadratmeter. Dazu ${kerne.length === 1 ? "ein Treppenhaus" : `${zt(kerne.length)} Treppenhäuser`} mit Aufzug.`;
     else if (i === E - 1 && E > 2) sagen = `${etagenName(i)}, das oberste Geschoss, gleiche Aufteilung.`;
     else sagen = E > 4 ? `${etagenName(i)}.` : `${etagenName(i)}, gleiche Aufteilung.`;
-    schritte.push({ sagen, teile: etagenTeile[i] });
+    schritte.push({ status: etagenName(i), sagen, teile: etagenTeile[i] });
   }
-  schritte.push({ sagen: efh ? `Satteldach mit 35 Grad und Solarmodulen nach Süden, rund ${fmt(pvKwp, 0)} Kilowatt Peak.` : `Flachdach mit Attika und Photovoltaik, rund ${fmt(pvKwp, 0)} Kilowatt Peak.`, teile: teileDach });
-  schritte.push({ sagen: `Jetzt die Wasserleitungen: Kaltwasser in Blau, Warmwasser in Rot. Vom Hausanschluss ${p.keller ? "im Keller" : ""} über den Speicher mit ${speicherL} Litern in die Steigleitungen und zu Küche und Bad.`, teile: [...L.kaltwasser, ...L.warmwasser, ...tl.kaltwasser, ...tl.warmwasser] });
-  schritte.push({ sagen: "Abwasser in Braun: Fallleitungen im Schacht, unten die Grundleitung zum Kanal, oben über Dach entlüftet.", teile: [...L.abwasser, ...tl.abwasser] });
-  schritte.push({ sagen: `Heizung in Orange: Luft-Wärmepumpe mit etwa ${heizlast} Kilowatt, Pufferspeicher, dann Fußbodenheizung in jedem Raum. Rund ${fmt(laenge.heizung, 0)} Meter Heizrohr.`, teile: [...L.heizung, ...tl.heizung] });
-  schritte.push({ sagen: `Strom in Gelb: Zählerschrank mit ${anzahlWhg + (efh ? 0 : 1)} ${anzahlWhg + (efh ? 0 : 1) === 1 ? "Zähler" : "Zählern"}, Steigleitungen und eine Unterverteilung pro ${efh ? "Etage" : "Wohnung"}, ${stromkreise} Deckenauslässe.`, teile: [...L.strom, ...tl.strom] });
+  schritte.push({ status: "Dach", sagen: efh ? `Satteldach mit 35 Grad und Solarmodulen nach Süden, rund ${fmt(pvKwp, 0)} Kilowatt Peak.` : `Flachdach mit Attika und Photovoltaik, rund ${fmt(pvKwp, 0)} Kilowatt Peak.`, teile: teileDach });
+  schritte.push({ status: "Wasser", sagen: `Jetzt die Wasserleitungen: Kaltwasser in Blau, Warmwasser in Rot. Vom Hausanschluss ${p.keller ? "im Keller" : ""} über den Speicher mit ${speicherL} Litern in die Steigleitungen und zu Küche und Bad.`, teile: [...L.kaltwasser, ...L.warmwasser, ...tl.kaltwasser, ...tl.warmwasser] });
+  schritte.push({ status: "Abwasser", sagen: "Abwasser in Braun: Fallleitungen im Schacht, unten die Grundleitung zum Kanal, oben über Dach entlüftet.", teile: [...L.abwasser, ...tl.abwasser] });
+  schritte.push({ status: "Heizung", sagen: `Heizung in Orange: Luft-Wärmepumpe mit etwa ${heizlast} Kilowatt, Pufferspeicher, dann Fußbodenheizung in jedem Raum. Rund ${fmt(laenge.heizung, 0)} Meter Heizrohr.`, teile: [...L.heizung, ...tl.heizung] });
+  schritte.push({ status: "Strom", sagen: `Strom in Gelb: Zählerschrank mit ${anzahlWhg + (efh ? 0 : 1)} ${anzahlWhg + (efh ? 0 : 1) === 1 ? "Zähler" : "Zählern"}, Steigleitungen und eine Unterverteilung pro ${efh ? "Etage" : "Wohnung"}, ${stromkreise} Deckenauslässe.`, teile: [...L.strom, ...tl.strom] });
 
   const plan = {
     titel,

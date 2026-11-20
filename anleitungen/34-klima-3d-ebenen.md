@@ -1,4 +1,4 @@
-# Klimazonen, 3D-Gelände und Ebenen-Fenster (ab Version 1.119.0)
+# Klimazonen, 3D-Gelände und Ebenen-Fenster (ab Version 1.121.0)
 
 ## Ebenen-Fenster
 - Unten links im Weltgeschehen: **⚙ Ebenen** antippen = auf, nochmal antippen = zu.

@@ -3123,8 +3123,38 @@ html.friday-verdeckt body::before, html.friday-verdeckt body::after { animation-
 /* 3) Wanderndes Raster: verschieben statt neu malen (der Grafikchip schiebt nur, nichts wird neu gemalt) */
 .grid-bg { inset: -54px; animation-name: hud-gridpan-t; will-change: transform; }
 @keyframes hud-gridpan-t { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(54px, 54px, 0); } }
+/* Werkstatt v1.120: Infokarte (Steckbrief) + Bauteil-Details beim Antippen statt Schilder im Modell */
+.werkstatt-side { width: 250px; max-height: calc(100% - 200px); overflow-y: auto; scrollbar-width: none; }
+.werkstatt-facts li { border-left-color: var(--cyan, #ff8a1e); }
+.werkstatt-facts .ws-steck { border: 1px solid color-mix(in srgb, var(--cyan, #ff8a1e) 55%, transparent); border-left-width: 3px; border-radius: 10px; background: rgba(12,8,2,.78); padding: 10px 12px; box-shadow: 0 0 18px color-mix(in srgb, var(--cyan, #ff8a1e) 22%, transparent); }
+.werkstatt-facts .ws-steck p { margin: 4px 0 8px; font: 13px/1.35 var(--font-ui, sans-serif); color: #e8eef4; }
+.ws-steck-row { display: flex; gap: 10px; }
+.ws-steck-row span { flex: 1; min-width: 0; }
+.ws-steck-row b { font-size: 13px !important; color: var(--cyan, #ff8a1e) !important; }
+.werkstatt-info { position: absolute; right: 16px; bottom: 140px; max-width: 260px; padding: 10px 14px; border-radius: 12px; background: rgba(2,10,20,.86); border: 1px solid color-mix(in srgb, var(--cyan, #ff8a1e) 60%, transparent); box-shadow: 0 0 18px color-mix(in srgb, var(--cyan, #ff8a1e) 25%, transparent); font: 12px ui-monospace, Menlo, monospace; color: #cfeaf5; pointer-events: none; }
+.werkstatt-info.hidden { display: none; }
+.werkstatt-info small { display: block; letter-spacing: .12em; text-transform: uppercase; color: #8fc7de; }
+.werkstatt-info b { display: block; font-size: 15px; color: #fff; margin: 2px 0; }
+.werkstatt-caption { font-size: 15px; letter-spacing: .04em; }
+@media (max-width: 700px) {
+  .werkstatt-top { gap: 10px; padding: 10px 12px; }
+  .werkstatt-brand { display: none; }
+  .werkstatt-title { font-size: 12px; letter-spacing: .08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .werkstatt-side { top: 52px; left: 8px; width: 158px; max-height: 46%; gap: 6px; }
+  .werkstatt-facts { gap: 4px; }
+  .werkstatt-facts li { padding: 4px 8px; }
+  .werkstatt-facts small { font-size: 9px; }
+  .werkstatt-facts b { font-size: 12px; }
+  .werkstatt-facts .ws-steck { padding: 7px 9px; }
+  .werkstatt-facts li:nth-child(n+5) { display: none; }
+  .werkstatt-side .switch { font-size: 11px; }
+  .werkstatt-facts .ws-steck p { display: none; }
+  .ws-steck-row { flex-direction: column; gap: 4px; }
+  .werkstatt-info { right: 8px; bottom: 190px; max-width: 200px; }
+}
 
-/* v1.119.0 – Ebenen-Fenster: nur per Knopf auf/zu (kein Hover mehr), ✕ oben, Tippen daneben schließt */
+
+/* v1.121.0 – Ebenen-Fenster: nur per Knopf auf/zu (kein Hover mehr), ✕ oben, Tippen daneben schließt */
 .lage-legend .legend-body { visibility: hidden; transition: opacity .16s ease, transform .16s ease, visibility 0s linear .16s; }
 .lage-legend.open .legend-body { visibility: visible; transition: opacity .16s ease, transform .16s ease, visibility 0s; }
 .lage-legend.open .legend-toggle { border-color: var(--cyan); background: rgba(255,138,30,.18); }
@@ -3134,7 +3164,7 @@ html.friday-verdeckt body::before, html.friday-verdeckt body::after { animation-
 .legend-zu:hover { border-color: var(--cyan); color: var(--cyan); }
 html.ist-handy .lage-legend .nur-mac-switch { display: none; }
 
-/* v1.119.0 – Klimazonen */
+/* v1.121.0 – Klimazonen */
 #lage-klima path { stroke: none; opacity: .78; }
 #lage-klima { pointer-events: none; }
 .klima-keys { display: none; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 10px; margin-top: 8px; font-size: 11px; color: var(--muted); }
@@ -3147,14 +3177,14 @@ html.ist-handy .lage-legend .nur-mac-switch { display: none; }
 .klima-card p { margin: 3px 0 0; color: var(--muted); line-height: 1.4; }
 .klima-card button { margin-left: auto; background: none; border: 0; color: var(--muted); font-size: 14px; cursor: pointer; min-height: 0; padding: 0 0 0 6px; }
 
-/* v1.119.0 – Schiff: Ziel-Hafen, Foto, Text */
+/* v1.121.0 – Schiff: Ziel-Hafen, Foto, Text */
 .sc-extra .sc-foto { display: block; margin: 6px 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); position: relative; }
 .sc-extra .sc-foto img { display: block; width: 100%; max-height: 200px; object-fit: cover; }
 .sc-extra .sc-foto small { position: absolute; right: 6px; bottom: 4px; font-size: 9px; color: #fff; text-shadow: 0 0 3px #000; }
 .sc-extra .sc-text { font-size: 12px; line-height: 1.45; color: var(--muted); margin: 6px 0 0; }
 .sc-extra .sc-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 
-/* v1.119.0 – 3D-Gelände (nur Mac) */
+/* v1.121.0 – 3D-Gelände (nur Mac) */
 .lage-dm-3d { background: rgba(10,6,3,.72); border: 1px solid rgba(255,138,30,.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font: inherit; font-size: 12px; color: var(--cyan, #ff8a1e); border-radius: 999px; padding: 6px 12px; cursor: pointer; min-height: 0; height: auto; }
 .lage-dm-3d.active { background: linear-gradient(135deg, rgba(255,138,30,.9), rgba(255,90,20,.85)); color: #120700; }
 html.ist-handy .lage-dm-3d { display: none; }

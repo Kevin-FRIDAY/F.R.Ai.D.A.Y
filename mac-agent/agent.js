@@ -250,8 +250,26 @@ on run argv
 end run`;
 const zielOk = (s) => /^\+\d{5,16}$/.test(s) || /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i.test(s);
 
-function osaFile(script, args, timeout) {
-  return run("osascript", ["-e", script, ...args.map(String)], timeout);
+// Läuft Kalender/Erinnerungen/Nachrichten gerade nicht, meldet macOS "-600 Das Programm läuft nicht".
+// Dann das Programm unsichtbar im Hintergrund starten und es einmal neu versuchen.
+const laeuftNicht = (err) => /\(-600\)|läuft nicht|isn.t running|not running/i.test(String(err?.message || ""));
+async function appStarten(name) {
+  try { await run("open", ["-gj", "-a", name], 8000); } catch { return; }
+  for (let i = 0; i < 20; i++) {
+    try { await run("pgrep", ["-x", name], 2000); await new Promise((r) => setTimeout(r, 600)); return; } catch { /* noch nicht da */ }
+    await new Promise((r) => setTimeout(r, 300));
+  }
+}
+async function osaFile(script, args, timeout) {
+  const los = () => run("osascript", ["-e", script, ...args.map(String)], timeout);
+  try {
+    return await los();
+  } catch (err) {
+    const app = script.match(/tell application "([^"]+)"/)?.[1];
+    if (!app || !laeuftNicht(err)) throw err;
+    await appStarten(app);
+    return los();
+  }
 }
 const zeitArgs = (z) => (z = z || {}, [zahl(z.y, 2000, 2100, 2026), zahl(z.m, 1, 12, 1), zahl(z.d, 1, 31, 1), zahl(z.h, 0, 23, 9), zahl(z.mi, 0, 59, 0)]);
 

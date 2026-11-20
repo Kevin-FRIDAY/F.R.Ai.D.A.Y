@@ -1,4 +1,4 @@
-// Mehr zum Schiff – nur aus freien, erlaubten Quellen (v1.119.0).
+// Mehr zum Schiff – nur aus freien, erlaubten Quellen (v1.121.0).
 // Kevin wollte "alles, was bei VesselFinder kostenlos ist". VesselFinder verbietet in seinen
 // Nutzungsbedingungen das automatische Auslesen und Kopieren (auch der Fotos). Darum holt
 // Friday dieselben Infos von freien Quellen:

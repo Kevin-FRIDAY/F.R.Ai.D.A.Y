@@ -125,13 +125,21 @@ function mitGzip(k) {
   return { ...k, json, gz: zlib.gzipSync(json, { level: 6 }) };
 }
 
+let katalogFehler = 0, katalogWarteBis = 0;
 export async function getKatalog() {
   if (!katalog) { const f = lies(DATEI); if (f?.sats?.length) katalog = mitGzip(f); }
   const alt = !katalog || Date.now() - Date.parse(katalog.stand) > FRISCH_MS;
-  if (alt && !laedt) {
+  // Nach einem Fehler nicht bei jedem Aufruf neu fragen: CelesTrak sperrt sonst (403).
+  // Wartezeit wächst: 5, 10, 20 ... höchstens 120 Minuten.
+  if (alt && !laedt && Date.now() >= katalogWarteBis) {
     laedt = baueKatalog()
-      .then((k) => { schreib(DATEI, k); katalog = mitGzip(k); })
-      .catch((err) => { if (!katalog) throw err; console.warn("Satelliten-Katalog bleibt alt:", err.message); })
+      .then((k) => { schreib(DATEI, k); katalog = mitGzip(k); katalogFehler = 0; katalogWarteBis = 0; })
+      .catch((err) => {
+        katalogFehler++;
+        katalogWarteBis = Date.now() + Math.min(120, 5 * 2 ** (katalogFehler - 1)) * 60 * 1000;
+        if (!katalog) throw err;
+        console.warn("Satelliten-Katalog bleibt alt:", err.message);
+      })
       .finally(() => { laedt = null; });
   }
   if (!katalog) await laedt; // beim allerersten Mal warten

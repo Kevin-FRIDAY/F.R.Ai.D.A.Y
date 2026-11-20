@@ -18,7 +18,7 @@
   let gruppen = [], schiffe = [], aktiv = new Set(), stand = "", info = { aktiv: true, verbunden: false };
   let gewaehlt = 0;           // MMSI des angetippten Schiffs
   let detail = null;          // Steckbrief vom Server
-  let extra = null;           // Ziel-Hafen, Foto, Text (freie Quellen, v1.119.0)
+  let extra = null;           // Ziel-Hafen, Foto, Text (freie Quellen, v1.121.0)
   let treffer = null;         // Set von MMSI aus der Suche
   let ladeTimer = null, karteTimer = null, laedt = false;
   let L = null;               // Leinwand
@@ -159,7 +159,7 @@
         if (i >= 0 && sicht[i] && auf) ctx.lineTo(sx[i], sy[i]);
         ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
       }
-      // Weg zum Ziel-Hafen (Luftlinie, gestrichelt) + Hafen-Anker (v1.119.0)
+      // Weg zum Ziel-Hafen (Luftlinie, gestrichelt) + Hafen-Anker (v1.121.0)
       const h = extra?.mmsi === gewaehlt ? extra.hafen : null;
       if (h && detail) {
         const R = Math.PI / 180, v = (la, lo) => [Math.cos(la * R) * Math.cos(lo * R), Math.cos(la * R) * Math.sin(lo * R), Math.sin(la * R)];

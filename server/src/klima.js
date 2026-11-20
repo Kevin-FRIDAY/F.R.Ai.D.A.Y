@@ -1,4 +1,4 @@
-// Klimazonen im Weltgeschehen per Sprache (v1.119.0) – ohne Claude.
+// Klimazonen im Weltgeschehen per Sprache (v1.121.0) – ohne Claude.
 // "Zeig mir die Klimazonen", "Klimazonen an/aus", "Klimakarte".
 // Die Karte selbst (Köppen-Geiger, Uni Wien) liegt im Dashboard (vendor/klimazonen.json).
 export function quickCommand(text) {

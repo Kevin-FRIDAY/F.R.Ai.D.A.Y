@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Weltgeschehen: Klimazonen als Ebene (v1.119.0).
+// F.R.Ai.D.A.Y Weltgeschehen: Klimazonen als Ebene (v1.121.0).
 // Köppen-Geiger-Klimakarte der Uni Wien (Kottek et al. 2006 / Rubel et al. 2017, Zeitraum 1986–2010),
 // 0,5°-Raster, liegt fertig in vendor/klimazonen.json (kein Internet nötig).
 // Gezeichnet werden 13 Hauptzonen als Flächen auf dem Globus; Antippen zeigt die genaue Zone (30 Klassen).
