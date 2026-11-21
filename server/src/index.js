@@ -60,6 +60,7 @@ import { satellitenRouten } from "./satelliten.js";
 import { flugzeugeRouten } from "./flugzeuge.js";
 import { welttourRouten } from "./welttour.js";
 import { osirisStatus } from "./osiris.js";
+import { eveRouten } from "./eve.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
 const missing = checkConfig();
@@ -677,6 +678,8 @@ zentraleRouten(app, asyncRoute);
 
 // Helfer-Paket: Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede (v1.106.0).
 helferRouten(app, asyncRoute);
+// Eve – Testversion von Friday (v1.137.0): Schloss für neue Funktionen + Wünsche an Claude.
+eveRouten(app, asyncRoute);
 wacheRouten(app, asyncRoute);
 // Kontrollraum (v1.135.0): Regelwerk, Schleifen-Schutz, Gedächtnis, Herzschlag, Kosten-Deckel, Seele, Fähigkeiten, Änderungen.
 kernRouten(app, asyncRoute);
