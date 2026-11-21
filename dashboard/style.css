@@ -3562,3 +3562,70 @@ html.perf-fluessig .lp-p-brenn .lp-welle, html.perf-fluessig .lp-p-notflug .lp-p
   .st-vorschau { height: 300px; }
 }
 html.perf-fluessig .st-kabel.an, html.perf-fluessig .st-knoten.run .st-ring { animation: none; }
+
+/* ---------- v1.134.0 Auto-Studio (Werkstatt): helles Studio, Spiegelboden, Daten wie auf den TikTok-Bildern ---------- */
+.autostudio { position: absolute; inset: 0; z-index: 20; background: #e8eaed; color: #111318; overflow: hidden; font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; }
+.autostudio.hidden { display: none; }
+.as-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+.as-top { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; padding-top: max(14px, env(safe-area-inset-top)); pointer-events: none; }
+.as-top > * { pointer-events: auto; }
+.as-brand { font: 600 12px ui-monospace, Menlo, monospace; letter-spacing: .22em; color: #e5621c; }
+.as-knopf { padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(17,19,24,.16); background: rgba(255,255,255,.72); color: #111318; font: 600 13px system-ui, -apple-system, sans-serif; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); white-space: nowrap; }
+.as-knopf:hover, .as-knopf:focus-visible { border-color: #e5621c; outline: none; }
+.as-knopf.on { background: #111318; color: #fff; border-color: #111318; }
+.as-knopf.as-haupt { background: linear-gradient(135deg, #ff8a1e, #e5621c); color: #fff; border-color: transparent; }
+.as-knopf.hidden { display: none; }
+.as-karte { position: absolute; left: 28px; top: 64px; max-width: 420px; pointer-events: none; }
+.as-marke { display: flex; align-items: center; gap: 10px; font: 800 15px system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #3a3f47; }
+.as-akzent { display: inline-flex; gap: 3px; margin-right: 8px; vertical-align: middle; }
+.as-akzent i { display: block; width: 9px; height: 22px; transform: skewX(-24deg); border-radius: 1px; }
+.as-akzent.gross i { width: 16px; height: 44px; }
+.as-name { margin: 6px 0 0; font: italic 900 clamp(40px, 6vw, 72px)/1 system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; letter-spacing: -.01em; color: #111318; }
+.as-zusatz { margin-top: 4px; font: italic 700 18px system-ui, sans-serif; color: #4a4f57; }
+.as-daten { list-style: none; margin: 14px 0 0; padding: 0; font: 500 18px/1.45 system-ui, sans-serif; color: #1b1e24; }
+.as-daten b { font-weight: 800; }
+.as-hinweis { margin-top: 10px; font: 500 12px system-ui, sans-serif; color: #7b8088; }
+.as-leiste { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; padding-bottom: max(14px, env(safe-area-inset-bottom)); }
+.as-farben { display: flex; gap: 8px; flex-wrap: wrap; }
+.as-farben button { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.55), transparent 45%), var(--lack); box-shadow: 0 1px 4px rgba(0,0,0,.3); cursor: pointer; padding: 0; }
+.as-farben button.on { outline: 2px solid #e5621c; outline-offset: 2px; }
+.as-knoepfe { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+/* Modellreihe als helles Blatt wie die Vorlagen-Bilder */
+.as-reihe { position: absolute; inset: 0; z-index: 3; background: linear-gradient(#d9dce1, #e8eaed 130px, #e8eaed); display: flex; flex-direction: column; }
+.as-reihe.hidden { display: none; }
+.as-reihe-kopf { position: absolute; top: 0; right: 0; display: flex; gap: 8px; padding: 14px 18px; padding-top: max(14px, env(safe-area-inset-top)); z-index: 2; }
+.as-reihe-inhalt { flex: 1; overflow-y: auto; padding: 22px 18px 40px; -webkit-overflow-scrolling: touch; }
+.as-reihe-titel { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 30px 0 18px; }
+.as-reihe-titel h2 { margin: 0; font: italic 900 clamp(40px, 7vw, 76px)/1 system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; color: #111318; }
+.as-reihe-liste { list-style: none; margin: 0 auto; padding: 0; max-width: 1100px; }
+.as-reihe-liste > li { display: grid; grid-template-columns: minmax(220px, 34%) 1fr; align-items: center; gap: 10px; padding: 4px 0; cursor: pointer; border-radius: 16px; transition: background .2s; }
+.as-reihe-liste > li:hover, .as-reihe-liste > li:focus-visible { background: rgba(255,255,255,.45); outline: none; }
+.as-reihe-text h3 { margin: 0; display: flex; align-items: center; font: italic 900 clamp(26px, 3.6vw, 44px)/1.05 system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; color: #111318; }
+.as-reihe-text small { display: block; margin: 2px 0 0 4px; font: italic 700 13px system-ui, sans-serif; color: #5a5f67; }
+.as-reihe-text ul { list-style: none; margin: 6px 0 0 4px; padding: 0; font: 500 15px/1.35 system-ui, sans-serif; color: #1b1e24; }
+.as-reihe-text ul b { font-weight: 800; }
+.as-balken { margin: 6px 0 0 4px; height: 4px; border-radius: 3px; background: rgba(17,19,24,.1); max-width: 220px; overflow: hidden; }
+.as-balken i { display: block; height: 100%; border-radius: 3px; }
+.as-reihe-bild { aspect-ratio: 1200 / 600; display: flex; align-items: center; justify-content: center; }
+.as-reihe-bild img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.as-lädt { font: 600 12px ui-monospace, Menlo, monospace; letter-spacing: .16em; color: #9aa0a8; animation: call-think 1.2s ease-in-out infinite; }
+.as-reihe-fuss { max-width: 1100px; margin: 18px auto 0; font: 500 12px system-ui, sans-serif; color: #7b8088; text-align: center; }
+.werkstatt-vorlagen button.ws-studio { border-color: rgba(255,255,255,.55); background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,138,30,.16)); }
+@media (max-width: 700px) {
+  .as-karte { left: 16px; right: 16px; top: 54px; }
+  .as-name { font-size: 46px; }
+  .as-daten { font-size: 16px; margin-top: 8px; }
+  .as-leiste { flex-direction: column; align-items: stretch; gap: 10px; }
+  .as-farben { justify-content: center; }
+  .as-knoepfe { justify-content: center; }
+  .as-knopf { padding: 8px 11px; font-size: 12px; }
+  .as-reihe-liste > li { grid-template-columns: 1fr 1.25fr; gap: 4px; }
+  .as-reihe-text h3 { font-size: 24px; }
+  .as-akzent i { width: 7px; height: 17px; }
+  .as-reihe-text ul { font-size: 12px; }
+  .as-reihe-text small { font-size: 11px; }
+  .as-reihe-titel { margin-top: 44px; }
+}
+.autostudio.ist-echt .as-farben { visibility: hidden; }
+.as-quelle { margin-top: 10px; font: 500 12px system-ui, sans-serif; color: #4a4f57; pointer-events: auto; }
+.as-quelle a, .as-quelle button { color: #e5621c; background: none; border: 0; padding: 0; font: inherit; cursor: pointer; text-decoration: underline; }
