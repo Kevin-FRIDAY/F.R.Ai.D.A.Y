@@ -33,6 +33,8 @@ import { haBereit } from "./homeassistant.js";
 import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
 import * as logbuch from "./logbuch.js";
+import * as datenbank from "./datenbank.js";
+const { alleEintraege } = datenbank;
 import { alleDokumente, dokument, antwortenSpeichern } from "./dokumente.js";
 import { auftragStand } from "./auftrag.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
@@ -285,21 +287,6 @@ app.get("/api/activity", (req, res) => res.json(store.getActivity()));
 
 // ---------- Friday-Datenbank (Fenster "Wissen"): alles, was gesprochen und gemacht wurde ----------
 store.archivStarten();
-function alleEintraege() {
-  const zeit = (id) => { const n = parseInt(String(id || ""), 36); return n > 1.5e12 && n < 4e12 ? new Date(n).toISOString() : null; };
-  const out = [];
-  for (const e of store.leseArchiv()) out.push({ typ: e.typ || "gespraech", at: e.at, kanal: e.kanal, frage: e.frage, antwort: e.antwort, aktionen: e.aktionen, alt: e.uebernommen || undefined });
-  for (const a of store.getActivity()) out.push({ typ: "aktion", at: a.at, art: a.cat, text: a.label });
-  for (const m of store.getMemories()) out.push({ typ: "gedaechtnis", at: m.created || zeit(m.id), text: m.text });
-  for (const t of store.getTasks()) out.push({ typ: "aufgabe", at: t.at ? new Date(t.at).toISOString() : zeit(t.id), text: t.text, erledigt: !!t.done });
-  for (const r of store.getReminders()) out.push({ typ: "erinnerung", at: zeit(r.id) || r.due, faellig: r.due, text: r.text, erledigt: !!r.done });
-  for (const s of store.getShopping()) out.push({ typ: "einkauf", at: zeit(s.id), text: s.text, erledigt: !!s.done });
-  for (const d of alleDokumente()) {
-    const n = d.fragen?.length || 0, b = d.fragen?.filter((f) => f.antwort.trim()).length || 0;
-    out.push({ typ: "dokument", at: d.erstellt, id: d.id, art: d.art, text: d.titel, inhalt: d.art === "fragebogen" ? d.fragen.map((f, i) => `${i + 1}. ${f.frage}${f.antwort ? ` → ${f.antwort}` : ""}`).join("\n") : d.inhalt, info: d.art === "fragebogen" ? `${b} von ${n} beantwortet` : "" });
-  }
-  return out.filter((e) => e.at).sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
-}
 // Dokumente und Fragebögen, die Friday erstellt hat.
 app.get("/api/dokumente", (req, res) => res.json(alleDokumente().slice().reverse().map(({ inhalt, fragen, ...d }) => ({ ...d, fragen: fragen?.length, beantwortet: fragen?.filter((f) => f.antwort.trim()).length }))));
 app.get("/api/dokumente/:id", (req, res) => { const d = dokument(req.params.id); return d ? res.json(d) : res.status(404).json({ error: "Nicht gefunden" }); });
@@ -320,15 +307,25 @@ app.get("/api/wissen/datenbank", (req, res) => {
   for (const e of alle) stats[e.typ] = (stats[e.typ] || 0) + 1;
   let liste = alle;
   if (typ) liste = liste.filter((e) => e.typ === typ);
-  if (q) liste = liste.filter((e) => [e.frage, e.antwort, e.text, e.art, e.kanal, e.inhalt].some((v) => v && String(v).toLowerCase().includes(q)));
+  if (q) liste = datenbank.filtern(liste, { q });
   const treffer = liste.length;
   if (vor) liste = liste.filter((e) => e.at < vor);
   res.json({ stats, treffer, eintraege: liste.slice(0, limit), mehr: liste.length > limit });
 });
 app.get("/api/wissen/export", (req, res) => {
-  res.setHeader("Content-Disposition", `attachment; filename="friday-datenbank-${new Date().toISOString().slice(0, 10)}.json"`);
+  const tag = new Date().toISOString().slice(0, 10);
+  if (req.query.format === "csv") {
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="friday-datenbank-${tag}.csv"`);
+    return res.send(datenbank.alsCsv(datenbank.filtern(alleEintraege(), { typ: String(req.query.typ || ""), q: String(req.query.q || "") })));
+  }
+  res.setHeader("Content-Disposition", `attachment; filename="friday-datenbank-${tag}.json"`);
   res.json({ exportiert: new Date().toISOString(), eintraege: alleEintraege() });
 });
+// v1.129.0: Übersicht im Gehirn-Stil (Speicher-Karte, 30 Tage, Themen, Rückblick) + eigene Notizen.
+app.get("/api/wissen/uebersicht", (req, res) => res.json(datenbank.uebersicht()));
+app.post("/api/wissen/notiz", (req, res) => { try { res.json(datenbank.notizSpeichern(req.body || {})); } catch (err) { res.status(400).json({ error: err.message }); } });
+app.delete("/api/wissen/notiz/:id", (req, res) => res.json({ ok: datenbank.notizLoeschen(req.params.id) }));
 app.get("/api/systemcheck", asyncRoute(async (req, res) => res.json(await runSystemCheck())));
 app.get("/api/mail", asyncRoute(async (req, res) => res.json(await getMailOverview(req.query.force === "1"))));
 app.post("/api/mail/sort", asyncRoute(async (req, res) => res.json(await sortMail())));
