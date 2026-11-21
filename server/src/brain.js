@@ -34,6 +34,12 @@ import { quickCommand as routenQuick } from "./routen.js";
 import { quickCommand as helferQuick } from "./helfer.js";
 import { quickCommand as wacheQuick } from "./wache.js";
 import { quickCommand as studioQuick } from "./videostudio.js";
+// Kontrollraum (v1.135.0, Bausteine aus Conway-Research/automaton, MIT): Gedächtnis-Schubladen, Seele,
+// Fähigkeiten, Kosten-Deckel und Schleifen-Schutz.
+import { quickCommand as kernQuick, kontextFuer as kernKontext } from "./kern.js";
+import { fuerKontext as seeleKontext } from "./seele.js";
+import { sperre as deckelSperre } from "./kostendeckel.js";
+import { neuerWaechter as schleifenWaechter } from "./schleifen.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -78,21 +84,25 @@ Aufträge:
 - Listen, Pläne, Texte, Rezepte und Ideen, die man aufheben will, speicherst du mit dokument_erstellen (gesuchte Infos und Erklärungen erzählst du dagegen direkt). Fragebögen erstellst du mit fragebogen_erstellen, mit genau so vielen Fragen wie gewünscht. Danach erzählst du in zwei, drei Sätzen, was drinsteht, und dass es im Dashboard liegt.
 - Spiele baust du nie als Dokument und schreibst ihren Code nie in die Antwort: benutze spiel_bauen. Das Dashboard zeigt dann live, wie du programmierst, und startet das Spiel.
 - Soll ein neues Video entstehen ("mach mir ein 20-Sekunden-Video über …"), benutze video_erstellen. Vorhandene Clips mit Untertiteln schneiden ist video_schnitt.
-- Wenn etwas wirklich nicht geht, sag ehrlich und kurz, warum.`;
+- Wenn etwas wirklich nicht geht, sag ehrlich und kurz, warum.
+
+Gedächtnis und Lernen:
+- Erklärt dir Boss, wie er etwas Mehrstufiges haben will, oder hat ein Weg aus mehreren Schritten gut geklappt, speichere ihn mit ablauf_speichern. Steht unten ein passender Ablauf, halte dich daran und sag danach mit ablauf_bewerten, ob er geklappt hat.
+- Sagt Boss "lerne, wie man …" oder "mach daraus eine Fähigkeit", lege mit faehigkeit_erstellen eine Fähigkeit an.
+- Eine dauerhafte Erkenntnis über eure Zusammenarbeit ("Boss will es kürzer") schreibst du mit seele_notiz in deine Seele. Sparsam, höchstens eine pro Gespräch.
+- Lehnt das Regelwerk eine Aktion ab, sag Boss kurz den Grund und versuch es nicht auf einem Umweg.`;
 
 const WEB_SEARCH = { type: "web_search_20260209", name: "web_search", max_uses: 3 };
 
 function contextBlock(extra = {}) {
   const now = new Date().toLocaleString("de-DE", { timeZone: config.timezone, dateStyle: "full", timeStyle: "short" });
   const isoLocal = new Date().toLocaleString("sv-SE", { timeZone: config.timezone }).replace(" ", "T").slice(0, 16);
-  const memories = store.getMemories().map((m) => `- ${m.text}`).join("\n") || "(noch nichts)";
   let text = `Aktuelle Zeit: ${now} (${isoLocal}, Zeitzone ${config.timezone}). Heimatstadt: ${config.city}.
 Mac verbunden: ${isoAgentText()}.
 ${dienstKurzinfo()}
 Kanal: ${extra.channel || "web"}.
 
-Was du über ${config.userName} weißt:
-${memories}
+${kernKontext(extra.frage || "")}
 
 Dein Agenten-Team (du koordinierst es; nenne den passenden Agenten, wenn es hilft):
 ${agentsBrief()}
@@ -235,6 +245,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (tvAnswer) { actions.push("fernseher"); return finish(tvAnswer); }
     } catch (err) {
       console.error("Fernseher-Schnellbefehl:", err.message);
+    }
+  }
+
+  // Kontrollraum (v1.135.0): "öffne den Kontrollraum", "zeig mir deine Seele", "was hast du heute ausgegeben?" – ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const kr = kernQuick(text);
+      if (kr) { actions.push(...kr.actions); return finish(kr.answer); }
+    } catch (err) {
+      console.error("Kontrollraum:", err.message);
     }
   }
 
@@ -394,6 +414,13 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
+  // Kosten-Deckel (v1.135.0): Grenze pro Stunde/Tag erreicht → nur Offline-Befehle, kein Claude.
+  const deckel = deckelSperre();
+  if (deckel) {
+    actions.push("kosten_deckel");
+    return finish(deckel);
+  }
+
   // Sparmodus bei knappem Guthaben: günstiges Modell, wenig Aufwand, keine Websuche.
   // Denk-Tempo "Automatisch" (KI-Modell-Routing): kurze Fragen → Haiku, schwere → Opus, sonst Sonnet.
   const tempoWahl = getSettings().tempo === "auto" ? tempoFuerFrage(text) : getSettings().tempo;
@@ -409,9 +436,12 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // (neue Minute, neue Notiz im Gedächtnis), lehnt Claude die Denk-Blöcke der vorigen Runde ab (Fehler 400).
   const system = [
     { type: "text", text: PERSONA, cache_control: { type: "ephemeral" } },
-    { type: "text", text: contextBlock({ channel, mode, targetLang }) },
+    { type: "text", text: seeleKontext() },
+    { type: "text", text: contextBlock({ channel, mode, targetLang, frage: text }) },
   ];
   let denkBloeckeEntfernt = false;
+  const schleife = schleifenWaechter(channel); // Schleifen-Schutz (v1.135.0)
+  const auftragId = `${channel}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
   for (let round = 0; round < 8; round++) {
     const params = {
       model,
@@ -473,7 +503,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       toolUses.map(async (tool) => {
         actions.push(tool.name === "mac" ? `mac:${tool.input?.action}` : tool.name);
         try {
-          const result = await runTool(tool.name, tool.input, { quelle: "claude", kanal: channel });
+          const result = await runTool(tool.name, tool.input, { quelle: "claude", kanal: channel, auftrag: auftragId });
           if (result && Array.isArray(result.content)) return { type: "tool_result", tool_use_id: tool.id, content: result.content };
           const isError = Boolean(result && result.error);
           return { type: "tool_result", tool_use_id: tool.id, content: JSON.stringify(result ?? {}), is_error: isError };
@@ -482,6 +512,10 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
         }
       }),
     );
+    // Schleifen-Schutz: dreimal genau dasselbe → Hinweis, viermal → Abbruch.
+    const sw = schleife.runde(toolUses);
+    if (sw.art === "abbruch") { actions.push("schleife"); return finish(sw.text); }
+    if (sw.art === "hinweis") results.push({ type: "text", text: sw.text });
     messages.push({ role: "user", content: results });
     setzeAuftrag(channel, "erstellen", Math.min(90, 55 + round * 12), "Friday fasst das Ergebnis zusammen …");
   }

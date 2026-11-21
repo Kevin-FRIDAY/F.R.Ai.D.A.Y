@@ -710,6 +710,10 @@
         else if (hat("route_planen")) window.FridayRouten?.neueste();
         else if (routeZiel) window.FridayRouten?.open({ ziel: decodeURIComponent(routeZiel.slice(11)) });
         else if (hat("routen")) window.FridayRouten?.open();
+        // Kontrollraum (v1.135.0): "öffne den Kontrollraum", "zeig mir deine Seele", "was hast du heute ausgegeben?"
+        const kernA = data.actions?.find((a) => a === "kern" || (typeof a === "string" && a.startsWith("kern:")));
+        if (kernA) window.FridayKern?.open({ tab: kernA.startsWith("kern:") ? kernA.slice(5) : "" });
+        else if (hat("kosten_deckel")) window.FridayKern?.open({ tab: "kosten" });
         // Kamera-Wache (v1.127.0): Fenster öffnen, eine Kamera zeigen, Ereignisse zeigen.
         const wacheA = aktion("wache:");
         if (wacheA === "wache:ereignisse") window.FridayWache?.open({ tab: "ereignisse" });
