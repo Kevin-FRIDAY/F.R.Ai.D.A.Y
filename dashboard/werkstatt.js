@@ -448,6 +448,27 @@
     }
     infoAus();
     schlange = [];
+    // v1.136.0: Autos aus Fridays Datenbank → helles Auto-Studio (Seitenansicht, Spiegelboden, Daten).
+    if (entry.plan?.studio && window.FridayStudio) {
+      plan = { titel: entry.plan.titel, kennzahlen: entry.plan.kennzahlen || [], steckbrief: entry.plan.steckbrief, schritte: [] };
+      showFacts(plan);
+      setState("STUDIO", "done");
+      $("werkstatt-step").textContent = "AUTO-STUDIO";
+      setCaption("Auto-Studio: Farbe, Ansicht und Modellreihe unten wählen.");
+      if (window.FridayStudio.zeige(entry.plan.studio)) {
+        ansage(entry.plan.einleitung);
+        ansage(entry.plan.fazit);
+        // Echtes 3D-Modell: sofort (Bibliothek) oder sobald Sketchfab fertig ist (höchstens 90 s warten).
+        let st = entry.plan.studio;
+        const t0 = Date.now();
+        while (st.wartet && run === running && Date.now() - t0 < 90000) {
+          await pause(1500);
+          try { st = (await (await api(`/api/werkstatt/job/${entry.id}`)).json()).plan?.studio || {}; } catch { /* weiter warten */ }
+        }
+        if (run === running && st.datei) window.FridayStudio.echt(st.datei);
+        return;
+      }
+    }
     let gezeigt = 0, angesagt = false, fehlversuche = 0, planNr = entry.planNr || 1, geladenId = "";
     if (neu) { modellObj = null; modellId = ""; plan.modell = null; }
     const t0 = Date.now();
@@ -616,9 +637,11 @@
     ["✈️", "Flugzeug", "bau mir ein Flugzeug"], ["🛩️", "Kampfjet", "bau mir einen Kampfjet"], ["🚁", "Helikopter", "bau mir einen Helikopter"], ["🚀", "Rakete", "bau mir eine Rakete"],
     ["🚢", "Containerschiff", "bau mir ein Containerschiff"], ["🛳️", "Kreuzfahrtschiff", "bau mir ein Kreuzfahrtschiff"], ["🛥️", "Motorboot", "bau mir ein Motorboot"], ["⛵", "Segelboot", "bau mir ein Segelboot"], ["🌊", "U-Boot", "bau mir ein U-Boot"],
   ];
+  // v1.136.0: Auto-Studio – Modellreihen wie auf den TikTok-Bildern (Daten in server/src/autostudio.js).
+  VORLAGEN.unshift(["🏁", "BMW M", "BMW M Modellreihe"], ["🏁", "Mercedes-AMG", "Mercedes-AMG Modellreihe"], ["🏁", "Audi RS", "Audi RS Modellreihe"], ["🏁", "VW R", "Volkswagen R Modellreihe"], ["🏁", "Porsche", "Porsche Modellreihe"]);
   const vorlagenBox = $("werkstatt-vorlagen");
   if (vorlagenBox) {
-    vorlagenBox.innerHTML = VORLAGEN.map(([ico, name, wunsch], i) => `<button type="button" data-i="${i}" title="${escapeHtml(wunsch)}">${ico} ${escapeHtml(name)}</button>`).join("");
+    vorlagenBox.innerHTML = VORLAGEN.map(([ico, name, wunsch], i) => `<button type="button" data-i="${i}" title="${escapeHtml(wunsch)}"${ico === "🏁" ? ' class="ws-studio"' : ""}>${ico} ${escapeHtml(name)}</button>`).join("");
     vorlagenBox.addEventListener("click", (e) => {
       const b = e.target.closest("button[data-i]");
       if (!b) return;

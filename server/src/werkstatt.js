@@ -8,6 +8,7 @@ import { getSettings } from "./einstellungen.js";
 import { isHausWunsch, isHausBefehl, planHouse } from "./haus.js";
 import { erkenneArt, erkenneFarbe, baueVorlage, istVorlagenBefehl, masseAusKennzahlen } from "./bauvorlagen.js";
 import { findeLokal, holeModell, sketchfabToken, suchwort } from "./modelle.js";
+import { findeAuto, istStudioBefehl, studioPlan } from "./autostudio.js";
 
 const client = new Anthropic({ apiKey: config.anthropicKey });
 
@@ -131,10 +132,41 @@ function planVorlage(text, art, opt = {}, grund = "") {
   return { ok: true, ...job };
 }
 
+// v1.136.0 Auto-Studio: Autos aus Fridays Datenbank (server/src/autostudio.js) im hellen Studio.
+// Einzelnes Auto: gibt es ein echtes 3D-Modell (eigene Bibliothek oder Sketchfab-Schlüssel), zeigt das Studio
+// zuerst Fridays eigenes Modell und tauscht es gegen das echte, sobald es geladen ist.
+const modellInfo = (m, laenge) => ({ id: m.id, name: m.name, autor: m.autor || "", lizenz: m.lizenz || "", link: m.link || "", quelle: m.quelle || "", laenge });
+function planStudio(text, treffer) {
+  const plan = studioPlan(treffer, erkenneFarbe(text));
+  const job = neuerJob(text, false);
+  Object.assign(job, { plan, status: "fertig", ohneClaude: true, studio: true });
+  eintragen({ bereich: "werkstatt", titel: `Auto-Studio: ${plan.titel}`, details: `Wunsch: ${text}${eckdaten(plan)}` });
+  if (treffer.art === "modell") {
+    const suche = `${treffer.marke.marke} ${treffer.modell.name}`;
+    const lokal = findeLokal(suche);
+    if (lokal) plan.studio.datei = modellInfo(lokal, treffer.modell.laenge);
+    else if (sketchfabToken()) {
+      job.status = "baut";
+      plan.studio.wartet = true;
+      holeModell(suche, { art: erkenneArt(suche) || "sportwagen", titel: suche })
+        .then((m) => { if (m) plan.studio.datei = modellInfo(m, treffer.modell.laenge); })
+        .catch(() => {})
+        .finally(() => { plan.studio.wartet = false; job.status = "fertig"; job.planNr += 1; });
+    }
+  }
+  return { ok: true, ...job };
+}
+
 // Sprachbefehl "Friday, bau mir ein Mehrfamilienhaus" oder "bau mir einen Kampfjet" – sofort und ohne Guthaben.
 export function quickCommand(text) {
   if (isHausBefehl(text)) {
     const r = planHaus(String(text).trim().slice(0, 1000));
+    return { answer: "Einen Moment, Chef.", actions: ["werkstatt"], titel: r.plan.titel };
+  }
+  // v1.136.0: "Friday, zeig mir die BMW-M-Modelle" / "bau mir einen RS 6" → Auto-Studio, ohne Claude.
+  const auto = istStudioBefehl(text);
+  if (auto) {
+    const r = planStudio(String(text).trim().slice(0, 1000), auto);
     return { answer: "Einen Moment, Chef.", actions: ["werkstatt"], titel: r.plan.titel };
   }
   if (!istVorlagenBefehl(text)) return null;
@@ -225,6 +257,7 @@ export function startBuild(wunsch, basis = null) {
   const text = String(wunsch || "").trim().slice(0, 1000);
   if (!text) return { ok: false, error: "Was soll ich bauen, Chef?" };
   if (!basis && isHausWunsch(text)) return planHaus(text);
+  if (!basis) { const auto = findeAuto(text); if (auto) return planStudio(text, auto); }
   const art = erkenneArt(text);
   const optAusText = { farbe: erkenneFarbe(text), elektro: /elektro|e-auto|tesla|taycan|e-tron|\bid\.? ?[3-7]\b/i.test(text) };
   // v1.125.0: Echte 3D-Modelle zuerst – aus der eigenen Bibliothek oder (mit Schlüssel) frisch von Sketchfab.
