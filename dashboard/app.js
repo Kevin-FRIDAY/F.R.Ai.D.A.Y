@@ -755,6 +755,7 @@
         else if (klangA === "klang:auto") { window.FridayKlang?.auto(true); window.FridayKlang?.open(); }
         else if (klangA) window.FridayKlang?.spiele(klangA.slice(6));
         else if (hat("klang")) window.FridayKlang?.open();
+        if (hat("klangvideo")) window.FridayKlang?.ansicht("video");
         // Spiele-Werkstatt: live zuschauen, wie Friday programmiert, oder ein gespeichertes Spiel starten.
         const spielBau = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel_bauen:"));
         const spielStart = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel:"));

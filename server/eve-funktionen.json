@@ -10,6 +10,15 @@
         ".menu-apps",
         ".nav-apps"
       ]
+    },
+    {
+      "id": "klang-video",
+      "name": "Videos zum Stimmungs-Sound",
+      "version": "1.140.0",
+      "beschreibung": "Zu allen 19 Klängen laufen passende, frei lizenzierte Videos (Wikimedia Commons), z. B. Kaminfeuer, Bach im Wald, Unterwasser mit Fischen. Stumm, der Klang bleibt live. Knopf 🎬 Video im Stimmungs-Sound oder \"Friday, Kaminfeuer mit Video\".",
+      "ziele": [
+        ".kr-video-knopf"
+      ]
     }
   ]
 }
