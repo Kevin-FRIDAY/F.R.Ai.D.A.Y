@@ -1,4 +1,4 @@
-// v1.135.0 Auto-Studio: Fridays eigene Auto-Datenbank für die Werkstatt.
+// v1.136.0 Auto-Studio: Fridays eigene Auto-Datenbank für die Werkstatt.
 // Kevin wollte Autos wie auf den KI-Bildern aus TikTok: Seitenansicht im hellen Studio mit Spiegelboden,
 // echte Markenfarben und dazu die Daten (Motor, PS, 0–100, Spitze) – gern als ganze Modellreihe.
 // Alles ohne Claude: die Daten stehen hier, das Dashboard (dashboard/autostudio.js) baut die Autos selbst.

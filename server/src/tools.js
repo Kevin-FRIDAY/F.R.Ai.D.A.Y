@@ -23,6 +23,10 @@ import { starteSpiel, listeSpiele } from "./spiele.js";
 import { command as tvCommand } from "./fernseher.js";
 import { command as alexaCommand } from "./alexa.js";
 import { toolDefinitions as dienstTools, smartHomeTool } from "./dienste-werkzeuge.js";
+// Kontrollraum (v1.135.0, Bausteine aus Conway-Research/automaton, MIT): Regelwerk, Gedächtnis, Seele, Fähigkeiten.
+import { kernTools, istKernTool, runKernTool } from "./kern.js";
+import { pruefe as regelwerkPruefe } from "./regelwerk.js";
+import { faktMerken, SCHUBLADEN, ereignis as gedaechtnisEreignis } from "./gedaechtnis.js";
 import { istDienstTool, runDienstTool } from "./dienste.js";
 import { command as haCommand } from "./homeassistant.js";
 import { routeFuerClaude } from "./routen.js";
@@ -162,7 +166,10 @@ export const toolDefinitions = [
     description: "Speichert eine dauerhafte Info über den Nutzer (Vorlieben, Termine, Namen, Fakten). Nutze das, wenn er etwas Merkenswertes erzählt oder 'merk dir' sagt.",
     input_schema: {
       type: "object",
-      properties: { fact: { type: "string", description: "Die Info in einem kurzen Satz" } },
+      properties: {
+        fact: { type: "string", description: "Die Info in einem kurzen Satz" },
+        schublade: { type: "string", enum: Object.keys(SCHUBLADEN), description: "Optional: person, vorliebe, ort, termin, technik, arbeit oder sonstiges" },
+      },
       required: ["fact"],
     },
   },
@@ -338,6 +345,7 @@ export const toolDefinitions = [
   },
   smartHomeTool,
   ...dienstTools,
+  ...kernTools,
   ...jarvisTools, // v1.134.0: Dauer-Wächter, Dokumenten-Wissen, Apple Notizen/Kontakte/Musik
 ];
 
@@ -487,6 +495,10 @@ const ACTLOG = {
 
 // Weitere Werkzeuge mit lesbarem Namen fürs Logbuch.
 const LOGTITEL = {
+  ablauf_speichern: (i) => `Ablauf gemerkt: ${i.name || ""}`,
+  ablauf_bewerten: (i) => `Ablauf ${i.geklappt ? "hat geklappt" : "ging schief"}: ${i.name || ""}`,
+  seele_notiz: (i) => `Seele ergänzt: ${String(i.text || "").slice(0, 80)}`,
+  faehigkeit_erstellen: (i) => `Fähigkeit angelegt: ${i.name || ""}`,
   get_weather: (i) => `Wetter abgefragt${i.city ? `: ${i.city}` : ""}`,
   list_tasks: () => "Aufgaben angesehen",
   list_reminders: () => "Erinnerungen angesehen",
@@ -522,6 +534,14 @@ const LOGBUCH_SELBST = new Set(["spiel_bauen", "anrufe", "werkstatt", "add_task"
 export async function runTool(name, input = {}, wer = {}) {
   if (ACTLOG[name]) { try { store.logActivity(ACTLOG[name][0], ACTLOG[name][1](input), { logbuch: false }); } catch { /* egal */ } }
   const start = Date.now();
+  // Regelwerk (v1.135.0): feste Regeln vor jedem Werkzeug – verboten heißt sofort Schluss (vor der Freigabe-Glocke).
+  if (wer.quelle === "claude" || ["mission", "automation", "modul"].includes(wer.kanal)) {
+    const r = regelwerkPruefe(name, input, wer);
+    if (!r.erlaubt) {
+      gedaechtnisEreignis({ werkzeug: name, kurz: `Gestoppt vom Regelwerk: ${r.grund}`, ok: false, kanal: wer.kanal });
+      return { error: `Vom Regelwerk gestoppt: ${r.grund}`, regelwerk: r.regel };
+    }
+  }
   // Autonomie-Regler + Notfallmodus: Claude und Automatisches dürfen nicht alles sofort.
   if (wer.quelle === "claude" || ["mission", "automation", "modul"].includes(wer.kanal)) {
     const p = pruefeWerkzeug(name, wer.kanal);
@@ -539,8 +559,15 @@ export async function runTool(name, input = {}, wer = {}) {
     throw err;
   }
   logWerkzeug(name, input, wer, result, Date.now() - start);
+  // Gedächtnis-Schublade "Ereignisse": was Friday zuletzt getan hat.
+  if (!NUR_ANZEIGE.has(name)) {
+    const fehler = result && typeof result === "object" && !Array.isArray(result) && result.error;
+    gedaechtnisEreignis({ werkzeug: name, kurz: `${ACTLOG[name] ? ACTLOG[name][1](input || {}) : LOGTITEL[name] ? LOGTITEL[name](input || {}) : name}${fehler ? ` – ${String(result.error).slice(0, 80)}` : ""}`, ok: !fehler, kanal: wer.kanal });
+  }
   return result;
 }
+// Reine Abfragen, die als Ereignis nichts bringen
+const NUR_ANZEIGE = new Set(["get_weather", "list_tasks", "list_reminders", "list_protocols", "iss", "air_quality", "currency", "crypto", "holidays"]);
 
 function logWerkzeug(name, input, wer, result, dauer) {
   if (LOGBUCH_SELBST.has(name)) return;
@@ -558,6 +585,7 @@ function logWerkzeug(name, input, wer, result, dauer) {
 
 async function runToolIntern(name, input = {}, wer = {}) {
   if (istDienstTool(name)) return runDienstTool(name, input);
+  if (istKernTool(name)) return runKernTool(name, input);
   if (istJarvisTool(name)) return runJarvisTool(name, input, wer);
   switch (name) {
     case "world_news": {
@@ -622,7 +650,7 @@ async function runToolIntern(name, input = {}, wer = {}) {
     case "get_weather":
       return getWeather(input.city || config.city);
     case "remember":
-      return store.addMemory(String(input.fact || ""));
+      return faktMerken(String(input.fact || ""), input.schublade);
     case "forget":
       return { geloescht: store.forgetMemory(String(input.query || "")) };
     case "set_reminder": {

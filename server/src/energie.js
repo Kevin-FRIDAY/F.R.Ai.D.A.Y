@@ -4,6 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DATA_DIR } from "./config.js";
+import { buche as deckelBuchen, sparen as deckelSparen } from "./kostendeckel.js";
 
 const FILE = path.join(DATA_DIR, "energie.json");
 // US-Dollar je 1 Mio. Tokens (Eingabe, Ausgabe, Cache schreiben, Cache lesen). Schätzwerte für die Anzeige.
@@ -51,6 +52,7 @@ export function recordUsage(model, usage, quelle = "chat") {
     d.kosten.push({ zeit: new Date().toISOString(), quelle, modell: model, usd: Math.round(usd * 10000) / 10000 });
     if (d.kosten.length > 40) d.kosten.shift();
     save(d);
+    deckelBuchen(usd, quelle); // Kosten-Deckel pro Stunde/Tag (v1.135.0)
   } catch { /* Anzeige ist nicht lebenswichtig */ }
 }
 
@@ -101,5 +103,6 @@ export function getEnergie() {
 
 // Welches Modell das Gehirn gerade nehmen soll.
 export function brainModel(standard) {
-  return getEnergie().zustand === "voll" ? standard : SPAR_MODELL; // knapp oder leer: sparen
+  // knapp oder leer: sparen. Kosten-Deckel fast erreicht (≥ 80 %): ebenfalls sparen.
+  return getEnergie().zustand === "voll" && !deckelSparen() ? standard : SPAR_MODELL;
 }

@@ -448,7 +448,7 @@
     }
     infoAus();
     schlange = [];
-    // v1.135.0: Autos aus Fridays Datenbank → helles Auto-Studio (Seitenansicht, Spiegelboden, Daten).
+    // v1.136.0: Autos aus Fridays Datenbank → helles Auto-Studio (Seitenansicht, Spiegelboden, Daten).
     if (entry.plan?.studio && window.FridayStudio) {
       plan = { titel: entry.plan.titel, kennzahlen: entry.plan.kennzahlen || [], steckbrief: entry.plan.steckbrief, schritte: [] };
       showFacts(plan);
@@ -637,7 +637,7 @@
     ["✈️", "Flugzeug", "bau mir ein Flugzeug"], ["🛩️", "Kampfjet", "bau mir einen Kampfjet"], ["🚁", "Helikopter", "bau mir einen Helikopter"], ["🚀", "Rakete", "bau mir eine Rakete"],
     ["🚢", "Containerschiff", "bau mir ein Containerschiff"], ["🛳️", "Kreuzfahrtschiff", "bau mir ein Kreuzfahrtschiff"], ["🛥️", "Motorboot", "bau mir ein Motorboot"], ["⛵", "Segelboot", "bau mir ein Segelboot"], ["🌊", "U-Boot", "bau mir ein U-Boot"],
   ];
-  // v1.135.0: Auto-Studio – Modellreihen wie auf den TikTok-Bildern (Daten in server/src/autostudio.js).
+  // v1.136.0: Auto-Studio – Modellreihen wie auf den TikTok-Bildern (Daten in server/src/autostudio.js).
   VORLAGEN.unshift(["🏁", "BMW M", "BMW M Modellreihe"], ["🏁", "Mercedes-AMG", "Mercedes-AMG Modellreihe"], ["🏁", "Audi RS", "Audi RS Modellreihe"], ["🏁", "VW R", "Volkswagen R Modellreihe"], ["🏁", "Porsche", "Porsche Modellreihe"]);
   const vorlagenBox = $("werkstatt-vorlagen");
   if (vorlagenBox) {

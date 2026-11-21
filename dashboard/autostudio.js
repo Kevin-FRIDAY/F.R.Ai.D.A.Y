@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Auto-Studio (v1.135.0): Autos wie auf Kevins TikTok-Bildern – Seitenansicht im hellen Studio,
+// F.R.Ai.D.A.Y Auto-Studio (v1.136.0): Autos wie auf Kevins TikTok-Bildern – Seitenansicht im hellen Studio,
 // Spiegelboden, Markenfarben, Daten (Motor, PS, 0–100, Spitze) und ganze Modellreihen zum Vergleichen.
 // Die Autos baut Friday selbst (keine Dateien, kein Claude): Karosserie als Hülle aus Querschnitten,
 // Lack mit Klarlack, getönte Scheiben, Felgen mit Speichen und Bremssätteln in Markenfarbe.
