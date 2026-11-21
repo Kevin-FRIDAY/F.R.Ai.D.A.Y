@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Klang-Bilder (v1.130.0): zu jedem Stimmungs-Sound eine bewegte Szene.
+// F.R.Ai.D.A.Y Klang-Bilder (v1.131.0): zu jedem Stimmungs-Sound eine bewegte Szene.
 // Regen über der Stadt, Gewitter mit Blitzen, Kaminfeuer, Meer im Sonnenuntergang, Wald, Schnee, Café, Zug …
 // Alles wird live auf einer Leinwand (Canvas) gemalt: kein Download, keine fremden Bilder, läuft auch offline.
 // Nutzung: const b = FridayKlangBild.neu(canvas); b.setze("regen"); b.ereignis("blitz"); b.foto(true); b.stop();

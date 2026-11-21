@@ -61,7 +61,7 @@ Sprache: „Friday, widersprich mir: Homeoffice macht faul.“ Auch hier gibt es
 
 ## 🎧 Stimmungs-Sound (Werkzeug-Menü → Friday)
 
-Seit v1.130.0 gibt es **19 Klänge** in sechs Gruppen:
+Seit v1.131.0 gibt es **19 Klänge** in sechs Gruppen:
 - **Wetter:** Regen, Gewitter (mit Donner), Bergwind, Winterwald
 - **Natur:** Wald & Vögel, Regenwald, Sommernacht
 - **Wasser:** Meer, Bach im Wald, Unterwasser

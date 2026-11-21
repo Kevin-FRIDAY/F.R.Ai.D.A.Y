@@ -872,23 +872,47 @@
     </section>
 
     <section id="wissen" class="sheet hidden" aria-label="Fridays Datenbank">
-      <div class="panel sheet-box wissen-box">
-        <header class="sheet-top"><h2>🗄 Fridays Datenbank</h2><button id="wissen-x" class="ghost small">✕</button></header>
-        <div id="wissen-stats" class="wissen-stats"></div>
+      <div class="panel sheet-box wissen-box db-box">
+        <header class="sheet-top db-top">
+          <h2>🗄 Fridays Datenbank</h2>
+          <span id="db-unter" class="db-unter">Lade …</span>
+          <button id="wissen-x" class="ghost small" aria-label="Schließen">✕</button>
+        </header>
+        <div class="db-screen">
+          <div class="db-screen-in">
+            <div class="db-col">
+              <div class="db-h">DATENKERN <span id="db-seit" class="db-klein"></span></div>
+              <div id="wissen-stats" class="db-kacheln"></div>
+              <form id="db-notiz" class="db-notiz" autocomplete="off">
+                <div class="db-h">WISSEN EINTRAGEN</div>
+                <input id="db-notiz-text" type="text" maxlength="4000" placeholder="z. B. WLAN-Passwort steht hinten am Router">
+                <div class="db-notiz-reihe"><input id="db-notiz-tags" type="text" maxlength="120" placeholder="Stichworte (optional)"><button class="chip" type="submit">＋ Speichern</button></div>
+              </form>
+            </div>
+            <div class="db-col db-mitte">
+              <div class="db-h">SPEICHER-KARTE <span id="db-quellen" class="db-klein"></span></div>
+              <svg id="db-karte" class="db-karte" viewBox="0 0 400 300" role="img" aria-label="Quellen der Datenbank"></svg>
+            </div>
+            <div class="db-col">
+              <div class="db-h">AKTIVITÄT 30 TAGE <span id="db-woche" class="db-klein"></span></div>
+              <div id="db-tage" class="db-tage" aria-label="Einträge pro Tag"></div>
+              <div class="db-achse"><span id="db-tag-von"></span><span>heute</span></div>
+              <div class="db-h">HÄUFIGE THEMEN</div>
+              <div id="db-themen" class="db-themen"><span class="muted">–</span></div>
+              <div class="db-h">RÜCKBLICK</div>
+              <div id="db-rueck" class="db-rueck"><span class="muted">–</span></div>
+            </div>
+          </div>
+        </div>
         <div class="wissen-leiste">
           <input id="wissen-q" class="wissen-suche" type="search" placeholder="Alles durchsuchen … z. B. Türkei, Einkauf, Montag" autocomplete="off">
-          <button id="wissen-export" class="chip" type="button" title="Alles als Datei speichern">⬇ Export</button>
+          <button id="wissen-export" class="chip" type="button" title="Alles als JSON-Datei speichern">⬇ JSON</button>
+          <button id="wissen-csv" class="chip" type="button" title="Aktuelle Auswahl als Tabelle (Excel/Numbers)">⬇ Tabelle</button>
         </div>
         <div id="wissen-filter" class="wissen-filter" role="tablist">
           <button type="button" data-typ="" class="active">Alles</button>
-          <button type="button" data-typ="gespraech">💬 Gespräche</button>
-          <button type="button" data-typ="aktion">⚡ Aktionen</button>
-          <button type="button" data-typ="gedaechtnis">🧠 Gemerkt</button>
-          <button type="button" data-typ="aufgabe">✅ Aufgaben</button>
-          <button type="button" data-typ="erinnerung">⏰ Erinnerungen</button>
-          <button type="button" data-typ="einkauf">🛒 Einkauf</button>
-          <button type="button" data-typ="dokument">📄 Dokumente</button>
         </div>
+        <div id="wissen-treffer" class="db-klein db-treffer"></div>
         <div id="wissen-liste" class="wissen-liste"><span class="muted">Lade …</span></div>
         <button id="wissen-mehr" class="chip wissen-mehr hidden" type="button">Ältere laden</button>
       </div>
@@ -1256,6 +1280,7 @@
   <script src="kaufberater.js"></script>
   <script src="gegenrede.js"></script>
   <script src="ideen.js"></script>
+  <script src="datenbank.js"></script>
   <script src="klangbild.js"></script>
   <script src="klangraum.js"></script>
   <script src="lagebild.js"></script>

@@ -6,6 +6,7 @@ import * as store from "./store.js";
 import * as logbuch from "./logbuch.js";
 import { U } from "./datum.js";
 import { denke } from "./denker.js";
+import * as ausbau from "./friday-ausbau.js";
 
 const neueId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const pick = (l) => l[Math.floor(Math.random() * l.length)];
@@ -15,6 +16,7 @@ export const BEREICHE = {
   kreativ: { name: "Kreativität", icon: "🎨" },
   nische: { name: "Nischen-Business", icon: "💼" },
   technik: { name: "Technik", icon: "🛠" },
+  friday: { name: "Für Friday", icon: "🤖" },
 };
 // [Bereich, Titel, Pitch, erster Schritt, Startkosten]
 const SAMEN = [
@@ -46,6 +48,10 @@ const PROBLEM = ["vergessen ständig Termine", "werfen zu viel Essen weg", "verl
 const FORM = ["einen Abo-Service", "eine einfache App", "einen Vor-Ort-Service", "ein Bastel-Set", "einen Kurs", "eine Vorlage zum Ausdrucken", "einen Friday-Agenten", "ein Wochenend-Angebot"];
 
 export function wuerfeln(bereich = "") {
+  if (bereich === "friday") {
+    const v = ausbau.zufall();
+    return { bereich: "friday", titel: v.titel, pitch: v.pitch, schritt: v.sprache && v.sprache !== "–" ? `Danach sagst du: „${v.sprache}“. Voraussetzung: ${v.braucht}.` : `Voraussetzung: ${v.braucht}.`, kosten: v.kosten, ausbau: v.id };
+  }
   const pool = SAMEN.filter((x) => !bereich || x[0] === bereich);
   if (Math.random() < 0.2 || !pool.length) {
     const fuer = pick(FUER), prob = pick(PROBLEM), form = pick(FORM);
@@ -111,11 +117,18 @@ export async function ausarbeiten({ titel = "", text = "" }) {
 // ---------- Sprache ----------
 const OEFFNEN = U(/^(öffne|oeffne|zeig|zeige|starte)( mir)?( die| den| das)? (ideen-schmiede|ideenschmiede|ideen schmiede|ideen-tresor|ideentresor|meine ideen)\b/);
 const WUERFEL = U(/\b(gib|nenn|sag|hast du|brauche|würfel|wuerfel)( mir)?( mal)? (eine |ne |n )?(neue |gute |coole |verrückte |verrueckte )?(start-?up-?idee|startup idee|geschäftsidee|geschaeftsidee|business-?idee|idee|projektidee|nischen-?idee|bastelidee|technik-?idee)( für| fuer| zum| im)? ?(alltag|kreativität|kreativitaet|nische|nischen-business|technik)?\b/);
+const AUSBAU = U(/\b(was (kann|könnte|koennte|sollte) (man|ich) (bei dir|in friday|dir) (noch )?(einbauen|einbinden|bauen|ergänzen|ergaenzen|verbessern)|wie kann (ich|man) dich (erweitern|verbessern|ausbauen)|(schlag|schlage|nenn) (mir )?(eine |ne )?(neue )?(funktion|erweiterung|verbesserung|einbindung) (für|fuer) dich( vor)?|(öffne|oeffne|zeig)( mir)?( den)? (friday-?)?(bauplan|ausbau)|friday ausbauen)\b/);
 const MERKEN = U(/^(?:merk dir|speicher|notier) (?:die |eine |meine )?(?:idee|geschäftsidee|geschaeftsidee)[,:]? (.{6,})$/);
 
 export function quickCommand(text) {
   const t = String(text || "").replace(/^(hey |hallo |ok )?(friday|freitag)[ ,.]*/i, "").trim();
   const k = t.toLowerCase();
+  if (AUSBAU.test(k)) {
+    const a = ausbau.ausbau();
+    const v = a.vorschlaege.find((x) => x.id === a.passend[0]) || ausbau.zufall();
+    const grund = a.passend[0] ? ` Das passt zu dir, du hast ${v.passt}-mal danach gefragt.` : "";
+    return { answer: `Mein Vorschlag: ${v.titel}. ${v.pitch}${grund} Im Bauplan stehen ${a.zahlen.offen} Ideen für mich.`, actions: ["ideen:ausbau"] };
+  }
   if (OEFFNEN.test(k)) return { answer: "Die Ideen-Schmiede ist offen. Soll ich würfeln oder prüfen wir deine Idee?", actions: ["ideen"] };
   let m = k.match(MERKEN);
   if (m) {
