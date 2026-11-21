@@ -61,18 +61,35 @@ Sprache: „Friday, widersprich mir: Homeoffice macht faul.“ Auch hier gibt es
 
 ## 🎧 Stimmungs-Sound (Werkzeug-Menü → Friday)
 
-Es gibt acht Klänge: Regen, Meer, Wald, Kaminfeuer, Fokus-Rauschen, Sommernacht, Weltraum und Energie-Puls. Sie werden live erzeugt, ohne Download und ohne Guthaben. Während Friday spricht, wird es automatisch leiser.
+Seit v1.129.0 gibt es **19 Klänge** in sechs Gruppen:
+- **Wetter:** Regen, Gewitter (mit Donner), Bergwind, Winterwald
+- **Natur:** Wald & Vögel, Regenwald, Sommernacht
+- **Wasser:** Meer, Bach im Wald, Unterwasser
+- **Gemütlich:** Kaminfeuer, Café, Zugfahrt
+- **Fokus & Ruhe:** Fokus-Rauschen, Klangschale, Herzschlag
+- **Sci-Fi:** Weltraum, Raumschiff-Brücke, Energie-Puls
+
+Alle Klänge werden live erzeugt, ohne Download und ohne Guthaben. Während Friday spricht, wird es automatisch leiser.
+
+**Bild zum Klang:** Oben im Fenster läuft zu jedem Klang eine bewegte Szene: Regen über der Stadt, Blitze beim Gewitter (genau dann, wenn es donnert), ein knisterndes Kaminfeuer, Wellen im Sonnenuntergang, Schnee im Winterwald und so weiter.
+- **📷 Echtes Foto:** zeigt statt der Animation ein echtes Foto (nur frei lizenzierte Bilder von Openverse, mit Fotograf und Lizenz). Bei Regen, Gewitter und Schnee fallen die Tropfen oder Flocken live darüber. **↻** zeigt ein anderes Foto.
+- **Wo regnet es gerade?** Bei Regen, Gewitter und Winterwald zeigt Friday, in welchen von 48 Städten weltweit es gerade regnet, gewittert oder schneit (Wetter von Open-Meteo). Tipp auf eine Stadt, dann kommt ein Foto aus dieser Stadt.
+- **⛶** zeigt die Szene im Vollbild, zum Beispiel das Kaminfeuer auf dem Fernseher. Esc oder ✕ schließt.
+
+**Schlaf-Timer:** 15, 30 oder 60 Minuten, danach blendet Friday den Klang aus.
 
 **Automatik:** Friday passt den Klang an das an, was du **in Friday** machst:
 - Spiele-Werkstatt → Energie-Puls
 - Weltgeschehen → Weltraum
+- System-Zentrale / Fridays Gehirn → Raumschiff-Brücke
+- Routen → Zugfahrt
+- Ideen-Schmiede → Café
 - Kühlschrank → Kaminfeuer
-- Fragen zu Code → Fokus
-- Fragen zur Reise → Meer
+- Fragen zu Code → Fokus, zur Reise → Meer, zu Meditation → Klangschale
 
 Was du außerhalb von Friday machst, liest sie nicht mit.
 
-Sprache: „Spiel Regen“, „Fokus-Sound“, „Stimmungs-Sound automatisch“, „Sound aus“.
+Sprache: „Spiel Gewitter“, „Kaminfeuer“, „Spiel Café-Geräusche“, „Wo regnet es gerade?“, „Wo schneit es?“, „Stimmungs-Sound automatisch“, „Sound aus“.
 
 ## 💡 Ideen-Schmiede (Werkzeug-Menü → Erschaffen)
 
