@@ -523,6 +523,43 @@
     detailUmriss?.bringToFront();
     document.querySelectorAll("#lage-dm-stil button").forEach((b) => b.classList.toggle("active", b.dataset.stil === stil));
   }
+  // v1.133.0: Länder über der Datumsgrenze (Russland, Fidschi, USA/Alaska-Inseln): Die Kartendaten springen
+  // dort von +180° auf −180°. Leaflet/MapLibre zeichnen diesen Sprung als waagerechte Linie quer über die Karte.
+  // Darum jeden Ring "durchgehend" machen (179 → 181 statt 179 → −179) und neben die Landesmitte schieben.
+  function ohneDatumsgrenze(f, mitteLon) {
+    const g = f?.geometry;
+    if (!g || (g.type !== "Polygon" && g.type !== "MultiPolygon")) return f;
+    const ring = (r) => {
+      const out = [];
+      let versatz = 0, vorher = null;
+      for (const [lon, lat] of r) {
+        if (vorher !== null) {
+          const d = lon + versatz - vorher;
+          if (d > 180) versatz -= 360;
+          else if (d < -180) versatz += 360;
+        }
+        vorher = lon + versatz;
+        out.push([vorher, lat]);
+      }
+      // Ring um den Pol (Antarktis): lässt sich nicht flach schließen → unverändert lassen
+      if (out.length > 1 && Math.abs(out[0][0] - out[out.length - 1][0]) > 180) return r;
+      let mittel = 0;
+      for (const p of out) mittel += p[0];
+      mittel /= out.length;
+      let schub = 0;
+      while (mittel + schub - mitteLon > 180) schub -= 360;
+      while (mittel + schub - mitteLon < -180) schub += 360;
+      return schub ? out.map(([x, y]) => [x + schub, y]) : out;
+    };
+    const poly = (p) => p.map(ring);
+    const coordinates = g.type === "Polygon" ? poly(g.coordinates) : g.coordinates.map(poly);
+    return { type: "Feature", id: f.id, properties: f.properties || {}, geometry: { type: g.type, coordinates } };
+  }
+  function landMitteLon(f) {
+    const teil = hauptteil(f);
+    try { return d3geo.geoCentroid(teil || f)[0]; } catch { return 0; }
+  }
+  window.FridayDatumsgrenze = ohneDatumsgrenze;
   let leicht = false; // v1.121.3: Welt-Runde auf dem Handy: ohne Detailkarte, Schiffe und Flugzeuge (spart Speicher)
   async function detailAn(id, teil, mitte) {
     if (!detailErlaubt() || leicht) return;
@@ -544,7 +581,8 @@
       }
       detailMap.invalidateSize();
       if (detailUmriss) { detailMap.removeLayer(detailUmriss); detailUmriss = null; }
-      const ganz = landFeature(id);
+      const roh = landFeature(id);
+      const ganz = roh ? ohneDatumsgrenze(roh, mitte?.[0] ?? landMitteLon(roh)) : null;
       if (ganz) detailUmriss = L.geoJSON(ganz, { interactive: false, style: { color: "#ff8a1e", weight: 2.5, opacity: 0.95, fill: false } }).addTo(detailMap);
       let grenzen = null;
       if (teil) {
@@ -593,7 +631,10 @@
     landWaehlen: (id) => select(id),
     // Detailkarte (Leaflet) + Umriss des gewählten Landes – für das 3D-Gelände (gelaende.js)
     detailKarte: () => detailMap,
-    detailUmriss: () => (selected ? landFeature(selected) : null),
+    detailUmriss: () => {
+      const f = selected ? landFeature(selected) : null;
+      return f ? ohneDatumsgrenze(f, landMitteLon(f)) : null;
+    },
   };
 
   function flyToWorld() {
