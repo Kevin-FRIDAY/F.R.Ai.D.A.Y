@@ -3563,7 +3563,7 @@ html.perf-fluessig .lp-p-brenn .lp-welle, html.perf-fluessig .lp-p-notflug .lp-p
 }
 html.perf-fluessig .st-kabel.an, html.perf-fluessig .st-knoten.run .st-ring { animation: none; }
 
-/* ---------- v1.134.0 Auto-Studio (Werkstatt): helles Studio, Spiegelboden, Daten wie auf den TikTok-Bildern ---------- */
+/* ---------- v1.135.0 Auto-Studio (Werkstatt): helles Studio, Spiegelboden, Daten wie auf den TikTok-Bildern ---------- */
 .autostudio { position: absolute; inset: 0; z-index: 20; background: #e8eaed; color: #111318; overflow: hidden; font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif; }
 .autostudio.hidden { display: none; }
 .as-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }

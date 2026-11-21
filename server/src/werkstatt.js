@@ -132,7 +132,7 @@ function planVorlage(text, art, opt = {}, grund = "") {
   return { ok: true, ...job };
 }
 
-// v1.134.0 Auto-Studio: Autos aus Fridays Datenbank (server/src/autostudio.js) im hellen Studio.
+// v1.135.0 Auto-Studio: Autos aus Fridays Datenbank (server/src/autostudio.js) im hellen Studio.
 // Einzelnes Auto: gibt es ein echtes 3D-Modell (eigene Bibliothek oder Sketchfab-Schlüssel), zeigt das Studio
 // zuerst Fridays eigenes Modell und tauscht es gegen das echte, sobald es geladen ist.
 const modellInfo = (m, laenge) => ({ id: m.id, name: m.name, autor: m.autor || "", lizenz: m.lizenz || "", link: m.link || "", quelle: m.quelle || "", laenge });
@@ -163,7 +163,7 @@ export function quickCommand(text) {
     const r = planHaus(String(text).trim().slice(0, 1000));
     return { answer: "Einen Moment, Chef.", actions: ["werkstatt"], titel: r.plan.titel };
   }
-  // v1.134.0: "Friday, zeig mir die BMW-M-Modelle" / "bau mir einen RS 6" → Auto-Studio, ohne Claude.
+  // v1.135.0: "Friday, zeig mir die BMW-M-Modelle" / "bau mir einen RS 6" → Auto-Studio, ohne Claude.
   const auto = istStudioBefehl(text);
   if (auto) {
     const r = planStudio(String(text).trim().slice(0, 1000), auto);

@@ -1,4 +1,4 @@
-# 43 · Auto-Studio in der Werkstatt (v1.134.0)
+# 43 · Auto-Studio in der Werkstatt (v1.135.0)
 
 Friday zeigt Autos so wie auf den bekannten Vergleichsbildern: **Seitenansicht im hellen Studio,
 Spiegelboden, Markenfarben und die Daten** (Motor, PS, 0–100 km/h, Spitze). Ganz ohne Claude-Guthaben.

@@ -25,7 +25,7 @@ VPY="$DEST/.venv/bin/python"
 "$VPY" -m pip install -q --upgrade pip
 
 echo "Installiere ffmpeg, PyTorch und Kursdaten (das dauert ein paar Minuten) …"
-"$VPY" -m pip install -q imageio-ffmpeg torch numpy pandas einops huggingface_hub safetensors tqdm yfinance certifi
+"$VPY" -m pip install -q imageio-ffmpeg torch numpy pandas einops huggingface_hub safetensors tqdm yfinance certifi pypdf
 
 echo "Installiere Whisper (Transkript) …"
 if [ "$(uname -m)" = "arm64" ]; then

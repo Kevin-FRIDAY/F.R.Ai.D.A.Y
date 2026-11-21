@@ -273,6 +273,209 @@ async function osaFile(script, args, timeout) {
 }
 const zeitArgs = (z) => (z = z || {}, [zahl(z.y, 2000, 2100, 2026), zahl(z.m, 1, 12, 1), zahl(z.d, 1, 31, 1), zahl(z.h, 0, 23, 9), zahl(z.mi, 0, 59, 0)]);
 
+
+// ---------- v1.134.0: Apple Notizen, Kontakte, Musik (Idee aus OpenJarvis) ----------
+// Wie beim Kalender: Texte gehen als argv an AppleScript, nie in den Code. Zeiten als Sekunden ab heute 0:00.
+const NOTIZEN_LISTE = `
+on run argv
+  set RS to character id 30
+  set US to character id 31
+  set basis to current date
+  set time of basis to 0
+  set out to ""
+  tell application "Notes"
+    set ns to name of every note
+    set ids to id of every note
+    set ds to modification date of every note
+    repeat with i from 1 to count of ns
+      set out to out & (item i of ns) & US & (item i of ids) & US & (((item i of ds) - basis) as integer as text) & RS
+    end repeat
+  end tell
+  return out
+end run`;
+
+const NOTIZEN_SUCHEN = `
+on run argv
+  set q to item 1 of argv
+  set RS to character id 30
+  set US to character id 31
+  set basis to current date
+  set time of basis to 0
+  set out to ""
+  set n to 0
+  tell application "Notes"
+    try
+      set treffer to (every note whose plaintext contains q)
+    on error
+      set treffer to (every note whose name contains q)
+    end try
+    repeat with nt in treffer
+      set n to n + 1
+      if n > 15 then exit repeat
+      set t to plaintext of nt
+      if (length of t) > 1500 then set t to text 1 thru 1500 of t
+      set out to out & (name of nt) & US & (id of nt) & US & (((modification date of nt) - basis) as integer as text) & US & t & RS
+    end repeat
+  end tell
+  return out
+end run`;
+
+const NOTIZ_LESEN = `
+on run argv
+  set nid to item 1 of argv
+  tell application "Notes"
+    set nt to note id nid
+    set t to plaintext of nt
+    if (length of t) > 20000 then set t to text 1 thru 20000 of t
+    return (name of nt) & (character id 31) & t
+  end tell
+end run`;
+
+const NOTIZ_NEU = `
+on run argv
+  set b to item 1 of argv
+  set fn to item 2 of argv
+  tell application "Notes"
+    set ziel to missing value
+    if fn is not "" then
+      try
+        set ziel to folder fn
+      end try
+    end if
+    if ziel is missing value then set ziel to default folder of default account
+    set nt to make new note at ziel with properties {body:b}
+    return (name of ziel)
+  end tell
+end run`;
+
+const KONTAKTE_SUCHEN = `
+on run argv
+  set q to item 1 of argv
+  set RS to character id 30
+  set US to character id 31
+  set GS to character id 29
+  set out to ""
+  set n to 0
+  tell application "Contacts"
+    try
+      set treffer to (every person whose name contains q or nickname contains q or organization contains q)
+    on error
+      set treffer to (every person whose name contains q)
+    end try
+    repeat with p in treffer
+      set n to n + 1
+      if n > 12 then exit repeat
+      set tel to ""
+      repeat with x in phones of p
+        set tel to tel & (label of x as text) & ": " & (value of x) & GS
+      end repeat
+      set em to ""
+      repeat with x in emails of p
+        set em to em & (value of x) & GS
+      end repeat
+      set gb to ""
+      try
+        set d to birth date of p
+        if d is not missing value then set gb to ((year of d) as text) & "-" & ((month of d as integer) as text) & "-" & ((day of d) as text)
+      end try
+      set org to ""
+      try
+        set org to organization of p
+        if org is missing value then set org to ""
+      end try
+      set nn to ""
+      try
+        set nn to nickname of p
+        if nn is missing value then set nn to ""
+      end try
+      set out to out & (name of p) & US & tel & US & em & US & gb & US & org & US & nn & RS
+    end repeat
+  end tell
+  return out
+end run`;
+
+const KONTAKTE_GEBURTSTAGE = `
+on run argv
+  set RS to character id 30
+  set US to character id 31
+  set out to ""
+  tell application "Contacts"
+    set ps to (every person whose birth date is not missing value)
+    repeat with p in ps
+      set d to birth date of p
+      set out to out & (name of p) & US & ((year of d) as text) & "-" & ((month of d as integer) as text) & "-" & ((day of d) as text) & RS
+    end repeat
+  end tell
+  return out
+end run`;
+
+const MUSIK_STATUS = `
+on run argv
+  set US to character id 31
+  if not (application "Music" is running) then return "stopped"
+  tell application "Music"
+    set st to player state as text
+    if st is "stopped" then return st
+    set t to current track
+    return st & US & (name of t) & US & (artist of t) & US & (album of t) & US & ((shuffle enabled) as text)
+  end tell
+end run`;
+
+const MUSIK_PLAYLISTS = `
+on run argv
+  set RS to character id 30
+  set out to ""
+  tell application "Music"
+    repeat with p in (every user playlist)
+      set out to out & (name of p) & RS
+    end repeat
+  end tell
+  return out
+end run`;
+
+const MUSIK_PLAYLIST_SPIELEN = `
+on run argv
+  set q to item 1 of argv
+  tell application "Music"
+    set ps to (every user playlist whose name is q)
+    if (count of ps) is 0 then set ps to (every user playlist whose name contains q)
+    if (count of ps) is 0 then error "Keine Playlist mit diesem Namen"
+    set p to item 1 of ps
+    play p
+    return name of p
+  end tell
+end run`;
+
+const MUSIK_SUCHEN_SPIELEN = `
+on run argv
+  set q to item 1 of argv
+  set RS to character id 30
+  set US to character id 31
+  tell application "Music"
+    set ts to search playlist "Library" for q
+    if (count of ts) is 0 then error "Nichts in deiner Musik gefunden"
+    play item 1 of ts
+    set out to ""
+    set n to 0
+    repeat with t in ts
+      set n to n + 1
+      if n > 8 then exit repeat
+      set out to out & (name of t) & US & (artist of t) & RS
+    end repeat
+    return out
+  end tell
+end run`;
+
+const MUSIK_ZUFALL = `
+on run argv
+  tell application "Music"
+    set shuffle enabled to ((item 1 of argv) is "1")
+    return (shuffle enabled) as text
+  end tell
+end run`;
+
+const htmlEsc = (s) => String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
 const actions = {
   async open_app({ value }) {
     await run("open", ["-a", value]);
@@ -452,6 +655,73 @@ const actions = {
     if (!zielOk(an)) throw new Error("Ungültige Nummer");
     await run("open", [`facetime-audio://${encodeURIComponent(an).replace(/%2B/g, "+").replace(/%40/g, "@")}`]);
     return "Anruf gestartet";
+  },
+  // v1.134.0: Apple Notizen
+  async notizen_liste({ value }) {
+    const v = jsonVal(value);
+    const out = await osaFile(NOTIZEN_LISTE, [], 60000);
+    const alle = zeilen(out).map(([name, id, s]) => ({ name, id, s: Number(s) }));
+    alle.sort((a, b) => b.s - a.s);
+    return { notizen: alle.slice(0, zahl(v.anzahl, 1, 200, 30)), gesamt: alle.length };
+  },
+  async notizen_suchen({ value }) {
+    const q = String(jsonVal(value).text || "").trim().slice(0, 100);
+    if (!q) throw new Error("Wonach soll ich suchen?");
+    const out = await osaFile(NOTIZEN_SUCHEN, [q], 60000);
+    return { notizen: zeilen(out).map(([name, id, s, text]) => ({ name, id, s: Number(s), text })) };
+  },
+  async notiz_lesen({ value }) {
+    const id = String(jsonVal(value).id || "");
+    if (!/^x-coredata:\/\//.test(id)) throw new Error("Ungültige Notiz");
+    const out = await osaFile(NOTIZ_LESEN, [id], 30000);
+    const [name, ...rest] = out.split(US);
+    return { name, text: rest.join(US) };
+  },
+  async notiz_neu({ value }) {
+    const v = jsonVal(value);
+    const titel = String(v.titel || "").trim().slice(0, 200);
+    const text = String(v.text || "").trim().slice(0, 20000);
+    if (!titel && !text) throw new Error("Leere Notiz");
+    const body = `<div><h1>${htmlEsc(titel || text.split("\n")[0].slice(0, 60))}</h1></div>${text.split("\n").map((z) => `<div>${htmlEsc(z) || "<br>"}</div>`).join("")}`;
+    const ordner = await osaFile(NOTIZ_NEU, [body, String(v.ordner || "").slice(0, 80)], 30000);
+    return { ordner };
+  },
+  // v1.134.0: Apple Kontakte
+  async kontakte_suchen({ value }) {
+    const q = String(jsonVal(value).name || "").trim().slice(0, 80);
+    if (!q) throw new Error("Wen soll ich suchen?");
+    const GS = String.fromCharCode(29);
+    const out = await osaFile(KONTAKTE_SUCHEN, [q], 45000);
+    return { kontakte: zeilen(out).map(([name, tel, em, gb, org, spitz]) => ({ name, telefon: String(tel || "").split(GS).filter(Boolean), email: String(em || "").split(GS).filter(Boolean), geburtstag: gb || "", firma: org || "", spitzname: spitz || "" })) };
+  },
+  async kontakte_geburtstage() {
+    const out = await osaFile(KONTAKTE_GEBURTSTAGE, [], 60000);
+    return { geburtstage: zeilen(out).map(([name, gb]) => ({ name, geburtstag: gb })) };
+  },
+  // v1.134.0: Apple Musik (Music-App)
+  async musik_status() {
+    const out = await osaFile(MUSIK_STATUS, [], 15000);
+    const [zustand, titel, kuenstler, album, zufall] = out.split(US);
+    return { zustand, titel: titel || "", kuenstler: kuenstler || "", album: album || "", zufall: zufall === "true" };
+  },
+  async musik_playlists() {
+    const out = await osaFile(MUSIK_PLAYLISTS, [], 30000);
+    return { playlists: out.split(RS).filter(Boolean) };
+  },
+  async musik_playlist({ value }) {
+    const q = String(jsonVal(value).name || "").trim().slice(0, 100);
+    if (!q) throw new Error("Welche Playlist?");
+    return { playlist: await osaFile(MUSIK_PLAYLIST_SPIELEN, [q], 30000) };
+  },
+  async musik_suchen({ value }) {
+    const q = String(jsonVal(value).text || "").trim().slice(0, 100);
+    if (!q) throw new Error("Was soll ich spielen?");
+    const out = await osaFile(MUSIK_SUCHEN_SPIELEN, [q], 45000);
+    return { titel: zeilen(out).map(([name, kuenstler]) => ({ name, kuenstler })) };
+  },
+  async musik_zufall({ value }) {
+    const an = jsonVal(value).an !== false;
+    return { zufall: (await osaFile(MUSIK_ZUFALL, [an ? "1" : "0"], 15000)) === "true" };
   },
   async screenshot_look() {
     const file = path.join(os.tmpdir(), `friday-${Date.now()}.jpg`);
