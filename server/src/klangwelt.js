@@ -1,4 +1,4 @@
-// Klangwelt (v1.129.0): Sprachbefehle für den Stimmungs-Sound, echte Fotos zu jedem Klang
+// Klangwelt (v1.130.0): Sprachbefehle für den Stimmungs-Sound, echte Fotos zu jedem Klang
 // (nur frei lizenzierte Bilder über Openverse) und "Wo regnet es gerade?" (Open-Meteo, ohne Schlüssel).
 // Der Klang selbst und die bewegten Szenen entstehen im Browser (dashboard/klangraum.js + klangbild.js).
 import { U } from "./datum.js";

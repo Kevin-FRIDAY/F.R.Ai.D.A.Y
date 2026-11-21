@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Stimmungs-Sound (v1.106.0, erweitert in v1.129.0)
+// F.R.Ai.D.A.Y Stimmungs-Sound (v1.106.0, erweitert in v1.130.0)
 // 19 Klänge (Regen, Gewitter, Meer, Wald, Bach, Schnee, Wind, Kamin, Café, Zug, Unterwasser, Dschungel, Klangschale,
 // Herzschlag, Raumschiff-Brücke, Fokus, Sommernacht, Weltraum, Energie-Puls) – alles live im Browser erzeugt
 // (Web Audio, keine Downloads, kein Guthaben). Zu jedem Klang eine bewegte Szene (klangbild.js) oder auf Wunsch
