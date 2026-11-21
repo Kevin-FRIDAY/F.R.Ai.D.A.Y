@@ -61,6 +61,7 @@ import { flugzeugeRouten } from "./flugzeuge.js";
 import { welttourRouten } from "./welttour.js";
 import { osirisStatus } from "./osiris.js";
 import { eveRouten } from "./eve.js";
+import { appsRouten } from "./appzentrale.js";
 import { eveWeiterleitung, eveStarten } from "./eve-prozess.js";
 import { eveSchutzAn } from "./eve-schutz.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
@@ -686,6 +687,7 @@ zentraleRouten(app, asyncRoute);
 helferRouten(app, asyncRoute);
 // Eve – Testversion von Friday (v1.137.0): Schloss für neue Funktionen + Wünsche an Claude.
 eveRouten(app, asyncRoute);
+appsRouten(app, asyncRoute);
 wacheRouten(app, asyncRoute);
 // Kontrollraum (v1.135.0): Regelwerk, Schleifen-Schutz, Gedächtnis, Herzschlag, Kosten-Deckel, Seele, Fähigkeiten, Änderungen.
 kernRouten(app, asyncRoute);

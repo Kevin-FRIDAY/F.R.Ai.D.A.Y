@@ -474,6 +474,55 @@ on run argv
   end tell
 end run`;
 
+// ---------- v1.139.0: App-Zentrale (Fotos, Kurzbefehle, Google Drive, OneDrive) ----------
+const FOTOS_INFO = `
+on run argv
+  set RS to (ASCII character 30)
+  tell application "Photos"
+    set n to count of media items
+    set out to (n as text) & RS
+    set i to 0
+    repeat with a in albums
+      set i to i + 1
+      if i > 40 then exit repeat
+      set out to out & (name of a) & RS
+    end repeat
+  end tell
+  return out
+end run`;
+// Google Drive und OneDrive legen ihre Ordner auf dem Mac unter ~/Library/CloudStorage ab (ältere Versionen direkt im Home-Ordner).
+function cloudWurzeln(dienst) {
+  const home = os.homedir();
+  const cs = path.join(home, "Library", "CloudStorage");
+  const muster = dienst === "onedrive" ? /^OneDrive/i : /^GoogleDrive/i;
+  const alt = dienst === "onedrive" ? ["OneDrive"] : ["Google Drive", "My Drive"];
+  const liste = [];
+  try { for (const n of fs.readdirSync(cs)) if (muster.test(n)) liste.push(path.join(cs, n)); } catch { /* Ordner fehlt */ }
+  for (const n of alt) { const p = path.join(home, n); try { if (fs.statSync(p).isDirectory()) liste.push(p); } catch { /* fehlt */ } }
+  return liste;
+}
+function neuesteDateien(wurzel, max = 15) {
+  const dateien = [];
+  let geprueft = 0;
+  const gehe = (dir, tiefe) => {
+    if (tiefe > 3 || geprueft > 3000) return;
+    let eintraege = [];
+    try { eintraege = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
+    for (const e of eintraege) {
+      if (e.name.startsWith(".") || ++geprueft > 3000) continue;
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) gehe(p, tiefe + 1);
+      else if (e.isFile()) { try { const st = fs.statSync(p); dateien.push({ name: e.name, ordner: path.relative(wurzel, dir) || "", groesse: st.size, geaendert: st.mtimeMs }); } catch { /* weg */ } }
+    }
+  };
+  gehe(wurzel, 0);
+  return dateien.sort((a, b) => b.geaendert - a.geaendert).slice(0, max);
+}
+async function kurzbefehlNamen() {
+  const out = await run("shortcuts", ["list"], 20000);
+  return out.split("\n").map((z) => z.trim()).filter(Boolean);
+}
+
 const htmlEsc = (s) => String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 const actions = {
@@ -718,6 +767,35 @@ const actions = {
     if (!q) throw new Error("Was soll ich spielen?");
     const out = await osaFile(MUSIK_SUCHEN_SPIELEN, [q], 45000);
     return { titel: zeilen(out).map(([name, kuenstler]) => ({ name, kuenstler })) };
+  },
+  async fotos_info() {
+    const teile = String(await osaFile(FOTOS_INFO, [], 90000)).split(RS).filter((x) => x.length);
+    return { anzahl: Number(teile[0]) || 0, alben: teile.slice(1) };
+  },
+  async kurzbefehle_liste() {
+    const namen = await kurzbefehlNamen();
+    return { kurzbefehle: namen.slice(0, 300), gesamt: namen.length };
+  },
+  async kurzbefehl_ausfuehren({ value }) {
+    const name = String(jsonVal(value).name || "").trim();
+    if (!name) throw new Error("Welcher Kurzbefehl?");
+    // Nur Kurzbefehle, die es wirklich gibt (kein beliebiger Text an die Kommandozeile).
+    if (!(await kurzbefehlNamen()).includes(name)) throw new Error(`Den Kurzbefehl „${name}“ gibt es auf dem Mac nicht.`);
+    const out = await run("shortcuts", ["run", name], 120000);
+    return { name, ausgabe: String(out || "").slice(0, 2000) };
+  },
+  async cloud_ordner({ value }) {
+    const dienst = jsonVal(value).dienst === "onedrive" ? "onedrive" : "gdrive";
+    const wurzeln = cloudWurzeln(dienst);
+    if (!wurzeln.length) return { gefunden: false, ordner: [], dateien: [] };
+    return { gefunden: true, ordner: wurzeln.map((w) => path.basename(w)), dateien: neuesteDateien(wurzeln[0]) };
+  },
+  async cloud_oeffnen({ value }) {
+    const dienst = jsonVal(value).dienst === "onedrive" ? "onedrive" : "gdrive";
+    const w = cloudWurzeln(dienst)[0];
+    if (!w) throw new Error(dienst === "onedrive" ? "OneDrive ist auf diesem Mac nicht eingerichtet." : "Google Drive ist auf diesem Mac nicht eingerichtet.");
+    await run("open", [w]);
+    return { geoeffnet: path.basename(w) };
   },
   async musik_zufall({ value }) {
     const an = jsonVal(value).an !== false;

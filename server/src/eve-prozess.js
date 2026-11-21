@@ -11,6 +11,7 @@ import http from "node:http";
 import { spawn } from "node:child_process";
 import { config, ROOT, FRIDAY_DATA_DIR, IST_EVE } from "./config.js";
 import { eintragen } from "./logbuch.js";
+import { isAgentOnline, getAgentInfo, sendToAgent, EVE_LESEN } from "./agent-hub.js";
 
 export const EVE_DATEN = path.join(FRIDAY_DATA_DIR, "eve-daten");
 const EVE_HOME = path.join(os.homedir(), "Friday-Eve");
@@ -65,6 +66,18 @@ export function eveStarten() {
     },
   });
   zustand = { ...zustand, laeuft: true, seit: new Date().toISOString(), fehler: "", kopiert: kopiertAm() };
+  // v1.139.0: Eve darf über Friday am Mac LESEN (Kalender, Fotos, Kurzbefehle-Liste …), nie etwas auslösen.
+  const meldeMac = () => { try { kind?.connected && kind.send({ typ: "agent_status", online: isAgentOnline(), info: getAgentInfo() }); } catch { /* Eve startet noch */ } };
+  const macTakt = setInterval(meldeMac, 3000);
+  setTimeout(meldeMac, 1500);
+  kind.on("message", async (m) => {
+    if (m?.typ !== "agent_lesen" || typeof m.id !== "string") return;
+    const antwort = EVE_LESEN.has(m.action)
+      ? await sendToAgent(m.action, m.params || {}, Math.min(130000, Math.max(1000, Number(m.timeoutMs) || 20000)))
+      : { ok: false, error: "In Eve nicht erlaubt." };
+    try { kind?.connected && kind.send({ typ: "agent_antwort", id: m.id, antwort }); } catch { /* Eve weg */ }
+  });
+  kind.on("exit", () => clearInterval(macTakt));
   kind.on("exit", (code) => {
     kind = null;
     zustand.laeuft = false;
