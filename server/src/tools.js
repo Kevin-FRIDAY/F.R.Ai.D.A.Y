@@ -27,6 +27,8 @@ import { istDienstTool, runDienstTool } from "./dienste.js";
 import { command as haCommand } from "./homeassistant.js";
 import { routeFuerClaude } from "./routen.js";
 import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } from "./extras.js";
+import { toolDefinitions as jarvisTools, istJarvisTool, runJarvisTool } from "./jarvis-paket.js";
+import { gesundheitUebersicht } from "./apple.js";
 
 // Osiris Live-Lagekarte: lokal auf dem Mac (Port 3100), sonst automatisch osirisai.live.
 import { osirisUrl } from "./osiris.js";
@@ -255,7 +257,7 @@ export const toolDefinitions = [
   },
   {
     name: "get_health",
-    description: "Liest die zuletzt vom iPhone übermittelten Gesundheitsdaten (Schritte, Schlaf, Puls).",
+    description: "Liest die Gesundheitsdaten vom iPhone (Schritte, Schlaf, Ruhepuls, Kalorien, Training, Gewicht): die letzten Werte, Wochenschnitt und den Verlauf der letzten Tage.",
     input_schema: { type: "object", properties: {} },
   },
   {
@@ -336,6 +338,7 @@ export const toolDefinitions = [
   },
   smartHomeTool,
   ...dienstTools,
+  ...jarvisTools, // v1.134.0: Dauer-Wächter, Dokumenten-Wissen, Apple Notizen/Kontakte/Musik
 ];
 
 // --- Wetter (Open-Meteo, kostenlos, kein Schlüssel nötig) ---
@@ -502,6 +505,11 @@ const LOGTITEL = {
   dokument_erstellen: (i) => `Dokument erstellt: ${i.titel || ""}`,
   fragebogen_erstellen: (i) => `Fragebogen erstellt: ${i.titel || ""}`,
   system_check: () => "System-Check gemacht",
+  dokumente_suchen: (i) => `Dokumente durchsucht: ${i.frage || ""}`,
+  dauer_waechter: (i) => `Dauer-Wächter: ${i.aktion || ""} ${i.art || ""} ${i.suche || i.coin || i.url || i.stichwort || ""}`,
+  apple_notizen: (i) => `Notizen: ${i.aktion || ""} ${i.text || i.titel || ""}`,
+  apple_kontakte: (i) => `Kontakte: ${i.aktion || ""} ${i.name || ""}`,
+  apple_musik: (i) => `Musik: ${i.aktion || ""} ${i.name || i.text || ""}`,
   update: (i) => `Update: ${i.action || "prüfen"}`,
 };
 // Diese Bereiche schreiben ihr Logbuch selbst (mit genauerem Ergebnis).
@@ -520,7 +528,7 @@ export async function runTool(name, input = {}, wer = {}) {
     if (p.blockiert) { logWerkzeug(name, input, wer, { error: p.blockiert }, 0); return { error: p.blockiert }; }
     if (p.freigabe) {
       const g = freigabeAnfordern({ werkzeug: name, eingabe: input, kanal: wer.kanal, grund: wer.grund });
-      return { wartet_auf_freigabe: true, info: `Diese Aktion (${g.titel}) braucht erst die Freigabe von Boss. Sie liegt in der Modul-Zentrale unter Kontrolle → Genehmigungen. Sag Boss kurz, dass er sie dort freigeben kann. Behaupte nicht, sie sei schon erledigt.` };
+      return { wartet_auf_freigabe: true, info: `Diese Aktion (${g.titel}) braucht erst die Freigabe von Boss. Sie liegt in der Freigabe-Glocke oben im Dashboard (und als Knopf in Telegram). Sag Boss kurz, dass er sie dort freigeben kann oder einfach „gib frei“ sagt. Behaupte nicht, sie sei schon erledigt.` };
     }
   }
   let result;
@@ -550,6 +558,7 @@ function logWerkzeug(name, input, wer, result, dauer) {
 
 async function runToolIntern(name, input = {}, wer = {}) {
   if (istDienstTool(name)) return runDienstTool(name, input);
+  if (istJarvisTool(name)) return runJarvisTool(name, input, wer);
   switch (name) {
     case "world_news": {
       if (!input.country) {
@@ -649,8 +658,11 @@ async function runToolIntern(name, input = {}, wer = {}) {
       const r = await alexaCommand(input);
       return r.ok ? r : { error: r.error };
     }
-    case "get_health":
-      return store.getHealth() ?? { info: "Noch keine Gesundheitsdaten vom iPhone empfangen." };
+    case "get_health": {
+      const g = gesundheitUebersicht();
+      if (!g.letzter_tag) return store.getHealth() ?? { info: "Noch keine Gesundheitsdaten vom iPhone empfangen." };
+      return { letzte_werte: store.getHealth(), wochenschnitt: Object.fromEntries(Object.entries(g.trends).map(([k, v]) => [k, { diese_woche: v.woche, vorwoche: v.vorwoche, letzter: v.letzter }])), letzte_tage: g.verlauf.slice(-10) };
+    }
     case "update":
       return input.action === "install" ? startUpdate() : checkForUpdate();
     case "send_push":
