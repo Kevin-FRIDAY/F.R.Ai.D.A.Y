@@ -1,7 +1,7 @@
 // F.R.Ai.D.A.Y iCloud-Mail: lesen + sortieren über IMAP (imapflow).
 // Zugang per App-spezifischem Passwort (appleid.apple.com), in .env.
 import { ImapFlow } from "imapflow";
-import { config } from "./config.js";
+import { config, IST_EVE } from "./config.js";
 import * as store from "./store.js";
 
 const HOST = "imap.mail.me.com";
@@ -62,6 +62,7 @@ export async function getMailOverview(force = false) {
 // Sortieren: Newsletter/Werbung (Header List-Unsubscribe) aus dem Posteingang
 // in den Ordner "Newsletter" verschieben. Nichts wird gelöscht.
 export async function sortMail() {
+  if (IST_EVE) return { simuliert: true, info: "Eve-Testmodus: Mails wurden NICHT verschoben. Das macht nur Friday." };
   if (!mailConfigured()) return { ok: false, grund: "nicht_verbunden" };
   const client = newClient();
   try {

@@ -10,6 +10,7 @@ import dgram from "node:dgram";
 import os from "node:os";
 import WebSocket from "ws";
 import * as store from "./store.js";
+import { IST_EVE } from "./config.js";
 
 // Ports lassen sich nur für Tests verstellen (echter Fernseher: 8001/8002).
 const HTTP_PORT = Number(process.env.TV_HTTP_PORT || 8001);
@@ -194,6 +195,7 @@ function openSocket(ip, { secure = true, token, waitMs = 8000 } = {}) {
 }
 
 async function connect({ waitMs } = {}) {
+  if (IST_EVE) throw Object.assign(new Error("Eve-Testmodus"), { code: "EVE" });
   const tv = getTv();
   if (!tv?.ip) throw Object.assign(new Error("Noch kein Fernseher eingerichtet."), { code: "NOTV" });
   if (conn && conn.ip === tv.ip && conn.ws.readyState === WebSocket.OPEN) {
@@ -234,6 +236,7 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Freundliche Fehlermeldung zum Vorlesen.
 function friendly(err) {
+  if (err.code === "EVE") return "Eve-Testmodus: Der Fernseher wurde NICHT gesteuert. Das macht nur Friday.";
   if (err.code === "NOTV") return "Ich kenne noch keinen Fernseher. Öffne im Werkzeug-Menü die Fernbedienung und such ihn einmal.";
   if (err.code === "DENIED") return "Der Fernseher hat Friday abgelehnt. Drück beim nächsten Versuch am Fernseher auf Zulassen.";
   if (err.code === "TIMEOUT") return "Der Fernseher hat nicht geantwortet. Wenn eine Frage auf dem Bildschirm steht, drück Zulassen.";
@@ -308,6 +311,7 @@ function wakeOnLan(mac) {
 }
 
 export async function powerOn() {
+  if (IST_EVE) return { ok: false, error: friendly({ code: "EVE" }) };
   const tv = getTv();
   if (!tv?.ip) return { ok: false, error: friendly({ code: "NOTV" }) };
   const info = await tvInfo(tv.ip, 1500);
@@ -369,6 +373,7 @@ async function installedApps() {
 }
 
 export async function openApp(name) {
+  if (IST_EVE) return { ok: false, error: friendly({ code: "EVE" }) };
   const tv = getTv();
   if (!tv?.ip) return { ok: false, error: friendly({ code: "NOTV" }) };
   const known = findApp(name);

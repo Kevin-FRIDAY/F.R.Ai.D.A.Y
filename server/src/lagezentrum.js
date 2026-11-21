@@ -3,7 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import Anthropic from "@anthropic-ai/sdk";
-import { config, ROOT } from "./config.js";
+import { config, ROOT, DATA_DIR } from "./config.js";
 import { getPopulation, getAirQuality } from "./extras.js";
 import { recordUsage, isCreditError, markEmpty } from "./energie.js";
 
@@ -365,7 +365,7 @@ export function getInfra(typ) {
   if (!file) return [];
   if (infraCache[typ]) return infraCache[typ];
   try {
-    infraCache[typ] = JSON.parse(fs.readFileSync(path.join(ROOT, "data", file), "utf8"));
+    infraCache[typ] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, file), "utf8"));
   } catch { return []; } // Datei fehlt noch: Lage-Plus lädt sie nach, darum nichts merken
   return infraCache[typ];
 }

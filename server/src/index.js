@@ -1,7 +1,7 @@
 // F.R.Ai.D.A.Y Server - startet alles.
 import http from "node:http";
 import express from "express";
-import { config, checkConfig, DASHBOARD_DIR } from "./config.js";
+import { config, checkConfig, DASHBOARD_DIR, IST_EVE } from "./config.js";
 import { requireAuth, requireShortcutOrAuth, verifyToken, verifyPassword, createToken, loginAllowed, recordFailure, clearFailures } from "./auth.js";
 import { ask } from "./brain.js";
 import { attachAgentHub, isAgentOnline, getAgentInfo, sendToAgent } from "./agent-hub.js";
@@ -61,6 +61,8 @@ import { flugzeugeRouten } from "./flugzeuge.js";
 import { welttourRouten } from "./welttour.js";
 import { osirisStatus } from "./osiris.js";
 import { eveRouten } from "./eve.js";
+import { eveWeiterleitung, eveStarten } from "./eve-prozess.js";
+import { eveSchutzAn } from "./eve-schutz.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
 const missing = checkConfig();
@@ -72,6 +74,9 @@ if (missing.length) {
 const app = express();
 app.disable("x-powered-by");
 app.set("trust proxy", "loopback");
+// Eve (Testversion): im Eve-Modus gehen alle /api-Anfragen an den eigenen Eve-Prozess (eigene Daten).
+if (IST_EVE) eveSchutzAn();
+app.use(eveWeiterleitung);
 app.use(express.json({ limit: "12mb" }));
 
 app.use((req, res, next) => {
@@ -239,6 +244,7 @@ app.get("/api/osiris", async (req, res) => { res.json(await osirisStatus()); });
 
 app.get("/api/status", (req, res) => {
   res.json({
+    eve: IST_EVE,
     name: config.userName,
     agent: { online: isAgentOnline(), ...getAgentInfo() },
     voice: false,
@@ -701,7 +707,10 @@ wacheStart();
 kernStart();
 zentraleStart(ask);
 jarvisStart();
-startTelegram();
-startShips();
+if (!IST_EVE) {
+  startTelegram(); // der Telegram-Bot gehört Friday
+  startShips(); // aisstream erlaubt nur eine Verbindung
+  eveStarten(); // Eve im Hintergrund mitstarten
+}
 startAutoScan();
 archivStart();

@@ -11,7 +11,7 @@
   const { esc, json } = H;
   const SCHLUESSEL = "eve_modus"; // bewusst ohne friday_-Vorsilbe: bleibt pro Gerät
   const lies = () => { try { return localStorage.getItem(SCHLUESSEL) === "1"; } catch { return false; } };
-  let eve = lies();
+  let eve = window.EveStart ? window.EveStart.eve : lies();
   let stand = null;
   const html = document.documentElement;
 
@@ -57,6 +57,8 @@
   }
 
   function setze(an) {
+    // Mit eigenem Eve-Server: Einstellungen tauschen und neu laden (damit alle Daten von der richtigen Seite kommen).
+    if (window.EveStart) { schild(an ? "Wechsle zu Eve …" : "Wechsle zu Friday …"); setTimeout(() => window.EveStart.wechsel(Boolean(an)), 250); return; }
     eve = Boolean(an);
     try { localStorage.setItem(SCHLUESSEL, eve ? "1" : "0"); } catch { /* egal */ }
     html.classList.add("eve-wechsel");
@@ -96,7 +98,7 @@
       chat.id = "eve-chat";
       chat.innerHTML = `
         <div class="ec-kopf">
-          <div><b>💬 Draht zu Claude</b><small>Schreib, was Eve anders machen soll. Ich sammle alles, du schickst es mit einem Tipp.</small></div>
+          <div><b>💬 Draht zu Claude</b><small>Schreib, was Eve anders machen soll. Ich sammle alles, du schickst es mit einem Tipp.</small><small class="ec-schutz">🧪 Eve hat eigene Daten. Alexa, Fernseher, Licht, Nachrichten &amp; Co. werden nur simuliert.</small></div>
           <button type="button" class="ec-tests" id="ec-tests" title="Funktionen im Test – hier gibst du sie für Friday frei">🔒 Tests</button>
         </div>
         <div class="ec-verlauf" id="ec-verlauf" aria-live="polite"></div>
@@ -200,6 +202,10 @@
     html: `
       <div class="hf-status" id="et-status">Neue Funktionen kommen zuerst nur in Eve. In Friday liegen sie hinter einem Schloss, bis du sie hier freigibst.</div>
       <div class="hf-karte"><h3>Gerade im Test</h3><div id="et-liste" class="hf-liste"></div></div>
+      <div class="hf-karte"><h3>Eves eigene Daten</h3>
+        <p class="et-daten" id="et-daten">–</p>
+        <p class="hf-hinweis">Termine, Listen, Gedächtnis und Einstellungen in Eve sind eine eigene Kopie. Was du in Eve anlegst oder löschst, ändert Friday nicht. Alexa, Fernseher, Licht, Smart Home, Spotify, Todoist, Notion, Anrufe, Mails sortieren und Nachrichten macht Eve nur zum Schein (steht im Logbuch).</p>
+        <button class="hf-btn leise" id="et-reset">↺ Eve auf Friday-Stand zurücksetzen</button></div>
       <div class="hf-karte"><h3>So läuft es</h3>
         <ol class="et-schritte">
           <li>Du schreibst in Eve, was neu oder anders werden soll, und tippst „An Claude schicken“.</li>
@@ -211,6 +217,9 @@
   function zeichneTests() {
     const l = tests.$("#et-liste");
     if (!l) return;
+    const p = stand?.prozess;
+    const d = tests.$("#et-daten");
+    if (d && p) d.innerHTML = `${p.laeuft ? '<span class="hf-badge hf-gut">Eve läuft</span>' : `<span class="hf-badge hf-schlecht">Eve läuft nicht</span> ${esc(p.fehler || "")}`} ${p.kopiert ? `Kopie von Friday vom ${esc(zeit(p.kopiert))}` : ""}`;
     const fs = stand?.funktionen || [];
     l.innerHTML = fs.length ? fs.map((f) => `
       <div class="hf-zeile">
@@ -220,6 +229,18 @@
       </div>`).join("") : '<div class="hf-leer">Gerade ist nichts im Test. Sobald Claude etwas Neues für dich baut, steht es hier.</div>';
   }
   tests.sheet.addEventListener("click", async (e) => {
+    if (e.target.closest("#et-reset")) {
+      if (!confirm("Eve auf den heutigen Stand von Friday zurücksetzen? Alles, was du in Eve zum Testen angelegt hast, ist dann weg. Friday bleibt unverändert.")) return;
+      tests.$("#et-status").textContent = "Setze Eve zurück …";
+      try {
+        stand = await json("/api/eve/zuruecksetzen", { body: {} });
+        window.EveStart?.eveEinstellungenVergessen();
+        tests.$("#et-status").textContent = "Fertig ✓ Eve ist wieder eine frische Kopie von Friday.";
+        zeichneTests();
+        if (eve) setTimeout(() => location.reload(), 1500);
+      } catch (err) { tests.$("#et-status").textContent = err.message; }
+      return;
+    }
     const b = e.target.closest("[data-frei]");
     if (!b) return;
     try {
@@ -353,6 +374,8 @@ html.eve-modus #eve-chat { display: flex; flex-direction: column; gap: 10px; pad
 .ec-kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .ec-kopf b { display: block; font-size: 17px; color: var(--u-titel, #fff); }
 .ec-kopf small { display: block; opacity: .7; font-size: 13px; margin-top: 2px; }
+.ec-kopf small.ec-schutz { opacity: .9; color: var(--cyan); font-size: 12px; }
+.et-daten { margin: 0 0 6px; }
 .ec-tests { flex: none; border-radius: 999px; padding: 6px 12px; border: 1px solid var(--u-rand, #38e1ff); background: transparent; color: var(--cyan); font: inherit; font-size: 13px; cursor: pointer; }
 .ec-verlauf { display: flex; flex-direction: column; gap: 8px; max-height: 300px; min-height: 120px; overflow-y: auto; padding: 4px 2px; overscroll-behavior: contain; }
 .ec-msg { max-width: 88%; padding: 8px 12px; border-radius: 14px; font-size: 14.5px; line-height: 1.4; word-break: break-word; }

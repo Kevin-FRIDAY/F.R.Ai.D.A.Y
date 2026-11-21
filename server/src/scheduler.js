@@ -1,5 +1,5 @@
 // Hintergrund-Aufgaben: Erinnerungen verschicken und Morgenbriefing.
-import { config } from "./config.js";
+import { config, IST_EVE } from "./config.js";
 import * as store from "./store.js";
 import { notifyAll } from "./notify.js";
 import { sendToAgent, isAgentOnline } from "./agent-hub.js";
@@ -131,14 +131,17 @@ async function checkBackup() {
 }
 
 export function startScheduler() {
-  setTimeout(() => checkBackup(), 2 * 60 * 1000);
-  setInterval(() => checkBackup(), 3600 * 1000);
-  setTimeout(() => checkUpdates().catch(() => {}), 60 * 1000);
-  setInterval(() => checkUpdates().catch(() => {}), 30 * 60 * 1000);
+  // Eve (Testversion) sichert und aktualisiert nie selbst – das macht nur Friday.
+  if (!IST_EVE) {
+    setTimeout(() => checkBackup(), 2 * 60 * 1000);
+    setInterval(() => checkBackup(), 3600 * 1000);
+    setTimeout(() => checkUpdates().catch(() => {}), 60 * 1000);
+    setInterval(() => checkUpdates().catch(() => {}), 30 * 60 * 1000);
+  }
   setTimeout(() => vorladen(), 90 * 1000);
   setInterval(() => vorladen(), 20 * 60 * 1000);
   setTimeout(() => marktVorrechnen(), 5 * 60 * 1000);
   setInterval(() => marktVorrechnen(), 15 * 60 * 1000);
   setInterval(() => checkReminders().catch((e) => console.error("Erinnerungen:", e.message)), 30 * 1000);
-  setInterval(() => checkBriefing(), 30 * 1000);
+  if (!IST_EVE) setInterval(() => checkBriefing(), 30 * 1000); // Eve: kein eigenes Morgen-Briefing (spart Guthaben)
 }

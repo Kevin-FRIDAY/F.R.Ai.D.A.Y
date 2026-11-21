@@ -1,4 +1,4 @@
-# 44 · Eve – die Testversion von Friday (v1.137.0)
+# 44 · Eve – die Testversion von Friday (v1.137.0, eigene Daten ab v1.138.0)
 
 Eve ist dieselbe Friday, nur im **Test-Modus**. Alles Neue kommt zuerst zu Eve. Erst wenn es dir gefällt, gibst du es für Friday frei.
 
@@ -35,3 +35,21 @@ Neue Funktionen stehen in `server/eve-funktionen.json`.
 - Gefällt dir etwas: in Eve auf **🔒 Tests** → **✓ In Friday freigeben**. Ab dann ist es auch in Friday offen. Zurücknehmen geht mit „Wieder sperren“.
 
 Deine Freigaben und Wünsche liegen in `server/data/eve.json` und bleiben bei Updates erhalten.
+
+## Eve hat eigene Daten (ab v1.138.0)
+Eve läuft als eigener kleiner Server neben Friday (Friday startet ihn automatisch mit).
+- Beim ersten Start kopiert Friday ihre Daten nach `server/data/eve-daten`. Ab dann sind es zwei getrennte Welten:
+  Termine, Aufgaben, Einkaufsliste, Gedächtnis, Einstellungen, Logbuch … in Eve ändern **nichts** in Friday.
+- Fotos, Spiele, Webseiten und Videos von Eve landen in `~/Friday-Eve/…`, nicht in Fridays Ordnern.
+- Die Adresse bleibt gleich (auch auf dem iPhone über Tailscale). Der Umschalter sagt Friday, ob deine Anfragen an Eve gehen.
+- Auch die Dashboard-Einstellungen (Farbe, Glow, Kopf-Stil …) sind pro Seite getrennt.
+
+### Was Eve nur zum Schein macht
+Alles, was in der echten Welt etwas auslöst, macht Eve **nicht**: Alexa, Fernseher, Licht (Hue), Home Assistant, Spotify,
+Todoist, Notion, Apple-Kalender und -Erinnerungen, Anrufe und Nachrichten, Mails sortieren, Telegram und Push.
+Eve antwortet dann „nur simuliert“ und schreibt ins Logbuch, was Friday an dieser Stelle getan hätte.
+Außerdem macht nur Friday: Updates, Sicherungen, Wiederherstellen, Morgen-Briefing, Automationen und Herzschlag
+(sonst liefe alles doppelt und kostet doppeltes Guthaben). Der Mac-Agent ist nur mit Friday verbunden.
+
+### Eve zurücksetzen
+🔒 Tests → **↺ Eve auf Friday-Stand zurücksetzen**. Eves Testdaten werden gelöscht, Eve ist wieder eine frische Kopie von Friday.

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawn, execFile } from "node:child_process";
-import { config, ROOT, DATA_DIR } from "./config.js";
+import { config, ROOT, DATA_DIR, IST_EVE } from "./config.js";
 
 const APP_DIR = path.resolve(ROOT, "..");
 const BACKUP_SCRIPT = path.join(APP_DIR, "sicherung.sh");
@@ -55,6 +55,7 @@ export function listBackups() {
 
 let running = null;
 export function createBackup(grund = "manuell", { programm = false } = {}) {
+  if (IST_EVE) return Promise.reject(new Error("Sicherungen macht nur Friday. Wechsle oben auf Friday."));
   if (running) return running;
   if (!fs.existsSync(BACKUP_SCRIPT)) return Promise.reject(new Error("Das Sicherungs-Skript fehlt."));
   const args = [BACKUP_SCRIPT, grund];
@@ -79,6 +80,7 @@ export function getRestoreStatus() {
 }
 
 export function startRestore(name, { programm = false } = {}) {
+  if (IST_EVE) return { error: "Wiederherstellen geht nur in Friday. Wechsle oben auf Friday." };
   if (!NAME_RE.test(String(name))) return { error: "Ungültige Sicherung." };
   const backup = listBackups().find((b) => b.name === name);
   if (!backup) return { error: "Diese Sicherung gibt es nicht." };
@@ -108,6 +110,7 @@ export function startRestore(name, { programm = false } = {}) {
 
 // Einmal am Tag automatisch sichern (wenn die letzte Sicherung älter als 24 Stunden ist).
 export async function autoBackup() {
+  if (IST_EVE) return null;
   const latest = listBackups()[0];
   if (latest && Date.now() - new Date(latest.zeit).getTime() < DAY) return null;
   return createBackup("automatisch");

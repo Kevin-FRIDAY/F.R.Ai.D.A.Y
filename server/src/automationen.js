@@ -3,7 +3,7 @@
 // Aktionen: Friday einen Auftrag geben, Mitteilung schicken, Protokoll starten, Aufgabe anlegen, Mission starten.
 // Alles läuft durch den Autonomie-Regler (Freigaben) und stoppt im Notfallmodus.
 // Gespeichert in server/data/automationen.json.
-import { config } from "./config.js";
+import { config, IST_EVE } from "./config.js";
 import * as store from "./store.js";
 import { eintragen } from "./logbuch.js";
 import { notfallAktiv } from "./kommando.js";
@@ -149,6 +149,7 @@ async function tick() {
 
 export function automationenStart(ask) {
   askFn = ask;
+  if (IST_EVE) return; // Eve: Automationen laufen nur von Hand (sonst liefe alles doppelt und kostet doppelt)
   setTimeout(() => {
     if (notfallAktiv()) return;
     for (const r of alle()) if (r.an && r.ausloeser.art === "start") ausfuehren(r, "Friday ist gestartet").catch(() => {});

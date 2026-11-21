@@ -11,6 +11,7 @@ import crypto from "node:crypto";
 import { config, DATA_DIR, ROOT } from "./config.js";
 import { githubToken } from "./updater.js";
 import { eintragen } from "./logbuch.js";
+import { eveZustand, eveZuruecksetzen } from "./eve-prozess.js";
 
 const DATEI = path.join(DATA_DIR, "eve.json");
 const KATALOG = path.join(ROOT, "eve-funktionen.json");
@@ -54,6 +55,7 @@ export function stand() {
     offen: d.wuensche.filter((w) => w.status === "offen").length,
     sendungen: d.sendungen.slice(-10).reverse(),
     github: { schluessel: Boolean(tok), repo: config.updateRepo },
+    prozess: eveZustand(),
   };
 }
 
@@ -153,5 +155,6 @@ export function eveRouten(app, asyncRoute) {
     const offen = lesen().wuensche.filter((w) => w.status === "offen");
     res.json({ text: offen.length ? auftragsText(offen) : "", anzahl: offen.length });
   });
+  app.post("/api/eve/zuruecksetzen", asyncRoute(async (req, res) => { await eveZuruecksetzen(); res.json({ ok: true, ...stand() }); }));
   app.post("/api/eve/senden", asyncRoute(async (req, res) => res.json(await senden({ nurKopiert: Boolean(req.body?.kopiert) }))));
 }

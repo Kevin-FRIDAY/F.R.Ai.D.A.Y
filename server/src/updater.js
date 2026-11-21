@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { config, ROOT, DATA_DIR } from "./config.js";
+import { config, ROOT, DATA_DIR, IST_EVE } from "./config.js";
 
 const APP_DIR = path.resolve(ROOT, "..");
 const SCRIPT = path.join(APP_DIR, "update.sh");
@@ -131,6 +131,7 @@ export function updateProgress() {
 }
 
 export function startUpdate({ auto = false } = {}) {
+  if (IST_EVE) return { error: "Updates installiert nur Friday. Wechsle oben auf Friday und tippe dort auf Update." };
   const current = getUpdateStatus();
   if (current?.state === "laeuft" && Date.now() - new Date(current.time).getTime() < 10 * 60 * 1000) {
     return { error: "Es läuft schon ein Update." };
