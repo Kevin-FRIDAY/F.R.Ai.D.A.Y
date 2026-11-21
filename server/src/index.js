@@ -24,6 +24,7 @@ import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwe
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { helferRouten, helferStart } from "./helfer.js";
 import { wacheRouten, wacheStart } from "./wache.js";
+import { kernRouten, kernStart } from "./kern.js";
 import { startShips, getShips, shipsStatus, schiffeRouten } from "./ships.js";
 import { getISS } from "./extras.js";
 import * as alexa from "./alexa.js";
@@ -677,6 +678,8 @@ zentraleRouten(app, asyncRoute);
 // Helfer-Paket: Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede (v1.106.0).
 helferRouten(app, asyncRoute);
 wacheRouten(app, asyncRoute);
+// Kontrollraum (v1.135.0): Regelwerk, Schleifen-Schutz, Gedächtnis, Herzschlag, Kosten-Deckel, Seele, Fähigkeiten, Änderungen.
+kernRouten(app, asyncRoute);
 // OpenJarvis-Paket (v1.134.0): Freigabe-Glocke, Dauer-Wächter, Dokumenten-Wissen, Apple-Apps, Whisper.
 jarvisRouten(app, asyncRoute);
 
@@ -692,6 +695,7 @@ logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
 helferStart();
 wacheStart();
+kernStart();
 zentraleStart(ask);
 jarvisStart();
 startTelegram();
