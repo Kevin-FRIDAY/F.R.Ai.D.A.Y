@@ -820,7 +820,7 @@ const REGELN = [
   ["bus", /\bbus\b|reisebus|linienbus|schulbus|doppeldecker/],
   ["motorrad", /motorrad|bike\b|harley|ducati|kawasaki|yamaha r|motorroller|roller\b|vespa|chopper|\bkrad\b/],
   ["suv", /\bsuv\b|geländewagen|gelaendewagen|offroader|jeep|g-klasse|range rover|land rover|defender|cayenne|macan|\bx[3-7]\b|\bq[3-8]\b|touareg|tiguan|\bglc\b|\bgle\b|\bgls\b|pick-?up|model [xy]\b|urus|bentayga/],
-  ["sportwagen", /sportwagen|supersportwagen|rennwagen|hypercar|lamborghini|ferrari|mclaren|bugatti|koenigsegg|pagani|porsche|\bgt3\b|\bamg gt\b|corvette|aston martin|lotus|\br8\b|\bm[2-8]\b|formel ?1|rennauto|lambo/],
+  ["sportwagen", /sportwagen|supersportwagen|rennwagen|hypercar|lamborghini|ferrari|mclaren|bugatti|koenigsegg|pagani|porsche|\bgt3\b|\bamg gt\b|corvette|aston martin|lotus|\br8\b|\bm[2-8]\b|formel ?1|rennauto|lambo|hurac[aá]n|aventador|revuelto|countach|murci[eé]lago|gallardo|diablo|laferrari|\benzo\b|\bsf ?90\b|\b(488|458|812|296)\b|testarossa|chiron|veyron|\b911\b|carrera|cayman|boxster|mustang|camaro|\bgt-?r\b|supra|\bnsx\b|viper|\bslr\b|\bsls\b/],
   ["limousine", /\bauto\b|\bautos\b|\bwagen\b|limousine|kombi|kleinwagen|cabrio|coupé|coupe|pkw|audi|\bbmw\b|mercedes|\bvw\b|volkswagen|golf|passat|tesla|opel|ford|toyota|skoda|seat|cupra|hyundai|kia|renault|peugeot|fiat|volvo|mazda|honda|nissan|polo|\ba[3-8]\b|e-?auto|elektroauto/],
 ];
 

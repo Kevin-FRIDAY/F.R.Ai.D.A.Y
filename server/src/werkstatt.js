@@ -412,7 +412,8 @@ async function bauen(job, basis) {
 // Rettung: passende Vorlage einsetzen, Claudes Angaben (Titel, Steckbrief, Kennzahlen, Einleitung) behalten.
 function vorlageEinsetzen(job) {
   const p = job.plan;
-  const art = erkenneArt(`${job.wunsch} ${p.titel || ""} ${p.steckbrief?.typ || ""}`);
+  const art = erkenneArt(`${job.wunsch} ${p.titel || ""} ${p.steckbrief?.typ || ""}`)
+    || erkenneArt(`${p.steckbrief?.kurz || ""} ${p.einleitung || ""}`); // v1.133.0: auch Claudes Beschreibung lesen
   if (!art) return false;
   const text = `${job.wunsch} ${p.titel || ""}`;
   const v = baueVorlage(art, { ...masseAusKennzahlen(p.kennzahlen), farbe: erkenneFarbe(job.wunsch) || erkenneFarbe(p.titel), elektro: /elektro|e-auto|tesla|taycan|e-tron/i.test(text), titel: p.titel || undefined });
