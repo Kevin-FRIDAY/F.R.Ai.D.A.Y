@@ -1,4 +1,4 @@
-// Lage-Plus (v1.126.0): neun weitere Ebenen fürs Weltgeschehen, angeregt von OSINT-Karten wie Argos Atlas.
+// Lage-Plus (v1.128.0): neun weitere Ebenen fürs Weltgeschehen, angeregt von OSINT-Karten wie Argos Atlas.
 // Eigene Friday-Umsetzung, nur freie, öffentliche Quellen ohne Schlüssel:
 //   adsb.lol (Flugzeuge mit Notfall-Code), IMF PortWatch (Meerengen + Häfen), Auswärtiges Amt OpenData
 //   (Reisewarnungen), NOAA NHC (Hurrikane + Vorhersage-Kegel), WHO Disease Outbreak News (Ausbrüche),

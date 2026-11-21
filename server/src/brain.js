@@ -13,6 +13,7 @@ import { offlineAnswer, notfallText } from "./offline.js";
 import { quickCommand as hausQuick } from "./werkstatt.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
 import { quickCommand as archivQuick } from "./archiv.js";
+import { quickCommand as gehirnQuick } from "./gehirn.js";
 import { quickCommand as weltQuick, vollbildQuick } from "./weltgespraech.js";
 import { quickCommand as satQuick } from "./satelliten.js";
 import { quickCommand as schiffQuick } from "./ships.js";
@@ -30,6 +31,7 @@ import { quickCommand as zentraleQuick } from "./zentrale.js";
 import { quickCommand as spielQuick } from "./spiele.js";
 import { quickCommand as routenQuick } from "./routen.js";
 import { quickCommand as helferQuick } from "./helfer.js";
+import { quickCommand as wacheQuick } from "./wache.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -233,6 +235,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
+  // Kamera-Wache (v1.127.0): "Was passiert zu Hause?", "Wache an", "Ist jemand im Wohnzimmer?" – ohne Claude.
+  // Vor dem Helfer-Paket und der Länder-Info, damit "was passiert in der Küche" kein Land wird.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const wa = await wacheQuick(text);
+      if (wa) { actions.push(...wa.actions); return finish(wa.answer); }
+    } catch (err) {
+      console.error("Kamera-Wache:", err.message);
+    }
+  }
+
   // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Stimmungs-Sound, Ideen-Schmiede – ohne Claude.
   if (mode !== "translate" && !image && text) {
     try {
@@ -293,6 +306,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (lb) { actions.push(...lb.actions); return finish(lb.answer); }
     } catch (err) {
       console.error("Logbuch:", err.message);
+    }
+  }
+
+  // Gehirn ("zeig mir dein Gehirn", "öffne den KI-Kern") – ohne Claude, mit echten Zahlen.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const g = gehirnQuick(text, { agentOnline: isAgentOnline() });
+      if (g) { actions.push(...g.actions); return finish(g.answer); }
+    } catch (err) {
+      console.error("Gehirn:", err.message);
     }
   }
 

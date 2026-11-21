@@ -3223,7 +3223,167 @@ html.perf-fluessig .lage-legend .legend-body { background: rgba(10,6,3,.96); }
 .werkstatt-vorlagen .ws-echt button { flex: 0 0 auto; }
 .werkstatt-vorlagen .ws-echt a { color: #ff8a1e; }
 
-/* ---------- Lage-Plus v1.126.0: Brennpunkte, Notfall-Flugzeuge, Meerengen, Hurrikane, Ausbrüche, Reise, Stabilität, Strahlung, Atom, Häfen ---------- */
+/* ===== v1.126.0: Fridays Gehirn (KI-Kern) – Glas-Bildschirm, Leitungen, Gehirn auf Sockel ===== */
+.sz[data-reiter="gehirn"] .sz-box { width: min(1180px, 100%); }
+.gh { padding: 6px 18px 4px; }
+.gh-stage { position: relative; display: flex; flex-direction: column; align-items: stretch;
+  background: radial-gradient(ellipse 70% 55% at 50% 78%, rgba(255,120,20,.16), transparent 70%), radial-gradient(ellipse 60% 40% at 50% 10%, rgba(120,90,255,.08), transparent 70%); border-radius: 18px; }
+.gh h4 { margin: 8px 0 6px; font: 600 11px var(--font-head, var(--font)); letter-spacing: .16em; text-transform: uppercase; color: var(--u-titel); display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.gh-klein { font: 500 11px var(--font-ui, var(--font)); letter-spacing: .02em; text-transform: none; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gh-bar { display: block; height: 4px; border-radius: 4px; background: rgba(255,138,30,.14); overflow: hidden; margin-top: 5px; }
+.gh-bar s { display: block; height: 100%; width: 2%; border-radius: 4px; background: linear-gradient(90deg, var(--f, var(--cyan)), color-mix(in srgb, var(--f, var(--cyan)) 50%, #fff)); box-shadow: 0 0 8px var(--f, var(--cyan)); transition: width .8s ease; text-decoration: none; }
+.gh-ico { flex: 0 0 auto; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; border: 1px solid var(--u-rand-soft); background: rgba(255,138,30,.08); }
+.gh-ico svg, .gh-flow svg, .gh-z-hirn svg { width: 20px; height: 20px; fill: none; stroke: var(--cyan); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 4px var(--cyan)); }
+
+/* Gebogener Glas-Bildschirm */
+.gh-screen { perspective: 1500px; padding: 4px 6px 0; }
+.gh-screen-in { position: relative; display: grid; grid-template-columns: minmax(190px, .9fr) minmax(300px, 1.5fr) minmax(220px, 1fr); gap: 14px; padding: 14px 16px;
+  transform: rotateX(7deg); transform-origin: 50% 100%;
+  border-radius: 46% 46% 22px 22px / 34px 34px 22px 22px;
+  background: linear-gradient(180deg, rgba(255,160,70,.10), rgba(40,22,8,.55) 40%, rgba(10,6,3,.72)), linear-gradient(90deg, rgba(140,100,255,.10), transparent 30%, transparent 70%, rgba(80,190,255,.08));
+  border: 1px solid rgba(255,150,60,.55);
+  box-shadow: 0 0 32px rgba(255,138,30,.28), inset 0 0 40px rgba(255,138,30,.10), inset 0 1px 0 rgba(255,230,200,.35);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.gh-screen-in::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(115deg, transparent 20%, rgba(255,240,220,.07) 32%, transparent 44%); }
+.gh-col { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.gh-logo { display: flex; flex-direction: column; margin-bottom: 4px; }
+.gh-logo b { font: 700 20px var(--font-head, var(--font)); letter-spacing: .14em; color: #fff; text-shadow: 0 0 14px var(--cyan); }
+.gh-logo span { font-size: 11px; letter-spacing: .14em; color: var(--muted); }
+.gh-kachel { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; border: 1px solid var(--u-rand-soft); background: var(--u-karte); }
+.gh-kachel > div { min-width: 0; flex: 1; }
+.gh-kachel small, .gh-energie small { display: block; font-size: 10.5px; letter-spacing: .06em; color: var(--muted); }
+.gh-kachel b { display: block; font: 700 18px var(--font-ui, var(--font)); color: var(--cyan); text-shadow: 0 0 10px color-mix(in srgb, var(--cyan) 60%, transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gh-kachel em { display: block; font-style: normal; font-size: 11px; color: var(--text); opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gh-kachel.schlecht b { color: var(--bad); text-shadow: 0 0 10px rgba(255,93,108,.6); }
+
+/* Neuronale Pfade */
+#gh-pfade { width: 100%; height: auto; display: block; }
+#gh-pfade .gh-p { fill: none; stroke: var(--f); stroke-width: .8; stroke-opacity: .55; }
+#gh-pfade .gh-p.an { stroke-width: 1.4; stroke-dasharray: 3 9; animation: gh-fluss 1.6s linear infinite; filter: drop-shadow(0 0 2px var(--f)); }
+.gh.denkt #gh-pfade .gh-p.an { animation-duration: .6s; }
+#gh-pfade .gh-n { fill: rgba(20,10,4,.9); stroke: #ff9a3c; stroke-width: 1.4; filter: drop-shadow(0 0 4px #ff8a1e); }
+#gh-pfade text { font: 600 9.5px var(--font-ui, var(--font)); fill: #ffd9b8; }
+#gh-pfade .gh-zk circle { fill: rgba(10,6,3,.9); stroke: var(--f); stroke-width: 1.6; filter: drop-shadow(0 0 6px var(--f)); transition: r .3s; }
+#gh-pfade .gh-zk .gh-zk-in { fill: var(--f); stroke: none; }
+#gh-pfade .gh-zk text { fill: #fff; font-size: 9px; paint-order: stroke; stroke: rgba(12,7,3,.95); stroke-width: 3px; stroke-linejoin: round; }
+#gh-pfade .gh-zk.aktiv circle:first-child { stroke-width: 3; }
+@keyframes gh-fluss { to { stroke-dashoffset: -24; } }
+
+/* Ablauf Analyse → Aktion */
+.gh-flow { display: grid; grid-template-columns: 1fr 14px 1fr 14px 1fr 14px 1fr; align-items: center; gap: 2px; }
+.gh-flow > div { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 2px; border-radius: 12px; border: 1px solid var(--u-rand-soft); background: rgba(255,138,30,.05); transition: all .3s; }
+.gh-flow > div span { font: 600 11px var(--font-ui, var(--font)); color: var(--muted); }
+.gh-flow > i { height: 2px; background: linear-gradient(90deg, rgba(255,138,30,.2), rgba(255,138,30,.7)); }
+.gh-flow > div.durch { border-color: var(--u-rand); background: rgba(255,138,30,.14); }
+.gh-flow > div.durch span { color: var(--text); }
+.gh-flow > div.an { border-color: #ffb066; background: rgba(255,138,30,.3); box-shadow: 0 0 18px rgba(255,138,30,.55); animation: gh-puls 1s ease-in-out infinite; }
+.gh-flow > div.an span { color: #fff; }
+.gh-flow > div.fehler { border-color: var(--bad); box-shadow: 0 0 14px rgba(255,93,108,.45); }
+@keyframes gh-puls { 50% { transform: scale(1.05); } }
+
+/* Diagramme rechts */
+#gh-stunden, #gh-last { width: 100%; height: 56px; display: block; }
+#gh-last { height: 44px; }
+#gh-stunden rect { fill: rgba(255,138,30,.18); }
+#gh-stunden rect.an { fill: #ff8a1e; fill-opacity: .75; filter: drop-shadow(0 0 3px #ff8a1e); }
+#gh-stunden rect.jetzt { fill: #4cc3ff; fill-opacity: .9; filter: drop-shadow(0 0 4px #4cc3ff); }
+.gh-achse { display: flex; justify-content: space-between; font-size: 9.5px; color: var(--muted); margin-top: -2px; }
+#gh-last path { fill: none; stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+#gh-last .gh-l-cpu { stroke: #ff8a1e; filter: drop-shadow(0 0 3px #ff8a1e); }
+#gh-last .gh-l-ram { stroke: #b06bff; opacity: .8; }
+.gh-strom { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; max-height: 150px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(#000 75%, transparent); mask-image: linear-gradient(#000 75%, transparent); }
+.gh-strom li { display: grid; grid-template-columns: 18px 1fr auto; gap: 6px; align-items: center; font-size: 11.5px; padding: 3px 6px; border-radius: 7px; background: rgba(255,138,30,.06); }
+.gh-strom li b { font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gh-strom li time { color: var(--muted); font-size: 10.5px; }
+.gh-strom li.fehler { background: rgba(255,93,108,.12); }
+.gh-strom li.fehler b { color: #ffb3bb; }
+
+/* Leitungen vom Bildschirm zum Gehirn */
+.gh-kabel { width: 100%; height: 70px; display: block; margin-top: -4px; overflow: visible; }
+.gh-kabel path { fill: none; stroke-width: 2.2; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+.gh-kabel .k1, .gh-kabel .k2 { stroke: #b06bff; filter: drop-shadow(0 0 5px #b06bff); }
+.gh-kabel .k3, .gh-kabel .k4 { stroke: #ff8a1e; filter: drop-shadow(0 0 5px #ff8a1e); }
+.gh-kabel .k5 { stroke: #ffd9b0; stroke-dasharray: 2 10; opacity: .7; animation: gh-fluss 1.2s linear infinite; }
+.gh-kabel .k1, .gh-kabel .k3 { stroke-dasharray: 10 14; animation: gh-fluss 1.4s linear infinite; }
+.gh.denkt .gh-kabel path { animation-duration: .45s; }
+
+/* Gehirn + Seiten */
+.gh-unten { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(320px, 1.5fr) minmax(200px, 1fr); gap: 14px; align-items: center; margin-top: -12px; }
+.gh-kern { position: relative; height: 380px; }
+#gh-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.gh-denkt { position: absolute; left: 50%; top: 6px; transform: translateX(-50%); padding: 3px 12px; border-radius: 999px; font: 600 11px var(--font-head, var(--font)); letter-spacing: .2em; text-transform: uppercase; color: #fff; background: rgba(255,138,30,.25); border: 1px solid #ff9a3c; box-shadow: 0 0 14px rgba(255,138,30,.5); animation: sz-puls 1.2s ease-in-out infinite; }
+.gh-denkt.hidden { display: none; }
+.gh-seite { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.gh-ring { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--u-rand-soft); background: var(--u-karte); }
+.gh-ring svg { width: 84px; height: 84px; flex: 0 0 auto; transform: rotate(-90deg); }
+.gh-ring circle { fill: none; stroke-width: 7; }
+.gh-r-bg { stroke: rgba(255,138,30,.14); }
+.gh-r-val { stroke: var(--cyan); stroke-linecap: round; filter: drop-shadow(0 0 6px var(--cyan)); transition: stroke-dashoffset 1s ease; stroke-dashoffset: 264; stroke-dasharray: 264; }
+.gh-ring[data-stufe="warn"] .gh-r-val { stroke: #ffc24d; }
+.gh-ring[data-stufe="bad"] .gh-r-val { stroke: var(--bad); }
+.gh-ring > div { min-width: 0; }
+.gh-ring b { display: block; font: 700 26px var(--font-head, var(--font)); color: #fff; text-shadow: 0 0 12px var(--cyan); }
+.gh-ring small { display: block; font-size: 12px; color: var(--u-titel); letter-spacing: .08em; }
+.gh-ring em { display: block; font-style: normal; font-size: 10.5px; color: var(--muted); }
+.gh-zentren { display: flex; flex-direction: column; gap: 6px; }
+.gh-z { display: flex; gap: 10px; align-items: center; width: 100%; padding: 7px 10px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--f) 35%, transparent); background: linear-gradient(120deg, color-mix(in srgb, var(--f) 12%, transparent), rgba(10,6,3,.4)); color: inherit; text-align: left; cursor: pointer; font: inherit; transition: border-color .2s, box-shadow .2s; }
+.gh-z:hover, .gh-z.aktiv { border-color: var(--f); box-shadow: 0 0 14px color-mix(in srgb, var(--f) 45%, transparent); }
+.gh-z-hirn { flex: 0 0 auto; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: color-mix(in srgb, var(--f) 14%, transparent); }
+.gh-z-hirn svg { stroke: var(--f); filter: drop-shadow(0 0 4px var(--f)); }
+.gh-z-txt { min-width: 0; flex: 1; }
+.gh-z-txt b { display: block; font: 600 13px var(--font-ui, var(--font)); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gh-z-txt small { display: block; font-size: 10.5px; color: var(--muted); }
+.gh-energie { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; border: 1px solid var(--u-rand-soft); background: var(--u-karte); }
+.gh-energie > div { flex: 1; min-width: 0; }
+.gh-energie b { display: block; font: 700 18px var(--font-ui, var(--font)); color: var(--cyan); }
+.gh-energie[data-zustand="spar"] b { color: #ffc24d; }
+.gh-energie[data-zustand="tot"] b { color: var(--bad); }
+.gh-fuss { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 6px; padding: 8px 4px 2px; border-top: 1px solid var(--u-rand-soft); font: 600 11px var(--font-head, var(--font)); letter-spacing: .2em; color: var(--cyan); }
+.gh-fuss #gh-modell { letter-spacing: .06em; color: var(--muted); font-family: var(--font-ui, var(--font)); }
+
+/* Schmaler Bildschirm (Tablet) */
+@media (max-width: 1100px) {
+  .gh-screen-in { grid-template-columns: 1fr 1fr; }
+  .gh-screen-in .gh-mid { grid-column: 1 / -1; order: 3; }
+}
+/* iPhone: Gehirn zuerst, dann der Bildschirm */
+@media (max-width: 760px) {
+  .gh { padding: 4px 10px 2px; }
+  .gh-stage { display: flex; flex-direction: column; }
+  .gh-unten { order: 1; margin-top: 0; }
+  .gh-screen { order: 2; margin-top: 10px; }
+  .gh-kabel { display: none; }
+  .gh-fuss { order: 3; }
+  .gh-screen { perspective: none; padding: 0; }
+  .gh-screen-in { grid-template-columns: 1fr; transform: none; border-radius: 26px 26px 16px 16px / 18px 18px 16px 16px; padding: 12px; gap: 10px; }
+  .gh-screen-in .gh-mid { order: 0; }
+  .gh-left { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; }
+  .gh-kachel { min-width: 0; }
+  .gh-left .gh-logo { grid-column: 1 / -1; }
+  .gh-kachel { padding: 7px 8px; gap: 7px; }
+  .gh-kachel .gh-ico { width: 28px; height: 28px; }
+  .gh-kachel b { font-size: 15px; }
+  .gh-kabel { height: 40px; }
+  .gh-unten { grid-template-columns: 1fr 1fr; margin-top: -6px; }
+  .gh-kern { grid-column: 1 / -1; order: -1; height: 300px; }
+  .gh-ring svg { width: 62px; height: 62px; }
+  .gh-ring b { font-size: 20px; }
+  .gh-z { padding: 6px 8px; gap: 7px; }
+  .gh-z-hirn { width: 28px; height: 28px; }
+}
+@media (max-width: 420px) {
+  .gh-unten { grid-template-columns: 1fr; }
+  .gh-kachel .gh-ico { display: none; }
+  .gh-kachel b { font-size: 14px; }
+}
+/* Flüssig-Modus: kein Glas-Weichzeichner, weniger Leuchten */
+html.perf-fluessig .gh-screen-in { -webkit-backdrop-filter: none; backdrop-filter: none; }
+html.perf-fluessig #gh-pfade .gh-p.an, html.perf-fluessig .gh-kabel path { filter: none; }
+@media (prefers-reduced-motion: reduce) { #gh-pfade .gh-p.an, .gh-kabel path, .gh-flow > div.an { animation: none; } }
+
+/* ---------- Lage-Plus v1.128.0: Brennpunkte, Notfall-Flugzeuge, Meerengen, Hurrikane, Ausbrüche, Reise, Stabilität, Strahlung, Atom, Häfen ---------- */
 .lp-p { cursor: pointer; }
 .lp-p-brenn .lp-ring { fill: rgba(255,120,20,.22); stroke: #ff8a1e; stroke-width: 1.8; }
 .lp-p-brenn.hoch .lp-ring { fill: rgba(255,50,50,.28); stroke: #ff4a4a; }

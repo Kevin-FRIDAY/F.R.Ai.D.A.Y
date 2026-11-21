@@ -1,4 +1,4 @@
-# Lage-Plus: neun neue Ebenen im Weltgeschehen (v1.126.0)
+# Lage-Plus: neun neue Ebenen im Weltgeschehen (v1.128.0)
 
 Angeregt von Lagekarten wie Argos Atlas, aber als eigene Friday-Version. Alles kommt aus freien, öffentlichen Quellen, du brauchst keinen Schlüssel und kein Konto.
 

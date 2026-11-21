@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Lage-Plus (v1.126.0): neun weitere Ebenen im Weltgeschehen, nur freie, öffentliche Quellen.
+// F.R.Ai.D.A.Y Lage-Plus (v1.128.0): neun weitere Ebenen im Weltgeschehen, nur freie, öffentliche Quellen.
 // Notfall-Flugzeuge, Meerengen-Verkehr, Reisewarnungen, Hurrikan-Kegel, WHO-Ausbrüche, Atomkraftwerke + Häfen,
 // Strahlung, Brennpunkt-Melder, Stabilitäts-Wert. Dazu Kacheln in der Lagebild-Leiste.
 (() => {

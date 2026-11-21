@@ -8,6 +8,7 @@ import { attachAgentHub, isAgentOnline, getAgentInfo, sendToAgent } from "./agen
 import { mailConfigured, getMailOverview, sortMail } from "./mail.js";
 import { runSystemCheck } from "./syscheck.js";
 import { systemLive } from "./systemlive.js";
+import { gehirnStand } from "./gehirn.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
 import { agentsWithStatus } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
@@ -20,6 +21,7 @@ import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webs
 import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, VORLAGEN } from "./spiele.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { helferRouten, helferStart } from "./helfer.js";
+import { wacheRouten, wacheStart } from "./wache.js";
 import { startShips, getShips, shipsStatus, schiffeRouten } from "./ships.js";
 import { getISS } from "./extras.js";
 import * as alexa from "./alexa.js";
@@ -235,6 +237,8 @@ app.get("/api/status", (req, res) => {
 
 // Live-Werte für die System-Zentrale (Prozessor, Speicher, Platte, Fridays Verbrauch)
 app.get("/api/system/live", (req, res) => res.json(systemLive()));
+// Fridays Gehirn (KI-Kern): echte Zahlen aus Logbuch, Gedächtnis, Archiv, Energie und Auftrag.
+app.get("/api/gehirn", (req, res) => res.json(gehirnStand({ agentOnline: isAgentOnline(), version: runningVersion() })));
 
 // --- Updates ---
 app.get("/api/update", asyncRoute(async (req, res) => res.json({ ...(await checkForUpdate()), status: getUpdateStatus(), githubSchluessel: githubTokenStatus() })));
@@ -643,6 +647,7 @@ zentraleRouten(app, asyncRoute);
 
 // Helfer-Paket: Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede (v1.106.0).
 helferRouten(app, asyncRoute);
+wacheRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
@@ -655,6 +660,7 @@ server.listen(config.port, config.host, () => {
 logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
 helferStart();
+wacheStart();
 zentraleStart(ask);
 startTelegram();
 startShips();
