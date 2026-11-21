@@ -5,6 +5,7 @@ import * as kuehl from "./kuehlschrank.js";
 import * as kauf from "./kaufberater.js";
 import * as gegen from "./gegenrede.js";
 import * as ideen from "./ideenschmiede.js";
+import * as ausbau from "./friday-ausbau.js";
 import * as lernen from "./lernen.js";
 import { denke } from "./denker.js";
 import { notifyAll } from "./notify.js";
@@ -112,6 +113,12 @@ export function helferRouten(app, asyncRoute) {
 
   // --- Ideen-Schmiede ---
   app.get("/api/ideen", (req, res) => res.json({ tresor: ideen.tresor(), bereiche: ideen.BEREICHE }));
+  // v1.130.0: Friday ausbauen (Bauplan-Katalog, Lücken aus der Datenbank, KI-Vorschläge)
+  app.get("/api/ideen/ausbau", (req, res) => res.json(ausbau.ausbau({ tage: Math.min(365, Math.max(7, Number(req.query.tage) || 60)) })));
+  app.post("/api/ideen/ausbau/auftrag", (req, res) => res.json({ text: ausbau.bauAuftrag(req.body || {}) }));
+  app.post("/api/ideen/ausbau/ki", asyncRoute(async (req, res) => {
+    try { res.json({ vorschlaege: await ausbau.kiVorschlaege() }); } catch (err) { fehler(res, err, /Guthaben/.test(err.message) ? 402 : 502); }
+  }));
   app.get("/api/ideen/wuerfeln", (req, res) => res.json(ideen.wuerfeln(String(req.query.bereich || ""))));
   app.post("/api/ideen/pruefen", (req, res) => { try { res.json(ideen.pruefen(req.body?.text)); } catch (err) { fehler(res, err); } });
   app.post("/api/ideen", (req, res) => res.json(ideen.speichern(req.body || {})));
