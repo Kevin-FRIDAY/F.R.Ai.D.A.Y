@@ -9,35 +9,9 @@ import * as ausbau from "./friday-ausbau.js";
 import * as lernen from "./lernen.js";
 import { denke } from "./denker.js";
 import { notifyAll } from "./notify.js";
-import { U } from "./datum.js";
+import { klangQuick, klangRouten } from "./klangwelt.js";
 
-// ---------- Stimmungs-Sound (der Klang selbst entsteht im Browser, hier nur die Sprachbefehle) ----------
-const KLANG = [
-  ["regen", /\b(regen|regengeräusche|regengeraeusche|regenrauschen)\b/],
-  ["meer", /\b(meer|meeresrauschen|wellen|ozean|strand)\b/],
-  ["wald", /\b(wald|vögel|voegel|vogelgezwitscher|natur|naturgeräusche|naturgeraeusche)\b/],
-  ["kamin", /\b(kamin|kaminfeuer|lagerfeuer|feuer knistern)\b/],
-  ["fokus", /\b(fokus|konzentration|konzentrier|brown noise|braunes rauschen|lernmusik|arbeitsmusik|fokus-sound|fokussound|deep work)\b/],
-  ["nacht", /\b(nacht|grillen|einschlafen|schlafen|schlafgeräusche|schlafgeraeusche)\b/],
-  ["weltraum", /\b(weltraum|space|all|sci-fi|scifi|raumschiff)\b/],
-  ["puls", /\b(puls|energie|power|motivation|training|sport|party|workout)\b/],
-];
-function klangQuick(text) {
-  const t = String(text || "").toLowerCase().replace(/^(hey |hallo |ok )?(friday|freitag)[ ,.]*/, "").replace(/[!?.]/g, "").trim();
-  if (U(/^(öffne|oeffne|zeig)( mir)?( den| die)? (stimmungs-?sound|klangraum|klang-raum|sound-?mixer|geräusche|geraeusche)$/).test(t)) return { answer: "Der Stimmungs-Sound ist offen.", actions: ["klang"] };
-  if (U(/\b(stimmungs-?sound|hintergrund-?sound|hintergrundgeräusche|hintergrundgeraeusche|klangraum|naturgeräusche|naturgeraeusche|fokus-?sound|sound|geräusche|geraeusche|klang)\b.*\b(aus|stopp|stop|beenden|leiser machen)\b|^(mach|stell) (den |die )?(sound|geräusche|geraeusche|klang|stimmungs-?sound)( wieder)? aus$/).test(t)) return { answer: "Stimmungs-Sound ist aus.", actions: ["klang:aus"] };
-  if (U(/\b(stimmungs-?sound|klang|sound)\b.*\b(automatisch|auto|passend|selbst aussuchen)\b|^(pass|passe) (den )?(sound|klang|die musik) (an|automatisch an)|^stimmungs-?sound( an)?$/).test(t)) return { answer: "Automatik an: Ich passe die Geräusche an das an, was du gerade in Friday machst.", actions: ["klang:auto"] };
-  const klangWort = U(/\b(geräusch|geraeusch|sound|klang|rauschen|atmosphäre|atmosphaere|hintergrundmusik|musik|lernmusik|arbeitsmusik)\w*/).test(t);
-  if (/\b(spotify|playlist|lied|song|album|radio|licht|lampe|fernseher|tv|alexa)\b/.test(t)) return null;
-  for (const [id, re] of KLANG) {
-    if (!U(re).test(t)) continue;
-    const kurzBefehl = U(/^(spiel|spiele|starte|mach|ich brauche|gib mir)( mir)?( mal| etwas| ein bisschen)? \S+( \S+)?( an| ab| bitte)*$/).test(t);
-    if (klangWort || (kurzBefehl && id !== "puls" && id !== "nacht")) {
-      return { answer: { regen: "Regen läuft. Gemütlich.", meer: "Meeresrauschen läuft.", wald: "Wald und Vögel laufen.", kamin: "Das Kaminfeuer knistert.", fokus: "Fokus-Rauschen läuft. Viel Erfolg, Boss.", nacht: "Nachtgeräusche laufen. Schlaf gut.", weltraum: "Weltraum-Klang läuft.", puls: "Energie-Puls läuft." }[id], actions: [`klang:${id}`] };
-    }
-  }
-  return null;
-}
+// Stimmungs-Sound: Sprachbefehle, Fotos und "Wo regnet es gerade?" stehen in klangwelt.js.
 
 /** Ein Schnellbefehl für brain.js (alles ohne Claude). */
 export async function quickCommand(text) {
@@ -63,6 +37,8 @@ export function helferStart() {
 const fehler = (res, err, code = 400) => res.status(code).json({ error: err.message || String(err) });
 
 export function helferRouten(app, asyncRoute) {
+  // --- Stimmungs-Sound: Fotos + "Wo regnet es gerade?" (v1.129.0) ---
+  klangRouten(app, asyncRoute);
   // --- Carlas Lernecke (v1.108.0) ---
   lernen.lernenRouten(app, asyncRoute);
 

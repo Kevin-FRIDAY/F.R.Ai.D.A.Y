@@ -733,6 +733,7 @@
         else if (hat("ideen")) window.FridayIdeen?.open();
         const klangA = aktion("klang:");
         if (klangA === "klang:aus") window.FridayKlang?.aus();
+        else if (klangA?.startsWith("klang:wo:")) window.FridayKlang?.wo(klangA.slice(9));
         else if (klangA === "klang:auto") { window.FridayKlang?.auto(true); window.FridayKlang?.open(); }
         else if (klangA) window.FridayKlang?.spiele(klangA.slice(6));
         else if (hat("klang")) window.FridayKlang?.open();
