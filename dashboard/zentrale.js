@@ -679,11 +679,13 @@
       let chip = $("hb-zentrale");
       const bar = document.querySelector(".hud-bar");
       if (!bar) return;
-      const zeigen = d.kontrolle.notfall || d.kontrolle.offen > 0 || d.missionen.probleme > 0;
+      // Offene Freigaben zeigt seit v1.134.0 die Glocke (glocke.js); hier nur noch Notfall und Missions-Probleme.
+      const zeigen = d.kontrolle.notfall || d.missionen.probleme > 0;
       if (!zeigen) { chip?.remove(); return; }
-      if (!chip) { chip = document.createElement("button"); chip.type = "button"; chip.id = "hb-zentrale"; chip.className = "hb-chip hb-btn"; bar.insertBefore(chip, bar.querySelector(".hb-ver")); chip.addEventListener("click", () => oeffnen(d.kontrolle.notfall || d.kontrolle.offen ? "kontrolle" : "missionen")); }
+      if (!chip) { chip = document.createElement("button"); chip.type = "button"; chip.id = "hb-zentrale"; chip.className = "hb-chip hb-btn"; bar.insertBefore(chip, bar.querySelector(".hb-ver")); chip.addEventListener("click", () => oeffnen(chip.dataset.ziel || "missionen")); }
+      chip.dataset.ziel = d.kontrolle.notfall ? "kontrolle" : "missionen";
       chip.classList.toggle("zt-alarm", Boolean(d.kontrolle.notfall));
-      chip.innerHTML = d.kontrolle.notfall ? "<i class=\"hb-dot\"></i>🛑 <b>NOTFALL</b>" : d.kontrolle.offen ? `<i class="hb-dot"></i>Freigabe <b>${d.kontrolle.offen}</b>` : `<i class="hb-dot"></i>Mission <b>⚠ ${d.missionen.probleme}</b>`;
+      chip.innerHTML = d.kontrolle.notfall ? "<i class=\"hb-dot\"></i>🛑 <b>NOTFALL</b>" : `<i class="hb-dot"></i>Mission <b>⚠ ${d.missionen.probleme}</b>`;
     } catch { /* egal */ }
   }
   setTimeout(hudChip, 3000);

@@ -5,6 +5,7 @@ import { ask } from "./brain.js";
 import { sendTelegram, sendTelegramPhoto } from "./notify.js";
 import { telegramFoto } from "./wache.js";
 import * as store from "./store.js";
+import { telegramKnopf } from "./freigaben.js";
 
 const api = (method) => `https://api.telegram.org/bot${config.telegramToken}/${method}`;
 
@@ -82,6 +83,8 @@ export async function startTelegram() {
       for (const update of res.result || []) {
         offset = update.update_id + 1;
         if (update.message) handle(update.message);
+        // Freigabe-Glocke: Knopf "Freigeben"/"Ablehnen" unter einer Anfrage
+        if (update.callback_query) telegramKnopf(update.callback_query).catch((err) => console.error("Telegram-Knopf:", err.message));
       }
       if (res.ok === false) await new Promise((ok) => setTimeout(ok, 5000));
     } catch (err) {

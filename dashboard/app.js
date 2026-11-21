@@ -720,6 +720,16 @@
         else if (wacheA) window.FridayWache?.open({ kamera: wacheA.slice(6) });
         else if (hat("wache")) window.FridayWache?.open();
         else if (hat("wache_status")) window.FridayWache?.refresh();
+        // OpenJarvis-Paket (v1.134.0): Freigabe-Glocke, Dauer-Wächter, Dokumenten-Wissen, Apple-Apps.
+        if (hat("glocke")) window.FridayGlocke?.open();
+        else window.FridayGlocke?.refresh();
+        if (hat("dauerwaechter")) window.FridayWaechter?.open();
+        else window.FridayWaechter?.refresh();
+        const dokA = data.actions?.find((a) => a === "dokwissen" || (typeof a === "string" && a.startsWith("dokwissen:")));
+        if (dokA === "dokwissen:dokumente") window.FridayDokwissen?.open({ tab: "dokumente" });
+        else if (dokA) window.FridayDokwissen?.open(dokA.startsWith("dokwissen:") ? { frage: decodeURIComponent(dokA.slice(10)), ergebnis: data.answer } : {});
+        const appleA = data.actions?.find((a) => a === "apple" || (typeof a === "string" && a.startsWith("apple:")));
+        if (appleA) { const [, t, q] = appleA.split(":"); window.FridayApple?.open({ tab: t || "notizen", q: q ? decodeURIComponent(q) : "" }); }
         // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede, Stimmungs-Sound.
         if (hat("kuehlschrank")) window.FridayKuehl?.open({ tab: hat("kuehlschrank:rezepte") ? "rezepte" : "vorrat" });
         else window.FridayKuehl?.refresh();
@@ -766,7 +776,7 @@
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
       // Gesprächsmodus: Kam der Befehl per Stimme, hört Friday danach weiter zu, ohne "Friday" davor.
       const weiter = ohr.modus !== "befehl" && !ohr.wartend && !unterbrochenEben() && !lernA && !window.FridayLernen?.offen() && (hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer));
-      if (weiter && Recognition && !callActive && !window.FridayDokumente?.offen()) {
+      if (weiter && (Recognition || window.FridayHoeren?.soll()) && !callActive && !window.FridayDokumente?.offen()) {
         setTimeout(() => { if (!busy && !speaking) listenOnce({ folge: true, frage: hat("zuhoeren") }); }, 150);
       }
     } catch (err) {
@@ -1840,15 +1850,45 @@
   // Befehl-Modus: der nächste Satz zählt auch ohne "Friday" (nach "Friday" allein, nach einer Frage von Friday).
   function befehlModus({ folge = false, frage = false } = {}) {
     clearTimeout(ohr.befehlTimer);
+    if (window.FridayHoeren?.soll()) { whisperBefehl({ folge, frage }); return; }
     ohr.modus = "befehl";
     ohr.befehl = { folge, frage };
     document.body.classList.toggle("gespraech", folge);
     setState(folge ? "Ich höre weiter …" : "Ich höre", "listening");
     ohr.befehlTimer = setTimeout(befehlEnde, frage ? 12000 : 8000);
   }
+  // v1.134.0 Whisper (hoeren.js): Befehl aufnehmen und auf dem Mac verstehen lassen.
+  async function whisperBefehl({ folge = false, frage = false } = {}) {
+    ohr.modus = "befehl";
+    ohr.befehl = { folge, frage, whisper: true };
+    document.body.classList.toggle("gespraech", folge);
+    ohrStopp();
+    if (speaking) stilleJetzt();
+    setState(folge ? "Ich höre weiter (Whisper) …" : "Ich höre (Whisper) …", "listening");
+    const r = await window.FridayHoeren.aufnehmen({ maxMs: frage ? 14000 : 10000, wartenMs: frage ? 8000 : 6000 });
+    if (ohr.modus !== "befehl" || !ohr.befehl.whisper) return; // inzwischen gestoppt
+    ohr.modus = "warten";
+    ohr.befehl = {};
+    document.body.classList.remove("gespraech");
+    ohrSpaeter(600);
+    if (r.error) { diag.schritt(`Whisper: ${r.error}`, "warn"); setState(r.error); setTimeout(zeigeRuhe, 4000); return; }
+    const said = String(r.text || "").trim();
+    if (!said) { zeigeRuhe(); return; }
+    diag.schritt(`Gehört (Whisper): „${said.slice(0, 80)}“`);
+    const m = said.match(WAKE);
+    const cmd = m && m.index < 3 ? nachWeckwort(said, m) : said.replace(/^[,.!\s]+/, "").trim();
+    if (folge && !frage && GESPRAECH_ENDE.test(cmd)) {
+      addMessage("user", said);
+      say(["Gern, Boss.", "Jederzeit, Boss.", "Alles klar, Boss."][Math.floor(Math.random() * 3)]);
+      return;
+    }
+    if (cmd.length < 2) { zeigeRuhe(); return; }
+    ausfuehren(cmd);
+  }
   function befehlEnde() {
     clearTimeout(ohr.befehlTimer);
     if (ohr.modus !== "befehl") return;
+    if (ohr.befehl.whisper) window.FridayHoeren?.abbrechen();
     ohr.modus = "warten";
     ohr.befehl = {};
     document.body.classList.remove("gespraech");
@@ -1932,7 +1972,8 @@
       return;
     }
     if (cmd.length < 2) { // nur "Friday": kurz antworten und auf den Befehl warten
-      befehlModus({});
+      // Mit Whisper erst nach dem "Ja?" aufnehmen (sonst nimmt sie ihre eigene Stimme auf).
+      if (!window.FridayHoeren?.soll()) befehlModus({});
       // Solange sie "Ja?" sagt, läuft die Zeit nicht (die Stimme kann ein paar Sekunden brauchen).
       // Danach läuft das 8-Sekunden-Fenster für den Befehl neu.
       clearTimeout(ohr.befehlTimer);
@@ -1947,6 +1988,7 @@
 
   // Für andere Fenster und den Reaktor-Knopf: jetzt zuhören (ohne "Friday").
   function listenOnce(opts = {}) {
+    if (window.FridayHoeren?.soll()) { befehlModus(opts); return; }
     if (!Recognition) {
       addMessage("friday", "Dein Browser kann keine Sprache erkennen. Nutze Safari oder Chrome, oder tipp unten.");
       return;
@@ -1959,6 +2001,7 @@
   window.Friday.zuhoeren = listenOnce;
 
   $("reactor").addEventListener("click", () => {
+    if (window.FridayHoeren?.nimmtAuf()) { window.FridayHoeren.fertig(); return; } // Tipp = fertig gesprochen
     if (speaking) { stilleJetzt(); setTimeout(zeigeRuhe, 300); return; }
     listenOnce();
   });

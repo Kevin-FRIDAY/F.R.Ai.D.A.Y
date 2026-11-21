@@ -52,6 +52,8 @@ function gueltigerStandort(s) {
 import { localVersion, checkForUpdate, startUpdate, getUpdateStatus, updateProgress, runningVersion, githubTokenStatus, setGithubToken, forgetGithubToken } from "./updater.js";
 import { archivUebersicht, speichereFoto, einsortieren, dateiPfad, fotoWegwerfen, oeffneOrdner, archivStart } from "./archiv.js";
 import { zentraleRouten, zentraleStart } from "./zentrale.js";
+import { verlaufSpeichern } from "./apple.js";
+import { jarvisRouten, jarvisStart } from "./jarvis-paket.js";
 import { lagebildRouten } from "./lagebild.js";
 import { lageplusRouten, reisewarnungFuer, stabilitaetFuer } from "./lageplus.js";
 import { satellitenRouten } from "./satelliten.js";
@@ -111,6 +113,8 @@ app.post("/api/health", requireShortcutOrAuth, (req, res) => {
   const b = req.body || {};
   const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : undefined);
   store.saveHealth({ schritte: num(b.steps), schlaf_stunden: num(b.sleepHours), ruhepuls: num(b.restingHeartRate), aktive_kalorien: num(b.activeEnergy) });
+  // v1.134.0: Verlauf für das Gesundheits-Fenster (ein Eintrag pro Tag, mehr Werte möglich)
+  verlaufSpeichern({ schritte: num(b.steps), schlaf_stunden: num(b.sleepHours), ruhepuls: num(b.restingHeartRate), aktive_kalorien: num(b.activeEnergy), gewicht: num(b.weight), training_min: num(b.exerciseMinutes), stehstunden: num(b.standHours) });
   res.json({ ok: true });
 });
 
@@ -676,6 +680,8 @@ helferRouten(app, asyncRoute);
 wacheRouten(app, asyncRoute);
 // Kontrollraum (v1.135.0): Regelwerk, Schleifen-Schutz, Gedächtnis, Herzschlag, Kosten-Deckel, Seele, Fähigkeiten, Änderungen.
 kernRouten(app, asyncRoute);
+// OpenJarvis-Paket (v1.134.0): Freigabe-Glocke, Dauer-Wächter, Dokumenten-Wissen, Apple-Apps, Whisper.
+jarvisRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
@@ -691,6 +697,7 @@ helferStart();
 wacheStart();
 kernStart();
 zentraleStart(ask);
+jarvisStart();
 startTelegram();
 startShips();
 startAutoScan();

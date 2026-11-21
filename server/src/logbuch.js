@@ -49,6 +49,8 @@ export const BEREICHE = {
   update: ["⬇", "Updates"],
   sicherung: ["🛡", "Sicherungen"],
   verbindung: ["🔗", "Verbindungen"],
+  apple: ["🍏", "Apple-Apps"],
+  waechter: ["🔭", "Dauer-Wächter"],
   system: ["⚙", "System"],
   sonstiges: ["•", "Sonstiges"],
 };
@@ -79,6 +81,9 @@ const ZU_BEREICH = {
   briefing: "briefing",
   update: "update", system_check: "system", stimme: "system",
   logbuch: "system",
+  apple_notizen: "apple", apple_kontakte: "apple", apple_musik: "musik", apple: "apple",
+  dauer_waechter: "waechter", dauerwaechter: "waechter",
+  dokumente_suchen: "suche", dokwissen: "suche", glocke: "system",
 };
 export function bereichFuer(name) {
   const n = String(name || "").split(":")[0];
