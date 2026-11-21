@@ -366,9 +366,10 @@ export function getInfra(typ) {
   if (infraCache[typ]) return infraCache[typ];
   try {
     infraCache[typ] = JSON.parse(fs.readFileSync(path.join(ROOT, "data", file), "utf8"));
-  } catch { infraCache[typ] = []; }
+  } catch { return []; } // Datei fehlt noch: Lage-Plus lädt sie nach, darum nichts merken
   return infraCache[typ];
 }
+export function resetInfraCache() { for (const k of Object.keys(infraCache)) delete infraCache[k]; }
 
 // --- Echte Nachrichtenbilder (GDELT, öffentlich, kein Schlüssel) ---
 // GDELT erlaubt nur ca. eine Anfrage alle 5 Sekunden -> globale Warteschlange + Zwischenspeicher.

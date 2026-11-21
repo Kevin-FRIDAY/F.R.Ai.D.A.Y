@@ -324,6 +324,8 @@
         </div>`;
       el.querySelector(".lb-zu")?.addEventListener("click", () => setLeiste(false));
       el.querySelectorAll(".lb-k").forEach((b) => b.addEventListener("click", () => kachelKlick(b.dataset.k, u)));
+      // Lage-Plus (lageplus.js) hängt hier seine Kacheln an.
+      window.dispatchEvent(new CustomEvent("friday-lb-leiste", { detail: { grid: el.querySelector(".lb-grid") } }));
     } catch {
       el.innerHTML = `<div class="lb-head">📡 LAGEBILD <em>gerade nicht erreichbar</em><button type="button" class="lb-zu" title="Leiste ausblenden">–</button></div>`;
       el.querySelector(".lb-zu")?.addEventListener("click", () => setLeiste(false));
