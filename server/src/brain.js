@@ -34,6 +34,7 @@ import { quickCommand as routenQuick } from "./routen.js";
 import { quickCommand as helferQuick } from "./helfer.js";
 import { quickCommand as wacheQuick } from "./wache.js";
 import { quickCommand as studioQuick } from "./videostudio.js";
+import { quickCommand as jarvisQuick } from "./jarvis-paket.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -71,6 +72,8 @@ Werkzeuge:
 - Termine und Apple-Erinnerungen: kalender (Fridays eigene Erinnerungen mit Wecker: set_reminder). Musik: spotify, wenn verbunden, sonst mac. Lampen: hue für Philips Hue, smart_home für Home Assistant (Heizung, Steckdosen, Rollos, Sensoren). Aufgaben: todoist, wenn verbunden. Notizen und Wissen: notion.
 - Nachrichten und Anrufe an die Frau des Nutzers, ihn selbst oder hinterlegte Kontakte: anrufe. Wer "ruf meine Frau an und sag ihr …" sagt, hat damit bestätigt: direkt ausführen. Den Text in der Ich-Form des Nutzers formulieren.
 - Mac-Aktionen gehen nur, wenn der Mac verbunden ist. Wenn nicht, sag es kurz.
+- Eigene Unterlagen (Verträge, Rechnungen, Anleitungen, PDFs): dokumente_suchen, und nenne immer die Quelle (Datei, Seite). Apple Notizen, Kontakte und die Music-App: apple_notizen, apple_kontakte, apple_musik. Soll ich etwas über längere Zeit beobachten ("sag mir Bescheid, wenn …"): dauer_waechter.
+- Bekommst du "wartet_auf_freigabe" zurück, sag kurz, dass die Aktion in der Glocke oben auf Boss' Freigabe wartet (oder per Knopf in Telegram), und tu nicht so, als sei sie erledigt.
 - Lösche, kaufe oder verschicke nie etwas an andere Personen ohne ausdrückliche Bestätigung.
 
 Aufträge:
@@ -257,6 +260,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (wa) { actions.push(...wa.actions); return finish(wa.answer); }
     } catch (err) {
       console.error("Kamera-Wache:", err.message);
+    }
+  }
+
+  // OpenJarvis-Paket (v1.134.0): Freigabe-Glocke ("gib frei"), Dauer-Wächter ("beobachte …"),
+  // Dokumenten-Wissen ("was steht in meinen Dokumenten über …"), Apple Notizen/Kontakte/Musik/Health – ohne Claude fürs Suchen.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const oj = await jarvisQuick(text);
+      if (oj) { actions.push(...oj.actions); if (oj.claude) claudeGefragt = true; return finish(oj.answer); }
+    } catch (err) {
+      console.error("OpenJarvis-Paket:", err.message);
     }
   }
 

@@ -25,6 +25,7 @@ export const NUR_LESEN = new Set([
   "world_news", "list_tasks", "system_check", "check_mail", "air_quality", "currency", "crypto", "holidays", "iss", "lookup",
   "country_info", "get_weather", "list_reminders", "list_protocols", "get_health", "welt_alarm", "markt_radar",
   "dokument_erstellen", "fragebogen_erstellen", "web_search",
+  "dokumente_suchen", "apple_kontakte", // v1.134.0 (nur lesen)
 ]);
 // Werkzeuge, die nach außen wirken, Geräte schalten oder Friday selbst verändern.
 export const KRITISCH = new Set([
@@ -38,7 +39,20 @@ export const WERKZEUG_TEXT = {
   video_schnitt: "Videoschnitt starten", webseite_bauen: "Webseite bauen", werkstatt: "3D-Werkstatt",
   add_task: "Aufgabe anlegen", add_shopping: "Einkaufsliste", remember: "Etwas merken", set_reminder: "Erinnerung stellen",
   spotify: "Musik", kalender: "Kalender", todoist: "Todoist", notion: "Notion", open_app: "App öffnen",
+  apple_notizen: "Apple Notizen", apple_musik: "Apple Musik", dauer_waechter: "Dauer-Wächter",
 };
+
+// v1.134.0 Freigabe-Glocke (aus OpenJarvis übernommen: "Approval Bell"): Diese Aktionen kann Boss so
+// einstellen, dass Friday sie NIE ohne Freigabe macht – egal welche Autonomie-Stufe. Standard: Löschen,
+// Mails sortieren und Updates. Anrufe bleiben aus, weil "ruf meine Frau an" schon die Bestätigung ist.
+export const FRAGBAR = {
+  anrufe: "Anrufe & Nachrichten an andere", forget: "Etwas aus dem Gedächtnis löschen", sort_mail: "Mails sortieren / verschieben",
+  update: "Friday aktualisieren", mac: "Aktionen auf dem Mac", send_push: "Mitteilungen schicken", run_protocol: "Protokolle starten",
+  smart_home: "Smart Home schalten", hue: "Licht schalten", alexa: "Alexa-Routinen", fernseher: "Fernseher steuern",
+  apple_notizen: "Apple Notizen anlegen", apple_musik: "Musik abspielen", dauer_waechter: "Dauer-Wächter anlegen/löschen",
+  webseite_bauen: "Webseiten bauen", video_schnitt: "Videoschnitt starten",
+};
+export const IMMER_FRAGEN_STANDARD = ["forget", "sort_mail", "update"];
 
 // Welche Bereiche (Module) welche Daten lesen dürfen. Friday hält sich daran, wenn sie Kontext sammelt.
 export const DATEN = {
@@ -73,6 +87,8 @@ function laden() {
     autonomie: Number.isInteger(d.autonomie) && d.autonomie >= 0 && d.autonomie <= 3 ? d.autonomie : 2,
     notfall: d.notfall && typeof d.notfall === "object" ? d.notfall : null,
     genehmigungen: Array.isArray(d.genehmigungen) ? d.genehmigungen : [],
+    // v1.134.0 Freigabe-Glocke: Werkzeuge, bei denen Friday IMMER erst fragt (auch im Gespräch).
+    immerFragen: Array.isArray(d.immerFragen) ? d.immerFragen.filter((w) => FRAGBAR[w]) : [...IMMER_FRAGEN_STANDARD],
     rechte,
   };
 }
@@ -94,6 +110,8 @@ export function stand() {
     offen: d.genehmigungen.filter((g) => g.status === "offen"),
     erledigt: d.genehmigungen.filter((g) => g.status !== "offen").slice(-30).reverse(),
     rechte: d.rechte,
+    immerFragen: d.immerFragen,
+    fragbar: FRAGBAR,
     daten: DATEN,
     nutzer: NUTZER,
   };
@@ -122,6 +140,22 @@ export function setzeRecht(nutzer, daten, an) {
 export function darf(nutzer, daten) {
   return Boolean(laden().rechte[nutzer]?.[daten]);
 }
+
+/** Glocke: "Immer nachfragen" für ein Werkzeug an- oder ausschalten. */
+export function setzeImmerFragen(werkzeug, an) {
+  if (!FRAGBAR[werkzeug]) return { error: "Dieses Werkzeug kann man hier nicht einstellen." };
+  const d = laden();
+  const set = new Set(d.immerFragen);
+  if (an) set.add(werkzeug); else set.delete(werkzeug);
+  d.immerFragen = [...set];
+  speichern(d);
+  eintragen({ bereich: "system", titel: `Freigabe-Glocke: ${FRAGBAR[werkzeug]} ${an ? "– fragt jetzt immer" : "– ohne Nachfrage"}`, quelle: "dashboard" });
+  return stand();
+}
+
+// Wer möchte von neuen Freigaben erfahren? (Glocke, Telegram)
+const zuhoerer = new Set();
+export function beiNeuerFreigabe(fn) { zuhoerer.add(fn); return () => zuhoerer.delete(fn); }
 
 // ---- Notfallmodus ----
 export function notfallAktiv() {
@@ -156,6 +190,8 @@ export function pruefeWerkzeug(name, kanal = "") {
   if (NUR_LESEN.has(name)) return { ok: true };
   const d = laden();
   if (d.notfall) return { blockiert: "Der Notfallmodus ist an. Friday führt gerade keine Aktionen aus. Beende ihn in der Modul-Zentrale → Kontrolle." };
+  // Freigabe-Glocke: "Immer nachfragen" gilt auf jeder Stufe außer "Selbstständig".
+  if (d.immerFragen.includes(name) && d.autonomie < 3) return { freigabe: true };
   const automatisch = AUTOMATISCH.has(String(kanal));
   const kritisch = KRITISCH.has(name);
   const st = d.autonomie;
@@ -183,6 +219,7 @@ export function freigabeAnfordern({ werkzeug, eingabe, kanal, grund }) {
   d.genehmigungen = d.genehmigungen.slice(-200);
   speichern(d);
   eintragen({ bereich: "system", titel: `Freigabe angefragt: ${g.titel}`, details: kurzText(g.eingabe), kanal: g.kanal, quelle: "automatisch" });
+  for (const fn of zuhoerer) { try { Promise.resolve(fn(g)).catch(() => {}); } catch { /* egal */ } }
   return g;
 }
 
