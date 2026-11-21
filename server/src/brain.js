@@ -25,6 +25,7 @@ import { getSettings } from "./einstellungen.js";
 import { setzeAuftrag, auftragFertig, werkzeugName } from "./auftrag.js";
 import * as logbuch from "./logbuch.js";
 import * as oekosystem from "./oekosystem.js";
+import { quickCommand as datenbankQuick } from "./datenbank.js";
 import { tempoFuerFrage } from "./denker.js";
 import { quickCommand as kommandoQuick } from "./kommando.js";
 import { quickCommand as zentraleQuick } from "./zentrale.js";
@@ -237,7 +238,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Video-Studio (v1.131.0): "Friday, erstell mir ein 20-Sekunden-Video über Mallorca mit Musik" – startet sofort.
+  // Video-Studio (v1.132.0): "Friday, erstell mir ein 20-Sekunden-Video über Mallorca mit Musik" – startet sofort.
   // Das Drehbuch schreibt Claude, wenn Guthaben da ist, sonst Wikipedia/Vorlage. Musik komponiert Friday selbst.
   if (mode !== "translate" && !image && text) {
     try {
@@ -309,6 +310,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (oe) { actions.push(...oe.actions); return finish(oe.answer); }
     } catch (err) {
       console.error("Ökosystem:", err.message);
+    }
+  }
+
+  // Fridays Datenbank ("durchsuche die Datenbank nach …", "notiere in die Datenbank: …") – ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const db = datenbankQuick(text);
+      if (db) { actions.push(...db.actions); return finish(db.answer); }
+    } catch (err) {
+      console.error("Datenbank:", err.message);
     }
   }
 

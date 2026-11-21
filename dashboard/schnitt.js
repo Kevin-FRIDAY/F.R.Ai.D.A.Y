@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Schnitt-Team (v1.131.0): drei Reiter im Stil von Fridays Gehirn.
+// F.R.Ai.D.A.Y Schnitt-Team (v1.132.0): drei Reiter im Stil von Fridays Gehirn.
 //  🎬 Video erstellen – Video-Studio auf Zuruf: Regie, Bildsucher, Grafik, Komponist, Sprecher, Render (GET/POST /api/studio)
 //  ✂ Clips schneiden – das bisherige Schnitt-Team (GET/POST /api/video-job)
 //  ▶ Fertige Videos  – alles aus ~/Friday-Video/Fertig mit Abspielen (GET /api/studio/videos)

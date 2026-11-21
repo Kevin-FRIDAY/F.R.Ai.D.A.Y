@@ -693,7 +693,7 @@
         if (hat("welttour_zurueck")) window.FridayWelttour?.zurueck();
         if (hat("welttour_stopp")) window.FridayWelttour?.stopp(true);
         if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
-        // Schnitt-Team / Video-Studio (v1.131.0): "erstell mir ein 20-Sekunden-Video über …"
+        // Schnitt-Team / Video-Studio (v1.132.0): "erstell mir ein 20-Sekunden-Video über …"
         const studioJob = aktion("studio_job:");
         if (studioJob) window.FridayStudio?.verfolge(studioJob.slice(11));
         else if (hat("video_erstellen")) window.FridayStudio?.verfolge(null);
@@ -725,6 +725,9 @@
         const gegenA = aktion("gegenrede:");
         if (gegenA) window.FridayGegen?.open({ id: gegenA.slice(10) });
         else if (hat("gegenrede")) window.FridayGegen?.open();
+        const wissenA = data.actions?.find((a) => a === "wissen" || (typeof a === "string" && a.startsWith("wissen:")));
+        if (wissenA) window.FridayWissen?.oeffne(wissenA.startsWith("wissen:") ? decodeURIComponent(wissenA.slice(7)) : "");
+        if (hat("ideen:ausbau")) window.FridayIdeen?.open({ reiter: "ausbau" });
         const ideeA = aktion("idee:");
         if (ideeA) { try { window.FridayIdeen?.open({ wurf: JSON.parse(decodeURIComponent(ideeA.slice(5))) }); } catch { window.FridayIdeen?.open(); } }
         else if (hat("ideen")) window.FridayIdeen?.open();
@@ -1334,8 +1337,8 @@
     loadBrain();
   }
   // ---------- Wissen = Fridays Datenbank: alles, was gesprochen und gemacht wurde ----------
-  const W_ICON = { gespraech: "💬", aktion: "⚡", gedaechtnis: "🧠", aufgabe: "✅", erinnerung: "⏰", einkauf: "🛒", dokument: "📄" };
-  const W_NAME = { gespraech: "Gespräche", aktion: "Aktionen", gedaechtnis: "Gemerkt", aufgabe: "Aufgaben", erinnerung: "Erinnerungen", einkauf: "Einkauf", dokument: "Dokumente" };
+  const W_ICON = { gespraech: "💬", aktion: "⚡", gedaechtnis: "🧠", aufgabe: "✅", erinnerung: "⏰", einkauf: "🛒", dokument: "📄", notiz: "📝", idee: "💡", entscheidung: "⚖️", ziel: "🎯", mission: "🚀", geraet: "🔌", vorrat: "🥫", lernen: "🎓" };
+  const W_NAME = { gespraech: "Gespräche", aktion: "Aktionen", gedaechtnis: "Gemerkt", aufgabe: "Aufgaben", erinnerung: "Erinnerungen", einkauf: "Einkauf", dokument: "Dokumente", notiz: "Notizen", idee: "Ideen", entscheidung: "Entscheidungen", ziel: "Ziele", mission: "Missionen", geraet: "Geräte", vorrat: "Vorrat", lernen: "Lernstapel" };
   const W_KANAL = { web: "Dashboard", telegram: "Telegram", siri: "Siri", briefing: "Briefing" };
   let wTyp = "", wQ = "", wLetztes = "", wSuchTimer = null, wLaedt = false;
   const wMark = (t) => {
@@ -1368,8 +1371,12 @@
     } else {
       haupt = wMark(e.text);
       if (e.typ === "aktion" && e.art) haupt += `<span class="kanal">${escapeHtml(e.art)}</span>`;
+      else if (e.info) haupt += `<span class="kanal">${escapeHtml(e.info)}</span>`;
+      if (e.typ !== "gedaechtnis" && e.typ !== "aktion" && W_NAME[e.typ] && !wTyp) haupt += `<span class="kanal db-quelle">${escapeHtml(W_NAME[e.typ])}</span>`;
+      if (e.inhalt) neben = `<div class="antwort" title="Antippen zum Aufklappen">${wMark(String(e.inhalt).slice(0, 1200))}</div>`;
     }
-    return `<div class="wissen-e${e.erledigt ? " erledigt" : ""}"><span class="ico">${W_ICON[e.typ] || "•"}</span><div><div class="frage">${haupt}</div>${neben}</div><span class="zeit">${zeit}</span></div>`;
+    const weg = e.typ === "notiz" && e.id ? `<button class="db-weg" type="button" data-notiz="${escapeHtml(e.id)}" title="Notiz löschen" aria-label="Notiz löschen">✕</button>` : "";
+    return `<div class="wissen-e${e.erledigt ? " erledigt" : ""}" data-typ="${escapeHtml(e.typ)}"><span class="ico">${W_ICON[e.typ] || "•"}</span><div><div class="frage">${haupt}</div>${neben}</div><span class="zeit">${zeit}${weg}</span></div>`;
   }
   async function ladeWissen(weiter = false) {
     if (wLaedt) return;
@@ -1380,11 +1387,9 @@
       const u = new URLSearchParams({ typ: wTyp, q: wQ, limit: "120" });
       if (weiter && wLetztes) u.set("vor", wLetztes);
       const d = await (await api("/api/wissen/datenbank?" + u)).json();
-      const st = d.stats || {};
-      const seit = st.seit ? new Date(st.seit).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "–";
-      $("wissen-stats").innerHTML = `<div class="wissen-stat"><b>${st.gesamt || 0}</b><small>Einträge gesamt</small></div>`
-        + ["gespraech", "aktion", "gedaechtnis"].map((t) => `<div class="wissen-stat"><b>${st[t] || 0}</b><small>${W_NAME[t]}</small></div>`).join("")
-        + `<div class="wissen-stat"><b style="font-size:15px">${seit}</b><small>Erster Eintrag</small></div>`;
+      if (!weiter) window.FridayDatenbank?.kern();
+      const tr = $("wissen-treffer");
+      if (tr) tr.textContent = wQ || wTyp ? `${d.treffer || 0} Treffer${wTyp ? ` in ${W_NAME[wTyp] || wTyp}` : ""}${wQ ? ` zu „${wQ}“` : ""}` : "";
       let html = "", letzterTag = weiter && liste?.dataset.tag ? liste.dataset.tag : "";
       for (const e of d.eintraege || []) {
         const tag = e.alt ? "Ältere Gespräche" : wTagName(new Date(e.at));
@@ -1413,11 +1418,40 @@
     document.querySelectorAll("#wissen-filter button").forEach((x) => x.classList.toggle("active", x === b));
     ladeWissen();
   });
-  $("wissen-liste")?.addEventListener("click", (e) => {
+  $("wissen-liste")?.addEventListener("click", async (e) => {
+    const weg = e.target.closest("[data-notiz]");
+    if (weg) {
+      try { await api("/api/wissen/notiz/" + encodeURIComponent(weg.dataset.notiz), { method: "DELETE" }); } catch { /* egal */ }
+      ladeWissen(); return;
+    }
     const dok = e.target.closest("[data-dok]");
     if (dok) { window.FridayDokumente?.oeffne(dok.dataset.dok); return; }
     const a = e.target.closest(".antwort"); if (a) a.classList.toggle("offen");
   });
+  $("wissen-csv")?.addEventListener("click", async () => {
+    try {
+      const blob = await (await api("/api/wissen/export?" + new URLSearchParams({ format: "csv", typ: wTyp, q: wQ }))).blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `friday-datenbank-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    } catch { /* egal */ }
+  });
+  // Von außen (Speicher-Karte, Themen, Sprachbefehl): Filter oder Suche setzen.
+  window.FridayWissen = {
+    oeffne(q = "", typ = "") {
+      openSheet("wissen");
+      wQ = String(q || ""); wTyp = String(typ || "");
+      const f = $("wissen-q"); if (f) f.value = wQ;
+      document.querySelectorAll("#wissen-filter button").forEach((x) => x.classList.toggle("active", x.dataset.typ === wTyp));
+      ladeWissen();
+    },
+    typ(t) { wTyp = t || ""; document.querySelectorAll("#wissen-filter button").forEach((x) => x.classList.toggle("active", x.dataset.typ === wTyp)); ladeWissen(); },
+    suche(q) { wQ = String(q || ""); const f = $("wissen-q"); if (f) f.value = wQ; ladeWissen(); },
+    neu() { ladeWissen(); },
+    get aktiverTyp() { return wTyp; },
+  };
   $("wissen-export")?.addEventListener("click", async () => {
     try {
       const blob = await (await api("/api/wissen/export")).blob();

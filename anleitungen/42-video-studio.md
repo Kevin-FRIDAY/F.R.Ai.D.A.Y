@@ -1,4 +1,4 @@
-# Video-Studio: Videos auf Zuruf, mit eigener Musik (v1.131.0)
+# Video-Studio: Videos auf Zuruf, mit eigener Musik (v1.132.0)
 
 Das Schnitt-Team kann jetzt nicht nur deine Clips schneiden, sondern **selbst Videos erstellen**.
 
