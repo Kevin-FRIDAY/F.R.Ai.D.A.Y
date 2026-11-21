@@ -1,4 +1,15 @@
 {
   "_hinweis": "Funktionen, die gerade in Eve getestet werden. In Friday sind sie gesperrt (Schloss), bis Kevin sie in Eve freigibt. Neue Funktion = neuer Eintrag hier. 'ziele' sind CSS-Selektoren der Knöpfe/Bereiche, die in Friday das Schloss bekommen.",
-  "funktionen": []
+  "funktionen": [
+    {
+      "id": "app-zentrale",
+      "name": "App-Zentrale (21 Apps)",
+      "version": "1.139.0",
+      "beschreibung": "Apple Kalender, Erinnerungen, Fotos, Music, Kurzbefehle, Apple TV, Google Drive, OneDrive, GitHub, YouTube, Netflix, Spotify, Prime Video, Disney+, Alexa, Ring, Arlo, PayPal, Amazon, eBay, Google Pay an einem Ort. Friday zahlt und kauft nie selbst.",
+      "ziele": [
+        ".menu-apps",
+        ".nav-apps"
+      ]
+    }
+  ]
 }

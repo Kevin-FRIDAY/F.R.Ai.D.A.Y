@@ -13,6 +13,7 @@ import { offlineAnswer, notfallText } from "./offline.js";
 import { quickCommand as hausQuick } from "./werkstatt.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
 import { quickCommand as archivQuick } from "./archiv.js";
+import { quickCommand as appsQuick } from "./appzentrale.js";
 import { quickCommand as gehirnQuick } from "./gehirn.js";
 import { quickCommand as weltQuick, vollbildQuick } from "./weltgespraech.js";
 import { quickCommand as satQuick } from "./satelliten.js";
@@ -384,6 +385,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (a) { actions.push(...a.actions); return finish(a.answer); }
     } catch (err) {
       console.error("Archiv:", err.message);
+    }
+  }
+
+  // App-Zentrale (v1.139.0, im Test: in Friday erst nach Freigabe in Eve): "öffne Ring", "starte Kurzbefehl …",
+  // "was gibt's neues auf GitHub?", "bezahl mit PayPal" (nie selbst!) – ohne Claude. Nach dem Fernseher (TV-Befehle gehen vor).
+  if (mode !== "translate" && !image && text) {
+    try {
+      const ap = await appsQuick(text);
+      if (ap) { actions.push(...ap.actions); return finish(ap.answer); }
+    } catch (err) {
+      console.error("App-Zentrale:", err.message);
     }
   }
 
