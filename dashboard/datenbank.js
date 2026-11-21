@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y – Fridays Datenbank im Stil von Fridays Gehirn (v1.129.0)
+// F.R.Ai.D.A.Y – Fridays Datenbank im Stil von Fridays Gehirn (v1.130.0)
 // Oben ein gebogener Glas-Bildschirm wie beim KI-Kern: links der Datenkern (echte Zahlen) und „Wissen eintragen“,
 // in der Mitte die Speicher-Karte (jede Quelle ein leuchtender Knoten, Größe = Anzahl, antippen = filtern),
 // rechts Aktivität der letzten 30 Tage, häufige Themen (antippen = suchen) und der Rückblick.
@@ -18,19 +18,7 @@
   style.textContent = `
 .db-box { width: min(1180px, 100%); }
 .db-top { gap: 14px; align-items: center; }
-.db-ring { position: relative; width: 58px; height: 58px; flex: 0 0 auto; }
-.db-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.db-ring circle { fill: none; stroke-width: 4; }
-.db-ring .bg { stroke: rgba(255,138,30,.15); stroke-dasharray: 2 4; }
-.db-ring .wert { stroke: var(--cyan); stroke-linecap: round; filter: drop-shadow(0 0 5px var(--cyan)); transition: stroke-dashoffset 1s ease; }
-.db-ring b { position: absolute; inset: 0; display: grid; place-items: center; font: 700 15px var(--font-head, var(--font)); color: #fff; text-shadow: 0 0 10px var(--cyan); }
-.db-titel { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.db-titel small { font: 500 10px var(--font-ui, var(--font)); letter-spacing: .28em; color: var(--muted); }
-.db-titel h2 { margin: 0; }
 .db-unter { font: 500 12.5px ui-monospace, Menlo, monospace; color: var(--cyan); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.db-live { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--u-rand-soft, rgba(255,138,30,.3)); font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .12em; color: var(--text); }
-.db-live i { width: 7px; height: 7px; border-radius: 50%; background: #38e08c; box-shadow: 0 0 8px #38e08c; animation: db-puls 1.6s ease-in-out infinite; }
-@keyframes db-puls { 50% { opacity: .35; } }
 .db-screen { perspective: 1500px; padding: 2px 2px 4px; margin-bottom: 10px; }
 .db-screen-in { position: relative; display: grid; grid-template-columns: minmax(200px, .95fr) minmax(280px, 1.35fr) minmax(220px, 1fr); gap: 14px; padding: 14px 16px 16px;
   border-radius: 26px 26px 18px 18px / 30px 30px 18px 18px; border: 1px solid var(--u-rand, rgba(255,138,30,.55));
@@ -93,12 +81,9 @@
   .db-screen-in { grid-template-columns: 1fr; transform: none; border-radius: 18px; padding: 12px; }
   .db-mitte { order: -1; }
   .db-top { flex-wrap: wrap; }
-  .db-live { display: none; }
-  .db-ring { width: 48px; height: 48px; }
 }`;
   document.head.appendChild(style);
 
-  const R = 2 * Math.PI * 27;
   let stand = null;
 
   function karte(u) {
@@ -140,10 +125,9 @@
     stand = u;
     const gemerkt = (u.typen.gedaechtnis || 0) + (u.typen.notiz || 0);
     const anzQ = Object.keys(u.quellen).length;
-    $("db-ring-zahl").textContent = `${u.quellenAktiv}`;
-    const ring = $("db-ring-wert");
-    ring.style.strokeDasharray = `${R}`;
-    ring.style.strokeDashoffset = `${R * (1 - u.quellenAktiv / anzQ)}`;
+    // Untertitel in den Gehirn-Kopf (gehirn-stil.js) unter den Titel setzen
+    const unter = $("db-unter"), titel = unter?.parentElement?.querySelector(".gs-titel");
+    if (unter && titel && unter.parentElement !== titel) titel.append(unter);
     $("db-unter").textContent = `${u.quellenAktiv} von ${anzQ} Quellen aktiv · ${mb(u.speicher.bytes)} · ${zahl(u.speicher.dateien)} Dateien`;
     $("db-seit").textContent = `seit ${datum(u.seit)}`;
     const k = (titel, wert, unter, klasse = "") => `<div class="db-k ${klasse}"><small>${titel}</small><b>${wert}</b><em>${unter}</em></div>`;

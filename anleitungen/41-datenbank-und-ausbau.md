@@ -1,4 +1,4 @@
-# Fridays Datenbank + „Friday ausbauen“ (v1.129.0)
+# Fridays Datenbank + „Friday ausbauen“ (v1.130.0)
 
 ## Fridays Datenbank
 

@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Ideen-Schmiede (v1.106.0, v1.129.0: Reiter „Friday ausbauen“ im Stil des Tool-Ökosystems)
+// F.R.Ai.D.A.Y Ideen-Schmiede (v1.106.0, v1.130.0: Reiter „Friday ausbauen“ im Stil des Tool-Ökosystems)
 // Würfeln (Alltag, Kreativität, Nischen-Business, Technik), eigene Idee ehrlich prüfen, im Ideen-Tresor
 // aufheben und Schritt für Schritt vorantreiben. Ohne Claude; „Mit KI ausarbeiten“ braucht Guthaben.
 (() => {

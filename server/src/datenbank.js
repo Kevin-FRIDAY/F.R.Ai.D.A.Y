@@ -1,4 +1,4 @@
-// Fridays Datenbank (v1.129.0): ein Ort für alles, was Friday weiß und getan hat.
+// Fridays Datenbank (v1.130.0): ein Ort für alles, was Friday weiß und getan hat.
 // Vorher: Gespräche, Aktionen, Gemerktes, Aufgaben, Erinnerungen, Einkauf, Dokumente.
 // Neu dazu: eigene Notizen („Wissen eintragen“), Ideen-Tresor, Entscheidungen, Ziele, Missionen,
 // Meine Geräte, Vorrat (Kühlschrank) und Lernstapel. Dazu eine Übersicht im Stil von Fridays Gehirn:

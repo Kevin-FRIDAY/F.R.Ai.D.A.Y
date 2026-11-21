@@ -113,7 +113,7 @@ export function helferRouten(app, asyncRoute) {
 
   // --- Ideen-Schmiede ---
   app.get("/api/ideen", (req, res) => res.json({ tresor: ideen.tresor(), bereiche: ideen.BEREICHE }));
-  // v1.129.0: Friday ausbauen (Bauplan-Katalog, Lücken aus der Datenbank, KI-Vorschläge)
+  // v1.130.0: Friday ausbauen (Bauplan-Katalog, Lücken aus der Datenbank, KI-Vorschläge)
   app.get("/api/ideen/ausbau", (req, res) => res.json(ausbau.ausbau({ tage: Math.min(365, Math.max(7, Number(req.query.tage) || 60)) })));
   app.post("/api/ideen/ausbau/auftrag", (req, res) => res.json({ text: ausbau.bauAuftrag(req.body || {}) }));
   app.post("/api/ideen/ausbau/ki", asyncRoute(async (req, res) => {

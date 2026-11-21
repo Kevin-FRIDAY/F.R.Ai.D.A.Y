@@ -1,4 +1,4 @@
-// Friday ausbauen (v1.129.0): Die Ideen-Schmiede macht jetzt auch Vorschläge für Friday selbst.
+// Friday ausbauen (v1.130.0): Die Ideen-Schmiede macht jetzt auch Vorschläge für Friday selbst.
 // 1) Bauplan-Katalog: Dienste, die man EINBINDEN kann (meist kostenlos), und Funktionen, die man BAUEN kann.
 //    Jeder Vorschlag mit Nutzen, Aufwand, Kosten, was man braucht und einem Beispiel-Sprachbefehl.
 //    Ist etwas schon eingebaut (Modul-Datei vorhanden), wird es als „schon da“ markiert statt vorgeschlagen.

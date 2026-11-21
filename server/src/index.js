@@ -322,7 +322,7 @@ app.get("/api/wissen/export", (req, res) => {
   res.setHeader("Content-Disposition", `attachment; filename="friday-datenbank-${tag}.json"`);
   res.json({ exportiert: new Date().toISOString(), eintraege: alleEintraege() });
 });
-// v1.129.0: Übersicht im Gehirn-Stil (Speicher-Karte, 30 Tage, Themen, Rückblick) + eigene Notizen.
+// v1.130.0: Übersicht im Gehirn-Stil (Speicher-Karte, 30 Tage, Themen, Rückblick) + eigene Notizen.
 app.get("/api/wissen/uebersicht", (req, res) => res.json(datenbank.uebersicht()));
 app.post("/api/wissen/notiz", (req, res) => { try { res.json(datenbank.notizSpeichern(req.body || {})); } catch (err) { res.status(400).json({ error: err.message }); } });
 app.delete("/api/wissen/notiz/:id", (req, res) => res.json({ ok: datenbank.notizLoeschen(req.params.id) }));
