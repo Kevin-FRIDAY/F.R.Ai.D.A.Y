@@ -5,7 +5,11 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT = path.resolve(here, "..");
-export const DATA_DIR = path.join(ROOT, "data");
+// Friday: server/data. Eve (Testversion, v1.138.0) läuft als zweiter Prozess mit eigenem Ordner (FRIDAY_DATA_DIR).
+export const FRIDAY_DATA_DIR = path.join(ROOT, "data");
+export const DATA_DIR = process.env.FRIDAY_DATA_DIR ? path.resolve(process.env.FRIDAY_DATA_DIR) : FRIDAY_DATA_DIR;
+/** Läuft dieser Prozess als Eve? Dann wirkt nichts nach außen (Alexa, TV, Nachrichten, Updates …). */
+export const IST_EVE = process.env.FRIDAY_EVE === "1";
 export const DASHBOARD_DIR = path.resolve(ROOT, "..", "dashboard");
 
 // Werte aus der .env haben Vorrang vor Umgebungsvariablen des Systems.
@@ -15,9 +19,9 @@ const fileEnv = fs.existsSync(envFile) ? parseEnv(fs.readFileSync(envFile, "utf8
 const env = (name, fallback = "") => (fileEnv[name] ?? process.env[name] ?? "").trim() || fallback;
 
 export const config = {
-  port: Number(env("PORT", "3000")),
+  port: IST_EVE ? Number(process.env.FRIDAY_EVE_PORT || 0) : Number(env("PORT", "3000")),
   // 127.0.0.1 = nur dieser Computer. Von außen kommt man über Tailscale rein.
-  host: env("HOST", "127.0.0.1"),
+  host: IST_EVE ? "127.0.0.1" : env("HOST", "127.0.0.1"),
   anthropicKey: env("ANTHROPIC_API_KEY"),
   passwordHash: env("PASSWORD_HASH"),
   sessionSecret: env("SESSION_SECRET"),
@@ -29,10 +33,10 @@ export const config = {
   timezone: env("TIMEZONE", "Europe/Berlin"),
   model: env("CLAUDE_MODEL", "claude-opus-5-5"),
   effort: env("CLAUDE_EFFORT", "low"),
-  ntfyTopic: env("NTFY_TOPIC"),
+  ntfyTopic: IST_EVE ? "" : env("NTFY_TOPIC"), // Eve schickt keine Push-Nachrichten
   ntfyServer: env("NTFY_SERVER", "https://ntfy.sh"),
   briefingTime: env("BRIEFING_TIME"),
-  telegramToken: env("TELEGRAM_BOT_TOKEN"),
+  telegramToken: IST_EVE ? "" : env("TELEGRAM_BOT_TOKEN"), // Eve nutzt den Telegram-Bot nicht (der gehört Friday)
   telegramChatId: env("TELEGRAM_CHAT_ID"),
   haUrl: env("HOME_ASSISTANT_URL").replace(/\/$/, ""),
   haToken: env("HOME_ASSISTANT_TOKEN"),

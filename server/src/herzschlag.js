@@ -13,6 +13,7 @@ import * as gedaechtnis from "./gedaechtnis.js";
 import * as seele from "./seele.js";
 import * as regelwerk from "./regelwerk.js";
 import { WERKZEUG_TEXT } from "./kommando.js";
+import { IST_EVE } from "./config.js";
 
 const NAME = "herzschlag";
 const TAKT_MS = 60_000;
@@ -117,7 +118,7 @@ async function takt() {
 }
 
 export function herzschlagStart() {
-  if (timer) return;
+  if (timer || IST_EVE) return; // Eve hat keinen eigenen Herzschlag (kostet sonst doppelt)
   aenderungen.sichern("Start"); // erste Aufnahme
   timer = setTimeout(takt, 20_000);
   timer.unref?.();

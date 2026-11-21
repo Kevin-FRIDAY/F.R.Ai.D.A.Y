@@ -4,7 +4,8 @@ import { pruefeWerkzeug, freigabeAnfordern } from "./kommando.js";
 import fs from "node:fs";
 import { dokumentErstellen, fragebogenErstellen } from "./dokumente.js";
 import path from "node:path";
-import { config, ROOT } from "./config.js";
+import { config, ROOT, IST_EVE } from "./config.js";
+import { EVE_SIMULIERT, simuliereWerkzeug } from "./eve-schutz.js";
 import * as store from "./store.js";
 import { mailConfigured, getMailOverview, sortMail } from "./mail.js";
 import { runSystemCheck } from "./syscheck.js";
@@ -550,6 +551,12 @@ export async function runTool(name, input = {}, wer = {}) {
       const g = freigabeAnfordern({ werkzeug: name, eingabe: input, kanal: wer.kanal, grund: wer.grund });
       return { wartet_auf_freigabe: true, info: `Diese Aktion (${g.titel}) braucht erst die Freigabe von Boss. Sie liegt in der Freigabe-Glocke oben im Dashboard (und als Knopf in Telegram). Sag Boss kurz, dass er sie dort freigeben kann oder einfach „gib frei“ sagt. Behaupte nicht, sie sei schon erledigt.` };
     }
+  }
+  // Eve (Testversion): Geräte, Konten und Nachrichten werden nur simuliert.
+  if (IST_EVE && EVE_SIMULIERT.has(name)) {
+    const sim = simuliereWerkzeug(name, input);
+    logWerkzeug(name, input, wer, sim, 0);
+    return sim;
   }
   let result;
   try {
