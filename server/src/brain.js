@@ -237,7 +237,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Video-Studio (v1.129.0): "Friday, erstell mir ein 20-Sekunden-Video über Mallorca mit Musik" – startet sofort.
+  // Video-Studio (v1.131.0): "Friday, erstell mir ein 20-Sekunden-Video über Mallorca mit Musik" – startet sofort.
   // Das Drehbuch schreibt Claude, wenn Guthaben da ist, sonst Wikipedia/Vorlage. Musik komponiert Friday selbst.
   if (mode !== "translate" && !image && text) {
     try {
