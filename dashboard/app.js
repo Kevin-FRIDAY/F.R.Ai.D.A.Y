@@ -693,6 +693,13 @@
         if (hat("welttour_zurueck")) window.FridayWelttour?.zurueck();
         if (hat("welttour_stopp")) window.FridayWelttour?.stopp(true);
         if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
+        // Schnitt-Team / Video-Studio (v1.132.0): "erstell mir ein 20-Sekunden-Video über …"
+        const studioJob = aktion("studio_job:");
+        if (studioJob) window.FridayStudio?.verfolge(studioJob.slice(11));
+        else if (hat("video_erstellen")) window.FridayStudio?.verfolge(null);
+        else if (hat("studio:videos")) window.FridayStudio?.open({ tab: "videos" });
+        else if (hat("studio")) window.FridayStudio?.open({ tab: "erstellen" });
+        else if (hat("video_schnitt")) window.FridayStudio?.open({ tab: "schneiden" });
         if (hat("archiv")) window.FridayArchiv?.open();
         if (hat("gehirn")) window.FridayGehirn?.open();
         if (hat("oekosystem")) window.FridayOekosystem?.open();

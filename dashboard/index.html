@@ -993,34 +993,103 @@
 
   <!-- Schnitt-Team: Videoschnitt mit 6 Agenten, live angezeigt -->
   <button id="schnitt-open" class="hidden" aria-hidden="true"></button>
-  <section id="schnitt" class="schnitt hidden" aria-label="Schnitt-Team">
-    <header class="schnitt-top">
-      <div class="schnitt-title">FRIDAY · SCHNITT-TEAM</div>
-      <span id="schnitt-state" class="schnitt-state">Bereit</span>
-      <button id="schnitt-x" class="ghost small" title="Schließen">✕</button>
-    </header>
-    <div class="schnitt-grid">
-      <aside class="schnitt-panel">
-        <h3>CLIPS · EINGANG</h3>
-        <ul id="schnitt-clips" class="schnitt-clips"></ul>
-        <div class="chips"><button class="chip" data-open="eingang">Eingang öffnen</button><button class="chip" data-open="fertig">Fertig öffnen</button></div>
-        <label class="row-field"><span>Look</span><select id="schnitt-look"></select></label>
-        <button id="schnitt-start" class="schnitt-go">▶ Schneide das Video</button>
-        <p class="muted small-text">Tipp: Eine .cube-Datei im Ordner „LUTs" ersetzt den Look, eine Musikdatei im Ordner „Musik" läuft leise unter der Sprache. Alles bleibt auf deinem Mac.</p>
-      </aside>
-      <div class="schnitt-panel schnitt-main">
-        <h3>ZEITLEISTE</h3>
-        <div id="schnitt-timeline" class="schnitt-timeline"></div>
-        <h3>PEGEL · LUFS JE CLIP</h3>
-        <div id="schnitt-levels" class="schnitt-levels"></div>
-        <div id="schnitt-result" class="schnitt-result hidden"></div>
-        <h3>AKTIVITÄT</h3>
-        <ul id="schnitt-log" class="schnitt-log"></ul>
+  <section id="schnitt" class="sheet hidden sz st" aria-label="Schnitt-Team und Video-Studio">
+    <div class="panel sheet-box sz-box st-box">
+      <header class="sz-head">
+        <div class="sz-core" aria-hidden="true">
+          <svg viewBox="0 0 120 120"><circle class="sz-c1" cx="60" cy="60" r="54"/><circle class="sz-c2" cx="60" cy="60" r="44"/><circle class="sz-c3" cx="60" cy="60" r="34"/></svg>
+          <b id="st-zahl">–</b>
+        </div>
+        <div class="sz-title">
+          <small>F.R.Ai.D.A.Y · MEDIEN</small>
+          <h2>Schnitt-Team</h2>
+          <p id="schnitt-state" class="sz-summary">Bereit</p>
+        </div>
+        <div class="sz-meta">
+          <span class="sz-pill"><i class="sz-live"></i>LIVE</span>
+          <span class="sz-pill" id="st-pille">12 Agenten</span>
+        </div>
+        <button id="schnitt-x" class="ghost small sz-x" title="Schließen">✕</button>
+      </header>
+
+      <nav class="sz-tabs" role="tablist">
+        <button type="button" class="active" data-st="erstellen" role="tab">🎬 Video erstellen</button>
+        <button type="button" data-st="schneiden" role="tab">✂ Clips schneiden</button>
+        <button type="button" data-st="videos" role="tab">▶ Fertige Videos</button>
+      </nav>
+
+      <!-- Reiter 1: Video auf Zuruf -->
+      <div class="sz-pane st-pane" data-stp="erstellen">
+        <div class="gh-screen"><div class="gh-screen-in st-screen">
+          <div class="gh-col st-auftrag">
+            <div class="gh-logo"><b>VIDEO STUDIO</b><span>auf Zuruf · mit eigener Musik</span></div>
+            <label class="st-feld"><small>Worum geht's?</small>
+              <textarea id="st-thema" rows="2" maxlength="300" placeholder="z. B. Mallorca, Bitcoin erklärt, mein neues Café …"></textarea></label>
+            <div class="st-feld"><small>Länge</small><div class="st-wahl" id="st-laenge">
+              <button type="button" data-v="10">10 s</button><button type="button" data-v="15">15 s</button><button type="button" data-v="20" class="an">20 s</button><button type="button" data-v="30">30 s</button><button type="button" data-v="60">60 s</button></div></div>
+            <div class="st-feld"><small>Format</small><div class="st-wahl" id="st-format">
+              <button type="button" data-v="hoch" class="an" title="TikTok, Reels, Shorts">▯ 9:16</button><button type="button" data-v="quer" title="YouTube">▭ 16:9</button><button type="button" data-v="quadrat" title="Instagram">□ 1:1</button></div></div>
+            <div class="st-feld"><small>Musik <button type="button" id="st-hoer" class="st-hoer" title="Kurz probehören">▶ probehören</button></small><div class="st-wahl st-wahl-klein" id="st-musik">
+              <button type="button" data-v="auto" class="an">✦ Passend</button><button type="button" data-v="neon">Neon</button><button type="button" data-v="episch">Episch</button><button type="button" data-v="chill">Chill</button><button type="button" data-v="energie">Energie</button><button type="button" data-v="froehlich">Fröhlich</button><button type="button" data-v="spannend">Spannend</button><button type="button" data-v="eigene">Meine</button><button type="button" data-v="aus">Aus</button></div></div>
+            <div class="st-feld"><small>Bilder</small><div class="st-wahl st-wahl-klein" id="st-bilder">
+              <button type="button" data-v="auto" class="an">📷 Freie Fotos</button><button type="button" data-v="eigene">🎞 Meine Clips</button><button type="button" data-v="grafik">✦ Neon-Grafik</button></div></div>
+            <label class="st-schalter"><input type="checkbox" id="st-sprecher"><span></span>Mit Sprecher (Mac-Stimme)</label>
+            <button id="st-go" class="st-go">▶ Video erstellen</button>
+            <p class="st-tipp">Oder sag: <b>„Friday, erstell mir ein 20-Sekunden-Video über Mallorca mit Musik.“</b></p>
+          </div>
+
+          <div class="gh-col st-mitte">
+            <h4>Produktions-Pfade <span class="gh-klein" id="st-pfad-info">bereit</span></h4>
+            <div class="st-flow" id="st-flow"></div>
+            <h4>Drehbuch <span class="gh-klein" id="st-db-info"></span></h4>
+            <ol class="st-story" id="st-story"><li class="muted">Das Drehbuch erscheint, sobald die Regie fertig ist.</li></ol>
+            <h4>Zeitleiste <span class="gh-klein" id="st-tl-info"></span></h4>
+            <div class="st-tl" id="st-tl"></div>
+          </div>
+
+          <div class="gh-col st-rechts">
+            <h4>Vorschau <span class="gh-klein" id="st-vs-info"></span></h4>
+            <div class="st-vorschau" id="st-vorschau"><div class="st-leer"><i></i><span>Hier läuft gleich dein Video.</span></div></div>
+            <div class="st-ergebnis hidden" id="st-ergebnis"></div>
+            <h4>Datenstrom</h4>
+            <ul class="gh-strom st-strom" id="st-strom"></ul>
+          </div>
+        </div></div>
+        <div class="st-agenten" id="st-agenten"></div>
+        <p class="st-fuss muted small-text">Alles echt und bleibt auf deinem Mac: Fotos nur gemeinfrei (CC0, keine Namensnennung nötig), Musik komponiert Friday selbst, fertige Videos landen in ~/Friday-Video/Fertig. Ohne Guthaben schreibt Friday das Drehbuch aus Wikipedia.</p>
       </div>
-      <aside class="schnitt-panel">
-        <h3>AGENTEN</h3>
-        <ul id="schnitt-agents" class="schnitt-agents"></ul>
-      </aside>
+
+      <!-- Reiter 2: Clips schneiden (Schnitt-Team v1.62) -->
+      <div class="sz-pane st-pane hidden" data-stp="schneiden">
+        <div class="schnitt-grid">
+          <aside class="schnitt-panel">
+            <h3>CLIPS · EINGANG</h3>
+            <ul id="schnitt-clips" class="schnitt-clips"></ul>
+            <div class="chips"><button class="chip" data-open="eingang">Eingang öffnen</button><button class="chip" data-open="fertig">Fertig öffnen</button></div>
+            <label class="row-field"><span>Look</span><select id="schnitt-look"></select></label>
+            <button id="schnitt-start" class="schnitt-go st-go">▶ Schneide das Video</button>
+            <p class="muted small-text">Tipp: Eine .cube-Datei im Ordner „LUTs" ersetzt den Look, eine Musikdatei im Ordner „Musik" läuft leise unter der Sprache. Alles bleibt auf deinem Mac.</p>
+          </aside>
+          <div class="schnitt-panel schnitt-main">
+            <h3>ZEITLEISTE</h3>
+            <div id="schnitt-timeline" class="schnitt-timeline"></div>
+            <h3>PEGEL · LUFS JE CLIP</h3>
+            <div id="schnitt-levels" class="schnitt-levels"></div>
+            <div id="schnitt-result" class="schnitt-result hidden"></div>
+            <h3>AKTIVITÄT</h3>
+            <ul id="schnitt-log" class="schnitt-log"></ul>
+          </div>
+          <aside class="schnitt-panel">
+            <h3>AGENTEN</h3>
+            <ul id="schnitt-agents" class="schnitt-agents"></ul>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Reiter 3: fertige Videos -->
+      <div class="sz-pane st-pane hidden" data-stp="videos">
+        <div class="st-videos" id="st-videos"><p class="muted">Lade …</p></div>
+      </div>
     </div>
   </section>
 

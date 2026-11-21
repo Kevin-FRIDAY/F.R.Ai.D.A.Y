@@ -12,6 +12,8 @@ import { gehirnStand } from "./gehirn.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
 import { agentsWithStatus } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
+import { getStudio, starteStudio, listeVideos, zeigeImFinder, posterPfad } from "./videostudio.js";
+import { komponiere, STIMMUNG_IDS } from "./musik.js";
 import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
 import { planBuild, getLatestBuild, getBuildJob } from "./werkstatt.js";
 import { status as modelleStatus, modellDatei, sketchfabVerbinden, sketchfabTrennen, startmodelleLaden } from "./modelle.js";
@@ -140,6 +142,17 @@ app.get(/^\/api\/archiv\/datei\/(foto|video|webseite|spiel)\/(.+)$/, (req, res) 
   if (req.params[0] === "webseite" || req.params[0] === "spiel") res.setHeader("Content-Security-Policy", "sandbox allow-scripts allow-forms allow-popups allow-modals");
   res.type(p.mime);
   res.sendFile(p.voll, { dotfiles: "deny" });
+});
+
+// Vorschaubilder fertiger Studio-Videos für <img>/<video poster>: Anmeldung per Kopfzeile, Cookie oder ?t=
+app.get("/api/studio/poster/:name", (req, res) => {
+  const kopf = (req.headers.authorization || "").replace(/^Bearer /, "");
+  const cookie = (req.headers.cookie || "").match(/(?:^|;\s*)friday_session=([^;]+)/)?.[1];
+  if (![kopf, cookie && decodeURIComponent(cookie), String(req.query.t || "")].some((t) => t && verifyToken(t))) return res.status(401).json({ error: "Nicht angemeldet" });
+  const f = posterPfad(req.params.name);
+  if (!f) return res.status(404).end();
+  res.setHeader("Cache-Control", "private, max-age=86400");
+  res.type("image/jpeg").sendFile(f);
 });
 
 app.use("/api", requireAuth);
@@ -484,6 +497,21 @@ app.get("/api/agents", (req, res) => res.json(agentsWithStatus()));
 app.get("/api/video-job", (req, res) => res.json(getVideoJob()));
 app.post("/api/video-job", (req, res) => { const r = startVideoJob({ look: req.body?.look }); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/api/video-open", (req, res) => res.json(openVideoDir(String(req.body?.which || ""))));
+// Video-Studio: Videos auf Zuruf (Drehbuch, freie Fotos/eigene Clips, eigene Musik, Sprecher)
+app.get("/api/studio", (req, res) => res.json(getStudio()));
+app.post("/api/studio", (req, res) => {
+  const b = req.body || {};
+  const r = starteStudio({ thema: b.thema, sekunden: b.sekunden, format: b.format, musik: b.musik, bilder: b.bilder, sprecher: b.sprecher === true, stil: b.stil });
+  res.status(r.ok ? 200 : 400).json(r);
+});
+app.get("/api/studio/videos", (req, res) => res.json({ videos: listeVideos() }));
+app.get("/api/studio/hoerprobe/:stimmung", (req, res) => {
+  if (!STIMMUNG_IDS.includes(req.params.stimmung)) return res.status(404).json({ error: "Unbekannte Stimmung" });
+  const m = komponiere({ stimmung: req.params.stimmung, sekunden: 9, seed: 7 });
+  res.type("audio/wav").setHeader("Cache-Control", "private, max-age=3600");
+  res.send(m.wav);
+});
+app.post("/api/studio/finder", (req, res) => res.json(zeigeImFinder(req.body?.name)));
 app.get("/api/markt/:asset", (req, res) => res.json(getForecast(req.params.asset)));
 app.post("/api/markt/:asset/neu", (req, res) => res.json(getForecast(req.params.asset, { force: true })));
 app.get("/api/papierdepot", (req, res) => res.json(getDepot()));

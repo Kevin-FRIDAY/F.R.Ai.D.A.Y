@@ -29,7 +29,7 @@
   // Diese Fenster sind Werkzeug-Werkstätten → Ökosystem-Look
   const OEKO = new Set(["ideen", "gegen", "spiele", "zentrale", "agents"]);
   // Vorlagen selbst nicht anfassen
-  const AUSLASSEN = new Set(["brain", "oekosystem"]);
+  const AUSLASSEN = new Set(["brain", "oekosystem", "schnitt"]); // haben schon den Gehirn-Kopf (sz-head)
 
   // 3D-Würfel wie im Ökosystem
   const WUERFEL = `<svg class="gs-3d" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8 54 20 32 32 10 20z" fill="var(--gs-c)" stroke="rgba(255,255,255,.55)" stroke-width=".8" stroke-linejoin="round"/><path d="M32 8 54 20 32 32 10 20z" fill="#fff" opacity=".35"/><path d="M10 20 32 32v24L10 44z" fill="var(--gs-c)" stroke="rgba(255,255,255,.55)" stroke-width=".8" stroke-linejoin="round"/><path d="M32 32 54 20v24L32 56z" fill="var(--gs-c)" stroke="rgba(255,255,255,.55)" stroke-width=".8" stroke-linejoin="round"/><path d="M32 32 54 20v24L32 56z" fill="#000" opacity=".35"/></svg>`;
@@ -282,7 +282,6 @@ body.diag-aus .side-diag-panel { display: none !important; }
     { sel: ".markt-top", b: "welt" },
     { sel: ".werkstatt-top", b: "erschaffen", oeko: true },
     { sel: ".ws-top", b: "erschaffen", oeko: true },
-    { sel: ".schnitt-top", b: "erschaffen", oeko: true },
     { sel: ".vision-top", b: "friday" },
     { sel: ".camera-top", b: "friday" },
     { sel: ".sat-top", b: "friday" },

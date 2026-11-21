@@ -71,7 +71,7 @@ const ZU_BEREICH = {
   webseite_bauen: "webseite",
   spiel_bauen: "spiel", spiel: "spiel", spiele: "spiel",
   kuehlschrank: "kuehlschrank", lernen: "lernen", kaufberater: "kauf", gegenrede: "gegenrede", ideen: "idee", klang: "klang", wache: "wache", wache_status: "wache",
-  video_schnitt: "video",
+  video_schnitt: "video", video_erstellen: "video",
   dokument_erstellen: "dokument", fragebogen_erstellen: "dokument",
   archiv: "archiv",
   check_mail: "mail", sort_mail: "mail",
