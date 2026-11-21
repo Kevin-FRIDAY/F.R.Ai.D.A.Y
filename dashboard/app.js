@@ -90,23 +90,37 @@
     const liste = [];
     let el = null, versteck = null;
     const an = () => storage.get("friday_diagnose") !== "0";
+    // v1.129.0: Die Diagnose sitzt jetzt fest in der linken Seitenleiste (unter "Meine Dienste", über dem Profil).
+    // Gibt es den Platz nicht (z. B. core.html), schwebt sie wie früher unten links.
+    let imPanel = false;
     function box() {
       if (el) return el;
-      el = document.createElement("div");
-      el.id = "diag"; el.className = "diag"; el.setAttribute("aria-live", "polite");
+      el = document.getElementById("diag");
+      imPanel = !!el;
+      if (!el) {
+        el = document.createElement("div");
+        el.id = "diag"; el.className = "diag";
+        document.body.append(el);
+      }
+      el.setAttribute("aria-live", "polite");
       el.title = "Diagnose: antippen für alle Schritte";
       el.addEventListener("click", () => { el.classList.toggle("gross"); zeichne(); zeigen(); });
-      document.body.append(el);
       return el;
     }
+    function panelSichtbar() { document.body.classList.toggle("diag-aus", !an()); }
+    panelSichtbar();
+    window.addEventListener("storage", panelSichtbar);
+    window.addEventListener("friday-settings", panelSichtbar);
     function zeichne() {
       if (!el) return;
-      const n = el.classList.contains("gross") ? 40 : 4;
+      const n = el.classList.contains("gross") ? 40 : (imPanel ? 14 : 4);
       el.innerHTML = liste.slice(-n).map((x) => `<div class="d-${x.stufe}"><b>${x.zeit}</b> ${escapeHtml(x.text)}</div>`).join("");
+      if (imPanel) el.scrollTop = el.scrollHeight;
     }
     function zeigen() {
       clearTimeout(versteck);
       el.classList.add("sichtbar");
+      if (imPanel) return; // in der Seitenleiste bleibt sie stehen
       versteck = setTimeout(() => { if (!el.classList.contains("gross")) el.classList.remove("sichtbar"); }, 25000);
     }
     function schritt(text, stufe = "info") {
@@ -117,6 +131,7 @@
       liste.push({ zeit, text, stufe });
       if (liste.length > 60) liste.shift();
       try { console.log("[Friday]", zeit, text); } catch { /* egal */ }
+      panelSichtbar();
       if (!an()) return;
       box(); zeichne(); zeigen();
     }
