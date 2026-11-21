@@ -13,6 +13,8 @@ import { sendPush } from "./notify.js";
 import { checkForUpdate, startUpdate } from "./updater.js";
 import { COUNTRIES, findCountry, getCountryNews, getOverview, getCountryInfo } from "./lagezentrum.js";
 import { getVideoJob, startVideoJob, openVideoDir, LOOKS } from "./videoteam.js";
+import { starteStudio, getStudio, FORMATE as STUDIO_FORMATE, BILDQUELLEN } from "./videostudio.js";
+import { STIMMUNG_IDS } from "./musik.js";
 import { getForecast, getDepot, MAERKTE } from "./markt.js";
 import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { getAlarm } from "./lagezentrum.js";
@@ -275,6 +277,23 @@ export const toolDefinitions = [
     },
   },
   {
+    name: "video_erstellen",
+    description: "Fridays Video-Studio: erstellt auf Zuruf ein komplettes Kurzvideo (z. B. 'mach mir ein 20-Sekunden-Video über Mallorca mit Musik'). Regie schreibt das Drehbuch, Bildsucher holt gemeinfreie Fotos (oder nimmt die Clips/Fotos aus ~/Friday-Video/Eingang), Komponist komponiert eigene lizenzfreie Musik, optional spricht ein Sprecher (Mac-Stimme). Ergebnis als MP4 in ~/Friday-Video/Fertig, das Dashboard zeigt den Fortschritt live. Dauert ca. 1 Minute. Für das Schneiden vorhandener Clips mit Untertiteln nimm video_schnitt.",
+    input_schema: {
+      type: "object",
+      properties: {
+        thema: { type: "string", description: "Worum geht es im Video" },
+        sekunden: { type: "integer", minimum: 5, maximum: 90 },
+        format: { type: "string", enum: Object.keys(STUDIO_FORMATE), description: "hoch = 9:16 (TikTok/Reels), quer = 16:9 (YouTube), quadrat = 1:1" },
+        musik: { type: "string", enum: ["auto", "aus", "eigene", ...STIMMUNG_IDS], description: "auto = passend zum Thema, eigene = Datei aus ~/Friday-Video/Musik" },
+        bilder: { type: "string", enum: Object.keys(BILDQUELLEN), description: "auto = freie Fotos, grafik = nur Neon-Grafik, eigene = Clips/Fotos aus dem Ordner Eingang" },
+        sprecher: { type: "boolean" },
+        stil: { type: "string", description: "optional: Stil- oder Inhaltswunsch" },
+      },
+      required: ["thema"],
+    },
+  },
+  {
     name: "webseite_bauen",
     description: "Webseiten-Werkstatt: baut aus einem Kundenauftrag eine komplette, verkaufsfertige Webseite (eine HTML-Datei) mit Angebotstext und Preisvorschlag, gespeichert in ~/Friday-Webseiten. aendern_id überarbeitet ein bestehendes Projekt. Dauert 1–2 Minuten; das Dashboard zeigt die Seite danach. Verkaufen und kassieren tut der Nutzer selbst.",
     input_schema: {
@@ -446,6 +465,7 @@ const ACTLOG = {
   run_protocol: ["mac", (i) => `Protokoll ausgeführt: ${i.name || ""}`],
   send_push: ["mitteilung", () => "Mitteilung gesendet"],
   video_schnitt: ["mac", (i) => `Videoschnitt: ${i.action || ""}`],
+  video_erstellen: ["mac", (i) => `Video-Studio: ${i.thema || ""} (${i.sekunden || 20} s)`],
   werkstatt: ["mac", (i) => `Werkstatt: ${i.wunsch || ""}`],
   webseite_bauen: ["mac", (i) => `Webseite: ${i.auftrag || ""}`],
   world_news: ["suche", (i) => `Nachrichten geprüft: ${i.country || i.topic || "Welt"}`],
@@ -570,6 +590,11 @@ async function runToolIntern(name, input = {}, wer = {}) {
       const v = getVideoJob();
       if (!v.job) return { status: "frei", clips_im_eingang: v.clips.length, ordner: v.dirs.eingang };
       return { status: v.job.status, agenten: Object.fromEntries(Object.entries(v.job.agents).map(([k, a]) => [k, `${a.status}: ${a.text}`])), ergebnis: v.job.result?.name, fehler: v.job.error };
+    }
+    case "video_erstellen": {
+      const r = starteStudio(input, { quelle: wer.kanal || "claude" });
+      if (!r.ok) return { fehler: r.error, laeuft: r.laeuftSchon ? getStudio().job?.auftrag?.thema : undefined };
+      return { gestartet: true, auftrag: r.auftrag, hinweis: "Das Dashboard zeigt das Studio live; Friday meldet sich, wenn das Video fertig ist. Sag nur kurz, dass das Team loslegt." };
     }
     case "spiel_bauen": {
       const r = starteSpiel(input.auftrag, { basis: input.basis_id, kanal: wer.kanal || "web" });

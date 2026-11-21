@@ -32,6 +32,7 @@ import { quickCommand as spielQuick } from "./spiele.js";
 import { quickCommand as routenQuick } from "./routen.js";
 import { quickCommand as helferQuick } from "./helfer.js";
 import { quickCommand as wacheQuick } from "./wache.js";
+import { quickCommand as studioQuick } from "./videostudio.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -75,6 +76,7 @@ Aufträge:
 - Wenn ${config.userName} dir einen Auftrag gibt, erledigst du ihn sofort in dieser Antwort. Sag nie "mache ich" oder "ich erstelle das", ohne es im selben Zug zu tun. Es gibt kein "später": nach deiner Antwort passiert nichts mehr.
 - Listen, Pläne, Texte, Rezepte und Ideen, die man aufheben will, speicherst du mit dokument_erstellen (gesuchte Infos und Erklärungen erzählst du dagegen direkt). Fragebögen erstellst du mit fragebogen_erstellen, mit genau so vielen Fragen wie gewünscht. Danach erzählst du in zwei, drei Sätzen, was drinsteht, und dass es im Dashboard liegt.
 - Spiele baust du nie als Dokument und schreibst ihren Code nie in die Antwort: benutze spiel_bauen. Das Dashboard zeigt dann live, wie du programmierst, und startet das Spiel.
+- Soll ein neues Video entstehen ("mach mir ein 20-Sekunden-Video über …"), benutze video_erstellen. Vorhandene Clips mit Untertiteln schneiden ist video_schnitt.
 - Wenn etwas wirklich nicht geht, sag ehrlich und kurz, warum.`;
 
 const WEB_SEARCH = { type: "web_search_20260209", name: "web_search", max_uses: 3 };
@@ -232,6 +234,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (tvAnswer) { actions.push("fernseher"); return finish(tvAnswer); }
     } catch (err) {
       console.error("Fernseher-Schnellbefehl:", err.message);
+    }
+  }
+
+  // Video-Studio (v1.129.0): "Friday, erstell mir ein 20-Sekunden-Video über Mallorca mit Musik" – startet sofort.
+  // Das Drehbuch schreibt Claude, wenn Guthaben da ist, sonst Wikipedia/Vorlage. Musik komponiert Friday selbst.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const vs = studioQuick(text);
+      if (vs) { actions.push(...vs.actions); return finish(vs.answer); }
+    } catch (err) {
+      console.error("Video-Studio:", err.message);
     }
   }
 
