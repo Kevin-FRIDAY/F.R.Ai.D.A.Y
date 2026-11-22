@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Stimmungs-Sound (v1.106.0, erweitert in v1.131.0)
+// F.R.Ai.D.A.Y Stimmungs-Sound (v1.106.0, erweitert in v1.131.0, Klang-Plus v1.149.0)
 // 19 Klänge (Regen, Gewitter, Meer, Wald, Bach, Schnee, Wind, Kamin, Café, Zug, Unterwasser, Dschungel, Klangschale,
 // Herzschlag, Raumschiff-Brücke, Fokus, Sommernacht, Weltraum, Energie-Puls) – alles live im Browser erzeugt
 // (Web Audio, keine Downloads, kein Guthaben). Zu jedem Klang eine bewegte Szene (klangbild.js) oder auf Wunsch
@@ -61,7 +61,7 @@
 
   // ---------- Klangerzeugung ----------
   let generation = 0, wechselt = false;
-  let ctx = null, master = null, aktiv = null, knoten = [], timer = [], laut = Number(ls.get("friday_klang_laut") || 0.5);
+  let ctx = null, haupt = null, master = null, analyse = null, aktiv = null, knoten = [], timer = [], laut = Number(ls.get("friday_klang_laut") || 0.5);
   const auto = () => ls.get("friday_klang_auto") === "1";
   function rauschen(art) {
     const len = ctx.sampleRate * 4, b = ctx.createBuffer(1, len, ctx.sampleRate), d = b.getChannelData(0);
@@ -166,6 +166,114 @@
       takt(() => { ton(70, 0.18, "sine", 0.45, master, 40); spaeter(() => ton(85, 0.16, "sine", 0.32, master, 50), 280); }, 1000);
     },
   };
+  // ---------- Klang-Plus (v1.149.0, zuerst nur in Eve) ----------
+  // Problem vorher: 8 Klänge lagen fast nur im Tiefbass (unter 300 Hz). Handy-, iPad- und MacBook-Lautsprecher spielen
+  // das kaum ab – es kam scheinbar „kein Ton“. Jetzt hat jeder Klang hörbare Mitten/Höhen und alle sind gleich laut.
+  const plusFrei = () => !window.FridayEve || window.FridayEve.frei("klang-plus");
+  // Lautstärke-Ausgleich je Klang (gemessen im Browser: alle landen bei ca. -30 dB im hörbaren Bereich ab 300 Hz)
+  const PEGEL = { regen: 0.85, gewitter: 0.75, wind: 1.2, schnee: 2.7, wald: 2.4, dschungel: 2.1, nacht: 3, meer: 1.7, bach: 1.5, unterwasser: 3.1, kamin: 2.1, cafe: 2.7, zug: 2.9, fokus: 1.7, klangschale: 2.9, herz: 2.8, weltraum: 2.5, raumschiff: 3.1, puls: 2.6 };
+  // Mitten-Schicht: leises, gefiltertes Rauschen, damit kleine Lautsprecher etwas zum Spielen haben
+  function mitte(f, v, q = 0.8, art = "rosa") { const s = rauschen(art); const g = gain(v); kette(s, filter("bandpass", f, q), g, master); s.start(); return g; }
+  function zirpen(f, vol) { // Grille: schnelle Pulse
+    const n = 3 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < n; i++) spaeter(() => ton(f * R(0.99, 1.01), 0.035, "sine", vol), i * 55);
+  }
+  function blubb(vol = 0.09) { const f = R(350, 900); ton(f, R(0.06, 0.12), "sine", vol, master, f * R(2, 3)); }
+  const BAU_NEU = {
+    schnee() {
+      const s = rauschen("braun"), g = gain(0.3); kette(s, filter("lowpass", 500), g, master); lfo(g.gain, 0.06, 0.12, 0.3); s.start();
+      const w = mitte(700, 0.12, 0.9); lfo(w.gain, 0.08, 0.06, 0.12);
+      mitte(3000, 0.04, 0.8);
+      zufall(() => ton(R(1800, 2800), 2.5, "sine", 0.03), 1500, 7000); // Glitzern
+    },
+    wald() {
+      const s = rauschen("rosa"); const g = gain(0.14); kette(s, filter("lowpass", 900), g, master); lfo(g.gain, 0.05, 0.06, 0.14); s.start();
+      const laub = mitte(1800, 0.06, 0.7); lfo(laub.gain, 0.12, 0.04, 0.06);
+      const vogel = () => { const f = 2400 + Math.random() * 2000; const n = 2 + Math.floor(Math.random() * 5); for (let i = 0; i < n; i++) spaeter(() => ton(f * (0.9 + Math.random() * 0.25), 0.09 + Math.random() * 0.08, "sine", 0.09, master, f * 1.3), i * 120); };
+      vogel(); zufall(vogel, 900, 3500);
+      zufall(() => { const f = R(1100, 1500); ton(f, 0.35, "sine", 0.05, master, f * 0.8); spaeter(() => ton(f * 0.8, 0.45, "sine", 0.05, master, f * 0.7), 420); }, 6000, 14000); // Kuckuck/Taube
+    },
+    nacht() {
+      const s = rauschen("braun"); kette(s, filter("lowpass", 300), gain(0.2), master); s.start();
+      const luft = mitte(900, 0.07, 0.6); lfo(luft.gain, 0.07, 0.04, 0.07);
+      zirpen(4400, 0.1); zufall(() => zirpen(R(4200, 4700), R(0.07, 0.11)), 300, 900);
+      zufall(() => zirpen(R(3600, 3900), 0.05), 700, 2000); // zweite Grille weiter weg
+      zufall(() => { ton(420, 0.5, "sine", 0.07, master, 380); spaeter(() => ton(400, 0.8, "sine", 0.06, master, 360), 600); }, 12000, 26000); // Eule
+    },
+    meer() {
+      const s = rauschen("braun"); const g = gain(0.45); kette(s, filter("lowpass", 900), g, master); lfo(g.gain, 0.09, 0.3, 0.4); s.start();
+      const r = rauschen("rosa"); const g2 = gain(0.16); kette(r, filter("highpass", 900), filter("lowpass", 6000), g2, master); lfo(g2.gain, 0.09, 0.13, 0.15); r.start();
+      zufall(() => { const f = R(1800, 2600); ton(f, 0.25, "sine", 0.025, master, f * 0.8); }, 7000, 16000); // Möwe in der Ferne
+    },
+    unterwasser() {
+      const s = rauschen("braun"), g = gain(0.45); kette(s, filter("lowpass", 220), g, master); lfo(g.gain, 0.05, 0.15, 0.45); s.start();
+      const dumpf = mitte(450, 0.16, 1.2); lfo(dumpf.gain, 0.07, 0.07, 0.16);
+      zufall(() => { const n = 2 + Math.floor(Math.random() * 6); for (let i = 0; i < n; i++) spaeter(() => blubb(0.1), i * R(50, 130)); }, 400, 1800);
+      zufall(() => { const f = R(320, 520); ton(f, 3.5, "sine", 0.06, master, f * R(1.3, 1.7)); spaeter(() => ton(f * 1.5, 2.5, "sine", 0.04, master, f), 2600); }, 8000, 18000); // Walgesang
+    },
+    kamin() {
+      const s = rauschen("braun"); kette(s, filter("lowpass", 500), gain(0.45), master); s.start();
+      const fauch = mitte(1100, 0.07, 0.7); lfo(fauch.gain, 0.3, 0.04, 0.07);
+      zufall(() => knack(0.2 + Math.random() * 0.3), 30, 300);
+      zufall(() => { for (let i = 0; i < 4; i++) spaeter(() => knack(0.25, R(2000, 5000)), i * R(20, 60)); }, 2000, 6000); // Funkenregen
+    },
+    cafe() {
+      const b = rauschen("braun"); kette(b, filter("lowpass", 300), gain(0.18), master); b.start();
+      [350, 750, 1300, 2200].forEach((f) => { const s = rauschen("rosa"), g = gain(0.08); kette(s, filter("bandpass", f, 1.5), g, master); s.start(); zufall(() => g.gain.setTargetAtTime(R(0.03, f > 1000 ? 0.09 : 0.16), ctx.currentTime, 0.12), 150, 500); });
+      zufall(() => { const f = R(2600, 4200); ton(f, 0.35, "triangle", 0.05); if (Math.random() < 0.5) spaeter(() => ton(f * 1.07, 0.3, "triangle", 0.035), 90); }, 900, 3500); // Tassen
+      zufall(() => { for (let i = 0; i < 3; i++) spaeter(() => knack(0.08, R(800, 1600)), i * 80); }, 4000, 9000); // Löffel/Schritte
+    },
+    zug() {
+      const s = rauschen("braun"); kette(s, filter("lowpass", 260), gain(0.4), master); s.start();
+      const fahrt = mitte(650, 0.14, 0.7); lfo(fahrt.gain, 0.2, 0.04, 0.14);
+      mitte(2400, 0.03, 1);
+      takt(() => {
+        const klack = (v) => { ton(180, 0.08, "triangle", v, master, 90); knack(v * 0.9, R(900, 1600)); knack(v * 0.5, R(2500, 3500)); };
+        klack(0.18); spaeter(() => klack(0.16), 130);
+      }, 1100);
+      zufall(() => { ton(392, 1.6, "sawtooth", 0.02); ton(494, 1.6, "sawtooth", 0.016); }, 25000, 50000); // Signal in der Ferne
+    },
+    fokus() {
+      const s = rauschen("braun"); kette(s, filter("lowpass", 900), gain(0.55), master); s.start();
+      mitte(800, 0.06, 0.5);
+    },
+    klangschale() {
+      [220, 220.6, 440.5].forEach((f, i) => { const o = ctx.createOscillator(); o.frequency.value = f; const g = gain(i === 2 ? 0.008 : 0.016); kette(o, g, master); lfo(g.gain, 0.08 + i * 0.03, 0.006, i === 2 ? 0.008 : 0.016); o.start(); });
+      const schlag = () => { szene("schlag"); const b = R(205, 235); [[1, 0.16, 10], [2.71, 0.11, 7], [5.12, 0.06, 5], [8.4, 0.03, 3]].forEach(([p, a, d]) => { ton(b * p, d, "sine", a); ton(b * p * 1.004, d, "sine", a * 0.6); }); };
+      takt(schlag, 9000);
+    },
+    herz() {
+      const s = rauschen("braun"); kette(s, filter("lowpass", 400), gain(0.2), master); s.start();
+      const rausch = mitte(500, 0.05, 0.6); lfo(rausch.gain, 1, 0.03, 0.05); // Blutrauschen im Takt
+      const schlag = (f, v) => { ton(f, 0.18, "sine", v, master, f * 0.55); ton(f * 2.2, 0.08, "triangle", v * 0.35, master, f); const r = rauschen("rosa"), fi = filter("bandpass", 380, 1.4), g = gain(0), t = ctx.currentTime; g.gain.linearRampToValueAtTime(v * 0.5, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12); r.connect(fi); fi.connect(g); g.connect(master); r.start(t); r.stop(t + 0.15); };
+      takt(() => { schlag(95, 0.5); spaeter(() => schlag(110, 0.35), 280); }, 1000);
+    },
+    weltraum() {
+      [110, 164.8, 220.5, 330, 440.2].forEach((f, i) => { const o = ctx.createOscillator(); o.type = i % 2 ? "triangle" : "sine"; o.frequency.value = f; o.detune.value = (Math.random() - 0.5) * 14; const fi = filter("lowpass", 1200); const g = gain(i < 2 ? 0.05 : 0.03); kette(o, fi, g, master); lfo(fi.frequency, 0.03 + i * 0.01, 600, 1200); lfo(g.gain, 0.04 + i * 0.013, 0.015, i < 2 ? 0.05 : 0.03); o.start(); });
+      const s = rauschen("rosa"); const sg = gain(0.05); kette(s, filter("bandpass", 1400, 0.6), sg, master); lfo(sg.gain, 0.05, 0.03, 0.05); s.start();
+      zufall(() => { const f = R(1200, 2400); ton(f, 3, "sine", 0.025, master, f * R(0.97, 1.03)); }, 2000, 6000); // Sternen-Funkeln
+    },
+    raumschiff() {
+      [[55, 0.06], [110, 0.04], [220, 0.025], [330, 0.012]].forEach(([f, v]) => { const o = ctx.createOscillator(); o.type = f > 100 ? "triangle" : "sine"; o.frequency.value = f; kette(o, gain(v), master); o.start(); });
+      const s = rauschen("braun"); kette(s, filter("lowpass", 350), gain(0.22), master); s.start();
+      const r = rauschen("rosa"), bp = filter("bandpass", 700, 1.2), lg = gain(0.1); kette(r, bp, lg, master); lfo(bp.frequency, 0.02, 300, 700); r.start(); // Lüftung
+      zufall(() => { const n = 1 + Math.floor(Math.random() * 4); for (let i = 0; i < n; i++) spaeter(() => ton(R(900, 2200), 0.07, "square", 0.025), i * 90); }, 1800, 5000); // Computer
+      zufall(() => { ton(660, 0.18, "sine", 0.05); spaeter(() => ton(880, 0.25, "sine", 0.05), 180); }, 15000, 30000); // Durchsage-Gong
+    },
+    puls() {
+      let n = 0; const akk = [[220, 277, 330], [196, 247, 294], [175, 220, 262], [196, 247, 294]];
+      takt(() => {
+        const t = ctx.currentTime;
+        const o = ctx.createOscillator(), g = gain(0); o.frequency.setValueAtTime(160, t); o.frequency.exponentialRampToValueAtTime(50, t + 0.18); g.gain.linearRampToValueAtTime(0.4, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.25); o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.3);
+        knack(0.12, R(3000, 4000)); // Klick vom Kick, auf kleinen Lautsprechern hörbar
+        spaeter(() => { const h = rauschen("weiss"), hf = filter("highpass", 7000), hg = gain(0), tt = ctx.currentTime; hg.gain.linearRampToValueAtTime(0.06, tt + 0.003); hg.gain.exponentialRampToValueAtTime(0.0001, tt + 0.06); h.connect(hf); hf.connect(hg); hg.connect(master); h.start(tt); h.stop(tt + 0.08); }, 240); // Hi-Hat
+        const bass = akk[Math.floor(n / 8) % 4][0]; ton(bass / 2 * 2, 0.22, "sawtooth", 0.03); // Bass eine Oktave höher, damit er auf dem Handy klingt
+        if (n % 2) ton(akk[Math.floor(n / 8) % 4][(n >> 1) % 3] * 2, 0.15, "triangle", 0.03); // Arpeggio
+        if (n % 8 === 0) akk[Math.floor(n / 8) % 4].forEach((f) => ton(f, 2.2, "triangle", 0.035));
+        n++;
+      }, 480);
+    },
+  };
   function stoppeKlang() {
     for (const t of timer) t?.iv ? clearInterval(t.iv) : clearTimeout(t);
     timer = [];
@@ -175,13 +283,23 @@
   function spiele(id, { leise = false } = {}) {
     if (!KLAENGE[id]) return;
     try {
-      if (!ctx) { ctx = new (window.AudioContext || window.webkitAudioContext)(); master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination); }
+      if (!ctx) {
+        // iPhone: Ton auch bei Stummschalter (sonst bleibt Web Audio auf iOS still, wenn der Schalter auf lautlos steht)
+        if (plusFrei()) { try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch { /* älteres iOS */ } }
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        haupt = ctx.createGain(); haupt.gain.value = 0;
+        // Kompressor fängt Spitzen ab (Donner, Kamin-Knacken), damit nichts übersteuert
+        const komp = ctx.createDynamicsCompressor(); komp.threshold.value = -14; komp.knee.value = 10; komp.ratio.value = 4; komp.attack.value = 0.004; komp.release.value = 0.25;
+        analyse = ctx.createAnalyser(); analyse.fftSize = 256; analyse.smoothingTimeConstant = 0.8;
+        haupt.connect(komp); komp.connect(ctx.destination); komp.connect(analyse);
+        master = ctx.createGain(); master.connect(haupt);
+      }
       ctx.resume?.();
     } catch { return; }
     if (aktiv === id) return;
     const g = ++generation;
-    const wechsel = () => { if (g !== generation) return; wechselt = false; stoppeKlang(); aktiv = id; BAU[id](); master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(zielLaut(), ctx.currentTime, leise ? 1 : 0.4); zeichne(); };
-    if (aktiv || knoten.length) { wechselt = true; master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(0, ctx.currentTime, 0.2); setTimeout(wechsel, 850); } else wechsel();
+    const wechsel = () => { if (g !== generation) return; wechselt = false; stoppeKlang(); aktiv = id; const plus = plusFrei(); master = ctx.createGain(); master.gain.value = plus ? (PEGEL[id] || 1) : 1; master.connect(haupt); knoten.push(master); ((plus && BAU_NEU[id]) || BAU[id])(); haupt.gain.cancelScheduledValues(ctx.currentTime); haupt.gain.setTargetAtTime(zielLaut(), ctx.currentTime, leise ? 1 : 0.4); zeichne(); };
+    if (aktiv || knoten.length) { wechselt = true; haupt.gain.cancelScheduledValues(ctx.currentTime); haupt.gain.setTargetAtTime(0, ctx.currentTime, 0.2); setTimeout(wechsel, 850); } else wechsel();
     ls.set("friday_klang_letzter", id);
     // Die Szene wechselt sofort mit
     zeigeSzene(id);
@@ -191,15 +309,15 @@
     if (!ctx || !aktiv) { aktiv = null; zeichne(); zeigeSzene(null); return; }
     const g = ++generation;
     wechselt = false;
-    master.gain.cancelScheduledValues(ctx.currentTime);
-    master.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
+    haupt.gain.cancelScheduledValues(ctx.currentTime);
+    haupt.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
     setTimeout(() => { if (g === generation) stoppeKlang(); }, 1300);
     aktiv = null; zeichne(); zeigeSzene(null);
   }
   // Leiser, während Friday spricht
   const sprichtGerade = () => document.getElementById("reactor")?.classList.contains("speaking");
   const zielLaut = () => laut * 0.6 * (sprichtGerade() ? 0.25 : 1);
-  setInterval(() => { if (ctx && aktiv && !wechselt) master.gain.setTargetAtTime(zielLaut(), ctx.currentTime, 0.25); }, 300);
+  setInterval(() => { if (ctx && aktiv && !wechselt) haupt.gain.setTargetAtTime(zielLaut(), ctx.currentTime, 0.25); }, 300);
 
   // ---------- Schlaf-Timer ----------
   let schlafEnde = 0;
@@ -245,6 +363,7 @@
           <img class="kr-foto" id="kr-foto" alt="" referrerpolicy="no-referrer" decoding="async">
           <video class="kr-video" id="kr-video" muted playsinline preload="auto" aria-hidden="true"></video>
           <canvas class="kr-canvas" id="kr-canvas" aria-hidden="true"></canvas>
+          <canvas class="kr-spektrum" id="kr-spektrum" aria-hidden="true"></canvas>
           <div class="kr-oben">
             <div class="kr-szene"><small>SZENE</small><b id="kr-szene-titel">Bereit</b></div>
             <div class="kr-knoepfe">
@@ -488,6 +607,41 @@
   // Vollbild per Esc verlassen = große Szene schließen
   document.addEventListener("fullscreenchange", () => { const el = document.getElementById("kr-gross"); if (el && !document.fullscreenElement && !el.hidden) { el.querySelector(".kr-gross-x").click(); } });
 
+  // ---------- Live-Spektrum (Klang-Plus) ----------
+  // Zeigt, was wirklich aus dem Lautsprecher kommt: Balken unten in der Bühne, Ring im Kopf und Kachel atmen mit.
+  const spek = w.$("#kr-spektrum"), spekCtx = spek.getContext?.("2d");
+  let spekDaten = null, spekLauf = false;
+  function spektrum() {
+    const plus = plusFrei();
+    w.sheet.classList.toggle("kr-plus", plus);
+    if (!plus || !w.offen() || !analyse || !aktiv || document.hidden) { spekLauf = false; w.sheet.style.setProperty("--pegel", "0"); spekCtx?.clearRect(0, 0, spek.width, spek.height); return; }
+    spekLauf = true;
+    spekDaten = spekDaten || new Uint8Array(analyse.frequencyBinCount);
+    analyse.getByteFrequencyData(spekDaten);
+    const dpr = Math.min(2, window.devicePixelRatio || 1), bw = spek.clientWidth, bh = spek.clientHeight;
+    if (spek.width !== Math.round(bw * dpr) || spek.height !== Math.round(bh * dpr)) { spek.width = Math.round(bw * dpr); spek.height = Math.round(bh * dpr); }
+    const c = spekCtx; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, bw, bh);
+    const farbe = KLAENGE[aktiv].f, n = 48, nutz = Math.floor(spekDaten.length * 0.7);
+    let summe = 0;
+    const grad = c.createLinearGradient(0, bh, 0, 0); grad.addColorStop(0, farbe); grad.addColorStop(1, "rgba(255,255,255,0)");
+    c.fillStyle = grad; c.shadowColor = farbe; c.shadowBlur = 10;
+    const breite = bw / n;
+    for (let i = 0; i < n; i++) {
+      // logarithmisch verteilt, damit Höhen und Tiefen gleich viel Platz bekommen
+      const a = Math.floor(Math.pow(i / n, 1.6) * nutz), b = Math.max(a + 1, Math.floor(Math.pow((i + 1) / n, 1.6) * nutz));
+      let v = 0; for (let k = a; k < b; k++) v = Math.max(v, spekDaten[k]);
+      v /= 255; summe += v;
+      const h = Math.max(2, v * bh * 0.95), x = i * breite;
+      c.globalAlpha = 0.35 + v * 0.65;
+      c.fillRect(x + breite * 0.18, bh - h, breite * 0.64, h);
+    }
+    c.globalAlpha = 1;
+    w.sheet.style.setProperty("--pegel", (summe / n).toFixed(3));
+    requestAnimationFrame(spektrum);
+  }
+  const spekStart = () => { if (!spekLauf) requestAnimationFrame(spektrum); };
+  setInterval(spekStart, 1000); // startet von selbst, sobald ein Klang läuft und das Fenster offen ist
+
   // ---------- Kacheln ----------
   function zeichne() {
     const l = w.$("#kr-liste");
@@ -498,6 +652,7 @@
         <span class="kr-ico">${k.icon}</span>
         <span class="kr-tx"><b>${esc(k.name)}</b><em>${esc(k.text)}</em></span>
         <span class="kr-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="kr-pegel" aria-hidden="true"></span>
       </button>`).join("");
     w.$("#kr-auto").checked = auto();
     w.$("#kr-laut").value = laut;
@@ -609,7 +764,35 @@
   .kr-steuer { grid-template-columns: 1fr; }
 }
 html.perf-fluessig .kr-foto { animation: none; }
-@media (prefers-reduced-motion: reduce) { .kr-foto, .kr-eq i { animation: none; } }`;
+@media (prefers-reduced-motion: reduce) { .kr-foto, .kr-eq i { animation: none; } }
+/* ---- Klang-Plus (v1.149.0, nur in Eve bis zur Freigabe) ---- */
+.kr-spektrum { position: absolute; left: 0; right: 0; bottom: 0; height: 34%; width: 100%; z-index: 1; pointer-events: none; display: none; opacity: .85; mix-blend-mode: screen; }
+.kr-plus .kr-spektrum { display: block; }
+.kr-plus .kr-head .sz-core svg { transform: scale(calc(1 + var(--pegel, 0) * .35)); transition: transform .12s; filter: drop-shadow(0 0 calc(4px + var(--pegel, 0) * 26px) var(--kr-f)); }
+.kr-plus .kr-glas { box-shadow: 0 0 calc(24px + var(--pegel, 0) * 60px) color-mix(in srgb, var(--kr-f) 38%, transparent), inset 0 0 40px rgba(255,138,30,.10), inset 0 1px 0 rgba(255,230,200,.35); }
+.kr-plus .kr-raster { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.kr-plus .kr-karte { padding: 12px; border-radius: 16px; gap: 12px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--f) 16%, rgba(12,7,3,.9)), rgba(12,7,3,.75) 65%);
+  border-color: color-mix(in srgb, var(--f) 30%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.kr-plus .kr-karte::before { display: none; }
+.kr-plus .kr-karte::after { content: ""; position: absolute; inset: -40% -10% auto auto; width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--f) 35%, transparent), transparent 70%); opacity: .35; transition: opacity .3s; pointer-events: none; }
+.kr-plus .kr-karte:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.35), 0 0 16px color-mix(in srgb, var(--f) 30%, transparent); }
+.kr-plus .kr-karte:hover::after { opacity: .7; }
+.kr-plus .kr-ico { width: 46px; height: 46px; border-radius: 50%; font-size: 23px; position: relative; z-index: 1;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--f) 45%, transparent), color-mix(in srgb, var(--f) 10%, transparent) 70%);
+  border: 1px solid color-mix(in srgb, var(--f) 70%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--f) 35%, transparent), inset 0 0 10px color-mix(in srgb, var(--f) 30%, transparent); }
+.kr-plus .kr-tx { position: relative; z-index: 1; }
+.kr-plus .kr-tx b { font-size: 14.5px; letter-spacing: .02em; }
+.kr-pegel { display: none; }
+.kr-plus .kr-karte.an .kr-eq { display: none; }
+.kr-plus .kr-karte.an .kr-pegel { display: block; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 3px; border-radius: 3px; z-index: 1; background: rgba(255,255,255,.08); overflow: hidden; }
+.kr-plus .kr-karte.an .kr-pegel::after { content: ""; position: absolute; inset: 0; transform-origin: left; transform: scaleX(calc(.08 + var(--pegel, 0) * 2.2)); background: linear-gradient(90deg, var(--f), #fff); box-shadow: 0 0 10px var(--f); transition: transform .1s; }
+.kr-plus .kr-karte.an { box-shadow: 0 0 26px color-mix(in srgb, var(--f) 45%, transparent), inset 0 0 26px color-mix(in srgb, var(--f) 16%, transparent); border-color: var(--f); }
+.kr-plus .kr-karte.an .kr-ico { animation: kr-atmen 2.8s ease-in-out infinite; }
+@keyframes kr-atmen { 0%,100% { box-shadow: 0 0 12px color-mix(in srgb, var(--f) 40%, transparent); } 50% { box-shadow: 0 0 26px var(--f); } }
+@media (max-width: 900px) { .kr-plus .kr-raster { grid-template-columns: 1fr 1fr; } .kr-plus .kr-ico { width: 36px; height: 36px; font-size: 18px; } .kr-plus .kr-karte { padding: 10px; } }
+html.perf-fluessig .kr-plus .kr-karte { -webkit-backdrop-filter: none; backdrop-filter: none; }
+@media (prefers-reduced-motion: reduce) { .kr-plus .kr-karte.an .kr-ico { animation: none; } }`;
   document.head.appendChild(st);
   zeichne();
 

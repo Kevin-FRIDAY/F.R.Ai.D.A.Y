@@ -118,9 +118,16 @@
       "ziele": []
     },
     {
+      "id": "klang-plus",
+      "name": "Stimmungs-Sound Plus (alle Klänge hörbar + Live-Spektrum)",
+      "version": "1.149.0",
+      "beschreibung": "Alle 19 Klänge neu abgemischt: hörbar auch auf iPhone- und MacBook-Lautsprechern (vorher lagen Unterwasser, Weltraum, Zug, Sommernacht, Raumschiff, Klangschale, Herzschlag und Energie-Puls fast nur im Tiefbass) und alle gleich laut. Auf dem iPhone auch bei Stummschalter. Neue Details (Grillen, Eule, Walgesang, Funkenregen, Hi-Hat …), Live-Spektrum in der Bühne, leuchtende Kacheln mit echtem Pegel.",
+      "ziele": []
+    },
+    {
       "id": "live-sport",
       "name": "Live-Sport mit Spielanalyse",
-      "version": "1.148.0",
+      "version": "1.150.0",
       "beschreibung": "Alle großen Sportarten live aus freien Quellen: Fußball (WM, EM, Bundesliga, Champions League …), NFL, NBA, NHL, MLB, Tennis, Formel 1, Golf, UFC, Rugby, dazu Ergebnisse für Handball, Volleyball, Darts, Radsport, E-Sport. „Friday, zeig mir das Live-Spiel“ öffnet Stand, Tore/Karten, Statistik, Ticker und Spielverlauf, Friday analysiert, was bisher passiert ist. Das Live-Bild gibt es nur legal beim Sender: Friday sagt, wo (ARD/ZDF kostenlos oder Bezahl-App), dazu offizielle Highlights.",
       "ziele": [
         ".menu-sport"

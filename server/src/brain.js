@@ -213,7 +213,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Live-Sport (v1.148.0; vor der Spiele-Werkstatt, damit "Live-Spiel" hier landet), im Test: in Friday erst nach Freigabe in Eve): "zeig mir das Live-Spiel",
+  // Live-Sport (v1.150.0; vor der Spiele-Werkstatt, damit "Live-Spiel" hier landet), im Test: in Friday erst nach Freigabe in Eve): "zeig mir das Live-Spiel",
   // "wie steht es bei Bayern?", "Bundesliga live" – Stand, Ereignisse, Analyse, wo es legal läuft.
   if (mode !== "translate" && !image && text) {
     try {
@@ -235,7 +235,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Markt-Radar Plus (v1.148.0, zuerst nur in Eve): "analysiere den DAX", "Prognose für Gold", "öffne die Markt-Wache".
+  // Markt-Radar Plus (v1.150.0, zuerst nur in Eve): "analysiere den DAX", "Prognose für Gold", "öffne die Markt-Wache".
   if (mode !== "translate" && !image && text) {
     try {
       const mp = await marktplusQuick(text);
