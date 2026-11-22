@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Licht-Läufer</title>
+<!--FRIDAY-GRAFIK-->
+</head>
+<body>
+<script>
+// Licht-Läufer: Ein Lichtwesen rennt über die Dächer einer Neon-Stadt. Springen, Doppelsprung, Splitter sammeln.
+(() => {
+  const C = FG.C;
+  const SCHWER = 2600, SPRUNG = 900;
+  let laeufer, daecher, splitter, sperren, tempo, weg, punkte, gesammelt, stadt, spur, phase;
+
+  function baueStadt() {
+    stadt = [0.25, 0.45, 0.7].map((tiefe, e) => {
+      const haeuser = []; let x = 0;
+      while (x < 2400) { const w = FG.zufall(40, 110) * (1 + e * 0.3), h = FG.zufall(0.15, 0.45) * (1 - e * 0.25); haeuser.push({ x, w, h, fenster: Array.from({ length: 18 }, () => Math.random() < 0.35), schild: Math.random() < 0.18 ? FG.wahl([C.neon, C.cyan, C.lila, "#ff5c8a"]) : null }); x += w + FG.zufall(4, 20); }
+      return { tiefe, haeuser, breite: x };
+    });
+  }
+  function neuesDach(vorher) {
+    const H = FG.H;
+    const luecke = vorher ? FG.zufall(70, Math.min(250, 90 + tempo * 0.35)) : 0;
+    const x = vorher ? vorher.x + vorher.w + luecke : -20;
+    const y = vorher ? FG.klemmen(vorher.y + FG.zufall(-90, 90), H * 0.5, H * 0.84) : H * 0.72;
+    const w = vorher ? FG.zufall(220, 520) : FG.W * 0.9;
+    const d = { x, y, w, farbe: FG.wahl([C.neon, C.cyan, C.lila]) };
+    // Splitter in Bögen über Dach und Lücke
+    if (vorher && Math.random() < 0.8) { const n = FG.ganz(3, 6); for (let i = 0; i < n; i++) splitter.push({ x: x + 40 + i * 34, y: y - 50 - Math.sin((i / (n - 1)) * Math.PI) * 50, p: Math.random() * 6 }); }
+    if (vorher && w > 300 && Math.random() < 0.55) sperren.push({ x: x + FG.zufall(140, w - 80), y, h: FG.zufall(34, 52) });
+    return d;
+  }
+  function springen() {
+    if (laeufer.boden) { laeufer.vy = -SPRUNG; laeufer.boden = false; laeufer.sprung = 1; FG.ton("sprung"); FG.funken(laeufer.x, laeufer.y, { n: 10, farbe: C.cyan, tempo: 140, winkel: Math.PI, streu: 1, leben: 0.4 }); }
+    else if (laeufer.sprung === 1) { laeufer.vy = -SPRUNG * 0.85; laeufer.sprung = 2; FG.ton("power"); FG.ring(laeufer.x, laeufer.y - 20, C.cyan, 50, 0.35); }
+  }
+
+  FG.spiel({
+    id: "licht-laeufer", titel: "LICHT-LÄUFER", untertitel: "Geschick · Grafik-Plus", symbol: "🏃", hintergrund: false,
+    anleitung: "Renne über die Dächer der Neon-Stadt. <b>Tippen</b> oder <kbd>Leertaste</kbd> = springen, nochmal in der Luft = <b>Doppelsprung</b>. Sammle Lichtsplitter, spring über rote Laser-Sperren.",
+    init() {
+      baueStadt(); splitter = []; sperren = []; tempo = 380; weg = 0; punkte = 0; gesammelt = 0; spur = []; phase = 0;
+      daecher = [neuesDach(null)]; while (daecher.length < 6) daecher.push(neuesDach(daecher[daecher.length - 1]));
+      laeufer = { x: FG.W * 0.26, y: daecher[0].y, vy: 0, boden: true, sprung: 0 };
+    },
+    tippen() { springen(); },
+    pruefen: () => ({ laeufer, daecher, sperren, tempo }), // für automatische Tests
+    taste(k) { if (k === " " || k === "arrowup" || k === "w") springen(); },
+    update(dt) {
+      tempo = Math.min(820, tempo + dt * 9); weg += tempo * dt; phase += dt * tempo / 40;
+      const dx = tempo * dt;
+      for (const d of daecher) d.x -= dx; for (const s of splitter) s.x -= dx; for (const s of sperren) s.x -= dx;
+      while (daecher[daecher.length - 1].x < FG.W + 400) daecher.push(neuesDach(daecher[daecher.length - 1]));
+      daecher = daecher.filter((d) => d.x + d.w > -50); splitter = splitter.filter((s) => s.x > -30 && !s.weg); sperren = sperren.filter((s) => s.x > -30);
+      // Schwerkraft und Landen
+      const altY = laeufer.y;
+      laeufer.vy += SCHWER * dt; laeufer.y += laeufer.vy * dt; laeufer.boden = false;
+      for (const d of daecher) {
+        if (laeufer.x > d.x - 6 && laeufer.x < d.x + d.w + 6 && altY <= d.y + 2 && laeufer.y >= d.y && laeufer.vy >= 0) {
+          if (laeufer.vy > 900) { FG.funken(laeufer.x, d.y, { n: 12, farbe: d.farbe, tempo: 200, winkel: -Math.PI / 2, streu: 1.3, leben: 0.4 }); FG.wackeln(2); }
+          laeufer.y = d.y; laeufer.vy = 0; laeufer.boden = true; laeufer.sprung = 0;
+        }
+      }
+      if (laeufer.boden) laeufer.x += (FG.W * 0.26 - laeufer.x) * Math.min(1, dt * 2);
+      // Gegen eine Hauswand gelaufen?
+      for (const d of daecher) if (laeufer.x > d.x - 4 && laeufer.x < d.x + 14 && laeufer.y > d.y + 10) laeufer.x = Math.min(laeufer.x, d.x - 4);
+      for (const s of splitter) if (FG.abstand(s.x, s.y, laeufer.x, laeufer.y - 22) < 26) { s.weg = true; gesammelt++; punkte += 50; FG.ton("punkt"); FG.funken(s.x, s.y, { n: 10, farbe: C.cyan, tempo: 160, leben: 0.5 }); FG.text(s.x, s.y - 12, "+50", C.cyan, 16); }
+      for (const s of sperren) if (!s.aus && Math.abs(s.x - laeufer.x) < 12 && laeufer.y > s.y - s.h) { s.aus = true; return sterben("Von einer Laser-Sperre erwischt."); }
+      if (laeufer.y > FG.H + 80 || laeufer.x < -10) return sterben("In die Tiefe gestürzt.");
+      punkte += dt * tempo / 20;
+      spur.push({ x: laeufer.x, y: laeufer.y - 22 }); if (spur.length > 14) spur.shift();
+      for (const p of spur) p.x -= dx;
+      FG.hud({ Punkte: Math.round(punkte), Meter: Math.round(weg / 40), "◇": gesammelt });
+    },
+    zeichne(c) {
+      if (!daecher) return;
+      const W = FG.W, H = FG.H, t = FG.zeit;
+      // Himmel mit Mond
+      c.fillStyle = FG.verlauf(c, 0, 0, 0, H, ["#0a0420", "#1c0a33", "#3a0f3a", "#120618"]); c.fillRect(0, 0, W, H);
+      FG.leuchten(W * 0.78, H * 0.2, Math.min(W, H) * 0.35, C.lila, 0.35);
+      c.fillStyle = "#ffe9d0"; c.beginPath(); c.arc(W * 0.78, H * 0.2, Math.min(W, H) * 0.07, 0, 7); c.fill();
+      // Stadt in drei Tiefen (Parallaxe)
+      stadt.forEach((s, e) => {
+        const versatz = ((weg * s.tiefe) % s.breite + s.breite) % s.breite, boden = H * (0.62 + e * 0.1);
+        for (let wdh = 0; wdh < 2; wdh++) for (const h of s.haeuser) {
+          const x = h.x - versatz + wdh * s.breite; if (x > W || x + h.w < 0) continue;
+          const top = boden - h.h * H;
+          c.fillStyle = ["#150a24", "#110720", "#0b0414"][e]; c.fillRect(x, top, h.w, H - top);
+          if (!FG.sparen || e === 2) { c.fillStyle = FG.rgba(e === 2 ? C.gold : C.neon, 0.18 + e * 0.12); let i = 0; for (let fy = top + 10; fy < boden - 6 && i < 60; fy += 14) for (let fx = x + 6; fx < x + h.w - 8; fx += 12) { if (h.fenster[i++ % 18]) c.fillRect(fx, fy, 5, 7); } }
+          if (h.schild && e > 0) { c.fillStyle = h.schild; c.fillRect(x + h.w * 0.2, top + 12, h.w * 0.6, 6); FG.leuchten(x + h.w / 2, top + 15, h.w * 0.6, h.schild, 0.5 + 0.2 * Math.sin(t * 3 + x)); }
+        }
+      });
+      c.fillStyle = FG.verlauf(c, 0, H * 0.6, 0, H, ["rgba(58,15,58,0)", "rgba(20,6,24,.8)"]); c.fillRect(0, H * 0.6, W, H * 0.4);
+      // Dächer (Spielfläche)
+      for (const d of daecher) {
+        c.fillStyle = FG.verlauf(c, 0, d.y, 0, H, ["#1d1030", "#06030c"]); c.fillRect(d.x, d.y, d.w, H - d.y);
+        FG.glow(d.farbe, 14, (k) => { k.fillStyle = d.farbe; k.fillRect(d.x, d.y - 2, d.w, 3); });
+        c.fillStyle = FG.rgba(d.farbe, 0.12); for (let fx = d.x + 14; fx < d.x + d.w - 10; fx += 26) for (let fy = d.y + 20; fy < H; fy += 30) c.fillRect(fx, fy, 10, 12);
+      }
+      // Laser-Sperren
+      for (const s of sperren) {
+        const flacker = 0.7 + Math.random() * 0.3;
+        c.fillStyle = "#2a0a10"; c.fillRect(s.x - 5, s.y - s.h - 6, 10, 6); c.fillRect(s.x - 5, s.y - 4, 10, 4);
+        FG.glow(C.rot, 18, (k) => { k.fillStyle = FG.rgba(C.rot, flacker); k.fillRect(s.x - 1.5, s.y - s.h, 3, s.h - 4); });
+        FG.leuchten(s.x, s.y - s.h / 2, s.h, C.rot, 0.35 * flacker);
+      }
+      // Splitter
+      for (const s of splitter) {
+        const y = s.y + Math.sin(t * 4 + s.p) * 4;
+        FG.leuchten(s.x, y, 22, C.cyan, 0.7);
+        c.save(); c.translate(s.x, y); c.rotate(t * 2 + s.p); c.fillStyle = FG.verlauf(c, -7, -7, 7, 7, ["#e8fffc", C.cyan]); c.beginPath(); c.moveTo(0, -8); c.lineTo(6, 0); c.lineTo(0, 8); c.lineTo(-6, 0); c.closePath(); c.fill(); c.restore();
+      }
+      // Läufer: Leuchtspur + Strichfigur mit Laufbewegung
+      if (FG.zustand === "ende") return;
+      c.save(); c.globalCompositeOperation = "lighter"; c.lineCap = "round";
+      for (let i = 1; i < spur.length; i++) { const a = i / spur.length; c.strokeStyle = FG.rgba(C.cyan, a * 0.5); c.lineWidth = a * 10; c.beginPath(); c.moveTo(spur[i - 1].x, spur[i - 1].y); c.lineTo(spur[i].x, spur[i].y); c.stroke(); }
+      c.restore();
+      const x = laeufer.x, y = laeufer.y, luft = !laeufer.boden, s1 = luft ? 0.6 : Math.sin(phase), s2 = luft ? -0.9 : Math.sin(phase + Math.PI);
+      FG.leuchten(x, y - 24, 46, C.cyan, 0.5);
+      FG.glow(C.cyan, 14, (k) => {
+        k.strokeStyle = "#e8fffc"; k.lineWidth = 4; k.lineCap = "round"; k.lineJoin = "round";
+        const huefte = [x, y - 20], schulter = [x + 4, y - 38];
+        const bein = (s) => { k.beginPath(); k.moveTo(...huefte); k.lineTo(x + s * 10, y - 10 + Math.abs(s) * 2); k.lineTo(x + s * 14 - 3, y - (s < 0 ? 4 : 0)); k.stroke(); };
+        const arm = (s) => { k.beginPath(); k.moveTo(...schulter); k.lineTo(x + 4 - s * 10, y - 28); k.lineTo(x + 8 - s * 12, y - 34 + s * 4); k.stroke(); };
+        bein(s1); bein(s2); arm(s1); arm(s2);
+        k.beginPath(); k.moveTo(...huefte); k.lineTo(...schulter); k.stroke();
+        k.fillStyle = "#e8fffc"; k.beginPath(); k.arc(x + 6, y - 46, 6, 0, 7); k.fill();
+      });
+    },
+  });
+  function sterben(text) {
+    FG.explosion(laeufer.x, Math.min(laeufer.y, FG.H - 20) - 20, C.cyan, 1.3); FG.ton("boom"); FG.blitz(C.cyan, 0.25);
+    FG.ende(Math.round(punkte), `${text} ${Math.round(weg / 40)} m gelaufen.`);
+  }
+})();
+</script>
+</body>
+</html>

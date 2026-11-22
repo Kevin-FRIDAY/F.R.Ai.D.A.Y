@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Orbit-Sprung</title>
+<!--FRIDAY-GRAFIK-->
+</head>
+<body>
+<script>
+// Orbit-Sprung: Deine Sonde kreist um einen Planeten. Antippen = abspringen. Triff den nächsten Orbit!
+(() => {
+  const C = FG.C;
+  const PALETTEN = [["#ffd9a0", "#ff8a1e", "#5a1d05"], ["#c9fff8", "#2ee6d0", "#04403b"], ["#e9d6ff", "#b57bff", "#2b0f4d"], ["#fff1b5", "#ffc44d", "#5a3c05"], ["#ffc9d6", "#ff5c8a", "#4d0a1d"]];
+  let planeten, sonde, kamY, punkte, sprung, spur, sterneGesammelt, weiter;
+
+  function neuerPlanet(y, nr) {
+    const r = FG.zufall(26, 44) * Math.min(1.2, FG.W / 420 + 0.3);
+    const p = { x: FG.zufall(r + 50, FG.W - r - 50), y, r, orbit: r + FG.zufall(34, 52), pal: FG.wahl(PALETTEN), ring: Math.random() < 0.35, dreh: Math.random() * 6, nr,
+      vx: nr > 6 && Math.random() < Math.min(0.6, nr / 30) ? FG.zufall(30, 70) * FG.wahl([-1, 1]) : 0, stern: Math.random() < 0.6 };
+    return p;
+  }
+  function luecke() { return FG.zufall(190, 250) + Math.min(90, punkte * 3); }
+
+  function abspringen() {
+    if (!sonde.an) return;
+    const p = sonde.an, w = sonde.w;
+    const v = 360 + Math.min(220, punkte * 6);
+    sonde.vx = -Math.sin(w) * v * sonde.dir; sonde.vy = Math.cos(w) * v * sonde.dir;
+    sonde.an = null; sonde.frei = 0; p.verlassen = true;
+    FG.ton("sprung"); FG.funken(sonde.x, sonde.y, { n: 12, farbe: C.cyan, tempo: 160, winkel: Math.atan2(-sonde.vy, -sonde.vx), streu: 0.7, leben: 0.4 });
+  }
+
+  FG.spiel({
+    id: "orbit-sprung", titel: "ORBIT-SPRUNG", untertitel: "Geschick · Grafik-Plus", symbol: "🪐", hintergrund: "nebel",
+    anleitung: "Deine Sonde kreist um einen Planeten. <b>Tippe</b> (oder <kbd>Leertaste</kbd>), um tangential abzuspringen und den Orbit des nächsten Planeten zu treffen. Sammle ★ für Extrapunkte.",
+    sternTempo: () => (sonde && !sonde.an ? 60 : 12),
+    init() {
+      planeten = []; punkte = 0; spur = []; sterneGesammelt = 0; kamY = 0; weiter = 0; FG.kamera.y = 0;
+      let y = FG.H * 0.72;
+      for (let i = 0; i < 6; i++) { const p = neuerPlanet(y, i); if (i === 0) { p.x = FG.W / 2; p.vx = 0; p.stern = false; } planeten.push(p); y -= luecke(); }
+      const p0 = planeten[0];
+      sonde = { an: p0, w: 0, dir: 1, x: p0.x + p0.orbit, y: p0.y, vx: 0, vy: 0, frei: 0 };
+    },
+    tippen() { abspringen(); },
+    pruefen: () => ({ sonde, planeten, punkte }), // für automatische Tests
+    taste(k) { if (k === " " || k === "arrowup" || k === "w") abspringen(); },
+    update(dt) {
+      // Planeten bewegen sich (später) seitlich hin und her
+      for (const p of planeten) { p.dreh += dt * 0.3; if (p.vx) { p.x += p.vx * dt; if (p.x < p.r + 30 || p.x > FG.W - p.r - 30) p.vx *= -1; } }
+      if (sonde.an) {
+        const p = sonde.an, om = (200 + Math.min(160, punkte * 5)) / p.orbit;
+        sonde.w += om * dt * sonde.dir;
+        sonde.x = p.x + Math.cos(sonde.w) * p.orbit; sonde.y = p.y + Math.sin(sonde.w) * p.orbit;
+      } else {
+        // Leichte Anziehung in Planeten-Nähe macht Sprünge etwas gnädiger
+        for (const p of planeten) {
+          if (p.verlassen) continue;
+          const dx = p.x - sonde.x, dy = p.y - sonde.y, d = Math.hypot(dx, dy);
+          if (d < p.orbit * 1.9 && d > 1) { const k = 260 * dt * (p.orbit * 1.9 - d) / p.orbit; sonde.vx += (dx / d) * k; sonde.vy += (dy / d) * k; }
+        }
+        sonde.x += sonde.vx * dt; sonde.y += sonde.vy * dt; sonde.frei += dt;
+        // Einfangen, wenn die Sonde den Orbit eines anderen Planeten kreuzt
+        for (const p of planeten) {
+          if (p.verlassen) continue;
+          const d = FG.abstand(p.x, p.y, sonde.x, sonde.y);
+          if (d < p.orbit + 6) {
+            const w = Math.atan2(sonde.y - p.y, sonde.x - p.x);
+            const kreuz = (sonde.x - p.x) * sonde.vy - (sonde.y - p.y) * sonde.vx;
+            sonde.an = p; sonde.w = w; sonde.dir = kreuz >= 0 ? 1 : -1;
+            const neu = !p.besucht; p.besucht = true;
+            if (neu) { punkte++; FG.ton("punkt"); FG.text(p.x, p.y - p.orbit - 10, "+1", C.gold, 22); }
+            if (p.stern) { p.stern = false; sterneGesammelt++; punkte += 3; FG.ton("power"); FG.text(p.x, p.y - p.orbit - 36, "★ +3", C.cyan, 22); FG.funken(p.x, p.y, { n: 30, farbe: C.gold, tempo: 300 }); }
+            FG.ring(p.x, p.y, p.pal[1], p.orbit * 1.6, 0.6);
+            for (const q of planeten) if (q !== p) q.verlassen = q.y > p.y; // zurück geht nicht
+            break;
+          }
+        }
+        if (sonde.x < -40 || sonde.x > FG.W + 40 || sonde.y - kamY > FG.H + 60 || sonde.y - kamY < -200 || sonde.frei > 2.6) {
+          FG.explosion(FG.klemmen(sonde.x, 10, FG.W - 10), FG.klemmen(sonde.y, kamY + 10, kamY + FG.H - 10), C.neon, 1.4); FG.ton("boom");
+          FG.ende(punkte, `Ins All abgedriftet. ${sterneGesammelt} ★ gesammelt.`);
+        }
+      }
+      // Kamera folgt weich nach oben
+      const ziel = (sonde.an ? sonde.an.y : sonde.y) - FG.H * 0.66;
+      if (ziel < kamY) kamY += (ziel - kamY) * Math.min(1, dt * 2.5);
+      FG.kamera.y = kamY;
+      // Neue Planeten oben, alte unten weg
+      let oben = planeten[planeten.length - 1];
+      while (oben.y - kamY > -FG.H) { const p = neuerPlanet(oben.y - luecke(), oben.nr + 1); planeten.push(p); oben = p; }
+      planeten = planeten.filter((p) => p.y - kamY < FG.H + 200 || p === sonde.an);
+      spur.push({ x: sonde.x, y: sonde.y }); if (spur.length > 40) spur.shift();
+      FG.hud({ Planeten: punkte, "★": sterneGesammelt });
+    },
+    zeichne(c) {
+      if (!planeten) return;
+      const t = FG.zeit;
+      c.save(); c.translate(0, -kamY);
+      for (const p of planeten) {
+        // Orbit-Bahn
+        c.setLineDash([4, 8]); c.lineDashOffset = -t * 20; c.strokeStyle = FG.rgba(p.pal[1], p === sonde.an ? 0.55 : p.verlassen ? 0.1 : 0.3); c.lineWidth = 1.5;
+        c.beginPath(); c.arc(p.x, p.y, p.orbit, 0, 7); c.stroke(); c.setLineDash([]);
+        // Atmosphäre + Planet mit Licht von oben links
+        FG.leuchten(p.x, p.y, p.r * 2.6, p.pal[1], 0.45);
+        const g = c.createRadialGradient(p.x - p.r * 0.4, p.y - p.r * 0.4, p.r * 0.1, p.x, p.y, p.r);
+        g.addColorStop(0, p.pal[0]); g.addColorStop(0.55, p.pal[1]); g.addColorStop(1, p.pal[2]);
+        c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, p.r, 0, 7); c.fill();
+        // Bänder auf der Oberfläche
+        c.save(); c.beginPath(); c.arc(p.x, p.y, p.r, 0, 7); c.clip(); c.globalAlpha = 0.18; c.fillStyle = p.pal[2];
+        for (let i = -2; i <= 2; i++) c.fillRect(p.x - p.r, p.y + i * p.r * 0.34 + Math.sin(p.dreh + i) * 3, p.r * 2, p.r * 0.12);
+        c.globalAlpha = 1; c.fillStyle = "rgba(0,0,0,.35)"; c.beginPath(); c.arc(p.x + p.r * 0.35, p.y + p.r * 0.35, p.r, 0, 7); c.fill(); c.restore();
+        if (p.ring) { c.save(); c.translate(p.x, p.y); c.rotate(-0.4); c.strokeStyle = FG.rgba(p.pal[0], 0.7); c.lineWidth = 3; c.beginPath(); c.ellipse(0, 0, p.r * 1.7, p.r * 0.45, 0, Math.PI * 1.05, Math.PI * 1.95 + 0.9); c.stroke(); c.restore(); }
+        if (p.stern) { const sy = p.y - p.r - 16 + Math.sin(t * 3 + p.nr) * 4; FG.leuchten(p.x, sy, 26, C.gold, 0.9); c.fillStyle = "#fff6d0"; c.font = "18px system-ui"; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText("★", p.x, sy); }
+      }
+      // Leuchtspur der Sonde
+      c.save(); c.globalCompositeOperation = "lighter"; c.lineCap = "round";
+      for (let i = 1; i < spur.length; i++) { const a = i / spur.length; c.strokeStyle = FG.rgba(C.cyan, a * 0.6); c.lineWidth = a * 5; c.beginPath(); c.moveTo(spur[i - 1].x, spur[i - 1].y); c.lineTo(spur[i].x, spur[i].y); c.stroke(); }
+      c.restore();
+      if (FG.zustand !== "ende") {
+        FG.leuchten(sonde.x, sonde.y, 34, C.cyan, 0.9);
+        c.fillStyle = "#eafffb"; c.beginPath(); c.arc(sonde.x, sonde.y, 6, 0, 7); c.fill();
+        c.strokeStyle = C.cyan; c.lineWidth = 2; c.beginPath(); c.arc(sonde.x, sonde.y, 10 + Math.sin(t * 8) * 1.5, 0, 7); c.stroke();
+        // Zielhilfe: kurze Linie in Sprungrichtung
+        if (sonde.an) { const dx = -Math.sin(sonde.w) * sonde.dir, dy = Math.cos(sonde.w) * sonde.dir; c.strokeStyle = "rgba(46,230,208,.35)"; c.setLineDash([3, 6]); c.beginPath(); c.moveTo(sonde.x, sonde.y); c.lineTo(sonde.x + dx * 70, sonde.y + dy * 70); c.stroke(); c.setLineDash([]); }
+      }
+      c.restore();
+    },
+  });
+})();
+</script>
+</body>
+</html>

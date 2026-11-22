@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Neon-Drift</title>
+<!--FRIDAY-GRAFIK-->
+</head>
+<body>
+<script>
+// Neon-Drift: Pseudo-3D-Rennen auf einer endlosen Neon-Straße. Ausweichen, Energie sammeln, schneller werden.
+(() => {
+  const C = FG.C;
+  const SEG = 200, BREITE = 2000, KAM_H = 1000, TIEFE = 0.84, SICHT = 160, ANZAHL = 900;
+  let segs, pos, strecke, tempo, spielerX, lenk, schild, punkte, energie, himmelX, unverwundbar, zeitImSpiel, berge;
+
+  // Straße bauen: Abschnitte mit Kurven und sanften Hügeln
+  function baueStrecke() {
+    segs = [];
+    let kurve = 0, ziel = 0, rest = 0, huegel = 0;
+    for (let i = 0; i < ANZAHL; i++) {
+      if (rest-- <= 0) { rest = FG.ganz(40, 110); ziel = i < 60 ? 0 : FG.wahl([-4, -2.5, -1, 0, 0, 1, 2.5, 4]); }
+      kurve += (ziel - kurve) * 0.04;
+      huegel = Math.sin(i / 37) * 900 + Math.sin(i / 13) * 250;
+      segs.push({ i, kurve, y1: 0, y2: 0, huegel, dinge: [], p1: {}, p2: {} });
+    }
+    for (let i = 0; i < ANZAHL; i++) { segs[i].y1 = segs[i].huegel; segs[i].y2 = segs[(i + 1) % ANZAHL].huegel; }
+    for (let i = 80; i < ANZAHL; i++) belegen(segs[i], 0.6);
+  }
+  // Hindernisse (rot) und Energiekugeln (türkis) auf ein Segment legen
+  function belegen(s, schwer) {
+    s.dinge = [];
+    if (s.i < 40) return;
+    const r = Math.random();
+    if (r < 0.045 * schwer) s.dinge.push({ art: "sperre", x: FG.wahl([-0.66, 0, 0.66]) });
+    else if (r < 0.06 * schwer + 0.02) s.dinge.push({ art: "kugel", x: FG.zufall(-0.75, 0.75) });
+    if (s.i % 6 === 0) s.dinge.push({ art: "pfahl", x: -1.25 }, { art: "pfahl", x: 1.25 });
+  }
+
+  function projiziere(p, wx, wy, wz, kx, ky, kz) {
+    const z = wz - kz;
+    p.z = z; p.s = TIEFE / z;
+    p.x = Math.round(FG.W / 2 + p.s * (wx - kx) * FG.W / 2);
+    p.y = Math.round(FG.H / 2 - p.s * (wy - ky) * FG.H / 2);
+    p.w = Math.round(p.s * BREITE * FG.W / 2);
+  }
+  const misch = (a, b, t) => { const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16); const k = (s) => Math.round(((x >> s) & 255) * (1 - t) + ((y >> s) & 255) * t); return `rgb(${k(16)},${k(8)},${k(0)})`; };
+  function viereck(c, x1, y1, w1, x2, y2, w2, farbe) { c.fillStyle = farbe; c.beginPath(); c.moveTo(x1 - w1, y1); c.lineTo(x2 - w2, y2); c.lineTo(x2 + w2, y2); c.lineTo(x1 + w1, y1); c.fill(); }
+
+  FG.spiel({
+    id: "neon-drift", titel: "NEON-DRIFT", untertitel: "Rennen · Grafik-Plus", symbol: "🏁", hintergrund: false, scanlines: true,
+    anleitung: "Rase über die Neon-Straße. Weiche den <b style='color:#ff4b4b'>roten Sperren</b> aus und sammle <b style='color:#2ee6d0'>Energie</b>.<br>Lenken: <kbd>←</kbd><kbd>→</kbd> / <kbd>A</kbd><kbd>D</kbd> oder linke/rechte Bildschirmhälfte halten.",
+    pruefen: () => ({ springe: (z) => { pos = z; }, pos: () => pos, schildVoll: () => { schild = 99; } }), // für automatische Tests
+    init() {
+      baueStrecke(); pos = 0; strecke = 0; tempo = 5200; spielerX = 0; lenk = 0; schild = 3; punkte = 0; energie = 0; himmelX = 0; unverwundbar = 0; zeitImSpiel = 0;
+      berge = [0, 1].map((e) => Array.from({ length: 24 }, (_, i) => ({ x: i / 24, h: FG.zufall(0.4, 1) * (e ? 0.12 : 0.08) })));
+    },
+    update(dt) {
+      zeitImSpiel += dt;
+      const max = 9000 + Math.min(9000, zeitImSpiel * 110);
+      tempo = Math.min(max, tempo + 2600 * dt);
+      // Lenken (Tastatur, Bildschirmhälfte oder Joystick)
+      let r = FG.richtung().x;
+      if (FG.zeiger.unten) r += FG.zeiger.x < FG.W / 2 ? -1 : 1;
+      r = FG.klemmen(r, -1, 1);
+      lenk += (r - lenk) * Math.min(1, dt * 8);
+      const anteil = tempo / 18000;
+      const seg = segs[Math.floor((pos + KAM_H * TIEFE) / SEG) % ANZAHL];
+      spielerX += lenk * dt * 2.2 * (0.6 + anteil);
+      spielerX -= seg.kurve * anteil * dt * 0.55; // Fliehkraft in Kurven
+      if (Math.abs(spielerX) > 1) { tempo = Math.max(2500, tempo - 9000 * dt); if (Math.random() < 0.5) FG.funken(FG.W / 2 + FG.zufall(-30, 30), FG.H - 40, { n: 2, farbe: C.gold, tempo: 160, winkel: -Math.PI / 2, streu: 1.2, leben: 0.4 }); }
+      spielerX = FG.klemmen(spielerX, -1.6, 1.6);
+      const alt = Math.floor(pos / SEG);
+      pos += tempo * dt; strecke += tempo * dt;
+      const neu = Math.floor(pos / SEG);
+      for (let i = alt; i < neu; i++) belegen(segs[(i - 2 + ANZAHL) % ANZAHL], 0.6 + Math.min(1.4, zeitImSpiel / 60));
+      if (pos >= ANZAHL * SEG) pos -= ANZAHL * SEG; // Rundkurs: wieder von vorne
+      himmelX += seg.kurve * anteil * dt * 0.02;
+      punkte += Math.round(tempo * dt / 100);
+      unverwundbar -= dt;
+      // Zusammenstöße auf dem Segment unter dem Auto
+      for (const d of seg.dinge) {
+        if (d.weg || Math.abs(d.x - spielerX) > (d.art === "pfahl" ? 0.12 : 0.3)) continue;
+        if (d.art === "kugel") { d.weg = true; energie++; punkte += 250; FG.ton("punkt"); FG.text(FG.W / 2, FG.H - 150, "+250", C.cyan); FG.funken(FG.W / 2, FG.H - 110, { n: 22, farbe: C.cyan, tempo: 260 }); FG.ring(FG.W / 2, FG.H - 110, C.cyan, 80); if (energie % 8 === 0 && schild < 5) { schild++; FG.text(FG.W / 2, FG.H - 190, "SCHILD +1", C.gruen, 24); FG.ton("power"); } }
+        else if (unverwundbar <= 0) {
+          d.weg = true; schild--; tempo *= 0.45; unverwundbar = 1.4;
+          FG.explosion(FG.W / 2, FG.H - 100, C.rot, 1.3); FG.blitz(C.rot, 0.3); FG.ton("treffer");
+          if (schild <= 0) { FG.explosion(FG.W / 2, FG.H - 100, C.neon, 2.2); FG.ton("boom"); FG.ende(punkte, "Wagen zerstört nach " + (strecke / 100000).toFixed(1) + " km Neon."); }
+        }
+      }
+      FG.hud({ Punkte: punkte.toLocaleString("de-DE"), "km/h": Math.round(tempo / 50), Schild: "◆".repeat(Math.max(0, schild)) || "–" });
+    },
+    zeichne(c) {
+      const W = FG.W, H = FG.H, t = FG.zeit;
+      // Himmel + Sonne mit Streifen
+      c.fillStyle = FG.verlauf(c, 0, 0, 0, H * 0.6, ["#07031a", "#1d0730", "#4a0d36", "#7a1d2c"]); c.fillRect(0, 0, W, H);
+      const sx = W / 2 - himmelX * W * 0.6, sy = H * 0.42, sr = Math.min(W, H) * 0.2;
+      FG.leuchten(sx, sy, sr * 3, C.neon, 0.45);
+      c.save(); c.beginPath(); c.arc(sx, sy, sr, 0, 7); c.clip();
+      c.fillStyle = FG.verlauf(c, 0, sy - sr, 0, sy + sr, ["#fff2b0", "#ffc44d", "#ff8a1e", "#ff3d7a"]); c.fillRect(sx - sr, sy - sr, sr * 2, sr * 2);
+      c.fillStyle = "#2a0a2e"; for (let i = 0; i < 7; i++) { const yy = sy + sr * (0.1 + i * 0.14) + ((t * 8) % (sr * 0.14)); c.fillRect(sx - sr, yy, sr * 2, 2 + i * 1.3); }
+      c.restore();
+      // Berge in zwei Ebenen (verschieben sich in Kurven)
+      berge.forEach((b, e) => {
+        const v = (((himmelX * (e ? 0.5 : 0.3)) % 1) + 1) % 1, o = -v * W, n = b.length;
+        c.beginPath(); c.moveTo(o, H * 0.52);
+        for (let k = 0; k <= n * 2; k++) c.lineTo(o + (k / n) * W, H * 0.52 - b[k % n].h * H);
+        c.lineTo(o + 2 * W, H * 0.52); c.closePath();
+        c.fillStyle = e ? "#14071f" : "#0b0414"; c.fill();
+        c.strokeStyle = FG.rgba(e ? C.lila : C.neon, 0.5); c.lineWidth = 1.2; c.stroke();
+      });
+      if (!segs) return;
+      // Straße von vorne nach hinten projizieren
+      const basis = Math.floor(pos / SEG), anteil = (pos % SEG) / SEG;
+      const bseg = segs[basis % ANZAHL];
+      const spielerY = FG.misch(bseg.y1, bseg.y2, anteil);
+      let x = 0, dx = -(bseg.kurve * anteil), maxY = H;
+      for (let n = 0; n < SICHT; n++) {
+        const s = segs[(basis + n) % ANZAHL], schleife = s.i < bseg.i ? ANZAHL * SEG : 0;
+        const kz = pos - schleife;
+        projiziere(s.p1, 0, s.y1, s.i * SEG, spielerX * BREITE - x, spielerY + KAM_H, kz);
+        projiziere(s.p2, 0, s.y2, (s.i + 1) * SEG, spielerX * BREITE - x - dx, spielerY + KAM_H, kz);
+        x += dx; dx += s.kurve; s.clip = maxY; s.nebel = n / SICHT;
+        if (s.p1.z <= TIEFE || s.p2.y >= s.p1.y || s.p2.y >= maxY) continue;
+        const f = Math.pow(s.nebel, 1.3), hell = (Math.floor(s.i / 3) % 2) === 0, p1 = s.p1, p2 = s.p2;
+        c.fillStyle = misch(hell ? "#0d0618" : "#090412", "#3a0f33", f); c.fillRect(0, p2.y, W, p1.y - p2.y + 1);
+        const r1 = p1.w / 6, r2 = p2.w / 6;
+        viereck(c, p1.x, p1.y, p1.w + r1, p2.x, p2.y, p2.w + r2, misch(hell ? C.neon : "#2a1206", "#3a0f33", f));
+        viereck(c, p1.x, p1.y, p1.w, p2.x, p2.y, p2.w, misch(hell ? "#17101f" : "#130c1a", "#3a0f33", f));
+        if (hell) { const l1 = p1.w / 40, l2 = p2.w / 40; for (const sp of [-1 / 3, 1 / 3]) viereck(c, p1.x + p1.w * sp * 2, p1.y, l1, p2.x + p2.w * sp * 2, p2.y, l2, misch(C.cyan, "#3a0f33", f)); }
+        maxY = p2.y;
+      }
+      // Dinge auf der Straße von hinten nach vorne
+      for (let n = SICHT - 1; n > 0; n--) {
+        const s = segs[(basis + n) % ANZAHL];
+        if (!s.p1.s || s.p1.z <= TIEFE) continue;
+        for (const d of s.dinge) {
+          if (d.weg) continue;
+          const sk = s.p1.s * W / 2, dx2 = s.p1.x + sk * d.x * BREITE, dy = s.p1.y, a = 1 - Math.pow(s.nebel, 2);
+          if (dy > s.clip + 2) continue;
+          c.save(); c.beginPath(); c.rect(0, 0, W, s.clip); c.clip(); c.globalAlpha = a;
+          if (d.art === "sperre") {
+            const bw = sk * 520, bh = sk * 420;
+            c.fillStyle = FG.verlauf(c, 0, dy - bh, 0, dy, ["#ff6b6b", "#7a0f1a"]); FG.rund(c, dx2 - bw / 2, dy - bh, bw, bh, bw * 0.08); c.fill();
+            c.fillStyle = "#1a0306"; for (let k = 0; k < 4; k++) { c.beginPath(); c.moveTo(dx2 - bw / 2 + k * bw / 4, dy - bh * 0.3); c.lineTo(dx2 - bw / 2 + k * bw / 4 + bw / 8, dy - bh * 0.3); c.lineTo(dx2 - bw / 2 + k * bw / 4 + bw / 4, dy - bh * 0.7); c.lineTo(dx2 - bw / 2 + k * bw / 4 + bw / 8, dy - bh * 0.7); c.fill(); }
+            FG.leuchten(dx2, dy - bh / 2, bw, C.rot, 0.5 * a);
+          } else if (d.art === "kugel") {
+            const r = sk * 130, hy = dy - r * 2.2 - Math.sin(t * 5 + s.i) * r * 0.3;
+            FG.leuchten(dx2, hy, r * 4, C.cyan, 0.8 * a);
+            c.fillStyle = FG.verlauf(c, dx2, hy - r, dx2, hy + r, ["#e6fffb", C.cyan, "#0a6b63"]); c.beginPath(); c.arc(dx2, hy, r, 0, 7); c.fill();
+          } else {
+            const ph = sk * 1600, pw = Math.max(1, sk * 50);
+            c.fillStyle = "#1b0d28"; c.fillRect(dx2 - pw / 2, dy - ph, pw, ph);
+            FG.leuchten(dx2, dy - ph, sk * 500, s.i % 12 ? C.lila : C.neon, 0.8 * a);
+          }
+          c.restore();
+        }
+      }
+      // Horizont-Dunst
+      c.fillStyle = FG.verlauf(c, 0, H * 0.4, 0, H * 0.6, ["rgba(122,29,44,0)", "rgba(90,20,50,.35)", "rgba(90,20,50,0)"]); c.fillRect(0, H * 0.4, W, H * 0.2);
+      // Eigener Wagen
+      const ax = W / 2, ay = H - 70, s = Math.min(1.25, Math.max(0.75, W / 600)), blink = unverwundbar > 0 && Math.floor(t * 14) % 2 === 0;
+      if (!blink && FG.zustand !== "ende") {
+        c.save(); c.translate(ax, ay); c.scale(s, s); c.rotate(lenk * 0.08);
+        FG.leuchten(0, 30, 120, C.neon, 0.35);
+        c.fillStyle = "rgba(0,0,0,.5)"; c.beginPath(); c.ellipse(0, 34, 80, 12, 0, 0, 7); c.fill();
+        c.fillStyle = FG.verlauf(c, 0, -40, 0, 30, ["#3a2a40", "#120a16"]);
+        c.beginPath(); c.moveTo(-70, 28); c.lineTo(-62, -6); c.lineTo(-34, -30); c.lineTo(34, -30); c.lineTo(62, -6); c.lineTo(70, 28); c.closePath(); c.fill();
+        c.fillStyle = FG.verlauf(c, 0, -28, 0, -6, ["#2ee6d0", "#0b3d44"]); c.beginPath(); c.moveTo(-30, -26); c.lineTo(30, -26); c.lineTo(48, -8); c.lineTo(-48, -8); c.closePath(); c.fill();
+        FG.glow(C.neon, 18, (k) => { k.strokeStyle = C.neon; k.lineWidth = 3; k.beginPath(); k.moveTo(-66, 10); k.lineTo(66, 10); k.stroke(); });
+        c.fillStyle = "#ff3d3d"; c.fillRect(-64, 14, 26, 8); c.fillRect(38, 14, 26, 8);
+        FG.leuchten(-51, 18, 30, C.rot, 0.9); FG.leuchten(51, 18, 30, C.rot, 0.9);
+        c.restore();
+        if (tempo > 9000 && Math.random() < 0.6) FG.funken(ax + FG.zufall(-50, 50) * s, ay + 30 * s, { n: 1, farbe: FG.wahl([C.neon, C.gold]), tempo: 120, winkel: Math.PI / 2, streu: 0.4, leben: 0.35, groesse: 2 });
+      }
+      // Tempo-Linien am Rand
+      if (tempo > 11000) { c.strokeStyle = "rgba(255,230,200,.12)"; c.lineWidth = 1; for (let i = 0; i < 6; i++) { const yy = FG.zufall(H * 0.55, H), xx = FG.wahl([FG.zufall(0, W * 0.2), FG.zufall(W * 0.8, W)]); c.beginPath(); c.moveTo(xx, yy); c.lineTo(xx + (xx < W / 2 ? -40 : 40), yy + 30); c.stroke(); } }
+    },
+  });
+})();
+</script>
+</body>
+</html>

@@ -10,6 +10,15 @@
         ".menu-apps",
         ".nav-apps"
       ]
+    },
+    {
+      "id": "spiele-plus",
+      "name": "Spiele-Werkstatt Plus (Grafik-Plus + 6 neue Spiele)",
+      "version": "1.140.0",
+      "beschreibung": "Spiele-Datenbank mit Kategorien und 6 neuen eigenen Spielen in hochwertiger Grafik (Neon-Drift, Orbit-Sprung, Kristall-Fall, Tiefsee-Licht, Licht-Läufer, Turm-Wächter). Claude baut neue Spiele mit demselben Grafik-Motor (Leuchten, Partikel, Töne, Touch-Joystick).",
+      "ziele": [
+        ".sp-plus-bereich"
+      ]
     }
   ]
 }

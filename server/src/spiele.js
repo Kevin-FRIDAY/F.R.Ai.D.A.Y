@@ -8,7 +8,8 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Anthropic from "@anthropic-ai/sdk";
-import { config } from "./config.js";
+import { config, IST_EVE } from "./config.js";
+import { istFrei } from "./eve.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty, getEnergie } from "./energie.js";
 import { getSettings } from "./einstellungen.js";
 import * as logbuch from "./logbuch.js";
@@ -25,6 +26,41 @@ export const VORLAGEN = [
   { id: "meteor", datei: "meteor.html", titel: "Meteor-Abwehr", woerter: /weltraum|space|shooter|meteor|asteroid|raumschiff|rakete|alien|ballern|schie(ß|ss)/ },
 ];
 
+// ---------- Spiele-Werkstatt Plus (v1.140.0, zuerst nur in Eve) ----------
+// Sechs neue, eigene Spiele mit hochwertiger Grafik und ein gemeinsamer Grafik-Motor (plus/_grafik.js),
+// den auch Claude für neue Spiele benutzt. In Friday gesperrt, bis Boss "spiele-plus" in Eve freigibt.
+export const FUNKTION_ID = "spiele-plus";
+export const plusFrei = () => IST_EVE || istFrei(FUNKTION_ID);
+export const VORLAGEN_PLUS = [
+  { id: "neon-drift", datei: "plus/neon-drift.html", titel: "Neon-Drift", kategorie: "Rennen", symbol: "🏁", beschreibung: "Pseudo-3D-Rennen bei Sonnenuntergang: Sperren ausweichen, Energie sammeln, immer schneller.", woerter: /neon ?-?drift|rennen|rennspiel|autorennen|auto|racing|drift|strasse|straße/ },
+  { id: "orbit-sprung", datei: "plus/orbit-sprung.html", titel: "Orbit-Sprung", kategorie: "Geschick", symbol: "🪐", beschreibung: "Von Planet zu Planet springen – im richtigen Moment abspringen und den nächsten Orbit treffen.", woerter: /orbit|planet|sonde|umlaufbahn|gravitation|schwerkraft/ },
+  { id: "kristall-fall", datei: "plus/kristall-fall.html", titel: "Kristall-Fall", kategorie: "Denken", symbol: "💎", beschreibung: "Leuchtende Kristalle tauschen, Dreier-Reihen bilden, Ketten-Combos auslösen – gegen die Uhr.", woerter: /kristall|edelstein|juwel|diamant|drei gewinnt|3 gewinnt|match ?-?3|tausch/ },
+  { id: "tiefsee-licht", datei: "plus/tiefsee-licht.html", titel: "Tiefsee-Licht", kategorie: "Abenteuer", symbol: "🔦", beschreibung: "Mit dem Scheinwerfer durch die dunkle Tiefsee: Perlen bergen, Minen nur im Licht erkennen.", woerter: /tiefsee|u ?-?boot|unterwasser|tauch|meer|ozean|perle|qualle/ },
+  { id: "licht-laeufer", datei: "plus/licht-laeufer.html", titel: "Licht-Läufer", kategorie: "Geschick", symbol: "🏃", beschreibung: "Endlos-Lauf über die Dächer einer Neon-Stadt mit Doppelsprung und Laser-Sperren.", woerter: /l(ä|ae)ufer|runner|renn(?!en)|lauf|parkour|d(ä|ae)cher|jump|spring/ },
+  { id: "turm-waechter", datei: "plus/turm-waechter.html", titel: "Turm-Wächter", kategorie: "Strategie", symbol: "🗼", beschreibung: "Laser- und Puls-Türme bauen und aufrüsten, Drohnen-Wellen vom Kern fernhalten.", woerter: /turm|t(ü|ue)rme|tower|verteidig|defense|wellen|strategie/ },
+].map((v) => ({ ...v, plus: true }));
+const GRAFIK_PLATZ = "<!--FRIDAY-GRAFIK-->";
+const GRAFIK_BLOCK = /<script id="friday-grafik">[\s\S]*?<\/script>/;
+let motorCache = null;
+function grafikMotor() {
+  if (motorCache == null) motorCache = fs.readFileSync(path.join(VORLAGEN_DIR, "plus", "_grafik.js"), "utf8");
+  return motorCache;
+}
+/** Baut den Grafik-Motor an der Platzhalter-Stelle ein (die Spiel-Datei bleibt eigenständig). */
+export function mitMotor(html) {
+  if (!String(html).includes(GRAFIK_PLATZ)) return html;
+  return String(html).replace(GRAFIK_PLATZ, () => `<script id="friday-grafik">\n${grafikMotor()}\n</script>`);
+}
+/** Für Änderungen durch Claude: den großen Motor wieder durch den Platzhalter ersetzen (spart Guthaben). */
+export function ohneMotor(html) { return String(html).replace(GRAFIK_BLOCK, GRAFIK_PLATZ); }
+/** Alle Vorlagen, die gerade benutzt werden dürfen. */
+const erlaubteVorlagen = () => (plusFrei() ? [...VORLAGEN, ...VORLAGEN_PLUS] : VORLAGEN);
+/** Für das Dashboard: alle Vorlagen, die Plus-Spiele mit Sperr-Hinweis (Friday) oder frei (Eve). */
+export function vorlagenListe() {
+  const frei = plusFrei();
+  return [...VORLAGEN, ...VORLAGEN_PLUS].map((v) => ({ id: v.id, titel: v.titel, ...(v.plus ? { plus: true, kategorie: v.kategorie, symbol: v.symbol, beschreibung: v.beschreibung, gesperrt: !frei } : {}) }));
+}
+
 const SYSTEM = `Du bist die Spiele-Werkstatt von F.R.Ai.D.A.Y. Du programmierst kleine, sofort spielbare Browser-Spiele.
 
 Antworte NUR mit dem vollständigen Code einer einzigen HTML-Datei. Beginne direkt mit <!doctype html> und ende mit </html>. Kein Text davor oder danach, keine Markdown-Codeblöcke.
@@ -37,6 +73,40 @@ Anforderungen:
 - Stil: schwarzer Hintergrund, Neon-Orange (#ff8a1e) als Hauptfarbe mit Glow, Türkis (#2ee6d0) als Akzent, moderne futuristische Optik. Rot nur für Gefahr/Schaden.
 - Gut lesbarer, sauber eingerückter Code mit kurzen deutschen Kommentaren. Bau ein eigenes, originelles Spiel; kopiere keine Figuren, Namen oder Grafiken bekannter Spiele (allgemeine Spielideen wie "Schlange frisst Punkte" sind ok).
 - Halte es kompakt (höchstens etwa 600 Zeilen), aber vollständig und fehlerfrei. Lieber einfach und rund als groß und kaputt.`;
+
+// Grafik-Plus: Claude bekommt den gemeinsamen Grafik-Motor FG und baut damit deutlich hochwertigere Spiele.
+const SYSTEM_PLUS = `Du bist die Spiele-Werkstatt von F.R.Ai.D.A.Y. Du programmierst hochwertige, sofort spielbare Browser-Spiele mit beeindruckender Grafik.
+
+Antworte NUR mit dem vollständigen Code einer einzigen HTML-Datei. Beginne direkt mit <!doctype html> und ende mit </html>. Kein Text davor oder danach, keine Markdown-Codeblöcke.
+
+Du hast einen fertigen Grafik-Motor "FG". Schreib im <head> GENAU diese Zeile, dort wird er eingebaut: ${GRAFIK_PLATZ}
+Danach im <body> ein <script>, das FG.spiel({...}) aufruft. FG baut Canvas, Start-Bildschirm (Titel, Anleitung, Start-Knopf), Game-Over mit Rekord und "Nochmal", Punkte-Anzeige, Ton-Knopf, Vignette und Scanlines selbst – das musst du NICHT programmieren.
+
+FG.spiel({ id, titel, untertitel, symbol (Emoji), anleitung (HTML-Text), hintergrund: "sterne"|"nebel"|"tiefsee"|"raster"|false, stick: true für Touch-Joystick,
+  init(){ /* Spielzustand neu anlegen; wird beim Laden UND bei jedem Start aufgerufen */ },
+  update(dt){ /* Logik, dt in Sekunden; nur während des Spiels */ },
+  zeichne(ctx, dt){ /* alles zeichnen, auch auf dem Startbildschirm – vorher prüfen, ob init schon lief */ },
+  tippen(x,y){}, ziehen(x,y){}, loslassen(x,y){}, taste(k){ /* k = e.key klein, z. B. " ", "arrowleft" */ }, groesse(W,H){}, los(){} })
+Werte & Helfer: FG.W, FG.H (Bildgröße in CSS-Pixeln), FG.zeit, FG.zustand ("start"|"spiel"|"ende"), FG.C = {neon:"#ff8a1e", cyan:"#2ee6d0", gold:"#ffc44d", rot:"#ff4b4b", lila:"#b57bff", gruen:"#7dff8a", weiss:"#fff3e6"}
+FG.richtung() → {x,y} aus Pfeilen/WASD/Joystick · FG.taste("a","arrowleft") gehalten? · FG.zeiger {x,y,unten}
+FG.hud({Punkte: 12, Leben: "◆◆◆"}) Anzeige oben · FG.ende(punkte, "Text") Spiel vorbei (Rekord automatisch)
+Effekte: FG.leuchten(x,y,radius,farbe,alpha) weicher Lichtschein · FG.glow(farbe, staerke, (ctx)=>{...}) Neon-Schein · FG.funken(x,y,{n,farbe,tempo,leben,groesse,schwerkraft,winkel,streu}) · FG.explosion(x,y,farbe,groesse) · FG.ring(x,y,farbe,max) Schockwelle · FG.text(x,y,"+10",farbe,groesse) Schwebetext · FG.wackeln(staerke) · FG.blitz(farbe,staerke)
+Töne: FG.ton("klick"|"punkt"|"power"|"sprung"|"schuss"|"treffer"|"boom"|"level")
+Mathe: FG.zufall(a,b), FG.ganz(a,b), FG.wahl(liste), FG.klemmen(v,a,b), FG.misch(a,b,t), FG.weich(t), FG.abstand(x1,y1,x2,y2), FG.rgba("#ff8a1e",0.5), FG.verlauf(ctx,x0,y0,x1,y1,[farben]), FG.rund(ctx,x,y,w,h,r) (Pfad)
+Kamera: Wenn deine Welt scrollt, setz FG.kamera.x/.y – Effekte (funken, text, ring …) liegen dann in Welt-Koordinaten.
+
+Grafik-Qualität (das Wichtigste!):
+- Alles mit Tiefe: Verläufe statt flacher Farben, Licht von oben links, weiche Schatten, Leucht-Schein (FG.leuchten) um alles Wichtige.
+- Bewegung lebt: Partikel bei jedem Treffer/Einsammeln, Schockwellen, Schwebetexte mit Punkten, leichtes Wackeln bei Treffern, Animationen mit FG.weich.
+- Parallax-Hintergründe oder animierte Umgebung, Figuren mit kleinen Animationen (Atmen, Laufen, Drehen).
+- Farbwelt: schwarz/dunkelviolett, Neon-Orange als Hauptfarbe, Türkis als Akzent, Gold für Belohnungen, Rot nur für Gefahr.
+- Flüssig auch auf dem iPhone: keine riesigen Schleifen pro Pixel, Bilder einmal vorzeichnen (Offscreen-Canvas), shadowBlur nur über FG.glow.
+
+Regeln:
+- Keine externen Skripte, Bilder, Schriften oder Netzwerkzugriffe. localStorage nur in try/catch. Kein alert/confirm/prompt.
+- Auf iPhone (Touch) UND Mac (Tastatur/Maus) spielbar. Anleitung und alle Texte auf Deutsch.
+- Bau ein eigenes, originelles Spiel; kopiere keine Figuren, Namen oder Grafiken bekannter Spiele (allgemeine Spielideen sind ok).
+- Gut lesbarer Code mit kurzen deutschen Kommentaren, höchstens etwa 700 Zeilen, vollständig und fehlerfrei. Lieber rund und schön als riesig und kaputt.`;
 
 const slug = (s) => String(s || "spiel").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
   .normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-").slice(0, 40) || "spiel";
@@ -147,7 +217,7 @@ function saeubern(roh) {
 
 function passendeVorlage(auftrag) {
   const t = String(auftrag || "").toLowerCase();
-  return VORLAGEN.find((v) => v.woerter.test(t)) || null;
+  return erlaubteVorlagen().find((v) => v.woerter.test(t)) || null;
 }
 
 // Hat Friday gerade Energie für Claude?
@@ -166,7 +236,8 @@ export function starteSpiel(auftrag, opt = {}) {
   const basis = opt.basis ? sichereId(opt.basis) : null;
   for (const j of jobs.values()) if (!j.ende) return { ok: true, jobId: j.id, laeuftSchon: true, quelle: j.quelle, titel: j.titel };
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  const vorlageWunsch = opt.vorlage ? VORLAGEN.find((v) => v.id === opt.vorlage) : null;
+  if (opt.vorlage && VORLAGEN_PLUS.some((v) => v.id === opt.vorlage) && !plusFrei()) return { ok: false, error: "Dieses Spiel ist noch im Test. Probier es in Eve aus und gib es dort frei.", gesperrt: true };
+  const vorlageWunsch = opt.vorlage ? erlaubteVorlagen().find((v) => v.id === opt.vorlage) : null;
   const mitClaude = !vorlageWunsch && claudeBereit();
   if (basis && !mitClaude) return { ok: false, error: "Spiele ändern kann ich nur mit Claude-Guthaben, Boss. Die Vorlagen bleiben, wie sie sind." };
   const job = { id, auftrag: text || "ein Spiel", basis, code: "", status: "schreibt", quelle: mitClaude ? "claude" : "vorlage", start: Date.now(), kanal: opt.kanal || "web", titel: null, hinweis: "" };
@@ -191,15 +262,17 @@ async function bauMitClaude(job) {
   const model = brainModel(gewuenscht);
   const sparen = model === SPAR_MODELL && gewuenscht !== SPAR_MODELL;
   job.modell = model;
+  const plus = plusFrei();
+  job.plus = plus;
   let user = `Auftrag von Boss: ${job.auftrag}`;
   if (job.basis) {
-    const altHtml = fs.readFileSync(path.join(SPIELE_DIR, job.basis, "index.html"), "utf8");
+    const altHtml = ohneMotor(fs.readFileSync(path.join(SPIELE_DIR, job.basis, "index.html"), "utf8"));
     user = `Hier ist ein bestehendes Spiel. Ändere es nach dem Wunsch unten und gib die komplette neue HTML-Datei zurück.\n\nWunsch: ${job.auftrag}\n\nBestehendes Spiel:\n${altHtml}`;
   }
   const params = {
     model,
-    max_tokens: sparen ? 12000 : 24000,
-    system: SYSTEM,
+    max_tokens: sparen ? 12000 : plus ? 32000 : 24000,
+    system: plus ? SYSTEM_PLUS : SYSTEM,
     output_config: { effort: sparen ? "low" : "medium" },
     messages: [{ role: "user", content: user }],
   };
@@ -231,14 +304,14 @@ async function bauMitClaude(job) {
   if (!/<html[\s>]/i.test(html) || !/<\/html>/i.test(html)) {
     throw new Error(msg.stop_reason === "max_tokens" ? "Das Spiel wurde zu groß. Beschreib es etwas einfacher." : "Der Code kam nicht vollständig zurück.");
   }
-  fertig(job, html, titelAusHtml(html, job.auftrag), { quelle: "claude", modell: msg.model || model });
+  fertig(job, mitMotor(html), titelAusHtml(html, job.auftrag), { quelle: "claude", modell: msg.model || model });
 }
 
 // Offline: Vorlage nehmen und sichtbar "einspielen" (gleiche Live-Ansicht, aber ehrlich gekennzeichnet).
 async function bauAusVorlage(job, wunsch, grund) {
   job.quelle = "vorlage";
   let v = wunsch;
-  if (!v && job.basis) v = VORLAGEN.find((x) => x.id === leseMeta(job.basis)?.vorlage) || null;
+  if (!v && job.basis) v = erlaubteVorlagen().find((x) => x.id === leseMeta(job.basis)?.vorlage) || null;
   if (!v) v = passendeVorlage(job.auftrag);
   const passt = Boolean(v);
   if (!v) v = VORLAGEN[0];
@@ -248,7 +321,7 @@ async function bauAusVorlage(job, wunsch, grund) {
     : passt
       ? `${grund}: Ich spiele meine eingebaute Vorlage ${v.titel} ein. Für ein ganz eigenes Spiel brauche ich Claude-Guthaben.`
       : `${grund}: Dein Wunschspiel kann ich ohne Claude nicht programmieren. Hier ist meine eingebaute Vorlage ${v.titel}.`;
-  const html = fs.readFileSync(path.join(VORLAGEN_DIR, v.datei), "utf8");
+  const html = mitMotor(fs.readFileSync(path.join(VORLAGEN_DIR, v.datei), "utf8"));
   // In Häppchen ausgeben, damit man sieht, wie der Code entsteht (ca. 3 Sekunden).
   const stueck = Math.max(60, Math.ceil(html.length / 34));
   for (let i = 0; i < html.length; i += stueck) {
@@ -312,7 +385,7 @@ export function quickCommand(text, kanal = "web") {
   const hatSpiel = SPIEL_WORT.test(t);
 
   // Spiele-Werkstatt / Liste öffnen
-  if (/^(?:öffne|oeffne|zeig|zeige|mach)(?: mir)?(?: mal)? (?:die |deine |meine |fridays )?(?:spiele ?werkstatt|spiele|games|spielesammlung|spielesammlung)(?: auf| bitte)?$/.test(t)
+  if (/^(?:öffne|oeffne|zeig|zeige|mach)(?: mir)?(?: mal)? (?:die |deine |meine |fridays )?(?:spiele ?werkstatt|spiele ?datenbank|spiele|games|spielesammlung)(?: auf| bitte)?$/.test(t)
     || /^(?:welche|was für) spiele (?:hast du|habe ich|gibt es)(?: schon)?(?: gebaut)?$/.test(t)) {
     const n = listeSpiele().length;
     return { answer: n ? `Hier ist deine Spiele-Werkstatt, Boss. ${n === 1 ? "Ein Spiel" : `${n} Spiele`} liegen bereit.` : "Hier ist die Spiele-Werkstatt, Boss. Noch leer. Sag einfach: Bau mir ein Spiel.", actions: ["spiele"] };
@@ -327,6 +400,20 @@ export function quickCommand(text, kanal = "web") {
       const gespeichert = findeSpiel(w);
       const passt = gespeichert && (gespeichert.vorlage === v.id || slug(`${gespeichert.titel} ${gespeichert.auftrag || ""}`).includes(slug(w)));
       if (passt) return { answer: `${gespeichert.titel} startet, Boss. Viel Spaß!`, actions: [`spiel:${gespeichert.id}`] };
+      const r = starteSpiel(`Vorlage ${v.titel}`, { vorlage: v.id, kanal });
+      if (r.laeuftSchon) return antwortStart(r, kanal);
+      return { answer: `${v.titel} startet, Boss. Viel Spaß!`, actions: [`spiel_bauen:${r.jobId}`] };
+    }
+  }
+
+  // Grafik-Plus-Spiele direkt starten: "starte Neon-Drift", "lass uns Turm-Wächter spielen" (nur wenn freigegeben bzw. in Eve)
+  const plusDirekt = t.match(/^(?:starte|start|spiel|spiele|öffne|oeffne|lass uns|ich will|ich möchte|ich moechte)(?: mal)?(?: eine runde| ne runde| eine partie)? (?:das |ein |eine |mein |meine |dein )?(neon ?-?drift|orbit ?-?sprung|kristall ?-?fall|tiefsee ?-?licht|licht ?-?l(?:ä|ae)ufer|turm ?-?w(?:ä|ae)chter)(?: ?-?spiel)?(?: spielen)?$/);
+  if (plusDirekt) {
+    const v = VORLAGEN_PLUS.find((x) => slug(x.titel).replace(/-/g, "") === slug(plusDirekt[1]).replace(/-/g, ""));
+    if (v && !plusFrei()) return { answer: `${v.titel} ist noch im Test, Boss. Probier es in Eve aus und gib es dort frei.`, actions: ["spiele"] };
+    if (v) {
+      const gespeichert = listeSpiele().find((x) => x.quelle === "vorlage" && x.vorlage === v.id);
+      if (gespeichert) return { answer: `${v.titel} startet, Boss. Viel Spaß!`, actions: [`spiel:${gespeichert.id}`] };
       const r = starteSpiel(`Vorlage ${v.titel}`, { vorlage: v.id, kanal });
       if (r.laeuftSchon) return antwortStart(r, kanal);
       return { answer: `${v.titel} startet, Boss. Viel Spaß!`, actions: [`spiel_bauen:${r.jobId}`] };
