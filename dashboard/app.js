@@ -760,6 +760,12 @@
         else if (klangA) window.FridayKlang?.spiele(klangA.slice(6));
         else if (hat("klang")) window.FridayKlang?.open();
         if (hat("klangvideo")) window.FridayKlang?.ansicht("video");
+        // Live-Sport (v1.150.0, im Test): "sport", "sport_liga:<liga>", "sport_spiel:<liga>:<id>"
+        const sportSp = aktion("sport_spiel:");
+        const sportLi = aktion("sport_liga:");
+        if (sportSp) { const [, lg, ...rest] = sportSp.split(":"); window.FridaySport?.open({ liga: lg, id: rest.join(":") }); }
+        else if (sportLi) window.FridaySport?.open({ liga: sportLi.slice(11) });
+        else if (hat("sport")) window.FridaySport?.open();
         // Spiele-Werkstatt: live zuschauen, wie Friday programmiert, oder ein gespeichertes Spiel starten.
         const spielBau = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel_bauen:"));
         const spielStart = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel:"));
@@ -767,7 +773,7 @@
         else if (hat("spiel_bauen")) window.FridaySpiele?.neuester();
         else if (spielStart) window.FridaySpiele?.spiel(spielStart.slice(6));
         else if (hat("spiele")) window.FridaySpiele?.open();
-        // Markt-Radar Plus (v1.145.0): Markt anzeigen, Prognose oder Markt-Wache.
+        // Markt-Radar Plus (v1.150.0): Markt anzeigen, Prognose oder Markt-Wache.
         const mpA = aktion("marktplus:");
         if (mpA) window.FridayMarktPlus?.open(mpA.slice(10));
         else if (hat("markt_plus")) window.FridayMarktPlus?.open("");

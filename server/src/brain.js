@@ -13,6 +13,7 @@ import { offlineAnswer, notfallText } from "./offline.js";
 import { quickCommand as hausQuick } from "./werkstatt.js";
 import { quickCommand as zerlegeQuick } from "./teilebank.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
+import { quickCommand as sportQuick } from "./sport.js";
 import { quickCommand as archivQuick } from "./archiv.js";
 import { quickCommand as profilQuick, kurzinfo as profilKurzinfo } from "./profil.js";
 import { duFormFrei } from "./anrufe.js";
@@ -212,6 +213,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
+  // Live-Sport (v1.150.0; vor der Spiele-Werkstatt, damit "Live-Spiel" hier landet), im Test: in Friday erst nach Freigabe in Eve): "zeig mir das Live-Spiel",
+  // "wie steht es bei Bayern?", "Bundesliga live" – Stand, Ereignisse, Analyse, wo es legal läuft.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const sp = await sportQuick(text);
+      if (sp) { actions.push(...sp.actions); return finish(sp.answer); }
+    } catch (err) {
+      console.error("Live-Sport:", err.message);
+    }
+  }
+
   // Spiele-Werkstatt ("bau mir ein Spiel", "öffne mein Snake-Spiel") – startet den Bau sofort,
   // das Dashboard zeigt live, wie Friday programmiert. Claude schreibt den Code im Hintergrund.
   if (mode !== "translate" && !image && text) {
@@ -223,7 +235,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Markt-Radar Plus (v1.145.0, zuerst nur in Eve): "analysiere den DAX", "Prognose für Gold", "öffne die Markt-Wache".
+  // Markt-Radar Plus (v1.150.0, zuerst nur in Eve): "analysiere den DAX", "Prognose für Gold", "öffne die Markt-Wache".
   if (mode !== "translate" && !image && text) {
     try {
       const mp = await marktplusQuick(text);
