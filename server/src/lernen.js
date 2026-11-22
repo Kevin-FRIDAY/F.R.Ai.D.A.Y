@@ -345,9 +345,27 @@ export function stapelHolen(id) {
   const s = laden().stapel.find((x) => x.id === id);
   return s ? { ...stapelInfo(s), karten: s.karten, bilder: s.bilder || [] } : null;
 }
+// Eigene Lernkarten (v1.140.0, zuerst nur in Eve): Kartenfarbe und Textmarker-Stellen.
+export const KARTEN_FARBEN = ["weiss", "gelb", "orange", "rot", "rosa", "lila", "blau", "tuerkis", "gruen"];
+export const MARKER_FARBEN = ["gelb", "gruen", "pink", "blau", "orange"];
+const farbeVon = (f) => (KARTEN_FARBEN.includes(f) ? f : null);
+function markierungenVon(liste) {
+  if (!Array.isArray(liste)) return [];
+  const out = [];
+  for (const m of liste.slice(0, 40)) {
+    const text = kurz(String(m?.text || "").replace(/\s+/g, " ").trim(), 120);
+    if (!text || !["frage", "antwort"].includes(m?.seite) || !MARKER_FARBEN.includes(m?.farbe)) continue;
+    if (!out.some((x) => x.seite === m.seite && x.text.toLowerCase() === text.toLowerCase())) out.push({ seite: m.seite, text, farbe: m.farbe });
+  }
+  return out;
+}
+/** Alle Stapel mit Karten (für die Recherche: was steht auf Carlas Karten?). */
+export const alleStapel = () => laden().stapel;
 const neueKarte = (k, quelle) => ({
   id: neueId(), frage: kurz(sauber(k.frage), 400), antwort: kurz(String(k.antwort || "").trim(), 3000),
   ...(typeof k.reihenfolge === "boolean" ? { reihenfolge: k.reihenfolge } : {}),
+  ...(farbeVon(k.farbe) && k.farbe !== "weiss" ? { farbe: k.farbe } : {}),
+  ...(markierungenVon(k.markierungen).length ? { markierungen: markierungenVon(k.markierungen) } : {}),
   ...(k.bild ? { bild: kurz(k.bild, 40) } : {}),
   fach: 1, faellig: heute(), richtig: 0, falsch: 0, gesehen: 0, erstellt: new Date().toISOString(), quelle: quelle || "hand",
 });
@@ -401,6 +419,8 @@ export function karteAendern(sid, kid, felder = {}) {
   if (felder.antwort !== undefined) k.antwort = kurz(String(felder.antwort).trim(), 3000);
   if (felder.reihenfolge === true || felder.reihenfolge === false) k.reihenfolge = felder.reihenfolge;
   if (felder.reihenfolge === null) delete k.reihenfolge;
+  if (felder.farbe !== undefined) { const f = farbeVon(felder.farbe); if (f && f !== "weiss") k.farbe = f; else delete k.farbe; }
+  if (felder.markierungen !== undefined) { const m = markierungenVon(felder.markierungen); if (m.length) k.markierungen = m; else delete k.markierungen; }
   if (felder.zuruecksetzen) Object.assign(k, { fach: 1, faellig: heute(), richtig: 0, falsch: 0 });
   speichern(d);
   return k;
