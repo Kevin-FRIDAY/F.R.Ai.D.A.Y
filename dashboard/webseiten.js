@@ -25,6 +25,8 @@
   async function show(site) {
     current = site;
     box.querySelectorAll("#ws-list button").forEach((b) => b.classList.toggle("on", b.dataset.id === site.id));
+    if (live && !live.ende) return; // Während des Live-Baus bleibt die Live-Ansicht vorn.
+    if (live) { $("ws-live").classList.add("hidden"); }
     $("ws-detail").classList.remove("hidden");
     $("ws-titel").textContent = site.titel;
     $("ws-angebot").textContent = site.angebot || "";
@@ -37,10 +39,136 @@
     } catch { $("ws-frame").srcdoc = "<p style='font-family:sans-serif;padding:20px'>Vorschau nicht verfügbar.</p>"; }
   }
 
+  // ---------- Live-Bau mit Countdown (v1.146.0, zuerst nur in Eve) ----------
+  // Man sieht, wie Friday die Seite programmiert (Code + wachsende Vorschau), dazu Countdown und Ladebalken.
+  // In Friday antwortet der Server mit 423 (noch im Test) → dann baut Friday wie bisher.
+  let live = null; // { id, ab, code, t0, schaetzung, timer, vorschauZeit }
+  const wl = (id) => $(id);
+  const hlEsc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const hl = (t) => hlEsc(t).replace(/(&lt;!--[\s\S]*?(?:--&gt;|$))|("[^"\n]*")|(&lt;\/?[\w-]+)|([\w:-]+)(?==)/g,
+    (m, k, str, tag, attr) => (k ? `<span class="k">${k}</span>` : str ? `<span class="s">${str}</span>` : tag ? `<span class="t">${tag}</span>` : `<span class="a">${attr}</span>`));
+  const uhr = (sek) => { const s = Math.max(0, Math.round(sek)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+
+  function liveZeigen(an) {
+    $("ws-live").classList.toggle("hidden", !an);
+    if (an) $("ws-detail").classList.add("hidden");
+  }
+
+  function liveTick() {
+    if (!live || live.ende) return;
+    const vergangen = (Date.now() - live.t0) / 1000;
+    const rest = live.schaetzung - vergangen;
+    const box = $("ws-live");
+    box.classList.toggle("wl-ueber", rest < 0);
+    wl("wl-zeit").textContent = rest >= 0 ? uhr(rest) : `+${uhr(-rest)}`;
+    wl("wl-uhr-text").textContent = rest >= 0 ? "bis fertig" : "gleich fertig";
+    const p = Math.min(0.97, Math.max(live.code.length / Math.max(1, live.erwartet), (vergangen / live.schaetzung) * 0.92));
+    live.p = Math.max(live.p || 0, p);
+    wl("wl-fuell").style.width = `${(live.p * 100).toFixed(1)}%`;
+    wl("wl-prozent").textContent = `${Math.round(live.p * 100)} %`;
+  }
+
+  function liveCode(neu) {
+    const pre = wl("wl-code");
+    const unten = pre.scrollHeight - pre.scrollTop - pre.clientHeight < 60;
+    const alt = live.code;
+    live.code = alt + neu;
+    pre.innerHTML = hl(alt) + (neu ? `<span class="neu">${hl(neu)}</span>` : "");
+    if (unten) pre.scrollTop = pre.scrollHeight;
+    if (neu && Date.now() - (live.vorschauZeit || 0) > 1800 && /<body[\s>]/i.test(live.code)) {
+      live.vorschauZeit = Date.now();
+      wl("wl-frame").srcdoc = live.code;
+    }
+  }
+
+  async function livePoll() {
+    if (!live || live.ende) return;
+    let j;
+    try { j = await (await api(`/api/webseite/live/${live.id}?ab=${live.code.length}`)).json(); } catch { live.poll = setTimeout(livePoll, 1500); return; }
+    if (!live || live.id !== j.id) return;
+    if (j.ab < live.code.length) { live.code = live.code.slice(0, j.ab); }
+    liveCode(j.code || "");
+    if (j.titel) wl("wl-titel").textContent = j.titel;
+    wl("wl-phase").textContent = j.phase || "";
+    wl("wl-zeilen").textContent = (j.zeilen || 0).toLocaleString("de-DE");
+    wl("wl-zeichen").textContent = (j.zeichen || 0).toLocaleString("de-DE");
+    if (j.status === "baut") { live.poll = setTimeout(livePoll, 600); return; }
+    liveEnde(j);
+  }
+
+  function liveEnde(j) {
+    live.ende = true;
+    clearInterval(live.timer);
+    const box = $("ws-live");
+    busy = false; $("ws-go").disabled = false; $("ws-change-go").disabled = false;
+    $("ws-state").textContent = ""; $("ws-state").className = "ws-state";
+    box.classList.remove("wl-ueber");
+    if (j.status === "fertig" && j.ergebnis) {
+      const sek = Math.round(j.vergangen_s);
+      box.classList.add("wl-fertig");
+      wl("wl-fuell").style.width = "100%"; wl("wl-prozent").textContent = "100 % ✓";
+      wl("wl-zeit").textContent = uhr(sek); wl("wl-uhr-text").textContent = "fertig in";
+      wl("wl-frame").srcdoc = live.code;
+      wl("wl-code").innerHTML = hl(live.code);
+      const r = j.ergebnis;
+      const knapp = sek <= j.schaetzung_s + 3 ? `${sek} Sekunden, wie versprochen.` : `${sek} Sekunden, etwas länger als gedacht.`;
+      msg(`Fertig in ${sek} s: ${r.titel}. Preisvorschlag ${eur(r.preis_eur)}.`);
+      say(`Fertig, Chef. ${knapp} ${r.titel} steht. Mein Preisvorschlag: ${Math.round(r.preis_eur || 0)} Euro.`);
+      window.FridayEnergie?.refresh();
+      setTimeout(() => { if (live?.id === j.id) { liveZeigen(false); loadList(r.id); } }, 4000);
+    } else {
+      box.classList.add("wl-fehler");
+      wl("wl-phase").textContent = j.error || "Hat nicht geklappt.";
+      msg(j.error || "Die Webseite hat gerade nicht geklappt.", true);
+      say(j.error || "Das hat leider nicht geklappt, Chef.");
+    }
+  }
+
+  function liveFolgen(job, { sprechen } = {}) {
+    if (live && !live.ende) { clearTimeout(live.poll); clearInterval(live.timer); }
+    live = { id: job.id, code: "", t0: Date.now() - (job.vergangen_s || 0) * 1000, schaetzung: job.schaetzung_s || 60, erwartet: job.erwartet_zeichen || 20000, p: 0 };
+    const box = $("ws-live");
+    box.classList.remove("wl-fertig", "wl-fehler", "wl-ueber");
+    wl("wl-code").innerHTML = ""; wl("wl-frame").srcdoc = "";
+    wl("wl-titel").textContent = job.titel || "Friday baut …";
+    wl("wl-spruch").textContent = job.spruch ? `„${job.spruch}“` : "";
+    wl("wl-modell").textContent = job.modus === "schnell" ? "⚡ Tempo-Modus" : "";
+    liveZeigen(true);
+    box.scrollTop = 0; // Handy: Live-Ansicht steht oben
+    busy = true; $("ws-go").disabled = true; $("ws-change-go").disabled = true;
+    $("ws-state").textContent = "BAUT LIVE"; $("ws-state").className = "ws-state busy";
+    msg("");
+    if (sprechen && job.spruch) say(job.spruch);
+    live.timer = setInterval(liveTick, 250);
+    liveTick();
+    livePoll();
+  }
+
+  /** true = Live-Bau läuft, false = gesperrt (alter Weg), null = Fehler schon gemeldet. */
+  async function buildLive(auftrag, basis) {
+    let res;
+    try { res = await api("/api/webseite/live", { method: "POST", body: JSON.stringify({ auftrag, basis }) }); } catch { return false; }
+    if (res.status === 423) return false;
+    const r = await res.json().catch(() => ({}));
+    if (!r.ok) { msg(r.error || "Das ging gerade nicht.", true); return null; }
+    liveFolgen(r.job, { sprechen: !r.laeuft_schon });
+    return true;
+  }
+
+  async function laufendenBauHolen() {
+    try {
+      const res = await api("/api/webseite/live/aktuell");
+      if (!res.ok) return;
+      const { job } = await res.json();
+      if (job && (!live || live.id !== job.id)) liveFolgen(job);
+    } catch { /* gesperrt oder offline */ }
+  }
+
   async function build(auftrag, basis) {
     if (busy) return;
     auftrag = String(auftrag || "").trim();
     if (!auftrag) { msg("Beschreib zuerst den Kunden und die Seite.", true); return; }
+    if ((await buildLive(auftrag, basis)) !== false) return;
     busy = true;
     $("ws-go").disabled = true; $("ws-change-go").disabled = true;
     msg(basis ? "Friday überarbeitet die Seite … (1–2 Minuten)" : "Friday baut die Webseite … (1–2 Minuten)");
@@ -88,7 +216,7 @@
     loadList(current.id);
   });
 
-  const open = (id) => { box.classList.remove("hidden"); loadList(id); };
+  const open = (id) => { box.classList.remove("hidden"); loadList(id); laufendenBauHolen(); };
   $("webseiten-open")?.addEventListener("click", () => open());
   $("webseiten-x")?.addEventListener("click", () => box.classList.add("hidden"));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.classList.contains("hidden")) box.classList.add("hidden"); });

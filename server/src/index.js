@@ -19,7 +19,7 @@ import { planBuild, getLatestBuild, getBuildJob } from "./werkstatt.js";
 import { status as modelleStatus, modellDatei, sketchfabVerbinden, sketchfabTrennen, startmodelleLaden } from "./modelle.js";
 import { getEnergie, aufladen, einnahme } from "./energie.js";
 import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } from "./einstellungen.js";
-import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webseiten.js";
+import { listSites, buildSite, getSiteHtml, markSold, openSiteDir, startLive, getLiveJob, getLiveAktuell, liveFrei } from "./webseiten.js";
 import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, vorlagenListe, plusFrei } from "./spiele.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { helferRouten, helferStart } from "./helfer.js";
@@ -63,6 +63,8 @@ import { osirisStatus } from "./osiris.js";
 import { eveRouten } from "./eve.js";
 import { appsRouten } from "./appzentrale.js";
 import { zerlegeRouten } from "./teilebank.js";
+import { profilRouten } from "./profil.js";
+import { marktplusRouten, marktWacheStart } from "./marktplus.js";
 import { eveWeiterleitung, eveStarten } from "./eve-prozess.js";
 import { eveSchutzAn } from "./eve-schutz.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
@@ -179,6 +181,7 @@ const DASHBOARD_LOG = [
   ["POST", /^\/update$/, "update", () => "Update gestartet (von Hand)"],
   ["POST", /^\/backups$/, "sicherung", () => "Sicherung erstellt (von Hand)"],
   ["POST", /^\/backups\/([^/]+)\/restore$/, "sicherung", (q, m) => `Sicherung zurückgeholt: ${decodeURIComponent(m[1])}${q.body?.programm ? " (mit Programm)" : ""}`],
+  ["POST", /^\/webseite\/live$/, "webseite", (q) => `Webseite live gebaut: ${String(q.body?.auftrag || "").slice(0, 120)}`],
   ["POST", /^\/webseite$/, "webseite", (q) => `Webseite gebaut: ${String(q.body?.auftrag || "").slice(0, 120)}`],
   ["POST", /^\/webseite\/([^/]+)\/verkauft$/, "energie", (q) => `Webseite verkauft für ${nr(q.body?.betrag)} €`],
   ["POST", /^\/energie\/aufgeladen$/, "energie", (q) => `Guthaben aufgeladen: ${nr(q.body?.betrag)} $`],
@@ -186,6 +189,8 @@ const DASHBOARD_LOG = [
   ["POST", /^\/papierdepot\/freigeben$/, "markt", (q) => `Spielgeld-Handel: ${String(q.body?.richtung || "")} ${String(q.body?.asset || "")}`],
   ["POST", /^\/papierdepot\/zuruecksetzen$/, "markt", () => "Spielgeld-Depot zurückgesetzt"],
   ["POST", /^\/markt\/([^/]+)\/neu$/, "markt", (q, m) => `Prognose neu berechnet: ${m[1]}`],
+  ["POST", /^\/marktplus\/wache\/markt$/, "markt", (q) => `Markt-Wache: ${String(q.body?.name || q.body?.symbol || "").slice(0, 60)} eingestellt`],
+  ["POST", /^\/marktplus\/wache\/entfernen$/, "markt", () => "Markt-Wache: Markt entfernt"],
   ["POST", /^\/video-job$/, "video", (q) => `Videoschnitt gestartet${q.body?.look ? ` (Look ${String(q.body.look).slice(0, 20)})` : ""}`],
   ["POST", /^\/dienste\/([^/]+)\/vergessen$/, "verbindung", (q, m) => `Verbindung getrennt: ${m[1]}`],
   ["POST", /^\/dienste\/([^/]+)\/befehl$/, null, (q, m) => `${m[1]}: ${String(q.body?.action || "")} ${String(q.body?.value ?? "").slice(0, 60)}`],
@@ -570,6 +575,11 @@ app.post("/api/spiel", (req, res) => res.json(starteSpiel(req.body?.auftrag, { b
 app.get("/api/spiel/job/:id", (req, res) => { const j = jobStand(req.params.id, req.query.ab); if (!j) return res.status(404).json({ error: "Auftrag nicht gefunden" }); res.json(j); });
 app.get("/api/spiel/:id/html", (req, res) => { const html = spielHtml(req.params.id); if (html == null) return res.status(404).json({ error: "Nicht gefunden" }); res.json({ html }); });
 app.post("/api/spiel/:id/weg", (req, res) => { const r = spielWegwerfen(req.params.id); res.status(r.ok ? 200 : 404).json(r); });
+// Live-Bau mit Countdown (v1.145.0): zuerst nur in Eve, in Friday nach Freigabe.
+const liveGesperrt = (res) => { if (liveFrei()) return false; res.status(423).json({ ok: false, gesperrt: true, error: "Der Live-Bau ist noch im Test. Probier ihn in Eve aus und gib ihn dort frei." }); return true; };
+app.post("/api/webseite/live", (req, res) => { if (liveGesperrt(res)) return; const r = startLive(req.body?.auftrag, req.body?.basis || null); res.status(r.ok ? 200 : 400).json(r); });
+app.get("/api/webseite/live/aktuell", (req, res) => { if (liveGesperrt(res)) return; res.json({ job: getLiveAktuell() }); });
+app.get("/api/webseite/live/:id", (req, res) => { if (liveGesperrt(res)) return; const j = getLiveJob(req.params.id, req.query.ab); if (!j) return res.status(404).json({ error: "Unbekannter Bau." }); res.json(j); });
 app.post("/api/webseite", asyncRoute(async (req, res) => { const r = await buildSite(req.body?.auftrag, req.body?.basis || null); res.status(r.ok ? 200 : 400).json(r); }));
 app.get("/api/webseite/:id/html", (req, res) => { const html = getSiteHtml(req.params.id); if (html == null) return res.status(404).json({ error: "Nicht gefunden" }); res.json({ html }); });
 app.post("/api/webseite/:id/verkauft", asyncRoute(async (req, res) => { const r = await markSold(req.params.id, req.body?.betrag); res.status(r.ok ? 200 : 400).json(r); }));
@@ -690,6 +700,8 @@ helferRouten(app, asyncRoute);
 eveRouten(app, asyncRoute);
 appsRouten(app, asyncRoute);
 zerlegeRouten(app);
+profilRouten(app);
+marktplusRouten(app, asyncRoute);
 wacheRouten(app, asyncRoute);
 // Kontrollraum (v1.135.0): Regelwerk, Schleifen-Schutz, Gedächtnis, Herzschlag, Kosten-Deckel, Seele, Fähigkeiten, Änderungen.
 kernRouten(app, asyncRoute);
@@ -708,6 +720,7 @@ logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
 helferStart();
 wacheStart();
+marktWacheStart(); // Markt-Radar Plus: läuft in Eve, in Friday erst nach Freigabe
 kernStart();
 zentraleStart(ask);
 jarvisStart();

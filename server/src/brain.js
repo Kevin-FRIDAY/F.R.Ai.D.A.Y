@@ -14,6 +14,8 @@ import { quickCommand as hausQuick } from "./werkstatt.js";
 import { quickCommand as zerlegeQuick } from "./teilebank.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
 import { quickCommand as archivQuick } from "./archiv.js";
+import { quickCommand as profilQuick, kurzinfo as profilKurzinfo } from "./profil.js";
+import { duFormFrei } from "./anrufe.js";
 import { quickCommand as appsQuick } from "./appzentrale.js";
 import { quickCommand as gehirnQuick } from "./gehirn.js";
 import { quickCommand as weltQuick, vollbildQuick } from "./weltgespraech.js";
@@ -32,6 +34,7 @@ import { tempoFuerFrage } from "./denker.js";
 import { quickCommand as kommandoQuick } from "./kommando.js";
 import { quickCommand as zentraleQuick } from "./zentrale.js";
 import { quickCommand as spielQuick } from "./spiele.js";
+import { quickCommand as marktplusQuick } from "./marktplus.js";
 import { quickCommand as routenQuick } from "./routen.js";
 import { quickCommand as helferQuick } from "./helfer.js";
 import { quickCommand as wacheQuick } from "./wache.js";
@@ -105,7 +108,8 @@ function contextBlock(extra = {}) {
   let text = `Aktuelle Zeit: ${now} (${isoLocal}, Zeitzone ${config.timezone}). Heimatstadt: ${config.city}.
 Mac verbunden: ${isoAgentText()}.
 ${dienstKurzinfo()}
-Kanal: ${extra.channel || "web"}.
+${profilKurzinfo()}
+${duFormFrei() ? 'Nachrichten an andere (anrufe): Schreib den Text so, wie Boss ihn dem Empfänger selbst sagen würde, direkt in der Du-Form. "Sag meiner Frau, dass ich sie liebe" → Text "Ich liebe dich.", nicht "Ich liebe sie."\n' : ""}Kanal: ${extra.channel || "web"}.
 
 ${kernKontext(extra.frage || "")}
 
@@ -216,6 +220,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (sp) { actions.push(...sp.actions); return finish(sp.answer); }
     } catch (err) {
       console.error("Spiele-Werkstatt:", err.message);
+    }
+  }
+
+  // Markt-Radar Plus (v1.145.0, zuerst nur in Eve): "analysiere den DAX", "Prognose für Gold", "öffne die Markt-Wache".
+  if (mode !== "translate" && !image && text) {
+    try {
+      const mp = await marktplusQuick(text);
+      if (mp) { actions.push(...mp.actions); return finish(mp.answer); }
+    } catch (err) {
+      console.error("Markt-Radar Plus:", err.message);
     }
   }
 
@@ -395,6 +409,8 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     try {
       const a = archivQuick(text);
       if (a) { actions.push(...a.actions); return finish(a.answer); }
+      const pq = profilQuick(text);
+      if (pq) { actions.push(...pq.actions); return finish(pq.answer); }
     } catch (err) {
       console.error("Archiv:", err.message);
     }

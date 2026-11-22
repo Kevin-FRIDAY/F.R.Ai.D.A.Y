@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Stimmungs-Sound (v1.106.0, erweitert in v1.131.0, Klang-Plus v1.145.0)
+// F.R.Ai.D.A.Y Stimmungs-Sound (v1.106.0, erweitert in v1.131.0, Klang-Plus v1.148.0)
 // 19 Klänge (Regen, Gewitter, Meer, Wald, Bach, Schnee, Wind, Kamin, Café, Zug, Unterwasser, Dschungel, Klangschale,
 // Herzschlag, Raumschiff-Brücke, Fokus, Sommernacht, Weltraum, Energie-Puls) – alles live im Browser erzeugt
 // (Web Audio, keine Downloads, kein Guthaben). Zu jedem Klang eine bewegte Szene (klangbild.js) oder auf Wunsch
@@ -166,7 +166,7 @@
       takt(() => { ton(70, 0.18, "sine", 0.45, master, 40); spaeter(() => ton(85, 0.16, "sine", 0.32, master, 50), 280); }, 1000);
     },
   };
-  // ---------- Klang-Plus (v1.145.0, zuerst nur in Eve) ----------
+  // ---------- Klang-Plus (v1.148.0, zuerst nur in Eve) ----------
   // Problem vorher: 8 Klänge lagen fast nur im Tiefbass (unter 300 Hz). Handy-, iPad- und MacBook-Lautsprecher spielen
   // das kaum ab – es kam scheinbar „kein Ton“. Jetzt hat jeder Klang hörbare Mitten/Höhen und alle sind gleich laut.
   const plusFrei = () => !window.FridayEve || window.FridayEve.frei("klang-plus");
@@ -765,7 +765,7 @@
 }
 html.perf-fluessig .kr-foto { animation: none; }
 @media (prefers-reduced-motion: reduce) { .kr-foto, .kr-eq i { animation: none; } }
-/* ---- Klang-Plus (v1.145.0, nur in Eve bis zur Freigabe) ---- */
+/* ---- Klang-Plus (v1.148.0, nur in Eve bis zur Freigabe) ---- */
 .kr-spektrum { position: absolute; left: 0; right: 0; bottom: 0; height: 34%; width: 100%; z-index: 1; pointer-events: none; display: none; opacity: .85; mix-blend-mode: screen; }
 .kr-plus .kr-spektrum { display: block; }
 .kr-plus .kr-head .sz-core svg { transform: scale(calc(1 + var(--pegel, 0) * .35)); transition: transform .12s; filter: drop-shadow(0 0 calc(4px + var(--pegel, 0) * 26px) var(--kr-f)); }
