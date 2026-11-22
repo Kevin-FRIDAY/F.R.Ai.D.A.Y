@@ -738,6 +738,7 @@
         if (appsA) window.FridayApps?.open({ id: appsA.slice(5), hervor: hat(`apps_oeffnen:${appsA.slice(5)}`) });
         else if (hat("apps")) window.FridayApps?.open();
         // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede, Stimmungs-Sound.
+        if (hat("profil")) window.FridayProfil?.open();
         if (hat("kuehlschrank")) window.FridayKuehl?.open({ tab: hat("kuehlschrank:rezepte") ? "rezepte" : "vorrat" });
         else window.FridayKuehl?.refresh();
         const kaufA = aktion("kauf:");
@@ -783,7 +784,7 @@
       if (lernA) window.FridayLernen?.open({ modus: lernA.split(":")[1] || "start", suche: lernA.split(":").slice(2).join(" "), stimme: Boolean(opts.stimme) });
       // Friday hat eine Frage gestellt ("Welches Land?"): gleich zuhören, ohne Knopfdruck.
       // Gesprächsmodus: Kam der Befehl per Stimme, hört Friday danach weiter zu, ohne "Friday" davor.
-      const weiter = ohr.modus !== "befehl" && !ohr.wartend && !unterbrochenEben() && !lernA && !window.FridayLernen?.offen() && (hat("zuhoeren") || (opts.stimme && gespraechAn() && data.answer));
+      const weiter = ohr.modus !== "befehl" && !ohr.wartend && !unterbrochenEben() && !lernA && !window.FridayLernen?.offen() && (hat("zuhoeren") || (opts.stimme && (gespraechAn() || gespraechDauer() > 0) && data.answer));
       if (weiter && (Recognition || window.FridayHoeren?.soll()) && !callActive && !window.FridayDokumente?.offen()) {
         setTimeout(() => { if (!busy && !speaking) listenOnce({ folge: true, frage: hat("zuhoeren") }); }, 150);
       }
@@ -935,6 +936,14 @@
     storage.set("friday_nur_weckwort", "1");
   }
   bindFlag("set-gespraech", "friday_gespraech", false);
+  (() => { // v1.145.0: wie lange Friday im Gespräch dran bleibt (Eve-Test „gespraech-laenger“)
+    const el = $("set-gespraech-dauer");
+    if (!el) return;
+    const v = storage.get("friday_gespraech_dauer");
+    el.value = v === null || v === undefined || v === "" ? "30" : String(v);
+    if (!el.value) el.value = "30";
+    el.addEventListener("change", () => { storage.set("friday_gespraech_dauer", el.value); window.dispatchEvent(new Event("friday-settings")); });
+  })();
   bindFlag("set-unterbrechen", "friday_unterbrechen", true);
   bindFlag("set-vonselbst", "friday_vonselbst", false);
   bindFlag("set-diagnose", "friday_diagnose", true);
@@ -1675,6 +1684,17 @@
   // Gesprächsmodus (Standard AUS): Nach einer gesprochenen Antwort zählt der nächste Satz auch ohne "Friday".
   // Aus, weil Friday sonst das Gespräch mit anderen an sich selbst schickt. Einschalten: Einstellungen → Assistent.
   const gespraechAn = () => storage.get("friday_gespraech") === "1";
+  // v1.145.0 (Eve-Test „gespraech-laenger“): Hat Boss Friday mit „Friday …“ angesprochen, bleibt sie nach jeder
+  // Antwort eine Weile dran (Einstellung friday_gespraech_dauer: 0 = aus, 15/30/60 s, Standard 30).
+  const langFrei = () => { try { return !window.FridayEve?.frei || window.FridayEve.frei("gespraech-laenger"); } catch { return false; } };
+  const gespraechDauer = () => {
+    if (!langFrei()) return 0;
+    const v = storage.get("friday_gespraech_dauer");
+    if (v === null || v === undefined || v === "") return 30;
+    const n = Number(v);
+    return Number.isFinite(n) && n > 0 ? Math.min(120, n) : 0;
+  };
+  window.Friday.gespraechDauer = gespraechDauer;
   const unterbrechenAn = () => storage.get("friday_unterbrechen") !== "0";
   // Damit endet ein Gespräch, ohne dass es an Friday geschickt wird.
   const GESPRAECH_ENDE = /^(?:(?:ok(?:ay)?|gut|alles klar|super|perfekt)[ ,.!]*)?(?:danke(?: dir| schön| schoen| sehr)?|das wars?|das war's|das war es|das reicht|reicht|fertig|stopp?|ende|schluss|tschüss|tschuess|bis später|bis spaeter|nichts mehr|nein danke)(?: friday| boss)?[ .!]*$/i;
@@ -1863,7 +1883,43 @@
     ohr.befehl = { folge, frage };
     document.body.classList.toggle("gespraech", folge);
     setState(folge ? "Ich höre weiter …" : "Ich höre", "listening");
-    ohr.befehlTimer = setTimeout(befehlEnde, frage ? 12000 : 8000);
+    befehlZeit(frage ? 12000 : befehlMs());
+  }
+  // Wie lange der Befehl-Modus auf den nächsten Satz wartet. Im langen Gespräch: die eingestellte Zeit.
+  function befehlMs() {
+    const d = ohr.befehl.folge && !ohr.befehl.frage ? gespraechDauer() : 0;
+    return d > 0 ? d * 1000 : ohr.befehl.frage ? 12000 : 8000;
+  }
+  function befehlZeit(ms) {
+    clearTimeout(ohr.befehlTimer);
+    ohr.befehlBis = Date.now() + ms;
+    ohr.befehlTimer = setTimeout(befehlEnde, ms);
+    gespraechPille();
+  }
+  // Sichtbare Restzeit unten: „Ich höre weiter · 24 s · „Danke“ beendet“
+  let pille = null, pilleTimer = null;
+  function gespraechPille() {
+    const an = ohr.modus === "befehl" && ohr.befehl.folge && !ohr.befehl.frage && gespraechDauer() > 0;
+    if (!an) { if (pille) pille.hidden = true; clearInterval(pilleTimer); pilleTimer = null; return; }
+    if (!pille) {
+      pille = document.createElement("div");
+      pille.id = "gespraech-pille";
+      pille.setAttribute("role", "status");
+      pille.innerHTML = '<span class="gp-punkt" aria-hidden="true"></span><span class="gp-text">Ich höre weiter</span><b class="gp-zeit"></b><span class="gp-tipp">„Danke“ beendet</span><button type="button" class="gp-x" aria-label="Gespräch beenden">✕</button><i class="gp-balken" aria-hidden="true"></i>';
+      pille.querySelector(".gp-x").addEventListener("click", () => { befehlEnde(); });
+      document.body.appendChild(pille);
+    }
+    pille.hidden = false;
+    const gesamt = Math.max(1000, ohr.befehlBis - Date.now());
+    const tick = () => {
+      const rest = Math.max(0, ohr.befehlBis - Date.now());
+      if (ohr.modus !== "befehl" || !rest) { gespraechPille(); return; }
+      pille.querySelector(".gp-zeit").textContent = `${Math.ceil(rest / 1000)} s`;
+      pille.querySelector(".gp-balken").style.width = `${Math.min(100, (rest / gesamt) * 100)}%`;
+    };
+    tick();
+    clearInterval(pilleTimer);
+    pilleTimer = setInterval(tick, 250);
   }
   // v1.134.0 Whisper (hoeren.js): Befehl aufnehmen und auf dem Mac verstehen lassen.
   async function whisperBefehl({ folge = false, frage = false } = {}) {
@@ -1873,11 +1929,14 @@
     ohrStopp();
     if (speaking) stilleJetzt();
     setState(folge ? "Ich höre weiter (Whisper) …" : "Ich höre (Whisper) …", "listening");
-    const r = await window.FridayHoeren.aufnehmen({ maxMs: frage ? 14000 : 10000, wartenMs: frage ? 8000 : 6000 });
+    const lang = folge && !frage ? gespraechDauer() : 0;
+    if (lang) { ohr.befehlBis = Date.now() + lang * 1000; gespraechPille(); }
+    const r = await window.FridayHoeren.aufnehmen({ maxMs: lang ? lang * 1000 + 15000 : frage ? 14000 : 10000, wartenMs: lang ? lang * 1000 : frage ? 8000 : 6000 });
     if (ohr.modus !== "befehl" || !ohr.befehl.whisper) return; // inzwischen gestoppt
     ohr.modus = "warten";
     ohr.befehl = {};
     document.body.classList.remove("gespraech");
+    gespraechPille();
     ohrSpaeter(600);
     if (r.error) { diag.schritt(`Whisper: ${r.error}`, "warn"); setState(r.error); setTimeout(zeigeRuhe, 4000); return; }
     const said = String(r.text || "").trim();
@@ -1900,6 +1959,7 @@
     ohr.modus = "warten";
     ohr.befehl = {};
     document.body.classList.remove("gespraech");
+    gespraechPille();
     zeigeRuhe();
   }
   function stilleJetzt() {
@@ -1928,7 +1988,7 @@
     const m = said.match(WAKE);
     // Befehl-Modus: der nächste fertige Satz zählt, auch ohne "Friday".
     if (ohr.modus === "befehl" && !busy) {
-      if (!fertig) { clearTimeout(ohr.befehlTimer); ohr.befehlTimer = setTimeout(befehlEnde, 8000); return; }
+      if (!fertig) { befehlZeit(Math.max(8000, befehlMs())); return; }
       // Fridays eigene letzte Worte ("Ja, Boss?") aus dem Lautsprecher
       if (!m && (istEcho(said) || /^(ja|ja boss|ich hore|boss)$/.test(norm(said)))) { erledigt(); return; }
       if (speaking) stilleJetzt(); // Boss redet schon, während sie noch "Ja?" sagt

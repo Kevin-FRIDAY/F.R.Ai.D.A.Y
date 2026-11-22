@@ -81,7 +81,20 @@
   .db-screen-in { grid-template-columns: 1fr; transform: none; border-radius: 18px; padding: 12px; }
   .db-mitte { order: -1; }
   .db-top { flex-wrap: wrap; }
-}`;
+}/* v1.145.0 (Eve-Test „datenbank-gespeichert“): grüner Haken nach dem Speichern */
+.db-ok { display: none; align-items: center; gap: 8px; margin-top: 2px; padding: 7px 10px; border-radius: 10px; border: 1px solid rgba(56,224,140,.55); background: rgba(56,224,140,.1); color: #c9ffe3; font-size: 13px; }
+.db-ok.an { display: flex; animation: dbOkRein .35s ease-out; }
+.db-ok .db-ok-kreis { flex: none; width: 22px; height: 22px; border-radius: 50%; background: #38e08c; color: #04210f; display: grid; place-items: center; font-weight: 800; font-size: 14px; box-shadow: 0 0 12px rgba(56,224,140,.8); }
+.db-ok b { color: #fff; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@keyframes dbOkRein { from { opacity: 0; transform: translateY(-4px) scale(.97); } to { opacity: 1; transform: none; } }
+.db-zuletzt { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.db-zuletzt:empty { display: none; }
+.db-zuletzt .db-z-h { font-size: 10.5px; letter-spacing: .12em; opacity: .7; }
+.db-zuletzt .db-z { display: flex; align-items: center; gap: 7px; font-size: 12.5px; min-width: 0; }
+.db-zuletzt .db-z i { flex: none; width: 16px; height: 16px; border-radius: 50%; background: #38e08c; color: #04210f; font-style: normal; font-weight: 800; font-size: 11px; display: grid; place-items: center; box-shadow: 0 0 8px rgba(56,224,140,.6); }
+.db-zuletzt .db-z span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.db-zuletzt .db-z small { flex: none; opacity: .6; margin-left: auto; }
+`;
   document.head.appendChild(style);
 
   let stand = null;
@@ -164,9 +177,43 @@
       if (!r.ok) throw new Error();
       $("db-notiz-text").value = ""; $("db-notiz-tags").value = "";
       const f = $("db-notiz"); f.classList.add("ok"); setTimeout(() => f.classList.remove("ok"), 1200);
+      if (hakenFrei()) { let n = {}; try { n = await r.json(); } catch { /* egal */ } zeigeHaken(n.titel || text); zuletzt(); }
       window.FridayWissen?.neu();
     } catch { $("db-notiz-text").placeholder = "Speichern ging nicht – nochmal versuchen."; }
   });
+
+  // ---------- v1.145.0 (Eve-Test): grüner Haken + „Zuletzt gespeichert“ ----------
+  const hakenFrei = () => { try { return !window.FridayEve?.frei || window.FridayEve.frei("datenbank-gespeichert"); } catch { return true; } };
+  const form = $("db-notiz");
+  let okEl = null, zEl = null, okTimer = null;
+  if (form) {
+    okEl = document.createElement("div"); okEl.id = "db-notiz-ok"; okEl.className = "db-ok"; okEl.setAttribute("role", "status"); okEl.setAttribute("aria-live", "polite");
+    zEl = document.createElement("div"); zEl.id = "db-zuletzt"; zEl.className = "db-zuletzt";
+    form.append(okEl, zEl);
+    // Erst wenn wieder getippt wird, verschwindet der Haken (nach 20 s spätestens).
+    $("db-notiz-text")?.addEventListener("input", () => { if ($("db-notiz-text").value) okEl.classList.remove("an"); });
+  }
+  // Passwörter nicht offen auf dem Bildschirm stehen lassen: "WLAN-Passwort: abc123" → "WLAN-Passwort: ••••••"
+  const verdeckt = (t) => /(passw|kennw|\bpin\b|zugangscode|schlüssel|schluessel)/i.test(t)
+    ? String(t).replace(/((?:passwort|kennwort|pin|code|schlüssel|schluessel)[^:=]{0,30}?(?:[:=]|\bist\b|\blautet\b)\s*)(\S.*)$/i, (_, a, b) => a + "•".repeat(Math.min(10, Math.max(6, b.length))))
+    : t;
+  function zeigeHaken(titel) {
+    if (!okEl) return;
+    okEl.innerHTML = `<span class="db-ok-kreis" aria-hidden="true">✓</span><span>Gespeichert: <b>${esc(verdeckt(String(titel)).slice(0, 80))}</b></span>`;
+    okEl.classList.remove("an"); void okEl.offsetWidth; okEl.classList.add("an");
+    clearTimeout(okTimer); okTimer = setTimeout(() => okEl.classList.remove("an"), 20000);
+  }
+  async function zuletzt() {
+    if (!zEl || !hakenFrei()) { if (zEl) zEl.innerHTML = ""; return; }
+    try {
+      const d = await (await api("/api/wissen/datenbank?typ=notiz&limit=10")).json();
+      const l = (d.eintraege || d.liste || d.items || []).filter((e) => e.typ === "notiz").sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 3);
+      zEl.innerHTML = l.length ? `<div class="db-z-h">ZULETZT GESPEICHERT</div>` + l.map((e) => `<div class="db-z"><i aria-hidden="true">✓</i><span>${esc(verdeckt(e.text))}</span><small>${datum(e.at)}</small></div>`).join("") : "";
+    } catch { /* egal */ }
+  }
+  // Beim Öffnen der Datenbank die letzten Einträge zeigen.
+  const wissenSheet = $("wissen");
+  if (wissenSheet) new MutationObserver(() => { if (!wissenSheet.classList.contains("hidden")) zuletzt(); }).observe(wissenSheet, { attributes: true, attributeFilter: ["class"] });
 
   window.FridayDatenbank = { kern, get stand() { return stand; } };
 })();

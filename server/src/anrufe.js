@@ -10,6 +10,13 @@ import { config } from "./config.js";
 import { isAgentOnline, sendToAgent } from "./agent-hub.js";
 import * as V from "./verbindungen.js";
 import { U } from "./datum.js";
+import { IST_EVE } from "./config.js";
+import { istFrei } from "./eve.js";
+
+// v1.145.0 (im Test, in Friday erst nach Freigabe in Eve): Nachrichten gehen direkt an den Empfänger.
+// "Schick meiner Frau, dass ich sie liebe" → "Ich liebe dich." statt "Ich liebe sie."
+export const FUNKTION_DU = "nachricht-du-form";
+export const duFormFrei = () => IST_EVE || istFrei(FUNKTION_DU);
 
 const d = () => V.get("anrufe");
 const boss = () => config.userName || "Boss";
@@ -61,22 +68,126 @@ export function findeKontakt(wer) {
 // ---------- Text umformen ----------
 // "dass ich heute Pizza essen will" → "Ich will heute Pizza essen."
 // Im Nebensatz steht das Verb hinten; für die Nachricht wandert es nach vorne.
-export function hauptsatz(roh) {
+export function hauptsatz(roh, { mehr = false } = {}) {
   let t = String(roh || "").trim().replace(/^[,:\s]+/, "").replace(/[.\s]+$/, "");
   t = t.replace(/^(bitte |mal |doch )/i, "");
   const dass = /^dass\s+/i.test(t);
   if (dass) {
     t = t.replace(/^dass\s+/i, "");
     const w = t.split(/\s+/);
-    if (w.length >= 3 && /^(ich|wir)$/i.test(w[0])) {
+    // mehr: auch "dass sie heute kommen soll" → "Sie soll heute kommen" (nur ein einfacher Satz ohne Komma)
+    const subj = mehr && !/[,;]/.test(t) ? /^(ich|wir|sie|er|du|es|man)$/i : /^(ich|wir)$/i;
+    if (w.length >= 3 && subj.test(w[0])) {
       const verb = w.pop();
-      w.splice(1, 0, verb);
+      // mehr: trennbare Verben wieder trennen ("dass ich dein Auto abhole" → "Ich hole dein Auto ab")
+      const tr = mehr && w.length >= 2 && !/^(antwort|analys|ander|angel|arbeit)/i.test(verb)
+        ? /^(zurück|vorbei|zusammen|weiter|heim|fest|weg|los|nach|mit|auf|aus|ein|vor|ab|an|zu)(\p{L}{3,})$/iu.exec(verb) : null;
+      if (tr) { w.splice(1, 0, tr[2]); w.push(tr[1]); } else w.splice(1, 0, verb);
       t = w.join(" ");
     }
   }
   if (!t) return "";
   t = t.charAt(0).toUpperCase() + t.slice(1);
   return /[.!?]$/.test(t) ? t : t + ".";
+}
+
+// ---------- Du-Form: an den Empfänger, nicht über ihn ----------
+const VERB_DU = {
+  ist: "bist", hat: "hast", wird: "wirst", war: "warst", kann: "kannst", muss: "musst", soll: "sollst", darf: "darfst",
+  will: "willst", mag: "magst", "möchte": "möchtest", "weiß": "weißt", tut: "tust", "wäre": "wärst", "würde": "würdest",
+  "könnte": "könntest", sollte: "solltest", "müsste": "müsstest", "dürfte": "dürftest", "hätte": "hättest", wollte: "wolltest",
+  konnte: "konntest", musste: "musstest", durfte: "durftest", hatte: "hattest", wurde: "wurdest", "isst": "isst", "liest": "liest",
+};
+const HILFSVERB = new Set(["ist", "hat", "wird", "war", "kann", "muss", "soll", "darf", "will", "mag", "möchte", "wäre", "würde", "könnte", "sollte", "hätte", "hatte", "wollte"]);
+const PLURAL = /^(sind|haben|werden|waren|können|müssen|sollen|dürfen|wollen|mögen|möchten|wären|würden|hätten|hatten)$/i;
+const BINDE = new Set(["und", "aber", "oder", "weil", "dass", "ob", "wenn", "wie", "damit", "als", "denn", "sondern", "obwohl", "bis", "nachdem", "sobald"]);
+const NEBEN = new Set(["weil", "dass", "ob", "wenn", "wie", "damit", "als", "obwohl", "bis", "nachdem", "sobald"]);
+const POSS = { "": "dein", e: "deine", en: "deinen", em: "deinem", er: "deiner", es: "deines" };
+
+export function verbDu(v) {
+  const w = String(v || ""), k = w.toLowerCase();
+  if (VERB_DU[k]) return VERB_DU[k];
+  if (/(st|zt|ßt|xt|ss)$/.test(k)) return w;      // heißt, sitzt, isst
+  if (/[dt]et$/.test(k)) return w.slice(0, -1) + "st"; // arbeitet → arbeitest
+  if (/[^aeiouäöü]t$/.test(k) || /[aeiouäöühr]t$/.test(k)) return w.slice(0, -1) + "st"; // liebt → liebst, geht → gehst
+  if (/te$/.test(k)) return w + "st";                // kaufte → kauftest
+  return w;
+}
+
+// Wer ist der Empfänger: "w" (sie/ihr), "m" (er/ihn) oder null (unklar)
+function geschlecht(k, t) {
+  if (k?.rolle === "frau") return "w";
+  if (k?.rolle === "ich" || !k) return null;
+  const n = V.norm(k.name || "");
+  if (/(mama|mutter|mutti|oma|schwester|tante|tochter|freundin|frau|cousine|nichte|chefin)\b/.test(n)) return "w";
+  if (/(papa|vater|vati|opa|bruder|onkel|sohn|freund|mann|cousin|neffe|chef)\b/.test(n)) return "m";
+  const w = /\b(sie|ihr|ihre[mnrs]?)\b/i.test(t), m = /\b(er|ihn|ihm|sein|seine[mnrs]?)\b/i.test(t);
+  return w && !m ? "w" : m && !w ? "m" : null;
+}
+
+/** Formt "Ich liebe sie." für den Empfänger k um zu "Ich liebe dich." (nur Pronomen, die den Empfänger meinen). */
+export function duForm(satz, k) {
+  const t = String(satz || "");
+  const g = geschlecht(k, t);
+  if (!t || !g) return t;
+  const tok = t.split(/(\s+)/); // Wörter und Leerzeichen abwechselnd
+  const idx = []; for (let i = 0; i < tok.length; i++) if (/\S/.test(tok[i])) idx.push(i);
+  const kern = (s) => s.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, "");
+  const setze = (i, neu) => { const alt = tok[i]; const w = kern(alt); const g1 = w[0] && w[0] === w[0].toUpperCase(); tok[i] = alt.replace(w, g1 ? neu[0].toUpperCase() + neu.slice(1) : neu); };
+  const klauselEnde = (p) => { // Wortposition des letzten Worts dieses Nebensatzes
+    for (let q = p; q < idx.length; q++) { if (/[,.;!?]$/.test(tok[idx[q]]) || q === idx.length - 1) return q; if (BINDE.has(kern(tok[idx[q + 1]] || "").toLowerCase())) return q; }
+    return idx.length - 1;
+  };
+  let subjekt = false;
+  for (let p = 0; p < idx.length; p++) {
+    const i = idx[p], w = kern(tok[i]), lw = w.toLowerCase();
+    const vor = p > 0 ? kern(tok[idx[p - 1]]).toLowerCase() : "";
+    const vorEnde = p > 0 && /[,.;!?]$/.test(tok[idx[p - 1]]);
+    const nach = p + 1 < idx.length ? kern(tok[idx[p + 1]]) : "";
+    const istSubj = (g === "w" && lw === "sie") || (g === "m" && lw === "er");
+    if (istSubj) {
+      if (p === 0 || vorEnde || BINDE.has(vor)) {
+        // Hauptsatz: Verb direkt danach; Nebensatz (dass, weil, ob …): Verb am Ende
+        const vp = NEBEN.has(vor) ? klauselEnde(p) : p + 1;
+        const verb = vp < idx.length ? kern(tok[idx[vp]]) : "";
+        if (PLURAL.test(verb) || /en$/i.test(verb) && vp === p + 1) continue; // "sie sind …" = mehrere Leute
+        setze(i, "du"); if (verb && vp !== p) setze(idx[vp], verbDu(verb)); subjekt = true;
+        continue;
+      }
+      if (HILFSVERB.has(vor) || (/[^e]t$/.test(vor) && p >= 2 && lw === "er")) { // "heute soll sie kommen"
+        setze(i, "du"); setze(idx[p - 1], verbDu(kern(tok[idx[p - 1]]))); subjekt = true; continue;
+      }
+      if (g === "w") setze(i, "dich"); // "ich liebe sie" → "ich liebe dich"
+      continue;
+    }
+    if (g === "w" && lw === "sie") { setze(i, "dich"); continue; }
+    if (g === "m" && lw === "ihn") { setze(i, "dich"); continue; }
+    if (g === "m" && lw === "ihm") { setze(i, "dir"); continue; }
+    const poss = g === "w" ? /^ihr(e|en|em|er|es)?$/i.exec(w) : /^sein(e|en|em|er|es)?$/i.exec(w);
+    if (poss) {
+      const end = poss[1] || "";
+      // "ihr" ohne Endung: vor einem Nomen (groß geschrieben) = "dein", sonst = "dir" ("ich habe ihr Blumen gekauft")
+      if (g === "w" && !end && !(nach && nach[0] === nach[0].toUpperCase() && /\p{L}/u.test(nach[0]) && !/^(Blumen|Geschenke)$/.test(nach))) setze(i, "dir");
+      else setze(i, POSS[end.toLowerCase()]);
+      continue;
+    }
+    if (subjekt && lw === "sich") setze(i, "dich");
+  }
+  let out = tok.join("");
+  if (/^ob\s/i.test(out)) out = out.replace(/[.]$/, "?");
+  return out.charAt(0).toUpperCase() + out.slice(1);
+}
+
+// "in der steht", "mit dem Text" usw. vor der eigentlichen Nachricht weglassen
+export function ohneEinleitung(t) {
+  return String(t || "").replace(/^[,:\s]*(?:(?:in der|wo(?: da)?(?: drin)?|worin|auf der) (?:steht|stehen soll)|(?:mit|und) (?:dem|folgendem|diesem) (?:text|inhalt)|die (?:lautet|heißt|heisst)|(?:dass )?(?:da|darin|drin) (?:steht|stehen soll)|mit folgendem|folgendes|und (?:schreib|schreibe) (?:ihr|ihm)|und (?:sag|sage) (?:ihr|ihm))[,:\s]*/i, "");
+}
+
+/** Der Text, der beim Empfänger ankommt. */
+export function nachrichtText(text, k) {
+  if (!text) return "";
+  if (!duFormFrei()) return hauptsatz(text);
+  return duForm(hauptsatz(ohneEinleitung(text), { mehr: true }), k);
 }
 
 // So spricht Friday am Telefon: [Begrüßung, Nachricht]
@@ -160,7 +271,7 @@ export async function ausfuehren(p = {}) {
   try {
     const k = typeof p.an === "object" && p.an ? p.an : findeKontakt(p.an);
     const wer = k && !k.fehlt ? wen(k) : k?.fehlt === "frau" ? "deine Frau" : k?.fehlt === "ich" ? "dich" : String(p.an?.name || p.an || "?");
-    const satz = p.text && !k?.fehlt ? hauptsatz(p.text) : "";
+    const satz = p.text && !k?.fehlt ? nachrichtText(p.text, k) : "";
     const weg = r.aktion === "anruf" ? "Anruf (Twilio)" : r.aktion === "facetime" ? "FaceTime" : r.aktion === "nachricht" ? "iMessage/SMS" : "";
     eintragen({
       bereich: "anruf",
@@ -177,7 +288,7 @@ async function ausfuehrenIntern({ an, text = "", art = "nachricht" } = {}) {
   if (!k) return { ok: false, error: `„${an}“ kenne ich nicht, ${boss()}. Trag den Kontakt im Fenster Verbindungen unter Anrufe ein. Ich schreibe nur Leuten, die du dort hinterlegst.` };
   if (k.fehlt === "frau") return { ok: false, error: "Ich habe noch keine Nummer von deiner Frau. Trag sie im Werkzeug-Menü unter Verbindungen → Anrufe ein." };
   if (k.fehlt === "ich") return { ok: false, error: "Ich habe deine eigene Handynummer noch nicht. Trag sie im Werkzeug-Menü unter Verbindungen → Anrufe ein." };
-  const satz = text ? hauptsatz(text) : "";
+  const satz = text ? nachrichtText(text, k) : "";
   if (art === "nachricht" && !satz) return { ok: false, error: `Was soll ich ${ihr(k)} schreiben?` };
 
   if (art === "anruf") {
