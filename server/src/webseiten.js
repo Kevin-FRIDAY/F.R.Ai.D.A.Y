@@ -276,6 +276,21 @@ function phaseAus(html, job) {
   }[tag];
 }
 
+/** v1.151.0: Die Bau-Phase als gesprochener Satz ("Das baue ich gerade: …"). Leer = nichts ansagen. */
+export function phaseSatz(phase) {
+  const p = String(phase || "").replace(/\s*…$/, "").trim();
+  if (!p || p === "Fertig") return "";
+  let m;
+  if ((m = p.match(/^Plant „(.+)“$/))) return `Ich plane gerade die Seite ${m[1]}.`;
+  if (p === "Plant die Seite") return "Ich plane gerade die Seite.";
+  if (p === "Legt das Grundgerüst an") return "Das baue ich gerade: das Grundgerüst.";
+  if (/^Gestaltet das Design/.test(p)) return "Jetzt gestalte ich das Design, Farben und Schriften.";
+  if (/^Schreibt/.test(p)) return "Die Seite steht. Jetzt schreibe ich noch Angebot und Preis.";
+  if (p === "Programmiert die Funktionen") return "Jetzt programmiere ich die Funktionen.";
+  if ((m = p.match(/^Baut (.+)$/))) return `Das baue ich gerade: ${m[1]}.`;
+  return "";
+}
+
 function liveStand(job, ab = 0) {
   const html = job.html || "";
   const von = Math.max(0, Math.min(Number(ab) || 0, html.length));
@@ -284,7 +299,7 @@ function liveStand(job, ab = 0) {
     id: job.id, status: job.status, auftrag: job.auftrag, modus: job.modus, modell: job.modell,
     spruch: job.spruch, wunsch: job.wunsch, schaetzung_s: job.schaetzung_s, erwartet_zeichen: job.erwartet_zeichen,
     vergangen_s: Math.round(vergangen * 10) / 10, titel: job.titel, zeichen: html.length,
-    zeilen: html ? html.split("\n").length : 0, phase: phaseAus(html, job),
+    zeilen: html ? html.split("\n").length : 0, phase: phaseAus(html, job), sprich: phaseSatz(phaseAus(html, job)),
     ab: von, code: html.slice(von), ergebnis: job.ergebnis || null, error: job.error || null,
   };
 }

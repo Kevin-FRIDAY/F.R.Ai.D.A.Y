@@ -509,12 +509,14 @@ export async function spielDetail(ligaId, id) {
     verlauf = verlaufAus(spiel, ereignisse);
   } else if (spiel.art === "duell") verlauf = verlaufAus(spiel, ereignisse);
   const videos = (sum?.videos || []).slice(0, 4).map((v) => ({ titel: v.headline || v.title || "", bild: v.thumbnail || "", url: v.links?.web?.href || v.links?.source?.href || "" })).filter((v) => v.url);
+  ereignisse = ereignisse.slice(-40).map((e) => ({ ...e, ansage: ereignisSatz(spiel, e) }));
   const data = {
-    ...spiel, ereignisse: ereignisse.slice(-40), statistik, kommentar, verlauf,
+    ...spiel, ereignisse, statistik, kommentar, verlauf,
     wo: woSchauen(ligaId), suche: suchbegriff(spiel), videosQuelle: videos,
     quelle: liga.tsdb ? "TheSportsDB (frei)" : "ESPN-Spielstände (frei)",
   };
   data.regelAnalyse = regelAnalyse(data);
+  data.ansage = lageAnsage(data);
   detailCache.set(key, { at: Date.now(), data });
   if (detailCache.size > 100) detailCache.delete(detailCache.keys().next().value);
   return data;
@@ -582,6 +584,70 @@ export function regelAnalyse(s) {
   if (letzt && s.zustand === "live" && tore.length >= 2) saetze.push(`Das letzte Tor fiel ${letzt.minute ? `in der ${letzt.minute.replace(/'$/, ".")} Minute ` : ""}für ${letzt.seite === "heim" ? H : G}.`);
   if (s.lage && s.zustand === "live") saetze.push(`Gerade: ${s.lage}.`);
   return saetze.filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+}
+
+// ---------- Stand-Ansage (v1.151.0) ----------
+// Friday sagt beim Öffnen eines Spiels laut: so steht es gerade, das ist passiert (Tore, Karten, Elfmeter …).
+const minSprech = (m) => {
+  const z = String(m || "").replace(/'/g, "").trim();
+  if (!z) return "";
+  const n = z.match(/^(\d+)(?:\+(\d+))?/);
+  if (n) return n[2] ? `In der ${n[1]}. Minute plus ${n[2]}` : `In der ${n[1]}. Minute`;
+  return z;
+};
+const ANSAGE_TYPEN = new Set(["tor", "gelb", "rot", "chance", "var"]);
+/** Ein Ereignis als gesprochener Satz, z. B. "In der 23. Minute: Tor für Deutschland durch Musiala." */
+export function ereignisSatz(s, e) {
+  if (!e || !ANSAGE_TYPEN.has(e.typ)) return "";
+  const team = e.seite === "heim" ? nameKurz(s.heim) : e.seite === "gast" ? nameKurz(s.gast) : "";
+  const wer = e.spieler ? (e.typ === "tor" ? ` durch ${e.spieler}` : ` an ${e.spieler}`) : "";
+  const fuer = team ? ` für ${team}` : "";
+  let kern;
+  if (e.typ === "tor") kern = /eigentor/i.test(e.art) ? `Eigentor${e.spieler ? ` von ${e.spieler}` : ""}${team ? ` (${team})` : ""}` : `${/elfmeter/i.test(e.art) ? "Tor per Elfmeter" : s.sport === "fussball" || !e.art ? "Tor" : e.art}${fuer}${wer}`;
+  else if (e.typ === "gelb") kern = `Gelbe Karte${fuer}${wer}`;
+  else if (e.typ === "rot") kern = `Rote Karte${fuer}${wer}`;
+  else if (e.typ === "chance") kern = `${e.art || "Elfmeter verschossen"}${fuer}${e.spieler ? `, ${e.spieler}` : ""}`;
+  else kern = `Videobeweis${team ? ` bei ${team}` : ""}`;
+  const m = minSprech(e.minute);
+  return `${m ? `${m}: ` : ""}${kern}.`;
+}
+
+/** Kurzer Lagebericht zum Vorlesen: Stand, was passiert ist, Karten-Bilanz. Ohne Claude. */
+export function lageAnsage(s) {
+  if (!s) return "";
+  if (s.art !== "duell") return regelAnalyse(s);
+  if (s.zustand === "vorher") return regelAnalyse(s);
+  const h = zahl(s.heim.punkte), g = zahl(s.gast.punkte);
+  const H = s.heim.name, G = s.gast.name;
+  const teile = [];
+  const st = String(s.statusText || "").trim();
+  const zeit = !st ? "" : /^\d+'?(\+\d+'?)?$/.test(st) ? `, ${minSprech(st).replace(/^In/, "in")}` : `, ${st}`;
+  if (s.sport === "tennis" && s.heim.saetze?.length) teile.push(`${s.zustand === "ende" ? "Endstand" : "So steht es gerade"}: ${H} gegen ${G}, Sätze ${s.heim.saetze.map((x, i) => `${x} zu ${s.gast.saetze[i] ?? "-"}`).join(", ")}${zeit}.`);
+  else if (h == null || g == null) teile.push(`${H} gegen ${G}${zeit}.`);
+  else if (s.zustand === "ende") teile.push(`Endstand: ${H} ${h}, ${G} ${g}.`);
+  else teile.push(`So steht es gerade: ${H} ${h}, ${G} ${g}${zeit}.`);
+  const wichtig = (s.ereignisse || []).filter((e) => ANSAGE_TYPEN.has(e.typ));
+  // Bei sehr vielen Ereignissen (z. B. Basketball-Punkte) nur die letzten nennen
+  const zuViel = wichtig.length > 8;
+  const saetze = (zuViel ? wichtig.slice(-6) : wichtig).map((e) => ereignisSatz(s, e)).filter(Boolean);
+  if (saetze.length) teile.push(`${zuViel ? "Zuletzt ist passiert" : "Das ist passiert"}: ${saetze.join(" ")}`);
+  else if (s.sport === "fussball") teile.push("Bisher keine Tore und keine Karten.");
+  const karten = (typ) => {
+    const n = { heim: 0, gast: 0 };
+    for (const e of s.ereignisse || []) if (e.typ === typ && n[e.seite] != null) n[e.seite]++;
+    return n;
+  };
+  const gelb = karten("gelb"), rot = karten("rot");
+  const bilanz = (n, wort) => {
+    const sum = n.heim + n.gast;
+    if (!sum) return "";
+    const st = (x) => (x === 1 ? `eine ${wort} Karte` : `${x} ${wort} Karten`);
+    return n.heim && n.gast ? `${H} hat ${st(n.heim)}, ${G} ${st(n.gast)}` : `${st(sum)} für ${n.heim ? H : G}`;
+  };
+  const kb = [bilanz(gelb, "gelbe"), bilanz(rot, "rote")].filter(Boolean);
+  if (kb.length) teile.push(`Karten insgesamt: ${kb.join("; ")}.`);
+  if (s.lage && s.zustand === "live") teile.push(`Gerade: ${s.lage}.`);
+  return teile.join(" ").replace(/\s+/g, " ").trim();
 }
 
 const analyseCache = new Map(); // key -> { at, text }
@@ -687,7 +753,9 @@ export async function quickCommand(text) {
   const stark = STARK.test(t);
   const ueberblick = /\b(offne|oeffne|zeig|zeige)( mir)?( den| das| die)? (live ?sport|sport ?zentrale|sport ?fenster|sport ?ergebnisse|sportergebnisse|alle spiele|sport)( an| auf)?$/.test(t) || /^(live ?sport|sport ?zentrale|sportergebnisse)$/.test(t) || /\bwas lauft (gerade |heute )?im sport\b|\bwelche spiele laufen\b/.test(t);
   const mitLiga = (ligen.length || sportwort) && VERB.test(t);
-  const frage = FRAGE_STAND.test(t) || (/ gegen /.test(t) && VERB.test(t));
+  // v1.151.0: auch nur "Deutschland gegen Niederlande" (kurz, je Seite 1–3 Wörter) – antwortet nur, wenn es das Spiel wirklich gibt
+  const paarung = /^[a-z0-9.]+( [a-z0-9.]+){0,2} gegen [a-z0-9.]+( [a-z0-9.]+){0,2}$/.test(t) && !/\b(was|hilft|mittel|tipps?|warum|wie)\b/.test(t);
+  const frage = FRAGE_STAND.test(t) || (/ gegen /.test(t) && VERB.test(t)) || paarung;
   if (!stark && !mitLiga && !ueberblick && !frage) return null;
   // Länder-Info "zeig mir ... Ergebnisse"? nur wenn wirklich nach Sport gefragt wird
   if (!frei()) {
@@ -716,8 +784,11 @@ export async function quickCommand(text) {
     const was = spiel.art === "duell" ? `${spiel.heim.name} gegen ${spiel.gast.name}` : spiel.titel;
     return { answer: `${was} beginnt ${spiel.statusText}. ${woSatz(spiel.liga)} Ich habe dir das Spiel geöffnet und melde mich mit der Analyse, sobald es läuft.`.replace(/\s+/g, " ").trim(), actions: aktionen };
   }
+  // Erst der Lagebericht (Stand, Tore, Karten), dann Fridays Einschätzung, wenn Claude eine hat.
+  const d = await spielDetail(spiel.liga, spiel.id).catch(() => null);
   const a = await analyse(spiel.liga, spiel.id).catch(() => null);
-  const kern = a?.text || regelAnalyse(spiel);
+  const lage = d?.ansage || lageAnsage(spiel);
+  const kern = a?.quelle === "claude" && a.text ? `${lage} ${a.text}` : lage || a?.text || regelAnalyse(spiel);
   const kopf = spiel.zustand === "live" && !team && !ligen.length ? `Live gerade: ${spiel.ligaName}. ` : "";
   const wo = spiel.zustand === "live" ? ` ${woSatz(spiel.liga)}` : "";
   return { answer: `${kopf}${kern}${wo}`.replace(/\s+/g, " ").trim(), actions: aktionen };
