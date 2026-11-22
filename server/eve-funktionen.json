@@ -65,6 +65,15 @@
       "ziele": [
         ".sp-plus-bereich"
       ]
+    },
+    {
+      "id": "live-sport",
+      "name": "Live-Sport mit Spielanalyse",
+      "version": "1.145.0",
+      "beschreibung": "Alle großen Sportarten live aus freien Quellen: Fußball (WM, EM, Bundesliga, Champions League …), NFL, NBA, NHL, MLB, Tennis, Formel 1, Golf, UFC, Rugby, dazu Ergebnisse für Handball, Volleyball, Darts, Radsport, E-Sport. „Friday, zeig mir das Live-Spiel“ öffnet Stand, Tore/Karten, Statistik, Ticker und Spielverlauf, Friday analysiert, was bisher passiert ist. Das Live-Bild gibt es nur legal beim Sender: Friday sagt, wo (ARD/ZDF kostenlos oder Bezahl-App), dazu offizielle Highlights.",
+      "ziele": [
+        ".menu-sport"
+      ]
     }
   ]
 }

@@ -13,6 +13,7 @@ import { offlineAnswer, notfallText } from "./offline.js";
 import { quickCommand as hausQuick } from "./werkstatt.js";
 import { quickCommand as zerlegeQuick } from "./teilebank.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
+import { quickCommand as sportQuick } from "./sport.js";
 import { quickCommand as archivQuick } from "./archiv.js";
 import { quickCommand as appsQuick } from "./appzentrale.js";
 import { quickCommand as gehirnQuick } from "./gehirn.js";
@@ -205,6 +206,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (a) { actions.push(...a.actions); return finish(a.answer); }
     } catch (err) {
       console.error("Anrufe:", err.message);
+    }
+  }
+
+  // Live-Sport (v1.145.0; vor der Spiele-Werkstatt, damit "Live-Spiel" hier landet), im Test: in Friday erst nach Freigabe in Eve): "zeig mir das Live-Spiel",
+  // "wie steht es bei Bayern?", "Bundesliga live" – Stand, Ereignisse, Analyse, wo es legal läuft.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const sp = await sportQuick(text);
+      if (sp) { actions.push(...sp.actions); return finish(sp.answer); }
+    } catch (err) {
+      console.error("Live-Sport:", err.message);
     }
   }
 
