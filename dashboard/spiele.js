@@ -79,6 +79,26 @@
   .sp-vorlagen { margin-top: 16px; }
   .sp-vorlagen p { font-size: 12px; color: #a98d72; margin: 0 0 8px; }
   .sp-leer { color: #a98d72; font-size: 14px; padding: 10px 2px; }
+  /* Spiele-Datenbank · Grafik-Plus (v1.144.0, zuerst nur in Eve) */
+  .sp-plus-bereich { margin-top: 18px; position: relative; }
+  .sp-plus-bereich h3 { color: #ffd8b0; }
+  .sp-plus-bereich h3 em { font-style: normal; font-size: 11px; letter-spacing: .14em; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(46,230,208,.55); color: #8ff3e6; }
+  .sp-filter { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 10px; }
+  .sp-filter button { padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,138,30,.35); background: rgba(255,138,30,.06); color: #e6c7a6; font: 600 12px inherit; cursor: pointer; }
+  .sp-filter button.an { border-color: #ff8a1e; color: #fff; background: rgba(255,138,30,.22); box-shadow: 0 0 12px rgba(255,138,30,.3); }
+  .sp-plus-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .sp-pkarte { position: relative; overflow: hidden; text-align: left; padding: 0; border-radius: 16px; border: 1px solid rgba(255,138,30,.4); background: #0b0710; color: inherit; cursor: pointer; font: inherit; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+  .sp-pkarte:hover, .sp-pkarte:focus-visible { transform: translateY(-2px); border-color: #ff8a1e; box-shadow: 0 0 24px rgba(255,138,30,.35); outline: none; }
+  .sp-pkarte .sp-bild { height: 92px; display: flex; align-items: center; justify-content: center; font-size: 44px; position: relative; background: radial-gradient(circle at 50% 120%, var(--f1, #ff8a1e) 0%, transparent 62%), linear-gradient(160deg, #1c0b2c, #07040c); filter: saturate(1.2); }
+  .sp-pkarte .sp-bild::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px); pointer-events: none; }
+  .sp-pkarte .sp-bild span { filter: drop-shadow(0 0 14px var(--f1, #ff8a1e)); }
+  .sp-pkarte .sp-text { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 5px; }
+  .sp-pkarte b { font-size: 15px; color: #ffd8b0; letter-spacing: .04em; }
+  .sp-pkarte small { color: #b99a7c; font-size: 12px; line-height: 1.4; }
+  .sp-pkarte .sp-tags { display: flex; gap: 6px; font-size: 11px; align-items: center; }
+  .sp-pkarte .sp-tag { padding: 2px 7px; border-radius: 999px; border: 1px solid rgba(46,230,208,.5); color: #8ff3e6; }
+  .sp-pkarte.gesperrt { opacity: .6; }
+  .sp-pkarte.gesperrt .sp-bild::before { content: "🔒"; position: absolute; top: 8px; right: 10px; font-size: 16px; z-index: 1; }
   @media (max-width: 900px) {
     #spiele.sheet { padding: 0; align-items: stretch; }
     #spiele .sp-box { height: 100%; height: 100dvh; width: 100%; border-radius: 0; padding: calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom)); }
@@ -129,6 +149,7 @@
         <div id="sp-sammlung" class="sp-sammlung hidden" aria-label="Meine Spiele">
           <h3>📚 MEINE SPIELE <span id="sp-anzahl" class="muted"></span><button id="sp-sammlung-x" class="chip" type="button">Zurück</button></h3>
           <div id="sp-raster" class="sp-raster"></div>
+          <div id="sp-plus" class="sp-plus-bereich" hidden><h3>✦ SPIELE-DATENBANK <em>GRAFIK-PLUS</em></h3><div id="sp-filter" class="sp-filter"></div><div id="sp-plus-raster" class="sp-plus-raster"></div></div>
           <div class="sp-vorlagen"><h3>EINGEBAUTE VORLAGEN</h3><p>Funktionieren immer, auch ohne Claude-Guthaben.</p><div id="sp-vorlagen" class="sp-raster"></div></div>
         </div>
       </div>
@@ -359,9 +380,37 @@
         <b>${esc(s.titel)}</b><small>${esc(s.auftrag || "")}</small>
         <span class="sp-tags"><span class="sp-tag${s.quelle === "vorlage" ? " v" : ""}">${s.quelle === "vorlage" ? "Vorlage" : "Claude"}</span><span>${new Date(s.erstellt).toLocaleDateString("de-DE")}</span>${s.mal ? `<span>· ${s.mal}× gespielt</span>` : ""}<button class="sp-weg" data-weg="${esc(s.id)}" title="In den Papierkorb" aria-label="${esc(s.titel)} in den Papierkorb">🗑</button></span>
       </div>`).join("") || '<p class="sp-leer">Noch keine Spiele. Sag „Friday, bau mir ein Spiel“ oder tipp oben eine Idee ein.</p>';
-    $("sp-vorlagen").innerHTML = (sammlung.vorlagen || []).map((v) => `<div class="sp-karte" role="button" tabindex="0" data-vorlage="${esc(v.id)}"><b>${esc(v.titel)}</b><span class="sp-tags"><span class="sp-tag v">Vorlage</span><span>einspielen</span></span></div>`).join("");
+    zeigePlus();
+    $("sp-vorlagen").innerHTML = (sammlung.vorlagen || []).filter((v) => !v.plus).map((v) => `<div class="sp-karte" role="button" tabindex="0" data-vorlage="${esc(v.id)}"><b>${esc(v.titel)}</b><span class="sp-tags"><span class="sp-tag v">Vorlage</span><span>einspielen</span></span></div>`).join("");
+  }
+  // Spiele-Datenbank: neue Grafik-Plus-Spiele mit Kategorien (in Friday gesperrt, bis Boss sie in Eve freigibt)
+  const FARBEN = { Rennen: "#ff8a1e", Geschick: "#2ee6d0", Denken: "#b57bff", Abenteuer: "#3aa8ff", Strategie: "#ffc44d" };
+  let filter = "Alle";
+  function zeigePlus() {
+    const plus = (sammlung.vorlagen || []).filter((v) => v.plus);
+    $("sp-plus").hidden = !plus.length;
+    if (!plus.length) return;
+    const kats = ["Alle", ...new Set(plus.map((v) => v.kategorie))];
+    if (!kats.includes(filter)) filter = "Alle";
+    $("sp-filter").innerHTML = kats.map((k) => `<button type="button" data-filter="${esc(k)}" class="${k === filter ? "an" : ""}">${esc(k)}</button>`).join("");
+    $("sp-plus-raster").innerHTML = plus.filter((v) => filter === "Alle" || v.kategorie === filter).map((v) => `<div class="sp-pkarte${v.gesperrt ? " gesperrt" : ""}" role="button" tabindex="0" data-plus="${esc(v.id)}" style="--f1:${FARBEN[v.kategorie] || "#ff8a1e"}">
+        <div class="sp-bild"><span>${esc(v.symbol || "✦")}</span></div>
+        <div class="sp-text"><b>${esc(v.titel)}</b><small>${esc(v.beschreibung || "")}</small>
+        <span class="sp-tags"><span class="sp-tag">${esc(v.kategorie || "")}</span><span>${v.gesperrt ? "nur in Eve" : "ohne Guthaben spielbar"}</span></span></div>
+      </div>`).join("");
+    try { window.FridayEve?.refresh?.(); } catch { /* egal */ }
   }
   sheet.addEventListener("click", async (e) => {
+    const f = e.target.closest("[data-filter]");
+    if (f) { filter = f.dataset.filter; zeigePlus(); return; }
+    const pk = e.target.closest("[data-plus]");
+    if (pk) {
+      const v = (sammlung.vorlagen || []).find((x) => x.id === pk.dataset.plus);
+      if (v?.gesperrt) { hinweis(`🔒 ${v.titel} ist noch im Test. Probier es in Eve aus und gib es dort frei.`, true); return; }
+      const da = (sammlung.spiele || []).find((x) => x.quelle === "vorlage" && x.vorlage === pk.dataset.plus);
+      if (da) spielOeffnen(da.id); else bauen("", { vorlage: pk.dataset.plus });
+      return;
+    }
     const weg = e.target.closest("[data-weg]");
     if (weg) {
       e.stopPropagation();
@@ -374,7 +423,7 @@
     if (k?.dataset.id) spielOeffnen(k.dataset.id);
     else if (k?.dataset.vorlage) bauen("", { vorlage: k.dataset.vorlage });
   });
-  sheet.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.classList?.contains("sp-karte")) { e.preventDefault(); e.target.click(); } });
+  sheet.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && (e.target.classList?.contains("sp-karte") || e.target.classList?.contains("sp-pkarte"))) { e.preventDefault(); e.target.click(); } });
 
   // ---------- Knöpfe ----------
   $("sp-form").addEventListener("submit", (e) => {

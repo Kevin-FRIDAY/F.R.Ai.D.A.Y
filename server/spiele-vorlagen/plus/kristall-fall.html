@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Kristall-Fall</title>
+<!--FRIDAY-GRAFIK-->
+</head>
+<body>
+<script>
+// Kristall-Fall: Tausche zwei benachbarte Kristalle, sodass 3 oder mehr gleiche in einer Reihe liegen.
+(() => {
+  const C = FG.C;
+  const SP = 7, ZE = 8, DAUER = 90;
+  // Sechs Kristall-Arten: Farbe hell/mittel/dunkel + Form
+  const ARTEN = [
+    { f: ["#ffe1c2", "#ff8a1e", "#6b2a00"], form: "raute" },
+    { f: ["#d8fffa", "#2ee6d0", "#03443e"], form: "kreis" },
+    { f: ["#f2e3ff", "#b57bff", "#35115e"], form: "dreieck" },
+    { f: ["#fff6c9", "#ffc44d", "#6b4a00"], form: "stern" },
+    { f: ["#ffd6e2", "#ff5c8a", "#5e0a24"], form: "sechseck" },
+    { f: ["#dcffe0", "#7dff8a", "#0d4d17"], form: "achteck" },
+  ];
+  let tastatur = false, brett, phase, phaseT, a, b, combo, punkte, zeit, Z, OX, OY, wahl, cursor, gezogen, bilder = [], bilderZ = 0, hinweisT;
+
+  // ---------- Kristalle einmal schön vorzeichnen (schnell beim Spielen) ----------
+  function form(c, art, r) {
+    c.beginPath();
+    const ecken = (n, dreh, rr = r) => { for (let i = 0; i < n; i++) { const w = dreh + (i / n) * Math.PI * 2; c.lineTo(Math.cos(w) * rr, Math.sin(w) * rr); } c.closePath(); };
+    if (art === "raute") { c.moveTo(0, -r); c.lineTo(r * 0.78, 0); c.lineTo(0, r); c.lineTo(-r * 0.78, 0); c.closePath(); }
+    else if (art === "kreis") c.arc(0, 0, r * 0.86, 0, 7);
+    else if (art === "dreieck") { c.moveTo(0, -r); c.lineTo(r * 0.95, r * 0.72); c.lineTo(-r * 0.95, r * 0.72); c.closePath(); }
+    else if (art === "stern") { for (let i = 0; i < 10; i++) { const w = -Math.PI / 2 + (i / 10) * Math.PI * 2, rr = i % 2 ? r * 0.48 : r; c.lineTo(Math.cos(w) * rr, Math.sin(w) * rr); } c.closePath(); }
+    else if (art === "sechseck") ecken(6, Math.PI / 6, r * 0.92);
+    else ecken(8, Math.PI / 8, r * 0.9);
+  }
+  function baueBilder() {
+    const dpr = FG.dpr, g = Math.ceil(Z * dpr);
+    bilder = ARTEN.map((art) => {
+      const cv = document.createElement("canvas"); cv.width = cv.height = g;
+      const c = cv.getContext("2d"); c.scale(dpr, dpr); c.translate(Z / 2, Z / 2);
+      const r = Z * 0.38;
+      c.shadowColor = art.f[1]; c.shadowBlur = Z * 0.18;
+      form(c, art.form, r);
+      const v = c.createLinearGradient(-r, -r, r, r); v.addColorStop(0, art.f[0]); v.addColorStop(0.45, art.f[1]); v.addColorStop(1, art.f[2]);
+      c.fillStyle = v; c.fill(); c.shadowBlur = 0;
+      // Facetten: helle Kante oben links, dunkle unten rechts
+      c.save(); form(c, art.form, r); c.clip();
+      c.fillStyle = "rgba(255,255,255,.28)"; c.beginPath(); c.moveTo(-r, -r); c.lineTo(r * 0.2, -r); c.lineTo(-r * 0.1, r * 0.05); c.lineTo(-r, r * 0.2); c.fill();
+      c.fillStyle = "rgba(0,0,0,.25)"; c.beginPath(); c.moveTo(r, r); c.lineTo(-r * 0.1, r); c.lineTo(r * 0.15, r * 0.1); c.lineTo(r, -r * 0.1); c.fill();
+      c.restore();
+      form(c, art.form, r); c.strokeStyle = "rgba(255,255,255,.55)"; c.lineWidth = 1.2; c.stroke();
+      form(c, art.form, r * 0.45); c.strokeStyle = "rgba(255,255,255,.22)"; c.stroke();
+      c.fillStyle = "rgba(255,255,255,.9)"; c.beginPath(); c.ellipse(-r * 0.32, -r * 0.42, r * 0.16, r * 0.08, -0.6, 0, 7); c.fill();
+      return cv;
+    });
+    bilderZ = Z;
+  }
+
+  // ---------- Brett ----------
+  const typ = (r, c) => (r >= 0 && r < ZE && c >= 0 && c < SP && brett[r][c] ? brett[r][c].typ : -1);
+  function stein(t, r, c, y) { return { typ: t, r, c, x: c, y: y ?? r, v: 0, s: 1, weg: false }; }
+  function fuellen() {
+    brett = [];
+    for (let r = 0; r < ZE; r++) { brett.push([]); for (let c = 0; c < SP; c++) {
+      let t; do t = FG.ganz(0, ARTEN.length - 1); while ((c >= 2 && brett[r][c - 1].typ === t && brett[r][c - 2].typ === t) || (r >= 2 && brett[r - 1][c].typ === t && brett[r - 2][c].typ === t));
+      brett[r].push(stein(t, r, c, r - ZE - 1));
+    } }
+  }
+  // Alle Dreier-Reihen finden: markiert Steine, gibt Gruppen zurück
+  function treffer() {
+    const gruppen = [];
+    for (let r = 0; r < ZE; r++) for (let c = 0; c < SP;) { let n = 1; while (c + n < SP && typ(r, c + n) === typ(r, c) && typ(r, c) >= 0) n++; if (n >= 3) gruppen.push(Array.from({ length: n }, (_, i) => brett[r][c + i])); c += n; }
+    for (let c = 0; c < SP; c++) for (let r = 0; r < ZE;) { let n = 1; while (r + n < ZE && typ(r + n, c) === typ(r, c) && typ(r, c) >= 0) n++; if (n >= 3) gruppen.push(Array.from({ length: n }, (_, i) => brett[r + i][c])); r += n; }
+    return gruppen;
+  }
+  function tausche(s1, s2) { brett[s1.r][s1.c] = s2; brett[s2.r][s2.c] = s1; [s1.r, s2.r] = [s2.r, s1.r]; [s1.c, s2.c] = [s2.c, s1.c]; }
+  function moeglicherZug() {
+    for (let r = 0; r < ZE; r++) for (let c = 0; c < SP; c++) for (const [dr, dc] of [[0, 1], [1, 0]]) {
+      const s2 = brett[r + dr]?.[c + dc]; if (!s2) continue;
+      const s1 = brett[r][c]; tausche(s1, s2); const ok = treffer().length > 0; tausche(s1, s2);
+      if (ok) return [s1, s2];
+    }
+    return null;
+  }
+  function mischen() {
+    const alle = brett.flat().map((s) => s.typ);
+    let versuch = 0;
+    do { for (let i = alle.length - 1; i > 0; i--) { const j = FG.ganz(0, i); [alle[i], alle[j]] = [alle[j], alle[i]]; } brett.flat().forEach((s, i) => { s.typ = alle[i]; }); } while ((treffer().length || !moeglicherZug()) && ++versuch < 60);
+    FG.text(OX + SP * Z / 2, OY + ZE * Z / 2, "NEU GEMISCHT", C.cyan, 26); FG.ton("power");
+  }
+
+  function versuche(s1, s2) {
+    if (phase !== "bereit" || !s1 || !s2 || Math.abs(s1.r - s2.r) + Math.abs(s1.c - s2.c) !== 1) return;
+    a = s1; b = s2; phase = "tausch"; phaseT = 0; wahl = null; hinweisT = 0; FG.ton("klick");
+  }
+  function zelle(x, y) { const c = Math.floor((x - OX) / Z), r = Math.floor((y - OY) / Z); return r >= 0 && r < ZE && c >= 0 && c < SP ? brett[r][c] : null; }
+
+  function loesche(gruppen) {
+    const weg = new Set(gruppen.flat());
+    let gewinn = 0;
+    for (const g of gruppen) {
+      gewinn += g.length * 10 * combo * (g.length >= 5 ? 3 : g.length === 4 ? 2 : 1);
+      if (g.length >= 4) { zeit = Math.min(DAUER, zeit + (g.length - 2)); const m = g[Math.floor(g.length / 2)]; FG.text(OX + m.c * Z + Z / 2, OY + m.r * Z, `+${g.length - 2}s`, C.cyan, 22); FG.ton("power"); FG.blitz(ARTEN[g[0].typ].f[1], 0.15); }
+    }
+    punkte += gewinn;
+    for (const s of weg) { s.weg = true; const x = OX + s.c * Z + Z / 2, y = OY + s.r * Z + Z / 2; FG.funken(x, y, { n: 10, farbe: ARTEN[s.typ].f[1], tempo: 260, leben: 0.7, schwerkraft: 300 }); FG.leuchten(x, y, Z, ARTEN[s.typ].f[1], 0.5); }
+    const m = [...weg][0];
+    FG.text(OX + m.c * Z + Z / 2, OY + m.r * Z + Z / 2, combo > 1 ? `${gewinn} ×${combo}` : gewinn, combo > 1 ? C.gold : "#ffffff", 18 + Math.min(16, combo * 3));
+    if (combo >= 3) { FG.wackeln(4 + combo); FG.text(OX + SP * Z / 2, OY - 10, ["", "", "", "SUPER!", "FANTASTISCH!", "KRISTALL-STURM!"][Math.min(5, combo)], C.gold, 30); }
+    FG.ton(combo > 1 ? "power" : "punkt");
+    phase = "loeschen"; phaseT = 0;
+  }
+  function fallenLassen() {
+    for (let c = 0; c < SP; c++) {
+      const bleiben = []; for (let r = ZE - 1; r >= 0; r--) if (!brett[r][c].weg) bleiben.push(brett[r][c]);
+      let neu = 0;
+      for (let r = ZE - 1; r >= 0; r--) {
+        const k = ZE - 1 - r;
+        if (k < bleiben.length) { const s = bleiben[k]; s.r = r; brett[r][c] = s; }
+        else { neu++; brett[r][c] = stein(FG.ganz(0, ARTEN.length - 1), r, c, -neu - 0.2); }
+      }
+    }
+    phase = "fallen";
+  }
+
+  FG.spiel({
+    id: "kristall-fall", titel: "KRISTALL-FALL", untertitel: "Denken · Grafik-Plus", symbol: "💎", hintergrund: "nebel",
+    anleitung: "Tausche zwei benachbarte Kristalle, sodass <b>3 oder mehr gleiche</b> in einer Reihe liegen. Ketten geben Combo-Punkte, 4er und 5er schenken Zeit.<br>Wischen oder zwei Steine antippen · <kbd>Pfeile</kbd> + <kbd>Leertaste</kbd>",
+    sternTempo: () => 6,
+    groesse(W, H) {
+      Z = Math.floor(Math.min((W - 24) / SP, (H - 150) / ZE, 84));
+      OX = Math.round((W - SP * Z) / 2); OY = Math.round(Math.max(84, (H - ZE * Z) / 2 + 20));
+      if (Z !== bilderZ && FG.dpr) baueBilder();
+    },
+    pruefen: () => ({ zug: phase === "bereit" ? moeglicherZug()?.map((s) => [s.r, s.c]) : null, Z, OX, OY, punkte, phase }), // für automatische Tests
+    init() { fuellen(); phase = "fallen"; phaseT = 0; combo = 0; punkte = 0; zeit = DAUER; wahl = null; cursor = { r: 3, c: 3 }; gezogen = false; hinweisT = 0; },
+    tippen(x, y) {
+      const s = zelle(x, y); gezogen = false; tastatur = false;
+      if (!s || phase !== "bereit") return;
+      if (wahl && wahl !== s && Math.abs(wahl.r - s.r) + Math.abs(wahl.c - s.c) === 1) { versuche(wahl, s); gezogen = true; return; }
+      wahl = s; cursor = { r: s.r, c: s.c };
+    },
+    ziehen(x, y) {
+      if (!wahl || gezogen || phase !== "bereit") return;
+      const dx = x - (OX + wahl.c * Z + Z / 2), dy = y - (OY + wahl.r * Z + Z / 2);
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < Z * 0.45) return;
+      const [dr, dc] = Math.abs(dx) > Math.abs(dy) ? [0, Math.sign(dx)] : [Math.sign(dy), 0];
+      gezogen = true; versuche(wahl, brett[wahl.r + dr]?.[wahl.c + dc]);
+    },
+    taste(k) {
+      tastatur = true;
+      const d = { arrowleft: [0, -1], a: [0, -1], arrowright: [0, 1], d: [0, 1], arrowup: [-1, 0], w: [-1, 0], arrowdown: [1, 0], s: [1, 0] }[k];
+      if (d) {
+        if (wahl) { versuche(wahl, brett[wahl.r + d[0]]?.[wahl.c + d[1]]); return; }
+        cursor.r = FG.klemmen(cursor.r + d[0], 0, ZE - 1); cursor.c = FG.klemmen(cursor.c + d[1], 0, SP - 1);
+      } else if (k === " " || k === "enter") { const s = brett[cursor.r][cursor.c]; wahl = wahl === s ? null : s; }
+    },
+    update(dt) {
+      phaseT += dt;
+      if (phase !== "fallen" || zeit > 0) zeit = Math.max(0, zeit - dt);
+      hinweisT += dt;
+      if (phase === "tausch" || phase === "zurueck") {
+        const p = FG.weich(Math.min(1, phaseT / 0.2));
+        a.x = FG.misch(a.c, b.c, p); a.y = FG.misch(a.r, b.r, p); b.x = FG.misch(b.c, a.c, p); b.y = FG.misch(b.r, a.r, p);
+        if (phaseT >= 0.2) {
+          tausche(a, b); for (const s of [a, b]) { s.x = s.c; s.y = s.r; }
+          if (phase === "tausch") { const g = treffer(); if (g.length) { combo = 1; loesche(g); } else { phase = "zurueck"; phaseT = 0; FG.ton("treffer"); FG.wackeln(3); } }
+          else phase = "bereit";
+        }
+      } else if (phase === "loeschen") {
+        for (const s of brett.flat()) if (s.weg) s.s = Math.max(0, 1 - phaseT / 0.22);
+        if (phaseT >= 0.22) fallenLassen();
+      } else if (phase === "fallen") {
+        let ruhig = true;
+        for (const s of brett.flat()) {
+          s.x = s.c;
+          if (s.y < s.r) { s.v += 28 * dt; s.y = Math.min(s.r, s.y + s.v * dt); ruhig = false; if (s.y === s.r) { s.v = 0; s.s = 1.12; } }
+          s.s += (1 - s.s) * Math.min(1, dt * 12);
+        }
+        if (ruhig) {
+          const g = treffer();
+          if (g.length) { combo++; loesche(g); }
+          else { phase = "bereit"; combo = 0; if (!moeglicherZug()) mischen(); }
+        }
+      }
+      if (zeit <= 0 && phase === "bereit") FG.ende(punkte, "Die Zeit ist um.");
+      FG.hud({ Punkte: punkte.toLocaleString("de-DE"), Zeit: Math.ceil(zeit) + " s", ...(combo > 1 ? { Combo: "×" + combo } : {}) });
+    },
+    zeichne(c) {
+      if (!brett) return;
+      if (Z !== bilderZ) baueBilder();
+      const t = FG.zeit, W = SP * Z, H = ZE * Z;
+      // Glas-Brett
+      FG.leuchten(OX + W / 2, OY + H / 2, Math.max(W, H) * 0.8, C.lila, 0.18);
+      c.fillStyle = "rgba(14,8,24,.72)"; FG.rund(c, OX - 10, OY - 10, W + 20, H + 20, 18); c.fill();
+      c.strokeStyle = "rgba(255,138,30,.45)"; c.lineWidth = 1.5; c.stroke();
+      for (let r = 0; r < ZE; r++) for (let k = 0; k < SP; k++) if ((r + k) % 2 === 0) { c.fillStyle = "rgba(255,255,255,.035)"; c.fillRect(OX + k * Z, OY + r * Z, Z, Z); }
+      // Zeit-Balken
+      const p = zeit / DAUER, bx = OX - 10, by = OY - 26, bw = W + 20;
+      c.fillStyle = "rgba(255,255,255,.08)"; FG.rund(c, bx, by, bw, 8, 4); c.fill();
+      c.fillStyle = FG.verlauf(c, bx, 0, bx + bw, 0, p < 0.2 ? [C.rot, "#ff9a9a"] : [C.neon, C.gold]); FG.rund(c, bx, by, Math.max(8, bw * p), 8, 4); c.fill();
+      FG.leuchten(bx + bw * p, by + 4, 22, p < 0.2 ? C.rot : C.gold, 0.8);
+      // Auswahl & Tastatur-Rahmen
+      const rahmen = (r, k, farbe, puls) => { c.strokeStyle = farbe; c.lineWidth = 2.5; FG.rund(c, OX + k * Z + 3, OY + r * Z + 3, Z - 6, Z - 6, 12); c.globalAlpha = puls; c.stroke(); c.globalAlpha = 1; };
+      if (wahl) { FG.leuchten(OX + wahl.c * Z + Z / 2, OY + wahl.r * Z + Z / 2, Z * 0.9, C.weiss, 0.35); rahmen(wahl.r, wahl.c, C.weiss, 0.7 + 0.3 * Math.sin(t * 8)); }
+      if (FG.zustand === "spiel" && cursor && tastatur) rahmen(cursor.r, cursor.c, C.cyan, 0.35);
+      // Hinweis nach 6 Sekunden ohne Zug
+      if (phase === "bereit" && hinweisT > 6 && FG.zustand === "spiel") { const h = moeglicherZug(); if (h) for (const s of h) FG.leuchten(OX + s.c * Z + Z / 2, OY + s.r * Z + Z / 2, Z * (0.7 + 0.2 * Math.sin(t * 5)), C.gold, 0.45); }
+      // Kristalle
+      c.save(); c.beginPath(); c.rect(OX - 10, OY - 4, W + 20, H + 14); c.clip();
+      for (const s of brett.flat()) {
+        const x = OX + s.x * Z + Z / 2, y = OY + s.y * Z + Z / 2 + (s === wahl ? Math.sin(t * 8) * 2 : 0), g = Z * s.s * (s === wahl ? 1.08 : 1);
+        if (g <= 0.5) continue;
+        c.drawImage(bilder[s.typ], x - g / 2, y - g / 2, g, g);
+        if (!FG.sparen && Math.sin(t * 1.7 + s.r * 1.3 + s.c * 2.1) > 0.985) FG.leuchten(x - Z * 0.15, y - Z * 0.18, Z * 0.35, C.weiss, 0.9);
+      }
+      c.restore();
+    },
+  });
+})();
+</script>
+</body>
+</html>

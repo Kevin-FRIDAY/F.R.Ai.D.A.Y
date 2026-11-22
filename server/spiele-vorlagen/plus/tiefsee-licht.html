@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Tiefsee-Licht</title>
+<!--FRIDAY-GRAFIK-->
+</head>
+<body>
+<script>
+// Tiefsee-Licht: Mit dem Scheinwerfer deines Mini-U-Boots durch die dunkle Tiefsee.
+// Perlen geben Sauerstoff, Minen sieht man nur im Licht, Quallen leuchten von selbst.
+(() => {
+  const C = FG.C;
+  let boot, dinge, sauerstoff, huelle, punkte, perlen, spawnT, zeitImSpiel, dunkel, dctx, blickW, stroemung;
+
+  function neuesDing() {
+    const W = FG.W, H = FG.H, r = Math.random(), schwer = Math.min(1, zeitImSpiel / 90);
+    const y = FG.zufall(40, H - 40), x = W + 40;
+    if (r < 0.42) return { art: "perle", x, y, r: 9, v: FG.zufall(40, 70), p: Math.random() * 6 };
+    if (r < 0.72 + schwer * 0.08) return { art: "mine", x, y, r: 16, v: FG.zufall(30, 60) + schwer * 40, p: Math.random() * 6 };
+    return { art: "qualle", x, y, r: 20, v: FG.zufall(25, 45), p: Math.random() * 6, hy: y };
+  }
+
+  FG.spiel({
+    id: "tiefsee-licht", titel: "TIEFSEE-LICHT", untertitel: "Abenteuer · Grafik-Plus", symbol: "🔦", hintergrund: "tiefsee", stick: true,
+    anleitung: "Steuere dein Mini-U-Boot durch die Dunkelheit. Sammle <b style='color:#2ee6d0'>Perlen</b> für Sauerstoff. <b style='color:#ff4b4b'>Minen</b> siehst du nur im Scheinwerfer, Quallen nesseln.<br>Steuern: <kbd>Pfeile</kbd>/<kbd>WASD</kbd>, Maus gedrückt halten oder Finger ziehen.",
+    groesse(W, H) {
+      dunkel = document.createElement("canvas"); dunkel.width = Math.round(W * FG.dpr); dunkel.height = Math.round(H * FG.dpr);
+      dctx = dunkel.getContext("2d"); dctx.setTransform(FG.dpr, 0, 0, FG.dpr, 0, 0);
+    },
+    pruefen: () => ({ boot, dinge, sauerstoff }),
+    init() {
+      boot = { x: FG.W * 0.25, y: FG.H / 2, vx: 0, vy: 0, wackel: 0, unverwundbar: 0 };
+      dinge = []; sauerstoff = 100; huelle = 3; punkte = 0; perlen = 0; spawnT = 0; zeitImSpiel = 0; blickW = 0; stroemung = 0;
+      for (let i = 0; i < 5; i++) { const d = neuesDing(); d.x = FG.zufall(FG.W * 0.5, FG.W); dinge.push(d); }
+    },
+    update(dt) {
+      zeitImSpiel += dt;
+      // Steuerung: Joystick/Tasten oder (Maus) zum Zeiger hin
+      let { x: rx, y: ry } = FG.richtung();
+      if (FG.zeiger.unten && !rx && !ry) { const dx = FG.zeiger.x - boot.x, dy = FG.zeiger.y - boot.y, l = Math.hypot(dx, dy); if (l > 12) { rx = dx / l; ry = dy / l; } }
+      boot.vx += rx * 900 * dt; boot.vy += ry * 900 * dt;
+      boot.vx *= Math.pow(0.12, dt); boot.vy *= Math.pow(0.12, dt);
+      boot.x = FG.klemmen(boot.x + boot.vx * dt, 30, FG.W - 30); boot.y = FG.klemmen(boot.y + boot.vy * dt, 30, FG.H - 30);
+      if (Math.abs(boot.vx) + Math.abs(boot.vy) > 30) { const ziel = Math.atan2(boot.vy, boot.vx); let d = ziel - blickW; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; blickW += d * Math.min(1, dt * 5); }
+      if (Math.random() < 0.3) FG.funken(boot.x - Math.cos(blickW) * 26, boot.y - Math.sin(blickW) * 26, { n: 1, farbe: "#bff6ff", tempo: 40, winkel: blickW + Math.PI, streu: 0.5, leben: 0.9, groesse: 2, linie: false, reibung: 0.96, schwerkraft: -40 });
+      boot.unverwundbar -= dt;
+      sauerstoff -= dt * (3.2 + zeitImSpiel / 60);
+      stroemung = 1 + zeitImSpiel / 70;
+      spawnT -= dt;
+      if (spawnT <= 0) { dinge.push(neuesDing()); spawnT = Math.max(0.35, 1.15 - zeitImSpiel / 120); }
+      for (const d of dinge) {
+        d.x -= d.v * stroemung * dt; d.p += dt;
+        if (d.art === "qualle") d.y = d.hy + Math.sin(d.p * 1.3) * 30;
+        if (d.art === "mine") d.y += Math.sin(d.p) * 8 * dt;
+        const ab = FG.abstand(d.x, d.y, boot.x, boot.y);
+        if (ab < d.r + 18 && !d.weg) {
+          if (d.art === "perle") { d.weg = true; perlen++; punkte += 10; sauerstoff = Math.min(100, sauerstoff + 14); FG.ton("punkt"); FG.funken(d.x, d.y, { n: 16, farbe: C.cyan, tempo: 180 }); FG.ring(d.x, d.y, C.cyan, 50); FG.text(d.x, d.y - 20, "+O₂", C.cyan, 18); }
+          else if (boot.unverwundbar <= 0) {
+            d.weg = true; huelle--; boot.unverwundbar = 1.5;
+            if (d.art === "mine") { FG.explosion(d.x, d.y, C.neon, 1.4); FG.ton("boom"); FG.blitz(C.neon, 0.4); boot.vx -= 300; }
+            else { FG.funken(d.x, d.y, { n: 24, farbe: C.lila, tempo: 220 }); FG.ton("treffer"); FG.blitz(C.lila, 0.25); FG.wackeln(6); }
+          }
+        }
+      }
+      dinge = dinge.filter((d) => !d.weg && d.x > -60);
+      punkte += dt * 2;
+      if (huelle <= 0) FG.ende(Math.round(punkte), `Hülle gebrochen. ${perlen} Perlen geborgen.`);
+      else if (sauerstoff <= 0) FG.ende(Math.round(punkte), `Kein Sauerstoff mehr. ${perlen} Perlen geborgen.`);
+      FG.hud({ Punkte: Math.round(punkte), "O₂": Math.max(0, Math.round(sauerstoff)) + " %", Hülle: "◆".repeat(Math.max(0, huelle)) || "–" });
+    },
+    zeichne(c) {
+      if (!boot) return;
+      const W = FG.W, H = FG.H, t = FG.zeit;
+      // Meeresboden mit Felsen und Seetang
+      c.fillStyle = "#020a10"; c.beginPath(); c.moveTo(0, H);
+      for (let x = 0; x <= W + 40; x += 40) c.lineTo(x, H - 26 - Math.sin((x + t * 30) / 70) * 10 - Math.sin((x + t * 30) / 23) * 5);
+      c.lineTo(W, H); c.fill();
+      c.strokeStyle = "rgba(40,120,90,.5)"; c.lineWidth = 3; c.lineCap = "round";
+      for (let i = 0; i < 9; i++) { const x = ((i * 137 - t * 30) % (W + 60) + W + 60) % (W + 60) - 30; c.beginPath(); c.moveTo(x, H - 20); for (let k = 1; k < 6; k++) c.lineTo(x + Math.sin(t * 1.5 + k + i) * 6, H - 20 - k * 14); c.stroke(); }
+      // Minen und Perlen (die Dunkelheit kommt gleich darüber)
+      for (const d of dinge) {
+        if (d.art === "mine") {
+          c.save(); c.translate(d.x, d.y);
+          c.strokeStyle = "#3a3f46"; c.lineWidth = 3; for (let i = 0; i < 8; i++) { const w = (i / 8) * Math.PI * 2 + d.p * 0.2; c.beginPath(); c.moveTo(Math.cos(w) * 12, Math.sin(w) * 12); c.lineTo(Math.cos(w) * 21, Math.sin(w) * 21); c.stroke(); }
+          const g = c.createRadialGradient(-5, -5, 2, 0, 0, 16); g.addColorStop(0, "#7b828c"); g.addColorStop(1, "#1a1d22"); c.fillStyle = g; c.beginPath(); c.arc(0, 0, 15, 0, 7); c.fill();
+          c.strokeStyle = "#555c66"; c.beginPath(); c.moveTo(0, 15); c.lineTo(0, 60); c.stroke();
+          c.restore();
+        } else if (d.art === "perle") {
+          const g = c.createRadialGradient(d.x - 3, d.y - 3, 1, d.x, d.y, d.r); g.addColorStop(0, "#ffffff"); g.addColorStop(0.5, "#d9fffb"); g.addColorStop(1, "#5cc6be"); c.fillStyle = g; c.beginPath(); c.arc(d.x, d.y, d.r, 0, 7); c.fill();
+          c.strokeStyle = "rgba(255,240,200,.6)"; c.lineWidth = 2; c.beginPath(); c.ellipse(d.x, d.y + 4, 16, 6, 0, 0, Math.PI); c.stroke();
+        }
+      }
+      // Dunkelheit mit ausgeschnittenem Scheinwerfer-Kegel
+      dctx.globalCompositeOperation = "source-over"; dctx.clearRect(0, 0, W, H);
+      dctx.fillStyle = "rgba(0,5,12,.94)"; dctx.fillRect(0, 0, W, H);
+      dctx.globalCompositeOperation = "destination-out";
+      const L = Math.max(W, H) * 0.5, kx = boot.x + Math.cos(blickW) * 18, ky = boot.y + Math.sin(blickW) * 18;
+      const kegel = dctx.createRadialGradient(kx, ky, 10, kx, ky, L);
+      kegel.addColorStop(0, "rgba(0,0,0,1)"); kegel.addColorStop(0.6, "rgba(0,0,0,.75)"); kegel.addColorStop(1, "rgba(0,0,0,0)");
+      dctx.fillStyle = kegel; dctx.beginPath(); dctx.moveTo(kx, ky); dctx.arc(kx, ky, L, blickW - 0.42, blickW + 0.42); dctx.closePath(); dctx.fill();
+      const nah = dctx.createRadialGradient(boot.x, boot.y, 0, boot.x, boot.y, 70); nah.addColorStop(0, "rgba(0,0,0,.9)"); nah.addColorStop(1, "rgba(0,0,0,0)");
+      dctx.fillStyle = nah; dctx.beginPath(); dctx.arc(boot.x, boot.y, 70, 0, 7); dctx.fill();
+      c.drawImage(dunkel, 0, 0, W, H);
+      // Lichtstrahl sichtbar im Wasser
+      c.save(); c.globalCompositeOperation = "lighter";
+      const strahl = c.createRadialGradient(kx, ky, 0, kx, ky, L); strahl.addColorStop(0, "rgba(255,230,170,.22)"); strahl.addColorStop(1, "rgba(255,230,170,0)");
+      c.fillStyle = strahl; c.beginPath(); c.moveTo(kx, ky); c.arc(kx, ky, L, blickW - 0.38, blickW + 0.38); c.closePath(); c.fill(); c.restore();
+      // Selbstleuchtendes: Perlen-Schimmer, Quallen, Minen-Warnlicht
+      for (const d of dinge) {
+        if (d.art === "perle") FG.leuchten(d.x, d.y, 26 + Math.sin(d.p * 3) * 4, C.cyan, 0.55);
+        else if (d.art === "mine" && Math.sin(d.p * 4) > 0.9) FG.leuchten(d.x, d.y - 14, 14, C.rot, 0.9);
+        else if (d.art === "qualle") {
+          const puls = 0.85 + Math.sin(d.p * 3) * 0.15;
+          FG.leuchten(d.x, d.y, 60 * puls, C.lila, 0.5);
+          c.save(); c.translate(d.x, d.y); c.scale(puls, 1 / puls);
+          const g = c.createRadialGradient(0, -6, 2, 0, 0, d.r); g.addColorStop(0, "rgba(255,230,255,.95)"); g.addColorStop(0.6, "rgba(181,123,255,.7)"); g.addColorStop(1, "rgba(181,123,255,.15)");
+          c.fillStyle = g; c.beginPath(); c.arc(0, 0, d.r, Math.PI, 0); c.quadraticCurveTo(0, 8, -d.r, 0); c.fill(); c.restore();
+          c.strokeStyle = "rgba(210,170,255,.6)"; c.lineWidth = 1.5;
+          for (let i = -2; i <= 2; i++) { c.beginPath(); c.moveTo(d.x + i * 6, d.y + 4); for (let k = 1; k < 6; k++) c.lineTo(d.x + i * 6 + Math.sin(t * 4 + k + i) * 4, d.y + 4 + k * 7); c.stroke(); }
+        }
+      }
+      // Das U-Boot
+      if (FG.zustand !== "ende" && !(boot.unverwundbar > 0 && Math.floor(t * 12) % 2)) {
+        c.save(); c.translate(boot.x, boot.y); c.rotate(blickW); const spiegel = Math.cos(blickW) < 0; if (spiegel) c.scale(1, -1);
+        FG.leuchten(0, 0, 50, C.neon, 0.25);
+        const g = c.createLinearGradient(0, -14, 0, 14); g.addColorStop(0, "#ffcf8f"); g.addColorStop(0.5, "#ff8a1e"); g.addColorStop(1, "#7a3300");
+        c.fillStyle = g; c.beginPath(); c.ellipse(0, 0, 26, 13, 0, 0, 7); c.fill();
+        c.fillStyle = "#c25a0a"; FG.rund(c, -6, -21, 14, 10, 4); c.fill();
+        c.fillStyle = "#08202a"; c.beginPath(); c.arc(8, -2, 6, 0, 7); c.fill(); c.strokeStyle = "#ffe0b0"; c.lineWidth = 2; c.stroke();
+        c.fillStyle = "rgba(46,230,208,.6)"; c.beginPath(); c.arc(9, -3, 3, 0, 7); c.fill();
+        c.save(); c.translate(-28, 0); c.rotate(t * 20); c.fillStyle = "#5a2a05"; c.fillRect(-1.5, -8, 3, 16); c.restore();
+        c.fillStyle = "#fff6d8"; c.beginPath(); c.arc(25, 1, 3, 0, 7); c.fill(); FG.leuchten(26, 1, 20, C.gold, 0.9);
+        c.restore();
+      }
+      // Sauerstoff-Warnung
+      if (sauerstoff < 25 && FG.zustand === "spiel") { c.fillStyle = FG.rgba(C.rot, 0.12 + 0.1 * Math.sin(t * 8)); c.fillRect(0, 0, W, H); }
+    },
+  });
+})();
+</script>
+</body>
+</html>

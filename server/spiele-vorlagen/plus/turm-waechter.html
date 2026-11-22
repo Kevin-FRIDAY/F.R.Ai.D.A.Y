@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Turm-Wächter</title>
+<!--FRIDAY-GRAFIK-->
+<style>
+  #tw-leiste { position: fixed; left: 0; right: 0; bottom: max(10px, env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 8px; z-index: 3; padding: 0 10px; flex-wrap: wrap; }
+  #tw-leiste button { padding: 10px 14px; border-radius: 14px; border: 1px solid rgba(255,138,30,.45); background: rgba(12,7,4,.7); color: #ffe7cc; font: 600 13px system-ui, sans-serif; letter-spacing: .04em; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); cursor: pointer; }
+  #tw-leiste button.an { border-color: #2ee6d0; box-shadow: 0 0 16px rgba(46,230,208,.45); color: #fff; }
+  #tw-leiste button:disabled { opacity: .4; }
+  #tw-leiste small { color: #ffc44d; margin-left: 4px; }
+</style>
+</head>
+<body>
+<div id="tw-leiste" hidden>
+  <button id="tw-laser" class="an" type="button">⚡ Laser<small>40</small></button>
+  <button id="tw-puls" type="button">◎ Puls<small>70</small></button>
+  <button id="tw-welle" type="button">▶ Welle</button>
+</div>
+<script>
+// Turm-Wächter: Baue Laser- und Puls-Türme neben die Neon-Bahn und halte die Drohnen-Wellen auf.
+(() => {
+  const C = FG.C;
+  const ARTEN = { laser: { kosten: 40, reichweite: 2.6, schaden: 9, takt: 0.12, farbe: C.cyan }, puls: { kosten: 70, reichweite: 1.9, schaden: 14, takt: 1.1, farbe: C.lila } };
+  let SP, ZE, G, OX, OY, weg, wegLaenge, wegZellen, tuerme, feinde, geld, leben, welle, spawnRest, spawnT, pause, punkte, wahl, cursor, strahlen, laeuftWelle;
+  const leiste = document.getElementById("tw-leiste"), $ = (id) => document.getElementById(id);
+
+  function layout(W, H) {
+    const quer = W > H;
+    SP = quer ? 14 : 8; ZE = quer ? 8 : 14;
+    const oben = W < 560 ? 116 : 64; // Platz für die Anzeige oben (auf dem Handy zweizeilig)
+    G = Math.floor(Math.min((W - 20) / SP, (H - oben - 90) / ZE));
+    OX = Math.round((W - SP * G) / 2); OY = Math.round(Math.max(oben, (H - ZE * G) / 2 - 10));
+    const punkteQuer = [[-1, 1], [11, 1], [11, 4], [2, 4], [2, 6], [14, 6]];
+    weg = (quer ? punkteQuer : punkteQuer.map(([x, y]) => [y, x])).map(([x, y]) => ({ x: x + 0.5, y: y + 0.5 }));
+    wegLaenge = 0; for (let i = 1; i < weg.length; i++) wegLaenge += FG.abstand(weg[i - 1].x, weg[i - 1].y, weg[i].x, weg[i].y);
+    wegZellen = new Set();
+    for (let i = 1; i < weg.length; i++) { const a = weg[i - 1], b = weg[i], n = Math.ceil(FG.abstand(a.x, a.y, b.x, b.y) * 2); for (let k = 0; k <= n; k++) wegZellen.add(`${Math.floor(FG.misch(a.x, b.x, k / n))},${Math.floor(FG.misch(a.y, b.y, k / n))}`); }
+  }
+  // Position auf der Bahn (in Zellen) für eine Strecke d
+  function aufWeg(d) {
+    for (let i = 1; i < weg.length; i++) { const a = weg[i - 1], b = weg[i], l = FG.abstand(a.x, a.y, b.x, b.y); if (d <= l) return { x: FG.misch(a.x, b.x, d / l), y: FG.misch(a.y, b.y, d / l) }; d -= l; }
+    return weg[weg.length - 1];
+  }
+  const px = (x) => OX + x * G, py = (y) => OY + y * G;
+
+  function neueWelle() {
+    if (laeuftWelle) return;
+    welle++; laeuftWelle = true; spawnRest = 8 + welle * 2; spawnT = 0;
+    FG.text(FG.W / 2, FG.H / 2, `WELLE ${welle}`, C.gold, 34); FG.ton("level");
+  }
+  function neuerFeind() {
+    const r = Math.random(), staerke = Math.pow(1.22, welle - 1);
+    const art = welle > 2 && r < 0.2 ? "panzer" : welle > 1 && r < 0.45 ? "flitzer" : "drohne";
+    const t = { drohne: { hp: 30, v: 1.5, farbe: C.neon, geld: 5 }, flitzer: { hp: 18, v: 2.6, farbe: C.gold, geld: 6 }, panzer: { hp: 90, v: 0.9, farbe: "#ff5c8a", geld: 12 } }[art];
+    feinde.push({ art, d: 0, hp: t.hp * staerke, max: t.hp * staerke, v: t.v, farbe: t.farbe, geld: t.geld, langsam: 0, p: Math.random() * 6 });
+  }
+  function bauen(c, r) {
+    if (r < 0 || r >= ZE || c < 0 || c >= SP || wegZellen.has(`${c},${r}`)) return;
+    const da = tuerme.find((t) => t.c === c && t.r === r);
+    if (da) { // Aufrüsten
+      const k = Math.round(ARTEN[da.art].kosten * 0.8 * da.stufe);
+      if (da.stufe >= 3) { FG.text(px(c + 0.5), py(r), "MAX", C.weiss, 16); return; }
+      if (geld < k) { FG.text(px(c + 0.5), py(r), `${k} nötig`, C.rot, 15); FG.ton("treffer"); return; }
+      geld -= k; da.stufe++; FG.ring(px(c + 0.5), py(r + 0.5), C.gold, G * 1.4); FG.text(px(c + 0.5), py(r), `Stufe ${da.stufe}`, C.gold, 16); FG.ton("power"); return;
+    }
+    const a = ARTEN[wahl];
+    if (geld < a.kosten) { FG.text(px(c + 0.5), py(r), `${a.kosten} nötig`, C.rot, 15); FG.ton("treffer"); return; }
+    geld -= a.kosten; tuerme.push({ c, r, art: wahl, stufe: 1, cd: 0, w: 0, ziel: null });
+    FG.funken(px(c + 0.5), py(r + 0.5), { n: 16, farbe: a.farbe, tempo: 160 }); FG.ton("klick");
+  }
+  function waehle(a) { wahl = a; $("tw-laser").classList.toggle("an", a === "laser"); $("tw-puls").classList.toggle("an", a === "puls"); }
+  $("tw-laser").addEventListener("click", () => waehle("laser"));
+  $("tw-puls").addEventListener("click", () => waehle("puls"));
+  $("tw-welle").addEventListener("click", () => neueWelle());
+
+  FG.spiel({
+    id: "turm-waechter", titel: "TURM-WÄCHTER", untertitel: "Strategie · Grafik-Plus", symbol: "🗼", hintergrund: "raster",
+    anleitung: "Drohnen fliegen über die Neon-Bahn zu deinem Kern. Tippe auf ein freies Feld, um einen <b style='color:#2ee6d0'>Laser</b>- oder <b style='color:#b57bff'>Puls</b>-Turm zu bauen. Tippe einen Turm an, um ihn aufzurüsten.<br><kbd>1</kbd>/<kbd>2</kbd> Turm wählen · <kbd>Pfeile</kbd> + <kbd>Leertaste</kbd> bauen · <kbd>N</kbd> nächste Welle",
+    groesse(W, H) { layout(W, H); if (tuerme) tuerme = tuerme.filter((t) => t.c < SP && t.r < ZE && !wegZellen.has(`${t.c},${t.r}`)); },
+    init() { tuerme = []; feinde = []; strahlen = []; geld = 120; leben = 20; welle = 0; punkte = 0; pause = 3; laeuftWelle = false; cursor = { c: 5, r: 2 }; waehle("laser"); },
+    los() { leiste.hidden = false; },
+    tippen(x, y) { const c = Math.floor((x - OX) / G), r = Math.floor((y - OY) / G); cursor = { c, r }; bauen(c, r); },
+    taste(k) {
+      if (k === "1") waehle("laser"); else if (k === "2") waehle("puls"); else if (k === "n") neueWelle();
+      else if (k === " ") bauen(cursor.c, cursor.r);
+      else { const d = { arrowleft: [-1, 0], arrowright: [1, 0], arrowup: [0, -1], arrowdown: [0, 1] }[k]; if (d) cursor = { c: FG.klemmen(cursor.c + d[0], 0, SP - 1), r: FG.klemmen(cursor.r + d[1], 0, ZE - 1) }; }
+    },
+    pruefen: () => ({ geld, leben, welle, feinde: feinde.length, tuerme: tuerme.length, G, OX, OY, SP, ZE, frei: [...Array(SP * ZE).keys()].map((i) => [i % SP, Math.floor(i / SP)]).filter(([c, r]) => !wegZellen.has(`${c},${r}`)) }),
+    update(dt) {
+      // Wellen: nach einer Pause startet die nächste von selbst
+      if (!laeuftWelle) { pause -= dt; if (pause <= 0) neueWelle(); }
+      else if (spawnRest > 0) { spawnT -= dt; if (spawnT <= 0) { neuerFeind(); spawnRest--; spawnT = Math.max(0.35, 0.9 - welle * 0.03); } }
+      else if (!feinde.length) { laeuftWelle = false; pause = 6; const bonus = 20 + welle * 5; geld += bonus; FG.text(FG.W / 2, FG.H / 2, `+${bonus} Bonus`, C.gold, 24); }
+      for (const f of feinde) {
+        f.langsam = Math.max(0, f.langsam - dt); f.p += dt;
+        f.d += f.v * dt * (f.langsam > 0 ? 0.5 : 1);
+        if (f.d >= wegLaenge) { f.weg = true; leben--; FG.blitz(C.rot, 0.25); FG.wackeln(6); FG.ton("treffer"); }
+      }
+      // Türme feuern
+      for (const t of tuerme) {
+        const a = ARTEN[t.art], rw = a.reichweite + (t.stufe - 1) * 0.35, sch = a.schaden * (1 + (t.stufe - 1) * 0.7);
+        t.cd -= dt;
+        const imBereich = feinde.filter((f) => !f.weg && (() => { const p = aufWeg(f.d); return FG.abstand(p.x, p.y, t.c + 0.5, t.r + 0.5) <= rw; })());
+        if (t.art === "laser") {
+          const ziel = imBereich.sort((x, y) => y.d - x.d)[0];
+          if (ziel) { const p = aufWeg(ziel.d); t.w = Math.atan2(p.y - t.r - 0.5, p.x - t.c - 0.5); if (t.cd <= 0) { ziel.hp -= sch; t.cd = a.takt; strahlen.push({ x1: t.c + 0.5, y1: t.r + 0.5, x2: p.x, y2: p.y, t: 0.08, f: a.farbe }); if (Math.random() < 0.3) FG.funken(px(p.x), py(p.y), { n: 2, farbe: C.cyan, tempo: 100, leben: 0.25 }); } }
+        } else if (imBereich.length && t.cd <= 0) {
+          t.cd = a.takt; for (const f of imBereich) { f.hp -= sch; f.langsam = 1.2; }
+          FG.ring(px(t.c + 0.5), py(t.r + 0.5), a.farbe, rw * G, 0.4); FG.ton("schuss");
+        }
+      }
+      for (const f of feinde) if (f.hp <= 0 && !f.weg) { f.weg = true; geld += f.geld; punkte += 10; const p = aufWeg(f.d); FG.explosion(px(p.x), py(p.y), f.farbe, f.art === "panzer" ? 1 : 0.6); FG.text(px(p.x), py(p.y) - 10, `+${f.geld}`, C.gold, 14); FG.ton(f.art === "panzer" ? "boom" : "punkt"); }
+      feinde = feinde.filter((f) => !f.weg);
+      strahlen = strahlen.filter((s) => (s.t -= dt) > 0);
+      if (leben <= 0) { leiste.hidden = true; FG.ende(punkte + welle * 100, `Der Kern ist gefallen in Welle ${welle}.`); }
+      $("tw-laser").disabled = geld < ARTEN.laser.kosten; $("tw-puls").disabled = geld < ARTEN.puls.kosten; $("tw-welle").disabled = laeuftWelle;
+      FG.hud({ Welle: welle, Geld: geld, Kern: leben, Punkte: punkte + welle * 100 });
+    },
+    zeichne(c) {
+      if (!weg) return;
+      const t = FG.zeit;
+      // Spielfeld
+      c.fillStyle = "rgba(10,6,16,.6)"; FG.rund(c, OX - 6, OY - 6, SP * G + 12, ZE * G + 12, 14); c.fill();
+      c.strokeStyle = "rgba(255,138,30,.08)"; c.lineWidth = 1; c.beginPath();
+      for (let i = 0; i <= SP; i++) { c.moveTo(px(i), OY); c.lineTo(px(i), py(ZE)); } for (let i = 0; i <= ZE; i++) { c.moveTo(OX, py(i)); c.lineTo(px(SP), py(i)); } c.stroke();
+      // Neon-Bahn
+      c.save(); c.beginPath(); c.rect(OX - 6, OY - 6, SP * G + 12, ZE * G + 12); c.clip();
+      c.lineCap = "round"; c.lineJoin = "round";
+      const bahn = () => { c.beginPath(); weg.forEach((p, i) => (i ? c.lineTo(px(p.x), py(p.y)) : c.moveTo(px(p.x), py(p.y)))); };
+      FG.glow(C.neon, 18, (k) => { bahn(); k.strokeStyle = FG.rgba(C.neon, 0.85); k.lineWidth = G * 0.84; k.stroke(); });
+      bahn(); c.strokeStyle = "#140b1c"; c.lineWidth = G * 0.74; c.stroke();
+      bahn(); c.strokeStyle = "rgba(255,138,30,.06)"; c.lineWidth = G * 0.5; c.stroke();
+      bahn(); c.setLineDash([G * 0.2, G * 0.3]); c.lineDashOffset = -t * G; c.strokeStyle = FG.rgba(C.neon, 0.35); c.lineWidth = 2; c.stroke(); c.setLineDash([]);
+      c.restore();
+      // Kern am Ende
+      const e = weg[weg.length - 2], ex = px(FG.klemmen(e.x, 0.5, SP - 0.5)), ey = py(FG.klemmen(weg[weg.length - 1].y, 0.5, ZE - 0.5));
+      FG.leuchten(ex, ey, G * 1.6, leben > 5 ? C.cyan : C.rot, 0.6 + 0.2 * Math.sin(t * 4));
+      // Bau-Vorschau (Tastatur)
+      if (cursor && FG.zustand === "spiel") { c.strokeStyle = FG.rgba(C.cyan, 0.5); c.lineWidth = 2; FG.rund(c, px(cursor.c) + 2, py(cursor.r) + 2, G - 4, G - 4, 6); c.stroke(); }
+      // Türme
+      for (const tu of tuerme) {
+        const a = ARTEN[tu.art], x = px(tu.c + 0.5), y = py(tu.r + 0.5), r = G * 0.38;
+        FG.leuchten(x, y, G * 0.9, a.farbe, 0.25 + tu.stufe * 0.08);
+        c.fillStyle = FG.verlauf(c, x, y - r, x, y + r, ["#3a2a48", "#120a18"]); c.beginPath(); for (let i = 0; i < 6; i++) { const w = i / 6 * Math.PI * 2 + Math.PI / 6; c.lineTo(x + Math.cos(w) * r, y + Math.sin(w) * r); } c.closePath(); c.fill();
+        c.strokeStyle = a.farbe; c.lineWidth = 1.5; c.stroke();
+        for (let s = 0; s < tu.stufe; s++) { c.fillStyle = C.gold; c.beginPath(); c.arc(x - r * 0.5 + s * r * 0.5, y + r * 0.72, 2, 0, 7); c.fill(); }
+        c.save(); c.translate(x, y);
+        if (tu.art === "laser") { c.rotate(tu.w); c.fillStyle = "#e8fffc"; FG.rund(c, -4, -4, r * 1.2, 8, 3); c.fill(); c.fillStyle = C.cyan; c.beginPath(); c.arc(0, 0, r * 0.38, 0, 7); c.fill(); }
+        else { const s = 1 + 0.15 * Math.sin(t * 5 + tu.c); c.strokeStyle = C.lila; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, r * 0.5 * s, 0, 7); c.stroke(); c.fillStyle = "#f2e3ff"; c.beginPath(); c.arc(0, 0, r * 0.22, 0, 7); c.fill(); }
+        c.restore();
+      }
+      // Feinde mit Lebensbalken
+      for (const f of feinde) {
+        const p = aufWeg(f.d), x = px(p.x), y = py(p.y) + Math.sin(f.p * 6) * 2, r = G * (f.art === "panzer" ? 0.32 : f.art === "flitzer" ? 0.2 : 0.25);
+        FG.leuchten(x, y, r * 3, f.langsam > 0 ? C.lila : f.farbe, 0.55);
+        c.save(); c.translate(x, y); c.rotate(f.p * (f.art === "flitzer" ? 6 : 2));
+        c.fillStyle = FG.verlauf(c, -r, -r, r, r, ["#fff", f.farbe]); c.beginPath();
+        const ecken = f.art === "panzer" ? 4 : f.art === "flitzer" ? 3 : 5; for (let i = 0; i < ecken; i++) { const w = i / ecken * Math.PI * 2; c.lineTo(Math.cos(w) * r, Math.sin(w) * r); } c.closePath(); c.fill();
+        c.restore();
+        const anteil = Math.max(0, f.hp / f.max);
+        if (anteil < 1) { c.fillStyle = "rgba(0,0,0,.6)"; c.fillRect(x - r, y - r - 8, r * 2, 4); c.fillStyle = anteil > 0.4 ? C.gruen : C.rot; c.fillRect(x - r, y - r - 8, r * 2 * anteil, 4); }
+      }
+      // Laserstrahlen
+      c.save(); c.globalCompositeOperation = "lighter"; c.lineCap = "round";
+      for (const s of strahlen) { c.strokeStyle = FG.rgba(s.f, 0.35); c.lineWidth = 7; c.beginPath(); c.moveTo(px(s.x1), py(s.y1)); c.lineTo(px(s.x2), py(s.y2)); c.stroke(); c.strokeStyle = "#e8fffc"; c.lineWidth = 2; c.stroke(); }
+      c.restore();
+      if (!laeuftWelle && FG.zustand === "spiel" && welle > 0) { c.fillStyle = "rgba(255,231,204,.7)"; c.font = "600 13px system-ui"; c.textAlign = "center"; c.fillText(`Nächste Welle in ${Math.ceil(pause)} s`, FG.W / 2, py(ZE) + 22); }
+    },
+  });
+})();
+</script>
+</body>
+</html>

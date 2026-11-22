@@ -20,7 +20,7 @@ import { status as modelleStatus, modellDatei, sketchfabVerbinden, sketchfabTren
 import { getEnergie, aufladen, einnahme } from "./energie.js";
 import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } from "./einstellungen.js";
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir } from "./webseiten.js";
-import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, VORLAGEN } from "./spiele.js";
+import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, vorlagenListe, plusFrei } from "./spiele.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { helferRouten, helferStart } from "./helfer.js";
 import { wacheRouten, wacheStart } from "./wache.js";
@@ -565,7 +565,7 @@ app.post("/api/archiv/wegwerfen", (req, res) => { const r = fotoWegwerfen(req.bo
 app.post("/api/archiv/ordner", (req, res) => res.json(oeffneOrdner(req.body?.jahr, req.body?.monat)));
 app.get("/api/webseiten", (req, res) => res.json(listSites()));
 // Spiele-Werkstatt: bauen (Code kommt live), Stand abfragen, spielen, wegwerfen.
-app.get("/api/spiele", (req, res) => res.json({ spiele: listeSpiele(), claude: claudeBereit(), vorlagen: VORLAGEN.map((v) => ({ id: v.id, titel: v.titel })), aktuell: aktuellerJob() }));
+app.get("/api/spiele", (req, res) => res.json({ spiele: listeSpiele(), claude: claudeBereit(), vorlagen: vorlagenListe(), plus: plusFrei(), aktuell: aktuellerJob() }));
 app.post("/api/spiel", (req, res) => res.json(starteSpiel(req.body?.auftrag, { basis: req.body?.basis || null, vorlage: req.body?.vorlage || null, kanal: "web" })));
 app.get("/api/spiel/job/:id", (req, res) => { const j = jobStand(req.params.id, req.query.ab); if (!j) return res.status(404).json({ error: "Auftrag nicht gefunden" }); res.json(j); });
 app.get("/api/spiel/:id/html", (req, res) => { const html = spielHtml(req.params.id); if (html == null) return res.status(404).json({ error: "Nicht gefunden" }); res.json({ html }); });

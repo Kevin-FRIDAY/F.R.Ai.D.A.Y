@@ -46,3 +46,22 @@ Programmieren macht Claude (kostet ein paar Cent je Spiel, siehe ⚡ Energie). I
 ## Sicherheit
 
 Die Spiele laufen abgeschottet (Sandbox). Sie kommen nicht an Fridays Anmeldung, deine Daten oder den Mac.
+
+## Neu in v1.144.0: Spiele-Datenbank mit Grafik-Plus (zuerst nur in Eve)
+
+Unter **📚 Meine Spiele** gibt es jetzt die **Spiele-Datenbank** mit Kategorien (Rennen, Geschick, Denken, Abenteuer, Strategie) und sechs neuen, eigenen Spielen in deutlich hochwertigerer Grafik. Alle laufen ohne Claude-Guthaben, auf dem iPhone und am Mac:
+
+| Spiel | Art | Steuerung |
+|---|---|---|
+| 🏁 Neon-Drift | 3D-Rennen bei Sonnenuntergang | ← → oder linke/rechte Bildschirmhälfte |
+| 🪐 Orbit-Sprung | Von Planet zu Planet springen | Antippen / Leertaste |
+| 💎 Kristall-Fall | Kristalle tauschen, Dreier-Reihen | Wischen oder Pfeile + Leertaste |
+| 🔦 Tiefsee-Licht | Mit dem Scheinwerfer durch die Tiefsee | Finger ziehen / Pfeile / Maus halten |
+| 🏃 Licht-Läufer | Lauf über die Dächer der Neon-Stadt | Antippen / Leertaste (2× = Doppelsprung) |
+| 🗼 Turm-Wächter | Türme bauen, Drohnen-Wellen abwehren | Feld antippen, Knöpfe unten |
+
+Per Sprache: „Friday, starte Neon-Drift“, „lass uns Turm-Wächter spielen“, „öffne die Spiele-Datenbank“.
+
+**Grafik-Motor:** Alle neuen Spiele benutzen einen gemeinsamen Grafik-Motor (Leucht-Effekte, Partikel, Schockwellen, Bildschirm-Wackeln, Töne, Touch-Joystick, Rekorde). Wenn Claude in Eve ein neues Spiel programmiert, benutzt er denselben Motor, dadurch sehen auch selbst gewünschte Spiele viel besser aus. Wird das iPhone zu langsam, schaltet der Motor von selbst in einen Sparmodus.
+
+**Freigabe:** In Friday sind die neuen Spiele mit 🔒 gesperrt. Probier sie in Eve aus und gib „Spiele-Werkstatt Plus“ im Fenster **Eve-Tests** frei, dann gibt es sie auch in Friday.
