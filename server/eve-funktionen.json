@@ -49,6 +49,15 @@
       "ziele": []
     },
     {
+      "id": "zerlege-labor",
+      "name": "Zerlege-Labor in der Werkstatt",
+      "version": "1.143.0",
+      "beschreibung": "7 detailgetreue Modelle (Sportwagen mit V8, Elektroauto, V8-Motor, Motorrad, Flugzeug-Triebwerk, 6-Gang-Getriebe, Gaming-PC) mit 376 echten Bauteilen. Teile antippen, herausnehmen (z. B. Motor raus), greifen und verschieben, Explosionsansicht, Röntgen, Motor läuft, Zerlegen-Show.",
+      "ziele": [
+        "#werkstatt-zerlegen"
+      ]
+    },
+    {
       "id": "spiele-plus",
       "name": "Spiele-Werkstatt Plus (Grafik-Plus + 6 neue Spiele)",
       "version": "1.144.0",

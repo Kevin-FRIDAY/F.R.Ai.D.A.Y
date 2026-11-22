@@ -127,6 +127,7 @@
 
   function loop(t) {
     raf = requestAnimationFrame(loop);
+    if (box.classList.contains("zl-an")) return; // Zerlege-Labor liegt darüber – hier nichts rechnen
     if (autoSpin) yaw += 0.0025;
     // Nebel mit dem Abstand mitziehen, sonst verschwinden große Modelle (Häuser) im Dunst.
     scene.fog.near = Math.max(14, dist * 0.9); scene.fog.far = Math.max(46, dist * 3);
@@ -556,6 +557,8 @@
   async function request(wunsch, { neu = false } = {}) {
     wunsch = String(wunsch || "").trim();
     if (!wunsch) return;
+    // v1.143.0: "zerleg den Motor", "Explosionsansicht" → Zerlege-Labor (nur wenn freigegeben bzw. in Eve)
+    if (window.FridayZerlege?.passt(wunsch)) { window.FridayZerlege.befehl(wunsch); return; }
     const erweitern = !neu && $("werkstatt-extend").checked && plan;
     running++;
     setState("PLANT …", "busy");
