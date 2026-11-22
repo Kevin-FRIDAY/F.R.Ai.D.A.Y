@@ -13,7 +13,7 @@ import { U } from "./datum.js";
 import { IST_EVE } from "./config.js";
 import { istFrei } from "./eve.js";
 
-// v1.145.0 (im Test, in Friday erst nach Freigabe in Eve): Nachrichten gehen direkt an den Empfänger.
+// v1.147.0 (im Test, in Friday erst nach Freigabe in Eve): Nachrichten gehen direkt an den Empfänger.
 // "Schick meiner Frau, dass ich sie liebe" → "Ich liebe dich." statt "Ich liebe sie."
 export const FUNKTION_DU = "nachricht-du-form";
 export const duFormFrei = () => IST_EVE || istFrei(FUNKTION_DU);

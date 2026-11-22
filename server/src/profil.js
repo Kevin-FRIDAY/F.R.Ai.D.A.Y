@@ -1,4 +1,4 @@
-// Mein Profil (v1.145.0, im Test: in Friday erst nach Freigabe in Eve).
+// Mein Profil (v1.147.0, im Test: in Friday erst nach Freigabe in Eve).
 // Boss tippt unten links auf sein Profil und trägt dort alles Persönliche ein:
 // Foto, Name, Geburtstag (daraus das Alter), Adresse, Telefon, Beruf, Familie, Hobbys …
 // Gespeichert nur lokal auf dem Mac in data/profil.json (in Eve: in den Eve-Daten).

@@ -767,6 +767,10 @@
         else if (hat("spiel_bauen")) window.FridaySpiele?.neuester();
         else if (spielStart) window.FridaySpiele?.spiel(spielStart.slice(6));
         else if (hat("spiele")) window.FridaySpiele?.open();
+        // Markt-Radar Plus (v1.145.0): Markt anzeigen, Prognose oder Markt-Wache.
+        const mpA = aktion("marktplus:");
+        if (mpA) window.FridayMarktPlus?.open(mpA.slice(10));
+        else if (hat("markt_plus")) window.FridayMarktPlus?.open("");
         const zentraleAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("zentrale:"));
         if (zentraleAktion) window.FridayZentrale?.open(zentraleAktion.slice(9));
         else window.FridayZentrale?.refresh();
@@ -936,7 +940,7 @@
     storage.set("friday_nur_weckwort", "1");
   }
   bindFlag("set-gespraech", "friday_gespraech", false);
-  (() => { // v1.145.0: wie lange Friday im Gespräch dran bleibt (Eve-Test „gespraech-laenger“)
+  (() => { // v1.147.0: wie lange Friday im Gespräch dran bleibt (Eve-Test „gespraech-laenger“)
     const el = $("set-gespraech-dauer");
     if (!el) return;
     const v = storage.get("friday_gespraech_dauer");
@@ -1684,7 +1688,7 @@
   // Gesprächsmodus (Standard AUS): Nach einer gesprochenen Antwort zählt der nächste Satz auch ohne "Friday".
   // Aus, weil Friday sonst das Gespräch mit anderen an sich selbst schickt. Einschalten: Einstellungen → Assistent.
   const gespraechAn = () => storage.get("friday_gespraech") === "1";
-  // v1.145.0 (Eve-Test „gespraech-laenger“): Hat Boss Friday mit „Friday …“ angesprochen, bleibt sie nach jeder
+  // v1.147.0 (Eve-Test „gespraech-laenger“): Hat Boss Friday mit „Friday …“ angesprochen, bleibt sie nach jeder
   // Antwort eine Weile dran (Einstellung friday_gespraech_dauer: 0 = aus, 15/30/60 s, Standard 30).
   const langFrei = () => { try { return !window.FridayEve?.frei || window.FridayEve.frei("gespraech-laenger"); } catch { return false; } };
   const gespraechDauer = () => {

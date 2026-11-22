@@ -34,6 +34,7 @@ import { tempoFuerFrage } from "./denker.js";
 import { quickCommand as kommandoQuick } from "./kommando.js";
 import { quickCommand as zentraleQuick } from "./zentrale.js";
 import { quickCommand as spielQuick } from "./spiele.js";
+import { quickCommand as marktplusQuick } from "./marktplus.js";
 import { quickCommand as routenQuick } from "./routen.js";
 import { quickCommand as helferQuick } from "./helfer.js";
 import { quickCommand as wacheQuick } from "./wache.js";
@@ -219,6 +220,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (sp) { actions.push(...sp.actions); return finish(sp.answer); }
     } catch (err) {
       console.error("Spiele-Werkstatt:", err.message);
+    }
+  }
+
+  // Markt-Radar Plus (v1.145.0, zuerst nur in Eve): "analysiere den DAX", "Prognose für Gold", "öffne die Markt-Wache".
+  if (mode !== "translate" && !image && text) {
+    try {
+      const mp = await marktplusQuick(text);
+      if (mp) { actions.push(...mp.actions); return finish(mp.answer); }
+    } catch (err) {
+      console.error("Markt-Radar Plus:", err.message);
     }
   }
 

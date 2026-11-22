@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y – Mein Profil (v1.145.0, im Test: in Friday erst nach Freigabe in Eve)
+// F.R.Ai.D.A.Y – Mein Profil (v1.147.0, im Test: in Friday erst nach Freigabe in Eve)
 // Unten links aufs Profil tippen → Fenster mit Foto, Name, Geburtstag (Alter rechnet Friday aus),
 // Adresse, Kontakt, Familie, Vorlieben, Gesundheit und Notizen. Gespeichert nur auf dem Mac (/api/profil).
 (() => {

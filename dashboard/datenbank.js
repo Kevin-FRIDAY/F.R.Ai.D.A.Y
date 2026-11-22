@@ -81,7 +81,7 @@
   .db-screen-in { grid-template-columns: 1fr; transform: none; border-radius: 18px; padding: 12px; }
   .db-mitte { order: -1; }
   .db-top { flex-wrap: wrap; }
-}/* v1.145.0 (Eve-Test „datenbank-gespeichert“): grüner Haken nach dem Speichern */
+}/* v1.147.0 (Eve-Test „datenbank-gespeichert“): grüner Haken nach dem Speichern */
 .db-ok { display: none; align-items: center; gap: 8px; margin-top: 2px; padding: 7px 10px; border-radius: 10px; border: 1px solid rgba(56,224,140,.55); background: rgba(56,224,140,.1); color: #c9ffe3; font-size: 13px; }
 .db-ok.an { display: flex; animation: dbOkRein .35s ease-out; }
 .db-ok .db-ok-kreis { flex: none; width: 22px; height: 22px; border-radius: 50%; background: #38e08c; color: #04210f; display: grid; place-items: center; font-weight: 800; font-size: 14px; box-shadow: 0 0 12px rgba(56,224,140,.8); }
@@ -182,7 +182,7 @@
     } catch { $("db-notiz-text").placeholder = "Speichern ging nicht – nochmal versuchen."; }
   });
 
-  // ---------- v1.145.0 (Eve-Test): grüner Haken + „Zuletzt gespeichert“ ----------
+  // ---------- v1.147.0 (Eve-Test): grüner Haken + „Zuletzt gespeichert“ ----------
   const hakenFrei = () => { try { return !window.FridayEve?.frei || window.FridayEve.frei("datenbank-gespeichert"); } catch { return true; } };
   const form = $("db-notiz");
   let okEl = null, zEl = null, okTimer = null;
