@@ -83,6 +83,39 @@
       "ziele": [
         "#ws-live-marke"
       ]
+    },
+    {
+      "id": "mein-profil",
+      "name": "Mein Profil (unten links)",
+      "version": "1.147.0",
+      "beschreibung": "Unten links auf dein Profil tippen: Foto, Name, Geburtstag (Friday rechnet dein Alter aus), Adresse, Telefon, Beruf, Familie, Hobbys und mehr speichern. Bleibt nur auf deinem Mac. Friday kennt davon nur die Grunddaten, wenn du es erlaubst. Sprache: „Friday, öffne mein Profil“, „Wie alt bin ich?“.",
+      "ziele": [
+        ".side-user-panel",
+        "#profil-ganz"
+      ]
+    },
+    {
+      "id": "nachricht-du-form",
+      "name": "Nachrichten direkt an den Empfänger",
+      "version": "1.147.0",
+      "beschreibung": "„Schick meiner Frau eine Nachricht, in der steht, ich liebe sie“ → bei ihr kommt „Ich liebe dich.“ an, nicht „Ich liebe sie.“ Klappt auch mit er/ihn/ihm, sein/ihr, „dass sie heute kommen soll“ → „Du sollst heute kommen.“",
+      "ziele": []
+    },
+    {
+      "id": "gespraech-laenger",
+      "name": "Gespräch: Friday bleibt länger dran",
+      "version": "1.147.0",
+      "beschreibung": "Hast du Friday mit „Friday …“ angesprochen, hört sie danach weiter zu (einstellbar 15, 30 oder 60 Sekunden nach jeder Antwort), ohne dass du jedes Mal wieder „Friday“ sagen musst. Unten läuft die Zeit sichtbar mit. Ende mit „Danke“, „Stopp“, „Das war's“ oder einfach schweigen.",
+      "ziele": [
+        "#gespraech-lang-reihe"
+      ]
+    },
+    {
+      "id": "datenbank-gespeichert",
+      "name": "Datenbank: grüner Haken nach dem Speichern",
+      "version": "1.147.0",
+      "beschreibung": "Trägst du in Fridays Datenbank etwas ein (z. B. dein WLAN-Passwort) und tippst auf Speichern, erscheint ein grüner Haken mit „Gespeichert“. Der Eintrag steht danach oben in der Liste „Zuletzt gespeichert“ mit grünem Haken.",
+      "ziele": []
     }
   ]
 }

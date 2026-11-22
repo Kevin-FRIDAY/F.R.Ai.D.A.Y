@@ -63,6 +63,7 @@ import { osirisStatus } from "./osiris.js";
 import { eveRouten } from "./eve.js";
 import { appsRouten } from "./appzentrale.js";
 import { zerlegeRouten } from "./teilebank.js";
+import { profilRouten } from "./profil.js";
 import { marktplusRouten, marktWacheStart } from "./marktplus.js";
 import { eveWeiterleitung, eveStarten } from "./eve-prozess.js";
 import { eveSchutzAn } from "./eve-schutz.js";
@@ -699,6 +700,7 @@ helferRouten(app, asyncRoute);
 eveRouten(app, asyncRoute);
 appsRouten(app, asyncRoute);
 zerlegeRouten(app);
+profilRouten(app);
 marktplusRouten(app, asyncRoute);
 wacheRouten(app, asyncRoute);
 // Kontrollraum (v1.135.0): Regelwerk, Schleifen-Schutz, Gedächtnis, Herzschlag, Kosten-Deckel, Seele, Fähigkeiten, Änderungen.
