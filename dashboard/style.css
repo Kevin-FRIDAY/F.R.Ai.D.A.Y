@@ -3629,3 +3629,47 @@ html.perf-fluessig .st-kabel.an, html.perf-fluessig .st-knoten.run .st-ring { an
 .autostudio.ist-echt .as-farben { visibility: hidden; }
 .as-quelle { margin-top: 10px; font: 500 12px system-ui, sans-serif; color: #4a4f57; pointer-events: auto; }
 .as-quelle a, .as-quelle button { color: #e5621c; background: none; border: 0; padding: 0; font: inherit; cursor: pointer; text-decoration: underline; }
+
+/* ---------- Webseiten-Werkstatt: Live-Bau mit Countdown (v1.145.0, zuerst nur in Eve) ---------- */
+.ws-live-marke { position: relative; align-self: flex-start; font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .08em; color: var(--cyan, #ff8a1e); opacity: .85; padding: 2px 0; }
+.ws-live { grid-column: 2; border: 1px solid color-mix(in srgb, var(--cyan, #ff8a1e) 45%, transparent); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; min-height: 0;
+  background: var(--u-glas, rgba(14, 8, 3, .94)); box-shadow: 0 0 calc(26px * var(--glow, 1)) color-mix(in srgb, var(--cyan, #ff8a1e) 22%, transparent); }
+.ws-live.hidden { display: none; }
+.ws-live-marke > .eve-marke { position: static; display: inline-block; margin-left: 6px; vertical-align: middle; font-size: 8px; padding: 2px 4px; }
+@media (max-width: 900px) { .webseiten .ws-grid { flex: none; } .ws-live { grid-column: 1; order: -1; min-height: auto; } }
+.wl-kopf { display: flex; align-items: center; gap: 16px; }
+.wl-uhr { display: flex; flex-direction: column; align-items: center; min-width: 108px; padding: 6px 12px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--cyan, #ff8a1e) 55%, transparent); background: rgba(0,0,0,.35); }
+.wl-uhr span { font: 700 34px/1.05 ui-monospace, Menlo, monospace; color: var(--cyan, #ff8a1e); text-shadow: 0 0 calc(16px * var(--glow, 1)) color-mix(in srgb, var(--cyan, #ff8a1e) 80%, transparent); font-variant-numeric: tabular-nums; }
+.wl-uhr small { font: 10px ui-monospace, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.ws-live.wl-ueber .wl-uhr span { color: #ffcc4d; animation: call-think 1.2s ease-in-out infinite; }
+.ws-live.wl-fertig .wl-uhr span, .ws-live.wl-fertig .wl-prozent-gruen { color: #46e0a0; text-shadow: 0 0 14px rgba(70, 224, 160, .7); }
+.ws-live.wl-fertig .wl-uhr { border-color: rgba(70, 224, 160, .6); }
+.wl-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.wl-info b { font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wl-spruch { font-size: 13px; color: var(--text); font-style: italic; }
+.wl-spruch:empty { display: none; }
+.wl-phase { font: 12px ui-monospace, Menlo, monospace; color: var(--cyan, #ff8a1e); }
+.wl-zahlen { font: 11px/1.5 ui-monospace, Menlo, monospace; color: var(--muted); text-align: right; white-space: nowrap; }
+.wl-zahlen span { color: var(--text); font-variant-numeric: tabular-nums; }
+.wl-modell { color: var(--muted) !important; }
+.wl-balken { position: relative; height: 16px; border-radius: 999px; overflow: hidden; background: rgba(255,255,255,.06); border: 1px solid color-mix(in srgb, var(--cyan, #ff8a1e) 35%, transparent); }
+.wl-balken i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 999px; transition: width .5s ease;
+  background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--cyan, #ff8a1e) 95%, #fff) 0 10px, var(--cyan, #ff8a1e) 10px 20px); background-size: 28px 28px; animation: wl-streifen 1s linear infinite;
+  box-shadow: 0 0 calc(14px * var(--glow, 1)) color-mix(in srgb, var(--cyan, #ff8a1e) 80%, transparent); }
+.ws-live.wl-fertig .wl-balken i { background: linear-gradient(90deg, #1fbf7a, #46e0a0); animation: none; box-shadow: 0 0 16px rgba(70, 224, 160, .8); }
+.ws-live.wl-fehler .wl-balken i { background: #ff5d6c; animation: none; }
+.wl-balken em { position: absolute; inset: 0; display: grid; place-items: center; font: 700 10px ui-monospace, Menlo, monospace; font-style: normal; color: #fff; text-shadow: 0 0 4px #000, 0 0 2px #000; }
+@keyframes wl-streifen { to { background-position: 28px 0; } }
+.wl-fenster { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; min-height: 380px; }
+@media (max-width: 900px) { .wl-fenster { grid-template-columns: 1fr; min-height: 0; } .wl-code-box { height: 46vh; } .wl-vorschau-box { height: 50vh; } .wl-uhr span { font-size: 28px; } .wl-zahlen { display: none; } }
+.wl-code-box, .wl-vorschau-box { display: flex; flex-direction: column; min-height: 0; min-width: 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: #05070b; }
+.wl-leiste { display: flex; align-items: center; gap: 6px; padding: 6px 10px; font: 11px ui-monospace, Menlo, monospace; color: var(--muted); background: rgba(255,255,255,.04); border-bottom: 1px solid var(--line); }
+.wl-p { width: 9px; height: 9px; border-radius: 50%; } .wl-p.r { background: #ff5f57; } .wl-p.g { background: #28c840; order: 2; } .wl-p.y { background: #febc2e; order: 1; }
+.wl-leiste > :not(.wl-p) { order: 3; }
+.wl-code { flex: 1; margin: 0; padding: 10px 12px; overflow: auto; font: 12px/1.5 ui-monospace, Menlo, monospace; color: #c9d4e0; white-space: pre-wrap; word-break: break-all; }
+.wl-code .t { color: var(--cyan, #ff8a1e); } .wl-code .a { color: #7fd4ff; } .wl-code .s { color: #a5e07a; } .wl-code .k { color: #6b7685; font-style: italic; }
+.wl-code .neu { background: color-mix(in srgb, var(--cyan, #ff8a1e) 18%, transparent); transition: background 1.2s; }
+.wl-code::after { content: "▌"; color: var(--cyan, #ff8a1e); animation: wl-blink 1s steps(2) infinite; }
+.ws-live.wl-fertig .wl-code::after { content: ""; }
+@keyframes wl-blink { 50% { opacity: 0; } }
+.wl-frame { flex: 1; width: 100%; border: 0; background: #fff; }

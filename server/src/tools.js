@@ -19,7 +19,7 @@ import { STIMMUNG_IDS } from "./musik.js";
 import { getForecast, getDepot, MAERKTE } from "./markt.js";
 import { planBuild, getLatestBuild } from "./werkstatt.js";
 import { getAlarm } from "./lagezentrum.js";
-import { buildSite, listSites } from "./webseiten.js";
+import { buildSite, listSites, startLive, liveFrei } from "./webseiten.js";
 import { starteSpiel, listeSpiele } from "./spiele.js";
 import { command as tvCommand } from "./fernseher.js";
 import { command as alexaCommand } from "./alexa.js";
@@ -305,7 +305,7 @@ export const toolDefinitions = [
   },
   {
     name: "webseite_bauen",
-    description: "Webseiten-Werkstatt: baut aus einem Kundenauftrag eine komplette, verkaufsfertige Webseite (eine HTML-Datei) mit Angebotstext und Preisvorschlag, gespeichert in ~/Friday-Webseiten. aendern_id überarbeitet ein bestehendes Projekt. Dauert 1–2 Minuten; das Dashboard zeigt die Seite danach. Verkaufen und kassieren tut der Nutzer selbst.",
+    description: "Webseiten-Werkstatt: baut aus einem Kundenauftrag eine komplette, verkaufsfertige Webseite (eine HTML-Datei) mit Angebotstext und Preisvorschlag, gespeichert in ~/Friday-Webseiten. aendern_id überarbeitet ein bestehendes Projekt. Je nach Größe 30 Sekunden bis 2 Minuten; das Dashboard zeigt den Bau (in Eve live mit Countdown). Nenn im auftrag auch einen Zeitwunsch des Nutzers wörtlich (z. B. 'in 30 Minuten'). Verkaufen und kassieren tut der Nutzer selbst.",
     input_schema: {
       type: "object",
       properties: { auftrag: { type: "string" }, aendern_id: { type: "string", description: "optional: id eines bestehenden Projekts" } },
@@ -606,6 +606,11 @@ async function runToolIntern(name, input = {}, wer = {}) {
       return { land: country.name, schlagzeilen: news.items.slice(0, 12).map((n) => `${n.title} (${n.source})`) };
     }
     case "webseite_bauen": {
+      if (liveFrei()) {
+        const l = startLive(input.auftrag, input.aendern_id || null);
+        if (!l.ok) return { error: l.error };
+        return { baut: l.job.titel || l.job.auftrag, countdown_sekunden: l.job.schaetzung_s, hinweis: `Die Webseiten-Werkstatt zeigt jetzt live, wie die Seite programmiert wird, mit Countdown und sagt am Ende selbst Bescheid. Antworte NUR mit genau diesem Satz, ohne etwas dazu: ${l.job.spruch}` };
+      }
       const r = await buildSite(input.auftrag, input.aendern_id || null);
       if (!r.ok) return { error: r.error };
       return { gebaut: r.titel, id: r.id, preisvorschlag_eur: r.preis_eur, projekte_gesamt: listSites().length, hinweis: "Das Dashboard zeigt die Seite gleich. Sag kurz, was du gebaut hast, und den Preisvorschlag." };
