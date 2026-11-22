@@ -603,6 +603,17 @@
       const t = $("text"); if (t) t.value = "";
       return;
     }
+    // v1.154.0: "Friday, was siehst du?" / "scann das" aus jedem Menü → Friday Vision (Kamera geht von selbst auf).
+    if (!pendingImage && window.FridayVision?.artDerFrage) {
+      const art = window.FridayVision.artDerFrage(text);
+      if (art) {
+        diag.schritt(`Kamera-Frage (${art}): „${text}“`);
+        befehlEnde();
+        const t = $("text"); if (t) t.value = "";
+        window.FridayVision.frage(text, art);
+        return;
+      }
+    }
     busy = true;
     // Für den Stimmungs-Sound (Automatik): nur was Boss gerade in Friday sagt/tippt.
     try { window.dispatchEvent(new CustomEvent("friday-eingabe", { detail: { text } })); } catch { /* egal */ }
