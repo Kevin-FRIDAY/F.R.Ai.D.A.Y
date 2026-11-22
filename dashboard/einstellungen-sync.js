@@ -100,10 +100,10 @@
       for (const [k, v] of Object.entries(sending.set)) if (pending.set[k] === v) delete pending.set[k];
       pending.remove = pending.remove.filter((k) => !sending.remove.includes(k) || get(k) !== null);
       savePending();
-      if (zeigen) { toastWanted = false; toast("ok"); }
+      if (zeigen) { toastWanted = false; toast("ok"); window.dispatchEvent(new CustomEvent("friday:gespeichert")); }
       return true;
     } catch {
-      if (zeigen) { toastWanted = false; toast("offline"); }
+      if (zeigen) { toastWanted = false; toast("offline"); window.dispatchEvent(new CustomEvent("friday:nicht-gespeichert")); }
       clearTimeout(retryTimer);
       retryTimer = setTimeout(flush, 30000);
       return false;
@@ -148,7 +148,8 @@
 
   // ---- „Gespeichert“-Hinweis im Orange-Glas-Stil ----
   let toastEl = null, toastTimer = null;
-  function toast(art) {
+  // v1.153.0: grün = gespeichert, rot = nicht gespeichert, orange = nur auf diesem Gerät
+  function toast(art, klein) {
     if (!document.body) return;
     if (!toastEl) {
       toastEl = document.createElement("div");
@@ -157,21 +158,30 @@
       toastEl.setAttribute("aria-live", "polite");
       document.body.appendChild(toastEl);
     }
-    const ok = art === "ok";
-    toastEl.className = ok ? "ok" : "warn";
+    const ok = art === "ok", fehler = art === "fehler";
+    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    toastEl.className = ok ? "ok" : fehler ? "fehler" : "warn";
     toastEl.innerHTML = ok
-      ? '<span class="st-ico">✓</span><span class="st-txt"><b>Gespeichert</b><small>gilt auf Mac und iPhone</small></span>'
-      : '<span class="st-ico">!</span><span class="st-txt"><b>Auf diesem Gerät gespeichert</b><small>Mac nicht erreichbar, wird nachgeholt</small></span>';
+      ? `<span class="st-ico">✓</span><span class="st-txt"><b>Gespeichert</b><small>${esc(klein || "gilt auf Mac und iPhone")}</small></span>`
+      : fehler
+        ? `<span class="st-ico">!</span><span class="st-txt"><b>Nicht gespeichert</b><small>${esc(klein || "bitte nochmal versuchen")}</small></span>`
+        : '<span class="st-ico">!</span><span class="st-txt"><b>Auf diesem Gerät gespeichert</b><small>Mac nicht erreichbar, wird nachgeholt</small></span>';
     // Die Textgröße vergrößert die ganze Seite (zoom). Das Schild bleibt immer gleich groß und sichtbar.
     toastEl.style.zoom = String(1 / (parseFloat(document.documentElement.style.zoom) || 1));
     void toastEl.offsetWidth;
     toastEl.classList.add("show");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toastEl.classList.remove("show"), ok ? 1800 : 3600);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), ok ? 2200 : 3600);
   }
 
   // Für Schalter, die direkt am Server hängen (Auto-Update, Vorladen ...)
-  window.FridaySync = { gespeichert: () => toast("ok"), nichtGespeichert: () => toast("offline"), pull, flush };
+  // gespeichert() meldet zusätzlich „friday:gespeichert“, damit der grüne Haken neben dem Schalter erscheint (gespeichert.js).
+  window.FridaySync = {
+    gespeichert: () => { toast("ok"); window.dispatchEvent(new CustomEvent("friday:gespeichert")); },
+    nichtGespeichert: () => { toast("offline"); window.dispatchEvent(new CustomEvent("friday:nicht-gespeichert")); },
+    schild: (art, klein) => toast(art, klein),
+    pull, flush,
+  };
 
   // Beim Start, nach der Anmeldung und wenn die App wieder in den Vordergrund kommt
   const start = () => pull({ reloadOnChange: true });
