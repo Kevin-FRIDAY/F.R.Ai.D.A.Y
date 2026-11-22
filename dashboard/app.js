@@ -731,6 +731,9 @@
         const appleA = data.actions?.find((a) => a === "apple" || (typeof a === "string" && a.startsWith("apple:")));
         if (appleA) { const [, t, q] = appleA.split(":"); window.FridayApple?.open({ tab: t || "notizen", q: q ? decodeURIComponent(q) : "" }); }
         // App-Zentrale (v1.139.0, im Test): "apps" = Übersicht, "apps:<id>" = eine App zeigen, "apps_oeffnen:<id>" = Öffnen-Knopf hervorheben.
+        // Zerlege-Labor (v1.143.0, im Test): "zerlegen:<modell>:<befehl>"
+        const zerlA = aktion("zerlegen:");
+        if (zerlA) { const [, mid, bef] = zerlA.split(":"); window.FridayZerlege?.open({ modell: mid, befehl: bef ? decodeURIComponent(bef) : "" }); }
         const appsA = aktion("apps:");
         if (appsA) window.FridayApps?.open({ id: appsA.slice(5), hervor: hat(`apps_oeffnen:${appsA.slice(5)}`) });
         else if (hat("apps")) window.FridayApps?.open();

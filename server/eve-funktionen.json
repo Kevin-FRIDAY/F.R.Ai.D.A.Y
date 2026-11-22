@@ -47,6 +47,15 @@
       "version": "1.142.0",
       "beschreibung": "Ist dein Claude-Guthaben leer oder Claude gestört, denkt Friday über OpenRouter weiter, mit allen Werkzeugen (ohne Websuche). Schlüssel trägst du unter Verbindungen → Ersatz-Gehirn ein. Zum Testen in Eve: dort „Test: Eve denkt immer mit OpenRouter“ wählen und eine Frage stellen.",
       "ziele": []
+    },
+    {
+      "id": "zerlege-labor",
+      "name": "Zerlege-Labor in der Werkstatt",
+      "version": "1.143.0",
+      "beschreibung": "7 detailgetreue Modelle (Sportwagen mit V8, Elektroauto, V8-Motor, Motorrad, Flugzeug-Triebwerk, 6-Gang-Getriebe, Gaming-PC) mit 376 echten Bauteilen. Teile antippen, herausnehmen (z. B. Motor raus), greifen und verschieben, Explosionsansicht, Röntgen, Motor läuft, Zerlegen-Show.",
+      "ziele": [
+        "#werkstatt-zerlegen"
+      ]
     }
   ]
 }
