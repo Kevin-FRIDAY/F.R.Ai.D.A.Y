@@ -1,5 +1,5 @@
 // Fridays Gehirn: redet mit Claude und benutzt die Werkzeuge.
-import Anthropic from "@anthropic-ai/sdk";
+import { kiClient } from "./ki-client.js";
 import { config } from "./config.js";
 import { toolDefinitions, runTool } from "./tools.js";
 import * as store from "./store.js";
@@ -53,7 +53,7 @@ const TEMPO = {
 // Sätze, mit denen Friday etwas nur ankündigt, statt es zu tun.
 const NUR_ANGEKUENDIGT = /\b(mach(e)? ich|ich mach(e)? (das|dir|es|mich)|ich (erstelle|schreibe|bereite|kümmere|kuemmere|stelle|suche|baue|plane|setze)|wird erledigt|bin dran|gleich (fertig|erledigt)|sofort,? boss|kommt sofort|ich fange (jetzt )?an|einen moment)\b/i;
 
-const client = new Anthropic({ apiKey: config.anthropicKey });
+const client = kiClient();
 
 const PERSONA = `Du bist F.R.Ai.D.A.Y, die persönliche KI von ${config.userName}, inspiriert von FRIDAY aus Iron Man.
 
@@ -306,7 +306,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Zerlege-Labor (v1.140.0, im Test: in Friday erst nach Freigabe in Eve): "zerleg mir einen V8",
+  // Zerlege-Labor (v1.143.0, im Test: in Friday erst nach Freigabe in Eve): "zerleg mir einen V8",
   // "nimm den Motor aus dem Auto raus" – ohne Claude. Vor der Werkstatt, damit "zerleg" nicht als Bauwunsch landet.
   if (mode !== "translate" && !image && text) {
     try {

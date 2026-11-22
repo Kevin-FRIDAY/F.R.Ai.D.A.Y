@@ -1,7 +1,10 @@
 // Klangwelt (v1.131.0): Sprachbefehle für den Stimmungs-Sound, echte Fotos zu jedem Klang
+// (v1.140.0: dazu frei lizenzierte Videos von Wikimedia Commons, zuerst nur in Eve)
 // (nur frei lizenzierte Bilder über Openverse) und "Wo regnet es gerade?" (Open-Meteo, ohne Schlüssel).
 // Der Klang selbst und die bewegten Szenen entstehen im Browser (dashboard/klangraum.js + klangbild.js).
 import { U } from "./datum.js";
+import { IST_EVE } from "./config.js";
+import { istFrei } from "./eve.js";
 
 // ---------- Sprachbefehle (ohne Claude) ----------
 const KLANG = [
@@ -42,6 +45,14 @@ export function klangQuick(text) {
   if (U(/^(wo|in welcher stadt) (regnet|schneit|gewittert|stürmt) es( gerade| jetzt| grade)?$/).test(t)) {
     const art = /schneit/.test(t) ? "schnee" : /gewitter|stürmt/.test(t) ? "gewitter" : "regen";
     return { answer: { regen: "Ich zeige dir, wo es gerade regnet.", schnee: "Ich zeige dir, wo es gerade schneit.", gewitter: "Ich zeige dir, wo es gerade gewittert." }[art], actions: [`klang:wo:${art}`] };
+  }
+  // v1.140.0 (Test in Eve): "Kaminfeuer mit Video", "zeig mir ein Video zum Regen", "Stimmungs-Sound als Video"
+  const mitVideo = /\b(mit|als) (einem |dem )?videos?\b|\bvideos? (zum|zur|zu|vom|von|mit|über|ueber)\b|^(zeig|zeige)( mir)?( ein| das| ein paar)? videos?\b/.test(t)
+    && !/^(erstell|mach|bau|dreh|schneid|produzier|render|schreib)/.test(t);
+  if (mitVideo) {
+    const zusatz = IST_EVE || istFrei("klang-video") ? "Mit Video." : "Die Videos dazu sind noch im Test – probier sie in Eve aus.";
+    for (const [id, re] of KLANG) if (U(re).test(t)) return { answer: `${ANTWORT[id]} ${zusatz}`, actions: [`klang:${id}`, "klangvideo"] };
+    if (/\b(stimmungs-?sound|klangraum|sound|klang|geräusch|geraeusch)/.test(t)) return { answer: "Ich zeige dir zum Klang ein passendes Video.", actions: ["klang", "klangvideo"] };
   }
   const klangWort = U(/\b(geräusch|geraeusch|sound|klang|rauschen|atmosphäre|atmosphaere|hintergrundmusik|musik|lernmusik|arbeitsmusik)\w*/).test(t);
   if (/\b(spotify|playlist|lied|song|album|radio|licht|lampe|fernseher|tv|alexa|wetter)\b/.test(t)) return null;
@@ -85,6 +96,99 @@ export async function fotos(art, ort = "") {
     fotoCache.set(suche, { at: Date.now(), fotos: liste });
     return liste;
   } catch { return ort ? fotos(art, "") : []; }
+}
+
+// ---------- Videos zu jedem Klang (v1.140.0, zuerst nur in Eve) ----------
+// Nur Wikimedia Commons: dort ist jedes Video frei lizenziert (CC0, CC BY, CC BY-SA, gemeinfrei).
+// Handverlesene Clips je Klang; wenn die nicht erreichbar sind, sucht Friday selbst auf Commons.
+// Die Videos laufen stumm – der Klang kommt weiter live aus dem Browser.
+const VIDEO_AUSWAHL = {
+  regen: ["Radevormwald - Raindrops on a window 07 (1) ies.webm", "Raindrops against the window in the night city, Las Palmas.webm", "Radevormwald - Raindrops on a window 09 (1) ies.webm", "Rain in Sonoma - December 2025 - Sarah Stierch.webm", "Rainfall in East Legon 03.webm"],
+  gewitter: ["Гроза в Донецке- Thunderstorm in Donetsk.webm", "Éclairs orage de canicule soir 20 juin 2026 Lille.ogg", "Lightning - condensed version.webm", "Heat lightning - tokyo area - Aug 30 2021.webm"],
+  meer: ["Waves crashing on rocks off Beach 4, Kalaloch Beach, Washington 01.webm", "Ocean Shores - Waves &Seagulls 2015-06 303 (90 Sec).ogv", "Groyne and sea waves at Curonian Spit.webm", "Waves of the sea (Video).webm", "Aerial view of sand beach. Top view sea waves. Drone footage.webm"],
+  wald: ["Valla forest Nature reserve - A quiet place.webm", "Valla forest Nature reserve - High summer day.webm", "Hatfield Forest Lake and visitor centre, Hatfield Broad Oak Essex England.webm", "Birds of Sahyadri -Asian Paradise Flycatcher -.webm"],
+  kamin: ["Fantastic-fireplace-fire-chimney-hearth- background - texture - motion graphics - free video library.webm", "Fireplace 1 2021-02-14.webm", "Fireplace in Akita City Akarenga-kan Museum 2024 march 28.ogg", "Fire آتش 01.ogv", "Fire آتش 03.ogv"],
+  fokus: ["ဖယောင်းတိုင်မီးတောက်.webm", "White candle video.webm", "Blue candle burning.webm", "Wachsbrenner (minimalistisch).webm"],
+  nacht: ["JAPAN Milk Way 4K - Beautiful Star and Sky at Night Time Lapse.webm", "Timelapse of Milky way changing colors during Aurora - 53921478021.webm", "La Silla Timelapse General view.ogv", "A timelapse of the Milky Way's movement against the backdrop of the Assy-Turgen Observatory at an altitude of 2,750 m. Kazakhstan.webm"],
+  weltraum: ["Flight through Orion Nebula in visible light (Hubblecast 106b excerpt).webm", "Zoom into the Horsehead Nebula ESA496748.webm", "Orion Nebula 3D Fly-Through - HST.ogv", "Alexander Gerst’s Earth timelapses (2017 reissue).webm"],
+  puls: ["Laserbeam laser show in Bad Westernkotten 20240817 212704.webm", "Laser LY-RGBW01 presets in smoke PC291932.webm", "Laserbeam laser show in Bad Westernkotten 20240817 213138.webm", "1. Light Mowe Festival - Łódź 2015 - Laser show.webm"],
+  wind: ["Time Lapse Clouds above Steens Mountain (36203941112).webm", "Lenticular cloud over Longs Peak, Colorado (time lapse).ogv", "Wind blowing into grass and plants on a sunny day 2024-05-09.webm", "Winter Timelapse of Clouds Roiling over Rimrock on Okanagan Mountain.webm"],
+  bach: ["Barnes Creek 2022.webm", "Stream of water by Barnes Creek.webm", "Autumn stream in West Virginia.webm", "Cascading stream at Cascade Springs, May 17.webm", "Wolf Creek Falls Trail (25652917596).webm"],
+  schnee: ["Snow falling in Charlton MA 2025-12-14.webm", "Snow under LED street light in Tuntorp, Brastad.webm", "Landschaftsschutzgebiet Volkspark Rehberge lub 2026-01-03 snowing.webm", "Daffodils in the Snow.webm"],
+  cafe: ["Café Lomi, Paris - Vimeo.webm", "Kahvin tiputtelu Moccamasterilla.webm", "Cafe du Monde1.webm", "ET Bahir Dar asv2018-02 coffee roasting video.webm"],
+  zug: ["Amtrak Hiawatha 334 Dome View Milwaukee To Airport.webm", "EXPO-1520 double-decker train ride in 2013.webm", "2ES5 cab ride.webm"],
+  unterwasser: ["Tropical Fish Banner Fish on Coral Reef.webm", "First records of fish species at the Chesterfield-Bellona reef complex in the Coral Sea Marine Park (Ifremer 00669-78069 - 31555).webm", "Grüner Vogel-Lippfisch (Gomphosus varius)-Лазоревый клюворыл (Female fish) DSCF2720.webm", "Scuba diver with fish - kanagawa - 2025 march 21.webm", "Underwater Videos 5.webm"],
+  dschungel: ["California Academy of Sciences - Rainforests of the World 3 2024-01-16.webm", "Diana Creek Rapids.webm", "011 Dark-capped bulbul eating at Bwindi Impenetrable Forest National Park Video by Giles Laurent.webm", "Amazon Rainforest, Brazil.webm"],
+  klangschale: ["Watching Tibetan bowls sing.webm", "Singing bowl.ogv", "ဖယောင်းတိုင်မီးတောက်.webm"],
+  herz: ["White candle video.webm", "Timelapse of Milky way changing colors during Aurora - 53921478021.webm", "Blue candle burning.webm"],
+  raumschiff: ["First 8K Video from Space - Ultra HD VP9.webm", "Dragon CRS-11 Cargo Ship Departs ISS for Earth.webm", "Alexander Gerst’s Earth timelapses (2017 reissue).webm"],
+};
+// Ersatz-Suche auf Commons, falls die Auswahl nicht reicht
+const VIDEO_SUCHE = {
+  regen: "rain window", gewitter: "lightning thunderstorm", meer: "ocean waves beach", wald: "forest birds", kamin: "fireplace",
+  fokus: "candle flame", nacht: "milky way timelapse", weltraum: "nebula", puls: "laser show", wind: "clouds timelapse",
+  bach: "forest stream", schnee: "snow falling", cafe: "cafe", zug: "cab ride", unterwasser: "coral reef fish",
+  dschungel: "rainforest", klangschale: "singing bowl", herz: "candle", raumschiff: "space station",
+};
+const COMMONS = "https://commons.wikimedia.org/w/api.php";
+const videoCache = new Map(); // art -> { at, videos }
+const ohneHtml = (t) => String(t || "").replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/\s+/g, " ").trim();
+
+function videoEintrag(seite) {
+  const v = seite?.videoinfo?.[0];
+  if (!v || !(v.width > v.height)) return null; // nur Querformat
+  const d = Array.isArray(v.derivatives) ? v.derivatives : [];
+  const nach = (k) => d.find((x) => x.transcodekey === k);
+  const webm = nach("720p.vp9.webm") || nach("480p.vp9.webm") || nach("720p.webm") || nach("480p.webm");
+  const webmHD = nach("1080p.vp9.webm") || nach("720p.vp9.webm") || webm;
+  const mov = nach("360p.mpeg4.mov") || d.find((x) => /mp4|quicktime/.test(x.type || ""));
+  if (!webm && !mov) return null;
+  const m = v.extmetadata || {};
+  return {
+    titel: ohneHtml(m.ObjectName?.value) || String(seite.title || "").replace(/^File:/, "").replace(/\.(webm|ogv|ogg)$/i, ""),
+    autor: ohneHtml(m.Artist?.value).slice(0, 60),
+    lizenz: ohneHtml(m.LicenseShortName?.value) || "frei",
+    seite: v.descriptionurl || "",
+    poster: v.thumburl || "",
+    dauer: Math.round(v.duration || 0),
+    quellen: [
+      webm && { src: webm.src, type: "video/webm", hd: webmHD?.src || webm.src },
+      mov && { src: mov.src, type: "video/mp4" }, // Safari spielt die .mov-Fassung als MP4
+    ].filter(Boolean),
+  };
+}
+
+async function commons(params, versuch = 0) {
+  const q = new URLSearchParams({ action: "query", format: "json", formatversion: "2", prop: "videoinfo", viprop: "url|size|extmetadata|derivatives", viurlwidth: "1280", ...params });
+  const res = await fetch(`${COMMONS}?${q}`, { headers: { "User-Agent": "F.R.Ai.D.A.Y/1.0 (Stimmungs-Sound)" }, signal: AbortSignal.timeout(12000) });
+  // Commons bremst bei vielen Anfragen kurz hintereinander (429) – dann einmal kurz warten und neu fragen.
+  if ((res.status === 429 || res.status >= 500) && versuch < 2) { await new Promise((r) => setTimeout(r, 2500 * (versuch + 1))); return commons(params, versuch + 1); }
+  if (!res.ok) throw new Error(`Commons ${res.status}`);
+  const data = await res.json();
+  return data?.query?.pages || [];
+}
+
+export async function videos(art) {
+  const auswahl = VIDEO_AUSWAHL[art];
+  if (!auswahl) return [];
+  const c = videoCache.get(art);
+  if (c && Date.now() - c.at < 12 * 60 * 60 * 1000) return c.videos;
+  let liste = [];
+  try {
+    const seiten = await commons({ titles: auswahl.map((t) => `File:${t}`).join("|") });
+    const rang = new Map(auswahl.map((t, i) => [`File:${t}`.replace(/_/g, " "), i]));
+    liste = seiten.filter((s) => !s.missing).sort((a, b) => (rang.get(a.title) ?? 99) - (rang.get(b.title) ?? 99)).map(videoEintrag).filter(Boolean);
+  } catch { /* Ersatz-Suche versuchen */ }
+  if (liste.length < 2) {
+    try {
+      const seiten = await commons({ generator: "search", gsrsearch: `${VIDEO_SUCHE[art]} filetype:video`, gsrnamespace: "6", gsrlimit: "12" });
+      const da = new Set(liste.map((v) => v.seite));
+      for (const v of seiten.map(videoEintrag).filter(Boolean)) if (v.dauer >= 8 && !da.has(v.seite)) liste.push(v);
+    } catch { /* nichts erreichbar */ }
+  }
+  liste = liste.slice(0, 6);
+  if (liste.length) videoCache.set(art, { at: Date.now(), videos: liste });
+  return liste;
 }
 
 // ---------- Wo regnet/schneit/gewittert es gerade? ----------
@@ -142,6 +246,9 @@ export async function woGerade(art) {
 export function klangRouten(app, asyncRoute) {
   app.get("/api/klang/foto", asyncRoute(async (req, res) => {
     res.json({ fotos: await fotos(String(req.query.art || ""), String(req.query.ort || "").slice(0, 40)) });
+  }));
+  app.get("/api/klang/video", asyncRoute(async (req, res) => {
+    res.json({ videos: await videos(String(req.query.art || "")) });
   }));
   app.get("/api/klang/wo", asyncRoute(async (req, res) => {
     try { res.json(await woGerade(String(req.query.art || "regen"))); } catch (err) { res.status(502).json({ error: `Wetterdaten gerade nicht erreichbar (${err.message}).` }); }

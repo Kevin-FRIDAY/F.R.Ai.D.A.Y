@@ -557,7 +557,7 @@
   async function request(wunsch, { neu = false } = {}) {
     wunsch = String(wunsch || "").trim();
     if (!wunsch) return;
-    // v1.140.0: "zerleg den Motor", "Explosionsansicht" → Zerlege-Labor (nur wenn freigegeben bzw. in Eve)
+    // v1.143.0: "zerleg den Motor", "Explosionsansicht" → Zerlege-Labor (nur wenn freigegeben bzw. in Eve)
     if (window.FridayZerlege?.passt(wunsch)) { window.FridayZerlege.befehl(wunsch); return; }
     const erweitern = !neu && $("werkstatt-extend").checked && plan;
     running++;

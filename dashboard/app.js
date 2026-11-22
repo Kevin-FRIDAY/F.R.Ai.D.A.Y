@@ -731,7 +731,7 @@
         const appleA = data.actions?.find((a) => a === "apple" || (typeof a === "string" && a.startsWith("apple:")));
         if (appleA) { const [, t, q] = appleA.split(":"); window.FridayApple?.open({ tab: t || "notizen", q: q ? decodeURIComponent(q) : "" }); }
         // App-Zentrale (v1.139.0, im Test): "apps" = Übersicht, "apps:<id>" = eine App zeigen, "apps_oeffnen:<id>" = Öffnen-Knopf hervorheben.
-        // Zerlege-Labor (v1.140.0, im Test): "zerlegen:<modell>:<befehl>"
+        // Zerlege-Labor (v1.143.0, im Test): "zerlegen:<modell>:<befehl>"
         const zerlA = aktion("zerlegen:");
         if (zerlA) { const [, mid, bef] = zerlA.split(":"); window.FridayZerlege?.open({ modell: mid, befehl: bef ? decodeURIComponent(bef) : "" }); }
         const appsA = aktion("apps:");
@@ -758,6 +758,7 @@
         else if (klangA === "klang:auto") { window.FridayKlang?.auto(true); window.FridayKlang?.open(); }
         else if (klangA) window.FridayKlang?.spiele(klangA.slice(6));
         else if (hat("klang")) window.FridayKlang?.open();
+        if (hat("klangvideo")) window.FridayKlang?.ansicht("video");
         // Spiele-Werkstatt: live zuschauen, wie Friday programmiert, oder ein gespeichertes Spiel starten.
         const spielBau = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel_bauen:"));
         const spielStart = data.actions?.find((a) => typeof a === "string" && a.startsWith("spiel:"));

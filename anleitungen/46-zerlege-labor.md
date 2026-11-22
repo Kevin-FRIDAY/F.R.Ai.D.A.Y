@@ -1,4 +1,4 @@
-# Zerlege-Labor in der Werkstatt (v1.140.0)
+# Zerlege-Labor in der Werkstatt (v1.143.0)
 
 Im Zerlege-Labor kannst du Maschinen auseinanderbauen – wie in einer echten Werkstatt, nur in 3D.
 

@@ -1,4 +1,4 @@
-// Zerlege-Labor (v1.140.0, zuerst nur in Eve): Fridays Teile-Datenbank für die Werkstatt.
+// Zerlege-Labor (v1.143.0, zuerst nur in Eve): Fridays Teile-Datenbank für die Werkstatt.
 // Jedes Modell besteht aus echten Bauteilen in echter Größe (Meter) und echter Lage, sortiert in Baugruppen.
 // Das Dashboard (dashboard/zerlegelabor.js) baut daraus ein 3D-Modell, das man zerlegen kann:
 // Motor herausnehmen, Karosserie abheben, Teile greifen und verschieben, Explosionsansicht, "Motor läuft"

@@ -202,7 +202,7 @@ const DASHBOARD_LOG = [
   ["POST", /^\/lage\/([^/]+)\/einschaetzung$/, "welt", (q, m) => `Lage-Einschätzung: ${decodeURIComponent(m[1])}`],
   ["DELETE", /^\/reminders\/([^/]+)$/, "erinnerung", () => "Erinnerung gelöscht"],
 ];
-const DIENST_BEREICH = { anrufe: "anruf", kalender: "kalender", spotify: "musik", hue: "smarthome", homeassistant: "smarthome", todoist: "aufgabe", notion: "suche", stimme: "system" };
+const DIENST_BEREICH = { openrouter: "system", anrufe: "anruf", kalender: "kalender", spotify: "musik", hue: "smarthome", homeassistant: "smarthome", todoist: "aufgabe", notion: "suche", stimme: "system" };
 app.use("/api", (req, res, next) => {
   if (req.method === "GET") return next();
   for (const [methode, muster, bereich, titel] of DASHBOARD_LOG) {

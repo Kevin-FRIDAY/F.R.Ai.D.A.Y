@@ -5,7 +5,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawn, execFile } from "node:child_process";
-import Anthropic from "@anthropic-ai/sdk";
+import { kiClient, ersatzBereit } from "./ki-client.js";
 import { config, ROOT } from "./config.js";
 import { recordUsage } from "./energie.js";
 
@@ -122,9 +122,9 @@ function handle(j, msg) {
 
 // Regie (Claude) schreibt zum fertigen Video eine kurze Bildunterschrift mit Hashtags.
 async function writeCaption(j) {
-  if (!config.anthropicKey || !j.result?.transcript) return;
+  if ((!config.anthropicKey && !ersatzBereit()) || !j.result?.transcript) return;
   try {
-    const client = new Anthropic({ apiKey: config.anthropicKey });
+    const client = kiClient();
     const res = await client.messages.create({
       model: config.model,
       max_tokens: 300,

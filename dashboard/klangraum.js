@@ -243,14 +243,15 @@
       <div class="kr-buehne">
         <div class="kr-glas" id="kr-glas">
           <img class="kr-foto" id="kr-foto" alt="" referrerpolicy="no-referrer" decoding="async">
+          <video class="kr-video" id="kr-video" muted playsinline preload="auto" aria-hidden="true"></video>
           <canvas class="kr-canvas" id="kr-canvas" aria-hidden="true"></canvas>
           <div class="kr-oben">
             <div class="kr-szene"><small>SZENE</small><b id="kr-szene-titel">Bereit</b></div>
             <div class="kr-knoepfe">
               <div class="kr-umschalter" role="group" aria-label="Ansicht">
-                <button type="button" data-ansicht="anim">✨ Animation</button><button type="button" data-ansicht="foto">📷 Echtes Foto</button>
+                <button type="button" data-ansicht="anim">✨ Animation</button><button type="button" data-ansicht="foto">📷 Echtes Foto</button><button type="button" data-ansicht="video" class="kr-video-knopf">🎬 Video</button>
               </div>
-              <button type="button" class="kr-rund" id="kr-naechstes" title="Anderes Foto" hidden>↻</button>
+              <button type="button" class="kr-rund" id="kr-naechstes" title="Anderes Bild" hidden>↻</button>
               <button type="button" class="kr-rund" id="kr-gross-btn" title="Szene groß zeigen">⛶</button>
             </div>
           </div>
@@ -269,7 +270,7 @@
         <button id="kr-aus" class="hf-btn leise kr-stopp" type="button">⏹ Stille</button>
       </div>
       <div id="kr-grund" class="hf-hinweis"></div>
-      <p class="hf-hinweis">Alle Klänge und Szenen entstehen live auf deinem Gerät – kein Download, kein Guthaben. Echte Fotos sind frei lizenziert (Openverse), Wetter von Open-Meteo. Sag: „Friday, spiel Gewitter“, „Kaminfeuer“, „Wo regnet es gerade?“, „Stimmungs-Sound automatisch“ oder „Sound aus“.</p>`,
+      <p class="hf-hinweis">Alle Klänge und Szenen entstehen live auf deinem Gerät – kein Download, kein Guthaben. Echte Fotos (Openverse) und Videos (Wikimedia Commons) sind frei lizenziert und laufen stumm, Wetter von Open-Meteo. Sag: „Friday, spiel Gewitter“, „Kaminfeuer“, „Wo regnet es gerade?“, „Stimmungs-Sound automatisch“ oder „Sound aus“.</p>`,
     onOpen: () => { zeichne(); zeigeSzene(aktiv); },
   });
 
@@ -309,8 +310,13 @@
   const FB = window.FridayKlangBild;
   const bildKlein = FB ? FB.neu(w.$("#kr-canvas")) : null;
   let bildGross = null;
-  let ansicht = ls.get("friday_klang_ansicht") === "foto" ? "foto" : "anim";
+  // Videos (v1.140.0) sind zuerst nur in Eve – in Friday liegen sie hinter dem Schloss, bis Boss sie freigibt.
+  const videoFrei = () => !window.FridayEve || window.FridayEve.frei("klang-video");
+  let ansicht = ["foto", "video"].includes(ls.get("friday_klang_ansicht")) ? ls.get("friday_klang_ansicht") : "anim";
+  const ans = () => (ansicht === "video" && !videoFrei() ? "anim" : ansicht);
+  const echt = () => ans() !== "anim"; // Foto oder Video: die gemalte Szene legt nur noch Effekte darüber
   let fotoListe = [], fotoNr = 0, fotoOrt = "", fotoFuer = "";
+  let videoListe = [], videoNr = 0, videoFuer = "", videoQuelle = 0;
   let woDaten = null, woFuer = "";
   let szeneId = null;
 
@@ -318,17 +324,20 @@
     szeneId = id;
     w.$("#kr-leer").hidden = !!id;
     w.$("#kr-szene-titel").textContent = id ? (FB?.titel(id) || KLAENGE[id].name) : "Bereit";
-    if (!id) { bildKlein?.stop(); bildGross?.stop(); setzeFoto(null); w.$("#kr-wo").hidden = true; kopfZeile(); return; }
-    if (w.offen()) { bildKlein?.setze(id); bildKlein?.foto(ansicht === "foto"); } else bildKlein?.stop();
-    if (grossOffen()) { bildGross.setze(id); bildGross.foto(ansicht === "foto"); }
+    if (!id) { bildKlein?.stop(); bildGross?.stop(); setzeFoto(null); setzeVideo(null); w.$("#kr-wo").hidden = true; kopfZeile(); return; }
+    if (w.offen()) { bildKlein?.setze(id); bildKlein?.foto(echt()); } else bildKlein?.stop();
+    if (grossOffen()) { bildGross.setze(id); bildGross.foto(echt()); }
     if (fotoFuer !== id) { fotoOrt = ""; fotoListe = []; fotoFuer = ""; }
-    if (ansicht === "foto") ladeFoto(id); else setzeFoto(null);
+    if (videoFuer !== id) { videoListe = []; videoFuer = ""; }
+    if (ans() === "foto") ladeFoto(id); else setzeFoto(null);
+    if (ans() === "video") ladeVideo(id); else setzeVideo(null);
     ladeWo(id);
     kopfZeile();
   }
   function umschalter() {
-    w.$$("[data-ansicht]").forEach((b) => b.classList.toggle("an", b.dataset.ansicht === ansicht));
-    w.$("#kr-naechstes").hidden = ansicht !== "foto";
+    w.$$("[data-ansicht]").forEach((b) => b.classList.toggle("an", b.dataset.ansicht === ans()));
+    w.$("#kr-naechstes").hidden = ans() === "anim";
+    w.$("#kr-naechstes").title = ans() === "video" ? "Anderes Video" : "Anderes Foto";
   }
   function setzeFoto(f) {
     const img = w.$("#kr-foto"), cr = w.$("#kr-credit"), gImg = document.getElementById("kr-gross-foto");
@@ -348,12 +357,69 @@
     fotoFuer = id; fotoNr = 0;
     try {
       const d = await H.json(`/api/klang/foto?art=${encodeURIComponent(id)}${fotoOrt ? `&ort=${encodeURIComponent(fotoOrt)}` : ""}`);
-      if (szeneId !== id || ansicht !== "foto") return;
+      if (szeneId !== id || ans() !== "foto") return;
       fotoListe = d.fotos || [];
       if (!fotoListe.length) { setzeFoto(null); grund("Gerade kein passendes Foto gefunden – ich zeige die Animation."); return; }
       setzeFoto(fotoListe[0]);
     } catch { if (szeneId === id) { fotoFuer = ""; setzeFoto(null); grund("Fotos gerade nicht erreichbar – ich zeige die Animation."); } }
   }
+  // ---------- Videos (Wikimedia Commons, stumm, laufen als Schleife durch die Auswahl) ----------
+  const kannWebm = (() => { try { return !!document.createElement("video").canPlayType('video/webm; codecs="vp9"'); } catch { return false; } })();
+  function quellen(v, gross) {
+    const q = (v.quellen || []).filter((x) => x.type !== "video/webm" || kannWebm);
+    return q.map((x) => (gross && x.hd ? x.hd : x.src));
+  }
+  function spieleIn(el, v, gross, beiFehler) {
+    if (!el) return;
+    const liste = quellen(v, gross);
+    let i = gross ? 0 : videoQuelle;
+    const weiter = () => { i++; if (i < liste.length) { el.src = liste[i]; el.play?.().catch(() => {}); } else beiFehler?.(); };
+    el.classList.remove("an");
+    el.onloadeddata = () => { el.classList.add("an"); if (!gross) videoQuelle = i; };
+    el.onerror = weiter;
+    el.onended = () => naechstesVideo();
+    el.loop = videoListe.length < 2;
+    if (v.poster) el.poster = v.poster;
+    if (!liste.length) return beiFehler?.();
+    el.muted = true; el.src = liste[i] || liste[0]; el.play?.().catch(() => {});
+  }
+  function setzeVideo(v) {
+    const el = w.$("#kr-video"), cr = w.$("#kr-credit"), gEl = document.getElementById("kr-gross-video");
+    const leeren = (x) => { if (!x) return; x.pause?.(); x.removeAttribute("src"); x.removeAttribute("poster"); x.classList.remove("an"); try { x.load(); } catch { /* egal */ } };
+    if (!v) { leeren(el); leeren(gEl); if (ans() !== "foto") cr.hidden = true; return; }
+    videoQuelle = 0;
+    const fehler = () => { if (videoNr < videoListe.length - 1) { videoNr++; setzeVideo(videoListe[videoNr]); } else { setzeVideo(null); grund("Kein Video erreichbar – ich zeige die Animation."); } };
+    if (w.offen()) spieleIn(el, v, false, fehler); else leeren(el);
+    if (grossOffen()) spieleIn(gEl, v, true);
+    cr.hidden = false; cr.href = v.seite || "#";
+    cr.textContent = `🎬 ${v.titel ? `„${v.titel.slice(0, 40)}“` : "Video"}${v.autor ? ` von ${v.autor.slice(0, 30)}` : ""} · ${v.lizenz || "frei"} · Wikimedia Commons`;
+  }
+  function naechstesVideo() {
+    if (!videoListe.length) return ladeVideo(szeneId);
+    videoNr = (videoNr + 1) % videoListe.length;
+    setzeVideo(videoListe[videoNr]);
+  }
+  async function ladeVideo(id) {
+    if (!id) return;
+    if (videoFuer === id && videoListe.length) { setzeVideo(videoListe[videoNr % videoListe.length]); return; }
+    videoFuer = id; videoNr = 0;
+    grund("Lade ein passendes Video …");
+    try {
+      const d = await H.json(`/api/klang/video?art=${encodeURIComponent(id)}`);
+      if (szeneId !== id || ans() !== "video") return;
+      videoListe = d.videos || [];
+      if (!videoListe.length) { setzeVideo(null); grund("Gerade kein passendes Video gefunden – ich zeige die Animation."); return; }
+      grund(videoListe.length > 1 ? `${videoListe.length} Videos zu ${KLAENGE[id].name} – sie laufen nacheinander, ↻ springt weiter.` : "");
+      setzeVideo(videoListe[0]);
+    } catch { if (szeneId === id) { videoFuer = ""; setzeVideo(null); grund("Videos gerade nicht erreichbar – ich zeige die Animation."); } }
+  }
+  // Fenster zu = Video anhalten (spart Akku und Datenvolumen), Fenster auf = weiter
+  new MutationObserver(() => {
+    const el = w.$("#kr-video");
+    if (!w.offen()) { el.pause?.(); return; }
+    if (ans() === "video" && el.getAttribute("src") && el.paused) el.play?.().catch(() => {});
+  }).observe(w.sheet, { attributes: true, attributeFilter: ["class"] });
+
   async function ladeWo(id) {
     const box = w.$("#kr-wo");
     if (!WO_TEXT[id]) { box.hidden = true; return; }
@@ -377,7 +443,7 @@
   function zeigeOrt(ort) {
     fotoOrt = ort; fotoFuer = ""; fotoListe = [];
     ansicht = "foto"; ls.set("friday_klang_ansicht", "foto"); umschalter();
-    bildKlein?.foto(true); bildGross?.foto(true);
+    bildKlein?.foto(true); bildGross?.foto(true); setzeVideo(null);
     if (szeneId) { ladeFoto(szeneId); zeigeWo(szeneId); }
     grund(`Echtes Foto aus ${ort} (sofern frei lizenziert vorhanden). Die Tropfen sind live.`);
   }
@@ -385,10 +451,15 @@
   w.sheet.querySelector(".kr-umschalter").addEventListener("click", (e) => {
     const b = e.target.closest("[data-ansicht]"); if (!b) return;
     ansicht = b.dataset.ansicht; ls.set("friday_klang_ansicht", ansicht); umschalter();
-    bildKlein?.foto(ansicht === "foto"); bildGross?.foto(ansicht === "foto");
-    if (ansicht === "foto") ladeFoto(szeneId); else { setzeFoto(null); grund(""); }
+    bildKlein?.foto(echt()); bildGross?.foto(echt());
+    grund("");
+    if (ans() === "foto") ladeFoto(szeneId); else setzeFoto(null);
+    if (ans() === "video") ladeVideo(szeneId); else setzeVideo(null);
   });
-  w.$("#kr-naechstes").addEventListener("click", () => { if (!fotoListe.length) return ladeFoto(szeneId); fotoNr = (fotoNr + 1) % fotoListe.length; setzeFoto(fotoListe[fotoNr]); });
+  w.$("#kr-naechstes").addEventListener("click", () => {
+    if (ans() === "video") return naechstesVideo();
+    if (!fotoListe.length) return ladeFoto(szeneId); fotoNr = (fotoNr + 1) % fotoListe.length; setzeFoto(fotoListe[fotoNr]);
+  });
 
   // Große Szene (Vollbild, z. B. Kaminfeuer auf dem Fernseher)
   const grossOffen = () => !!document.getElementById("kr-gross") && !document.getElementById("kr-gross").hidden;
@@ -397,23 +468,25 @@
     let el = document.getElementById("kr-gross");
     if (!el) {
       el = document.createElement("div"); el.id = "kr-gross"; el.className = "kr-gross";
-      el.innerHTML = `<img id="kr-gross-foto" class="kr-foto" alt="" referrerpolicy="no-referrer"><canvas id="kr-gross-canvas"></canvas><div class="kr-gross-titel"><small>F.R.Ai.D.A.Y · KLANGRAUM</small><b></b></div><button type="button" class="kr-rund kr-gross-x" aria-label="Schließen">✕</button>`;
+      el.innerHTML = `<img id="kr-gross-foto" class="kr-foto" alt="" referrerpolicy="no-referrer"><video id="kr-gross-video" class="kr-video" muted playsinline preload="auto" aria-hidden="true"></video><canvas id="kr-gross-canvas"></canvas><div class="kr-gross-titel"><small>F.R.Ai.D.A.Y · KLANGRAUM</small><b></b></div><button type="button" class="kr-rund kr-gross-x" aria-label="Schließen">✕</button>`;
       document.body.appendChild(el);
       bildGross = FB?.neu(el.querySelector("canvas"));
-      const zu = () => { el.hidden = true; bildGross?.stop(); };
+      const zu = () => { el.hidden = true; bildGross?.stop(); const gv = el.querySelector("video"); gv.pause?.(); gv.removeAttribute("src"); gv.classList.remove("an"); };
       el.querySelector(".kr-gross-x").addEventListener("click", zu);
       document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !el.hidden) { e.stopPropagation(); zu(); } }, true);
     }
     el.hidden = false;
     el.querySelector("b").textContent = `${KLAENGE[szeneId].icon} ${FB?.titel(szeneId) || KLAENGE[szeneId].name}`;
-    bildGross?.setze(szeneId); bildGross?.foto(ansicht === "foto");
-    const f = ansicht === "foto" && fotoListe[fotoNr % (fotoListe.length || 1)];
+    bildGross?.setze(szeneId); bildGross?.foto(echt());
+    const v = ans() === "video" && videoListe[videoNr % (videoListe.length || 1)];
+    if (v) spieleIn(el.querySelector("video"), v, true);
+    const f = ans() === "foto" && fotoListe[fotoNr % (fotoListe.length || 1)];
     const gImg = el.querySelector("img"); if (f) { gImg.onload = () => gImg.classList.add("an"); gImg.src = f.bild; } else { gImg.removeAttribute("src"); gImg.classList.remove("an"); }
     el.requestFullscreen?.().catch?.(() => {});
   }
   w.$("#kr-gross-btn").addEventListener("click", grossAuf);
   // Vollbild per Esc verlassen = große Szene schließen
-  document.addEventListener("fullscreenchange", () => { const el = document.getElementById("kr-gross"); if (el && !document.fullscreenElement && !el.hidden) { el.hidden = true; bildGross?.stop(); } });
+  document.addEventListener("fullscreenchange", () => { const el = document.getElementById("kr-gross"); if (el && !document.fullscreenElement && !el.hidden) { el.querySelector(".kr-gross-x").click(); } });
 
   // ---------- Kacheln ----------
   function zeichne() {
@@ -462,7 +535,13 @@
   background: radial-gradient(ellipse 70% 60% at 50% 80%, rgba(255,120,20,.14), transparent 70%), #070402;
   box-shadow: 0 0 32px color-mix(in srgb, var(--kr-f) 30%, transparent), inset 0 0 40px rgba(255,138,30,.10), inset 0 1px 0 rgba(255,230,200,.35); transition: border-color .6s, box-shadow .6s; }
 .kr-glas::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(115deg, transparent 20%, rgba(255,240,220,.07) 32%, transparent 44%); }
-.kr-canvas, .kr-foto, .kr-gross canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.kr-canvas, .kr-foto, .kr-video, .kr-gross canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.kr-video { object-fit: cover; opacity: 0; transition: opacity 1.2s; background: transparent; pointer-events: none; }
+.kr-video.an { opacity: 1; }
+.kr-rund[hidden] { display: none; }
+.kr-umschalter .kr-video-knopf > .eve-marke { position: static; display: inline-block; margin-left: 5px; vertical-align: middle; font-size: 8px; padding: 2px 4px; }
+.kr-umschalter .kr-video-knopf.eve-schloss { opacity: .55; }
+.kr-umschalter .kr-video-knopf.eve-schloss > .eve-marke { font-size: 11px; padding: 0; }
 .kr-foto { object-fit: cover; opacity: 0; transition: opacity .9s; animation: kr-zoom 40s ease-in-out infinite alternate; }
 .kr-foto.an { opacity: 1; }
 @keyframes kr-zoom { from { transform: scale(1.02); } to { transform: scale(1.12) translate(-1.5%, -1%); } }
@@ -541,6 +620,13 @@ html.perf-fluessig .kr-foto { animation: none; }
     aus,
     auto: (an = true) => { ls.set("friday_klang_auto", an ? "1" : "0"); zeichne(); },
     aktiv: () => aktiv,
+    // "Kaminfeuer mit Video": Ansicht umschalten (Video nur, wenn frei – in Friday erst nach Freigabe in Eve)
+    ansicht: (neu) => {
+      if (!["anim", "foto", "video"].includes(neu)) return;
+      w.auf();
+      if (neu === "video" && !videoFrei()) { grund("🔒 Videos zum Stimmungs-Sound sind noch im Test. Probier sie in Eve aus und gib sie dort frei."); return; }
+      w.sheet.querySelector(`.kr-umschalter [data-ansicht="${neu}"]`)?.click();
+    },
     // "Wo regnet es gerade?": Fenster auf, Klang an, Foto aus der ersten passenden Stadt
     wo: async (art = "regen") => {
       if (!WO_TEXT[art]) art = "regen";

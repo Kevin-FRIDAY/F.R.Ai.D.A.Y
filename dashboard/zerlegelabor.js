@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Zerlege-Labor (v1.140.0, zuerst nur in Eve): Modelle aus Fridays Teile-Datenbank
+// F.R.Ai.D.A.Y Zerlege-Labor (v1.143.0, zuerst nur in Eve): Modelle aus Fridays Teile-Datenbank
 // (server/src/teilebank.js) in 3D, detailgetreu und zum Anfassen:
 //  • Teil antippen → Wissen dazu (Funktion, Material, Gewicht, wie man es in echt ausbaut)
 //  • Teil oder ganze Baugruppe herausnehmen (z. B. Karosserie abheben, dann Motor mit dem Kran heraus)
