@@ -63,6 +63,7 @@ import { osirisStatus } from "./osiris.js";
 import { eveRouten } from "./eve.js";
 import { appsRouten } from "./appzentrale.js";
 import { zerlegeRouten } from "./teilebank.js";
+import { marktplusRouten, marktWacheStart } from "./marktplus.js";
 import { eveWeiterleitung, eveStarten } from "./eve-prozess.js";
 import { eveSchutzAn } from "./eve-schutz.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
@@ -187,6 +188,8 @@ const DASHBOARD_LOG = [
   ["POST", /^\/papierdepot\/freigeben$/, "markt", (q) => `Spielgeld-Handel: ${String(q.body?.richtung || "")} ${String(q.body?.asset || "")}`],
   ["POST", /^\/papierdepot\/zuruecksetzen$/, "markt", () => "Spielgeld-Depot zurückgesetzt"],
   ["POST", /^\/markt\/([^/]+)\/neu$/, "markt", (q, m) => `Prognose neu berechnet: ${m[1]}`],
+  ["POST", /^\/marktplus\/wache\/markt$/, "markt", (q) => `Markt-Wache: ${String(q.body?.name || q.body?.symbol || "").slice(0, 60)} eingestellt`],
+  ["POST", /^\/marktplus\/wache\/entfernen$/, "markt", () => "Markt-Wache: Markt entfernt"],
   ["POST", /^\/video-job$/, "video", (q) => `Videoschnitt gestartet${q.body?.look ? ` (Look ${String(q.body.look).slice(0, 20)})` : ""}`],
   ["POST", /^\/dienste\/([^/]+)\/vergessen$/, "verbindung", (q, m) => `Verbindung getrennt: ${m[1]}`],
   ["POST", /^\/dienste\/([^/]+)\/befehl$/, null, (q, m) => `${m[1]}: ${String(q.body?.action || "")} ${String(q.body?.value ?? "").slice(0, 60)}`],
@@ -696,6 +699,7 @@ helferRouten(app, asyncRoute);
 eveRouten(app, asyncRoute);
 appsRouten(app, asyncRoute);
 zerlegeRouten(app);
+marktplusRouten(app, asyncRoute);
 wacheRouten(app, asyncRoute);
 // Kontrollraum (v1.135.0): Regelwerk, Schleifen-Schutz, Gedächtnis, Herzschlag, Kosten-Deckel, Seele, Fähigkeiten, Änderungen.
 kernRouten(app, asyncRoute);
@@ -714,6 +718,7 @@ logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
 helferStart();
 wacheStart();
+marktWacheStart(); // Markt-Radar Plus: läuft in Eve, in Friday erst nach Freigabe
 kernStart();
 zentraleStart(ask);
 jarvisStart();

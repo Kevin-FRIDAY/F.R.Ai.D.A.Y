@@ -162,7 +162,7 @@ export function openSiteDir(id) {
   return { ok: true };
 }
 
-// ---------- Live-Bau mit Countdown (v1.145.0, zuerst nur in Eve) ----------
+// ---------- Live-Bau mit Countdown (v1.146.0, zuerst nur in Eve) ----------
 // Friday streamt die Seite: man sieht live, wie der Code entsteht, dazu Countdown und Ladebalken.
 // Sagt Kevin "bau mir eine Seite in 30 Minuten", lacht Friday und nennt eine Zeit, die sie wirklich schafft
 // (gemessen aus den letzten Bauten), und baut im Tempo-Modus mit dem schnellen Modell.

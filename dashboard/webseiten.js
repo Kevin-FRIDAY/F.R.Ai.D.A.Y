@@ -39,7 +39,7 @@
     } catch { $("ws-frame").srcdoc = "<p style='font-family:sans-serif;padding:20px'>Vorschau nicht verfügbar.</p>"; }
   }
 
-  // ---------- Live-Bau mit Countdown (v1.145.0, zuerst nur in Eve) ----------
+  // ---------- Live-Bau mit Countdown (v1.146.0, zuerst nur in Eve) ----------
   // Man sieht, wie Friday die Seite programmiert (Code + wachsende Vorschau), dazu Countdown und Ladebalken.
   // In Friday antwortet der Server mit 423 (noch im Test) → dann baut Friday wie bisher.
   let live = null; // { id, ab, code, t0, schaetzung, timer, vorschauZeit }

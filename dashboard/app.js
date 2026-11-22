@@ -766,6 +766,10 @@
         else if (hat("spiel_bauen")) window.FridaySpiele?.neuester();
         else if (spielStart) window.FridaySpiele?.spiel(spielStart.slice(6));
         else if (hat("spiele")) window.FridaySpiele?.open();
+        // Markt-Radar Plus (v1.145.0): Markt anzeigen, Prognose oder Markt-Wache.
+        const mpA = aktion("marktplus:");
+        if (mpA) window.FridayMarktPlus?.open(mpA.slice(10));
+        else if (hat("markt_plus")) window.FridayMarktPlus?.open("");
         const zentraleAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("zentrale:"));
         if (zentraleAktion) window.FridayZentrale?.open(zentraleAktion.slice(9));
         else window.FridayZentrale?.refresh();

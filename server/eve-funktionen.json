@@ -67,9 +67,18 @@
       ]
     },
     {
+      "id": "markt-plus",
+      "name": "Markt-Radar Plus: alle Märkte, Zeitstrahl, Prognose, Markt-Wache",
+      "version": "1.145.0",
+      "beschreibung": "Im Markt-Radar der Reiter „🌐 Alle Märkte“: 77 Märkte (Indizes, Aktien, Rohstoffe, Krypto, Devisen) plus Suche nach fast jeder Aktie/ETF, Zeitstrahl bis 1 Jahr zurück, Analyse (Trend, RSI, Schwankung), Prognose auf Wunsch mit Ehrlichkeits-Check und eine Markt-Wache, die im Hintergrund aufpasst und meldet. Keine Anlageberatung, Friday kauft nie etwas.",
+      "ziele": [
+        ".mr-plus-tab"
+      ]
+    },
+    {
       "id": "webseiten-live",
       "name": "Webseiten-Werkstatt: live bauen mit Countdown",
-      "version": "1.145.0",
+      "version": "1.146.0",
       "beschreibung": "Du siehst live, wie Friday die Webseite programmiert (Code tippt mit, Vorschau wächst), dazu Countdown und Ladebalken bis fertig. Sagst du „Friday, bau mir eine Webseite in 30 Minuten“, lacht sie und nennt eine Zeit, die sie wirklich schafft (z. B. 40 Sekunden), und baut im Tempo-Modus mit dem schnellen Modell.",
       "ziele": [
         "#ws-live-marke"
