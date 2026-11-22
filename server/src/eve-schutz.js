@@ -9,6 +9,7 @@ import { eintragen } from "./logbuch.js";
 // Diese Dienste dürfen auch in Eve etwas schicken, weil sie nur antworten (denken, sprechen, Daten liefern).
 const POST_ERLAUBT = [
   /(^|\.)anthropic\.com$/i,
+  /(^|\.)openrouter\.ai$/i, // Ersatz-Gehirn (v1.142.0): denkt nur
   /(^|\.)elevenlabs\.io$/i,
   /^auth\.opensky-network\.org$/i,
   /^127\.0\.0\.1$|^localhost$/i, // Eves eigener Server

@@ -1,12 +1,12 @@
 // Fridays Denker: ein Claude-Aufruf für Labor, Missionen und Ziel-Navigator.
 // KI-Modell-Routing: wählt je nach Aufgabe das passende Modell (Haiku für Einfaches, Sonnet als
 // Standard, Opus für Schweres) und spart automatisch, wenn das Guthaben knapp ist (Energie-System).
-import Anthropic from "@anthropic-ai/sdk";
+import { kiClient, ersatzBereit } from "./ki-client.js";
 import { config } from "./config.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty, getEnergie } from "./energie.js";
 import { getSettings } from "./einstellungen.js";
 
-const client = new Anthropic({ apiKey: config.anthropicKey });
+const client = kiClient();
 
 export const MODELLE = {
   leicht: { model: "claude-haiku-5-5", name: "Haiku 5.5 (schnell & günstig)", effort: "low" },
@@ -47,7 +47,7 @@ const WEB_SEARCH = { type: "web_search_20260209", name: "web_search", max_uses: 
  * @returns {Promise<{ok:boolean, text?:string, model?:string, routing?:object, error?:string, leer?:boolean}>}
  */
 export async function denke({ system, text, image, stufe = "auto", websuche = false, maxTokens = 6000, quelle = "labor" }) {
-  if (getEnergie().zustand === "leer") return { ok: false, leer: true, error: "Fridays Guthaben ist leer. Lade es auf console.anthropic.com auf und trag den Betrag im Energie-Fenster ein." };
+  if (!config.anthropicKey && !ersatzBereit()) return { ok: false, leer: true, error: "Fridays Guthaben ist leer. Lade es auf console.anthropic.com auf und trag den Betrag im Energie-Fenster ein." };
   const routing = waehleModell(stufe, text);
   const content = [];
   if (image?.data) content.push({ type: "image", source: { type: "base64", media_type: image.mediaType || "image/jpeg", data: image.data } });

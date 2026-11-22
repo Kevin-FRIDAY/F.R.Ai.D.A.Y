@@ -40,6 +40,13 @@
       "ziele": [
         "#ln-studio-neu"
       ]
+    },
+    {
+      "id": "openrouter-ersatz",
+      "name": "Ersatz-Gehirn über OpenRouter",
+      "version": "1.142.0",
+      "beschreibung": "Ist dein Claude-Guthaben leer oder Claude gestört, denkt Friday über OpenRouter weiter, mit allen Werkzeugen (ohne Websuche). Schlüssel trägst du unter Verbindungen → Ersatz-Gehirn ein. Zum Testen in Eve: dort „Test: Eve denkt immer mit OpenRouter“ wählen und eine Frage stellen.",
+      "ziele": []
     }
   ]
 }

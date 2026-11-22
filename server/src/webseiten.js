@@ -5,11 +5,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFile } from "node:child_process";
-import Anthropic from "@anthropic-ai/sdk";
+import { kiClient, ersatzBereit } from "./ki-client.js";
 import { config } from "./config.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty, einnahme } from "./energie.js";
 
-const client = new Anthropic({ apiKey: config.anthropicKey });
+const client = kiClient();
 export const WEB_DIR = process.env.FRIDAY_WEB_DIR || path.join(os.homedir(), "Friday-Webseiten");
 
 const WEBSEITE_TOOL = {
@@ -64,7 +64,7 @@ export function getSiteHtml(id) {
 }
 
 export async function buildSite(auftrag, basisId = null) {
-  if (!config.anthropicKey) return { ok: false, error: "Ohne Claude-Schlüssel kann ich keine Webseiten bauen." };
+  if (!config.anthropicKey && !ersatzBereit()) return { ok: false, error: "Ohne Claude-Schlüssel kann ich keine Webseiten bauen." };
   const text = String(auftrag || "").trim().slice(0, 2000);
   if (!text) return { ok: false, error: "Beschreib mir den Kunden und was die Seite können soll." };
   let user = `Auftrag: ${text}`;
