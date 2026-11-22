@@ -171,7 +171,7 @@ body.whisper-hoert #state::after { content: " ● REC"; color: #ff5a4a; font-siz
     einstellungen();
     status().then(() => { if (soll() || modus() === "whisper") window.Friday?.api?.("/api/hoeren/vorwaermen", { method: "POST", body: "{}" }).catch(() => {}); });
   }, 500);
-  document.addEventListener("click", (e) => { if (e.target.closest?.("[data-target='settings-open'], #settings-btn, .set-g-head")) einstellungen(); }, true);
+  document.addEventListener("click", (e) => { if (e.target.closest?.("[data-target='settings-open'], #settings-btn, .set-g-head, .set-tab")) einstellungen(); }, true);
 
   window.FridayHoeren = {
     soll,

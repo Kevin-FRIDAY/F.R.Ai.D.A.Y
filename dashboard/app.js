@@ -505,7 +505,8 @@
   // v1.121.1: Friday redet nicht von allein. Meldungen, die keiner bestellt hat (Timer, Erinnerung,
   // Energie, "Video fertig"), erscheinen still am Status-Ring statt vorgelesen zu werden.
   // Einschalten: Einstellungen → Assistent → "Friday darf von sich aus sprechen".
-  const vonSelbstAn = () => storage.get("friday_vonselbst") === "1";
+  // v1.154.0: In der Ruhezeit (Einstellungen → Assistent) spricht sie nie von selbst.
+  const vonSelbstAn = () => storage.get("friday_vonselbst") === "1" && !window.FridayRuhezeit?.();
   window.Friday.sagVonSelbst = (text, { quelle = "hinweis", stufe = "warn", dauer = 10 * 60000 } = {}) => {
     if (!text) return;
     if (vonSelbstAn()) return say(text);

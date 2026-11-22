@@ -459,266 +459,381 @@
       </div>
     </section>
 
-    <!-- Einstellungen -->
+    <!-- Einstellungen (v1.154.0: neu gestaltet – Reiter links, Karten rechts, Schnellschalter) -->
     <section id="settings" class="sheet hidden" aria-label="Einstellungen">
-      <div class="panel sheet-box">
+      <div class="panel sheet-box set-neu">
         <header class="sheet-top"><h2>⚙ Einstellungen</h2><button id="settings-x" class="ghost small">✕</button></header>
         <div class="set-suche-leiste">
-          <input id="set-suche" type="search" placeholder="Einstellung suchen … z. B. Uhr, Stimme, Farbe" autocomplete="off">
-          <button id="set-allezu" class="chip" type="button" title="Alle Gruppen auf- oder zuklappen">Alle zuklappen</button>
+          <span class="set-suche-ico" aria-hidden="true">⌕</span>
+          <input id="set-suche" type="search" placeholder="Einstellung suchen … z. B. Uhr, Stimme, Farbe" autocomplete="off" data-kein-haken>
         </div>
-        <p id="set-nichts" class="muted small-text hidden">Keine passende Einstellung gefunden.</p>
 
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">🎨</span><div class="set-g-txt"><h3>Darstellung</h3><small>Farbe, Dunkelmodus, Schrift, Größe</small></div></div>
-          <div class="set-g-body">
-            <div class="set-field"><label class="set-label">Akzentfarbe</label>
-              <div id="theme-swatches" class="swatches">
-                <button class="swatch" data-theme="orange" style="--sw:#ff8a1e" title="Orange"></button>
-                <button class="swatch" data-theme="cyan" style="--sw:#4fd8ff" title="Cyan"></button>
-                <button class="swatch" data-theme="gruen" style="--sw:#46e0a0" title="Grün"></button>
-                <button class="swatch" data-theme="rot" style="--sw:#ff5d6c" title="Rot"></button>
-                <button class="swatch" data-theme="lila" style="--sw:#b57bff" title="Lila"></button>
-                <button class="swatch" data-theme="gold" style="--sw:#ffcc4d" title="Gold"></button>
-                <button class="swatch" data-theme="pink" style="--sw:#ff6ec7" title="Pink"></button>
-                <button class="swatch" data-theme="eis" style="--sw:#8fb6ff" title="Eisblau"></button>
-                <label class="swatch swatch-eigen" title="Eigene Farbe"><input type="color" id="set-eigenfarbe" value="#ff8a1e" aria-label="Eigene Farbe"></label>
+        <div class="set-layout">
+          <nav class="set-tabs" role="tablist" aria-label="Bereiche">
+            <button type="button" class="set-tab" role="tab" data-set-tab="schnell" data-kein-haken><span class="set-tab-ico">⚡</span><span class="set-tab-txt"><b>Schnellzugriff</b><small>Das Wichtigste</small></span></button>
+            <button type="button" class="set-tab" role="tab" data-set-tab="profil" data-kein-haken><span class="set-tab-ico">👤</span><span class="set-tab-txt"><b>Profil &amp; Start</b><small>Name, Uhr, Startseite</small></span></button>
+            <button type="button" class="set-tab" role="tab" data-set-tab="aussehen" data-kein-haken><span class="set-tab-ico">🎨</span><span class="set-tab-txt"><b>Aussehen</b><small>Farbe, Kopf, Schrift</small></span></button>
+            <button type="button" class="set-tab" role="tab" data-set-tab="stimme" data-kein-haken><span class="set-tab-ico">🔊</span><span class="set-tab-txt"><b>Stimme &amp; Hören</b><small>Vorlesen, Weckwort</small></span></button>
+            <button type="button" class="set-tab" role="tab" data-set-tab="assistent" data-kein-haken><span class="set-tab-ico">🧠</span><span class="set-tab-txt"><b>Assistent</b><small>Denken, Verhalten</small></span></button>
+            <button type="button" class="set-tab" role="tab" data-set-tab="welt" data-kein-haken><span class="set-tab-ico">🌍</span><span class="set-tab-txt"><b>Welt &amp; Werkzeuge</b><small>Globus, Markt, Vision</small></span></button>
+            <button type="button" class="set-tab" role="tab" data-set-tab="system" data-kein-haken><span class="set-tab-ico">🛠</span><span class="set-tab-txt"><b>System &amp; Daten</b><small>Updates, Sicherung</small></span></button>
+          </nav>
+
+          <div class="set-inhalt">
+            <p id="set-nichts" class="set-leer hidden">Keine passende Einstellung gefunden.</p>
+
+            <!-- ===== Schnellzugriff ===== -->
+            <div class="set-pane" data-pane="schnell" role="tabpanel">
+              <div class="set-pane-kopf"><span>⚡</span><div><h3 class="set-pane-titel">Schnellzugriff</h3><small>Die wichtigsten Schalter auf einen Blick. Antippen schaltet um.</small></div></div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">◉</span><div class="set-g-txt"><h3>Schnellschalter</h3><small>Gleiche Schalter wie in den Bereichen</small></div></div>
+                <div class="set-g-body">
+                  <div class="set-kacheln" id="set-kacheln"></div>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">ℹ</span><div class="set-g-txt"><h3>Über Friday</h3><small>Version, Gerät, Speicherort</small></div></div>
+                <div class="set-g-body">
+                  <div class="set-info" id="set-ueber"></div>
+                </div>
               </div>
             </div>
-            <label class="switch"><input type="checkbox" id="amoled-toggle"><span>Tiefschwarz (AMOLED)</span></label>
-            <label class="row-field"><span>Glas-Deckkraft</span><input type="range" id="set-glas" min="0.6" max="1" step="0.02" value="0.94"></label>
-            <label class="row-field"><span>Ecken</span>
-              <select id="set-ecken"><option value="rund">Rund (Standard)</option><option value="weich">Sehr rund</option><option value="kantig">Kantig</option></select>
-            </label>
-            <label class="switch"><input type="checkbox" id="set-raster"><span>Leichtes HUD-Raster im Hintergrund</span></label>
-            <label class="row-field"><span>Schriftart</span>
-              <select id="font-select">
-                <option value="1">Orbitron + Rajdhani (Standard)</option>
-                <option value="2">Exo 2 (modern)</option>
-                <option value="3">Audiowide + Chakra Petch (fett)</option>
-                <option value="4">Oxanium (techy)</option>
-                <option value="5">Michroma + Saira (edel)</option>
-              </select>
-            </label>
-            <label class="row-field"><span>Textgröße</span>
-              <select id="text-size">
-                <option value="s">Klein</option>
-                <option value="m" selected>Normal</option>
-                <option value="l">Groß</option>
-                <option value="xl">Sehr groß</option>
-              </select>
-            </label>
-          </div>
-        </div>
 
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">👤</span><div class="set-g-txt"><h3>Profil</h3><small>Wie Friday dich nennt, deine Stadt</small></div></div>
-          <div class="set-g-body">
-            <label class="row-field"><span>Anrede</span><input id="srv-anrede" type="text" maxlength="40" placeholder="z. B. Kevin oder Boss" autocomplete="off"></label>
-            <label class="row-field"><span>Stadt fürs Wetter</span><input id="srv-stadt" type="text" maxlength="40" placeholder="z. B. Berlin" autocomplete="off"></label>
-            <div class="set-row"><span id="profil-info" class="muted small-text">Leer lassen = Wert aus der Installation.</span><button id="profil-save" class="chip" type="button">Speichern</button></div>
-            <label class="switch"><input type="checkbox" id="set-gruss" checked><span>Begrüßung über dem Eingabefeld anzeigen</span></label>
-          </div>
-        </div>
-
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">🕒</span><div class="set-g-txt"><h3>Uhr &amp; Startseite</h3><small>Zeitformat, Datum, welche Karten zu sehen sind</small></div></div>
-          <div class="set-g-body">
-            <label class="row-field"><span>Zeitformat</span><select id="set-uhr12"><option value="0">24 Stunden (14:30)</option><option value="1">12 Stunden (2:30 PM)</option></select></label>
-            <label class="switch"><input type="checkbox" id="set-uhrsek" checked><span>Sekunden anzeigen</span></label>
-            <label class="row-field"><span>Datum</span><select id="set-datum"><option value="lang">Lang (Mittwoch, 18. November 2026)</option><option value="kurz">Kurz (Mi., 18.11.2026)</option><option value="aus">Ausblenden</option></select></label>
-            <div class="set-label">Karten auf der Startseite</div>
-            <div class="set-chips" id="set-karten">
-              <label><input type="checkbox" data-karte="weather" checked><span>Wetter</span></label>
-              <label><input type="checkbox" data-karte="panel-status" checked><span>System Status</span></label>
-              <label><input type="checkbox" data-karte="panel-proc" checked><span>Aktive Prozesse</span></label>
-              <label><input type="checkbox" data-karte="panel-heute" checked><span>Heute</span></label>
-              <label><input type="checkbox" data-karte="panel-backup" checked><span>Sicherung</span></label>
-              <label><input type="checkbox" data-karte="quick" checked><span>Schnellzugriff</span></label>
-              <label><input type="checkbox" data-karte="hudbar" checked><span>Obere Leiste</span></label>
-              <label><input type="checkbox" data-karte="chips" checked><span>Befehls-Vorschläge</span></label>
-              <label><input type="checkbox" data-karte="transcript" checked><span>Gesprächsverlauf</span></label>
+            <!-- ===== Profil & Start ===== -->
+            <div class="set-pane" data-pane="profil" role="tabpanel">
+              <div class="set-pane-kopf"><span>👤</span><div><h3 class="set-pane-titel">Profil &amp; Start</h3><small>Wie Friday dich nennt und was du beim Öffnen siehst.</small></div></div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">👤</span><div class="set-g-txt"><h3>Profil</h3><small>Wie Friday dich nennt, deine Stadt</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Anrede</span><input id="srv-anrede" type="text" maxlength="40" placeholder="z. B. Kevin oder Boss" autocomplete="off"></label>
+                  <label class="row-field"><span>Stadt fürs Wetter</span><input id="srv-stadt" type="text" maxlength="40" placeholder="z. B. Berlin" autocomplete="off"></label>
+                  <div class="set-row"><span id="profil-info" class="muted small-text">Leer lassen = Wert aus der Installation.</span><button id="profil-save" class="chip" type="button">Speichern</button></div>
+                  <label class="switch"><input type="checkbox" id="set-gruss" checked><span>Begrüßung anzeigen<small>„Guten Abend, Kevin.“ über dem Eingabefeld</small></span></label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🕒</span><div class="set-g-txt"><h3>Uhr &amp; Datum</h3><small>Zeitformat oben rechts</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Zeitformat</span><select id="set-uhr12"><option value="0">24 Stunden (14:30)</option><option value="1">12 Stunden (2:30 PM)</option></select></label>
+                  <label class="switch"><input type="checkbox" id="set-uhrsek" checked><span>Sekunden anzeigen</span></label>
+                  <label class="row-field"><span>Datum</span><select id="set-datum"><option value="lang">Lang (Mittwoch, 18. November 2026)</option><option value="kurz">Kurz (Mi., 18.11.2026)</option><option value="aus">Ausblenden</option></select></label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🏠</span><div class="set-g-txt"><h3>Startseite</h3><small>Welche Karten zu sehen sind, was sich beim Start öffnet</small></div></div>
+                <div class="set-g-body">
+                  <div class="set-feld"><span class="set-label">Karten auf der Startseite</span>
+                    <div class="set-chips" id="set-karten">
+                      <label><input type="checkbox" data-karte="weather" checked><span>Wetter</span></label>
+                      <label><input type="checkbox" data-karte="panel-status" checked><span>System Status</span></label>
+                      <label><input type="checkbox" data-karte="panel-proc" checked><span>Aktive Prozesse</span></label>
+                      <label><input type="checkbox" data-karte="panel-heute" checked><span>Heute</span></label>
+                      <label><input type="checkbox" data-karte="panel-backup" checked><span>Sicherung</span></label>
+                      <label><input type="checkbox" data-karte="quick" checked><span>Schnellzugriff</span></label>
+                      <label><input type="checkbox" data-karte="hudbar" checked><span>Obere Leiste</span></label>
+                      <label><input type="checkbox" data-karte="chips" checked><span>Befehls-Vorschläge</span></label>
+                      <label><input type="checkbox" data-karte="transcript" checked><span>Gesprächsverlauf</span></label>
+                    </div>
+                  </div>
+                  <label class="row-field"><span>Beim Start öffnen<small>Fenster, das nach dem Öffnen von Friday von selbst aufgeht</small></span>
+                    <select id="set-startfenster"><option value="">Nichts (nur Friday)</option><option value="welt">Weltgeschehen</option><option value="system">System-Zentrale</option><option value="wissen">Fridays Datenbank</option><option value="archiv">Archiv</option></select>
+                  </label>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">🔊</span><div class="set-g-txt"><h3>Stimme</h3><small>Vorlesen, Stimme, Tempo</small></div></div>
-          <div class="set-g-body">
-            <label class="switch"><input type="checkbox" id="voice-toggle" checked><span>Vorlesen</span></label>
-            <label class="row-field"><span>Gerätestimme</span><select id="voice-select"></select></label>
-            <div class="voice-info-box">
-              <p id="voice-info">Stimmen werden geladen …</p>
-              <div class="voice-knoepfe"><button type="button" id="voice-probe" class="chip">▶ Probehören</button><button type="button" id="voice-reload" class="chip">↻ Liste neu laden</button></div>
-              <details class="voice-mehr">
-                <summary>Mehr Apple-Stimmen laden (kostenlos)</summary>
-                <p><a href="stimmen-anleitung.html" target="_blank" rel="noopener" class="chip">📷 Anleitung mit Bildern öffnen</a></p>
-                <p><b>Mac:</b> Systemeinstellungen → Bedienungshilfen → Gesprochene Inhalte → bei „Systemstimme“ auf ⓘ bzw. „Stimmen verwalten …“ → Deutsch → z. B. <i>Anna (Premium)</i>, <i>Helena</i>, <i>Petra</i>, <i>Markus</i>, <i>Yannick</i> mit ⬇ laden.</p>
-                <p><b>iPhone:</b> Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch → Stimme antippen → „Premium“ oder „Erweitert“ laden.</p>
-                <p>Danach Friday neu laden (oder „Liste neu laden“). ★ = Premium, ☆ = Erweitert, klingen am natürlichsten. Siri-Stimmen gibt Apple für Webseiten leider nicht frei.</p>
-              </details>
+            <!-- ===== Aussehen ===== -->
+            <div class="set-pane" data-pane="aussehen" role="tabpanel">
+              <div class="set-pane-kopf"><span>🎨</span><div><h3 class="set-pane-titel">Aussehen</h3><small>Farbe, Glas, Leuchten, Fridays Kopf und Schrift.</small></div></div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🎨</span><div class="set-g-txt"><h3>Farbe &amp; Glas</h3><small>Akzentfarbe, Tiefschwarz, Ecken</small></div></div>
+                <div class="set-g-body">
+                  <div class="set-feld"><span class="set-label">Akzentfarbe</span>
+                    <div id="theme-swatches" class="swatches">
+                      <button class="swatch" data-theme="orange" style="--sw:#ff8a1e" title="Orange"></button>
+                      <button class="swatch" data-theme="cyan" style="--sw:#4fd8ff" title="Cyan"></button>
+                      <button class="swatch" data-theme="gruen" style="--sw:#46e0a0" title="Grün"></button>
+                      <button class="swatch" data-theme="rot" style="--sw:#ff5d6c" title="Rot"></button>
+                      <button class="swatch" data-theme="lila" style="--sw:#b57bff" title="Lila"></button>
+                      <button class="swatch" data-theme="gold" style="--sw:#ffcc4d" title="Gold"></button>
+                      <button class="swatch" data-theme="pink" style="--sw:#ff6ec7" title="Pink"></button>
+                      <button class="swatch" data-theme="eis" style="--sw:#8fb6ff" title="Eisblau"></button>
+                      <label class="swatch swatch-eigen" title="Eigene Farbe"><input type="color" id="set-eigenfarbe" value="#ff8a1e" aria-label="Eigene Farbe"></label>
+                    </div>
+                  </div>
+                  <label class="switch"><input type="checkbox" id="amoled-toggle"><span>Tiefschwarz (AMOLED)<small>Reines Schwarz, spart Akku auf dem iPhone</small></span></label>
+                  <label class="row-field"><span>Glas-Deckkraft</span><input type="range" id="set-glas" min="0.6" max="1" step="0.02" value="0.94"></label>
+                  <label class="row-field"><span>Ecken</span>
+                    <select id="set-ecken"><option value="rund">Rund (Standard)</option><option value="weich">Sehr rund</option><option value="kantig">Kantig</option></select>
+                  </label>
+                  <label class="switch"><input type="checkbox" id="set-raster"><span>HUD-Raster im Hintergrund<small>Feines Gitter hinter allen Karten</small></span></label>
+                  <label class="switch"><input type="checkbox" id="set-netz" checked><span>Neuronen-Netz in Fenstern<small>Leuchtende Linien im Hintergrund jedes Fensters</small></span></label>
+                  <label class="switch"><input type="checkbox" id="set-kontrast"><span>Hoher Kontrast<small>Hellere graue Schrift, besser lesbar bei Sonne</small></span></label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">✨</span><div class="set-g-txt"><h3>Leuchten</h3><small>Wie stark das Neon glüht</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Glow-Stärke</span><input type="range" id="set-glow" min="0" max="2" step="0.1" value="1"></label>
+                  <label class="switch"><input type="checkbox" id="set-glowbreathe"><span>Neon atmet<small>Karten pulsieren ganz sanft</small></span></label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🗿</span><div class="set-g-txt"><h3>Fridays Kopf</h3><small>Stil und Bewegung in der Mitte</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Kopf-Stil</span>
+                    <select id="set-kopfstil">
+                      <option value="neuronen">Neuronen-Netz (Sternenhaut)</option>
+                      <option value="kristall">Kristall-Glas</option>
+                      <option value="detail">Detail-Scan</option>
+                      <option value="holo">Hologramm</option>
+                      <option value="partikel">Lichtpunkt-Wolke</option>
+                      <option value="kern">KI-Kern (ohne Gesicht)</option>
+                      <option value="facetten">Facetten-Skulptur</option>
+                      <option value="visier">HUD-Visier</option>
+                      <option value="linien">Neon-Linien</option>
+                    </select>
+                  </label>
+                  <label class="switch"><input type="checkbox" id="set-mouth" checked><span>Mund bewegt sich beim Reden</span></label>
+                  <label class="switch"><input type="checkbox" id="set-headmove" checked><span>Kopf wiegt sich leicht</span></label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">Aa</span><div class="set-g-txt"><h3>Schrift</h3><small>Schriftart und Größe</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Schriftart</span>
+                    <select id="font-select">
+                      <option value="1">Orbitron + Rajdhani (Standard)</option>
+                      <option value="2">Exo 2 (modern)</option>
+                      <option value="3">Audiowide + Chakra Petch (fett)</option>
+                      <option value="4">Oxanium (techy)</option>
+                      <option value="5">Michroma + Saira (edel)</option>
+                    </select>
+                  </label>
+                  <label class="row-field"><span>Textgröße</span>
+                    <select id="text-size">
+                      <option value="s">Klein</option>
+                      <option value="m" selected>Normal</option>
+                      <option value="l">Groß</option>
+                      <option value="xl">Sehr groß</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🚀</span><div class="set-g-txt"><h3>Leistung &amp; Bildschirm</h3><small>Flüssig oder schön, Vollbild, Akku</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Leistung</span>
+                    <select id="set-leistung">
+                      <option value="auto">Automatisch</option>
+                      <option value="schoen">Schön (volle Grafik)</option>
+                      <option value="fluessig">Flüssig (ruckelfrei)</option>
+                    </select>
+                  </label>
+                  <small id="set-leistung-info" class="muted small-text"></small>
+                  <label class="switch"><input type="checkbox" id="set-reduce"><span>Weniger Animationen<small>Schont den Akku</small></span></label>
+                  <label class="switch"><input type="checkbox" id="set-vollbild"><span>Immer im Vollbild<small>Ab dem ersten Klick, Taste F schaltet um</small></span></label>
+                  <label class="switch"><input type="checkbox" id="set-wach"><span>Bildschirm wach halten<small>Solange Friday offen ist, geht das Display nicht aus (gut am Ladekabel)</small></span></label>
+                </div>
+              </div>
             </div>
-            <label class="row-field"><span>Tempo</span><input type="range" id="voice-rate" min="0.6" max="1.6" step="0.05" value="1.05"></label>
-            <label class="row-field"><span>Tonhöhe</span><input type="range" id="voice-pitch" min="0.6" max="1.6" step="0.05" value="1"></label>
-            <label class="row-field"><span>Lautstärke</span><input type="range" id="set-lautstaerke" min="0.1" max="1" step="0.05" value="1"></label>
-            <label class="switch"><input type="checkbox" id="set-toene" checked><span>Signalton bei Timern und Erinnerungen</span></label>
-            <label class="row-field"><span>Signalton-Lautstärke</span><input type="range" id="set-tonlaut" min="0.05" max="1" step="0.05" value="0.6"></label>
-            <button id="voice-test" class="chip">Stimme testen</button>
-          </div>
-        </div>
 
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">🌍</span><div class="set-g-txt"><h3>Globus (Weltgeschehen)</h3><small>Stil, Länder-Namen, Drehung</small></div></div>
-          <div class="set-g-body">
-            <label class="row-field"><span>Stil</span>
-              <select id="globe-style">
-                <option value="echt">Echt (realistisch)</option>
-                <option value="holo">Hologramm (neon)</option>
-              </select>
-            </label>
-            <label class="switch"><input type="checkbox" id="set-globelabels" checked><span>Länder-Namen anzeigen</span></label>
-            <label class="switch"><input type="checkbox" id="set-globespin" checked><span>Globus dreht automatisch</span></label>
-            <label class="switch"><input type="checkbox" id="set-ticker" checked><span>Live-Ticker einblenden</span></label>
-            <label class="switch"><input type="checkbox" id="set-osiris-default"><span>Direkt mit Osiris-Karte öffnen</span></label>
-          </div>
-        </div>
-
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">🤖</span><div class="set-g-txt"><h3>Assistent</h3><small>Gesicht, Weckwort, Übersetzer</small></div></div>
-          <div class="set-g-body">
-            <label class="row-field"><span>Denk-Tempo</span>
-              <select id="srv-tempo">
-                <option value="blitz">⚡ Blitz – am schnellsten, einfache Sachen</option>
-                <option value="schnell">🚀 Schnell – schnell und klug (Standard)</option>
-                <option value="gruendlich">🧠 Gründlich – langsamer, für schwere Aufgaben</option>
-                <option value="auto">🎯 Automatisch – Friday wählt je nach Frage das passende Modell</option>
-              </select>
-            </label>
-            <label class="row-field"><span>Kopf-Stil</span>
-              <select id="set-kopfstil">
-                <option value="neuronen">Neuronen-Netz (Sternenhaut)</option>
-                <option value="kristall">Kristall-Glas</option>
-                <option value="detail">Detail-Scan</option>
-                <option value="holo">Hologramm</option>
-                <option value="partikel">Lichtpunkt-Wolke</option>
-                <option value="kern">KI-Kern (ohne Gesicht)</option>
-                <option value="facetten">Facetten-Skulptur</option>
-                <option value="visier">HUD-Visier</option>
-                <option value="linien">Neon-Linien</option>
-              </select>
-            </label>
-            <label class="switch"><input type="checkbox" id="set-mouth" checked><span>Mund bewegt sich beim Reden</span></label>
-            <label class="switch"><input type="checkbox" id="set-headmove" checked><span>Kopf bewegt sich (wiegen)</span></label>
-            <label class="switch"><input type="checkbox" id="wake-toggle" checked><span>"Friday" zuhören (Weckwort, immer an – Aus pausiert nur bis zum Neuladen)</span></label>
-            <label class="switch"><input type="checkbox" id="set-unterbrechen"><span>Unterbrechen mit „Friday“: Sagst du „Friday“, während sie spricht, hört sie sofort auf und hört dir zu. Normales Reden ohne „Friday“ stört sie nicht.</span></label>
-            <label class="switch"><input type="checkbox" id="translate-toggle"><span>Übersetzer</span></label>
-            <select id="translate-lang" class="hidden" aria-label="Zielsprache">
-              <option>Englische</option><option>Spanische</option><option>Französische</option>
-              <option>Italienische</option><option>Türkische</option><option>Polnische</option>
-              <option>Japanische</option><option>Kroatische</option>
-            </select>
-            <label class="row-field"><span>Leistung</span>
-              <select id="set-leistung">
-                <option value="auto">Automatisch</option>
-                <option value="schoen">Schön (volle Grafik)</option>
-                <option value="fluessig">Flüssig (ruckelfrei)</option>
-              </select>
-            </label>
-            <small id="set-leistung-info" class="muted small-text"></small>
-            <label class="switch"><input type="checkbox" id="set-reduce"><span>Weniger Animationen (schont Akku)</span></label>
-          </div>
-        </div>
-
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">🎙</span><div class="set-g-txt"><h3>Spracherkennung (Whisper)</h3><small>Friday versteht dich mit Whisper direkt auf dem Mac</small></div></div>
-          <div class="set-g-body">
-            <label class="row-field"><span>Wer versteht deine Befehle?</span>
-              <select id="set-hoeren">
-                <option value="auto">Automatisch (Standard: Gerät, Whisper nur ohne Geräte-Spracherkennung)</option>
-                <option value="whisper">Whisper auf dem Mac (genauer, ohne Cloud)</option>
-                <option value="geraet">Nur Gerät (Safari / Chrome)</option>
-              </select>
-            </label>
-            <label class="row-field"><span>Whisper-Modell</span>
-              <select id="set-hoeren-modell">
-                <option value="schnell">Schnell (klein, ca. 1 Sekunde)</option>
-                <option value="genau">Genau (groß, ca. 2–4 Sekunden, lädt einmal 1,6 GB)</option>
-              </select>
-            </label>
-            <small id="set-hoeren-info" class="muted small-text">Das Weckwort „Friday“ hört weiter das Gerät. Mit Whisper nimmt Friday danach deinen Befehl auf und lässt ihn auf dem Mac verstehen – auch in der iPhone-App, wenn Safari dort keine Spracherkennung erlaubt.</small>
-            <div class="hf-reihe"><button id="set-hoeren-test" class="chip" type="button">🎙 Whisper testen (5 Sekunden sprechen)</button></div>
-          </div>
-        </div>
-
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">🔗</span><div class="set-g-txt"><h3>Verbindungen</h3><small>Kalender, Stimme, Spotify, Smart Home, Todoist, Notion</small></div></div>
-          <div class="set-g-body">
-            <div class="set-row"><span class="muted small-text">Schlüssel eintragen und Dienste verbinden</span><button id="dienste-open2" class="chip">Öffnen</button></div>
-          </div>
-        </div>
-
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">⚡</span><div class="set-g-txt"><h3>Immer aktuell</h3><small>Updates und Vorladen im Hintergrund</small></div></div>
-          <div class="set-g-body">
-            <label class="switch"><input type="checkbox" id="srv-autoUpdate"><span>Updates automatisch installieren (wenn gerade nichts los ist)</span></label>
-            <label class="switch"><input type="checkbox" id="srv-vorladen"><span>Welt-Alarm und Videos im Hintergrund vorladen</span></label>
-            <label class="switch"><input type="checkbox" id="srv-marktVorrechnen"><span>Markt-Radar im Hintergrund vorrechnen (braucht Rechenleistung)</span></label>
-            <div class="set-row"><span id="upd-info" class="muted small-text">Version wird geprüft …</span><button id="upd-check" class="chip">Jetzt prüfen</button></div>
-            <div id="upd-neu" class="upd-neu hidden" role="status">
-              <div class="upd-neu-txt"><b id="upd-neu-titel">Update verfügbar</b><small id="upd-neu-sub">Neue Version bereit</small></div>
-              <button id="upd-install" class="upd-install">⬇ Jetzt installieren</button>
+            <!-- ===== Stimme & Hören ===== -->
+            <div class="set-pane" data-pane="stimme" role="tabpanel">
+              <div class="set-pane-kopf"><span>🔊</span><div><h3 class="set-pane-titel">Stimme &amp; Hören</h3><small>Wie Friday spricht und wann sie dir zuhört.</small></div></div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🔊</span><div class="set-g-txt"><h3>Stimme</h3><small>Vorlesen, Stimme, Tempo</small></div></div>
+                <div class="set-g-body">
+                  <label class="switch"><input type="checkbox" id="voice-toggle" checked><span>Vorlesen<small>Friday spricht ihre Antworten</small></span></label>
+                  <label class="row-field"><span>Gerätestimme</span><select id="voice-select"></select></label>
+                  <div class="voice-info-box">
+                    <p id="voice-info">Stimmen werden geladen …</p>
+                    <div class="voice-knoepfe"><button type="button" id="voice-probe" class="chip">▶ Probehören</button><button type="button" id="voice-reload" class="chip">↻ Liste neu laden</button></div>
+                    <details class="voice-mehr">
+                      <summary>Mehr Apple-Stimmen laden (kostenlos)</summary>
+                      <p><a href="stimmen-anleitung.html" target="_blank" rel="noopener" class="chip">📷 Anleitung mit Bildern öffnen</a></p>
+                      <p><b>Mac:</b> Systemeinstellungen → Bedienungshilfen → Gesprochene Inhalte → bei „Systemstimme“ auf ⓘ bzw. „Stimmen verwalten …“ → Deutsch → z. B. <i>Anna (Premium)</i>, <i>Helena</i>, <i>Petra</i>, <i>Markus</i>, <i>Yannick</i> mit ⬇ laden.</p>
+                      <p><b>iPhone:</b> Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch → Stimme antippen → „Premium“ oder „Erweitert“ laden.</p>
+                      <p>Danach Friday neu laden (oder „Liste neu laden“). ★ = Premium, ☆ = Erweitert, klingen am natürlichsten. Siri-Stimmen gibt Apple für Webseiten leider nicht frei.</p>
+                    </details>
+                  </div>
+                  <label class="row-field"><span>Tempo</span><input type="range" id="voice-rate" min="0.6" max="1.6" step="0.05" value="1.05"></label>
+                  <label class="row-field"><span>Tonhöhe</span><input type="range" id="voice-pitch" min="0.6" max="1.6" step="0.05" value="1"></label>
+                  <label class="row-field"><span>Lautstärke</span><input type="range" id="set-lautstaerke" min="0.1" max="1" step="0.05" value="1"></label>
+                  <div class="set-row"><span class="muted small-text">Hör dir die eingestellte Stimme an</span><button id="voice-test" class="chip" type="button">▶ Stimme testen</button></div>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🎧</span><div class="set-g-txt"><h3>Zuhören</h3><small>Weckwort „Friday“ und Gespräche</small></div></div>
+                <div class="set-g-body">
+                  <label class="switch"><input type="checkbox" id="wake-toggle" checked><span>Auf „Friday“ hören<small>Weckwort ist immer an. Aus pausiert nur bis zum Neuladen</small></span></label>
+                  <label class="switch"><input type="checkbox" id="set-unterbrechen"><span>Unterbrechen mit „Friday“<small>Sagst du „Friday“, während sie spricht, hört sie sofort auf und hört dir zu</small></span></label>
+                  <label class="switch"><input type="checkbox" id="set-gespraech"><span>Gesprächsmodus<small>Nach ihrer Antwort hört Friday weiter zu, ohne neues „Friday“. Standard aus, sonst redet sie dazwischen, wenn du mit anderen sprichst</small></span></label>
+                  <label class="row-field" id="gespraech-lang-reihe"><span>Nachhören nach „Friday …“<small>So lange bleibt sie nach jeder Antwort dran</small></span><select id="set-gespraech-dauer"><option value="0">Aus (nur ein Satz)</option><option value="15">15 Sekunden</option><option value="30">30 Sekunden (Standard)</option><option value="60">60 Sekunden</option></select></label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🎙</span><div class="set-g-txt"><h3>Spracherkennung (Whisper)</h3><small>Friday versteht dich mit Whisper direkt auf dem Mac</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Wer versteht dich?</span>
+                    <select id="set-hoeren">
+                      <option value="auto">Automatisch (Gerät, Whisper nur wenn nötig)</option>
+                      <option value="whisper">Whisper auf dem Mac (genauer, ohne Cloud)</option>
+                      <option value="geraet">Nur Gerät (Safari / Chrome)</option>
+                    </select>
+                  </label>
+                  <label class="row-field"><span>Whisper-Modell</span>
+                    <select id="set-hoeren-modell">
+                      <option value="schnell">Schnell (klein, ca. 1 Sekunde)</option>
+                      <option value="genau">Genau (groß, 2–4 Sekunden, lädt einmal 1,6 GB)</option>
+                    </select>
+                  </label>
+                  <small id="set-hoeren-info" class="muted small-text">Das Weckwort „Friday“ hört weiter das Gerät. Mit Whisper nimmt Friday danach deinen Befehl auf und lässt ihn auf dem Mac verstehen – auch in der iPhone-App, wenn Safari dort keine Spracherkennung erlaubt.</small>
+                  <div class="hf-reihe"><button id="set-hoeren-test" class="chip" type="button">🎙 Whisper testen (5 Sekunden sprechen)</button></div>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🔔</span><div class="set-g-txt"><h3>Töne</h3><small>Signale bei Timern, Erinnerungen und Tippen</small></div></div>
+                <div class="set-g-body">
+                  <label class="switch"><input type="checkbox" id="set-toene" checked><span>Signalton bei Timern und Erinnerungen</span></label>
+                  <label class="row-field"><span>Signalton-Lautstärke</span><input type="range" id="set-tonlaut" min="0.05" max="1" step="0.05" value="0.6"></label>
+                  <label class="switch"><input type="checkbox" id="set-klick"><span>Klick-Töne<small>Leises Sci-Fi-Klicken beim Antippen von Knöpfen</small></span></label>
+                </div>
+              </div>
             </div>
-            <div class="set-row"><span id="gh-info" class="muted small-text">GitHub-Schlüssel: wird geprüft …</span><button id="gh-forget" class="chip hidden">Entfernen</button></div>
-            <div class="alexa-row">
-              <input id="gh-token" type="password" placeholder="GitHub-Schlüssel (nur für privates Repo)" autocomplete="off" spellcheck="false">
-              <button id="gh-save" class="chip">Speichern</button>
-            </div>
-          </div>
-        </div>
 
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">✨</span><div class="set-g-txt"><h3>Glow & Werkzeuge</h3><small>Leuchten, Kamera, Märkte, Welt, Schnitt</small></div></div>
-          <div class="set-g-body">
-            <label class="row-field"><span>Glow-Stärke</span><input type="range" id="set-glow" min="0" max="2" step="0.1" value="1"></label>
-            <label class="switch"><input type="checkbox" id="set-glowbreathe"><span>Neon atmet (Panels pulsieren sanft)</span></label>
-            <label class="switch"><input type="checkbox" id="set-vonselbst"><span>Friday darf von sich aus sprechen (Timer, Erinnerungen, Energie, „Video fertig“). Aus: nur ein stiller Hinweis am Ring</span></label>
-            <label class="switch"><input type="checkbox" id="set-diagnose"><span>Diagnose anzeigen (linke Leiste unter „Meine Dienste“: gehört → gesendet → Antwort → gesprochen)</span></label>
-            <label class="switch"><input type="checkbox" id="set-gespraech"><span>Gesprächsmodus: Friday hört nach ihrer Antwort weiter zu, ohne „Friday“ (Standard aus, sonst redet sie dazwischen, wenn du mit anderen sprichst)</span></label>
-            <label class="row-field" id="gespraech-lang-reihe"><span>Gespräch: Hast du „Friday …“ gesagt, bleibt sie nach jeder Antwort so lange dran (ohne neues „Friday“)</span><select id="set-gespraech-dauer"><option value="0">Aus (nur ein Satz)</option><option value="15">15 Sekunden</option><option value="30">30 Sekunden (Standard)</option><option value="60">60 Sekunden</option></select></label>
-            <label class="switch"><input type="checkbox" id="set-vollbild"><span>Friday immer im Vollbild (ab dem ersten Klick, Taste F schaltet um)</span></label>
-            <label class="switch"><input type="checkbox" id="set-alarmauto"><span>Welt-Alarm beim Öffnen des Weltgeschehens abspielen (max. alle 30 Min.)</span></label>
-            <label class="switch"><input type="checkbox" id="set-lagedetail"><span>Beim Land tief hineinzoomen und auf die Detailkarte (Satellit mit Städten und Straßen) wechseln</span></label>
-            <label class="row-field"><span>Markt beim Öffnen</span><select id="set-marktdefault"><option value="gold">Gold</option><option value="bitcoin">Bitcoin</option><option value="ethereum">Ethereum</option></select></label>
-            <label class="switch"><input type="checkbox" id="set-marktspeak" checked><span>Markt-Ergebnis ansagen</span></label>
-            <label class="row-field"><span>Vision: Erkennen ab</span><input type="range" id="set-visionschwelle" min="30" max="80" step="5" value="45"></label>
-            <label class="switch"><input type="checkbox" id="set-visiongesten" checked><span>Vision: Hand-Gesten</span></label>
-            <label class="row-field"><span>Schnitt: Standard-Look</span><select id="set-schnittlook"><option value="natürlich">natürlich</option><option value="warm">warm</option><option value="kühl">kühl</option><option value="kino">kino</option></select></label>
-            <label class="switch"><input type="checkbox" id="set-werkstattmassiv"><span>Werkstatt startet massiv statt Hologramm</span></label>
-          </div>
-        </div>
-
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">🗂</span><div class="set-g-txt"><h3>Protokolle & Mehr</h3><small>Routinen und Werkzeuge</small></div></div>
-          <div class="set-g-body">
-            <div id="protocols" class="chips"></div>
-            <div class="chips">
-              <button id="key-btn" class="chip">Kurzbefehl-Schlüssel</button>
-              <button id="briefing-btn2" class="chip">Briefing jetzt</button>
-              <button id="backups-btn2" class="chip">Sicherungen</button>
+            <!-- ===== Assistent ===== -->
+            <div class="set-pane" data-pane="assistent" role="tabpanel">
+              <div class="set-pane-kopf"><span>🧠</span><div><h3 class="set-pane-titel">Assistent</h3><small>Wie schnell Friday denkt und wann sie sich meldet.</small></div></div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🧠</span><div class="set-g-txt"><h3>Denken</h3><small>Tempo und Gründlichkeit</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Denk-Tempo</span>
+                    <select id="srv-tempo">
+                      <option value="blitz">⚡ Blitz – am schnellsten, einfache Sachen</option>
+                      <option value="schnell">🚀 Schnell – schnell und klug (Standard)</option>
+                      <option value="gruendlich">🧠 Gründlich – langsamer, für schwere Aufgaben</option>
+                      <option value="auto">🎯 Automatisch – Friday wählt je nach Frage</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">💬</span><div class="set-g-txt"><h3>Melden &amp; Ruhe</h3><small>Wann Friday von sich aus spricht</small></div></div>
+                <div class="set-g-body">
+                  <label class="switch"><input type="checkbox" id="set-vonselbst"><span>Friday darf von sich aus sprechen<small>Timer, Erinnerungen, Energie, „Video fertig“. Aus: nur ein stiller Hinweis am Ring</small></span></label>
+                  <label class="switch"><input type="checkbox" id="set-ruhe"><span>Ruhezeit (Nicht stören)<small>In dieser Zeit spricht Friday nichts von selbst und spielt keine Signaltöne</small></span></label>
+                  <div class="row-field set-zeiten" id="set-ruhe-zeiten"><span>Ruhe von … bis</span><span class="set-zeit-paar"><input type="time" id="set-ruhe-von" value="22:00" aria-label="Ruhezeit von"><i>bis</i><input type="time" id="set-ruhe-bis" value="07:00" aria-label="Ruhezeit bis"></span></div>
+                  <label class="switch"><input type="checkbox" id="set-diagnose"><span>Diagnose anzeigen<small>Linke Leiste: gehört → gesendet → Antwort → gesprochen</small></span></label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🌐</span><div class="set-g-txt"><h3>Übersetzer</h3><small>Friday antwortet in einer anderen Sprache</small></div></div>
+                <div class="set-g-body">
+                  <label class="switch"><input type="checkbox" id="translate-toggle"><span>Übersetzer an</span></label>
+                  <select id="translate-lang" class="hidden" aria-label="Zielsprache">
+                    <option>Englische</option><option>Spanische</option><option>Französische</option>
+                    <option>Italienische</option><option>Türkische</option><option>Polnische</option>
+                    <option>Japanische</option><option>Kroatische</option>
+                  </select>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="set-group">
-          <div class="set-g-head"><span class="set-g-ico">💾</span><div class="set-g-txt"><h3>Einstellungen sichern</h3><small>Exportieren, importieren, zurücksetzen</small></div></div>
-          <div class="set-g-body">
-            <p class="muted small-text">Deine Einstellungen liegen auf dem Mac und gelten auf allen Geräten. Hier kannst du sie zusätzlich als Datei speichern oder alles auf Werkseinstellung stellen.</p>
-            <div class="chips">
-              <button id="set-export" class="chip" type="button">⬇ Als Datei speichern</button>
-              <label class="chip set-import-btn">⬆ Datei laden<input id="set-import" type="file" accept="application/json,.json" hidden></label>
-              <button id="set-reset" class="chip set-gefahr" type="button">↺ Alles zurücksetzen</button>
+            <!-- ===== Welt & Werkzeuge ===== -->
+            <div class="set-pane" data-pane="welt" role="tabpanel">
+              <div class="set-pane-kopf"><span>🌍</span><div><h3 class="set-pane-titel">Welt &amp; Werkzeuge</h3><small>Globus, Markt-Radar, Vision, Schnitt und Werkstatt.</small></div></div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🌍</span><div class="set-g-txt"><h3>Globus (Weltgeschehen)</h3><small>Stil, Länder-Namen, Drehung, Alarm</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Stil</span>
+                    <select id="globe-style">
+                      <option value="echt">Echt (realistisch)</option>
+                      <option value="holo">Hologramm (neon)</option>
+                    </select>
+                  </label>
+                  <label class="switch"><input type="checkbox" id="set-globelabels" checked><span>Länder-Namen anzeigen</span></label>
+                  <label class="switch"><input type="checkbox" id="set-globespin" checked><span>Globus dreht automatisch</span></label>
+                  <label class="switch"><input type="checkbox" id="set-ticker" checked><span>Live-Ticker einblenden</span></label>
+                  <label class="switch"><input type="checkbox" id="set-osiris-default"><span>Direkt mit Osiris-Karte öffnen</span></label>
+                  <label class="switch"><input type="checkbox" id="set-alarmauto"><span>Welt-Alarm beim Öffnen abspielen<small>Höchstens alle 30 Minuten</small></span></label>
+                  <label class="switch"><input type="checkbox" id="set-lagedetail"><span>Beim Land tief hineinzoomen<small>Wechselt auf die Detailkarte mit Städten und Straßen</small></span></label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">📈</span><div class="set-g-txt"><h3>Markt-Radar</h3><small>Start-Markt und Ansage</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Markt beim Öffnen</span><select id="set-marktdefault"><option value="gold">Gold</option><option value="bitcoin">Bitcoin</option><option value="ethereum">Ethereum</option></select></label>
+                  <label class="switch"><input type="checkbox" id="set-marktspeak" checked><span>Markt-Ergebnis ansagen</span></label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">👁</span><div class="set-g-txt"><h3>Friday Vision</h3><small>Kamera-Erkennung und Gesten</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Erkennen ab<small>Wie sicher Friday sein muss (in %)</small></span><input type="range" id="set-visionschwelle" min="30" max="80" step="5" value="45"></label>
+                  <label class="switch"><input type="checkbox" id="set-visiongesten" checked><span>Hand-Gesten erkennen</span></label>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🎬</span><div class="set-g-txt"><h3>Schnitt &amp; Werkstatt</h3><small>Video-Look und 3D-Start</small></div></div>
+                <div class="set-g-body">
+                  <label class="row-field"><span>Schnitt: Standard-Look</span><select id="set-schnittlook"><option value="natürlich">natürlich</option><option value="warm">warm</option><option value="kühl">kühl</option><option value="kino">kino</option></select></label>
+                  <label class="switch"><input type="checkbox" id="set-werkstattmassiv"><span>Werkstatt startet massiv<small>Statt Hologramm</small></span></label>
+                </div>
+              </div>
             </div>
-            <p id="set-daten-msg" class="muted small-text"></p>
+
+            <!-- ===== System & Daten ===== -->
+            <div class="set-pane" data-pane="system" role="tabpanel">
+              <div class="set-pane-kopf"><span>🛠</span><div><h3 class="set-pane-titel">System &amp; Daten</h3><small>Updates, Verbindungen, Sicherungen und Werkseinstellung.</small></div></div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">⬆</span><div class="set-g-txt"><h3>Immer aktuell</h3><small>Updates und Vorladen im Hintergrund</small></div></div>
+                <div class="set-g-body">
+                  <div class="set-row"><span id="upd-info" class="muted small-text">Version wird geprüft …</span><button id="upd-check" class="chip" type="button">Jetzt prüfen</button></div>
+                  <div id="upd-neu" class="upd-neu hidden" role="status">
+                    <div class="upd-neu-txt"><b id="upd-neu-titel">Update verfügbar</b><small id="upd-neu-sub">Neue Version bereit</small></div>
+                    <button id="upd-install" class="upd-install">⬇ Jetzt installieren</button>
+                  </div>
+                  <label class="switch"><input type="checkbox" id="srv-autoUpdate"><span>Updates automatisch installieren<small>Nur wenn gerade nichts los ist, vorher wird gesichert</small></span></label>
+                  <label class="switch"><input type="checkbox" id="srv-vorladen"><span>Welt-Alarm und Videos vorladen</span></label>
+                  <label class="switch"><input type="checkbox" id="srv-marktVorrechnen"><span>Markt-Radar im Hintergrund vorrechnen<small>Braucht etwas Rechenleistung</small></span></label>
+                  <div class="set-row"><span id="gh-info" class="muted small-text">GitHub-Schlüssel: wird geprüft …</span><button id="gh-forget" class="chip hidden" type="button">Entfernen</button></div>
+                  <div class="alexa-row">
+                    <input id="gh-token" type="password" placeholder="GitHub-Schlüssel (nur für privates Repo)" autocomplete="off" spellcheck="false">
+                    <button id="gh-save" class="chip" type="button">Speichern</button>
+                  </div>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🔗</span><div class="set-g-txt"><h3>Verbindungen</h3><small>Kalender, Stimme, Spotify, Smart Home, Todoist, Notion</small></div></div>
+                <div class="set-g-body">
+                  <div class="set-row"><span class="muted small-text">Schlüssel eintragen und Dienste verbinden</span><button id="dienste-open2" class="chip" type="button">Öffnen</button></div>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">🗂</span><div class="set-g-txt"><h3>Protokolle &amp; Werkzeuge</h3><small>Routinen, Kurzbefehle, Sicherungen</small></div></div>
+                <div class="set-g-body">
+                  <div id="protocols" class="chips"></div>
+                  <div class="chips">
+                    <button id="key-btn" class="chip" type="button">🔑 Kurzbefehl-Schlüssel</button>
+                    <button id="briefing-btn2" class="chip" type="button">📰 Briefing jetzt</button>
+                    <button id="backups-btn2" class="chip" type="button">💾 Sicherungen</button>
+                  </div>
+                </div>
+              </div>
+              <div class="set-group">
+                <div class="set-g-head"><span class="set-g-ico">💾</span><div class="set-g-txt"><h3>Einstellungen sichern</h3><small>Exportieren, importieren, zurücksetzen</small></div></div>
+                <div class="set-g-body">
+                  <p class="muted small-text">Deine Einstellungen liegen auf dem Mac und gelten auf allen Geräten. Hier kannst du sie zusätzlich als Datei speichern oder alles auf Werkseinstellung stellen.</p>
+                  <div class="chips">
+                    <button id="set-export" class="chip" type="button">⬇ Als Datei speichern</button>
+                    <label class="chip set-import-btn">⬆ Datei laden<input id="set-import" type="file" accept="application/json,.json" hidden></label>
+                    <button id="set-reset" class="chip set-gefahr" type="button">↺ Alles zurücksetzen</button>
+                  </div>
+                  <p id="set-daten-msg" class="muted small-text"></p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
