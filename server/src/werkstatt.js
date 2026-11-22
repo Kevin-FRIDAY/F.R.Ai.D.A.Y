@@ -1,7 +1,7 @@
 // Fridays Werkstatt: Claude entwirft aus einem Wunsch ("ein Porsche", "ein Wohnhaus mit 12 Etagen")
 // einen 3D-Bauplan aus einfachen Teilen, den das Dashboard Schritt für Schritt als Hologramm aufbaut.
 import { eintragen } from "./logbuch.js";
-import Anthropic from "@anthropic-ai/sdk";
+import { kiClient, ersatzBereit } from "./ki-client.js";
 import { config } from "./config.js";
 import { recordUsage, isCreditError, markEmpty, brainModel, SPAR_MODELL, getEnergie } from "./energie.js";
 import { getSettings } from "./einstellungen.js";
@@ -10,7 +10,7 @@ import { erkenneArt, erkenneFarbe, baueVorlage, istVorlagenBefehl, masseAusKennz
 import { findeLokal, holeModell, sketchfabToken, suchwort } from "./modelle.js";
 import { findeAuto, istStudioBefehl, studioPlan } from "./autostudio.js";
 
-const client = new Anthropic({ apiKey: config.anthropicKey });
+const client = kiClient();
 
 const FARBEN = ["cyan", "weiss", "rot", "orange", "gelb", "gruen", "blau", "lila", "grau", "schwarz", "glas", "chrom"];
 const point = { type: "array", items: { type: "number" }, minItems: 3, maxItems: 3 };
@@ -268,7 +268,7 @@ export function startBuild(wunsch, basis = null) {
   }
   // Ein schlichtes "bau mir einen Kampfjet" braucht kein Claude: die Vorlage ist sofort da.
   if (!basis && istVorlagenBefehl(text)) return planVorlage(text, art, optAusText);
-  if (!config.anthropicKey) {
+  if (!config.anthropicKey && !ersatzBereit()) {
     if (!basis && art) return planVorlage(text, art, optAusText, "Ohne Claude-Schlüssel: Fridays Vorlage.");
     return { ok: false, error: "Ohne Claude-Schlüssel kann die Werkstatt nichts entwerfen." };
   }
@@ -309,7 +309,7 @@ const INFO_TOOL = {
 
 // Infokarte (Baujahr, Preis, Eckdaten) zum Modell – schnell und günstig, notfalls ohne.
 async function infoHolen(text) {
-  if (!config.anthropicKey || getEnergie().zustand === "leer") return null;
+  if (!config.anthropicKey && !ersatzBereit()) return null;
   try {
     const model = brainModel("claude-haiku-5-5");
     const msg = await client.messages.create({
@@ -376,7 +376,7 @@ function planSketchfab(text, art, opt) {
       job.planNr += 1;
       return;
     }
-    if (config.anthropicKey && getEnergie().zustand !== "leer") {
+    if (config.anthropicKey || ersatzBereit()) {
       await bauen(job, null).catch((err) => { job.status = "fehler"; job.error = String(err?.message || err).slice(0, 300); });
     } else if (art) {
       Object.assign(job, { plan: baueVorlage(art, opt), status: "fertig", ohneClaude: true, vorlage: art });

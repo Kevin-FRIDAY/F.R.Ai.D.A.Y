@@ -7,13 +7,13 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import Anthropic from "@anthropic-ai/sdk";
+import { kiClient, denkenMoeglich } from "./ki-client.js";
 import { config } from "./config.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty, getEnergie } from "./energie.js";
 import { getSettings } from "./einstellungen.js";
 import * as logbuch from "./logbuch.js";
 
-const client = new Anthropic({ apiKey: config.anthropicKey });
+const client = kiClient();
 export const SPIELE_DIR = process.env.FRIDAY_SPIELE_DIR || path.join(os.homedir(), "Friday-Spiele");
 const VORLAGEN_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "spiele-vorlagen");
 
@@ -152,7 +152,7 @@ function passendeVorlage(auftrag) {
 
 // Hat Friday gerade Energie für Claude?
 export function claudeBereit() {
-  return Boolean(config.anthropicKey) && getEnergie().zustand !== "tot";
+  return denkenMoeglich();
 }
 
 /**
