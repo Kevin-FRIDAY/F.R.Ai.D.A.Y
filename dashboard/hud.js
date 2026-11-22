@@ -151,7 +151,7 @@
     let laut = 0.6;
     try {
       if (localStorage.getItem("friday_toene") === "0") return;
-      if (window.FridayRuhezeit?.()) return; // v1.154.0: Ruhezeit (Nicht stören)
+      if (window.FridayRuhezeit?.()) return; // v1.155.0: Ruhezeit (Nicht stören)
       laut = Number(localStorage.getItem("friday_tonlaut") ?? 0.6) || 0.6;
     } catch { /* egal */ }
     try {

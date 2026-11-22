@@ -68,6 +68,7 @@ import { profilRouten } from "./profil.js";
 import { marktplusRouten, marktWacheStart } from "./marktplus.js";
 import { eveWeiterleitung, eveStarten } from "./eve-prozess.js";
 import { eveSchutzAn } from "./eve-schutz.js";
+import * as produkt from "./produkt.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 
 const missing = checkConfig();
@@ -560,6 +561,10 @@ app.get("/api/einstellungen/oberflaeche", (req, res) => res.json(getUiSettings()
 app.post("/api/einstellungen/oberflaeche", (req, res) => {
   try { res.json(setUiSettings(req.body || {})); } catch (e) { console.error("oberflaeche:", e.message); res.status(500).json({ error: "Konnte nicht speichern." }); }
 });
+// Friday Vision: Produkt-Scan (Strichcode → Open Food Facts + Open Prices, sonst Foto-Erkennung)
+app.get("/api/produkt/code/:code", asyncRoute(async (req, res) => res.json(await produkt.perCode(req.params.code))));
+app.post("/api/produkt/bild", asyncRoute(async (req, res) => res.json(await produkt.perBild(req.body?.image))));
+app.get("/api/produkt/verlauf", (req, res) => res.json({ verlauf: produkt.verlauf() }));
 // Archiv: alles von Friday nach Jahr → Monat
 app.get("/api/archiv", (req, res) => res.json(archivUebersicht()));
 app.post("/api/archiv/foto", (req, res) => {

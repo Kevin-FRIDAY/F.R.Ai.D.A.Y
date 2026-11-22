@@ -505,7 +505,7 @@
   // v1.121.1: Friday redet nicht von allein. Meldungen, die keiner bestellt hat (Timer, Erinnerung,
   // Energie, "Video fertig"), erscheinen still am Status-Ring statt vorgelesen zu werden.
   // Einschalten: Einstellungen → Assistent → "Friday darf von sich aus sprechen".
-  // v1.154.0: In der Ruhezeit (Einstellungen → Assistent) spricht sie nie von selbst.
+  // v1.155.0: In der Ruhezeit (Einstellungen → Assistent) spricht sie nie von selbst.
   const vonSelbstAn = () => storage.get("friday_vonselbst") === "1" && !window.FridayRuhezeit?.();
   window.Friday.sagVonSelbst = (text, { quelle = "hinweis", stufe = "warn", dauer = 10 * 60000 } = {}) => {
     if (!text) return;
@@ -603,6 +603,17 @@
       if (window.openSysCheck) window.openSysCheck();
       const t = $("text"); if (t) t.value = "";
       return;
+    }
+    // v1.154.0: "Friday, was siehst du?" / "scann das" aus jedem Menü → Friday Vision (Kamera geht von selbst auf).
+    if (!pendingImage && window.FridayVision?.artDerFrage) {
+      const art = window.FridayVision.artDerFrage(text);
+      if (art) {
+        diag.schritt(`Kamera-Frage (${art}): „${text}“`);
+        befehlEnde();
+        const t = $("text"); if (t) t.value = "";
+        window.FridayVision.frage(text, art);
+        return;
+      }
     }
     busy = true;
     // Für den Stimmungs-Sound (Automatik): nur was Boss gerade in Friday sagt/tippt.

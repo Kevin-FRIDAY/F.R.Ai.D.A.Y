@@ -1,4 +1,4 @@
-// Einstellungen, Teil 2: Reiter + Suche (v1.154.0), Schnellzugriff, neue Schalter (Ruhezeit, Wach halten, Klick-Töne, Startfenster, Kontrast, Neuronen-Netz),
+// Einstellungen, Teil 2: Reiter + Suche (v1.155.0), Schnellzugriff, neue Schalter (Ruhezeit, Wach halten, Klick-Töne, Startfenster, Kontrast, Neuronen-Netz),
 // Profil, Uhr & Startseite, eigene Farbe, Glas, Ecken,
 // Raster, Lautstärke, Signaltöne, Export/Import/Zurücksetzen.
 // Alle Werte liegen als friday_* in localStorage und werden von einstellungen-sync.js auf den Mac gespiegelt.
@@ -12,7 +12,7 @@
   const set = (k, v) => { try { localStorage.setItem(k, v); } catch { /* privat */ } };
   const melden = () => window.dispatchEvent(new Event("friday-settings"));
 
-  // ---------- 1. Reiter + Suche (v1.154.0) ----------
+  // ---------- 1. Reiter + Suche (v1.155.0) ----------
   // Links (Mac) bzw. oben (iPhone) die Bereiche, rechts die Karten des gewählten Bereichs.
   // Die Suche durchsucht alle Bereiche gleichzeitig und zeigt nur passende Zeilen.
   const gruppen = [...box.querySelectorAll(".set-group")];
@@ -203,7 +203,7 @@
   wert("set-lautstaerke", "friday_lautstaerke", "1");
   flag("set-toene", "friday_toene", true);
   wert("set-tonlaut", "friday_tonlaut", "0.6");
-  // v1.154.0: neue Einstellungen
+  // v1.155.0: neue Einstellungen
   flag("set-netz", "friday_netz", true);
   flag("set-kontrast", "friday_kontrast", false);
   flag("set-wach", "friday_wach", false);
@@ -237,7 +237,7 @@
     farbe.addEventListener("click", () => { if (get("friday_theme") !== "eigen") nimm(); });
   }
 
-  // ---------- 4b. Neue Helfer (v1.154.0) ----------
+  // ---------- 4b. Neue Helfer (v1.155.0) ----------
   // Ruhezeit: zwischen „von“ und „bis“ (auch über Mitternacht) spricht Friday nichts von selbst und piept nicht.
   window.FridayRuhezeit = () => {
     if (get("friday_ruhe") !== "1") return false;
