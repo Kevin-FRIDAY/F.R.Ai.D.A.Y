@@ -11,6 +11,7 @@ import { quickCommand as tvQuick } from "./fernseher.js";
 import { quickCommand as dienstQuick, dienstKurzinfo } from "./dienste.js";
 import { offlineAnswer, notfallText } from "./offline.js";
 import { quickCommand as hausQuick } from "./werkstatt.js";
+import { quickCommand as zerlegeQuick } from "./teilebank.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
 import { quickCommand as archivQuick } from "./archiv.js";
 import { quickCommand as appsQuick } from "./appzentrale.js";
@@ -302,6 +303,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (hf) { actions.push(...hf.actions); return finish(hf.answer); }
     } catch (err) {
       console.error("Helfer-Paket:", err.message);
+    }
+  }
+
+  // Zerlege-Labor (v1.140.0, im Test: in Friday erst nach Freigabe in Eve): "zerleg mir einen V8",
+  // "nimm den Motor aus dem Auto raus" – ohne Claude. Vor der Werkstatt, damit "zerleg" nicht als Bauwunsch landet.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const z = zerlegeQuick(text);
+      if (z) { actions.push(...z.actions); return finish(z.answer); }
+    } catch (err) {
+      console.error("Zerlege-Labor:", err.message);
     }
   }
 
