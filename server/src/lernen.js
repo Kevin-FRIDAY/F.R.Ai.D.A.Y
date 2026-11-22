@@ -345,7 +345,7 @@ export function stapelHolen(id) {
   const s = laden().stapel.find((x) => x.id === id);
   return s ? { ...stapelInfo(s), karten: s.karten, bilder: s.bilder || [] } : null;
 }
-// Eigene Lernkarten (v1.140.0, zuerst nur in Eve): Kartenfarbe und Textmarker-Stellen.
+// Eigene Lernkarten (v1.141.0, zuerst nur in Eve): Kartenfarbe und Textmarker-Stellen.
 export const KARTEN_FARBEN = ["weiss", "gelb", "orange", "rot", "rosa", "lila", "blau", "tuerkis", "gruen"];
 export const MARKER_FARBEN = ["gelb", "gruen", "pink", "blau", "orange"];
 const farbeVon = (f) => (KARTEN_FARBEN.includes(f) ? f : null);

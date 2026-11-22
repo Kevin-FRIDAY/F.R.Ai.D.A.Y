@@ -1,4 +1,4 @@
-# Lernecke: Friday recherchiert, denkt mit und eigene Lernkarten (v1.140.0)
+# Lernecke: Friday recherchiert, denkt mit und eigene Lernkarten (v1.141.0)
 
 > Zuerst nur in **Eve**. In Friday sind die Knöpfe mit 🔒 gesperrt, bis du sie in Eve unter **🔒 Tests** freigibst
 > („Lernecke: Friday recherchiert und denkt mit“ und „Lernecke: eigene Lernkarten mit Farben und Textmarker“).

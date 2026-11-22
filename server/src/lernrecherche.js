@@ -1,4 +1,4 @@
-// Carlas Lernecke: Friday recherchiert und denkt mit (v1.140.0, zuerst nur in Eve).
+// Carlas Lernecke: Friday recherchiert und denkt mit (v1.141.0, zuerst nur in Eve).
 // 1) Fragt Carla „Was sind Verben?“, schaut Friday auf ihren Karten, in ihrer Themen-Vorbereitung und
 //    bei Wikipedia nach und erklärt es einfach, mit Beispielen. Mit Guthaben formuliert Claude die Erklärung
 //    aus diesem Stoff, ohne Guthaben liest Friday die wichtigsten Sätze von Wikipedia vor.

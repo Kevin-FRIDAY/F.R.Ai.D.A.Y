@@ -306,7 +306,7 @@
   const $ = (s) => w.$(s);
   const status = (t, f = false) => { const s = $("#ln-status"); s.textContent = t || ""; s.classList.toggle("fehler", f); };
   const kiFehler = (err) => (err.status === 402 ? "Fridays Guthaben ist leer. Alles ohne „braucht Guthaben“ klappt trotzdem." : err.message);
-  // v1.140.0: neue Funktionen zuerst nur in Eve (server/eve-funktionen.json). In Friday gesperrt bis zur Freigabe.
+  // v1.141.0: neue Funktionen zuerst nur in Eve (server/eve-funktionen.json). In Friday gesperrt bis zur Freigabe.
   const eveFrei = (id) => { try { return window.FridayEve?.frei ? window.FridayEve.frei(id) : true; } catch { return true; } };
   const rechercheFrei = () => eveFrei("lernecke-recherche");
   const studioFrei = () => eveFrei("lernecke-eigene-karten");
@@ -516,7 +516,7 @@
       mikroBelegen(false);
       live.textContent = t ? `„${t}“` : "";
       if (!t || !w.offen()) return;
-      // v1.140.0: „Was sind Verben?“ → Friday recherchiert und erklärt (statt nur Knöpfe zu wählen).
+      // v1.141.0: „Was sind Verben?“ → Friday recherchiert und erklärt (statt nur Knöpfe zu wählen).
       if (rechercheFrei() && istFrage(t)) { $("#ln-frage-q").value = t; return frageStellen(t); }
       const treffer = WAHL.find(([, re]) => re.test(t));
       if (!treffer) { await sag(rechercheFrei() ? "Sag einfach abfragen, lernen oder scannen. Oder frag mich etwas, zum Beispiel: Was sind Verben?" : "Sag einfach abfragen, lernen oder scannen. Oder tipp auf einen der Knöpfe."); return; }
@@ -716,7 +716,7 @@
       const richtig = r.gespiegelt ? spiegelCanvas(roh) : roh;
       let a;
       if (ohneFrage && r.text && guete(r.text) >= 0.75) {
-        // Automatisch scannen (v1.140.0): gut lesbar → ohne Rückfrage speichern.
+        // Automatisch scannen (v1.141.0): gut lesbar → ohne Rückfrage speichern.
         const k = mitKarten ? (r.karten ? { karten: r.karten, titel: r.titel } : await json("/api/lernen/text", { body: { text: r.text } }).catch(() => ({ karten: [] }))) : { karten: [] };
         a = { antwort: "ja", text: r.text, karten: k.karten || [], ziel: mitKarten ? $("#ln-ziel").value : "", titel: mitKarten ? ($("#ln-neu-titel").value.trim() || k.titel || "") : "", ohneFrage: true };
       } else {
@@ -1281,7 +1281,7 @@
     const frageText = $("#ln-h-frage").value.trim();
     const b = e.target.querySelector("button"); b.disabled = true;
     if (rechercheFrei()) {
-      // v1.140.0: Friday recherchiert (Karten, Vorbereitung, Wikipedia) – klappt auch ohne Guthaben.
+      // v1.141.0: Friday recherchiert (Karten, Vorbereitung, Wikipedia) – klappt auch ohne Guthaben.
       try {
         const r = await frageStellen(frageText || `Erklär mir ${k.frage}`, { stapel: k.sid, karte: k.id, ziel: null });
         zeichneHilfe(`<h3>🔎 ${esc(frageText || k.frage)}</h3>${frageHtml(r)}`);
@@ -1902,7 +1902,7 @@
   }
 
   // =====================================================================================
-  // v1.140.0 (zuerst nur in Eve): Friday recherchiert, bereitet Themen vor, scannt automatisch,
+  // v1.141.0 (zuerst nur in Eve): Friday recherchiert, bereitet Themen vor, scannt automatisch,
   // und Carla gestaltet eigene Lernkarten mit Farben und Textmarker.
   // =====================================================================================
 
@@ -2572,7 +2572,7 @@ button.ln-chip { cursor: pointer; font: inherit; font-size: 12.5px; }
   .ln-w-kopf img { width: 76px; height: 76px; }
   .ln-l-in { width: 9em; }
 }
-/* ---- v1.140.0: Frag Friday, Vorbereitung, Auto-Scan, Karten-Studio (zuerst nur in Eve) ---- */
+/* ---- v1.141.0: Frag Friday, Vorbereitung, Auto-Scan, Karten-Studio (zuerst nur in Eve) ---- */
 .ln-antwort-box { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--u-rand-soft, var(--line)); background: linear-gradient(160deg, color-mix(in srgb, var(--cyan) 10%, transparent), rgba(0,0,0,.25)); }
 .ln-antwort-box a.ln-chip { color: var(--cyan); text-decoration: none; }
 .ln-erklaerung { font-size: 17px !important; line-height: 1.6 !important; margin: 4px 0; color: #fff3e6; }
