@@ -72,6 +72,26 @@
             <span id="ln-live-start" class="hf-hinweis"></span>
           </div>
         </div>
+        <div id="ln-frage-k" class="hf-karte ln-frage-k">
+          <h3>❓ Frag Friday</h3>
+          <form id="ln-frage-form" class="hf-reihe" autocomplete="off">
+            <input id="ln-frage-q" class="hf-input grow" type="text" placeholder="z. B. Was sind Verben?" enterkeyhint="send" aria-label="Deine Frage">
+            <button id="ln-frage-los" class="hf-btn haupt" type="submit">🔎 Nachschauen &amp; erklären</button>
+            <button id="ln-frage-mikro" class="hf-btn" type="button" aria-label="Frage sagen">🎤</button>
+          </form>
+          <p class="hf-hinweis">Friday schaut auf deinen Karten, in ihrer Vorbereitung und im Internet nach und erklärt es dir einfach, mit Beispielen.</p>
+          <div id="ln-frage-erg"></div>
+        </div>
+        <div id="ln-vorb-k" class="hf-karte ln-vorb-k">
+          <h3>🧠 Friday ist vorbereitet</h3>
+          <div id="ln-vorb-liste" class="ln-chips"></div>
+          <form id="ln-vorb-form" class="hf-reihe" autocomplete="off" style="margin-top:10px">
+            <input id="ln-vorb-q" class="hf-input grow" type="text" placeholder="Was lernst du gerade? z. B. Farben" aria-label="Lernthema">
+            <button id="ln-vorb-los" class="hf-btn" type="submit">🧠 Vorbereiten</button>
+          </form>
+          <p class="hf-hinweis">Zu jedem Lernthema sammelt Friday vorab alles Wichtige (kostenlos aus Wikipedia), damit sie vorbereitet ist und dir helfen kann. Bei neuen Stapeln macht sie das von selbst.</p>
+          <div id="ln-vorb-detail"></div>
+        </div>
         <div id="ln-heute" class="hf-karte" style="display:none"><h3>Heute dran</h3><div id="ln-heute-liste"></div></div>
         <div id="ln-fortschritt" class="hf-karte" style="display:none"><h3>Dein Fortschritt</h3><div id="ln-fortschritt-liste" class="ln-themen"></div>
           <p class="hf-hinweis ln-legende"><span><b>Geübt</b> schon mal beantwortet</span><span><b>Gemerkt</b> so oft richtig</span><span><b>Auswendig</b> sitzt sicher</span></p></div>
@@ -100,6 +120,11 @@
             <div id="ln-cam-box" class="ln-cam-box" style="display:none">
               <video id="ln-cam" autoplay playsinline muted></video>
               <div class="hf-hinweis" id="ln-cam-hinweis"></div>
+              <div class="hf-reihe ln-cam-auto">
+                <label id="ln-cam-auto-wahl" class="ln-check"><input type="checkbox" id="ln-cam-auto"> 🤖 Automatisch scannen (Karte ruhig hinhalten)</label>
+                <label class="ln-check" id="ln-cam-ohne-wahl" style="display:none"><input type="checkbox" id="ln-cam-ohne" checked> Ohne Rückfrage speichern, wenn gut lesbar</label>
+                <span id="ln-cam-auto-stand" class="ln-chip" style="display:none"></span>
+              </div>
               <div class="hf-reihe"><button id="ln-cam-foto" class="hf-btn haupt" type="button">📸 Aufnehmen</button><button id="ln-cam-wechsel" class="hf-btn leise" type="button">🔄 Andere Kamera</button><button id="ln-cam-zu" class="hf-btn leise" type="button">✕ Kamera aus</button></div>
             </div>
             <img id="ln-vor" alt="" class="ln-vor" style="display:none">
@@ -136,6 +161,7 @@
       </section>
 
       <section data-seite="karten" class="hidden">
+        <div class="hf-reihe ln-studio-leiste"><button id="ln-studio-neu" class="hf-btn haupt" type="button">✏️ Eigene Karte gestalten</button><span class="hf-hinweis">Mit Farben und Textmarker, im Karten-Studio</span></div>
         <div id="ln-stapel" class="hf-raster"></div>
         <div id="ln-detail" class="hf-karte" style="display:none"></div>
       </section>
@@ -280,6 +306,34 @@
   const $ = (s) => w.$(s);
   const status = (t, f = false) => { const s = $("#ln-status"); s.textContent = t || ""; s.classList.toggle("fehler", f); };
   const kiFehler = (err) => (err.status === 402 ? "Fridays Guthaben ist leer. Alles ohne „braucht Guthaben“ klappt trotzdem." : err.message);
+  // v1.141.0: neue Funktionen zuerst nur in Eve (server/eve-funktionen.json). In Friday gesperrt bis zur Freigabe.
+  const eveFrei = (id) => { try { return window.FridayEve?.frei ? window.FridayEve.frei(id) : true; } catch { return true; } };
+  const rechercheFrei = () => eveFrei("lernecke-recherche");
+  const studioFrei = () => eveFrei("lernecke-eigene-karten");
+  const gesperrt = (name) => { status(`🔒 „${name}“ ist noch im Test. Probier es in Eve aus und gib es dort frei.`, true); return true; };
+  // Eigene Karten: Kartenfarbe + Textmarker (Stellen werden beim Anzeigen farbig hinterlegt, der Text bleibt unverändert).
+  const KFARBEN = [["weiss", "Ohne"], ["gelb", "Gelb"], ["orange", "Orange"], ["rot", "Rot"], ["rosa", "Rosa"], ["lila", "Lila"], ["blau", "Blau"], ["tuerkis", "Türkis"], ["gruen", "Grün"]];
+  const MFARBEN = [["gelb", "Gelb"], ["gruen", "Grün"], ["pink", "Pink"], ["blau", "Blau"], ["orange", "Orange"]];
+  const farbKlasse = (k) => (studioFrei() && k?.farbe && k.farbe !== "weiss" ? ` ln-kf-${k.farbe}` : "");
+  /** Text mit Textmarker-Stellen als HTML (alle Vorkommen, ohne Groß/klein zu unterscheiden). */
+  function mk(text, k, seite) {
+    const t = String(text ?? "");
+    const marks = studioFrei() ? (k?.markierungen || []).filter((m) => m.seite === seite && m.text) : [];
+    if (!marks.length) return esc(t);
+    const farbe = new Array(t.length).fill(null), klein = t.toLowerCase();
+    for (const m of [...marks].sort((a, b) => b.text.length - a.text.length)) {
+      const such = m.text.toLowerCase();
+      for (let i = klein.indexOf(such); i >= 0; i = klein.indexOf(such, i + such.length)) for (let j = i; j < i + such.length; j++) if (!farbe[j]) farbe[j] = m.farbe;
+    }
+    let out = "", i = 0;
+    while (i < t.length) {
+      let j = i; while (j < t.length && farbe[j] === farbe[i]) j++;
+      const stueck = esc(t.slice(i, j));
+      out += farbe[i] ? `<mark class="ln-mk ln-mk-${farbe[i]}">${stueck}</mark>` : stueck;
+      i = j;
+    }
+    return out;
+  }
 
   function zeigeTab(t) {
     tab = t;
@@ -416,6 +470,7 @@
     const mitKarten = (info.stapel || []).filter((x) => x.anzahl);
     $("#ln-fortschritt").style.display = mitKarten.length ? "" : "none";
     $("#ln-fortschritt-liste").innerHTML = mitKarten.map((x) => themaHtml(x)).join("");
+    vorbLaden();
   }
   // ---------- Fortschritts-Ringe ----------
   // Grüner Ring mit Prozent in der Mitte. Pro Thema (Stapel) drei Stück.
@@ -461,8 +516,10 @@
       mikroBelegen(false);
       live.textContent = t ? `„${t}“` : "";
       if (!t || !w.offen()) return;
+      // v1.141.0: „Was sind Verben?“ → Friday recherchiert und erklärt (statt nur Knöpfe zu wählen).
+      if (rechercheFrei() && istFrage(t)) { $("#ln-frage-q").value = t; return frageStellen(t); }
       const treffer = WAHL.find(([, re]) => re.test(t));
-      if (!treffer) { await sag("Sag einfach abfragen, lernen oder scannen. Oder tipp auf einen der Knöpfe."); return; }
+      if (!treffer) { await sag(rechercheFrei() ? "Sag einfach abfragen, lernen oder scannen. Oder frag mich etwas, zum Beispiel: Was sind Verben?" : "Sag einfach abfragen, lernen oder scannen. Oder tipp auf einen der Knöpfe."); return; }
       zeigeTab(treffer[0]);
       if (treffer[0] === "abfragen") quizStart();
       else if (treffer[0] === "hilfe") sag("Gern. Such dir einen Stapel aus. Ich zeige dir die Karten, lese vor, mache Eselsbrücken oder erkläre dir etwas.");
@@ -648,7 +705,7 @@
     });
   }
   /** Foto lesen, prüfen lassen und erst nach dem Ja speichern. Gibt null zurück, wenn Carla Nein sagt. */
-  async function fotoPruefen(c, { mitKarten = false, fach = "" } = {}) {
+  async function fotoPruefen(c, { mitKarten = false, fach = "", ohneFrage = false } = {}) {
     const bar = $("#ln-ocr");
     let roh = c, auto = true;
     for (let runde = 0; runde < 6; runde++) {
@@ -657,8 +714,15 @@
       let r;
       try { r = await fotoLesen(roh, { auto, bar }); } finally { bar.style.width = "100%"; bar.classList.remove("laeuft"); setTimeout(() => { bar.style.width = "0%"; }, 1200); }
       const richtig = r.gespiegelt ? spiegelCanvas(roh) : roh;
-      status("Prüf kurz, ob ich richtig gelesen habe.");
-      const a = await fotoCheck({ canvas: richtig, r, mitKarten });
+      let a;
+      if (ohneFrage && r.text && guete(r.text) >= 0.75) {
+        // Automatisch scannen (v1.141.0): gut lesbar → ohne Rückfrage speichern.
+        const k = mitKarten ? (r.karten ? { karten: r.karten, titel: r.titel } : await json("/api/lernen/text", { body: { text: r.text } }).catch(() => ({ karten: [] }))) : { karten: [] };
+        a = { antwort: "ja", text: r.text, karten: k.karten || [], ziel: mitKarten ? $("#ln-ziel").value : "", titel: mitKarten ? ($("#ln-neu-titel").value.trim() || k.titel || "") : "", ohneFrage: true };
+      } else {
+        status("Prüf kurz, ob ich richtig gelesen habe.");
+        a = await fotoCheck({ canvas: richtig, r, mitKarten });
+      }
       if (a.antwort === "spiegeln") { verwerfen(r.bild); roh = spiegelCanvas(richtig); auto = false; continue; }
       if (a.antwort !== "ja") {
         verwerfen(r.bild);
@@ -672,8 +736,8 @@
     return null;
   }
   /** Foto im Reiter „Scannen“: prüfen, dann speichern. */
-  async function bildLesen(c) {
-    const r = await fotoPruefen(c, { mitKarten: scan.modus === "seite" });
+  async function bildLesen(c, { auto = false } = {}) {
+    const r = await fotoPruefen(c, { mitKarten: scan.modus === "seite", ohneFrage: auto && $("#ln-cam-ohne").checked });
     if (!r) return;
     scan.bild = r.bild; scan.canvas = r.canvas; scan.quelle = "scan";
     $("#ln-vor").src = r.canvas.toDataURL("image/jpeg", 0.8); $("#ln-vor").style.display = "block";
@@ -684,6 +748,7 @@
       const fl = text.replace(/\n{2,}/g, "\n").trim();
       const seite = !$("#ln-vorne").value.trim() ? "vorne" : "hinten";
       if (seite === "vorne") { $("#ln-vorne").value = fl.replace(/\n/g, " "); status("✓ Vorderseite gespeichert. Jetzt umdrehen und die Rückseite fotografieren."); sag("Gespeichert. Jetzt die Rückseite."); }
+      else if (auto) { $("#ln-hinten").value = fl; seiteHinweis(); $("#ln-karte-dazu").click(); sag("Karte fertig. Halt die nächste Karte hin."); return; }
       else { $("#ln-hinten").value = fl; status("✓ Rückseite gespeichert. Tipp auf „Karte übernehmen“."); sag("Gespeichert. Tipp auf Karte übernehmen."); }
       seiteHinweis();
       return;
@@ -712,10 +777,12 @@
       const vorn = (camStream.getVideoTracks()[0]?.getSettings?.().facingMode || camRichtung) !== "environment";
       v.classList.toggle("ln-spiegel", vorn);
       $("#ln-cam-box").style.display = "";
+      if ($("#ln-cam-auto").checked) autoStart();
       $("#ln-cam-hinweis").textContent = vorn ? "Halt die Karte vor die Kamera. In der Vorschau ist die Schrift spiegelverkehrt, das ist normal. Friday liest sie richtig herum." : "Karte ins Bild, dann „Aufnehmen“.";
     } catch (err) { status(err.name === "NotAllowedError" ? "Kamera nicht erlaubt. Bitte im Browser die Kamera freigeben." : `Kamera geht nicht: ${err.message}`, true); }
   }
   function kameraAus() {
+    autoStopp();
     if (camStream) camStream.getTracks().forEach((t) => t.stop());
     camStream = null;
     const box = $("#ln-cam-box"); if (box) box.style.display = "none";
@@ -723,13 +790,18 @@
   $("#ln-cam-an").addEventListener("click", kameraAn);
   $("#ln-cam-zu").addEventListener("click", kameraAus);
   $("#ln-cam-wechsel").addEventListener("click", () => { camRichtung = camRichtung === "user" ? "environment" : "user"; kameraAn(); });
-  $("#ln-cam-foto").addEventListener("click", async () => {
+  function camFoto() {
     const v = $("#ln-cam");
-    if (!v.videoWidth) return;
+    if (!v.videoWidth) return null;
     const f = Math.min(1, 2200 / Math.max(v.videoWidth, v.videoHeight));
     const c = document.createElement("canvas");
     c.width = Math.round(v.videoWidth * f); c.height = Math.round(v.videoHeight * f);
     c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
+    return c;
+  }
+  $("#ln-cam-foto").addEventListener("click", async () => {
+    const c = camFoto();
+    if (!c) return;
     try { await bildLesen(c); } catch (err) { status(err.message, true); }
   });
   $("#ln-kamera").addEventListener("change", fotoDa);
@@ -801,6 +873,7 @@
       $("#ln-vorschau-k").style.display = "none"; $("#ln-text").value = ""; $("#ln-vor").style.display = "none"; $("#ln-ki-lesen").disabled = true;
       await laden();
       $("#ln-ziel").value = r.stapel.id; $("#ln-neu-titel").style.display = "none";
+      vorbereitenAuto(r.stapel.id);
     } catch (err) { status(err.message, true); }
   }
 
@@ -833,13 +906,14 @@
         <button class="hf-btn leise" data-d="loeschen" type="button">🗑 Stapel löschen</button>
       </div>
       <div class="hf-liste" style="margin-top:10px">${detail.karten.map((k) => `
-        <div class="hf-zeile ln-vz" data-k="${esc(k.id)}">
+        <div class="hf-zeile ln-vz${farbKlasse(k)}" data-k="${esc(k.id)}">
           <span class="icon" title="Fach ${k.fach || 1} von 5">${["①", "②", "③", "④", "⑤"][Math.min(4, (k.fach || 1) - 1)]}</span>
           <div class="name">
             <input class="hf-input" data-f value="${esc(k.frage)}" aria-label="Frage">
             <textarea class="hf-input" data-a rows="${Math.min(6, Math.max(2, (k.antwort || "").split("\n").length))}" aria-label="Antwort">${esc(k.antwort)}</textarea>
             <span class="klein">${k.richtig || 0}× richtig · ${k.falsch || 0}× falsch · fällig ${esc(k.faellig || "heute")}${k.bild ? " · 📷 Foto" : ""}</span>
           </div>
+          ${studioFrei() ? `<button class="hf-mini" data-studio="${esc(k.id)}" title="Im Karten-Studio bearbeiten: Farbe und Textmarker">✏️</button>` : ""}
           <button class="hf-mini" data-x="${esc(k.id)}" title="Karte löschen">🗑</button>
         </div>`).join("") || `<div class="hf-leer">Leer.</div>`}</div>`;
     d.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -856,6 +930,8 @@
   $("#ln-detail").addEventListener("click", async (e) => {
     const x = e.target.closest("[data-x]");
     const a = e.target.closest("[data-d]");
+    const st = e.target.closest("[data-studio]");
+    if (st && detail) return studioOeffnen({ stapel: detail.id, karte: detail.karten.find((k) => k.id === st.dataset.studio) });
     try {
       if (x) { await json(`/api/lernen/stapel/${detail.id}/karte/${x.dataset.x}`, { method: "DELETE" }); x.closest("[data-k]").remove(); await laden(); return; }
       if (!a) return;
@@ -865,6 +941,7 @@
         await json(`/api/lernen/stapel/${detail.id}`, { method: "DELETE" });
         detail = null; await laden(); zeichneStapel(); status("Stapel gelöscht."); return;
       }
+      if (was === "neu" && studioFrei()) return studioOeffnen({ stapel: detail.id });
       if (was === "neu") { await json("/api/lernen/karten", { body: { stapel: detail.id, karten: [{ frage: "Neue Karte", antwort: "" }] } }); await laden(); zeigeDetail(detail.id); return; }
       const id = detail.id;
       zeigeTab(was);
@@ -1147,10 +1224,10 @@
     const k = hilfe.karten[hilfe.i];
     if (!k) { $("#ln-h").innerHTML = `<div class="hf-leer">Der Stapel ist leer.</div>`; return; }
     $("#ln-h").innerHTML = `
-      <div class="ln-karteikarte ${hilfe.offen ? "offen" : ""}" id="ln-h-karte" role="button" tabindex="0" aria-label="Karte umdrehen">
+      <div class="ln-karteikarte ${hilfe.offen ? "offen" : ""}${farbKlasse(k)}" id="ln-h-karte" role="button" tabindex="0" aria-label="Karte umdrehen">
         <div class="klein hf-hinweis">Karte ${hilfe.i + 1} von ${hilfe.karten.length} · ${hilfe.offen ? "Rückseite" : "Vorderseite, tippen zum Umdrehen"}</div>
-        <div class="ln-frage">${esc(hilfe.offen ? "" : k.frage)}</div>
-        ${hilfe.offen ? `<div class="ln-antwort">${esc(k.frage)}</div><ol class="ln-punkte">${punkte(k.antwort).map((p) => `<li>${esc(p)}</li>`).join("")}</ol>` : ""}
+        <div class="ln-frage">${hilfe.offen ? "" : mk(k.frage, k, "frage")}</div>
+        ${hilfe.offen ? `<div class="ln-antwort">${mk(k.frage, k, "frage")}</div><ol class="ln-punkte">${punkte(k.antwort).map((p) => `<li>${mk(p, k, "antwort")}</li>`).join("")}</ol>` : ""}
       </div>
       <div class="hf-reihe">
         <button class="hf-btn" data-h="zurueck" type="button">◀</button>
@@ -1162,9 +1239,10 @@
         <button class="hf-btn" data-h="luecke" type="button">✏ Lückentext</button>
         <button class="hf-btn" data-h="einzeln" type="button">🎯 Nur diese abfragen</button>
         <button class="hf-btn" data-h="web" type="button">🌐 Mehr dazu im Internet</button>
+        ${studioFrei() ? `<button class="hf-btn" data-h="studio" type="button">✏️ Bearbeiten &amp; markieren</button>` : ""}
       </div>
       <div class="hf-karte"><h3>Frag Friday dazu</h3>
-        <form class="hf-reihe" id="ln-h-form" autocomplete="off"><input id="ln-h-frage" class="hf-input grow" type="text" placeholder="z. B. Was ist der Unterschied zwischen Mitose und Meiose?"><button class="hf-btn ki" type="submit">🤖 Erklär's mir</button></form>
+        <form class="hf-reihe" id="ln-h-form" autocomplete="off"><input id="ln-h-frage" class="hf-input grow" type="text" placeholder="z. B. Was ist der Unterschied zwischen Mitose und Meiose?"><button class="hf-btn ${rechercheFrei() ? "haupt" : "ki"}" type="submit">${rechercheFrei() ? "🔎 Nachschauen &amp; erklären" : "🤖 Erklär's mir"}</button></form>
       </div>
       <div id="ln-h-extra" class="hf-karte" style="${extra ? "" : "display:none"}">${extra}</div>`;
   }
@@ -1185,6 +1263,7 @@
       case "esel": { const t = eselsbruecke(k); zeichneHilfe(`<h3>🧠 Eselsbrücke</h3><p>${esc(t)}</p>`); return sag(t); }
       case "luecke": return zeichneHilfe(`<h3>✏ Lückentext – tipp auf eine Lücke zum Aufdecken</h3><div class="ln-frage" style="font-size:16px">${esc(k.frage)}</div><p style="line-height:1.9">${lueckentext(punkte(k.antwort).join(" · "))}</p>`);
       case "web": { zeigeTab("wissen"); $("#ln-w-q").value = k.frage.replace(/[?:]+$/, ""); return wissenSuchen(); }
+      case "studio": return studioOeffnen({ stapel: k.sid, karte: k });
       case "einzeln": {
         zeigeTab("abfragen");
         quiz = { sid: hilfe.stapel, liste: [{ k, nochmal: 0 }], i: 0, richtig: 0, teilweise: 0, falsch: 0, start: Date.now(), laeuft: true, nr: (quiz?.nr || 0) + 1 };
@@ -1201,6 +1280,15 @@
     const k = hilfe.karten[hilfe.i];
     const frageText = $("#ln-h-frage").value.trim();
     const b = e.target.querySelector("button"); b.disabled = true;
+    if (rechercheFrei()) {
+      // v1.141.0: Friday recherchiert (Karten, Vorbereitung, Wikipedia) – klappt auch ohne Guthaben.
+      try {
+        const r = await frageStellen(frageText || `Erklär mir ${k.frage}`, { stapel: k.sid, karte: k.id, ziel: null });
+        zeichneHilfe(`<h3>🔎 ${esc(frageText || k.frage)}</h3>${frageHtml(r)}`);
+      } catch (err) { status(err.message, true); }
+      b.disabled = false;
+      return;
+    }
     status("Friday denkt nach …");
     try {
       const r = await json("/api/lernen/ki/erklaeren", { body: { stapel: k.sid, karte: k.id, frage: frageText } });
@@ -1434,7 +1522,7 @@
     if (b) b.closest("tr")?.remove();
   });
   // ----- Eigene Karte -----
-  $("#ln-u-karte").addEventListener("click", () => { const k = $("#ln-u-neu"); k.style.display = ""; const sid = $("#ln-u-stapel").value; if (sid && sid !== "alle") { $("#ln-u-n-ziel").value = sid; $("#ln-u-n-titel").style.display = "none"; } $("#ln-u-n-vorne").focus(); });
+  $("#ln-u-karte").addEventListener("click", () => { if (studioFrei()) { const sid = $("#ln-u-stapel").value; return studioOeffnen({ stapel: sid && sid !== "alle" ? sid : "" }); } const k = $("#ln-u-neu"); k.style.display = ""; const sid = $("#ln-u-stapel").value; if (sid && sid !== "alle") { $("#ln-u-n-ziel").value = sid; $("#ln-u-n-titel").style.display = "none"; } $("#ln-u-n-vorne").focus(); });
   $("#ln-u-n-zu").addEventListener("click", () => { $("#ln-u-neu").style.display = "none"; });
   $("#ln-u-n-ziel").addEventListener("change", () => { $("#ln-u-n-titel").style.display = $("#ln-u-n-ziel").value ? "none" : ""; });
   $("#ln-u-n-ok").addEventListener("click", async () => {
@@ -1813,6 +1901,353 @@
     }, 500);
   }
 
+  // =====================================================================================
+  // v1.141.0 (zuerst nur in Eve): Friday recherchiert, bereitet Themen vor, scannt automatisch,
+  // und Carla gestaltet eigene Lernkarten mit Farben und Textmarker.
+  // =====================================================================================
+
+  // ---------- „Was sind Verben?“ → Friday schaut nach und erklärt ----------
+  const istFrage = (t) => {
+    const x = String(t || "").trim().toLowerCase();
+    if (!x || /\b(frag mich|abfragen|abfrage|scann|lernplan|archiv)\b/.test(x)) return false;
+    return /^(?:(?:hey |ok )?(?:friday|freitag)[ ,.]*)?(?:was (?:ist|sind|war|waren|bedeutet|heißt|heisst|versteht|meint|gibt es)|wer (?:war|ist|waren|sind)|wie |warum |wieso |weshalb |wozu |erklär|erklaer|sag mir was|kannst du mir (?:sagen|erklären|erklaeren)|ich (?:weiß|weiss|verstehe) nicht)/.test(x) || /\?\s*$/.test(x);
+  };
+  let letzteFrage = null;
+  const QUELLE = { ki: "🤖 mit KI erklärt", wikipedia: "📖 aus Wikipedia", vorbereitung: "🧠 aus meiner Vorbereitung", karten: "🗂 von deinen Karten" };
+  function frageHtml(r) {
+    return `<div class="ln-antwort-box">
+      <div class="ln-chips"><span class="ln-chip heiss"><b>${esc(r.thema)}</b></span><span class="ln-chip">${QUELLE[r.quelle] || ""}</span>
+        ${r.wissen ? `<a class="ln-chip" href="${esc(r.wissen.link)}" target="_blank" rel="noopener">Quelle: Wikipedia „${esc(r.wissen.titel)}“</a>` : ""}</div>
+      ${r.kiHinweis ? `<div class="hf-hinweis">${esc(r.kiHinweis)}</div>` : ""}
+      <p class="ln-w-text ln-erklaerung">${esc(r.antwort)}</p>
+      ${r.karten?.length ? `<div class="hf-hinweis">Dazu auf deinen Karten:</div><div class="hf-liste">${r.karten.map((k) => `<div class="hf-zeile"><span class="icon">🗂</span><span class="name"><b>${esc(k.frage)}</b><br><span class="klein">${esc(String(k.antwort || "").split("\n").slice(0, 3).join(" · "))} · Stapel „${esc(k.stapelTitel)}“</span></span></div>`).join("")}</div>` : ""}
+      <div class="hf-reihe" style="margin-top:10px">
+        <button class="hf-btn" data-fr="lesen" type="button">🔊 Nochmal vorlesen</button>
+        <button class="hf-btn haupt" data-fr="karte" type="button">🗂 Als Lernkarte speichern</button>
+        <button class="hf-btn" data-fr="mehr" type="button">🌐 Mehr dazu</button>
+        ${r.vorbereitung ? "" : `<button class="hf-btn leise" data-fr="vorb" type="button">🧠 Thema vorbereiten</button>`}
+      </div></div>`;
+  }
+  /** Frage an Friday: Karten → Vorbereitung → Wikipedia (mit Guthaben formuliert Claude die Erklärung). */
+  async function frageStellen(text, { stapel = null, karte = null, ziel = "#ln-frage-erg" } = {}) {
+    if (!rechercheFrei()) { gesperrt("Friday recherchiert"); throw new Error("Noch im Test."); }
+    const t = String(text || "").trim();
+    if (!t) { status("Schreib oder sag deine Frage.", true); throw new Error("Keine Frage."); }
+    const box = ziel ? $(ziel) : null;
+    if (box) box.innerHTML = `<div class="hf-hinweis">🔎 Friday schaut nach: auf deinen Karten, in ihrer Vorbereitung und im Internet …</div><div class="hf-balken"><i class="laeuft" style="width:60%"></i></div>`;
+    still();
+    try {
+      const r = await json("/api/lernen/frage", { body: { text: t, stapel, karte } });
+      letzteFrage = r;
+      if (box) box.innerHTML = frageHtml(r);
+      status("");
+      sag(r.antwort);
+      return r;
+    } catch (err) {
+      if (box) box.innerHTML = `<div class="hf-leer">${esc(err.message)}</div>`;
+      throw err;
+    }
+  }
+  $("#ln-frage-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!rechercheFrei()) return gesperrt("Friday recherchiert");
+    frageStellen($("#ln-frage-q").value).catch(() => {});
+  });
+  $("#ln-frage-mikro").addEventListener("click", async () => {
+    still();
+    const q = $("#ln-frage-q");
+    try {
+      q.placeholder = "🎤 Ich höre zu …";
+      const t = await hoere({ live: (x) => { q.value = x; }, start: 7000, stille: 1500, max: 20000 });
+      mikroBelegen(false); q.placeholder = "z. B. Was sind Verben?";
+      if (t) { q.value = t; frageStellen(t).catch(() => {}); }
+    } catch (err) { mikroBelegen(false); status(err.message, true); }
+  });
+  w.sheet.addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-fr]");
+    if (!b || !letzteFrage) return;
+    const r = letzteFrage;
+    try {
+      switch (b.dataset.fr) {
+        case "lesen": still(); return sag(r.antwort);
+        case "mehr": zeigeTab("wissen"); $("#ln-w-q").value = r.wissen?.titel || r.thema; return wissenSuchen(r.wissen?.titel);
+        case "vorb": return vorbereiten({ thema: r.thema });
+        case "karte": {
+          const frage = /[?]$/.test(r.frage) ? r.frage : `${r.frage}?`;
+          const antwort = r.antwort.split(/(?<=[.!?])\s+/).filter(Boolean).join("\n");
+          if (studioFrei()) return studioOeffnen({ vorlage: { frage: frage.charAt(0).toUpperCase() + frage.slice(1), antwort } });
+          const s = await json("/api/lernen/karten", { body: { titel: "Meine Fragen an Friday", stapel: (info.stapel || []).find((x) => x.titel === "Meine Fragen an Friday")?.id || null, karten: [{ frage, antwort }], quelle: "frage" } });
+          await laden(); status(`✓ Als Karte in „${s.stapel.titel}“ gespeichert.`); return sag("Gespeichert.");
+        }
+        default:
+      }
+    } catch (err) { status(err.message, true); }
+  });
+
+  // ---------- Themen-Vorbereitung: Friday sammelt vorab alles Wichtige ----------
+  let vorb = [];
+  const autoVorb = new Set();
+  async function vorbLaden() {
+    const liste = $("#ln-vorb-liste");
+    if (!rechercheFrei()) { liste.innerHTML = `<span class="ln-chip">🔒 Noch im Test – in Eve ausprobieren</span>`; return; }
+    try { vorb = (await json("/api/lernen/vorbereitung", { method: "GET" })).themen || []; } catch { return; }
+    liste.innerHTML = vorb.length
+      ? vorb.map((t) => `<button class="ln-chip" data-vorb="${esc(t.id)}" type="button" title="Vorbereitet am ${esc(new Date(t.at).toLocaleDateString("de-DE"))}">🧠 <b>${esc(t.thema)}</b> · ${(t.fakten || []).length} Fakten${t.verwandt?.length ? ` · ${t.verwandt.length} verwandt` : ""}</button>`).join("")
+      : `<span class="ln-chip">Noch kein Thema. Sag mir, was du gerade lernst.</span>`;
+    // Mitdenken: Stapel ohne Vorbereitung bekommen im Hintergrund eine (höchstens 2 pro Öffnen).
+    let n = 0;
+    for (const s of info.stapel || []) {
+      if (n >= 2) break;
+      if (!s.anzahl || vorb.some((t) => t.stapel === s.id) || autoVorb.has(s.id)) continue;
+      n++; vorbereitenAuto(s.id);
+    }
+  }
+  function vorbereitenAuto(sid) {
+    if (!sid || !rechercheFrei() || autoVorb.has(sid)) return;
+    autoVorb.add(sid);
+    json("/api/lernen/vorbereitung", { body: { stapel: sid, auto: true } }).then((t) => { if (!t.schonDa) vorbLaden(); }).catch(() => {});
+  }
+  async function vorbereiten({ thema, stapel } = {}) {
+    if (!rechercheFrei()) return gesperrt("Friday recherchiert");
+    zeigeTab("start");
+    const d = $("#ln-vorb-detail");
+    d.innerHTML = `<div class="hf-hinweis">🧠 Friday bereitet sich auf „${esc(thema || "dein Thema")}“ vor: Hauptartikel, verwandte Themen, wichtige Begriffe …</div><div class="hf-balken"><i class="laeuft" style="width:60%"></i></div>`;
+    d.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    try {
+      const t = await json("/api/lernen/vorbereitung", { body: { thema, stapel } });
+      await vorbLaden();
+      vorbDetail(t.id);
+      sag(`Ich habe mich auf ${t.thema} vorbereitet. ${(t.fakten || [])[0] || ""} Frag mich einfach, wenn du etwas wissen willst.`);
+    } catch (err) { d.innerHTML = `<div class="hf-leer">${esc(err.message)}</div>`; }
+  }
+  function vorbDetail(id) {
+    const t = vorb.find((x) => x.id === id);
+    const d = $("#ln-vorb-detail");
+    if (!t) { d.innerHTML = ""; return; }
+    d.innerHTML = `<div class="ln-vorb-box" data-vorb-id="${esc(t.id)}">
+      <div class="ln-w-kopf">${t.bild ? `<img src="${esc(t.bild)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ""}
+        <div><h3>🧠 ${esc(t.thema)}</h3><div class="hf-hinweis">${t.titel && t.titel !== t.thema ? `Wikipedia „${esc(t.titel)}“ · ` : ""}vorbereitet am ${esc(new Date(t.at).toLocaleDateString("de-DE"))}${t.stapelTitel ? ` · für den Stapel „${esc(t.stapelTitel)}“` : ""}${t.link ? ` · <a href="${esc(t.link)}" target="_blank" rel="noopener">Quelle</a>` : ""}</div></div></div>
+      ${t.zusammenfassung ? `<p class="ln-w-text">${esc(t.zusammenfassung)}</p>` : ""}
+      ${t.fakten?.length ? `<details open><summary><b>Das Wichtigste (${t.fakten.length})</b></summary><ul class="ln-fakten">${t.fakten.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></details>` : ""}
+      ${t.begriffe?.length ? `<div class="hf-hinweis" style="margin-top:8px">Wichtige Begriffe – tipp drauf, dann erklärt Friday sie:</div><div class="ln-chips">${t.begriffe.map((b) => `<button class="ln-chip" data-vf="${esc(b)}" type="button">${esc(b)}</button>`).join("")}</div>` : ""}
+      ${t.verwandt?.length ? `<div class="hf-hinweis" style="margin-top:8px">Verwandte Themen:</div><div class="hf-liste">${t.verwandt.map((v) => `<button class="hf-zeile ln-vw" data-vw="${esc(v.titel)}" type="button"><span class="icon">🔗</span><span class="name"><b>${esc(v.titel)}</b><br><span class="klein">${esc(String(v.zusammenfassung || "").slice(0, 180))}${String(v.zusammenfassung || "").length > 180 ? " …" : ""}</span></span></button>`).join("")}</div>` : ""}
+      <div class="hf-reihe" style="margin-top:10px">
+        <button class="hf-btn" data-vb="lesen" type="button">🔊 Vorlesen</button>
+        <button class="hf-btn haupt" data-vb="karten" type="button">🗂 Karten daraus</button>
+        <button class="hf-btn" data-vb="neu" type="button">🔄 Neu recherchieren</button>
+        <button class="hf-btn leise" data-vb="weg" type="button">🗑 Vergessen</button>
+        <button class="hf-btn leise" data-vb="zu" type="button">▴ Zuklappen</button>
+      </div></div>`;
+  }
+  $("#ln-vorb-liste").addEventListener("click", (e) => { const b = e.target.closest("[data-vorb]"); if (b) vorbDetail(b.dataset.vorb); });
+  $("#ln-vorb-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const thema = $("#ln-vorb-q").value.trim();
+    if (!thema) return status("Schreib dein Lernthema hinein, z. B. Farben.", true);
+    vorbereiten({ thema }); $("#ln-vorb-q").value = "";
+  });
+  $("#ln-vorb-detail").addEventListener("click", async (e) => {
+    const box = e.target.closest("[data-vorb-id]");
+    const t = vorb.find((x) => x.id === box?.dataset.vorbId);
+    if (!t) return;
+    const f = e.target.closest("[data-vf]"), vw = e.target.closest("[data-vw]"), b = e.target.closest("[data-vb]");
+    try {
+      if (f) { $("#ln-frage-q").value = `Was ist ${f.dataset.vf}?`; $("#ln-frage-k").scrollIntoView({ behavior: "smooth", block: "start" }); return frageStellen(`Was ist ${f.dataset.vf}?`); }
+      if (vw) { zeigeTab("wissen"); $("#ln-w-q").value = vw.dataset.vw; return wissenSuchen(vw.dataset.vw); }
+      if (!b) return;
+      switch (b.dataset.vb) {
+        case "lesen": still(); return sag(`${t.thema}. ${t.zusammenfassung || ""} ${(t.fakten || []).slice(0, 6).join(" ")}`);
+        case "karten": {
+          const k = await json("/api/lernen/web/karten", { body: { titel: t.titel || t.thema, einleitung: t.einleitung || t.zusammenfassung, abschnitte: t.abschnitte || [] } });
+          zeigeTab("scannen"); scan.bild = null; scan.quelle = "web";
+          const st = (info.stapel || []).find((x) => x.id === t.stapel);
+          $("#ln-ziel").value = st ? st.id : ""; $("#ln-neu-titel").style.display = st ? "none" : ""; $("#ln-neu-titel").value = st ? "" : t.thema; $("#ln-text").value = "";
+          zeigeVorschau(k);
+          return sag(`Ich habe ${k.karten.length} Karten zu ${t.thema} vorbereitet. Schau sie dir an und tipp auf Speichern.`);
+        }
+        case "neu": return vorbereiten({ thema: t.thema, stapel: t.stapel || null });
+        case "weg": await json(`/api/lernen/vorbereitung/${encodeURIComponent(t.id)}`, { method: "DELETE" }); $("#ln-vorb-detail").innerHTML = ""; return vorbLaden();
+        case "zu": $("#ln-vorb-detail").innerHTML = ""; return;
+        default:
+      }
+    } catch (err) { status(err.message, true); }
+  });
+
+  // ---------- Automatisch scannen: Karte ruhig hinhalten, Friday nimmt selbst auf ----------
+  let autoT = null, autoPrev = null, autoRuhig = 0, autoScharf = true, autoBusy = false;
+  const autoC = document.createElement("canvas"); autoC.width = 64; autoC.height = 48;
+  const autoStand = (t) => { const el = $("#ln-cam-auto-stand"); el.style.display = t ? "" : "none"; el.textContent = t || ""; };
+  function autoStart() { autoStopp(); if (!camStream) return; autoPrev = null; autoRuhig = 0; autoScharf = true; autoStand("👀 Halt eine Karte ruhig vor die Kamera …"); autoT = setInterval(autoSchritt, 300); }
+  function autoStopp() { clearInterval(autoT); autoT = null; autoStand(""); }
+  async function autoSchritt() {
+    const v = $("#ln-cam");
+    if (!v.videoWidth || autoBusy || w.sheet.querySelector(".ln-fcheck") || !w.offen()) return;
+    const x = autoC.getContext("2d", { willReadFrequently: true });
+    x.drawImage(v, 0, 0, 64, 48);
+    const px = x.getImageData(0, 0, 64, 48).data, n = 64 * 48, g = new Float32Array(n);
+    let summe = 0;
+    for (let i = 0; i < n; i++) { g[i] = 0.3 * px[i * 4] + 0.59 * px[i * 4 + 1] + 0.11 * px[i * 4 + 2]; summe += g[i]; }
+    const mittel = summe / n;
+    let streu = 0, kante = 0, bewegung = 99;
+    for (let i = 0; i < n; i++) { streu += (g[i] - mittel) ** 2; if (i % 64 !== 63) kante += Math.abs(g[i] - g[i + 1]); }
+    streu = Math.sqrt(streu / n); kante /= n;
+    if (autoPrev) { let s2 = 0; for (let i = 0; i < n; i++) s2 += Math.abs(g[i] - autoPrev[i]); bewegung = s2 / n; }
+    autoPrev = g;
+    if (bewegung > 14 && bewegung < 99) { autoScharf = true; autoRuhig = 0; autoStand("👀 Bewegung … jetzt ruhig halten"); return; }
+    if (!autoScharf) return; // dieselbe Karte ist schon aufgenommen
+    if (kante < 5 || streu < 16) { autoRuhig = 0; autoStand("👀 Ich sehe noch keine Karte …"); return; }
+    autoRuhig = bewegung < 4 ? autoRuhig + 1 : Math.max(0, autoRuhig - 1);
+    autoStand(autoRuhig >= 2 ? `📸 Gleich … ${"●".repeat(autoRuhig)}` : "✋ Ruhig halten …");
+    if (autoRuhig < 4) return;
+    autoScharf = false; autoRuhig = 0; autoBusy = true;
+    autoStand("📸 Aufgenommen! Ich lese …");
+    try { const c = camFoto(); if (c) await bildLesen(c, { auto: true }); } catch (err) { status(err.message, true); }
+    finally { autoBusy = false; autoPrev = null; if (autoT) autoStand("✅ Nächste Karte hinhalten (oder Karte kurz wegnehmen) …"); }
+  }
+  $("#ln-cam-auto").addEventListener("change", (e) => {
+    if (e.target.checked && !rechercheFrei()) { e.target.checked = false; return gesperrt("Automatisch scannen"); }
+    $("#ln-cam-ohne-wahl").style.display = e.target.checked ? "" : "none";
+    if (!e.target.checked) return autoStopp();
+    if (camStream) autoStart(); else kameraAn();
+    sag("Okay. Halt einfach eine Karte ruhig vor die Kamera, ich nehme sie selbst auf.");
+  });
+
+  // ---------- Karten-Studio: eigene Karten mit Farbe und Textmarker ----------
+  let studio = null;
+  function studioOeffnen({ stapel = "", karte = null, vorlage = null } = {}) {
+    if (!studioFrei()) return gesperrt("Eigene Lernkarten");
+    w.sheet.querySelector(".ln-studio")?.remove();
+    const k = karte || vorlage || {};
+    const st = info.stapel || [];
+    const neu = !karte;
+    studio = { stapel: stapel || "", id: karte?.id || null, farbe: k.farbe || "weiss", markierungen: (k.markierungen || []).map((m) => ({ ...m })), seite: "frage", sel: null, offen: false };
+    const box = document.createElement("div");
+    box.className = "ln-fcheck ln-studio";
+    box.setAttribute("role", "dialog");
+    box.setAttribute("aria-label", "Karten-Studio");
+    box.innerHTML = `<div class="ln-check-karte ln-studio-karte">
+        <div class="ln-studio-kopf"><h3>✏️ Karten-Studio</h3><button data-s="zu" class="hf-btn leise" type="button" aria-label="Schließen">✕</button></div>
+        <div class="ln-studio-grid">
+          <div class="ln-studio-links">
+            <div id="ls-vorschau" class="ln-karteikarte ln-studio-vorschau" role="button" tabindex="0" aria-label="Vorschau umdrehen"></div>
+            <div class="hf-reihe"><button data-s="dreh" class="hf-btn" type="button">🔄 Umdrehen</button><button data-s="lesen" class="hf-btn leise" type="button">🔊 Vorlesen</button></div>
+          </div>
+          <div class="ln-studio-rechts">
+            ${neu ? `<div class="hf-reihe"><select id="ls-ziel" class="hf-input grow" aria-label="In welchen Stapel?">${st.map((s) => `<option value="${esc(s.id)}">In „${esc(s.titel)}“</option>`).join("")}<option value="">＋ Neuer Stapel</option></select><input id="ls-titel" class="hf-input grow" type="text" placeholder="Name des neuen Stapels, z. B. Farben"></div>` : ""}
+            <label class="hf-feld">Vorderseite (Frage oder Begriff)<textarea id="ls-vorne" class="hf-input" rows="2" data-ls="frage">${esc(k.frage || "")}</textarea></label>
+            <label class="hf-feld">Rückseite (Antwort, jeder Punkt in eine eigene Zeile)<textarea id="ls-hinten" class="hf-input" rows="5" data-ls="antwort">${esc(k.antwort || "")}</textarea></label>
+            <div class="ln-studio-zeile"><span>🎨 Kartenfarbe</span><div class="ln-swatches">${KFARBEN.map(([id, name]) => `<button type="button" class="ln-sw ln-kf-${id}" data-kf="${id}" title="${name}" aria-label="Kartenfarbe ${name}"></button>`).join("")}</div></div>
+            <div class="ln-studio-zeile"><span>🖍 Textmarker</span><div class="ln-swatches">${MFARBEN.map(([id, name]) => `<button type="button" class="ln-sw ln-mk-${id}" data-mf="${id}" title="${name}" aria-label="Textmarker ${name}"></button>`).join("")}</div></div>
+            <p class="hf-hinweis" id="ls-tipp">Wort auf der Vorder- oder Rückseite markieren (mit dem Finger oder der Maus), dann eine Markerfarbe antippen.</p>
+            <div id="ls-marks" class="ln-chips"></div>
+            <label class="ln-check"><input type="checkbox" id="ls-reihe" ${k.reihenfolge ? "checked" : ""}> Reihenfolge ist wichtig</label>
+          </div>
+        </div>
+        <div class="hf-reihe ln-check-knoepfe">
+          <button data-s="ok" class="hf-btn haupt" type="button">✓ Karte speichern</button>
+          ${neu ? `<button data-s="ok-neu" class="hf-btn" type="button">✓ Speichern &amp; nächste Karte</button>` : `<button data-s="loeschen" class="hf-btn leise" type="button">🗑 Karte löschen</button>`}
+          <button data-s="zu" class="hf-btn leise" type="button">Abbrechen</button>
+        </div>
+      </div>`;
+    w.sheet.appendChild(box);
+    const q = (s) => box.querySelector(s);
+    if (neu) {
+      const z = q("#ls-ziel");
+      const wunsch = stapel || (detail?.id && tab === "karten" ? detail.id : "") || (st[0]?.id || "");
+      z.value = [...z.options].some((o) => o.value === wunsch) ? wunsch : "";
+      const titelZeigen = () => { q("#ls-titel").style.display = z.value ? "none" : ""; };
+      z.addEventListener("change", titelZeigen); titelZeigen();
+    }
+    const vorschau = () => {
+      const karte2 = { farbe: studio.farbe, markierungen: studio.markierungen };
+      const frage = q("#ls-vorne").value.trim(), antwort = q("#ls-hinten").value;
+      const v = q("#ls-vorschau");
+      v.className = `ln-karteikarte ln-studio-vorschau${studio.offen ? " offen" : ""}${studio.farbe !== "weiss" ? ` ln-kf-${studio.farbe}` : ""}`;
+      v.innerHTML = `<div class="klein hf-hinweis">${studio.offen ? "Rückseite" : "Vorderseite"} · so sieht deine Karte aus</div>`
+        + (studio.offen
+          ? `<div class="ln-antwort">${mk(frage, karte2, "frage")}</div><ol class="ln-punkte">${punkte(antwort).map((p) => `<li>${mk(p, karte2, "antwort")}</li>`).join("") || "<li class='hf-hinweis'>Noch leer</li>"}</ol>`
+          : `<div class="ln-frage">${mk(frage, karte2, "frage") || "<span class='hf-hinweis'>Vorderseite schreiben …</span>"}</div>`);
+      box.querySelectorAll("[data-kf]").forEach((b) => b.classList.toggle("an", b.dataset.kf === studio.farbe));
+      q("#ls-marks").innerHTML = studio.markierungen.map((m, i) => `<button type="button" class="ln-chip ln-mk-chip" data-mx="${i}" title="Markierung entfernen"><mark class="ln-mk ln-mk-${m.farbe}">${esc(m.text)}</mark> ${m.seite === "frage" ? "vorne" : "hinten"} ✕</button>`).join("");
+    };
+    // Markierte Stelle merken (am iPhone geht die Auswahl beim Tippen auf den Marker sonst verloren).
+    const merke = (e) => {
+      const t = e.target;
+      if (!t?.dataset?.ls) return;
+      const a = t.selectionStart, b = t.selectionEnd;
+      if (b > a) studio.sel = { seite: t.dataset.ls, text: t.value.slice(a, b).replace(/\s+/g, " ").trim() };
+      studio.seite = t.dataset.ls;
+    };
+    ["select", "keyup", "mouseup", "touchend", "focusin"].forEach((ev) => box.addEventListener(ev, merke));
+    const selWeg = () => document.addEventListener("selectionchange", function f() { const a = document.activeElement; if (!box.isConnected) return document.removeEventListener("selectionchange", f); if (a?.dataset?.ls && a.selectionEnd > a.selectionStart) studio.sel = { seite: a.dataset.ls, text: a.value.slice(a.selectionStart, a.selectionEnd).replace(/\s+/g, " ").trim() }; });
+    selWeg();
+    box.addEventListener("input", (e) => {
+      if (e.target.dataset?.ls) { studio.offen = e.target.dataset.ls === "antwort"; vorschau(); }
+    });
+    const zu = () => { box.classList.add("weg"); setTimeout(() => box.remove(), 250); studio = null; };
+    const speichern = async (weiter) => {
+      const frage = q("#ls-vorne").value.trim(), antwort = q("#ls-hinten").value.trim();
+      if (!frage) { q("#ls-tipp").textContent = "Schreib erst etwas auf die Vorderseite."; q("#ls-vorne").focus(); return; }
+      const lo = { frage: frage.toLowerCase(), antwort: antwort.toLowerCase() };
+      const markierungen = studio.markierungen.filter((m) => lo[m.seite].includes(m.text.toLowerCase()));
+      const felder = { frage, antwort, reihenfolge: q("#ls-reihe").checked, farbe: studio.farbe, markierungen };
+      let sid = studio.stapel;
+      if (studio.id) {
+        await json(`/api/lernen/stapel/${encodeURIComponent(sid)}/karte/${encodeURIComponent(studio.id)}`, { method: "PATCH", body: felder });
+        status("✓ Karte gespeichert.");
+      } else {
+        const ziel = q("#ls-ziel").value;
+        const r = await json("/api/lernen/karten", { body: { stapel: ziel || null, titel: q("#ls-titel").value, karten: [felder], quelle: "hand" } });
+        sid = r.stapel.id;
+        status(`✓ Karte in „${r.stapel.titel}“ gespeichert.`);
+        if (!ziel) vorbereitenAuto(sid);
+      }
+      await laden();
+      if (detail?.id === sid && tab === "karten") zeigeDetail(sid);
+      if (hilfe.stapel === sid) { const i = hilfe.i; hilfe.stapel = null; await hilfeLaden(); hilfe.i = Math.min(i, hilfe.karten.length - 1); zeichneHilfe(); }
+      if (weiter) {
+        const ziel = sid;
+        zu(); studioOeffnen({ stapel: ziel });
+        return;
+      }
+      zu();
+    };
+    box.addEventListener("click", async (e) => {
+      const b = e.target.closest("[data-s], [data-kf], [data-mf], [data-mx]");
+      if (!b) { if (e.target.closest("#ls-vorschau")) { studio.offen = !studio.offen; vorschau(); } return; }
+      try {
+        if (b.dataset.kf) { studio.farbe = b.dataset.kf; return vorschau(); }
+        if (b.dataset.mx !== undefined) { studio.markierungen.splice(+b.dataset.mx, 1); return vorschau(); }
+        if (b.dataset.mf) {
+          const s = studio.sel;
+          if (!s?.text) { q("#ls-tipp").textContent = "Markier erst ein Wort: auf der Karte gedrückt halten oder mit der Maus darüberziehen. Dann die Farbe antippen."; return; }
+          studio.markierungen = studio.markierungen.filter((m) => !(m.seite === s.seite && m.text.toLowerCase() === s.text.toLowerCase()));
+          studio.markierungen.push({ seite: s.seite, text: s.text.slice(0, 120), farbe: b.dataset.mf });
+          studio.offen = s.seite === "antwort"; studio.sel = null;
+          q("#ls-tipp").textContent = `✓ „${s.text.slice(0, 40)}“ markiert. Tipp auf eine Markierung unten, um sie wieder wegzunehmen.`;
+          return vorschau();
+        }
+        switch (b.dataset.s) {
+          case "zu": return zu();
+          case "dreh": studio.offen = !studio.offen; return vorschau();
+          case "lesen": still(); return sag(`${q("#ls-vorne").value}. ${punkte(q("#ls-hinten").value).join(". ")}`);
+          case "ok": return await speichern(false);
+          case "ok-neu": return await speichern(true);
+          case "loeschen":
+            if (!b.dataset.sicher) { b.dataset.sicher = "1"; b.textContent = "Wirklich löschen? Nochmal tippen"; return; }
+            await json(`/api/lernen/stapel/${encodeURIComponent(studio.stapel)}/karte/${encodeURIComponent(studio.id)}`, { method: "DELETE" });
+            { const sid = studio.stapel; zu(); await laden(); if (detail?.id === sid) zeigeDetail(sid); if (hilfe.stapel === sid) { hilfe.stapel = null; hilfeLaden(); } }
+            return status("Karte gelöscht.");
+          default:
+        }
+      } catch (err) { q("#ls-tipp").textContent = err.message; }
+    });
+    box.addEventListener("keydown", (e) => { if (e.key === "Escape") zu(); });
+    vorschau();
+    setTimeout(() => q("#ls-vorne")?.focus({ preventScroll: true }), 60);
+  }
+  $("#ln-studio-neu").addEventListener("click", () => studioOeffnen({ stapel: detail?.id || "" }));
+
   const style = document.createElement("style");
   style.textContent = `
 .ln-box { width: min(1080px, 100%); }
@@ -2136,6 +2571,55 @@ button.ln-chip { cursor: pointer; font: inherit; font-size: 12.5px; }
   .ln-z-zeile { grid-template-columns: 1fr; gap: 4px; }
   .ln-w-kopf img { width: 76px; height: 76px; }
   .ln-l-in { width: 9em; }
+}
+/* ---- v1.141.0: Frag Friday, Vorbereitung, Auto-Scan, Karten-Studio (zuerst nur in Eve) ---- */
+.ln-antwort-box { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--u-rand-soft, var(--line)); background: linear-gradient(160deg, color-mix(in srgb, var(--cyan) 10%, transparent), rgba(0,0,0,.25)); }
+.ln-antwort-box a.ln-chip { color: var(--cyan); text-decoration: none; }
+.ln-erklaerung { font-size: 17px !important; line-height: 1.6 !important; margin: 4px 0; color: #fff3e6; }
+.ln-vorb-box { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--u-rand-soft, var(--line)); background: rgba(0,0,0,.22); }
+.ln-vorb-box details summary { cursor: pointer; }
+.ln-fakten { margin: 8px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 5px; line-height: 1.5; }
+.ln-vw { width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; background: rgba(0,0,0,.18); border: 1px solid var(--u-rand-soft, var(--line)); border-radius: 12px; }
+.ln-vw:hover { border-color: var(--cyan); }
+.ln-cam-auto { margin-top: 8px; align-items: center; }
+.ln-studio-leiste { align-items: center; margin-bottom: 10px; }
+/* Kartenfarben (Karteikarte, Zeilen, Farbfelder) */
+.ln-kf-gelb { --kf: #ffd84d; } .ln-kf-orange { --kf: #ff9a3c; } .ln-kf-rot { --kf: #ff5a52; } .ln-kf-rosa { --kf: #ff8fc8; }
+.ln-kf-lila { --kf: #b48cff; } .ln-kf-blau { --kf: #5aa8ff; } .ln-kf-tuerkis { --kf: #3fe0d0; } .ln-kf-gruen { --kf: #5fdc7a; } .ln-kf-weiss { --kf: #d9d2c8; }
+.ln-box .ln-karteikarte[class*="ln-kf-"]:not(.ln-kf-weiss), .ln-studio .ln-karteikarte[class*="ln-kf-"]:not(.ln-kf-weiss) { border-color: var(--kf); background: radial-gradient(130% 130% at 0% 0%, color-mix(in srgb, var(--kf) 32%, transparent), color-mix(in srgb, var(--kf) 8%, rgba(0,0,0,.45))); box-shadow: inset 0 0 34px color-mix(in srgb, var(--kf) 18%, transparent), 0 0 18px color-mix(in srgb, var(--kf) 18%, transparent); }
+.ln-vz[class*="ln-kf-"] { border-left: 5px solid var(--kf); padding-left: 8px; border-radius: 10px; background: color-mix(in srgb, var(--kf) 9%, transparent); }
+/* Textmarker */
+mark.ln-mk { color: #1a1206; border-radius: 4px; padding: 0 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.ln-mk-gelb { --mk: #ffe94d; } .ln-mk-gruen { --mk: #8cf58a; } .ln-mk-pink { --mk: #ff8ad8; } .ln-mk-blau { --mk: #8fd0ff; } .ln-mk-orange { --mk: #ffb35c; }
+mark.ln-mk { background: linear-gradient(transparent 6%, var(--mk) 6%, var(--mk) 94%, transparent 94%); }
+/* Karten-Studio */
+.ln-studio-karte { width: min(1000px, 100%); }
+.ln-studio-kopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ln-studio-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.ln-studio-links, .ln-studio-rechts { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ln-studio .ln-studio-vorschau { min-height: 240px; font-size: 17px; line-height: 1.5; }
+.ln-studio .ln-studio-vorschau .ln-frage { font-size: 26px; font-weight: 700; text-align: center; padding: 30px 10px; color: #fff3e6; }
+.ln-studio .ln-studio-vorschau .ln-antwort { font-weight: 700; margin: 6px 0; }
+.ln-studio textarea.hf-input { width: 100%; font-size: 16px; resize: vertical; }
+.ln-studio-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.ln-studio-zeile > span { min-width: 120px; font-weight: 700; font-size: 13.5px; }
+.ln-swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+.ln-sw { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,.25); background: var(--kf, var(--mk)); box-shadow: 0 0 0 0 transparent; transition: transform .12s, box-shadow .12s; }
+.ln-sw.ln-kf-weiss { background: repeating-linear-gradient(45deg, rgba(255,255,255,.18) 0 4px, transparent 4px 8px); }
+.ln-sw:hover { transform: scale(1.08); }
+.ln-sw:focus, .ln-sw:focus-visible, .ln-sw:active { background: var(--kf, var(--mk)); outline: none; }
+.ln-sw.ln-kf-weiss:focus { background: repeating-linear-gradient(45deg, rgba(255,255,255,.18) 0 4px, transparent 4px 8px); }
+.ln-sw.an { border-color: #fff; box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan) 70%, transparent); }
+.ln-sw[data-mf] { border-radius: 8px 14px 8px 14px; }
+.ln-mk-chip { cursor: pointer; }
+/* In Eve liegt das „✎ Ändern“-Feld ganz oben – solange Foto-Check oder Karten-Studio offen sind, ausblenden. */
+body:has(.ln-fcheck) #eve-aendern { display: none !important; }
+@media (max-width: 900px) {
+  .ln-studio-grid { grid-template-columns: 1fr; }
+  .ln-studio .ln-studio-vorschau { min-height: 170px; }
+  .ln-studio .ln-studio-vorschau .ln-frage { font-size: 22px; padding: 18px 6px; }
+  .ln-sw { width: 38px; height: 38px; }
+  .ln-studio-zeile > span { min-width: 100%; }
 }
 `;
   document.head.appendChild(style);
