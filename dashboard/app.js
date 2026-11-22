@@ -763,7 +763,7 @@
         // Live-Sport (v1.150.0, im Test): "sport", "sport_liga:<liga>", "sport_spiel:<liga>:<id>"
         const sportSp = aktion("sport_spiel:");
         const sportLi = aktion("sport_liga:");
-        if (sportSp) { const [, lg, ...rest] = sportSp.split(":"); window.FridaySport?.open({ liga: lg, id: rest.join(":") }); }
+        if (sportSp) { const [, lg, ...rest] = sportSp.split(":"); window.FridaySport?.open({ liga: lg, id: rest.join(":"), still: true }); }
         else if (sportLi) window.FridaySport?.open({ liga: sportLi.slice(11) });
         else if (hat("sport")) window.FridaySport?.open();
         // Spiele-Werkstatt: live zuschauen, wie Friday programmiert, oder ein gespeichertes Spiel starten.

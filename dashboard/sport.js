@@ -2,6 +2,8 @@
 // Alle Sportarten aus freien Quellen – Live-Spiele, Ligen, ein Spiel im Detail mit Fridays Analyse,
 // Spielverlauf, Ereignissen, Statistik, Live-Ticker, legalen Sendern und offiziellen Highlights.
 // Friday sagt Tore an, solange das Fenster offen ist (abschaltbar).
+// v1.151.0: Öffnest du ein Spiel, liest Friday den Stand und alles Wichtige vor (Tore, gelbe/rote Karten …)
+// und meldet danach jedes neue Ereignis, solange das Spiel offen ist.
 (() => {
   "use strict";
   const H = window.FridayHelfer;
@@ -15,13 +17,15 @@
   let ladeNr = 0;
   let takt = 0;
   const letzteStaende = new Map();
+  const gesehen = new Map(); // Spiel -> Set der schon angesagten Ereignisse
+  let stillOeffnen = false;  // per Sprache geöffnet: Friday hat den Stand schon gesagt
 
   const w = H.fenster({
     id: "sport", titel: "🏟️ Live-Sport", klasse: "ls-box",
     html: `
       <div class="ls-kopf">
         <div class="hf-tabs" id="ls-sportarten" role="tablist"></div>
-        <label class="ls-ansage"><input type="checkbox" id="ls-ansage"> 🔔 Tore ansagen</label>
+        <label class="ls-ansage"><input type="checkbox" id="ls-ansage"> 🔊 Stand &amp; Ereignisse ansagen</label>
       </div>
       <div class="hf-tabs ls-ligen hidden" id="ls-ligen"></div>
       <div id="ls-status" class="hf-status"></div>
@@ -42,7 +46,7 @@
         return;
       }
     }
-    if (o.liga && o.id) ansicht = { art: "spiel", liga: o.liga, id: o.id };
+    if (o.liga && o.id) { ansicht = { art: "spiel", liga: o.liga, id: o.id }; stillOeffnen = Boolean(o.still); if (detail && detail.id !== o.id) detail = null; }
     else if (o.liga) { ansicht = { art: "liga", liga: o.liga, tag: "" }; sportWahl = katalog.ligen.find((l) => l.id === o.liga)?.sport || ""; }
     else if (!o.behalten) ansicht = { art: "live" };
     kopf();
@@ -83,11 +87,16 @@
         const d = await json(`/api/sport/spiel/${encodeURIComponent(ansicht.liga)}/${encodeURIComponent(ansicht.id)}`);
         if (nr !== ladeNr) return;
         const neu = !detail || detail.id !== d.id;
-        pruefeTor(d);
+        const gesagt = pruefeEreignisse(d, { neu });
+        pruefeTor(d, { stumm: gesagt });
         detail = d;
         zeigeSpiel(d, { neu });
         status("");
-        if (neu) ladeAnalyse(d);
+        if (neu) {
+          if (ansageAn() && !stillOeffnen && d.ansage) F().say?.(d.ansage);
+          stillOeffnen = false;
+          ladeAnalyse(d);
+        }
       } else if (ansicht.art === "liga") {
         const tag = ansicht.tag ? `?tag=${ansicht.tag}` : "";
         const d = await json(`/api/sport/liga/${encodeURIComponent(ansicht.liga)}${tag}`);
@@ -120,7 +129,25 @@
 
   // ---------- Tore ansagen ----------
   const ANSAGE = new Set(["fussball", "eishockey", "handball", "rugby", "football"]);
-  function pruefeTor(s) {
+  const ereignisKey = (e) => [e.typ, e.minute, e.seite, e.spieler, e.art].join("|");
+  /** Neue Ereignisse im offenen Spiel ansagen. Gibt true zurück, wenn etwas gesagt wurde. */
+  function pruefeEreignisse(d, { neu } = {}) {
+    if (d.art !== "duell") return false;
+    const key = `${d.liga}/${d.id}`;
+    const liste = (d.ereignisse || []).filter((e) => e.ansage);
+    const schon = gesehen.get(key);
+    const jetzt = new Set(liste.map(ereignisKey));
+    gesehen.set(key, jetzt);
+    if (neu || !schon || d.zustand !== "live" || !ansageAn()) return false;
+    const frisch = liste.filter((e) => !schon.has(ereignisKey(e)));
+    if (!frisch.length) return false;
+    const stand = d.heim.punkte !== "" ? ` Es steht ${d.heim.punkte} zu ${d.gast.punkte}.` : "";
+    const tor = frisch.some((e) => e.typ === "tor");
+    F().say?.(`${frisch.slice(-3).map((e) => e.ansage).join(" ")}${tor ? stand : ""}`);
+    return true;
+  }
+
+  function pruefeTor(s, { stumm = false } = {}) {
     if (s.art !== "duell") return;
     const key = `${s.liga}/${s.id}`;
     const stand = `${s.heim.punkte}:${s.gast.punkte}`;
@@ -132,7 +159,7 @@
     const fuer = h > ah ? s.heim : s.gast;
     const karte = w.sheet.querySelector(`[data-spiel="${CSS.escape(key)}"], .ls-anzeige[data-key="${CSS.escape(key)}"]`);
     karte?.classList.remove("ls-tor"); void karte?.offsetWidth; karte?.classList.add("ls-tor");
-    if (!ansageAn() || !ANSAGE.has(s.sport)) return;
+    if (stumm || !ansageAn() || !ANSAGE.has(s.sport)) return;
     const wort = s.sport === "fussball" || s.sport === "eishockey" || s.sport === "handball" ? "Tor" : "Punkte";
     F().say?.(`${wort} für ${fuer.kurzname || fuer.name}! Es steht jetzt ${h} zu ${g}.`);
   }
@@ -181,6 +208,7 @@
     const t = e.target.closest("[data-tag]");
     if (t && ansicht.art === "liga") { ansicht.tag = t.dataset.tag; laden(); return; }
     if (e.target.closest("#ls-zurueck")) { ansicht = ansicht.zurueck || (detail ? { art: "liga", liga: detail.liga, tag: "" } : { art: "live" }); if (ansicht.art === "liga") sportWahl = katalog.ligen.find((l) => l.id === ansicht.liga)?.sport || sportWahl; kopf(); laden(); return; }
+    if (e.target.closest("#ls-stand-sagen") && detail?.ansage) { F().say?.(detail.ansage); return; }
     if (e.target.closest("#ls-vorlesen")) { const t2 = $("#ls-analyse-text")?.textContent; if (t2) F().say?.(t2); return; }
     if (e.target.closest("#ls-neu-analyse") && detail) { ladeAnalyse(detail, { laut: true }); return; }
     if (e.target.closest("#ls-hl-laden") && detail) { ladeHighlights(detail); return; }
@@ -214,7 +242,7 @@
     const analyseKarte = alteAnalyse || `<div class="hf-karte ls-analyse" id="ls-analyse">
         <h3>🧠 Fridays Analyse <span class="ls-quelle" id="ls-analyse-quelle"></span></h3>
         <p id="ls-analyse-text">${esc(d.regelAnalyse || "")}</p>
-        <div class="hf-reihe"><button class="hf-btn leise" id="ls-vorlesen">🔊 Vorlesen</button>${d.zustand !== "vorher" ? '<button class="hf-btn leise" id="ls-neu-analyse">↻ Neu analysieren</button>' : ""}</div>
+        <div class="hf-reihe"><button class="hf-btn leise" id="ls-stand-sagen">📣 Stand ansagen</button><button class="hf-btn leise" id="ls-vorlesen">🔊 Vorlesen</button>${d.zustand !== "vorher" ? '<button class="hf-btn leise" id="ls-neu-analyse">↻ Neu analysieren</button>' : ""}</div>
       </div>`;
     const verlauf = d.verlauf?.length >= 2 ? `<div class="hf-karte"><h3>📈 Spielverlauf</h3>${verlaufSvg(d)}</div>` : "";
     const ereig = (d.ereignisse || []).length ? `<div class="hf-karte"><h3>⏱ Ereignisse</h3><ol class="ls-zeitleiste">${[...d.ereignisse].reverse().map((e) => `

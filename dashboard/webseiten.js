@@ -81,6 +81,28 @@
     }
   }
 
+  // v1.151.0: Friday sagt laut, was sie gerade baut ("Das baue ich gerade: den Kopfbereich").
+  // Jede Phase nur einmal, und nie mitten in einen Satz hinein (sonst schneidet die nächste Ansage ab).
+  const sprechDauer = (t) => 900 + (String(t).length / 13) * 1000;
+  function phaseAnsagen(satz) {
+    if (!live || live.ende || !satz) return;
+    let an = true;
+    try { an = localStorage.getItem("friday_ws_ansage") !== "0"; } catch { /* egal */ }
+    if (!an) return;
+    live.gesagt ||= new Set();
+    if (live.gesagt.has(satz)) return;
+    live.wartet = satz;
+    if (Date.now() < (live.frei || 0)) {
+      clearTimeout(live.ansageTimer);
+      live.ansageTimer = setTimeout(() => { const w2 = live?.wartet; if (w2) { live.wartet = ""; phaseAnsagen(w2); } }, live.frei - Date.now() + 50);
+      return;
+    }
+    live.wartet = "";
+    live.gesagt.add(satz);
+    live.frei = Date.now() + sprechDauer(satz);
+    say(satz);
+  }
+
   async function livePoll() {
     if (!live || live.ende) return;
     let j;
@@ -90,6 +112,7 @@
     liveCode(j.code || "");
     if (j.titel) wl("wl-titel").textContent = j.titel;
     wl("wl-phase").textContent = j.phase || "";
+    if (j.status === "baut") phaseAnsagen(j.sprich);
     wl("wl-zeilen").textContent = (j.zeilen || 0).toLocaleString("de-DE");
     wl("wl-zeichen").textContent = (j.zeichen || 0).toLocaleString("de-DE");
     if (j.status === "baut") { live.poll = setTimeout(livePoll, 600); return; }
@@ -99,6 +122,7 @@
   function liveEnde(j) {
     live.ende = true;
     clearInterval(live.timer);
+    clearTimeout(live.ansageTimer);
     const box = $("ws-live");
     busy = false; $("ws-go").disabled = false; $("ws-change-go").disabled = false;
     $("ws-state").textContent = ""; $("ws-state").className = "ws-state";
@@ -113,20 +137,22 @@
       const r = j.ergebnis;
       const knapp = sek <= j.schaetzung_s + 3 ? `${sek} Sekunden, wie versprochen.` : `${sek} Sekunden, etwas länger als gedacht.`;
       msg(`Fertig in ${sek} s: ${r.titel}. Preisvorschlag ${eur(r.preis_eur)}.`);
-      say(`Fertig, Chef. ${knapp} ${r.titel} steht. Mein Preisvorschlag: ${Math.round(r.preis_eur || 0)} Euro.`);
+      // Nicht mitten in die letzte Bau-Ansage hinein (höchstens 3 s warten). Schon fertige Bauten nicht noch mal ansagen.
+      const fertigSatz = `Fertig, Chef. ${knapp} ${r.titel} steht. Mein Preisvorschlag: ${Math.round(r.preis_eur || 0)} Euro.`;
+      if (!live.stumm) setTimeout(() => say(fertigSatz), Math.min(3000, Math.max(0, (live.frei || 0) - Date.now())));
       window.FridayEnergie?.refresh();
       setTimeout(() => { if (live?.id === j.id) { liveZeigen(false); loadList(r.id); } }, 4000);
     } else {
       box.classList.add("wl-fehler");
       wl("wl-phase").textContent = j.error || "Hat nicht geklappt.";
       msg(j.error || "Die Webseite hat gerade nicht geklappt.", true);
-      say(j.error || "Das hat leider nicht geklappt, Chef.");
+      if (!live.stumm) say(j.error || "Das hat leider nicht geklappt, Chef.");
     }
   }
 
   function liveFolgen(job, { sprechen } = {}) {
     if (live && !live.ende) { clearTimeout(live.poll); clearInterval(live.timer); }
-    live = { id: job.id, code: "", t0: Date.now() - (job.vergangen_s || 0) * 1000, schaetzung: job.schaetzung_s || 60, erwartet: job.erwartet_zeichen || 20000, p: 0 };
+    live = { id: job.id, code: "", t0: Date.now() - (job.vergangen_s || 0) * 1000, schaetzung: job.schaetzung_s || 60, erwartet: job.erwartet_zeichen || 20000, p: 0, stumm: job.status && job.status !== "baut" };
     const box = $("ws-live");
     box.classList.remove("wl-fertig", "wl-fehler", "wl-ueber");
     wl("wl-code").innerHTML = ""; wl("wl-frame").srcdoc = "";
@@ -138,7 +164,7 @@
     busy = true; $("ws-go").disabled = true; $("ws-change-go").disabled = true;
     $("ws-state").textContent = "BAUT LIVE"; $("ws-state").className = "ws-state busy";
     msg("");
-    if (sprechen && job.spruch) say(job.spruch);
+    if (sprechen && job.spruch) { say(job.spruch); live.frei = Date.now() + sprechDauer(job.spruch); }
     live.timer = setInterval(liveTick, 250);
     liveTick();
     livePoll();
