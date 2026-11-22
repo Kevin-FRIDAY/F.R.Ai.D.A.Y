@@ -1,45 +1,4 @@
 {
   "_hinweis": "Funktionen, die gerade in Eve getestet werden. In Friday sind sie gesperrt (Schloss), bis Kevin sie in Eve freigibt. Neue Funktion = neuer Eintrag hier. 'ziele' sind CSS-Selektoren der Knöpfe/Bereiche, die in Friday das Schloss bekommen.",
-  "funktionen": [
-    {
-      "id": "app-zentrale",
-      "name": "App-Zentrale (21 Apps)",
-      "version": "1.139.0",
-      "beschreibung": "Apple Kalender, Erinnerungen, Fotos, Music, Kurzbefehle, Apple TV, Google Drive, OneDrive, GitHub, YouTube, Netflix, Spotify, Prime Video, Disney+, Alexa, Ring, Arlo, PayPal, Amazon, eBay, Google Pay an einem Ort. Friday zahlt und kauft nie selbst.",
-      "ziele": [
-        ".menu-apps",
-        ".nav-apps"
-      ]
-    },
-    {
-      "id": "klang-video",
-      "name": "Videos zum Stimmungs-Sound",
-      "version": "1.140.0",
-      "beschreibung": "Zu allen 19 Klängen laufen passende, frei lizenzierte Videos (Wikimedia Commons), z. B. Kaminfeuer, Bach im Wald, Unterwasser mit Fischen. Stumm, der Klang bleibt live. Knopf 🎬 Video im Stimmungs-Sound oder \"Friday, Kaminfeuer mit Video\".",
-      "ziele": [
-        ".kr-video-knopf"
-      ]
-    },
-    {
-      "id": "lernecke-recherche",
-      "name": "Lernecke: Friday recherchiert und denkt mit",
-      "version": "1.141.0",
-      "beschreibung": "Carla fragt z. B. „Was sind Verben?“ – Friday schaut auf ihren Karten, in der Themen-Vorbereitung und bei Wikipedia nach und erklärt es einfach mit Beispielen. Zum Lernthema (z. B. Farben) sammelt Friday automatisch alles Wichtige vorab. Live-Kamera scannt Karten automatisch, sobald man sie ruhig hinhält.",
-      "ziele": [
-        "#ln-frage-los",
-        "#ln-frage-mikro",
-        "#ln-vorb-los",
-        "#ln-cam-auto-wahl"
-      ]
-    },
-    {
-      "id": "lernecke-eigene-karten",
-      "name": "Lernecke: eigene Lernkarten mit Farben und Textmarker",
-      "version": "1.141.0",
-      "beschreibung": "Im Karten-Studio eigene Lernkarten anlegen und bearbeiten, Kartenfarbe wählen und Wörter mit dem Textmarker (gelb, grün, pink, blau, orange) markieren.",
-      "ziele": [
-        "#ln-studio-neu"
-      ]
-    }
-  ]
+  "funktionen": []
 }
