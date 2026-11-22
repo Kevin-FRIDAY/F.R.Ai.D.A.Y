@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Live-Sport (v1.145.0, zuerst nur in Eve):
+// F.R.Ai.D.A.Y Live-Sport (v1.146.0, zuerst nur in Eve):
 // Alle Sportarten aus freien Quellen – Live-Spiele, Ligen, ein Spiel im Detail mit Fridays Analyse,
 // Spielverlauf, Ereignissen, Statistik, Live-Ticker, legalen Sendern und offiziellen Highlights.
 // Friday sagt Tore an, solange das Fenster offen ist (abschaltbar).

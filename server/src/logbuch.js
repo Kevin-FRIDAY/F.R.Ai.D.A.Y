@@ -69,7 +69,7 @@ const ZU_BEREICH = {
   routen: "route", route_planen: "route",
   world_news: "welt", welt_alarm: "welt", weltgeschehen: "welt", land_info: "welt", country_info: "welt", vollbild: "system", vollbild_aus: "system",
   lookup: "suche", web_search: "suche", get_weather: "suche", air_quality: "suche", currency: "suche", crypto: "suche", holidays: "suche", iss: "suche", rechnen: "suche", notion: "suche", get_health: "suche",
-  markt_radar: "markt",
+  markt_radar: "markt", markt_plus: "markt",
   webseite_bauen: "webseite",
   spiel_bauen: "spiel", spiel: "spiel", spiele: "spiel",
   kuehlschrank: "kuehlschrank", lernen: "lernen", kaufberater: "kauf", gegenrede: "gegenrede", ideen: "idee", klang: "klang", wache: "wache", wache_status: "wache",

@@ -759,7 +759,7 @@
         else if (klangA) window.FridayKlang?.spiele(klangA.slice(6));
         else if (hat("klang")) window.FridayKlang?.open();
         if (hat("klangvideo")) window.FridayKlang?.ansicht("video");
-        // Live-Sport (v1.145.0, im Test): "sport", "sport_liga:<liga>", "sport_spiel:<liga>:<id>"
+        // Live-Sport (v1.146.0, im Test): "sport", "sport_liga:<liga>", "sport_spiel:<liga>:<id>"
         const sportSp = aktion("sport_spiel:");
         const sportLi = aktion("sport_liga:");
         if (sportSp) { const [, lg, ...rest] = sportSp.split(":"); window.FridaySport?.open({ liga: lg, id: rest.join(":") }); }
@@ -772,6 +772,10 @@
         else if (hat("spiel_bauen")) window.FridaySpiele?.neuester();
         else if (spielStart) window.FridaySpiele?.spiel(spielStart.slice(6));
         else if (hat("spiele")) window.FridaySpiele?.open();
+        // Markt-Radar Plus (v1.146.0): Markt anzeigen, Prognose oder Markt-Wache.
+        const mpA = aktion("marktplus:");
+        if (mpA) window.FridayMarktPlus?.open(mpA.slice(10));
+        else if (hat("markt_plus")) window.FridayMarktPlus?.open("");
         const zentraleAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("zentrale:"));
         if (zentraleAktion) window.FridayZentrale?.open(zentraleAktion.slice(9));
         else window.FridayZentrale?.refresh();

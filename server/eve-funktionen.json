@@ -67,9 +67,18 @@
       ]
     },
     {
+      "id": "markt-plus",
+      "name": "Markt-Radar Plus: alle Märkte, Zeitstrahl, Prognose, Markt-Wache",
+      "version": "1.145.0",
+      "beschreibung": "Im Markt-Radar der Reiter „🌐 Alle Märkte“: 77 Märkte (Indizes, Aktien, Rohstoffe, Krypto, Devisen) plus Suche nach fast jeder Aktie/ETF, Zeitstrahl bis 1 Jahr zurück, Analyse (Trend, RSI, Schwankung), Prognose auf Wunsch mit Ehrlichkeits-Check und eine Markt-Wache, die im Hintergrund aufpasst und meldet. Keine Anlageberatung, Friday kauft nie etwas.",
+      "ziele": [
+        ".mr-plus-tab"
+      ]
+    },
+    {
       "id": "live-sport",
       "name": "Live-Sport mit Spielanalyse",
-      "version": "1.145.0",
+      "version": "1.146.0",
       "beschreibung": "Alle großen Sportarten live aus freien Quellen: Fußball (WM, EM, Bundesliga, Champions League …), NFL, NBA, NHL, MLB, Tennis, Formel 1, Golf, UFC, Rugby, dazu Ergebnisse für Handball, Volleyball, Darts, Radsport, E-Sport. „Friday, zeig mir das Live-Spiel“ öffnet Stand, Tore/Karten, Statistik, Ticker und Spielverlauf, Friday analysiert, was bisher passiert ist. Das Live-Bild gibt es nur legal beim Sender: Friday sagt, wo (ARD/ZDF kostenlos oder Bezahl-App), dazu offizielle Highlights.",
       "ziele": [
         ".menu-sport"
