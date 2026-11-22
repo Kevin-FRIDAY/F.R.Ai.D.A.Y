@@ -1,4 +1,4 @@
-// Live-Sport (v1.146.0, zuerst nur in Eve): "Friday, zeig mir das Live-Spiel", "Wie steht es bei Bayern?",
+// Live-Sport (v1.148.0, zuerst nur in Eve): "Friday, zeig mir das Live-Spiel", "Wie steht es bei Bayern?",
 // "Bundesliga live", "Analysiere das Spiel Deutschland gegen Frankreich".
 // Spielstände, Ereignisse (Tore, Karten, Körbe …), Statistik und Live-Ticker kommen aus FREIEN, öffentlichen
 // Quellen (ESPN-Spielstand-Schnittstelle ohne Schlüssel, TheSportsDB für Handball, Volleyball, Darts …).

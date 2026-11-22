@@ -1,4 +1,4 @@
-# Live-Sport mit Spielanalyse (v1.146.0, zuerst nur in Eve)
+# Live-Sport mit Spielanalyse (v1.148.0, zuerst nur in Eve)
 
 Friday zeigt dir alle großen Sportarten live – aus freien, öffentlichen Quellen – und analysiert, was im Spiel bisher passiert ist.
 

@@ -15,6 +15,8 @@ import { quickCommand as zerlegeQuick } from "./teilebank.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
 import { quickCommand as sportQuick } from "./sport.js";
 import { quickCommand as archivQuick } from "./archiv.js";
+import { quickCommand as profilQuick, kurzinfo as profilKurzinfo } from "./profil.js";
+import { duFormFrei } from "./anrufe.js";
 import { quickCommand as appsQuick } from "./appzentrale.js";
 import { quickCommand as gehirnQuick } from "./gehirn.js";
 import { quickCommand as weltQuick, vollbildQuick } from "./weltgespraech.js";
@@ -107,7 +109,8 @@ function contextBlock(extra = {}) {
   let text = `Aktuelle Zeit: ${now} (${isoLocal}, Zeitzone ${config.timezone}). Heimatstadt: ${config.city}.
 Mac verbunden: ${isoAgentText()}.
 ${dienstKurzinfo()}
-Kanal: ${extra.channel || "web"}.
+${profilKurzinfo()}
+${duFormFrei() ? 'Nachrichten an andere (anrufe): Schreib den Text so, wie Boss ihn dem Empfänger selbst sagen würde, direkt in der Du-Form. "Sag meiner Frau, dass ich sie liebe" → Text "Ich liebe dich.", nicht "Ich liebe sie."\n' : ""}Kanal: ${extra.channel || "web"}.
 
 ${kernKontext(extra.frage || "")}
 
@@ -210,7 +213,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Live-Sport (v1.146.0; vor der Spiele-Werkstatt, damit "Live-Spiel" hier landet), im Test: in Friday erst nach Freigabe in Eve): "zeig mir das Live-Spiel",
+  // Live-Sport (v1.148.0; vor der Spiele-Werkstatt, damit "Live-Spiel" hier landet), im Test: in Friday erst nach Freigabe in Eve): "zeig mir das Live-Spiel",
   // "wie steht es bei Bayern?", "Bundesliga live" – Stand, Ereignisse, Analyse, wo es legal läuft.
   if (mode !== "translate" && !image && text) {
     try {
@@ -232,7 +235,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Markt-Radar Plus (v1.146.0, zuerst nur in Eve): "analysiere den DAX", "Prognose für Gold", "öffne die Markt-Wache".
+  // Markt-Radar Plus (v1.148.0, zuerst nur in Eve): "analysiere den DAX", "Prognose für Gold", "öffne die Markt-Wache".
   if (mode !== "translate" && !image && text) {
     try {
       const mp = await marktplusQuick(text);
@@ -418,6 +421,8 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     try {
       const a = archivQuick(text);
       if (a) { actions.push(...a.actions); return finish(a.answer); }
+      const pq = profilQuick(text);
+      if (pq) { actions.push(...pq.actions); return finish(pq.answer); }
     } catch (err) {
       console.error("Archiv:", err.message);
     }

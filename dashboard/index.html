@@ -683,6 +683,7 @@
             <label class="switch"><input type="checkbox" id="set-vonselbst"><span>Friday darf von sich aus sprechen (Timer, Erinnerungen, Energie, „Video fertig“). Aus: nur ein stiller Hinweis am Ring</span></label>
             <label class="switch"><input type="checkbox" id="set-diagnose"><span>Diagnose anzeigen (linke Leiste unter „Meine Dienste“: gehört → gesendet → Antwort → gesprochen)</span></label>
             <label class="switch"><input type="checkbox" id="set-gespraech"><span>Gesprächsmodus: Friday hört nach ihrer Antwort weiter zu, ohne „Friday“ (Standard aus, sonst redet sie dazwischen, wenn du mit anderen sprichst)</span></label>
+            <label class="row-field" id="gespraech-lang-reihe"><span>Gespräch: Hast du „Friday …“ gesagt, bleibt sie nach jeder Antwort so lange dran (ohne neues „Friday“)</span><select id="set-gespraech-dauer"><option value="0">Aus (nur ein Satz)</option><option value="15">15 Sekunden</option><option value="30">30 Sekunden (Standard)</option><option value="60">60 Sekunden</option></select></label>
             <label class="switch"><input type="checkbox" id="set-vollbild"><span>Friday immer im Vollbild (ab dem ersten Klick, Taste F schaltet um)</span></label>
             <label class="switch"><input type="checkbox" id="set-alarmauto"><span>Welt-Alarm beim Öffnen des Weltgeschehens abspielen (max. alle 30 Min.)</span></label>
             <label class="switch"><input type="checkbox" id="set-lagedetail"><span>Beim Land tief hineinzoomen und auf die Detailkarte (Satellit mit Städten und Straßen) wechseln</span></label>
@@ -1220,12 +1221,29 @@
           <label for="ws-auftrag">Neuer Auftrag</label>
           <textarea id="ws-auftrag" rows="4" placeholder="z. B. Friseursalon „Mira“ in Berlin-Neukölln, modern und hell, Leistungen mit Preisen, Online-Termin per Mail, Öffnungszeiten"></textarea>
           <button id="ws-go" class="ws-go">Webseite bauen</button>
+          <span id="ws-live-marke" class="ws-live-marke" title="Du siehst live, wie Friday programmiert – mit Countdown. Tipp: „… in 30 Minuten“"><span>⚡ Live-Bau mit Countdown</span></span>
         </form>
         <p id="ws-msg" class="ws-msg"></p>
         <h3>PROJEKTE</h3>
         <ul id="ws-list" class="ws-list"></ul>
         <p class="muted small-text">Verkaufen und kassieren tust du über dein eigenes Konto. Trag einen Verkauf hier ein, dann zählt er für Fridays Überlebens-Bilanz.</p>
       </aside>
+      <div id="ws-live" class="ws-live hidden" aria-live="polite">
+        <div class="wl-kopf">
+          <div class="wl-uhr"><span id="wl-zeit">0:00</span><small id="wl-uhr-text">bis fertig</small></div>
+          <div class="wl-info">
+            <b id="wl-titel">Friday baut …</b>
+            <span id="wl-spruch" class="wl-spruch"></span>
+            <span id="wl-phase" class="wl-phase">Plant die Seite …</span>
+          </div>
+          <div class="wl-zahlen"><span id="wl-zeilen">0</span> Zeilen<br><span id="wl-zeichen">0</span> Zeichen<br><span id="wl-modell" class="wl-modell"></span></div>
+        </div>
+        <div class="wl-balken"><i id="wl-fuell"></i><em id="wl-prozent">0 %</em></div>
+        <div class="wl-fenster">
+          <div class="wl-code-box"><div class="wl-leiste"><span class="wl-p r"></span><span class="wl-p g"></span><span class="wl-p y"></span>index.html · Friday tippt live</div><pre id="wl-code" class="wl-code"></pre></div>
+          <div class="wl-vorschau-box"><div class="wl-leiste">Vorschau · wächst mit</div><iframe id="wl-frame" class="wl-frame" sandbox="" title="Live-Vorschau"></iframe></div>
+        </div>
+      </div>
       <div id="ws-detail" class="ws-detail hidden">
         <div class="ws-bar">
           <b id="ws-titel"></b>
@@ -1376,6 +1394,7 @@
   <script src="routen.js"></script>
   <script src="helfer.js"></script>
   <script src="kuehlschrank.js"></script>
+  <script src="profil.js"></script>
   <script src="glocke.js"></script>
   <script src="eve.js"></script>
   <script src="dauerwaechter.js"></script>
