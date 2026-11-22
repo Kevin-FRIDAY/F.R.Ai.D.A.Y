@@ -26,7 +26,7 @@ export const VORLAGEN = [
   { id: "meteor", datei: "meteor.html", titel: "Meteor-Abwehr", woerter: /weltraum|space|shooter|meteor|asteroid|raumschiff|rakete|alien|ballern|schie(ß|ss)/ },
 ];
 
-// ---------- Spiele-Werkstatt Plus (v1.140.0, zuerst nur in Eve) ----------
+// ---------- Spiele-Werkstatt Plus (v1.141.0, zuerst nur in Eve) ----------
 // Sechs neue, eigene Spiele mit hochwertiger Grafik und ein gemeinsamer Grafik-Motor (plus/_grafik.js),
 // den auch Claude für neue Spiele benutzt. In Friday gesperrt, bis Boss "spiele-plus" in Eve freigibt.
 export const FUNKTION_ID = "spiele-plus";
