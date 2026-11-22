@@ -3713,3 +3713,51 @@ html.perf-fluessig .st-kabel.an, html.perf-fluessig .st-knoten.run .st-ring { an
 @keyframes fhRein { 0% { transform: scale(0.2); opacity: 0; } 70% { transform: scale(1.18); opacity: 1; } 100% { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .fh-haken.fh-rein { animation: none; } }
 body.reduce-anim .fh-haken.fh-rein { animation: none; }
+
+/* ---------- Friday Vision: Produkt-Scan (v1.154.0) ---------- */
+.vision-scanrahmen { position: absolute; left: 50%; top: 50%; width: min(72%, 520px); aspect-ratio: 2.2 / 1; transform: translate(-50%, -50%); border: 2px solid var(--cyan); border-radius: 14px; box-shadow: 0 0 0 200vmax rgba(0,0,0,.35), var(--u-glow); pointer-events: none; z-index: 1; }
+.vision-scanrahmen.hidden { display: none; }
+.vision-scanrahmen i { position: absolute; left: 6%; right: 6%; height: 2px; top: 10%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); animation: vpScan 1.6s ease-in-out infinite alternate; }
+.vision-scanrahmen span { position: absolute; left: 0; right: 0; bottom: -26px; text-align: center; font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .2em; color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
+@keyframes vpScan { from { top: 10%; } to { top: 88%; } }
+.vision-bar #vision-scan.on { background: color-mix(in srgb, var(--cyan) 30%, transparent); border-color: var(--cyan); box-shadow: var(--u-glow); }
+.vision-produkt { position: absolute; z-index: 2; top: 12px; right: 12px; bottom: 12px; width: min(380px, calc(100% - 24px)); overflow-y: auto; padding: 14px 16px; border-radius: 16px;
+  background: var(--u-glas, rgba(10,6,3,.92)); border: 1px solid color-mix(in srgb, var(--cyan) 55%, transparent); box-shadow: var(--u-glow); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--text); animation: vpRein .35s cubic-bezier(.2,1.2,.4,1); }
+.vision-produkt.hidden { display: none; }
+@keyframes vpRein { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+.vp-kopf { display: flex; gap: 12px; align-items: center; }
+.vp-kopf img, .vp-ico { width: 64px; height: 64px; flex: none; border-radius: 12px; object-fit: contain; background: rgba(255,255,255,.92); }
+.vp-ico { display: grid; place-items: center; font-size: 30px; background: color-mix(in srgb, var(--cyan) 14%, transparent); }
+.vp-titel { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.vp-titel small { font: 600 10px ui-monospace, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--cyan); }
+.vp-titel b { font-size: 17px; line-height: 1.2; }
+.vp-code { font: 10px ui-monospace, Menlo, monospace; color: var(--muted); letter-spacing: .08em; }
+.vp-x { align-self: flex-start; }
+.vp-preis { margin: 12px 0 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--cyan) 45%, transparent); background: color-mix(in srgb, var(--cyan) 10%, transparent); display: flex; flex-direction: column; gap: 3px; }
+.vp-preis b { font-family: var(--font-head, ui-monospace); font-size: 24px; color: var(--cyan); text-shadow: 0 0 12px color-mix(in srgb, var(--cyan) 60%, transparent); }
+.vp-preis span { font-size: 12px; color: var(--muted); }
+.vp-preis.geschaetzt b { font-size: 19px; }
+.vp-preis.leer b { font-size: 15px; color: var(--text); text-shadow: none; }
+.vp-reihe { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+.vp-tag { font-size: 11px; padding: 3px 8px; border-radius: 99px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.05); }
+.vp-tag.gut { border-color: #3ccf7a; color: #7dffb0; }
+.vp-tag.warn { border-color: #ffb347; color: #ffd08a; }
+.vp-ns { font-size: 11px; padding: 3px 4px 3px 9px; border-radius: 99px; background: rgba(255,255,255,.06); border: 1px solid var(--ns); display: inline-flex; gap: 6px; align-items: center; }
+.vp-ns b { background: var(--ns); color: #fff; border-radius: 99px; padding: 0 8px; font-size: 13px; }
+.vision-produkt h4 { margin: 12px 0 6px; font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--cyan); }
+.vp-nw { width: 100%; border-collapse: collapse; font-size: 13px; }
+.vp-nw td { padding: 4px 2px; border-bottom: 1px solid rgba(255,255,255,.07); }
+.vp-nw td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.vp-nw tr:nth-child(3) td:first-child, .vp-nw tr:nth-child(5) td:first-child { padding-left: 14px; color: var(--muted); }
+.vp-zutaten { margin: 0; font-size: 12.5px; line-height: 1.45; color: color-mix(in srgb, var(--text) 85%, transparent); }
+.vp-klein { margin: 6px 0 0; font-size: 11.5px; color: var(--muted); }
+.vp-fuss { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.vp-quelle { margin: 10px 0 0; font-size: 10.5px; color: var(--muted); }
+@media (max-width: 900px) {
+  .vision-produkt { background: linear-gradient(160deg, #1c1006, #0a0603) !important; position: fixed; z-index: 60; top: auto; left: 8px; right: 8px; bottom: calc(8px + var(--m-safe-b, 0px)); width: auto; max-height: 74vh; max-height: 74dvh; }
+  @keyframes vpRein { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+  .vision-bar { gap: 6px; }
+  .vision-bar .chip { padding: 6px 10px; font-size: 13px; }
+  .vision-phone { flex-basis: 100%; order: 9; font-size: 11px; }
+  .vision-note { display: none; }
+}
