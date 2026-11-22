@@ -3687,3 +3687,29 @@ html.perf-fluessig .st-kabel.an, html.perf-fluessig .st-knoten.run .st-ring { an
 .ws-live.wl-fertig .wl-code::after { content: ""; }
 @keyframes wl-blink { 50% { opacity: 0; } }
 .wl-frame { flex: 1; width: 100%; border: 0; background: #fff; }
+
+/* =====================================================================
+   v1.153.0: Grüner Haken bei allem, was gespeichert wird (gespeichert.js).
+   Gleiches Grün wie der WLAN-Haken in Fridays Datenbank (v1.147.0).
+   ===================================================================== */
+:root { --ok-gruen: #38e08c; --ok-dunkel: #04210f; --ok-schein: rgba(56, 224, 140, 0.8); --fehler-rot: #ff5d6c; }
+#sync-toast.ok { border-color: rgba(56, 224, 140, 0.6); box-shadow: 0 0 28px rgba(56, 224, 140, 0.25), var(--u-schein, none), 0 10px 30px rgba(0, 0, 0, 0.5); }
+#sync-toast.ok .st-ico { background: var(--ok-gruen); color: var(--ok-dunkel); box-shadow: 0 0 14px var(--ok-schein); }
+#sync-toast.ok .st-txt b { color: #c9ffe3; text-shadow: 0 0 8px rgba(56, 224, 140, 0.55); }
+#sync-toast.fehler { border-color: rgba(255, 93, 108, 0.6); }
+#sync-toast.fehler .st-ico { background: linear-gradient(135deg, #ff9aa4, var(--fehler-rot)); color: #2a0006; box-shadow: 0 0 14px rgba(255, 93, 108, 0.6); }
+
+.fh-haken {
+  display: inline-grid; place-items: center; flex: none; vertical-align: middle;
+  width: 22px; height: 22px; min-width: 22px; max-width: 22px; margin-left: 8px; border-radius: 50%; box-sizing: border-box; padding: 0;
+  font: 800 13px/1 system-ui, sans-serif; letter-spacing: 0; text-transform: none;
+  background: var(--ok-gruen); color: var(--ok-dunkel);
+  box-shadow: 0 0 12px var(--ok-schein), 0 0 0 2px rgba(56, 224, 140, 0.25);
+  pointer-events: none; user-select: none;
+}
+.fh-haken.fh-fehler { background: var(--fehler-rot); color: #2a0006; box-shadow: 0 0 12px rgba(255, 93, 108, 0.7); }
+.fh-haken.fh-warte { background: var(--cyan); color: #1a0c02; box-shadow: 0 0 12px color-mix(in srgb, var(--cyan) 70%, transparent); }
+.fh-haken.fh-rein { animation: fhRein 0.42s cubic-bezier(.2, 1.4, .4, 1); }
+@keyframes fhRein { 0% { transform: scale(0.2); opacity: 0; } 70% { transform: scale(1.18); opacity: 1; } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .fh-haken.fh-rein { animation: none; } }
+body.reduce-anim .fh-haken.fh-rein { animation: none; }
