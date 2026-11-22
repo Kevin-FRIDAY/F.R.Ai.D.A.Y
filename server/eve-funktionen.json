@@ -65,6 +65,15 @@
       "ziele": [
         ".sp-plus-bereich"
       ]
+    },
+    {
+      "id": "markt-plus",
+      "name": "Markt-Radar Plus: alle Märkte, Zeitstrahl, Prognose, Markt-Wache",
+      "version": "1.145.0",
+      "beschreibung": "Im Markt-Radar der Reiter „🌐 Alle Märkte“: 77 Märkte (Indizes, Aktien, Rohstoffe, Krypto, Devisen) plus Suche nach fast jeder Aktie/ETF, Zeitstrahl bis 1 Jahr zurück, Analyse (Trend, RSI, Schwankung), Prognose auf Wunsch mit Ehrlichkeits-Check und eine Markt-Wache, die im Hintergrund aufpasst und meldet. Keine Anlageberatung, Friday kauft nie etwas.",
+      "ziele": [
+        ".mr-plus-tab"
+      ]
     }
   ]
 }
