@@ -65,6 +65,13 @@
       "ziele": [
         ".sp-plus-bereich"
       ]
+    },
+    {
+      "id": "klang-plus",
+      "name": "Stimmungs-Sound Plus (alle Klänge hörbar + Live-Spektrum)",
+      "version": "1.145.0",
+      "beschreibung": "Alle 19 Klänge neu abgemischt: hörbar auch auf iPhone- und MacBook-Lautsprechern (vorher lagen Unterwasser, Weltraum, Zug, Sommernacht, Raumschiff, Klangschale, Herzschlag und Energie-Puls fast nur im Tiefbass) und alle gleich laut. Auf dem iPhone auch bei Stummschalter. Neue Details (Grillen, Eule, Walgesang, Funkenregen, Hi-Hat …), Live-Spektrum in der Bühne, leuchtende Kacheln mit echtem Pegel.",
+      "ziele": []
     }
   ]
 }
