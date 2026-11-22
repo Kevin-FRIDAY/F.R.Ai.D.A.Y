@@ -47,7 +47,7 @@ Programmieren macht Claude (kostet ein paar Cent je Spiel, siehe ⚡ Energie). I
 
 Die Spiele laufen abgeschottet (Sandbox). Sie kommen nicht an Fridays Anmeldung, deine Daten oder den Mac.
 
-## Neu in v1.141.0: Spiele-Datenbank mit Grafik-Plus (zuerst nur in Eve)
+## Neu in v1.144.0: Spiele-Datenbank mit Grafik-Plus (zuerst nur in Eve)
 
 Unter **📚 Meine Spiele** gibt es jetzt die **Spiele-Datenbank** mit Kategorien (Rennen, Geschick, Denken, Abenteuer, Strategie) und sechs neuen, eigenen Spielen in deutlich hochwertigerer Grafik. Alle laufen ohne Claude-Guthaben, auf dem iPhone und am Mac:
 

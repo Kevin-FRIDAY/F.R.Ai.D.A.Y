@@ -7,6 +7,7 @@ import * as gegen from "./gegenrede.js";
 import * as ideen from "./ideenschmiede.js";
 import * as ausbau from "./friday-ausbau.js";
 import * as lernen from "./lernen.js";
+import { rechercheRouten } from "./lernrecherche.js";
 import { denke } from "./denker.js";
 import { notifyAll } from "./notify.js";
 import { klangQuick, klangRouten } from "./klangwelt.js";
@@ -41,6 +42,8 @@ export function helferRouten(app, asyncRoute) {
   klangRouten(app, asyncRoute);
   // --- Carlas Lernecke (v1.108.0) ---
   lernen.lernenRouten(app, asyncRoute);
+  // Friday recherchiert und bereitet Themen vor (v1.140.0, zuerst nur in Eve)
+  rechercheRouten(app, asyncRoute);
 
   // --- Kühlschrank ---
   app.get("/api/kuehlschrank", (req, res) => res.json({ vorrat: kuehl.vorrat(), rezepte: kuehl.rezepte({ limit: 8 }), statistik: kuehl.statistik(), lebensmittel: kuehl.LEBENSMITTEL.map(({ key, name, icon, tage }) => ({ key, name, icon, tage })) }));

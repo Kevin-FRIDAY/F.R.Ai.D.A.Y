@@ -79,7 +79,7 @@
   .sp-vorlagen { margin-top: 16px; }
   .sp-vorlagen p { font-size: 12px; color: #a98d72; margin: 0 0 8px; }
   .sp-leer { color: #a98d72; font-size: 14px; padding: 10px 2px; }
-  /* Spiele-Datenbank · Grafik-Plus (v1.141.0, zuerst nur in Eve) */
+  /* Spiele-Datenbank · Grafik-Plus (v1.144.0, zuerst nur in Eve) */
   .sp-plus-bereich { margin-top: 18px; position: relative; }
   .sp-plus-bereich h3 { color: #ffd8b0; }
   .sp-plus-bereich h3 em { font-style: normal; font-size: 11px; letter-spacing: .14em; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(46,230,208,.55); color: #8ff3e6; }

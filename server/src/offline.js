@@ -8,6 +8,7 @@ import { getCrypto, getExchange, getHolidays, getISS, getWiki } from "./extras.j
 import { findCountry, getCountryNews, getOverview } from "./lagezentrum.js";
 import { isAgentOnline, sendToAgent } from "./agent-hub.js";
 import { getEnergie } from "./energie.js";
+import { ersatzBereit } from "./openrouter.js";
 import { extraAnswer, EXTRA_HILFE } from "./offline-extra.js";
 import { plusAnswer, plusNotfall, naechsteFeiertageOffline } from "./offline-plus.js";
 import { lagebildAnswer } from "./lagebild.js";
@@ -500,7 +501,7 @@ async function offlineAnswerIntern(text, { notfall = false } = {}) {
   }
 
   // --- Welt-Nachrichten (mit Guthaben fasst Claude sie schöner zusammen) ---
-  const claudeAus = notfall || getEnergie().zustand === "tot";
+  const claudeAus = notfall || (getEnergie().zustand === "tot" && !ersatzBereit());
   const land = t.match(/^(?:was ist|was passiert|was geht|was gibt('s| es) neues)\s+(?:gerade |heute |aktuell )?(?:in|im|auf)\s+(?:der |den |dem |die )?([a-zäöüß\- ]{3,40}?)(?:\s+(?:los|gerade|so|passiert|neues|aktuell))*$/)
     || t.match(/^(?:nachrichten|news|schlagzeilen|neuigkeiten|lage)\s+(?:aus|in|für|zu|von)\s+(?:der |den |dem |die )?([a-zäöüß\- ]{3,40})$/);
   if (land && claudeAus) {

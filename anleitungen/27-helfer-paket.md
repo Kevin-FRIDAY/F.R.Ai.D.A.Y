@@ -91,6 +91,10 @@ Was du außerhalb von Friday machst, liest sie nicht mit.
 
 Sprache: „Spiel Gewitter“, „Kaminfeuer“, „Spiel Café-Geräusche“, „Wo regnet es gerade?“, „Wo schneit es?“, „Stimmungs-Sound automatisch“, „Sound aus“.
 
+**🎬 Video zum Klang (neu in v1.140.0, zuerst nur in Eve):** Oben im Fenster gibt es neben „Animation“ und „Echtes Foto“ den Knopf **🎬 Video**. Dann läuft zu jedem der 19 Klänge ein echtes Video: Kaminfeuer, Bach im Wald, Fische am Korallenriff, Schnee, Sternenhimmel, Gewitterblitze und so weiter (74 Videos insgesamt). Die Videos laufen stumm und nacheinander, der Klang kommt weiter live von Friday. ↻ springt zum nächsten Video, ⛶ zeigt es im Vollbild (schön auf dem Fernseher). Alle Videos kommen von Wikimedia Commons und sind frei lizenziert; unten rechts steht, von wem das Video ist.
+Sprache: „Kaminfeuer mit Video“, „Zeig mir ein Video zum Regen“, „Stimmungs-Sound als Video“.
+In Friday ist der Video-Knopf gesperrt (🔒), bis du ihn in Eve unter **Eve-Tests** freigibst.
+
 ## 💡 Ideen-Schmiede (Werkzeug-Menü → Erschaffen)
 
 - **Würfeln:** Ideen aus Alltag, Kreativität, Nischen-Business und Technik, jeweils mit dem ersten Schritt und den Startkosten.

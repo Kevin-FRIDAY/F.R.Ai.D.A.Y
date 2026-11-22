@@ -3,6 +3,7 @@
 import { config } from "./config.js";
 import { isAgentOnline } from "./agent-hub.js";
 import { getEnergie } from "./energie.js";
+import { ersatzBereit } from "./openrouter.js";
 import { runningVersion } from "./updater.js";
 import { hueBereit } from "./hue.js";
 import { haBereit } from "./homeassistant.js";
@@ -22,6 +23,7 @@ function laufzeitText(sek) {
 
 export function energieSatz() {
   const e = getEnergie();
+  if (e.zustand === "tot" && ersatzBereit()) return `Mein Claude-Guthaben ist leer, ${name()}. Ich denke gerade mit meinem Ersatz-Gehirn über OpenRouter weiter. Lade Claude auf console.anthropic.com auf und trag den Betrag im Energie-Fenster ein.`;
   if (e.zustand === "tot") return `Mein Claude-Guthaben ist leer, ${name()}. Lade es auf console.anthropic.com auf und trag den Betrag im Energie-Fenster ein. Meine Offline-Befehle laufen trotzdem.`;
   if (e.guthaben == null) return `Wie viel Guthaben genau noch da ist, weiß ich nicht, weil im Energie-Fenster noch kein Betrag steht. Bisher habe ich etwa ${euro(e.verbrauch || 0)} verbraucht. Tipp oben auf ⚡ Energie und trag ein, wie viel du aufgeladen hast.`;
   const teil = `Ich habe noch etwa ${euro(e.rest)}, das sind ${e.prozent} Prozent.`;
@@ -33,7 +35,7 @@ export function statusSatz() {
   const teile = [
     `Ich laufe mit Version ${runningVersion()}, seit ${laufzeitText(process.uptime())}.`,
     isAgentOnline() ? "Der Mac ist verbunden." : "Der Mac ist gerade nicht verbunden.",
-    e.zustand === "tot" ? "Mein Claude-Guthaben ist leer, ich arbeite offline." : e.zustand === "spar" ? "Ich bin im Sparmodus." : "Mein Gehirn ist bereit.",
+    e.zustand === "tot" ? (ersatzBereit() ? "Mein Claude-Guthaben ist leer, ich denke mit dem Ersatz-Gehirn OpenRouter." : "Mein Claude-Guthaben ist leer, ich arbeite offline.") : e.zustand === "spar" ? "Ich bin im Sparmodus." : "Mein Gehirn ist bereit.",
   ];
   return teile.join(" ");
 }
