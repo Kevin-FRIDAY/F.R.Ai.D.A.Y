@@ -10,11 +10,12 @@ import * as todoist from "./todoist.js";
 import * as notion from "./notion.js";
 import * as anrufe from "./anrufe.js";
 import * as openrouter from "./openrouter.js";
+import * as googlemaps from "./googlemaps.js";
 import { normalize } from "./offline.js";
 import { U, findeTag } from "./datum.js";
 
-export const DIENSTE = { openrouter, anrufe, kalender, spotify, homeassistant, hue, todoist, notion };
-export const REIHENFOLGE = ["openrouter", "anrufe", "kalender", "spotify", "homeassistant", "hue", "todoist", "notion"];
+export const DIENSTE = { openrouter, anrufe, googlemaps, kalender, spotify, homeassistant, hue, todoist, notion };
+export const REIHENFOLGE = ["openrouter", "anrufe", "googlemaps", "kalender", "spotify", "homeassistant", "hue", "todoist", "notion"];
 
 export async function alleStatus() {
   const liste = await Promise.all(
@@ -92,6 +93,7 @@ export function dienstKurzinfo() {
   if (todoist.todoistBereit()) an.push("Todoist (todoist)");
   if (notion.notionBereit()) an.push("Notion (notion)");
   if (anrufe.anrufeBereit()) an.push(anrufe.kurzinfo());
+  if (googlemaps.googleBereit()) an.push("Google Maps (Routen mit Live-Verkehr, Werkzeug route_planen)");
   return an.length ? `Verbundene Dienste: ${an.join(", ")}.` : "Noch keine Dienste wie Kalender, Spotify oder Smart Home verbunden.";
 }
 
