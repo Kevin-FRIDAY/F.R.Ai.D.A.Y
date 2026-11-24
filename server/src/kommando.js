@@ -39,7 +39,7 @@ export const WERKZEUG_TEXT = {
   video_schnitt: "Videoschnitt starten", webseite_bauen: "Webseite bauen", werkstatt: "3D-Werkstatt",
   add_task: "Aufgabe anlegen", add_shopping: "Einkaufsliste", remember: "Etwas merken", set_reminder: "Erinnerung stellen",
   spotify: "Musik", kalender: "Kalender", todoist: "Todoist", notion: "Notion", open_app: "App öffnen",
-  apple_notizen: "Apple Notizen", apple_musik: "Apple Musik", dauer_waechter: "Dauer-Wächter",
+  apple_notizen: "Apple Notizen", apple_musik: "Apple Musik", dauer_waechter: "Dauer-Wächter", konten: "Konten ansehen (nur lesen)",
 };
 
 // v1.134.0 Freigabe-Glocke (aus OpenJarvis übernommen: "Approval Bell"): Diese Aktionen kann Boss so
