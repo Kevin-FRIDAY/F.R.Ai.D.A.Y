@@ -40,6 +40,7 @@ import { quickCommand as spielQuick } from "./spiele.js";
 import { quickCommand as marktplusQuick } from "./marktplus.js";
 import { quickCommand as routenQuick } from "./routen.js";
 import { quickCommand as helferQuick } from "./helfer.js";
+import { quickCommand as wunschQuick } from "./wunschliste.js";
 import { quickCommand as wacheQuick } from "./wache.js";
 import { quickCommand as studioQuick } from "./videostudio.js";
 // Kontrollraum (v1.135.0, Bausteine aus Conway-Research/automaton, MIT): Gedächtnis-Schubladen, Seele,
@@ -310,6 +311,18 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (wa) { actions.push(...wa.actions); return finish(wa.answer); }
     } catch (err) {
       console.error("Kamera-Wache:", err.message);
+    }
+  }
+
+  // Kevins Wunschliste (v1.160.0): Unwetter, Pakete, Nachrichten, Mediathek, Ollama, Fritz!Box, Geburtstage,
+  // Familien-Pinnwand, Abend-Rückblick, "was weißt du über meine Gewohnheiten" – alles ohne Claude.
+  // Vor dem OpenJarvis-Paket, damit "wann hat Mama Geburtstag" Fridays eigene Geburtstagsliste nimmt.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const wl = await wunschQuick(text);
+      if (wl) { actions.push(...wl.actions); return finish(wl.answer); }
+    } catch (err) {
+      console.error("Wunschliste:", err.message);
     }
   }
 

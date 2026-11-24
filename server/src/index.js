@@ -23,6 +23,7 @@ import { listSites, buildSite, getSiteHtml, markSold, openSiteDir, startLive, ge
 import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, vorlagenListe, plusFrei } from "./spiele.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
 import { helferRouten, helferStart } from "./helfer.js";
+import { wunschRouten, wunschStart, widgetRoute } from "./wunschliste.js";
 import { wacheRouten, wacheStart } from "./wache.js";
 import { kernRouten, kernStart } from "./kern.js";
 import { startShips, getShips, shipsStatus, schiffeRouten } from "./ships.js";
@@ -135,6 +136,8 @@ app.post("/api/health", requireShortcutOrAuth, (req, res) => {
 
 // iPhone-Kurzbefehl "Friday Standort" (Automation): schickt den Standort auch, wenn Friday zu ist.
 kurzbefehlRoute(app, requireShortcutOrAuth);
+// iPhone-Widget (Scriptable, v1.160.0): lädt mit dem Kurzbefehl-Schlüssel.
+widgetRoute(app, requireShortcutOrAuth);
 
 // Spotify schickt den Browser nach der Anmeldung hierher zurück. Öffentlich, aber nur mit dem einmaligen "state" gültig.
 app.get("/api/spotify/callback", asyncRoute(async (req, res) => {
@@ -726,6 +729,8 @@ zentraleRouten(app, asyncRoute);
 
 // Helfer-Paket: Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede (v1.106.0).
 helferRouten(app, asyncRoute);
+// Kevins Wunschliste aus der Ideen-Schmiede (v1.160.0).
+wunschRouten(app, asyncRoute);
 // Eve – Testversion von Friday (v1.137.0): Schloss für neue Funktionen + Wünsche an Claude.
 eveRouten(app, asyncRoute);
 appsRouten(app, asyncRoute);
@@ -750,6 +755,7 @@ server.listen(config.port, config.host, () => {
 logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
 helferStart();
+wunschStart();
 wacheStart();
 marktWacheStart(); // Markt-Radar Plus: läuft in Eve, in Friday erst nach Freigabe
 kernStart();

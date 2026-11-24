@@ -763,6 +763,9 @@
         if (wissenA) window.FridayWissen?.oeffne(wissenA.startsWith("wissen:") ? decodeURIComponent(wissenA.slice(7)) : "");
         const lexA = data.actions?.find((a) => a === "lexikon" || (typeof a === "string" && a.startsWith("lexikon:")));
         if (lexA) window.FridayWissen?.oeffne(lexA.startsWith("lexikon:") ? decodeURIComponent(lexA.slice(8)) : "", "lexikon");
+        // Kevins Wunschliste (v1.160.0): "wunsch" = Übersicht, "wunsch:<reiter>[:suche]" = ein Bereich.
+        const wunschA = data.actions?.find((a) => a === "wunsch" || (typeof a === "string" && a.startsWith("wunsch:")));
+        if (wunschA) { const [, r, q] = wunschA.split(":"); window.FridayWunsch?.open({ reiter: r || "", q: q ? decodeURIComponent(q) : "" }); }
         if (hat("ideen:ausbau")) window.FridayIdeen?.open({ reiter: "ausbau" });
         const ideeA = aktion("idee:");
         if (ideeA) { try { window.FridayIdeen?.open({ wurf: JSON.parse(decodeURIComponent(ideeA.slice(5))) }); } catch { window.FridayIdeen?.open(); } }
