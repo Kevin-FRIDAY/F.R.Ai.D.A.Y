@@ -31,7 +31,7 @@ const WEBSEITE_TOOL = {
   },
 };
 
-// v1.156.0: Design-Bibel – damit jede Seite wie von einer guten Agentur aussieht.
+// v1.158.0: Design-Bibel – damit jede Seite wie von einer guten Agentur aussieht.
 const SYSTEM = `Du bist die Webseiten-Werkstatt von F.R.Ai.D.A.Y und arbeitest wie ein preisgekröntes Web-Design-Studio. Du baust verkaufsfertige Webseiten für kleine Firmen und Selbstständige, die so hochwertig aussehen, dass der Kunde sofort Ja sagt.
 
 TECHNIK
@@ -108,7 +108,7 @@ async function fertigMachen(html, liste, titel) {
   return { html: h, qualitaet: pruefeQualitaet(h) };
 }
 
-/** v1.156.0 Sofort-Vorlage ohne Claude: in 1–20 Sekunden (je nach Fotos), kostet kein Guthaben. */
+/** v1.158.0 Sofort-Vorlage ohne Claude: in 1–20 Sekunden (je nach Fotos), kostet kein Guthaben. */
 export async function baueVorlage(auftrag, opt = {}) {
   const text = String(auftrag || "").trim().slice(0, 2000);
   const w = wahl(text, opt);

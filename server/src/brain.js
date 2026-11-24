@@ -15,6 +15,7 @@ import { quickCommand as zerlegeQuick } from "./teilebank.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
 import { quickCommand as sportQuick } from "./sport.js";
 import { quickCommand as archivQuick } from "./archiv.js";
+import { quickCommand as standortQuick } from "./standort.js";
 import { quickCommand as profilQuick, kurzinfo as profilKurzinfo } from "./profil.js";
 import { duFormFrei } from "./anrufe.js";
 import { quickCommand as appsQuick } from "./appzentrale.js";
@@ -439,6 +440,12 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
+  // Standort ("wo bin ich?", "Standort aus", "vergiss meinen Standort") – ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    const sq = standortQuick(text);
+    if (sq) { actions.push(...sq.actions); return finish(sq.answer); }
+  }
+
   // Routen & Verbindungen ("wie lange brauche ich nach Hamburg?", "nächster Zug nach Köln") – ohne Claude.
   // Vor der Länder-Info, damit "zeig mir den Weg nach Paris" hier landet.
   if (mode !== "translate" && !image && text) {
@@ -562,7 +569,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       }
       return finish(answer || "Erledigt, Boss.");
     }
-    setzeAuftrag(channel, "arbeiten", Math.min(80, 30 + round * 15), `Friday ${werkzeugName(toolUses[0].name)} …`);
+    setzeAuftrag(channel, "arbeiten", Math.min(80, 30 + round * 15), `Friday ${werkzeugName(toolUses[0].name)} …`, toolUses.map((t) => t.name));
 
     // Alle Werkzeuge ausführen und die Ergebnisse gemeinsam zurückgeben.
     const results = await Promise.all(

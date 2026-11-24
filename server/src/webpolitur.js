@@ -1,4 +1,4 @@
-// v1.156.0 Feinschliff und Qualitäts-Check für jede Seite aus der Webseiten-Werkstatt.
+// v1.158.0 Feinschliff und Qualitäts-Check für jede Seite aus der Webseiten-Werkstatt.
 // politur() ergänzt, was oft fehlt (Sprache, Handy-Ansicht, Beschreibung, ruhige Bewegung, Lazy-Loading).
 // pruefeQualitaet() gibt eine Note von 0 bis 100 mit verständlichen Punkten zurück.
 

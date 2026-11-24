@@ -211,6 +211,17 @@ export function tage({ anzahl = 60 } = {}) {
   return [...out.values()].sort((a, b) => (a.tag < b.tag ? 1 : -1)).slice(0, Math.max(1, Math.min(400, anzahl)));
 }
 
+/** Die letzten Einträge (neueste zuerst) aus den jüngsten Monaten – z. B. fürs 3D-Büro. */
+export function letzte({ anzahlMonate = 2, limit = 4000 } = {}) {
+  const out = [];
+  for (const m of monate().slice(-anzahlMonate).reverse()) {
+    const liste = leseMonat(m);
+    for (let i = liste.length - 1; i >= 0 && out.length < limit; i--) out.push(liste[i]);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
 /** Suche über alle Tage (neueste zuerst). */
 export function suche({ q = "", bereich = "", limit = 300 } = {}) {
   const filter = { bereich: BEREICHE[bereich] ? bereich : "", q: String(q || "").toLowerCase().trim().slice(0, 100) };

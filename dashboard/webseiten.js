@@ -8,7 +8,7 @@
   if (!box) return;
 
   let sites = [], current = null, currentHtml = "", busy = false;
-  // v1.156.0: Stil-Wahl, Branche, Sofort-Vorlage, Geräte-Vorschau, Qualitäts-Note.
+  // v1.158.0: Stil-Wahl, Branche, Sofort-Vorlage, Geräte-Vorschau, Qualitäts-Note.
   let stil = "";
   try { stil = localStorage.getItem("friday_ws_stil") || ""; } catch { /* egal */ }
   let optionenDa = false;

@@ -870,8 +870,19 @@
     <button id="agents-open" class="hidden" aria-hidden="true"></button>
     <section id="agents" class="sheet hidden" aria-label="Agenten-Team">
       <div class="panel sheet-box">
-        <header class="sheet-top"><h2>🤖 Agenten-Team <span id="agents-count" class="agents-count"></span></h2><button id="agents-x" class="ghost small">✕</button></header>
-        <p class="muted small-text">Fridays Team aus Spezial-Agenten. 🟢 einsatzbereit · 🟡 braucht den Mac · ⚪ braucht noch Einrichtung. Tipp auf ein Beispiel, um es ins Chatfeld zu übernehmen.</p>
+        <header class="sheet-top"><h2>🤖 Agenten-Team <span id="agents-count" class="agents-count"></span></h2>
+          <div class="bu-umschalter" role="group" aria-label="Ansicht"><button type="button" id="agents-ansicht-buero" class="ghost small">🏢 Büro</button><button type="button" id="agents-ansicht-liste" class="ghost small">☰ Liste</button></div>
+          <button id="agents-x" class="ghost small">✕</button></header>
+        <div id="buero" class="buero">
+          <div id="buero-kopf" class="bu-kopf"></div>
+          <div class="bu-buehne">
+            <canvas id="buero-leinwand" class="bu-leinwand" tabindex="0" aria-label="3D-Büro des Agenten-Teams. Ziehen zum Drehen, antippen für Details."></canvas>
+            <p id="buero-fallback" class="bu-fallback hidden"></p>
+            <aside id="buero-detail" class="bu-detail hidden" aria-live="polite"></aside>
+            <p class="bu-tipp">Ziehen = drehen · Zwei Finger/Mausrad = zoomen · Antippen = Details</p>
+          </div>
+        </div>
+        <p class="muted small-text agents-intro">Fridays Team aus Spezial-Agenten. 🟢 einsatzbereit · 🟡 braucht den Mac · ⚪ braucht noch Einrichtung. Tipp auf ein Beispiel, um es ins Chatfeld zu übernehmen.</p>
         <div id="agents-list" class="agents-list"><p class="muted">Lade Team…</p></div>
       </div>
     </section>
@@ -1552,6 +1563,7 @@
   <script src="status-ring.js"></script>
   <script src="vendor/three.min.js"></script>
   <script src="vendor/GLTFLoader.js"></script>
+  <script src="buero.js"></script>
   <script src="face.js"></script>
   <script src="autostudio.js"></script>
   <script src="werkstatt.js"></script>

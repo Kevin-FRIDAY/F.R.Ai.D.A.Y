@@ -1,4 +1,4 @@
-# Webseiten-Werkstatt Profi (v1.156.0)
+# Webseiten-Werkstatt Profi (v1.158.0)
 
 Friday baut jetzt Webseiten, die wie von einer Agentur aussehen.
 

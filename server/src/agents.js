@@ -13,6 +13,8 @@ import { haBereit } from "./homeassistant.js";
 import { hueBereit } from "./hue.js";
 import { todoistBereit } from "./todoist.js";
 import { notionBereit } from "./notion.js";
+import { laufendeAuftraege, werkzeugName } from "./auftrag.js";
+import { letzte as letzteLogbuch, BEREICHE, tagVon } from "./logbuch.js";
 
 // need beschreibt, was ein Agent braucht:
 //  {type:"frei"}                      -> immer einsatzbereit (kostenlose Quelle)
@@ -57,6 +59,71 @@ export const AGENTS = [
 
 export const CATEGORIES = ["Organisation", "Stimme & Medien", "Lagezentrum", "Kreativ", "Entwicklung & Steuerung"];
 
+// Woran man erkennt, dass ein Agent gerade arbeitet oder zuletzt gearbeitet hat:
+// b = Logbuch-Bereiche, w = Claude-Werkzeuge / Schnellbefehl-Aktionen (Teil vor ":").
+const ARBEIT = {
+  mail: { b: ["mail"], w: ["check_mail", "sort_mail", "mail"] },
+  dateien: { b: ["archiv", "dokument"], w: ["dokumente_suchen", "dokwissen", "archiv", "dokument_erstellen", "fragebogen_erstellen"] },
+  kalender: { b: ["kalender", "erinnerung"], w: ["kalender", "set_reminder", "list_reminders"] },
+  aufgaben: { b: ["aufgabe", "einkauf"], w: ["add_task", "list_tasks", "todoist", "add_shopping"] },
+  wissen: { b: ["gedaechtnis"], w: ["remember", "forget", "notion", "lookup"] },
+  stimme: { b: [], w: ["stimme"] },
+  musik: { b: ["musik", "klang"], w: ["spotify", "apple_musik", "klang"] },
+  lage: { b: ["welt", "briefing"], w: ["world_news", "welt_alarm", "weltgeschehen", "land_info", "country_info", "briefing"] },
+  wetter: { b: [], w: ["get_weather", "air_quality"] },
+  karten: { b: ["route"], w: ["routen", "route_planen"] },
+  krypto: { b: [], w: ["crypto", "currency"] },
+  markt: { b: ["markt"], w: ["markt_radar", "markt_plus"] },
+  weltdaten: { b: [], w: ["iss", "flugzeuge", "schiffe"] },
+  video: { b: ["video"], w: ["video_schnitt", "video_erstellen"] },
+  webseiten: { b: ["webseite"], w: ["webseite_bauen"] },
+  design: { b: [], w: [] },
+  dreid: { b: ["werkstatt", "haus"], w: ["werkstatt", "haus"] },
+  code: { b: ["update"], w: ["update"] },
+  smarthome: { b: [], w: ["smart_home", "homeassistant", "run_protocol", "list_protocols"] },
+  licht: { b: [], w: ["hue"] },
+  fernseher: { b: ["tv"], w: ["fernseher"] },
+  alexa: { b: ["alexa"], w: ["alexa"] },
+  mac: { b: ["mac"], w: ["mac", "open_app"] },
+  system: { b: ["system", "sicherung"], w: ["system_check", "logbuch", "glocke"] },
+};
+const wzName = (a) => String(a || "").split(":")[0];
+function passtZu(agentId, eintrag) {
+  const r = ARBEIT[agentId];
+  if (!r) return false;
+  if (r.b.includes(eintrag.bereich)) return true;
+  return (eintrag.aktionen || []).some((a) => r.w.includes(wzName(a)));
+}
+
+// Was jeder Agent gerade tut (live aus laufenden Aufträgen) und zuletzt getan hat (aus dem Logbuch).
+function taetigkeiten(ids) {
+  const out = Object.fromEntries(ids.map((id) => [id, { arbeitet: false, jetzt: "", zuletzt: null, heute: 0 }]));
+  let laufend = [];
+  try { laufend = laufendeAuftraege(); } catch { /* egal */ }
+  for (const a of laufend) {
+    for (const w of a.werkzeuge || []) {
+      for (const id of ids) {
+        if (ARBEIT[id]?.w.includes(wzName(w)) && !out[id].arbeitet) {
+          out[id].arbeitet = true;
+          out[id].jetzt = `${werkzeugName(wzName(w)).replace(/^./, (c) => c.toUpperCase())} …`;
+        }
+      }
+    }
+  }
+  let eintraege = [];
+  try { eintraege = letzteLogbuch({ anzahlMonate: 2, limit: 4000 }); } catch { /* kein Logbuch */ }
+  const heuteTag = tagVon();
+  for (const e of eintraege) {
+    for (const id of ids) {
+      if (!passtZu(id, e)) continue;
+      const t = out[id];
+      if (!t.zuletzt) t.zuletzt = { titel: e.titel, at: e.at, ok: e.ok !== false, bereich: BEREICHE[e.bereich]?.[1] || "" };
+      if (e.tag === heuteTag) t.heute += 1;
+    }
+  }
+  return { out, laufend };
+}
+
 // Status eines Agenten anhand von .env + Mac-Verbindung.
 function statusOf(agent, macOnline) {
   const n = agent.need;
@@ -69,9 +136,14 @@ function statusOf(agent, macOnline) {
 
 export function agentsWithStatus() {
   const macOnline = isAgentOnline();
-  const list = AGENTS.map((a) => ({ id: a.id, name: a.name, emoji: a.emoji, cat: a.cat, purpose: a.purpose, examples: a.examples, ...statusOf(a, macOnline) }));
+  const { out: tun, laufend } = taetigkeiten(AGENTS.map((a) => a.id));
+  const list = AGENTS.map((a) => ({ id: a.id, name: a.name, emoji: a.emoji, cat: a.cat, purpose: a.purpose, examples: a.examples, ...statusOf(a, macOnline), ...tun[a.id] }));
   const aktiv = list.filter((a) => a.status === "aktiv").length;
-  return { categories: CATEGORIES, agents: list, gesamt: list.length, aktiv };
+  const arbeiten = list.filter((a) => a.arbeitet).length;
+  const chefin = laufend.length
+    ? { arbeitet: true, jetzt: laufend[0].text || "Friday arbeitet an einem Auftrag …", prozent: laufend[0].prozent || 0, kanal: laufend[0].kanal }
+    : { arbeitet: false, jetzt: arbeiten ? `Leitet ${arbeiten} Agenten` : "Leitet das Team – wartet auf deinen Auftrag", prozent: 0 };
+  return { categories: CATEGORIES, agents: list, gesamt: list.length, aktiv, arbeiten, chefin };
 }
 
 // Kurzer Überblick fürs Gehirn (damit Friday ihr Team kennt).

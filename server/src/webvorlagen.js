@@ -1,4 +1,4 @@
-// v1.156.0 Profi-Vorlagen der Webseiten-Werkstatt: 6 Stile × 14 Branchen.
+// v1.158.0 Profi-Vorlagen der Webseiten-Werkstatt: 6 Stile × 14 Branchen.
 // Baut ohne Claude in unter einer Sekunde eine hochwertige, animierte, responsive Seite mit 11 Abschnitten.
 // Dient als Sofort-Vorlage, als Rettung, wenn Claude ausfällt, und als Design-Vorgabe für Claude.
 

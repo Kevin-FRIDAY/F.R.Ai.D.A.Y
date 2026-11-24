@@ -1,4 +1,4 @@
-// v1.156.0 Echte Fotos für die Webseiten-Werkstatt.
+// v1.158.0 Echte Fotos für die Webseiten-Werkstatt.
 // Seiten markieren Bilder mit <img data-bild="englische suchwörter" alt="…">. Friday sucht dazu freie Fotos
 // bei Openverse (kommerziell nutzbare Lizenzen), lädt sie, verkleinert sie am Mac (sips) und bettet sie
 // direkt in die HTML-Datei ein – so bleibt die Seite eine einzige Datei. Bildnachweise kommen in den Fußbereich.

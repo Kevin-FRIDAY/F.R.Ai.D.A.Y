@@ -27,14 +27,14 @@ Ohne Sprache: Werkzeug-Menü → **Alltag** → **Routen & Verbindungen**.
 ## Von wo rechnet Friday?
 
 1. Im Fenster unten **⚙ Meine Orte & Standort** einmal deine **Zuhause**-Adresse (und gern die **Arbeit**) eintragen und speichern. Dann klappen auch „nach Hause“ und „zur Arbeit“.
-2. Unterwegs mit dem iPhone: Haken bei **Standort dieses Geräts als Start nehmen** setzen und den Standort erlauben. Dann rechnet Friday ab dort, wo du gerade bist – auch per Sprache.
+2. Unterwegs mit dem iPhone: Haken bei **📍 Friday darf den Standort dieses Geräts kennen** setzen und den Standort erlauben. Dann rechnet Friday ab dort, wo du gerade bist – auch per Sprache, Telegram und Siri (ab v1.157.0, siehe [Anleitung 52](52-standort-google-maps.md)).
 3. Der 📍-Knopf neben dem Startfeld nimmt einmalig deinen aktuellen Standort.
 
 Ohne Adresse rechnet Friday ab deiner Heimatstadt (Einstellungen → Profil).
 
 ## Gut zu wissen
 
-- Auto-Zeiten sind **ohne Stau**. Für Live-Verkehr: Apple Karten oder Google Maps.
+- Ohne Google-Schlüssel sind Auto-Zeiten **ohne Stau**. Mit Google Maps (ab v1.157.0) rechnet Friday mit Live-Verkehr und zeigt jeden Abbiege-Schritt – siehe [Anleitung 52](52-standort-google-maps.md).
 - Bahn & Bus kommen von **Transitous** (freie Fahrplandaten aus ganz Deutschland, Echtzeit und Verspätungen, wo die Verkehrsbetriebe sie liefern). Ein Ticket kann Friday nicht kaufen.
 - Adressen findet Friday über OpenStreetMap, die Strecken über die freien OSRM-Server.
 - Fahrrad wird bis ca. 300 km, zu Fuß bis ca. 40 km berechnet.
