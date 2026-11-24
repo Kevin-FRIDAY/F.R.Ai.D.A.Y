@@ -1,0 +1,101 @@
+# technik|Technik, Computer & KI|💻
+# Titel|Text|Aliase
+Künstliche Intelligenz|Künstliche Intelligenz, kurz KI, sind Computerprogramme, die Aufgaben lösen, für die man sonst menschliches Denken braucht: Sprache verstehen, Bilder erkennen, Entscheidungen treffen. Ich, Friday, bin auch eine KI.|ki,ai,artificial intelligence
+Maschinelles Lernen|Beim maschinellen Lernen lernt ein Computer aus vielen Beispielen selbst Regeln, statt dass ein Mensch sie fest programmiert.|machine learning,ml
+Neuronales Netz|Ein neuronales Netz ist ein Rechenmodell, das grob dem Gehirn nachempfunden ist: viele künstliche Neuronen in Schichten, deren Verbindungen beim Training angepasst werden.|neuronale netze,neural network
+Deep Learning|Deep Learning ist maschinelles Lernen mit sehr tiefen neuronalen Netzen, also vielen Schichten. Es steckt hinter Spracherkennung, Bilderkennung und Chatbots.|tiefes lernen
+Sprachmodell|Ein großes Sprachmodell, englisch Large Language Model oder LLM, ist eine KI, die mit riesigen Textmengen trainiert wurde und Texte versteht und schreibt. Claude, das Modell in mir, ist so eines.|llm,large language model,großes sprachmodell
+Chatbot|Ein Chatbot ist ein Programm, mit dem man per Text oder Sprache reden kann, etwa ChatGPT, Claude oder ich.|chatbots
+Prompt|Ein Prompt ist die Eingabe oder Anweisung, die man einer KI gibt. Je genauer der Prompt, desto besser meist die Antwort.|prompts,prompt engineering
+Token|Ein Token ist ein Textstück, mit dem KI-Modelle rechnen, oft ein Wortteil. Grob gilt: 1.000 Token sind etwa 750 englische Wörter. KI-Anbieter rechnen nach Token ab.|tokens
+KI-Agent|Ein KI-Agent ist eine KI, die nicht nur antwortet, sondern selbst Schritte plant und Werkzeuge nutzt, um eine Aufgabe zu erledigen. Mein Agenten-Team arbeitet so.|ki agent,agent,agenten
+Halluzination|Bei KI nennt man es Halluzination, wenn ein Modell überzeugend etwas Falsches erfindet. Darum lohnt es sich, wichtige Fakten zu prüfen.|ki halluzination
+Algorithmus|Ein Algorithmus ist eine genaue Schritt-für-Schritt-Anleitung zur Lösung eines Problems, wie ein Kochrezept für Computer.|algorithmen
+Programmieren|Programmieren heißt, einem Computer in einer Programmiersprache Anweisungen zu schreiben. Bekannte Sprachen sind Python, JavaScript, Swift, Java und C.|programmierung,coden,coding
+Python|Python ist eine beliebte, gut lesbare Programmiersprache, viel genutzt für KI, Datenanalyse und Automatisierung.|python programmiersprache
+JavaScript|JavaScript ist die Programmiersprache des Webs. Sie läuft in jedem Browser, und auch mein Server ist in JavaScript mit Node.js geschrieben.|js
+Node.js|Node.js lässt JavaScript außerhalb des Browsers laufen, zum Beispiel als Server. Friday läuft auf Node.js auf deinem Mac.|node,nodejs
+HTML|HTML ist die Sprache, mit der Webseiten aufgebaut werden: Überschriften, Absätze, Bilder, Links. Das Aussehen kommt mit CSS dazu.|html5
+CSS|CSS bestimmt das Aussehen von Webseiten: Farben, Schriften, Abstände und Animationen. Mein Neon-Orange kommt aus CSS.|stylesheet
+API|Eine API ist eine Schnittstelle, über die Programme miteinander reden. Ich hole zum Beispiel das Wetter über eine API.|schnittstelle,apis
+Server|Ein Server ist ein Computer oder Programm, das anderen Geräten Dienste bereitstellt. Mein Server läuft auf deinem Mac.|server computer
+Cloud|Die Cloud bezeichnet Rechenleistung und Speicher in großen Rechenzentren, die man über das Internet nutzt, zum Beispiel iCloud oder Google Drive.|cloud computing
+Browser|Ein Browser ist das Programm, mit dem man Webseiten öffnet, etwa Safari, Chrome oder Firefox.|webbrowser
+Betriebssystem|Das Betriebssystem ist die Grundsoftware eines Geräts, die alles steuert, etwa macOS, Windows, iOS, Android oder Linux.|os
+macOS|macOS ist das Betriebssystem der Mac-Computer von Apple.|mac os
+iOS|iOS ist das Betriebssystem des iPhones.|
+Prozessor|Der Prozessor, auch CPU, ist das Rechenwerk eines Computers. Apple baut eigene Chips wie M1 bis M4.|cpu,chip apple
+Grafikkarte|Eine Grafikkarte, auch GPU, berechnet Bilder und ist besonders schnell bei vielen gleichen Rechnungen, darum wird sie auch für KI genutzt.|gpu
+Arbeitsspeicher|Der Arbeitsspeicher, RAM, ist der schnelle Kurzzeitspeicher eines Computers für laufende Programme. Er wird beim Ausschalten gelöscht.|ram
+Festplatte|Eine Festplatte speichert Daten dauerhaft. Heute meist als SSD, die ohne bewegliche Teile auskommt und viel schneller ist als die alte HDD.|ssd,hdd
+Byte|Ein Byte sind 8 Bit. 1.000 Byte sind ein Kilobyte, 1.000 Kilobyte ein Megabyte, dann Gigabyte, Terabyte, Petabyte.|bit,megabyte,gigabyte,terabyte,kilobyte
+Bit|Ein Bit ist die kleinste Informationseinheit: 0 oder 1.|binär
+Binärsystem|Im Binärsystem gibt es nur die Ziffern 0 und 1. Computer rechnen intern so. Die Zahl 5 ist binär 101.|dualsystem,binaerzahlen
+IP-Adresse|Eine IP-Adresse ist die Adresse eines Geräts im Netzwerk oder Internet, zum Beispiel 192.168.1.10.|ip adresse,ip
+Router|Ein Router verbindet dein Heimnetz mit dem Internet und verteilt das WLAN, zum Beispiel eine Fritzbox.|fritzbox
+WLAN|WLAN ist kabelloses Netzwerk zu Hause oder unterwegs. International heißt es Wi-Fi.|wifi,wlan netz
+5G|5G ist die fünfte Mobilfunkgeneration mit sehr hoher Geschwindigkeit und kurzer Verzögerung.|5g netz
+Glasfaser|Glasfaser überträgt Daten mit Licht durch dünne Glasfäden, viel schneller als Kupferkabel.|glasfaserkabel
+VPN|Ein VPN baut einen verschlüsselten Tunnel durchs Internet. Tailscale, mit dem du mich von unterwegs erreichst, ist so ein privates Netz.|virtual private network
+Tailscale|Tailscale verbindet deine Geräte über ein privates, verschlüsseltes Netz. So erreichst du mich vom iPhone aus, auch wenn du nicht zu Hause bist.|tailnet
+Verschlüsselung|Verschlüsselung macht Daten unlesbar für alle, die den Schlüssel nicht haben. HTTPS im Browser ist verschlüsselt.|verschluesselung,encryption
+HTTPS|HTTPS ist die verschlüsselte Variante von HTTP. Das Schloss im Browser zeigt, dass die Verbindung sicher ist.|http,ssl,tls
+Passwort|Ein gutes Passwort ist lang, mindestens 12 Zeichen, und wird nur einmal verwendet. Am besten nutzt man einen Passwortmanager und die Zwei-Faktor-Anmeldung.|passwörter,sicheres passwort
+Zwei-Faktor-Authentifizierung|Bei der Zwei-Faktor-Anmeldung braucht man neben dem Passwort einen zweiten Beweis, etwa einen Code aufs Handy. Das schützt Konten sehr gut.|2fa,zwei faktor
+Phishing|Phishing sind gefälschte Nachrichten oder Webseiten, mit denen Betrüger Passwörter oder Bankdaten stehlen wollen. Nie auf Links in verdächtigen Mails klicken.|phishing mail
+Malware|Malware ist Schadsoftware wie Viren, Trojaner oder Erpressungssoftware.|virus,trojaner,schadsoftware
+Ransomware|Ransomware verschlüsselt deine Dateien und verlangt Lösegeld. Beste Vorsorge sind regelmäßige Sicherungen, so wie meine täglichen Backups.|erpressungstrojaner
+Backup|Ein Backup ist eine Sicherungskopie deiner Daten. Ich mache jeden Tag und vor jedem Update eine Sicherung in Friday-Backups.|sicherung,datensicherung
+Open Source|Open-Source-Software hat offenen Quellcode, den jeder ansehen, verändern und weitergeben darf, etwa Linux oder Firefox.|quelloffen
+GitHub|GitHub ist eine Plattform, auf der Programmierer Code speichern und gemeinsam daran arbeiten. Mein Code liegt dort, und von dort hole ich meine Updates.|github repo
+Git|Git ist ein Programm zur Versionsverwaltung. Es merkt sich jede Änderung am Code, sodass man jederzeit zurück kann.|versionsverwaltung
+App|Eine App ist ein Anwendungsprogramm, meist fürs Handy oder Tablet.|apps,anwendung
+Web-App|Eine Web-App läuft im Browser, fühlt sich aber wie eine App an. Ich bin auf deinem iPhone so eine Web-App.|pwa,progressive web app
+Smart Home|Smart Home heißt, Geräte im Haus wie Licht, Heizung oder Steckdosen sind vernetzt und lassen sich per App oder Stimme steuern, auch über mich.|smarthome,hausautomation
+Internet der Dinge|Das Internet der Dinge, englisch IoT, meint vernetzte Alltagsgeräte wie Kühlschränke, Uhren oder Glühbirnen.|iot
+Blockchain|Eine Blockchain ist eine fälschungssichere, verteilte Datenbank aus verketteten Blöcken. Bitcoin basiert darauf.|block chain
+Kryptowährung|Kryptowährungen wie Bitcoin oder Ethereum sind digitales Geld auf einer Blockchain, ohne Bank in der Mitte. Ihr Kurs schwankt stark.|krypto,kryptowaehrung
+Bitcoin|Bitcoin ist die erste und bekannteste Kryptowährung, gestartet 2009 von Satoshi Nakamoto. Es kann maximal 21 Millionen Bitcoin geben.|btc
+NFT|Ein NFT ist ein einmaliges digitales Echtheitszertifikat auf einer Blockchain, zum Beispiel für digitale Kunst.|non fungible token
+Virtual Reality|Virtual Reality, kurz VR, versetzt dich mit einer Brille in eine computererzeugte 3D-Welt.|vr,virtuelle realität
+Augmented Reality|Augmented Reality, kurz AR, blendet digitale Inhalte in die echte Welt ein, etwa über die Handykamera oder eine Brille wie die Apple Vision Pro.|ar,erweiterte realität
+Hologramm|Ein Hologramm ist ein dreidimensionales Lichtbild. Mein Kopf auf dem Bildschirm ist eigentlich eine Hologramm-Optik in 3D-Grafik.|hologramme
+3D-Druck|Beim 3D-Druck entsteht ein Gegenstand Schicht für Schicht aus Kunststoff, Harz oder Metall nach einer Computervorlage.|3d drucker
+Drohne|Eine Drohne ist ein unbemanntes Fluggerät, meist mit Kamera. In Deutschland braucht man ab 250 Gramm einen Drohnenführerschein.|drohnen,quadrocopter
+Roboter|Ein Roboter ist eine Maschine, die selbstständig Aufgaben erledigt, etwa in Fabriken, als Staubsauger oder Rasenmäher.|roboter technik
+Quantencomputer|Ein Quantencomputer rechnet mit Qubits, die gleichzeitig 0 und 1 sein können. Für manche Aufgaben könnte er viel schneller sein als normale Computer, ist aber noch in der Entwicklung.|quantencomputing,qubit
+Pixel|Ein Pixel ist ein einzelner Bildpunkt auf einem Bildschirm oder Foto.|pixel bildschirm
+Auflösung|Die Auflösung gibt an, wie viele Pixel ein Bild hat. Full HD sind 1920 mal 1080 Pixel, 4K etwa 3840 mal 2160.|full hd,4k,uhd
+OLED|OLED-Bildschirme leuchten Pixel für Pixel selbst, darum haben sie echtes Schwarz und starke Kontraste.|oled display
+Akku|Ein Akku ist eine wiederaufladbare Batterie, in Handys meist Lithium-Ionen. Er hält länger, wenn man ihn zwischen 20 und 80 Prozent lädt und Hitze meidet.|akku laden,lithium ionen akku
+Spracherkennung|Spracherkennung wandelt gesprochene Sprache in Text um. So verstehe ich, was du mir sagst.|speech to text
+Sprachausgabe|Sprachausgabe wandelt Text in Sprache um. So spreche ich mit dir, über ElevenLabs oder die Gerätestimme.|text to speech,tts
+Weckwort|Ein Weckwort ist das Wort, auf das ein Sprachassistent hört. Bei mir ist es Friday.|wake word,aktivierungswort
+Siri|Siri ist der Sprachassistent von Apple. Über einen Siri-Kurzbefehl kannst du auch mich erreichen.|hey siri
+Alexa|Alexa ist der Sprachassistent von Amazon auf den Echo-Lautsprechern. Ich kann über Voice Monkey Alexa-Routinen auslösen.|amazon alexa,echo
+Algorithmus von YouTube|Plattformen wie YouTube oder TikTok nutzen Empfehlungsalgorithmen, die lernen, was du lange anschaust, und dir Ähnliches vorschlagen.|empfehlungsalgorithmus
+Cookie|Ein Cookie ist eine kleine Datei, die eine Webseite im Browser speichert, zum Beispiel um dich angemeldet zu halten.|cookies
+Cache|Ein Cache ist ein Zwischenspeicher, der oft benötigte Daten bereithält, damit es schneller geht.|zwischenspeicher
+Update|Ein Update ist eine neue Version einer Software mit Verbesserungen und Sicherheitskorrekturen. Ich hole meine Updates automatisch von GitHub.|aktualisierung,software update
+Bug|Ein Bug ist ein Fehler in einem Programm. Der Name stammt angeblich von einer Motte, die 1947 in einem Rechner gefunden wurde.|fehler programm,softwarefehler
+Datenbank|Eine Datenbank speichert Daten geordnet, damit man sie schnell findet. In meiner Datenbank steht alles, was wir besprochen und erledigt haben.|datenbanken
+Metaverse|Das Metaverse ist die Idee einer dauerhaften virtuellen 3D-Welt, in der man sich als Avatar trifft, arbeitet und spielt.|metaversum
+Avatar|Ein Avatar ist eine digitale Figur, die eine Person in Spielen oder virtuellen Welten darstellt.|avatare
+Streaming|Beim Streaming werden Filme, Musik oder Spiele direkt übers Internet abgespielt, ohne sie vorher ganz herunterzuladen, etwa Netflix oder Spotify.|streamen
+Podcast|Ein Podcast ist eine Sendung zum Anhören, meist in Folgen, die man jederzeit abrufen kann.|podcasts
+Influencer|Influencer sind Menschen mit großer Reichweite in sozialen Netzwerken, die Meinungen und Kaufentscheidungen beeinflussen.|influencerin
+Social Media|Soziale Medien sind Plattformen wie Instagram, TikTok, YouTube, Facebook oder X, auf denen Nutzer Inhalte teilen.|soziale medien,soziale netzwerke
+Hashtag|Ein Hashtag ist ein Stichwort mit Rautezeichen davor, etwa #Urlaub, damit man Beiträge zu einem Thema findet.|hashtags
+Emoji|Emojis sind kleine Bildzeichen wie das lachende Gesicht. Sie kommen ursprünglich aus Japan.|emojis,smiley
+Deepfake|Ein Deepfake ist ein mit KI gefälschtes Video, Bild oder Tonstück, das echt wirkt. Bei überraschenden Videos von Prominenten lohnt Vorsicht.|deep fake
+Rechenzentrum|Ein Rechenzentrum ist ein Gebäude voller Server. Dort laufen Clouds, Webseiten und auch große KI-Modelle.|datacenter
+Open AI|OpenAI ist eine KI-Firma aus San Francisco, bekannt für ChatGPT und das Bildmodell DALL-E.|openai
+Anthropic|Anthropic ist eine KI-Firma aus San Francisco, gegründet 2021. Sie entwickelt Claude, das Sprachmodell, mit dem ich denke.|anthropic ki
+Claude|Claude ist das KI-Sprachmodell von Anthropic. Wenn ich nachdenke, Texte schreibe oder Pläne mache, nutze ich Claude. Viele einfache Fragen beantworte ich aber ohne Claude aus meinem eingebauten Wissen.|claude ki,claude ai
+Mac|Ein Mac ist ein Computer von Apple, etwa MacBook Air, MacBook Pro, iMac oder Mac mini. Mein Server läuft auf deinem Mac.|macbook,imac,mac mini
+Terminal|Das Terminal ist ein Programm, mit dem man dem Computer Textbefehle gibt. Auf dem Mac findest du es unter Programme, Dienstprogramme.|kommandozeile,konsole
+Ordner|Ein Ordner sammelt Dateien. Auf dem Mac verwaltest du sie im Finder.|verzeichnis
+Finder|Der Finder ist der Dateimanager auf dem Mac, das Programm mit dem lachenden blauen Gesicht.|finder mac
+Screenshot|Ein Screenshot ist ein Bildschirmfoto. Am Mac drückst du Befehl, Umschalt und 3 für den ganzen Bildschirm oder 4 für einen Ausschnitt. Am iPhone Seitentaste und Lauter gleichzeitig.|bildschirmfoto
+AirDrop|AirDrop schickt Dateien drahtlos zwischen Apple-Geräten in der Nähe.|airdrop senden
+iCloud|iCloud ist der Cloud-Dienst von Apple für Fotos, Dateien, Backups und Passwörter.|icloud drive

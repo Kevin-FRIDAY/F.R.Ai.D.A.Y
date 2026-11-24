@@ -1,0 +1,61 @@
+# natur|Natur & Wissenschaft|🔬
+# Titel|Text|Aliase
+Photosynthese|Bei der Photosynthese machen Pflanzen aus Sonnenlicht, Wasser und Kohlendioxid Zucker und geben dabei Sauerstoff ab.|fotosynthese
+Atom|Ein Atom ist der kleinste Baustein eines chemischen Elements. Es hat einen Kern aus Protonen und Neutronen, um den Elektronen kreisen.|atome
+Molekül|Ein Molekül besteht aus mehreren verbundenen Atomen. Wasser ist H2O: zwei Wasserstoffatome und ein Sauerstoffatom.|moleküle,molekuel
+Wasser|Wasser, H2O, gefriert bei 0 Grad Celsius und kocht auf Meereshöhe bei 100 Grad. Am dichtesten ist es bei 4 Grad, darum frieren Seen von oben zu.|h2o
+Kohlendioxid|Kohlendioxid, CO2, entsteht beim Verbrennen und beim Ausatmen. Es ist ein Treibhausgas und der Hauptgrund für den Klimawandel.|co2,kohlenstoffdioxid
+Klimawandel|Der Klimawandel ist die Erwärmung der Erde vor allem durch Treibhausgase aus Kohle, Öl und Gas. Die Erde ist schon etwa 1,3 Grad wärmer als vor der Industrialisierung.|erderwärmung,globale erwärmung
+Treibhauseffekt|Der Treibhauseffekt hält Wärme in der Atmosphäre fest. Natürlich ist er lebenswichtig, zu viel CO2 verstärkt ihn aber.|treibhausgase
+Ozonschicht|Die Ozonschicht in 15 bis 35 Kilometern Höhe schützt vor UV-Strahlung. Das Ozonloch erholt sich seit dem Verbot der FCKW langsam.|ozonloch
+DNA|Die DNA ist das Erbgut aller Lebewesen, ein Doppelstrang in Form einer Spirale, der Doppelhelix. Sie enthält den Bauplan des Körpers.|dns,erbgut
+Gen|Ein Gen ist ein Abschnitt der DNA, der den Bauplan für ein bestimmtes Merkmal enthält. Der Mensch hat etwa 20.000 Gene.|gene
+Zelle|Die Zelle ist die kleinste Einheit des Lebens. Der Mensch besteht aus rund 30 bis 40 Billionen Zellen.|zellen
+Bakterien|Bakterien sind winzige Einzeller. Die meisten sind harmlos oder nützlich, etwa im Darm, einige machen krank. Gegen sie helfen Antibiotika.|bakterium
+Virus|Ein Virus ist viel kleiner als ein Bakterium und kann sich nur in fremden Zellen vermehren. Antibiotika helfen nicht gegen Viren.|viren
+Evolution|Evolution ist die Entwicklung der Lebewesen über sehr lange Zeit durch Veränderung und natürliche Auslese, beschrieben von Charles Darwin.|evolutionstheorie
+Dinosaurier|Dinosaurier lebten vor etwa 230 bis 66 Millionen Jahren. Ein Asteroideneinschlag in Mexiko trug zu ihrem Aussterben bei. Vögel sind ihre heutigen Nachfahren.|dinos,dino
+Schwerkraft auf der Erde|Auf der Erde fallen Dinge mit 9,81 Metern pro Sekunde zum Quadrat. Ohne Luftwiderstand fallen eine Feder und ein Hammer gleich schnell.|fallbeschleunigung
+Schall|Schall sind Druckwellen in der Luft. In Luft ist er etwa 343 Meter pro Sekunde schnell. Zählt man nach dem Blitz die Sekunden bis zum Donner und teilt durch 3, hat man die Entfernung in Kilometern.|schallgeschwindigkeit,blitz entfernung
+Blitz|Ein Blitz ist eine riesige elektrische Entladung, bis zu 30.000 Grad heiß. Im Gewitter ist man im Auto sicher, weil es wie ein Faradayscher Käfig wirkt.|blitze,gewitter
+Regenbogen|Ein Regenbogen entsteht, wenn Sonnenlicht in Regentropfen gebrochen wird. Die Farben sind Rot, Orange, Gelb, Grün, Blau, Indigo und Violett. Man sieht ihn nur mit der Sonne im Rücken.|regenbogen farben
+Elektrischer Strom|Strom ist fließende elektrische Ladung. Spannung misst man in Volt, Stromstärke in Ampere, Leistung in Watt. In deutschen Steckdosen sind es 230 Volt.|strom,volt,ampere
+Watt|Watt ist die Einheit der Leistung. Eine Kilowattstunde ist die Energie, wenn ein Gerät mit 1.000 Watt eine Stunde läuft. Eine kWh kostet in Deutschland etwa 30 bis 40 Cent.|kilowattstunde,kwh
+Magnetismus|Magnete haben einen Nord- und einen Südpol. Gleiche Pole stoßen sich ab, ungleiche ziehen sich an. Auch die Erde ist ein riesiger Magnet.|magnet
+Aggregatzustand|Stoffe können fest, flüssig oder gasförmig sein. Wasser ist Eis, Wasser oder Dampf.|aggregatzustände
+Energieerhaltung|Energie geht nie verloren, sie wird nur umgewandelt, zum Beispiel von Bewegung in Wärme.|energieerhaltungssatz
+Relativitätstheorie|Einsteins Relativitätstheorie sagt unter anderem: Zeit und Raum sind nicht fest, bei hoher Geschwindigkeit vergeht die Zeit langsamer, und Masse ist Energie, E gleich m c Quadrat.|e=mc2,e gleich mc quadrat
+Quantenphysik|Die Quantenphysik beschreibt die Welt der kleinsten Teilchen. Dort verhalten sich Dinge sehr seltsam, ein Teilchen kann an mehreren Orten gleichzeitig wahrscheinlich sein.|quantenmechanik
+Kernspaltung|Bei der Kernspaltung werden schwere Atomkerne wie Uran gespalten. Dabei wird viel Energie frei, genutzt in Kernkraftwerken. Entdeckt 1938 von Otto Hahn.|kernkraft,atomkraft
+Kernfusion|Bei der Kernfusion verschmelzen leichte Atomkerne. So leuchtet die Sonne. Fusionskraftwerke sind noch in Entwicklung.|fusion,fusionsreaktor
+Erneuerbare Energie|Erneuerbare Energien sind Sonne, Wind, Wasser, Biomasse und Erdwärme. In Deutschland kommt inzwischen mehr als die Hälfte des Stroms daraus.|erneuerbare energien,ökostrom
+Wärmepumpe|Eine Wärmepumpe holt Wärme aus Luft, Erde oder Wasser und bringt sie ins Haus, ähnlich wie ein Kühlschrank rückwärts. Aus 1 Teil Strom macht sie etwa 3 bis 4 Teile Wärme.|waermepumpe
+Erdbeben|Erdbeben entstehen, wenn sich Platten der Erdkruste ruckartig verschieben. Ihre Stärke misst man mit der Magnitude, früher Richterskala.|richterskala,beben
+Vulkan|Ein Vulkan ist eine Öffnung in der Erdkruste, aus der Magma als Lava austritt. Aktive Vulkane in Europa sind zum Beispiel Ätna, Vesuv und die auf Island.|vulkane
+Plattentektonik|Die Erdkruste besteht aus großen Platten, die sich jedes Jahr wenige Zentimeter bewegen, etwa so schnell wie Fingernägel wachsen.|kontinentaldrift
+Erdkern|Der Erdkern ist etwa so heiß wie die Oberfläche der Sonne, rund 5.000 bis 6.000 Grad, und besteht vor allem aus Eisen und Nickel.|inneres der erde
+Atmosphäre|Die Atmosphäre ist die Lufthülle der Erde. Sie besteht aus etwa 78 Prozent Stickstoff, 21 Prozent Sauerstoff und rund 1 Prozent Argon.|lufthülle,luft
+Wolken|Wolken bestehen aus winzigen Wassertröpfchen oder Eiskristallen. Eine normale Haufenwolke wiegt so viel wie etwa 100 Elefanten.|wolke
+Hurrikan|Ein Hurrikan ist ein tropischer Wirbelsturm über dem Atlantik. Im Pazifik heißt er Taifun, im Indischen Ozean Zyklon. Ab 119 Kilometern pro Stunde Wind spricht man davon.|taifun,zyklon,wirbelsturm
+Tornado|Ein Tornado ist ein kleiner, aber extrem heftiger Luftwirbel, der vom Gewitter bis zum Boden reicht. Auch in Deutschland gibt es jedes Jahr einige.|windhose
+Golfstrom|Der Golfstrom ist eine warme Meeresströmung, die Wärme aus der Karibik nach Europa bringt und unser Klima mild macht.|golfstrom europa
+Pi|Pi ist das Verhältnis von Kreisumfang zu Durchmesser, etwa 3,14159. Die Ziffern hören nie auf und wiederholen sich nicht.|kreiszahl,π
+Primzahl|Eine Primzahl ist nur durch 1 und sich selbst teilbar: 2, 3, 5, 7, 11, 13, 17, 19, 23 und so weiter. 2 ist die einzige gerade Primzahl.|primzahlen
+Fibonacci-Folge|In der Fibonacci-Folge ist jede Zahl die Summe der beiden vorherigen: 1, 1, 2, 3, 5, 8, 13, 21, 34. Sie taucht oft in der Natur auf, etwa bei Sonnenblumen.|fibonacci
+Goldener Schnitt|Der Goldene Schnitt ist ein Teilungsverhältnis von etwa 1 zu 1,618, das als besonders harmonisch gilt.|goldener schnitt verhältnis
+Satz des Pythagoras|Im rechtwinkligen Dreieck gilt: a Quadrat plus b Quadrat gleich c Quadrat. c ist die längste Seite gegenüber dem rechten Winkel.|pythagoras formel
+Kreisfläche|Die Fläche eines Kreises ist Pi mal Radius zum Quadrat, der Umfang ist 2 mal Pi mal Radius.|kreis fläche,kreisumfang
+Prozentrechnung|Prozent heißt von Hundert. 20 Prozent von 50 rechnet man 50 mal 20 durch 100, also 10.|prozent rechnen,prozentrechnen
+Dreisatz|Mit dem Dreisatz rechnet man von einer Menge auf eine andere: Kosten 3 Äpfel 1,50 Euro, kostet einer 50 Cent, also kosten 7 Äpfel 3,50 Euro.|dreisatz rechnen
+Durchschnitt|Den Durchschnitt, das arithmetische Mittel, bekommt man, indem man alle Werte addiert und durch ihre Anzahl teilt.|mittelwert
+Unendlich|Unendlich ist keine Zahl, sondern beschreibt etwas ohne Ende. Das Zeichen sieht aus wie eine liegende Acht.|unendlichkeit
+Null|Die Null als Zahl kam aus Indien über die arabische Welt nach Europa. Durch Null kann man nicht teilen.|0
+Römische Zahlen|Römische Zahlen: I gleich 1, V gleich 5, X gleich 10, L gleich 50, C gleich 100, D gleich 500, M gleich 1000. 2026 ist MMXXVI.|römische ziffern
+Kalorie|Eine Kilokalorie ist die Energie, die man braucht, um einen Liter Wasser um ein Grad zu erwärmen. Ein Erwachsener braucht etwa 2.000 bis 2.500 Kilokalorien am Tag.|kalorien,kcal
+Ökosystem|Ein Ökosystem ist eine Lebensgemeinschaft von Pflanzen, Tieren und Mikroorganismen samt ihrer Umgebung, zum Beispiel ein Wald oder ein See.|ökosystem natur
+Nahrungskette|In einer Nahrungskette frisst ein Lebewesen das andere, etwa Gras, Hase, Fuchs.|nahrungsnetz
+Bienen|Bienen bestäuben einen großen Teil unserer Nutzpflanzen. Für ein Glas Honig fliegen sie etwa 100.000 Kilometer.|biene,honigbiene
+Bäume|Bäume speichern CO2. Eine große Buche bindet etwa 12 Kilo CO2 im Jahr. Der älteste bekannte Baum ist über 4.800 Jahre alt.|baum
+Regenwald|Tropische Regenwälder wie am Amazonas beherbergen mehr als die Hälfte aller Tier- und Pflanzenarten der Erde.|amazonas regenwald
+Wüste|Eine Wüste ist ein Gebiet mit sehr wenig Niederschlag. Die größte ist die Antarktis, die größte heiße Wüste die Sahara.|wüsten
+Mikroplastik|Mikroplastik sind Plastikteilchen kleiner als 5 Millimeter. Man findet sie inzwischen überall, sogar im Blut von Menschen.|plastik im meer

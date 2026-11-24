@@ -1,0 +1,28 @@
+# sport|Sport|⚽
+# Titel|Text|Aliase
+Fußball-Weltmeister|Fußball-Weltmeister: 1930 Uruguay, 1934 und 1938 Italien, 1950 Uruguay, 1954 Deutschland, 1958 und 1962 Brasilien, 1966 England, 1970 Brasilien, 1974 Deutschland, 1978 Argentinien, 1982 Italien, 1986 Argentinien, 1990 Deutschland, 1994 Brasilien, 1998 Frankreich, 2002 Brasilien, 2006 Italien, 2010 Spanien, 2014 Deutschland, 2018 Frankreich, 2022 Argentinien.|weltmeister liste,wm sieger,fußball wm sieger,wer ist weltmeister
+Deutschland Weltmeister|Deutschland wurde viermal Fußball-Weltmeister: 1954 in der Schweiz, 1974 in Deutschland, 1990 in Italien und 2014 in Brasilien.|wie oft ist deutschland weltmeister,wie oft weltmeister
+Rekordweltmeister|Brasilien ist mit fünf Titeln Fußball-Rekordweltmeister, vor Deutschland und Italien mit je vier.|wer ist rekordweltmeister
+Fußball-Europameister|Deutschland wurde dreimal Europameister: 1972, 1980 und 1996. Spanien ist mit vier Titeln Rekord-Europameister, zuletzt 2024 in Deutschland.|em sieger,europameister fußball
+Fußball|Beim Fußball spielen zwei Teams mit je elf Spielern 2 mal 45 Minuten. Ein Sieg bringt in der Liga drei Punkte, ein Unentschieden einen.|fussball regeln
+Abseits|Abseits ist ein Spieler, wenn er beim Abspiel näher am gegnerischen Tor ist als der Ball und der vorletzte Gegenspieler, meist der letzte Feldspieler. Auf gleicher Höhe ist kein Abseits.|abseitsregel
+Bundesliga|Die Fußball-Bundesliga gibt es seit 1963, mit 18 Vereinen. Rekordmeister ist der FC Bayern München mit über 30 Titeln.|fußball bundesliga
+FC Bayern München|Der FC Bayern München ist der erfolgreichste deutsche Fußballverein, Rekordmeister und sechsfacher Champions-League-Sieger.|bayern münchen,fc bayern
+Borussia Dortmund|Borussia Dortmund, kurz BVB, spielt im größten Stadion Deutschlands mit über 81.000 Plätzen und der Gelben Wand. Champions-League-Sieger 1997.|bvb,dortmund verein
+Champions League|Die UEFA Champions League ist der wichtigste Wettbewerb für europäische Vereinsmannschaften. Rekordsieger ist Real Madrid.|cl,champions league sieger
+Olympische Spiele|Die Olympischen Spiele finden alle vier Jahre statt, Sommer- und Winterspiele versetzt um zwei Jahre. Die fünf Ringe stehen für fünf Kontinente. 2028 sind die Sommerspiele in Los Angeles.|olympia,olympische ringe
+Marathon|Ein Marathon ist 42,195 Kilometer lang. Der Weltrekord der Männer liegt bei 2 Stunden und 35 Sekunden, aufgestellt 2023 von Kelvin Kiptum.|marathon länge
+100-Meter-Weltrekord|Der 100-Meter-Weltrekord liegt bei 9,58 Sekunden von Usain Bolt aus dem Jahr 2009 in Berlin. Bei den Frauen 10,49 Sekunden von Florence Griffith-Joyner, 1988.|100 meter rekord,schnellster mensch
+Formel 1|In der Formel 1 fahren die schnellsten Rennautos der Welt bis etwa 350 Kilometer pro Stunde. Rekordweltmeister sind Michael Schumacher und Lewis Hamilton mit je sieben Titeln.|f1
+Tennis|Im Tennis zählt man 15, 30, 40, Spiel. Bei 40 zu 40 heißt es Einstand. Die vier wichtigsten Turniere, die Grand Slams, sind Australian Open, French Open, Wimbledon und US Open.|tennis zählen,grand slam
+Basketball|Beim Basketball spielen je fünf Spieler. Ein Korb zählt zwei Punkte, von hinter der Dreierlinie drei. Der Korb hängt 3,05 Meter hoch.|basketball regeln
+Handball|Im Handball spielen sechs Feldspieler und ein Torwart je Team, 2 mal 30 Minuten. Deutschland wurde 1938, 1978 und 2007 Hallen-Weltmeister.|handball regeln
+Eishockey|Eishockey wird 3 mal 20 Minuten gespielt, mit je fünf Feldspielern und einem Torwart. Der Puck kann über 150 Kilometer pro Stunde schnell werden.|
+Golf|Beim Golf versucht man, den Ball mit möglichst wenigen Schlägen in 18 Löcher zu spielen. Par ist die vorgegebene Schlagzahl für ein Loch.|golf regeln
+Schach|Schach spielt man auf 64 Feldern mit je 16 Figuren. Ziel ist es, den gegnerischen König schachmatt zu setzen. Als bester Spieler der Geschichte gilt vielen Magnus Carlsen.|schach regeln
+Tour de France|Die Tour de France ist das berühmteste Radrennen der Welt, rund 3.500 Kilometer in drei Wochen im Juli. Der Führende trägt das Gelbe Trikot.|tour de france rad
+Super Bowl|Der Super Bowl ist das Endspiel im American Football der NFL und eines der meistgesehenen Sportereignisse der Welt. Er findet im Februar statt.|nfl finale
+Darts|Beim Darts startet man meist mit 501 Punkten und muss genau auf null kommen, der letzte Wurf muss ins Doppelfeld. Die höchste Aufnahme mit drei Pfeilen sind 180 Punkte.|darts regeln
+Boxen|Ein Boxkampf geht bei Profis über bis zu 12 Runden zu je 3 Minuten.|box regeln
+Skispringen|Der Weitenrekord im Skifliegen liegt bei über 250 Metern. Die Vierschanzentournee findet jedes Jahr um Neujahr in Deutschland und Österreich statt.|vierschanzentournee
+Bundesjugendspiele|Die Bundesjugendspiele gibt es in Deutschland seit 1951 an Schulen mit Laufen, Springen und Werfen.|

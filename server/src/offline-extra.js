@@ -4,6 +4,7 @@
 import { config } from "./config.js";
 import { systemLive } from "./systemlive.js";
 import { isAgentOnline } from "./agent-hub.js";
+import { zufallsFakt as lexikonFakt } from "./wissensbank.js";
 
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 const zahl = (v, stellen = 0) => Number(v).toLocaleString("de-DE", { maximumFractionDigits: stellen, minimumFractionDigits: 0 });
@@ -306,7 +307,7 @@ export async function extraAnswer(t, ok) {
   if (/\b(motivier mich|motiviere mich|zitat des tages|ein zitat|spruch des tages|inspirier mich|inspiriere mich|ich brauche motivation)\b/u.test(t)) return ok(pick(ZITATE), "zitat");
 
   // Fakten
-  if (/^(?:(?:erzähl|erzaehl|sag|nenn)(?: mir)? (?:einen |ein |noch einen )?(?:fakt|fun fact|interessanten fakt)|fun fact|fakt des tages|überrasch mich|ueberrasch mich|wusstest du(?: schon)?|erzähl mir was interessantes|erzaehl mir was interessantes)$/u.test(t)) return ok(pick(FAKTEN), "fakt");
+  if (/^(?:(?:erzähl|erzaehl|sag|nenn)(?: mir)? (?:einen |ein |noch einen )?(?:fakt|fun fact|interessanten fakt)|fun fact|fakt des tages|überrasch mich|ueberrasch mich|wusstest du(?: schon)?|erzähl mir was interessantes|erzaehl mir was interessantes)$/u.test(t)) { const lf = lexikonFakt(); return ok(lf && Math.random() < 0.9 ? lf : pick(FAKTEN), "fakt"); }
 
   // Atemübung
   if (/\b(atemübung|atemuebung|atem übung|beruhige mich|ich bin gestresst|ich bin nervös|hilf mir (zu )?entspannen|entspannungsübung)\b/u.test(t)) {

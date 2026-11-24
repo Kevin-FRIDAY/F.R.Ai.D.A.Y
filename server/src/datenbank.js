@@ -11,6 +11,14 @@ import * as logbuch from "./logbuch.js";
 import { DATA_DIR } from "./config.js";
 import { alleDokumente } from "./dokumente.js";
 import { U } from "./datum.js";
+import { ROOT } from "./config.js";
+import { verlauf as kaufVerlauf } from "./kaufberater.js";
+import { ablaeufe } from "./gedaechtnis.js";
+import { liste as lernarchivListe } from "./lernarchiv.js";
+import { uebersicht as dokwissenUebersicht } from "./dokwissen.js";
+import { listSites } from "./webseiten.js";
+import { listeSpiele } from "./spiele.js";
+import { statistik as lexikonStatistik, suche as lexikonSuche, fuerAnzeige as lexikonAnzeige } from "./wissensbank.js";
 
 const neueId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const kurz = (s, n) => String(s ?? "").replace(/\s+/g, " ").trim().slice(0, n);
@@ -35,7 +43,20 @@ export const QUELLEN = {
   geraet: { name: "Geräte", icon: "🔌", farbe: "#a0e9ff" },
   vorrat: { name: "Vorrat", icon: "🥫", farbe: "#c9f27a" },
   lernen: { name: "Lernstapel", icon: "🎓", farbe: "#ffb3e6" },
+  // v1.156.0: zehn weitere Quellen – alles, was Friday ohnehin schon speichert, jetzt auch durchsuchbar.
+  kauf: { name: "Kaufberater", icon: "🛍️", farbe: "#ffa36b" },
+  produkt: { name: "Produkte", icon: "🏷️", farbe: "#e8d36a" },
+  gegenrede: { name: "Gegenrede", icon: "😈", farbe: "#ff5d8f" },
+  ablauf: { name: "Abläufe", icon: "🔁", farbe: "#6bd6ff" },
+  werkzeug: { name: "Werkzeug-Einsätze", icon: "🛠️", farbe: "#b9c7d6" },
+  unterlage: { name: "Lern-Archiv", icon: "🗂️", farbe: "#f0a6ff" },
+  datei: { name: "Eigene Dateien", icon: "📚", farbe: "#8fd0ff" },
+  webseite: { name: "Webseiten", icon: "🌐", farbe: "#5cffc8" },
+  spiel: { name: "Spiele", icon: "🎮", farbe: "#a98bff" },
+  protokoll: { name: "Protokolle", icon: "📜", farbe: "#ffcf7a" },
 };
+/** Das eingebaute Lexikon (server/daten/lexikon) – eigene Quelle, aber nicht Teil der Zeitleiste. */
+export const LEXIKON_QUELLE = { name: "Lexikon", icon: "📖", farbe: "#ffe28a", eingebaut: true };
 
 // ---------- Eigene Notizen ----------
 export const notizen = () => laden("wissen-notizen", []);
@@ -83,7 +104,33 @@ export function alleEintraege() {
   for (const v of kuehl.vorrat || []) out.push({ typ: "vorrat", at: v.hinzu, text: `${v.icon || ""} ${v.name}${v.menge > 1 ? ` ×${v.menge}` : ""}`.trim(), info: v.ablauf ? `haltbar bis ${v.ablauf}` : "" });
   const lern = laden("lernen", { stapel: [] });
   for (const s of lern.stapel || []) out.push({ typ: "lernen", at: s.erstellt || zeitAusId(s.id), text: s.titel, info: `${(s.karten || []).length} Karten`, inhalt: (s.karten || []).slice(0, 12).map((k) => `• ${k.frage}`).join("\n") });
+  // ---- v1.156.0: weitere Quellen (jede für sich abgesichert, damit ein Fehler nie die ganze Datenbank stoppt) ----
+  const sicher = (fn) => { try { fn(); } catch { /* Quelle optional */ } };
+  sicher(() => { for (const k of kaufVerlauf()) out.push({ typ: "kauf", at: k.at, text: k.produkt, info: { rot: "Vorsicht", gelb: "mit Haken", gruen: "gut", grau: "zu wenig Daten" }[k.ampel] || "", inhalt: k.sprech || "" }); });
+  sicher(() => { for (const p of laden("produkt-verlauf", [])) out.push({ typ: "produkt", at: p.zeit, text: [p.marke, p.name].filter(Boolean).join(" ") || p.code || "Produkt", info: p.preis != null ? `${Number(p.preis).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` : (p.code ? `Code ${p.code}` : "") }); });
+  sicher(() => { for (const g of laden("gegenrede", [])) out.push({ typ: "gegenrede", at: g.at, text: g.titel, info: g.angreifbar != null ? `Angreifbarkeit ${g.angreifbar} %` : "", inhalt: kurz(g.these || g.text, 600) }); });
+  sicher(() => { for (const a of ablaeufe()) out.push({ typ: "ablauf", at: a.geaendert || a.erstellt, text: a.name, info: `${(a.schritte || []).length} Schritte · ${a.erfolg || 0}× geklappt`, inhalt: (a.schritte || []).map((x, i) => `${i + 1}. ${x}`).join("\n") }); });
+  sicher(() => { for (const e of laden("ereignisse", [])) out.push({ typ: "werkzeug", at: e.zeit, text: e.kurz || e.werkzeug, art: e.werkzeug, info: e.ok === false ? "fehlgeschlagen" : "" }); });
+  sicher(() => { for (const u of lernarchivListe().unterlagen || []) out.push({ typ: "unterlage", at: u.geaendert || u.erstellt, text: u.titel, info: u.fach || "", inhalt: u.auszug || "" }); });
+  sicher(() => { for (const d of dokwissenUebersicht().dokumente || []) out.push({ typ: "datei", at: d.eingelesen || (d.mtime ? new Date(d.mtime).toISOString() : null), text: d.name, info: [d.art, d.seiten ? `${d.seiten} Seiten` : ""].filter(Boolean).join(" · ") }); });
+  sicher(() => { for (const w of listSites()) out.push({ typ: "webseite", at: w.erstellt, text: w.titel || w.id, info: w.preis_eur ? `${w.preis_eur} €${w.verkauft ? " · verkauft" : ""}` : "", inhalt: kurz(w.angebot || w.auftrag, 500), erledigt: Boolean(w.verkauft) }); });
+  sicher(() => { for (const g of listeSpiele()) out.push({ typ: "spiel", at: g.erstellt, text: g.titel, info: g.mal ? `${g.mal}× gespielt` : "", inhalt: kurz(g.auftrag || g.beschreibung, 400) }); });
+  sicher(() => {
+    for (const [datei, eigen] of [["protocols.json", false], ["eigene-protokolle.json", true]]) {
+      const pfad = path.join(ROOT, datei);
+      if (!fs.existsSync(pfad)) continue;
+      const at = fs.statSync(pfad).mtime.toISOString();
+      const pr = JSON.parse(fs.readFileSync(pfad, "utf8")) || {};
+      for (const [name, v] of Object.entries(pr)) out.push({ typ: "protokoll", at, text: `Protokoll „${name}“`, info: eigen ? "eigenes" : "mitgeliefert", inhalt: v?.description || "" });
+    }
+  });
   return out.filter((e) => e.at && iso(e.at)).sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
+}
+
+/** Lexikon-Einträge für die Datenbank-Liste (eigenes Format, ohne Zeitstempel). */
+export function lexikonListe({ q = "", kat = "", limit = 60, offset = 0 } = {}) {
+  const r = lexikonSuche(q, { kat, limit, offset });
+  return { treffer: r.treffer, eintraege: r.eintraege.map(lexikonAnzeige), mehr: r.treffer > offset + limit };
 }
 
 export function filtern(alle, { typ = "", q = "" } = {}) {
@@ -151,8 +198,11 @@ export function uebersicht(alle = alleEintraege(), jetzt = new Date()) {
   }
   const gr = ordnerGroesse(DATA_DIR);
   const quellenAktiv = Object.values(typen).filter((n) => n > 0).length;
+  let lexikon = { gesamt: 0, kategorien: [] };
+  try { lexikon = lexikonStatistik(); } catch { /* Lexikon optional */ }
   return {
-    gesamt: alle.length, heute, woche, typen, quellen: QUELLEN, quellenAktiv,
+    gesamt: alle.length, heute, woche, typen, quellen: QUELLEN, quellenAktiv, lexikon, lexikonQuelle: LEXIKON_QUELLE,
+    wissenGesamt: alle.length + lexikon.gesamt,
     seit: alle.length ? alle[alle.length - 1].at : null,
     tage, kanaele, themen, rueckblick,
     speicher: { bytes: gr.summe, dateien: gr.dateien },
@@ -188,6 +238,9 @@ export function quickCommand(text) {
   if (m) {
     const q = (m[1] || m[2]).trim();
     const l = filtern(alleEintraege(), { q }).filter((e) => e.typ !== "aktion");
+    let lx = null;
+    try { lx = lexikonSuche(q, { limit: 1 }).eintraege[0] || null; } catch { /* egal */ }
+    if (!l.length && lx) return { answer: `In unseren Gesprächen steht nichts zu „${q}“, aber in meinem Lexikon: ${lx.text}`, actions: [`wissen:${encodeURIComponent(q)}`] };
     if (!l.length) return { answer: `Zu „${q}“ finde ich nichts in meiner Datenbank.`, actions: [`wissen:${encodeURIComponent(q)}`] };
     const e = l[0];
     const was = e.typ === "gespraech" ? `Du hast gefragt: ${kurz(e.frage, 120)}. Ich habe geantwortet: ${kurz(e.antwort, 160)}` : `${QUELLEN[e.typ]?.name || ""}: ${kurz(e.text, 160)}`;
@@ -196,7 +249,7 @@ export function quickCommand(text) {
   if (GROESSE.test(k)) {
     const u = uebersicht();
     const top = Object.entries(u.typen).filter(([, n]) => n).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([t2, n]) => `${n} ${QUELLEN[t2]?.name || t2}`).join(", ");
-    return { answer: `In meiner Datenbank stehen ${u.gesamt} Einträge aus ${u.quellenAktiv} Quellen, heute ${u.heute} neue. Am meisten: ${top || "noch nichts"}.`, actions: ["wissen"] };
+    return { answer: `In meiner Datenbank stehen ${u.gesamt} Einträge aus ${u.quellenAktiv} von ${Object.keys(QUELLEN).length} Quellen, heute ${u.heute} neue. Am meisten: ${top || "noch nichts"}. Dazu kommt mein eingebautes Lexikon mit ${u.lexikon.gesamt.toLocaleString("de-DE")} Einträgen, das ich ohne Internet kenne.`, actions: ["wissen"] };
   }
   m = k.match(RUECK);
   if (m) {

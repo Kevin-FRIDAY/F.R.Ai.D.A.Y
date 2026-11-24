@@ -1,0 +1,66 @@
+# staedte|Deutsche Städte|🏙️
+# Name|Bundesland|Einwohner (rund)|Zusatz|Aliase
+Berlin|Berlin|3,8 Millionen|Hauptstadt Deutschlands mit Brandenburger Tor, Reichstag und Fernsehturm.|hauptstadt deutschland
+Hamburg|Hamburg|1,9 Millionen|Zweitgrößte Stadt, mit Hafen, Elbphilharmonie und Reeperbahn.|
+München|Bayern|1,5 Millionen|Mit Oktoberfest, Frauenkirche und dem FC Bayern.|muenchen
+Köln|Nordrhein-Westfalen|1,1 Millionen|Mit dem Kölner Dom und dem Kölner Karneval.|koeln
+Frankfurt am Main|Hessen|770.000|Finanzzentrum mit Skyline, Börse und dem größten Flughafen Deutschlands.|frankfurt
+Stuttgart|Baden-Württemberg|630.000|Sitz von Mercedes-Benz und Porsche.|
+Düsseldorf|Nordrhein-Westfalen|630.000|Landeshauptstadt von NRW mit der Königsallee und der längsten Theke der Welt in der Altstadt.|duesseldorf
+Leipzig|Sachsen|620.000|Messestadt, Stadt der friedlichen Revolution 1989.|
+Dortmund|Nordrhein-Westfalen|600.000|Ruhrgebiet, Heimat von Borussia Dortmund.|
+Essen|Nordrhein-Westfalen|580.000|Ruhrgebiet, mit der Zeche Zollverein, einem Weltkulturerbe.|
+Bremen|Bremen|570.000|Mit den Bremer Stadtmusikanten und dem Roland.|
+Dresden|Sachsen|560.000|Mit Frauenkirche, Semperoper und Zwinger, genannt Elbflorenz.|
+Hannover|Niedersachsen|545.000|Messestadt und Landeshauptstadt von Niedersachsen.|
+Nürnberg|Bayern|530.000|Mit Kaiserburg, Christkindlesmarkt und Lebkuchen.|nuernberg
+Duisburg|Nordrhein-Westfalen|500.000|Hat den größten Binnenhafen Europas.|
+Bochum|Nordrhein-Westfalen|365.000|Ruhrgebiet, bekannt aus dem Lied von Herbert Grönemeyer.|
+Wuppertal|Nordrhein-Westfalen|355.000|Berühmt für die Schwebebahn.|
+Bielefeld|Nordrhein-Westfalen|335.000|Universitätsstadt in Ostwestfalen.|
+Bonn|Nordrhein-Westfalen|335.000|Von 1949 bis 1990 Hauptstadt der Bundesrepublik, Geburtsstadt Beethovens.|
+Münster|Nordrhein-Westfalen|320.000|Fahrradstadt, Ort des Westfälischen Friedens 1648.|muenster
+Mannheim|Baden-Württemberg|315.000|Stadt der Quadrate, hier fuhr Bertha Benz los.|
+Karlsruhe|Baden-Württemberg|305.000|Sitz des Bundesverfassungsgerichts.|
+Augsburg|Bayern|300.000|Eine der ältesten Städte Deutschlands, mit der Fuggerei.|
+Wiesbaden|Hessen|285.000|Landeshauptstadt von Hessen, Kurstadt.|
+Gelsenkirchen|Nordrhein-Westfalen|265.000|Heimat des FC Schalke 04.|
+Mönchengladbach|Nordrhein-Westfalen|260.000|Heimat von Borussia Mönchengladbach.|moenchengladbach,gladbach
+Aachen|Nordrhein-Westfalen|250.000|Westlichste Großstadt, mit Kaiserdom und Printen.|
+Braunschweig|Niedersachsen|250.000|Löwenstadt mit Technischer Universität.|
+Chemnitz|Sachsen|250.000|Früher Karl-Marx-Stadt, Europäische Kulturhauptstadt 2025.|
+Kiel|Schleswig-Holstein|247.000|Landeshauptstadt, bekannt für die Kieler Woche.|
+Halle (Saale)|Sachsen-Anhalt|240.000|Geburtsstadt von Georg Friedrich Händel.|halle
+Magdeburg|Sachsen-Anhalt|240.000|Landeshauptstadt an der Elbe, Stadt Ottos des Großen.|
+Freiburg im Breisgau|Baden-Württemberg|235.000|Sonnige Stadt am Schwarzwald mit dem Freiburger Münster.|freiburg
+Krefeld|Nordrhein-Westfalen|230.000|Samt- und Seidenstadt.|
+Mainz|Rheinland-Pfalz|220.000|Landeshauptstadt, Stadt Gutenbergs und der Fastnacht.|
+Lübeck|Schleswig-Holstein|218.000|Hansestadt mit Holstentor und Marzipan.|luebeck
+Erfurt|Thüringen|215.000|Landeshauptstadt mit Dom und Krämerbrücke.|
+Rostock|Mecklenburg-Vorpommern|210.000|Hansestadt an der Ostsee mit Warnemünde.|
+Oberhausen|Nordrhein-Westfalen|210.000|Mit dem Gasometer und dem Centro.|
+Kassel|Hessen|200.000|Stadt der documenta und des Herkules im Bergpark.|
+Hagen|Nordrhein-Westfalen|190.000|Tor zum Sauerland.|
+Potsdam|Brandenburg|185.000|Landeshauptstadt mit Schloss Sanssouci.|
+Saarbrücken|Saarland|180.000|Landeshauptstadt des Saarlands.|saarbruecken
+Hamm|Nordrhein-Westfalen|180.000|Mit dem Glaselefanten im Maximilianpark.|
+Ludwigshafen|Rheinland-Pfalz|172.000|Sitz des Chemiekonzerns BASF.|
+Oldenburg|Niedersachsen|170.000|Universitätsstadt im Nordwesten.|
+Osnabrück|Niedersachsen|165.000|Friedensstadt, wie Münster Ort des Westfälischen Friedens.|osnabrueck
+Leverkusen|Nordrhein-Westfalen|165.000|Sitz von Bayer und Heimat von Bayer 04 Leverkusen.|
+Darmstadt|Hessen|160.000|Wissenschaftsstadt, hier wurden mehrere chemische Elemente entdeckt.|
+Heidelberg|Baden-Württemberg|160.000|Älteste Universität Deutschlands, berühmte Schlossruine.|
+Regensburg|Bayern|155.000|Mittelalterliche Altstadt und Steinerne Brücke, Weltkulturerbe.|
+Paderborn|Nordrhein-Westfalen|155.000|Mit Dom und dem Heinz-Nixdorf-Computermuseum.|
+Ingolstadt|Bayern|140.000|Sitz von Audi.|
+Würzburg|Bayern|128.000|Mit Residenz und Frankenwein.|wuerzburg
+Ulm|Baden-Württemberg|128.000|Hat den höchsten Kirchturm der Welt, das Ulmer Münster mit 161,5 Metern.|
+Heilbronn|Baden-Württemberg|128.000|Weinstadt am Neckar.|
+Wolfsburg|Niedersachsen|125.000|Sitz von Volkswagen.|
+Göttingen|Niedersachsen|118.000|Universitätsstadt mit vielen Nobelpreisträgern.|goettingen
+Koblenz|Rheinland-Pfalz|114.000|Am Deutschen Eck, wo Mosel und Rhein zusammenfließen.|
+Jena|Thüringen|110.000|Optik-Stadt von Zeiss.|
+Trier|Rheinland-Pfalz|110.000|Älteste Stadt Deutschlands mit der Porta Nigra.|
+Bremerhaven|Bremen|115.000|Hafenstadt an der Nordsee, mit dem Klimahaus.|
+Erlangen|Bayern|115.000|Siemens-Standort und Universitätsstadt.|
+Schwerin|Mecklenburg-Vorpommern|98.000|Landeshauptstadt mit dem Schweriner Schloss auf einer Insel.|

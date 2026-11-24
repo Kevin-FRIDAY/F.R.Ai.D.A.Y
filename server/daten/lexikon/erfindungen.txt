@@ -1,0 +1,95 @@
+# erfindungen|Erfindungen|💡
+# Erfindung|Erfinder|Jahr|Zusatz|Aliase
+Buchdruck|Johannes Gutenberg|um 1450|Mit beweglichen Metall-Lettern in Mainz, die erste Gutenberg-Bibel entstand um 1455.|buchdruck mit beweglichen lettern,druckerpresse
+Glühbirne|Thomas Edison und Joseph Swan|1879|Edison machte sie alltagstauglich und langlebig.|glühlampe,gluehbirne
+Telefon|Alexander Graham Bell|1876|Schon 1861 hatte Philipp Reis in Deutschland einen Vorläufer gebaut.|
+Auto|Carl Benz|1886|Der Benz Patent-Motorwagen Nummer 1 hatte drei Räder.|automobil
+Flugzeug|Orville und Wilbur Wright|1903|Erster gesteuerter Motorflug in Kitty Hawk, USA.|motorflugzeug
+Dampfmaschine|James Watt (verbessert)|1769|Erste Dampfmaschinen baute Thomas Newcomen schon 1712, Watt machte sie effizient.|
+Computer|Konrad Zuse|1941|Die Z3 war der erste funktionsfähige, frei programmierbare Rechner.|erster computer
+World Wide Web|Tim Berners-Lee|1989|Am CERN in Genf, ab 1991 öffentlich.|www,internetseiten
+Internet|Vinton Cerf, Robert Kahn und andere|1969|Der Vorläufer ARPANET verband 1969 die ersten Rechner, das Protokoll TCP/IP kam 1983.|arpanet
+E-Mail|Ray Tomlinson|1971|Er führte das @-Zeichen in Adressen ein.|email,mail
+Smartphone|IBM (Simon), Durchbruch mit Apple|1994|Das IBM Simon gilt als erstes Smartphone, das iPhone 2007 machte es populär.|
+iPhone|Apple unter Steve Jobs|2007|Vorgestellt am 9. Januar 2007.|erstes iphone
+Fernseher|Paul Nipkow, Philo Farnsworth und andere|1926|John Logie Baird zeigte 1926 das erste Fernsehbild, elektronisches Fernsehen kam kurz darauf.|fernsehen
+Radio|Guglielmo Marconi|1895|Erste drahtlose Funkübertragung.|rundfunk
+Penicillin|Alexander Fleming|1928|Das erste Antibiotikum, entdeckt durch eine verschimmelte Bakterienschale.|antibiotikum
+Impfung|Edward Jenner|1796|Erste Pockenimpfung.|impfstoff
+Röntgenstrahlen|Wilhelm Conrad Röntgen|1895|Er nannte sie X-Strahlen.|röntgen,roentgen
+Dynamit|Alfred Nobel|1867|Mit dem Vermögen stiftete er den Nobelpreis.|
+Dieselmotor|Rudolf Diesel|1893|Patent 1892, erster laufender Motor 1897.|diesel
+Fahrrad|Karl Drais|1817|Die Laufmaschine ohne Pedale, die Draisine, in Mannheim.|draisine,laufrad
+Kühlschrank|Carl von Linde|1876|Kältemaschine mit Ammoniak.|
+Glas|Mesopotamien|um 3500 vor Christus|Erste Glasperlen.|
+Rad|Mesopotamien|um 3500 vor Christus|Eine der wichtigsten Erfindungen der Menschheit.|
+Papier|Cai Lun in China|105 nach Christus|Aus Pflanzenfasern und Lumpen.|
+Schießpulver|China|9. Jahrhundert|Zuerst für Feuerwerk genutzt.|
+Kompass|China|11. Jahrhundert|Magnetnadel zeigt nach Norden.|
+Brille|Italien|um 1285|Erste Lesebrillen.|
+Fernrohr|Hans Lipperhey|1608|Galilei nutzte es ab 1609 für die Astronomie.|teleskop
+Mikroskop|Zacharias Janssen|um 1590|Antoni van Leeuwenhoek sah damit 1676 als Erster Bakterien.|
+Thermometer|Galileo Galilei, Daniel Fahrenheit|1593 und 1714|Fahrenheit baute 1714 das Quecksilberthermometer.|
+Batterie|Alessandro Volta|1800|Die Voltasche Säule, nach ihm heißt die Einheit Volt.|
+Fotografie|Nicéphore Niépce|1826|Das älteste erhaltene Foto brauchte Stunden Belichtung.|foto,kamera
+Film|Brüder Lumière|1895|Erste öffentliche Filmvorführung in Paris.|kino
+Grammophon|Emil Berliner|1887|Schallplatte statt Walze.|schallplatte
+Nähmaschine|Josef Madersperger, Isaac Singer|1814 und 1851|Singer machte sie zum Massenprodukt.|
+Reißverschluss|Whitcomb Judson, Gideon Sundback|1893 und 1913|Sundback entwickelte die heutige Form.|reissverschluss
+Jeans|Levi Strauss und Jacob Davis|1873|Arbeitshose mit Nieten.|bluejeans
+Kaffeefilter|Melitta Bentz|1908|Aus Löschpapier ihres Sohnes, in Dresden.|
+Teebeutel|Thomas Sullivan|1908|Eigentlich als Probe verschickt.|
+Currywurst|Herta Heuwer|1949|In Berlin erfunden.|
+Döner Kebab im Brot|türkische Einwanderer in Berlin|1970er|Wird oft Kadir Nurman zugeschrieben.|döner,doener
+Gummibärchen|Hans Riegel (Haribo)|1922|In Bonn als Tanzbären.|gummibär
+Aspirin|Felix Hoffmann (Bayer)|1897|Wirkstoff Acetylsalicylsäure.|
+MP3|Fraunhofer-Institut mit Karlheinz Brandenburg|1990er|In Erlangen entwickelt, Musik wurde dadurch klein genug fürs Internet.|mp3 format
+Chipkarte|Jürgen Dethloff und Helmut Gröttrup|1969|Grundlage für EC- und SIM-Karten.|
+Airbag|Walter Linderer|1951|Patent, Serienreife später bei Mercedes-Benz 1981.|
+Sicherheitsgurt|Nils Bohlin (Volvo)|1959|Der Dreipunktgurt rettet bis heute Millionen Leben.|gurt
+Ampel|Lester Wire, James Hoge|1912|Erste elektrische Ampel in den USA, in Berlin ab 1924.|verkehrsampel
+Laser|Theodore Maiman|1960|Erster funktionierender Rubinlaser.|
+Transistor|Bardeen, Brattain und Shockley|1947|Grundlage aller modernen Elektronik.|
+Mikrochip|Jack Kilby und Robert Noyce|1958|Integrierter Schaltkreis.|integrierter schaltkreis,chip
+Mikrowelle|Percy Spencer|1945|Er merkte, wie ein Schokoriegel in seiner Tasche schmolz.|mikrowellenherd
+Computermaus|Douglas Engelbart|1963|Zuerst ein Holzkästchen mit Rädern.|maus
+GPS|US-Verteidigungsministerium|1978|Erster Satellit 1978, voll nutzbar seit 1995.|navigation
+Bluetooth|Ericsson|1994|Benannt nach dem Wikingerkönig Harald Blauzahn.|
+WLAN|Standard IEEE 802.11|1997|Wichtige Technik dazu kam aus Australien von CSIRO.|wifi,wi-fi
+QR-Code|Masahiro Hara (Denso Wave)|1994|Ursprünglich für Autoteile in Japan.|qr code
+USB|Ajay Bhatt und andere bei Intel|1996|Universal Serial Bus.|
+Post-it|Spencer Silver und Art Fry (3M)|1974|Ein misslungener Superkleber.|klebezettel
+Klettverschluss|George de Mestral|1951|Nach dem Vorbild von Kletten am Hundefell.|klett
+Blitzableiter|Benjamin Franklin|1752|Nach seinem Drachenexperiment.|
+Rechenmaschine|Wilhelm Schickard|1623|Später Blaise Pascal 1642 und Leibniz 1673.|
+Dübel|Artur Fischer|1958|Der Fischer-Dübel aus Kunststoff.|
+Zahnpasta in der Tube|Ottmar von Mayenburg (Chlorodont)|1907|In Dresden.|
+Gasballon|Brüder Montgolfier (Heißluft)|1783|Erste bemannte Ballonfahrt in Paris.|heißluftballon
+Zeppelin|Ferdinand von Zeppelin|1900|Erstes Luftschiff LZ 1 am Bodensee.|luftschiff
+Hubschrauber|Henrich Focke|1936|Die Focke-Wulf Fw 61 war der erste voll steuerbare Hubschrauber.|helikopter
+Düsentriebwerk|Hans von Ohain und Frank Whittle|1939|Erster Düsenjet Heinkel He 178.|strahltriebwerk
+Rakete|Wernher von Braun (moderne Großrakete)|1942|Chinesische Feuerpfeile gab es schon im Mittelalter.|
+Bitcoin|Satoshi Nakamoto|2008|Whitepaper 2008, Start Januar 2009.|
+Künstliche Intelligenz|John McCarthy und andere|1956|Der Begriff entstand auf der Dartmouth-Konferenz.|ki begriff
+Smartwatch|verschiedene, Durchbruch Apple Watch|2015|Apple Watch kam im April 2015.|apple watch
+Elektroauto|verschiedene|um 1880|Schon vor dem Benzinauto gab es Elektroautos. Tesla Roadster 2008 brachte die moderne Welle.|e-auto
+Solarzelle|Bell Labs|1954|Erste praktisch nutzbare Silicium-Solarzelle.|photovoltaik
+Kontaktlinse|Adolf Eugen Fick|1888|Erste Glaslinse.|
+Herzschrittmacher|Rune Elmqvist und Åke Senning|1958|Erste Implantation in Schweden.|
+Insulin als Medikament|Frederick Banting und Charles Best|1921|Rettet seitdem Menschen mit Diabetes.|insulin
+Teflon|Roy Plunkett|1938|Zufallsentdeckung bei DuPont.|antihaftbeschichtung
+Nylon|Wallace Carothers|1935|Erste vollsynthetische Faser.|
+Plastik|Leo Baekeland (Bakelit)|1907|Erster vollsynthetischer Kunststoff.|kunststoff
+Lego-Stein|Ole Kirk Christiansen, Godtfred Kirk|1958|Patent des heutigen Klemmsteins.|lego
+Playmobil|Hans Beck|1974|Erfunden bei Geobra Brandstätter in Zirndorf.|
+Rubik’s Cube|Ernő Rubik|1974|Zauberwürfel aus Ungarn.|zauberwürfel
+Videospiel|William Higinbotham, Pong von Atari|1958 und 1972|Tennis for Two 1958, Pong machte Spiele 1972 populär.|pong
+Game Boy|Nintendo (Gunpei Yokoi)|1989|Mit Tetris weltberühmt.|
+World of Warcraft|Blizzard|2004|Eines der erfolgreichsten Online-Rollenspiele.|wow
+Suchmaschine Google|Larry Page und Sergey Brin|1998|Als Doktoranden in Stanford.|google
+Wikipedia|Jimmy Wales und Larry Sanger|2001|Freie Online-Enzyklopädie.|
+YouTube|Chad Hurley, Steve Chen, Jawed Karim|2005|2006 von Google gekauft.|
+Facebook|Mark Zuckerberg|2004|In Harvard gegründet.|
+WhatsApp|Jan Koum und Brian Acton|2009|2014 von Facebook gekauft.|
+ChatGPT|OpenAI|2022|KI-Chatbot, startete am 30. November 2022.|
+Claude|Anthropic|2023|KI-Assistent von Anthropic und mein Gehirn.|claude ki

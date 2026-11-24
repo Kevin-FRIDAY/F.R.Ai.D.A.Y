@@ -1,0 +1,41 @@
+# kochen|Kochen & Küche|🍳
+# Titel|Text|Aliase
+Eier kochen|Ab kochendem Wasser: weich etwa 5 bis 6 Minuten, wachsweich 7 bis 8, hart 10 Minuten. Große Eier eine Minute länger, direkt aus dem Kühlschrank auch.|ei kochen,weiches ei,hartes ei,wie lange eier kochen
+Nudeln kochen|Pro 100 Gramm Nudeln etwa 1 Liter Wasser und 10 Gramm Salz. Die Kochzeit steht auf der Packung, meist 8 bis 12 Minuten. Pro Person rechnet man etwa 100 bis 125 Gramm.|pasta kochen,nudeln wie viel
+Reis kochen|Für Reis nimmt man etwa die doppelte Menge Wasser, also 1 Tasse Reis auf 2 Tassen Wasser, aufkochen und zugedeckt bei kleiner Hitze 15 bis 20 Minuten quellen lassen. Pro Person etwa 60 bis 80 Gramm.|reis wie viel wasser
+Kartoffeln kochen|Kartoffeln in Salzwasser etwa 20 bis 25 Minuten kochen. Sie sind gar, wenn ein Messer leicht hineingleitet.|kartoffeln wie lange
+Steak braten|Steak etwa 2 bis 3 Minuten pro Seite scharf anbraten, dann ruhen lassen. Kerntemperatur: rare 50 Grad, medium 56 bis 58, well done über 65 Grad.|steak garstufen,kerntemperatur steak
+Hähnchen|Geflügel muss innen mindestens 74 Grad erreichen, dann ist es sicher durch. Ein ganzes Hähnchen braucht bei 200 Grad etwa 60 bis 75 Minuten.|hähnchen kerntemperatur,huhn braten
+Brot backen|Ein einfaches Brot: 500 Gramm Mehl, 350 Milliliter Wasser, 10 Gramm Salz, ein halber Würfel Hefe. Gehen lassen, dann bei etwa 230 Grad rund 40 Minuten backen.|brot rezept
+Pizzateig|Pizzateig: 500 Gramm Mehl, 300 Milliliter lauwarmes Wasser, 10 Gramm Salz, 7 Gramm Trockenhefe, ein Schuss Olivenöl. Mindestens eine Stunde gehen lassen, bei maximaler Hitze backen.|pizza teig
+Pfannkuchen|Pfannkuchen: 250 Gramm Mehl, 500 Milliliter Milch, 3 Eier, eine Prise Salz. Verrühren, kurz ruhen lassen und in heißem Fett ausbacken.|pfannkuchen rezept,eierkuchen
+Gramm in Esslöffel|Ein gestrichener Esslöffel sind etwa 10 bis 15 Gramm, je nach Zutat: Mehl rund 10, Zucker rund 15, Butter rund 15 Gramm. Ein Teelöffel ist etwa ein Drittel davon.|esslöffel gramm,teelöffel gramm,el,tl
+Tasse in Gramm|Eine amerikanische Tasse, Cup, sind 240 Milliliter. Das sind etwa 125 Gramm Mehl, 200 Gramm Zucker oder 225 Gramm Butter.|cup in gramm,cups
+Prise|Eine Prise ist die Menge, die man zwischen Daumen und Zeigefinger fassen kann, etwa ein halbes bis ein Gramm.|eine prise
+Backofen Umluft|Bei Umluft stellt man den Ofen etwa 20 Grad niedriger ein als bei Ober- und Unterhitze.|umluft,ober unterhitze
+Hefe|Ein Würfel frische Hefe hat 42 Gramm und entspricht etwa zwei Päckchen Trockenhefe. Er reicht für 500 bis 1.000 Gramm Mehl.|frische hefe,trockenhefe
+Gelatine|6 Blatt Gelatine entsprechen etwa einem Päckchen gemahlener Gelatine und binden rund einen halben Liter Flüssigkeit.|
+Mehltypen|Die Typenzahl beim Mehl gibt den Mineralstoffgehalt an. Type 405 ist feines Haushaltsmehl für Kuchen, Type 550 gut für Brötchen und Pizza, 1050 für dunkleres Brot.|mehl type,type 405,type 550
+Haltbarkeit|Das Mindesthaltbarkeitsdatum heißt nicht, dass etwas danach schlecht ist. Riechen, schauen, probieren. Anders beim Verbrauchsdatum, etwa bei Hackfleisch: danach nicht mehr essen.|mhd,mindesthaltbarkeitsdatum,verbrauchsdatum
+Kühlschrank|Im Kühlschrank sollte es etwa 4 bis 7 Grad haben. Oben ist es am wärmsten, unten über dem Gemüsefach am kältesten, dort gehören Fleisch und Fisch hin.|kühlschrank temperatur,kuehlschrank
+Gefrierschrank|Im Gefrierschrank sollten es minus 18 Grad sein. Aufgetautes nicht wieder einfrieren, außer man hat es vorher gekocht.|einfrieren,tiefkühlen
+Hackfleisch|Hackfleisch verdirbt schnell und sollte am Kauftag gegessen oder eingefroren werden.|hack
+Knoblauch|Knoblauch entfaltet sein Aroma am besten, wenn man ihn nach dem Schneiden einige Minuten liegen lässt. Er verbrennt schnell, darum nicht zu heiß anbraten.|
+Zwiebeln schneiden|Damit die Augen beim Zwiebelschneiden weniger tränen: scharfes Messer, Zwiebel vorher kühlen und die Wurzel zuletzt abschneiden.|zwiebeln tränen
+Avocado reif|Eine reife Avocado gibt auf leichten Druck nach. Neben einem Apfel reift sie schneller.|avocado
+Bananen|Bananen nicht im Kühlschrank lagern, sie werden dort braun. Neben anderem Obst reifen sie schneller.|banane lagern
+Kaffee|Für Filterkaffee rechnet man etwa 6 bis 8 Gramm Kaffee pro Tasse mit 125 Milliliter Wasser bei 92 bis 96 Grad.|kaffee kochen,filterkaffee
+Tee ziehen lassen|Schwarzer Tee 3 bis 5 Minuten bei 100 Grad, grüner Tee 2 bis 3 Minuten bei 70 bis 80 Grad, Kräutertee 5 bis 10 Minuten.|tee kochen,grüner tee
+Spätzle|Spätzle-Teig: 400 Gramm Mehl, 4 Eier, etwas Wasser und Salz, zäh schlagen bis er Blasen wirft, dann ins kochende Salzwasser schaben.|spätzle rezept
+Currywurst Soße|Schnelle Currysoße: Ketchup, etwas Tomatenmark, Currypulver, ein Schuss Orangensaft und eine Prise Zucker aufkochen.|currysoße
+Grillen|Zum Grillen ist die Kohle bereit, wenn sie weiß-grau überzogen ist, nach etwa 20 bis 30 Minuten. Würstchen gehören in die indirekte Hitze, damit sie nicht platzen.|grill,holzkohle
+Vegan|Vegan heißt ganz ohne tierische Produkte, also kein Fleisch, Fisch, Milch, Eier oder Honig. Vegetarisch heißt ohne Fleisch und Fisch.|vegetarisch
+Laktose|Laktose ist Milchzucker. Wer laktoseintolerant ist, verträgt ihn schlecht. Hartkäse wie Parmesan ist fast laktosefrei.|laktoseintoleranz,milchzucker
+Gluten|Gluten ist ein Klebereiweiß in Weizen, Roggen, Dinkel und Gerste. Bei Zöliakie muss man es komplett meiden.|glutenfrei,zöliakie
+Umami|Umami ist der fünfte Geschmack neben süß, sauer, salzig und bitter, herzhaft wie in Parmesan, Tomaten oder Sojasoße.|fünfter geschmack
+Salz|Erwachsene sollten höchstens etwa 6 Gramm Salz am Tag essen, das ist ein Teelöffel.|salz am tag
+Kalorien Lebensmittel|Grobe Werte pro 100 Gramm: Apfel 50, Banane 90, Brot 250, Nudeln gekocht 150, Käse 350, Schokolade 540, Nüsse 600 Kilokalorien.|kalorien tabelle
+Spaghetti Carbonara|Echte Carbonara ohne Sahne: Spaghetti, Guanciale oder Speck, Eigelb, Pecorino und viel schwarzer Pfeffer. Die Eier-Käse-Masse kommt erst von der Hitze genommen dazu.|carbonara
+Lasagne|Lasagne braucht bei 180 Grad etwa 40 bis 45 Minuten im Ofen. Danach 10 Minuten ruhen lassen, dann lässt sie sich besser schneiden.|
+Kuchen fertig|Ob ein Kuchen fertig ist, prüft man mit der Stäbchenprobe: Holzstäbchen hineinstechen, bleibt kein Teig hängen, ist er durch.|stäbchenprobe
+Wasser kocht|Auf Meereshöhe kocht Wasser bei 100 Grad. Auf der Zugspitze schon bei etwa 90 Grad, deshalb dauert dort das Eierkochen länger.|siedepunkt

@@ -1,0 +1,54 @@
+# geld|Geld & Wirtschaft|💶
+# Titel|Text|Aliase
+Inflation|Inflation bedeutet, dass die Preise allgemein steigen und man für das gleiche Geld weniger bekommt. Die Europäische Zentralbank strebt etwa 2 Prozent pro Jahr an.|teuerung,geldentwertung
+Deflation|Deflation ist das Gegenteil von Inflation: Die Preise fallen über längere Zeit. Das klingt gut, kann aber die Wirtschaft bremsen.|
+Zinsen|Zinsen sind der Preis für geliehenes Geld. Wer spart, bekommt Zinsen, wer einen Kredit nimmt, zahlt Zinsen.|zins
+Zinseszins|Beim Zinseszins bekommt man auch Zinsen auf die schon erhaltenen Zinsen. Über viele Jahre wächst Geld dadurch stark. Faustregel 72: 72 geteilt durch den Zinssatz ergibt etwa die Jahre, bis sich das Geld verdoppelt.|zinseszinseffekt,72er regel
+Aktie|Eine Aktie ist ein kleiner Anteil an einer Firma. Steigt der Wert der Firma, steigt meist der Kurs. Manche Firmen zahlen eine Dividende.|aktien
+Dividende|Eine Dividende ist der Teil des Gewinns, den eine Aktiengesellschaft an ihre Aktionäre ausschüttet.|dividenden
+ETF|Ein ETF ist ein börsengehandelter Fonds, der meist einen ganzen Index nachbildet, etwa den MSCI World mit rund 1.500 Firmen. ETFs sind günstig und breit gestreut.|etfs,indexfonds
+Fonds|Ein Fonds sammelt Geld vieler Anleger und legt es in viele Wertpapiere an, dadurch ist das Risiko gestreut.|investmentfonds
+Börse|An der Börse werden Aktien und andere Wertpapiere gehandelt. Die wichtigste deutsche Börse ist in Frankfurt.|aktienmarkt
+DAX|Der DAX ist der wichtigste deutsche Aktienindex mit den 40 größten börsennotierten Firmen Deutschlands.|deutscher aktienindex
+Dow Jones|Der Dow Jones ist ein bekannter US-Aktienindex mit 30 großen amerikanischen Firmen.|dow
+S&P 500|Der S&P 500 enthält rund 500 der größten US-Firmen und gilt als wichtigstes Barometer der US-Wirtschaft.|s und p 500,sp500
+Nasdaq|Die Nasdaq ist eine US-Börse mit vielen Technologiefirmen wie Apple, Microsoft und Nvidia.|nasdaq 100
+Bulle und Bär|Ein Bullenmarkt ist ein steigender Markt, ein Bärenmarkt ein fallender. Der Bulle stößt die Hörner nach oben, der Bär schlägt mit der Tatze nach unten.|bullenmarkt,bärenmarkt
+Rendite|Die Rendite ist der Ertrag einer Geldanlage im Verhältnis zum eingesetzten Geld, meist pro Jahr in Prozent.|rendite geldanlage
+Diversifikation|Diversifikation heißt, Geld auf viele verschiedene Anlagen zu verteilen, um das Risiko zu senken. Nicht alle Eier in einen Korb legen.|streuung,risikostreuung
+Sparplan|Mit einem Sparplan legt man jeden Monat automatisch einen festen Betrag an, zum Beispiel in einen ETF. Das ist der einfachste Einstieg in die Geldanlage.|etf sparplan
+Notgroschen|Ein Notgroschen ist eine Rücklage für unerwartete Ausgaben, meist drei bis sechs Monatsgehälter auf dem Tagesgeldkonto.|notfallreserve
+Tagesgeld|Ein Tagesgeldkonto bringt Zinsen und man kommt jederzeit an sein Geld.|tagesgeldkonto
+Festgeld|Beim Festgeld legt man Geld für eine feste Zeit zu einem festen Zins an und kommt vorher nicht heran.|festgeldkonto
+Kredit|Ein Kredit ist geliehenes Geld, das man mit Zinsen zurückzahlt.|darlehen
+Dispokredit|Der Dispo ist ein Überziehungsrahmen auf dem Girokonto. Er ist sehr teuer und sollte nur kurz genutzt werden.|dispo,überziehungskredit
+Schufa|Die Schufa ist eine Auskunftei, die speichert, wie zuverlässig man Rechnungen und Kredite bezahlt. Eine kostenlose Selbstauskunft steht einem einmal im Jahr zu.|schufa auskunft
+IBAN|Die IBAN ist die internationale Kontonummer. Deutsche IBANs beginnen mit DE und haben 22 Zeichen.|kontonummer
+BIP|Das Bruttoinlandsprodukt misst den Wert aller Waren und Dienstleistungen, die ein Land in einem Jahr herstellt. Es zeigt, wie groß eine Wirtschaft ist.|bruttoinlandsprodukt
+Rezession|Eine Rezession ist ein wirtschaftlicher Abschwung, oft wenn das BIP zwei Quartale hintereinander schrumpft.|wirtschaftskrise
+Leitzins|Der Leitzins ist der Zins, zu dem sich Banken Geld bei der Zentralbank leihen. Er beeinflusst alle anderen Zinsen.|leitzinsen
+Europäische Zentralbank|Die EZB in Frankfurt ist für den Euro zuständig und soll die Preise stabil halten.|ezb
+Euro|Der Euro ist seit 1999 die Währung der Eurozone, als Bargeld seit 2002. 1 Euro waren 1,95583 D-Mark.|euro währung
+D-Mark|Die Deutsche Mark war von 1948 bis 2001 die Währung der Bundesrepublik. Umgerechnet wurde 1 Euro gleich 1,95583 Mark.|deutsche mark,dm
+Mehrwertsteuer|Die Mehrwertsteuer in Deutschland beträgt 19 Prozent, ermäßigt 7 Prozent, zum Beispiel für Lebensmittel und Bücher.|mwst,umsatzsteuer
+Brutto und Netto|Brutto ist der Betrag vor Abzug von Steuern und Abgaben, netto das, was übrig bleibt und tatsächlich ankommt.|brutto,netto
+Steuererklärung|Mit der Steuererklärung meldest du dem Finanzamt dein Einkommen. Viele Angestellte bekommen dabei Geld zurück, im Schnitt über 1.000 Euro. Abgabe geht online über ELSTER.|elster
+Kleinunternehmer|Als Kleinunternehmer musst du keine Umsatzsteuer ausweisen, solange dein Umsatz im Vorjahr höchstens 25.000 Euro war und im laufenden Jahr 100.000 Euro nicht übersteigt (Regel seit 2025).|kleinunternehmerregelung
+Gewerbe|Wer selbstständig etwas verkauft oder Dienstleistungen anbietet, meldet in der Regel ein Gewerbe beim Gewerbeamt an. Das kostet je nach Stadt etwa 20 bis 60 Euro.|gewerbeanmeldung
+Angebot und Nachfrage|Ist etwas knapp und viele wollen es, steigt der Preis. Gibt es viel davon und wenige wollen es, sinkt der Preis.|nachfrage
+Monopol|Ein Monopol liegt vor, wenn es für ein Produkt nur einen Anbieter gibt.|
+Startup|Ein Startup ist eine junge Firma mit einer neuen Geschäftsidee, die schnell wachsen will.|start up
+Venture Capital|Venture Capital ist Risikokapital von Investoren für junge Firmen gegen Firmenanteile.|risikokapital,vc
+Börsengang|Beim Börsengang, englisch IPO, bietet eine Firma zum ersten Mal Aktien an der Börse an.|ipo
+Marktkapitalisierung|Die Marktkapitalisierung ist der Börsenwert einer Firma: Aktienkurs mal Anzahl der Aktien.|börsenwert
+Gold als Anlage|Gold gilt als sicherer Hafen in Krisen. Es bringt keine Zinsen, behält aber langfristig meist seinen Wert.|goldanlage
+Kurs-Gewinn-Verhältnis|Das KGV ist der Aktienkurs geteilt durch den Gewinn pro Aktie. Es zeigt grob, ob eine Aktie teuer oder günstig bewertet ist.|kgv
+Rente|Die gesetzliche Rente in Deutschland funktioniert nach dem Umlageverfahren: Die Arbeitenden zahlen für die heutigen Rentner. Das reguläre Rentenalter steigt schrittweise auf 67.|rentenversicherung
+Mindestlohn|Der gesetzliche Mindestlohn in Deutschland liegt seit Januar 2026 bei 13,90 Euro pro Stunde (Stand 2026).|mindestlohn deutschland
+Budget|Ein Budget ist ein Plan, wie viel Geld man wofür ausgibt. Bekannt ist die 50-30-20-Regel: 50 Prozent für Fixkosten, 30 für Wünsche, 20 zum Sparen.|haushaltsbuch,50 30 20
+Preis-Leistungs-Verhältnis|Das Preis-Leistungs-Verhältnis sagt, wie viel man für sein Geld bekommt.|preis leistung
+Umsatz und Gewinn|Umsatz ist alles, was eine Firma einnimmt. Gewinn ist, was nach Abzug aller Kosten übrig bleibt.|umsatz,gewinn
+Rechnung|Eine Rechnung muss unter anderem Name und Anschrift beider Seiten, Datum, Rechnungsnummer, Leistung, Betrag und Steuer enthalten.|rechnung schreiben
+Skonto|Skonto ist ein Preisnachlass, wenn man eine Rechnung schnell bezahlt, zum Beispiel 2 Prozent innerhalb von 10 Tagen.|
+Ratenzahlung|Bei der Ratenzahlung zahlt man einen Kauf in Teilbeträgen ab. Oft kostet das Zinsen, also genau hinschauen.|raten
+Paypal|PayPal ist ein Online-Bezahldienst. Wichtig: Ich bezahle nie selbst, das machst immer du.|paypal bezahlen

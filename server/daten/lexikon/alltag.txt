@@ -1,0 +1,54 @@
+# alltag|Alltag & Recht|🏠
+# Titel|Text|Aliase
+Widerrufsrecht|Bei Online-Käufen hast du in der EU 14 Tage Widerrufsrecht ab Erhalt der Ware, ohne Angabe von Gründen. Im Laden gilt das nicht, dort ist Umtausch freiwillig.|widerruf,rückgabe online
+Gewährleistung|Die gesetzliche Gewährleistung beträgt in Deutschland zwei Jahre. Im ersten Jahr muss der Händler beweisen, dass ein Mangel nicht schon beim Kauf da war.|gewährleistung händler,garantie
+Garantie|Eine Garantie ist eine freiwillige Zusage des Herstellers, zusätzlich zur gesetzlichen Gewährleistung von zwei Jahren.|herstellergarantie
+Kündigungsfrist Mietwohnung|Als Mieter kannst du eine unbefristete Wohnung mit drei Monaten Frist kündigen, schriftlich mit Unterschrift.|wohnung kündigen,mietvertrag kündigen
+Mietkaution|Die Mietkaution darf höchstens drei Nettokaltmieten betragen und kann in drei Monatsraten gezahlt werden.|kaution
+Nebenkosten|Nebenkosten oder Betriebskosten sind zum Beispiel Wasser, Müll, Hausmeister und Grundsteuer. Die Abrechnung muss spätestens 12 Monate nach Ende des Abrechnungszeitraums kommen.|betriebskosten,nebenkostenabrechnung
+Handyvertrag kündigen|Seit 2022 kannst du Handy- und Internetverträge nach der Mindestlaufzeit jederzeit mit einem Monat Frist kündigen. Online-Verträge brauchen einen Kündigungsbutton.|vertrag kündigen,kündigungsbutton
+Personalausweis|Der Personalausweis gilt bei Menschen ab 24 Jahren zehn Jahre, darunter sechs Jahre. Ab 16 Jahren muss man einen Ausweis oder Pass haben.|perso,ausweis
+Reisepass|Der Reisepass gilt bei Erwachsenen ab 24 Jahren zehn Jahre. Für viele Länder außerhalb der EU braucht man ihn.|pass
+Führerschein|Der Führerschein Klasse B erlaubt Autos bis 3,5 Tonnen. Begleitetes Fahren ist ab 17 möglich. Alte Papierführerscheine müssen je nach Jahrgang schrittweise bis 2033 umgetauscht werden.|führerschein klasse b,fuehrerschein
+Tempolimit|In Deutschland gilt innerorts 50, außerorts 100 Kilometer pro Stunde. Auf der Autobahn gibt es eine Richtgeschwindigkeit von 130 und vielerorts Begrenzungen.|geschwindigkeit innerorts,höchstgeschwindigkeit
+Promillegrenze|Beim Autofahren gilt in Deutschland die 0,5-Promille-Grenze, für Fahranfänger in der Probezeit und unter 21 Jahren 0,0 Promille.|alkohol am steuer
+Blitzer|Wer innerorts bis 10 km/h zu schnell ist, zahlt 30 Euro Verwarnungsgeld (Stand 2026). Ab 21 km/h innerorts gibt es einen Punkt in Flensburg.|zu schnell gefahren,bußgeld
+Punkte in Flensburg|Im Fahreignungsregister in Flensburg ist der Führerschein ab 8 Punkten weg.|flensburg punkte
+Winterreifen|In Deutschland gilt eine situative Winterreifenpflicht bei Glätte, Schnee und Eis. Merkregel: von O bis O, Oktober bis Ostern. Nötig ist das Alpine-Symbol mit Schneeflocke.|winterreifenpflicht
+Reifenprofil|Gesetzlich sind 1,6 Millimeter Profiltiefe Pflicht, empfohlen werden für Sommerreifen 3 und für Winterreifen 4 Millimeter.|profiltiefe
+Hauptuntersuchung|Neue Autos müssen nach drei Jahren zur Hauptuntersuchung, danach alle zwei Jahre.|hu,tüv termin
+Ruhezeiten|Nachtruhe ist meist von 22 bis 6 Uhr. Genaues regeln Landesgesetze, die Gemeinde und die Hausordnung.|nachtruhe,lärm nachts
+Mülltrennung|Gelbe Tonne für Verpackungen aus Plastik und Metall, blaue Tonne für Papier, Biotonne für Essensreste, Restmüll für den Rest. Glas kommt nach Farben in den Container.|müll trennen,gelber sack
+Pfand|Pfand in Deutschland: Einwegflaschen und Dosen 25 Cent, Mehrweg-Glasflaschen meist 8 oder 15 Cent.|flaschenpfand,dosenpfand
+Briefporto|Ein Standardbrief in Deutschland kostet 95 Cent, eine Postkarte ebenfalls 95 Cent (Stand 2026).|porto,briefmarke
+Arbeitszeit|Erlaubt sind in der Regel 8 Stunden am Tag, bis 10 Stunden, wenn es im Schnitt ausgeglichen wird. Ab 6 Stunden steht eine Pause von 30 Minuten zu, ab 9 Stunden 45 Minuten.|pause arbeit,arbeitszeitgesetz
+Urlaubsanspruch|Bei einer Fünf-Tage-Woche stehen gesetzlich mindestens 20 Urlaubstage im Jahr zu, viele Verträge geben 25 bis 30.|urlaub tage,urlaubstage
+Krankmeldung|Wer krank ist, muss sich sofort beim Arbeitgeber melden. Eine ärztliche Bescheinigung braucht es meist ab dem vierten Tag, oft kommt sie heute elektronisch.|krankschreibung,au
+Elternzeit|Eltern können bis zu drei Jahre Elternzeit pro Kind nehmen, Elterngeld gibt es bis zu 14 Monate für beide zusammen.|elterngeld
+Kindergeld|Das Kindergeld beträgt seit 2026 259 Euro pro Kind und Monat (Stand 2026).|kindergeld höhe
+Erbschaft|Ohne Testament erben zuerst Ehepartner und Kinder. Ein Testament muss handgeschrieben und unterschrieben sein oder vom Notar beurkundet werden.|testament,erben
+Volljährigkeit|In Deutschland ist man ab 18 Jahren volljährig. Ab 14 ist man strafmündig, ab 16 darf man Bier und Wein kaufen, ab 18 Spirituosen.|volljährig,ab wann darf man
+Wahlrecht|Bei der Bundestagswahl darf man ab 18 Jahren wählen, bei der Europawahl ab 16. Man hat zwei Stimmen: die Erststimme für eine Person, die Zweitstimme für eine Partei.|wählen,erststimme,zweitstimme
+Bundestag|Der Bundestag ist das Parlament Deutschlands im Reichstagsgebäude in Berlin. Er wird alle vier Jahre gewählt und beschließt die Gesetze. Seit 2025 hat er 630 Sitze.|deutscher bundestag
+Bundesrat|Im Bundesrat wirken die 16 Bundesländer an der Gesetzgebung mit.|
+Grundgesetz|Das Grundgesetz ist seit dem 23. Mai 1949 die Verfassung Deutschlands. Artikel 1: Die Würde des Menschen ist unantastbar.|verfassung,artikel 1
+Bundeskanzler|Der Bundeskanzler leitet die Bundesregierung und wird vom Bundestag gewählt. Seit Mai 2025 ist es Friedrich Merz (Stand 2026).|kanzler,wer ist bundeskanzler
+Bundespräsident|Der Bundespräsident ist das Staatsoberhaupt Deutschlands und wird alle fünf Jahre von der Bundesversammlung gewählt. Seit 2017 ist es Frank-Walter Steinmeier (Stand 2026).|staatsoberhaupt,wer ist bundespräsident
+Datenschutz|Nach der DSGVO darfst du von Firmen Auskunft verlangen, welche Daten sie über dich speichern, und die Löschung fordern.|dsgvo auskunft
+Schwarzfahren|Ohne gültigen Fahrschein zahlt man im Nahverkehr meist 60 Euro erhöhtes Beförderungsentgelt.|ohne ticket
+Deutschlandticket|Das Deutschlandticket gilt im ganzen Nahverkehr in Deutschland, also in Bussen, Straßenbahnen und Regionalzügen, und kostet seit 2026 63 Euro im Monat (Stand 2026).|49 euro ticket,d ticket
+Bahn Verspätung|Bei der Bahn gibt es ab 60 Minuten Verspätung 25 Prozent, ab 120 Minuten 50 Prozent des Fahrpreises zurück, beantragt in der DB-Navigator-App.|fahrgastrechte,entschädigung bahn
+Flugverspätung|Ab drei Stunden Verspätung bei der Ankunft gibt es bei Flügen aus der EU je nach Strecke 250 bis 600 Euro Entschädigung, außer bei außergewöhnlichen Umständen.|flug verspätet,entschädigung flug
+Trinkgeld|In Deutschland gibt man im Restaurant meist 5 bis 10 Prozent Trinkgeld, beim Taxi rundet man auf.|trinkgeld wie viel
+Wäsche waschen|Normale Wäsche wird bei 30 bis 40 Grad sauber, Handtücher und Bettwäsche bei 60 Grad. Neue Kleidung vorher einmal waschen.|waschen grad,waschmaschine temperatur
+Fleck entfernen|Flecken möglichst schnell mit kaltem Wasser behandeln, heißes Wasser kann Eiweißflecken wie Blut festsetzen. Gallseife hilft bei vielen Flecken.|flecken,blutfleck
+Lüften|Richtig lüften heißt stoßlüften: mehrmals täglich 5 bis 10 Minuten Fenster ganz auf, im Winter kürzer. Das beugt Schimmel vor.|stoßlüften,schimmel
+Heizen sparen|Ein Grad weniger Raumtemperatur spart etwa 6 Prozent Heizenergie. 20 Grad im Wohnzimmer und 17 bis 18 Grad im Schlafzimmer gelten als gut.|heizkosten sparen,raumtemperatur
+Strom sparen|Größte Stromfresser sind oft alte Kühlgeräte, Trockner und Geräte im Stand-by. Eine abschaltbare Steckdosenleiste hilft.|stromverbrauch senken
+Pflanzen gießen|Die meisten Zimmerpflanzen gießt man, wenn die oberste Erdschicht trocken ist, lieber seltener und durchdringend. Staunässe ist der häufigste Grund, warum Pflanzen eingehen.|zimmerpflanzen
+Knigge|Adolph Freiherr Knigge schrieb 1788 ein Buch über den Umgang mit Menschen. Heute steht Knigge für gute Umgangsformen.|benimmregeln
+Du oder Sie|Im Deutschen siezt man Fremde und im Beruf, bis jemand das Du anbietet. Normalerweise bietet der Ältere oder Ranghöhere das Du an.|duzen,siezen
+Bewerbung|Eine Bewerbung besteht meist aus Anschreiben, Lebenslauf und Zeugnissen. Ein Foto ist in Deutschland nicht mehr Pflicht.|lebenslauf,anschreiben
+Umzug|Nach einem Umzug musst du dich innerhalb von zwei Wochen beim Bürgeramt ummelden. Der Vermieter muss dir eine Wohnungsgeberbestätigung geben.|ummelden,umziehen
+Kfz-Versicherung|Die Kfz-Haftpflicht ist in Deutschland Pflicht. Wechseln kann man meist zum 30. November, damit es ab 1. Januar gilt.|autoversicherung wechseln
+Haftpflichtversicherung|Eine private Haftpflichtversicherung zahlt, wenn du anderen aus Versehen einen Schaden zufügst. Sie gilt als eine der wichtigsten Versicherungen.|privathaftpflicht

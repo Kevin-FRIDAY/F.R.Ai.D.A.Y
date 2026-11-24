@@ -1,0 +1,34 @@
+# mac|Mac & iPhone Tipps|⌘
+# Titel|Text|Aliase
+Kopieren und Einfügen|Am Mac kopierst du mit Befehlstaste und C, fügst mit Befehlstaste und V ein und schneidest mit Befehlstaste und X aus.|kopieren,einfügen,copy paste,befehl c
+Rückgängig|Befehlstaste und Z macht den letzten Schritt rückgängig, Befehl, Umschalt und Z stellt ihn wieder her.|rückgängig machen,undo
+Spotlight|Mit Befehlstaste und Leertaste öffnest du die Spotlight-Suche, damit findest du Apps, Dateien und kannst sogar rechnen.|suche mac,befehl leertaste
+App beenden|Befehlstaste und Q beendet eine App ganz. Befehl und W schließt nur das Fenster.|befehl q,programm beenden
+Sofort beenden|Hängt eine App: Befehl, Wahltaste und Escape öffnet das Fenster Sofort beenden.|app hängt,programm hängt,force quit
+Zwischen Apps wechseln|Mit Befehlstaste und Tab wechselst du zwischen offenen Apps.|befehl tab,app wechseln
+Bildschirmfoto Mac|Befehl, Umschalt und 3 fotografiert den ganzen Bildschirm, Befehl, Umschalt und 4 einen Ausschnitt, Befehl, Umschalt und 5 öffnet das Bildschirmfoto-Menü mit Videoaufnahme.|screenshot mac,bildschirmfoto machen
+Bildschirm sperren|Mit Control, Befehl und Q sperrst du den Mac sofort.|mac sperren
+Emoji am Mac|Mit Control, Befehl und Leertaste oder der Globus-Taste und E öffnest du die Emoji-Auswahl.|emoji tastatur mac
+Suchen im Text|Befehlstaste und F sucht im aktuellen Dokument oder auf der Webseite.|befehl f,suchen
+Neuer Tab|In Safari öffnet Befehl und T einen neuen Tab, Befehl, Umschalt und T holt einen geschlossenen Tab zurück.|safari tab,tab wiederherstellen
+Seite neu laden|Befehl und R lädt eine Webseite neu. Befehl, Wahltaste und R lädt in Safari ohne Zwischenspeicher neu.|neu laden,reload
+Vollbild Mac|Control, Befehl und F schaltet eine App in den Vollbildmodus. Bei mir reicht auch die Taste F.|vollbild
+Datei umbenennen|Datei im Finder auswählen und Eingabetaste drücken, dann kannst du den Namen ändern.|umbenennen
+Papierkorb|Befehl und Rückschritttaste legt eine ausgewählte Datei in den Papierkorb.|datei löschen mac
+Finder-Ordner öffnen|Im Finder öffnet Befehl, Umschalt und G das Fenster Gehe zu Ordner, dort kannst du zum Beispiel ~/Friday eingeben.|gehe zu ordner
+Programme Ordner|Befehl, Umschalt und A öffnet im Finder den Programme-Ordner, Befehl, Umschalt und D den Schreibtisch.|programme öffnen
+Akkustand Mac|Den Akku siehst du oben rechts in der Menüleiste. Unter Systemeinstellungen, Batterie siehst du den Verlauf und den Zustand.|batterie mac
+Mac neu starten|Apfel-Menü oben links, dann Neustart. Hängt alles, Ein-Taste etwa 10 Sekunden gedrückt halten.|neustart mac
+Speicher frei machen|Unter Apfel-Menü, Systemeinstellungen, Allgemein, Speicher siehst du, was Platz belegt, und bekommst Empfehlungen zum Aufräumen.|speicherplatz mac,festplatte voll
+Aktivitätsanzeige|Die Aktivitätsanzeige unter Programme, Dienstprogramme zeigt, welche App wie viel Prozessor und Speicher braucht.|activity monitor
+Diktieren Mac|Zweimal die Funktions- oder Mikrofontaste drücken startet das Diktieren, du sprichst und der Mac schreibt.|diktieren,diktierfunktion
+iPhone Screenshot|Am iPhone mit Face ID drückst du Seitentaste und Lauter gleichzeitig, bei Home-Taste Seitentaste und Home-Taste.|screenshot iphone
+iPhone neu starten|iPhone erzwungen neu starten: Lauter kurz drücken, Leiser kurz drücken, dann Seitentaste gedrückt halten bis das Apple-Logo kommt.|iphone hängt,neustart iphone
+iPhone Akku schonen|Unter Einstellungen, Batterie, Laden kannst du das Laden auf 80 Prozent begrenzen, das schont den Akku langfristig.|akku schonen iphone
+Friday zum Home-Bildschirm|Öffne mich in Safari, tippe auf Teilen, dann Zum Home-Bildschirm. So bin ich wie eine App auf dem iPhone.|friday als app,web app iphone
+Kurzbefehle|Mit der App Kurzbefehle auf iPhone und Mac kannst du Abläufe automatisieren, zum Beispiel mit Siri eine Frage an mich schicken.|shortcuts,siri kurzbefehl
+Fokus|Mit Fokus auf iPhone und Mac schaltest du Mitteilungen gezielt stumm, etwa beim Schlafen oder Arbeiten.|nicht stören
+Wo ist|Mit der App Wo ist findest du verlorene Apple-Geräte und AirTags. Bei Verlust kannst du dort das Gerät sperren oder einen Ton abspielen.|find my,iphone suchen
+Taschenlampe iPhone|Die Taschenlampe schaltest du im Kontrollzentrum ein, oder sag Hey Siri, Taschenlampe an.|taschenlampe
+Bildschirmzeit|Unter Einstellungen, Bildschirmzeit siehst du, wie lange du welche Apps nutzt, und kannst Grenzen setzen.|screen time
+WLAN-Passwort teilen|Hält ein Freund sein iPhone neben deins und will in dein WLAN, fragt dein iPhone, ob es das Passwort teilen soll.|wlan teilen

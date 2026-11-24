@@ -1,0 +1,63 @@
+# tiere|Tiere|🐾
+# Titel|Text|Aliase
+Gepard|Der Gepard ist das schnellste Landtier und erreicht kurz über 100 Kilometer pro Stunde.|schnellstes tier an land,schnellstes landtier
+Wanderfalke|Der Wanderfalke ist im Sturzflug mit über 300 Kilometern pro Stunde das schnellste Tier der Welt.|schnellstes tier,schnellster vogel
+Blauwal|Der Blauwal ist das größte Tier, das je gelebt hat, bis zu 30 Meter lang und 150 Tonnen schwer. Sein Herz ist so groß wie ein Kleinwagen.|größtes tier,groesstes tier
+Afrikanischer Elefant|Der Afrikanische Elefant ist das größte Landtier, bis zu 6 Tonnen schwer. Elefanten sind etwa 22 Monate trächtig und erkennen sich im Spiegel.|elefant,elefanten,größtes landtier
+Giraffe|Die Giraffe ist das höchste Tier, bis zu 6 Meter hoch. Sie hat wie wir nur sieben Halswirbel.|giraffen
+Löwe|Löwen leben als einzige Großkatzen in Rudeln. Ein Brüllen ist bis zu 8 Kilometer weit zu hören.|löwen,loewe
+Tiger|Der Tiger ist die größte Raubkatze. Jedes Tier hat ein einmaliges Streifenmuster, wie ein Fingerabdruck.|tiger raubkatze
+Hund|Hunde stammen vom Wolf ab und sind seit über 15.000 Jahren Begleiter des Menschen. Sie riechen bis zu 100.000-mal besser als wir und werden im Schnitt 10 bis 13 Jahre alt.|hunde
+Katze|Katzen schlafen 12 bis 16 Stunden am Tag und werden im Schnitt 12 bis 18 Jahre alt. Schnurren kann beruhigend wirken.|katzen
+Pferd|Pferde können im Stehen dösen und werden 25 bis 30 Jahre alt.|pferde
+Kuh|Eine Milchkuh gibt etwa 25 bis 30 Liter Milch am Tag und hat vier Magenabteilungen.|kühe,rind
+Schwein|Schweine sind sehr intelligent, klüger als viele Hunde, und können nicht schwitzen, darum suhlen sie sich im Schlamm.|schweine
+Delfin|Delfine sind Säugetiere, sehr intelligent und schlafen mit einer Gehirnhälfte, damit sie weiter atmen können.|delfine,delphin
+Hai|Haie gibt es seit über 400 Millionen Jahren, länger als Bäume. Ihr Skelett besteht aus Knorpel.|haie,weißer hai
+Oktopus|Ein Oktopus hat drei Herzen, blaues Blut und neun Gehirne, eines zentral und je eines in den Armen.|krake,tintenfisch
+Pinguin|Pinguine sind Vögel, die nicht fliegen, aber hervorragend schwimmen. Fast alle leben auf der Südhalbkugel.|pinguine
+Eisbär|Eisbären haben unter dem weißen Fell schwarze Haut. Sie leben in der Arktis und sind die größten Landraubtiere.|eisbaer
+Panda|Der Große Panda frisst fast nur Bambus, bis zu 12 Stunden am Tag.|pandabär
+Koala|Koalas schlafen bis zu 20 Stunden am Tag und fressen fast nur Eukalyptus.|koalabär
+Känguru|Kängurus können bis zu 9 Meter weit springen und tragen ihre Jungen im Beutel.|kaenguru
+Faultier|Faultiere bewegen sich so langsam, dass auf ihrem Fell Algen wachsen. Sie steigen nur etwa einmal pro Woche zum Toilettengang vom Baum.|faultiere
+Schildkröte|Riesenschildkröten können über 150 Jahre alt werden. Die Galápagos-Schildkröte gehört zu den langlebigsten Landtieren.|schildkroete,schildkröten
+Grönlandwal|Grönlandwale können über 200 Jahre alt werden, das älteste bekannte Säugetier.|ältestes säugetier
+Ameise|Ameisen können ein Vielfaches ihres Gewichts tragen. Auf der Erde leben geschätzt 20 Billiarden Ameisen.|ameisen
+Biene|Eine Honigbiene macht in ihrem Leben nur etwa einen Teelöffel Honig. Ein Volk hat im Sommer bis zu 50.000 Bienen.|bienen
+Schmetterling|Schmetterlinge schmecken mit den Füßen. Aus der Raupe wird in der Puppe ein Falter.|schmetterlinge
+Spinne|Spinnen sind keine Insekten, sie haben acht Beine. Spinnenseide ist im Verhältnis stärker als Stahl.|spinnen
+Mücke|Nur weibliche Mücken stechen, sie brauchen Blut für ihre Eier. Mücken gelten wegen übertragener Krankheiten als gefährlichstes Tier für Menschen.|mücken,muecke
+Krokodil|Krokodile gibt es seit rund 200 Millionen Jahren, sie haben mit den Dinosauriern gelebt.|krokodile,alligator
+Schlange|Schlangen riechen mit der Zunge und können ihren Kiefer weit öffnen. In Deutschland leben sechs Arten, gefährlich ist nur die Kreuzotter, und das selten.|schlangen,kreuzotter
+Adler|Adler sehen etwa viermal schärfer als Menschen. Der Seeadler ist der größte Greifvogel Deutschlands.|adler vogel,seeadler
+Eule|Eulen können ihren Kopf um bis zu 270 Grad drehen und fliegen fast lautlos.|eulen,uhu
+Papagei|Papageien können Wörter nachsprechen, manche werden über 80 Jahre alt.|papageien
+Kolibri|Kolibris sind die kleinsten Vögel, schlagen bis zu 80-mal pro Sekunde mit den Flügeln und können rückwärts fliegen.|kolibris
+Strauß|Der Strauß ist der größte Vogel, legt die größten Eier und läuft bis zu 70 Kilometer pro Stunde.|strauss
+Fledermaus|Fledermäuse sind die einzigen Säugetiere, die richtig fliegen können. Sie orientieren sich mit Ultraschall-Echos.|fledermäuse
+Igel|Igel haben etwa 6.000 bis 8.000 Stacheln und halten Winterschlaf.|igel winterschlaf
+Eichhörnchen|Eichhörnchen vergraben Nüsse als Vorrat und vergessen viele davon, so pflanzen sie neue Bäume.|eichhoernchen
+Fuchs|Füchse leben auch in Städten wie Berlin und hören eine Maus unter Schnee.|füchse,rotfuchs
+Wolf|Wölfe leben in Rudeln und sind seit etwa 2000 wieder in Deutschland heimisch, vor allem im Osten und Norden.|wölfe
+Bär|Braunbären können bis zu 50 Kilometer pro Stunde schnell laufen. In Deutschland leben keine wild.|bären,braunbär
+Gorilla|Gorillas sind die größten Menschenaffen und teilen etwa 98 Prozent ihrer DNA mit uns.|gorillas
+Schimpanse|Schimpansen sind unsere nächsten Verwandten, rund 98,8 Prozent gleiche DNA. Sie benutzen Werkzeuge.|schimpansen
+Kamel|Kamele speichern im Höcker Fett, kein Wasser. Sie können in kurzer Zeit über 100 Liter trinken.|kamele,dromedar
+Nashorn|Nashörner sind stark bedroht. Ihr Horn besteht aus Keratin, wie unsere Fingernägel.|nashörner
+Nilpferd|Das Flusspferd gilt als eines der gefährlichsten Tiere Afrikas.|flusspferd
+Zebra|Jedes Zebra hat ein einzigartiges Streifenmuster.|zebras
+Axolotl|Der Axolotl ist ein mexikanischer Schwanzlurch, der verlorene Körperteile wie Beine nachwachsen lassen kann.|
+Bärtierchen|Bärtierchen sind winzige Tiere, die sogar das Weltall, extreme Kälte und Strahlung überleben können.|baertierchen
+Qualle|Manche Quallen gibt es seit über 500 Millionen Jahren. Sie bestehen zu etwa 95 Prozent aus Wasser.|quallen
+Seepferdchen|Bei Seepferdchen bekommen die Männchen die Babys.|seepferdchen männchen
+Goldfisch|Goldfische haben ein viel besseres Gedächtnis als drei Sekunden, sie merken sich Dinge über Monate.|goldfische
+Hummel|Hummeln fliegen schon bei Kälte und summen Blüten an, damit sie Pollen freigeben.|hummeln
+Regenwurm|Regenwürmer lockern und düngen den Boden. Unter einem Quadratmeter Wiese leben oft über 100.
+Storch|Weißstörche ziehen im Winter bis nach Afrika und kehren oft zum selben Nest zurück.|störche
+Kuckuck|Der Kuckuck legt seine Eier in fremde Nester und lässt andere Vögel brüten.|
+Hamster|Hamster tragen Futter in ihren Backentaschen und sind nachtaktiv.|hamster haustier
+Kaninchen|Kaninchen brauchen Gesellschaft, mindestens einen Artgenossen, und ihre Zähne wachsen ein Leben lang.|kaninchen haustier,hase
+Wellensittich|Wellensittiche stammen aus Australien und sind gesellig, man hält sie mindestens zu zweit.|wellensittiche
+Mammut|Mammuts waren behaarte Elefanten der Eiszeit. Die letzten starben vor etwa 4.000 Jahren auf einer Insel in Sibirien.|wollhaarmammut
+Tyrannosaurus Rex|Der Tyrannosaurus Rex lebte vor rund 68 bis 66 Millionen Jahren, war bis zu 12 Meter lang und hatte bananengroße Zähne.|t rex,t-rex

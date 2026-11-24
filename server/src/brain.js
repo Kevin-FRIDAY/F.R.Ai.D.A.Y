@@ -31,6 +31,7 @@ import { setzeAuftrag, auftragFertig, werkzeugName } from "./auftrag.js";
 import * as logbuch from "./logbuch.js";
 import * as oekosystem from "./oekosystem.js";
 import { quickCommand as datenbankQuick } from "./datenbank.js";
+import { quickCommand as lexikonQuick } from "./wissensbank.js";
 import { tempoFuerFrage } from "./denker.js";
 import { quickCommand as kommandoQuick } from "./kommando.js";
 import { quickCommand as zentraleQuick } from "./zentrale.js";
@@ -480,6 +481,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
+  // Fridays Lexikon (v1.156.0): rund 1.600 Wissens-Einträge ohne Claude und ohne Internet
+  // ("Was ist ein ETF?", "Wer war Marie Curie?", "Hauptstadt von Bayern", "Was passierte 1989?").
+  if (mode !== "translate" && !image && text) {
+    try {
+      const lx = lexikonQuick(text);
+      if (lx) { actions.push(...lx.actions); return finish(lx.answer); }
+    } catch (err) {
+      console.error("Lexikon:", err.message);
+    }
+  }
+
   // Kosten-Deckel (v1.135.0): Grenze pro Stunde/Tag erreicht → nur Offline-Befehle, kein Claude.
   const deckel = deckelSperre();
   if (deckel) {
@@ -595,6 +607,13 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
         if (off && off.answer !== notfallText()) { actions.push(...off.actions); return finish(off.answer); }
       } catch (err) {
         console.error("Offline-Gehirn (Notfall):", err.message);
+      }
+      // Claude nicht erreichbar: im Lexikon auch ungefähre Treffer suchen.
+      try {
+        const lx = lexikonQuick(text, { locker: true });
+        if (lx) { actions.push(...lx.actions); return finish(lx.answer); }
+      } catch (err) {
+        console.error("Lexikon (Notfall):", err.message);
       }
     }
     nichtGeklappt = true;

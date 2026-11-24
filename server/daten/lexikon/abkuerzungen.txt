@@ -1,0 +1,113 @@
+# abkuerzungen|Abkürzungen|🔤
+# Abkürzung|Bedeutung|Aliase
+z. B.|zum Beispiel|zb
+usw.|und so weiter|usw
+bzw.|beziehungsweise|bzw
+d. h.|das heißt|dh
+u. a.|unter anderem|ua
+ca.|circa, also ungefähr|ca
+evtl.|eventuell|evtl
+ggf.|gegebenenfalls|ggf
+inkl.|inklusive, also eingeschlossen|inkl
+zzgl.|zuzüglich, also kommt noch dazu|zzgl
+MwSt.|Mehrwertsteuer|mwst
+Nr.|Nummer|
+Tel.|Telefon|
+Str.|Straße|
+PLZ|Postleitzahl|
+AGB|Allgemeine Geschäftsbedingungen|
+GmbH|Gesellschaft mit beschränkter Haftung, eine Firmenform, bei der man nur mit dem Firmenvermögen haftet. Gründung mit mindestens 25.000 Euro Stammkapital.|gmbh
+UG|Unternehmergesellschaft (haftungsbeschränkt), die Mini-GmbH, gründbar schon ab 1 Euro Stammkapital.|ug haftungsbeschränkt
+AG|Aktiengesellschaft, eine Firma, deren Kapital in Aktien aufgeteilt ist.|
+e. V.|eingetragener Verein|ev,e.v.
+KFZ|Kraftfahrzeug|kfz
+TÜV|Technischer Überwachungsverein, prüft unter anderem bei der Hauptuntersuchung, ob ein Auto verkehrssicher ist.|tuev
+ADAC|Allgemeiner Deutscher Automobil-Club|
+PKW|Personenkraftwagen|pkw
+LKW|Lastkraftwagen|lkw
+ÖPNV|öffentlicher Personennahverkehr, also Bus, Bahn und Tram|oepnv
+DB|Deutsche Bahn|
+ICE|Intercity-Express, der schnellste Zug der Deutschen Bahn, bis 300 Kilometer pro Stunde.|
+BRD|Bundesrepublik Deutschland|
+DDR|Deutsche Demokratische Republik, von 1949 bis 1990 der Staat im Osten Deutschlands.|
+EU|Europäische Union|
+UN|United Nations, Vereinte Nationen|uno
+NATO|North Atlantic Treaty Organization, ein Verteidigungsbündnis von heute 32 Staaten, gegründet 1949.|nato
+WHO|World Health Organization, Weltgesundheitsorganisation der UNO mit Sitz in Genf.|
+UNESCO|Organisation der Vereinten Nationen für Bildung, Wissenschaft und Kultur. Sie vergibt den Titel Weltkulturerbe.|unesco
+FIFA|Fédération Internationale de Football Association, der Weltfußballverband.|fifa
+UEFA|Union of European Football Associations, der europäische Fußballverband.|uefa
+DFB|Deutscher Fußball-Bund|dfb
+NASA|National Aeronautics and Space Administration, die US-Raumfahrtbehörde.|
+CERN|Europäische Organisation für Kernforschung bei Genf, mit dem größten Teilchenbeschleuniger der Welt. Hier entstand das World Wide Web.|cern
+GPS|Global Positioning System, Satellitennavigation|
+USB|Universal Serial Bus|
+PDF|Portable Document Format, ein Dateiformat für Dokumente, das überall gleich aussieht.|
+JPG|Joint Photographic Experts Group, ein gängiges Bildformat für Fotos.|jpeg
+PNG|Portable Network Graphics, ein Bildformat ohne Qualitätsverlust, auch mit durchsichtigem Hintergrund.|
+GIF|Graphics Interchange Format, ein Bildformat, oft für kleine Animationen.|
+URL|Uniform Resource Locator, die Adresse einer Webseite|
+WWW|World Wide Web|
+HTML|Hypertext Markup Language|
+CPU|Central Processing Unit, der Hauptprozessor|
+GPU|Graphics Processing Unit, der Grafikprozessor|
+RAM|Random Access Memory, der Arbeitsspeicher|
+SSD|Solid State Drive, eine schnelle Festplatte ohne bewegliche Teile|
+LED|Light Emitting Diode, Leuchtdiode|
+LCD|Liquid Crystal Display, Flüssigkristallbildschirm|
+WLAN|Wireless Local Area Network, kabelloses Netzwerk|
+LTE|Long Term Evolution, der 4G-Mobilfunk|
+SIM|Subscriber Identity Module, die Karte oder eSIM, die dein Handy im Mobilfunknetz anmeldet.|sim karte,esim
+PIN|Persönliche Identifikationsnummer|
+TAN|Transaktionsnummer, Einmalcode beim Online-Banking|
+IBAN|International Bank Account Number, internationale Kontonummer|
+BIC|Business Identifier Code, die internationale Bankleitzahl|
+EC|Electronic Cash, heute meist Girocard|girocard
+ETF|Exchange Traded Fund, börsengehandelter Indexfonds|
+KI|Künstliche Intelligenz|
+AI|Artificial Intelligence, englisch für Künstliche Intelligenz|
+LLM|Large Language Model, großes Sprachmodell|
+API|Application Programming Interface, Programmierschnittstelle|
+FAQ|Frequently Asked Questions, häufig gestellte Fragen|
+DIY|Do it yourself, selbst gemacht|
+ASAP|As soon as possible, so schnell wie möglich|asap
+FYI|For your information, zu deiner Information|
+LOL|Laughing out loud, laut lachen|
+OMG|Oh my God|
+BTW|By the way, übrigens|
+IMHO|In my humble opinion, meiner bescheidenen Meinung nach|
+CEO|Chief Executive Officer, Geschäftsführer oder Vorstandschef|
+CFO|Chief Financial Officer, Finanzchef|
+CTO|Chief Technology Officer, Technikchef|
+HR|Human Resources, Personalabteilung|
+KPI|Key Performance Indicator, eine wichtige Kennzahl|
+B2B|Business to Business, Geschäft zwischen Firmen|
+B2C|Business to Consumer, Geschäft mit Privatkunden|
+SEO|Search Engine Optimization, Suchmaschinenoptimierung, damit eine Webseite bei Google weit oben steht.|
+DSGVO|Datenschutz-Grundverordnung, das EU-Gesetz zum Schutz persönlicher Daten seit 2018.|dsgvo
+GEZ|frühere Gebühreneinzugszentrale, heute heißt es Rundfunkbeitrag, zuletzt 18,36 Euro im Monat pro Wohnung.|rundfunkbeitrag
+BAföG|Bundesausbildungsförderungsgesetz, staatliche Unterstützung für Studium und Schule.|bafoeg
+AOK|Allgemeine Ortskrankenkasse|
+TK|Techniker Krankenkasse|
+SPD|Sozialdemokratische Partei Deutschlands|
+CDU|Christlich Demokratische Union Deutschlands|
+CSU|Christlich-Soziale Union in Bayern|
+FDP|Freie Demokratische Partei|
+AfD|Alternative für Deutschland|
+ZDF|Zweites Deutsches Fernsehen|
+ARD|Arbeitsgemeinschaft der öffentlich-rechtlichen Rundfunkanstalten der Bundesrepublik Deutschland|
+BKA|Bundeskriminalamt|
+BND|Bundesnachrichtendienst|
+THW|Technisches Hilfswerk, hilft bei Katastrophen|
+DRK|Deutsches Rotes Kreuz|
+Abi|Abitur, der Schulabschluss für die Uni|abitur
+Azubi|Auszubildender, jemand in der Berufsausbildung|
+WG|Wohngemeinschaft|
+k. o.|knockout, also erschöpft oder besiegt|ko
+o. k.|okay, in Ordnung|ok
+VIP|Very Important Person, besonders wichtige Person|
+DJ|Discjockey|
+HD|High Definition, hohe Bildauflösung|
+4K|Bildauflösung von etwa 4.000 Pixeln in der Breite|
+F.R.I.D.A.Y.|Female Replacement Intelligent Digital Assistant Youth, so heißt Tony Starks KI in den Marvel-Filmen. Bei mir schreibt man es F.R.Ai.D.A.Y.|friday,f.r.ai.d.a.y
+J.A.R.V.I.S.|Just A Rather Very Intelligent System, die erste KI von Tony Stark.|jarvis
