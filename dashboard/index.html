@@ -1350,8 +1350,11 @@
       <aside class="ws-side">
         <form id="ws-form" class="ws-form">
           <label for="ws-auftrag">Neuer Auftrag</label>
-          <textarea id="ws-auftrag" rows="4" placeholder="z. B. Friseursalon „Mira“ in Berlin-Neukölln, modern und hell, Leistungen mit Preisen, Online-Termin per Mail, Öffnungszeiten"></textarea>
-          <button id="ws-go" class="ws-go">Webseite bauen</button>
+          <textarea id="ws-auftrag" rows="4" placeholder="z. B. Friseursalon „Mira“ in Berlin-Neukölln, Leistungen mit Preisen, Online-Termin per Mail, Öffnungszeiten"></textarea>
+          <div class="ws-wahl"><span>Stil</span><div id="ws-stile" class="ws-stile" role="radiogroup" aria-label="Design-Stil"></div></div>
+          <label class="ws-wahl"><span>Branche</span><select id="ws-branche"><option value="">Automatisch erkennen</option></select></label>
+          <button id="ws-go" class="ws-go">✦ Webseite entwerfen (Claude)</button>
+          <button id="ws-sofort" type="button" class="ws-sofort" title="Friday baut sofort aus ihren Profi-Vorlagen – ohne Claude, kostet kein Guthaben">⚡ Sofort-Vorlage · kostenlos</button>
           <span id="ws-live-marke" class="ws-live-marke" title="Du siehst live, wie Friday programmiert – mit Countdown. Tipp: „… in 30 Minuten“"><span>⚡ Live-Bau mit Countdown</span></span>
         </form>
         <p id="ws-msg" class="ws-msg"></p>
@@ -1378,10 +1381,13 @@
       <div id="ws-detail" class="ws-detail hidden">
         <div class="ws-bar">
           <b id="ws-titel"></b>
+          <div id="ws-geraet" class="ws-geraet" role="group" aria-label="Vorschau-Größe"><button type="button" data-w="" class="on" title="Computer">🖥</button><button type="button" data-w="820" title="Tablet">▭</button><button type="button" data-w="390" title="Handy">📱</button></div>
+          <button id="ws-note" type="button" class="ws-note hidden" title="Qualitäts-Check"></button>
           <button id="ws-download" class="chip primary">Herunterladen</button>
           <button id="ws-ordner" class="chip">Im Finder</button>
         </div>
-        <iframe id="ws-frame" class="ws-frame" sandbox="allow-scripts allow-forms" title="Vorschau"></iframe>
+        <ul id="ws-checks" class="ws-checks hidden"></ul>
+        <div class="ws-frame-box"><iframe id="ws-frame" class="ws-frame" sandbox="allow-scripts allow-forms" title="Vorschau"></iframe></div>
         <div class="ws-bottom">
           <div class="ws-angebot"><h3>ANGEBOT</h3><p id="ws-angebot"></p><span id="ws-preis" class="ws-preis"></span> <button id="ws-copy" class="chip">Angebot kopieren</button></div>
           <div class="ws-actions">
