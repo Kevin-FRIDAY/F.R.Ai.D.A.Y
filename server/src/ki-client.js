@@ -44,17 +44,31 @@ function ersatzGrund(err) {
   return `Claude nicht erreichbar (${String(err?.message || err).slice(0, 80)})`;
 }
 
-// v1.160.0: Lokales KI-Gehirn (Ollama) als letzte Stufe – oder immer, wenn Boss "denk lokal" gesagt hat.
+// v1.160.0/v1.161.0: Ollama (lokal oder Cloud).
+//   · immer   → nur Ollama
+//   · sparen  → Ollama zuerst, bei Fehler Claude/OpenRouter (spart Guthaben)
+//   · notfall → Ollama als letzte Stufe, wenn Claude und OpenRouter ausfallen
 async function mitErsatz(versuch, params) {
-  if (OL.immer()) { OL.eingesprungen("denk lokal"); return OL.erstelle(params); }
+  if (OL.immer()) { OL.eingesprungen("Modus: nur Ollama"); return OL.erstelle(params); }
+  let ollamaVersucht = false;
+  if (OL.sparen() && OL.passtZu(params)) {
+    ollamaVersucht = true;
+    try {
+      const r = await OL.erstelle(params);
+      OL.eingesprungen("Spar-Modus");
+      return r;
+    } catch (err) {
+      console.error("Spar-Modus: Ollama klappt nicht, Claude übernimmt:", String(err?.message || err).slice(0, 160));
+    }
+  }
   try {
     return await mitErsatzOnline(versuch, params);
   } catch (err) {
-    if (!OL.bereit() || (err?.status && !istAusfall(err)) || err?.ersatzNichtMoeglich) throw err;
-    console.error("Claude/OpenRouter fallen aus, lokales Gehirn springt ein:", String(err?.message || err).slice(0, 160));
+    if (ollamaVersucht || !OL.bereit() || (err?.status && !istAusfall(err)) || err?.ersatzNichtMoeglich) throw err;
+    console.error("Claude/OpenRouter fallen aus, Ollama springt ein:", String(err?.message || err).slice(0, 160));
     OL.eingesprungen(ersatzGrund(err));
     try { return await OL.erstelle(params); } catch (olFehler) {
-      console.error("Lokales Gehirn:", olFehler.message);
+      console.error("Ollama:", olFehler.message);
       throw err;
     }
   }

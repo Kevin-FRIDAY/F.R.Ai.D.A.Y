@@ -12,7 +12,7 @@ Alles läuft **ohne Claude-Guthaben**. Nur die zwei Knöpfe mit „braucht Gutha
 | 📰 Eigene Nachrichten (RSS) | „Was gibt's Neues bei Heise?“, „Lies mir meine Nachrichten vor“ | Quellen im Fenster antippen oder eigene Feed-Adresse eintragen. |
 | 📦 Paket-Verfolgung | „Verfolge Paket 0034…“, „Wo ist mein Paket?“ | Für DHL-Live-Status: kostenloser Schlüssel von developer.dhl.com („Shipment Tracking – Unified“). Andere Dienste: Link. |
 | 🎞 Eigene Mediathek | „Spiel Iron Man“, „Habe ich Avatar in meiner Mediathek?“ | Jellyfin (kostenlos) oder Plex auf dem Mac, Adresse + Schlüssel eintragen. Läuft die Jellyfin-App am Fernseher, startet der Film dort. |
-| 🧠 Lokales KI-Gehirn | „Friday, denk lokal“ / „Friday, denk wieder normal“ | Ollama-App von ollama.com, dann im Terminal `ollama pull llama3.2:3b`, im Fenster „Einspringen“ anhaken. |
+| 🧠 Ollama-Gehirn (Mac oder Cloud) | „Friday, denk sparsam“ / „Friday, denk lokal“ / „Friday, denk wieder normal“ | Siehe Anleitung **56-ollama-gehirn.md** (seit v1.161.0). |
 | 📶 Fritz!Box | „Ist das Internet langsam?“, „Wie ist das Gäste-WLAN?“, „Gäste-WLAN an/aus“ | Leitungswerte gehen sofort. Für Gäste-WLAN: Fritz!Box-Benutzer mit Passwort eintragen. |
 | 🎂 Geburtstage | „Mama hat am 3. März Geburtstag“, „Wann hat Mama Geburtstag?“, „Was soll ich Mama schenken?“ | nichts. Erinnerung 7 Tage vorher (mit Geschenk-Ideen) und am Tag. |
 | 📱 iPhone-Widget | – | App „Scriptable“, im Fenster „Skript kopieren“, in Scriptable einfügen, Widget auf den Home-Bildschirm. |

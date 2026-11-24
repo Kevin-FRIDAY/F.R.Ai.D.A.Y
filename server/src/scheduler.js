@@ -28,7 +28,7 @@ async function checkReminders() {
     if (!r.done && new Date(r.due).getTime() <= now) {
       r.done = true;
       changed = true;
-      await notifyAll("Erinnerung", r.text);
+      await notifyAll("Erinnerung", r.text, { art: "erinnerung" });
       eintragen({ bereich: "erinnerung", titel: `Erinnerung ausgelöst: ${r.text}`, details: "Mitteilung an Handy/Telegram geschickt", quelle: "automatisch" });
       if (isAgentOnline()) sendToAgent("notify", { value: `Erinnerung: ${r.text}` });
     }

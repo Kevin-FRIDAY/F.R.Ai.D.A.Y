@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Meine Konten (v1.161.0): Berliner Sparkasse, Revolut und weitere Banken – NUR ANSEHEN.
+// F.R.Ai.D.A.Y Meine Konten (v1.162.0): Berliner Sparkasse, Revolut und weitere Banken – NUR ANSEHEN.
 // Kontostand, Umsätze, Monats-Auswertung nach Kategorien, Abos. Friday bewegt kein Geld.
 // Live über Enable Banking (kostenlos für eigene Konten) oder per CSV-Datei aus dem Online-Banking.
 (() => {
@@ -53,7 +53,7 @@
       <section data-seite="einrichten" class="hidden">
         <div class="hf-karte">
           <h3>Weg 1 · Live-Verbindung (empfohlen, kostenlos)</h3>
-          <p class="hf-hinweis">Über <b>Enable Banking</b> – ein zugelassener Kontoinformations-Dienst nach EU-Recht (PSD2). Für deine eigenen Konten kostenlos. Die Anmeldung bei der Bank (pushTAN, Revolut-App) machst du direkt bei der Bank – Friday sieht weder PIN noch Passwort. Der Zugang erlaubt nur Lesen und läuft nach spätestens 180 Tagen ab. Anleitung: „56-meine-konten.md“.</p>
+          <p class="hf-hinweis">Über <b>Enable Banking</b> – ein zugelassener Kontoinformations-Dienst nach EU-Recht (PSD2). Für deine eigenen Konten kostenlos. Die Anmeldung bei der Bank (pushTAN, Revolut-App) machst du direkt bei der Bank – Friday sieht weder PIN noch Passwort. Der Zugang erlaubt nur Lesen und läuft nach spätestens 180 Tagen ab. Anleitung: „57-meine-konten.md“.</p>
           <ol class="kt-schritte">
             <li>Auf <a href="https://enablebanking.com/sign-in/" target="_blank" rel="noopener">enablebanking.com</a> kostenlos registrieren → Control Panel → <b>API applications</b> → <b>Add a new application</b>, Umgebung <b>Production</b>.</li>
             <li>„Generate in the browser“ lassen – die <b>.pem-Datei</b> (privater Schlüssel) wird geladen. Gut aufheben.</li>

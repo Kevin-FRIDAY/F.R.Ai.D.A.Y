@@ -24,16 +24,16 @@ export const STUFEN = [
 export const NUR_LESEN = new Set([
   "world_news", "list_tasks", "system_check", "check_mail", "air_quality", "currency", "crypto", "holidays", "iss", "lookup",
   "country_info", "get_weather", "list_reminders", "list_protocols", "get_health", "welt_alarm", "markt_radar", "markt_plus",
-  "dokument_erstellen", "fragebogen_erstellen", "web_search",
+  "dokument_erstellen", "fragebogen_erstellen", "tabelle_erstellen", "web_search",
   "dokumente_suchen", "apple_kontakte", // v1.134.0 (nur lesen)
 ]);
 // Werkzeuge, die nach außen wirken, Geräte schalten oder Friday selbst verändern.
 export const KRITISCH = new Set([
-  "anrufe", "mac", "send_push", "sort_mail", "forget", "update", "run_protocol", "smart_home", "alexa", "fernseher", "hue",
+  "anrufe", "weckruf", "mac", "send_push", "sort_mail", "forget", "update", "run_protocol", "smart_home", "alexa", "fernseher", "hue",
   "video_schnitt", "webseite_bauen", "werkstatt",
 ]);
 export const WERKZEUG_TEXT = {
-  anrufe: "Anruf oder Nachricht", mac: "Aktion auf dem Mac", send_push: "Mitteilung schicken", sort_mail: "Mails sortieren",
+  anrufe: "Anruf oder Nachricht", weckruf: "iPhone klingeln lassen", mac: "Aktion auf dem Mac", send_push: "Mitteilung schicken", sort_mail: "Mails sortieren",
   forget: "Etwas aus dem Gedächtnis löschen", update: "Friday aktualisieren", run_protocol: "Protokoll starten",
   smart_home: "Smart Home schalten", alexa: "Alexa-Routine", fernseher: "Fernseher steuern", hue: "Licht schalten",
   video_schnitt: "Videoschnitt starten", webseite_bauen: "Webseite bauen", werkstatt: "3D-Werkstatt",

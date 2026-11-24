@@ -1,4 +1,4 @@
-# 56 · Meine Konten (Berliner Sparkasse, Revolut) – nur ansehen
+# 57 · Meine Konten (Berliner Sparkasse, Revolut) – nur ansehen
 
 Friday zeigt dir Kontostand, Umsätze, wofür dein Geld geht und welche Abos laufen.
 **Friday kann kein Geld bewegen.** Keine Überweisung, keine Zahlung, kein Dauerauftrag. Das ist fest eingebaut.

@@ -47,7 +47,7 @@ export function eveSchutzAn() {
 }
 
 // Werkzeuge, die in Eve nur simuliert werden (sie steuern Geräte, Konten oder schicken etwas weg).
-export const EVE_SIMULIERT = new Set(["open_app", "mac", "run_protocol", "fernseher", "alexa", "update", "send_push", "anrufe", "kalender", "spotify", "hue", "todoist", "notion", "smart_home", "sort_mail"]);
+export const EVE_SIMULIERT = new Set(["open_app", "mac", "run_protocol", "fernseher", "alexa", "update", "send_push", "anrufe", "weckruf", "kalender", "spotify", "hue", "todoist", "notion", "smart_home", "sort_mail"]);
 export function simuliereWerkzeug(name, input) {
   const was = Object.entries(input || {}).filter(([, v]) => v != null && v !== "").map(([k, v]) => `${k}: ${typeof v === "object" ? JSON.stringify(v) : v}`).join(", ").slice(0, 300);
   simuliert.push({ zeit: new Date().toISOString(), methode: "WERKZEUG", ziel: `${name}${was ? ` (${was})` : ""}` });

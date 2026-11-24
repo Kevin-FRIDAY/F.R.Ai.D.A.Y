@@ -331,7 +331,7 @@ export async function pruefe(id, { vonHand = false } = {}) {
     sichern(d);
     if (ergebnis.meldung) {
       eintragen({ bereich: "waechter", titel: `🔭 ${ergebnis.meldung.titel}`, details: ergebnis.meldung.text, quelle: "automatisch" });
-      const gesendet = await notifyAll(`🔭 ${ergebnis.meldung.titel}`, ergebnis.meldung.text).catch(() => false);
+      const gesendet = await notifyAll(`🔭 ${ergebnis.meldung.titel}`, ergebnis.meldung.text, { art: "friday" }).catch(() => false);
       for (const fn of zuhoerer) { try { fn(ergebnis.meldung, w); } catch { /* egal */ } }
       return { ok: true, waechter: w, meldung: ergebnis.meldung, gesendet };
     }

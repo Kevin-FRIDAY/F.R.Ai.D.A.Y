@@ -22,6 +22,7 @@ import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } fr
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir, startLive, getLiveJob, getLiveAktuell, liveFrei, baueVorlage, vorlagenOptionen, getSiteQualitaet } from "./webseiten.js";
 import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, vorlagenListe, plusFrei } from "./spiele.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
+import { weckrufStart } from "./weckruf.js";
 import { helferRouten, helferStart } from "./helfer.js";
 import { wunschRouten, wunschStart, widgetRoute } from "./wunschliste.js";
 import { wacheRouten, wacheStart } from "./wache.js";
@@ -41,6 +42,7 @@ import * as datenbank from "./datenbank.js";
 import { statistik as lexikonStatistik, zufallsFakt as lexikonFakt } from "./wissensbank.js";
 const { alleEintraege } = datenbank;
 import { alleDokumente, dokument, antwortenSpeichern } from "./dokumente.js";
+import { tabellenPfad, amMacOeffnen } from "./tabellen.js";
 import { auftragStand } from "./auftrag.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
 import { getLandInfo, findeLand } from "./laenderinfo.js";
@@ -338,11 +340,23 @@ app.get("/api/activity", (req, res) => res.json(store.getActivity()));
 // ---------- Friday-Datenbank (Fenster "Wissen"): alles, was gesprochen und gemacht wurde ----------
 store.archivStarten();
 // Dokumente und Fragebögen, die Friday erstellt hat.
-app.get("/api/dokumente", (req, res) => res.json(alleDokumente().slice().reverse().map(({ inhalt, fragen, ...d }) => ({ ...d, fragen: fragen?.length, beantwortet: fragen?.filter((f) => f.antwort.trim()).length }))));
+app.get("/api/dokumente", (req, res) => res.json(alleDokumente().slice().reverse().map(({ inhalt, fragen, blaetter, ...d }) => ({ ...d, fragen: fragen?.length, beantwortet: fragen?.filter((f) => f.antwort.trim()).length }))));
 app.get("/api/dokumente/:id", (req, res) => { const d = dokument(req.params.id); return d ? res.json(d) : res.status(404).json({ error: "Nicht gefunden" }); });
 app.post("/api/dokumente/:id/antworten", (req, res) => {
   const r = antwortenSpeichern(req.params.id, Array.isArray(req.body?.antworten) ? req.body.antworten : [], Boolean(req.body?.fertig));
   return r.error ? res.status(404).json(r) : res.json(r);
+});
+// Excel-Tabellen (v1.161.0): herunterladen und am Mac öffnen.
+app.get("/api/tabellen/:id/datei", (req, res) => {
+  const p = tabellenPfad(req.params.id);
+  if (!p) return res.status(404).json({ error: "Die Datei gibt es nicht mehr." });
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.download(p.voll, p.name, { dotfiles: "deny" });
+});
+app.post("/api/tabellen/:id/oeffnen", (req, res) => {
+  const p = tabellenPfad(req.params.id);
+  if (!p) return res.status(404).json({ error: "Die Datei gibt es nicht mehr." });
+  return amMacOeffnen(p.voll) ? res.json({ ok: true }) : res.status(400).json({ error: "Öffnen geht nur, wenn Friday auf dem Mac läuft." });
 });
 // Wie weit Friday mit dem aktuellen Auftrag ist (Arbeits-Balken).
 app.get("/api/auftrag/fortschritt", (req, res) => res.json(auftragStand(String(req.query.kanal || "web")) || {}));
@@ -759,6 +773,7 @@ server.listen(config.port, config.host, () => {
 });
 logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
+weckrufStart(); // v1.161.0: Termin-Wächter für Weckrufe
 helferStart();
 wunschStart();
 wacheStart();

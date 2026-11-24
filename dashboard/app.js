@@ -657,7 +657,7 @@
       const aktion = (p) => data.actions?.find((a) => typeof a === "string" && a.startsWith(p));
       try {
         // Friday hat ein Dokument oder einen Fragebogen erstellt: gleich zeigen.
-        if (hat("fragebogen_erstellen") || hat("dokument_erstellen")) window.FridayDokumente?.neuestes();
+        if (hat("fragebogen_erstellen") || hat("dokument_erstellen") || hat("tabelle_erstellen")) window.FridayDokumente?.neuestes();
         // Vollbild: im Browser umschalten (auf dem iPhone ist die Home-Bildschirm-App schon Vollbild).
         if (hat("vollbild") || hat("vollbild_aus")) {
           const r = window.FridayVollbild?.sprachBefehl(hat("vollbild"));
@@ -742,7 +742,7 @@
         else if (dokA) window.FridayDokwissen?.open(dokA.startsWith("dokwissen:") ? { frage: decodeURIComponent(dokA.slice(10)), ergebnis: data.answer } : {});
         const appleA = data.actions?.find((a) => a === "apple" || (typeof a === "string" && a.startsWith("apple:")));
         if (appleA) { const [, t, q] = appleA.split(":"); window.FridayApple?.open({ tab: t || "notizen", q: q ? decodeURIComponent(q) : "" }); }
-        // Meine Konten (v1.161.0): "konten", "konten:<tab>", "konten:umsaetze:<suche>"
+        // Meine Konten (v1.162.0): "konten", "konten:<tab>", "konten:umsaetze:<suche>"
         const kontenA = data.actions?.find((a) => a === "konten" || (typeof a === "string" && a.startsWith("konten:")));
         if (kontenA) { const [, t, q] = kontenA.split(":"); window.FridayKonten?.open({ tab: t || "uebersicht", ...(q ? { q: decodeURIComponent(q) } : {}) }); }
         // App-Zentrale (v1.139.0, im Test): "apps" = Übersicht, "apps:<id>" = eine App zeigen, "apps_oeffnen:<id>" = Öffnen-Knopf hervorheben.
