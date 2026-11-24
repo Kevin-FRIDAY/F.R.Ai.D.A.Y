@@ -135,16 +135,34 @@
 
     async ollama(el) {
       const d = await json("/api/wunsch/ollama");
-      el.innerHTML = sprache() + karte(`🧠 Lokales Gehirn ${d.laeuft ? '<span class="hf-badge hf-gut">Ollama läuft</span>' : '<span class="hf-badge hf-warn">Ollama aus</span>'}`, `
-        <p class="hf-hinweis">Ein kleines KI-Modell direkt auf dem Mac: kostenlos, ohne Internet. Friday nimmt es, wenn Claude und das Ersatz-Gehirn nicht können – oder immer, wenn du „Friday, denk lokal“ sagst. Es ist einfacher als Claude.</p>
-        <div class="hf-reihe"><label class="wl-schalter"><input type="checkbox" id="wl-ol-an" ${d.an ? "checked" : ""}> Einspringen, wenn Claude ausfällt</label><label class="wl-schalter"><input type="checkbox" id="wl-ol-immer" ${d.immer ? "checked" : ""}> Immer lokal denken</label></div>
-        <div class="hf-reihe" style="margin-top:8px"><label class="hf-feld grow">Modell<select id="wl-ol-modell">${[...new Set([d.modell, ...d.modelle.map((m) => m.name), ...d.empfohlen.map((m) => m.name)])].map((m) => `<option${m === d.modell ? " selected" : ""}>${esc(m)}</option>`).join("")}</select></label><label class="hf-feld grow">Adresse<input id="wl-ol-url" value="${esc(d.url)}"></label></div>
-        <div class="hf-reihe" style="margin-top:8px"><button class="hf-btn haupt" id="wl-ol-ok" type="button">Speichern</button><button class="hf-btn" id="wl-ol-test" type="button">Probe-Frage</button></div>
-        ${d.stats?.anzahl ? `<p class="hf-hinweis">Schon ${d.stats.anzahl}-mal lokal gedacht, zuletzt ${datum(d.stats.zuletzt)} ${zeit(d.stats.zuletzt)}.</p>` : ""}`)
-        + karte("📥 Einrichten (einmalig)", `<ol class="wl-schritte"><li>Auf <b>ollama.com</b> die Mac-App laden und öffnen.</li><li>Im Terminal: <code>ollama pull ${esc(d.modell)}</code></li><li>Hier „Einspringen“ anhaken und Probe-Frage drücken.</li></ol>
-        <ul class="wl-artikel">${d.empfohlen.map((m) => `<li><b>${esc(m.name)}</b> · ${esc(m.groesse)} – ${esc(m.text)}${d.modelle.some((x) => x.name === m.name) ? ' <span class="hf-badge hf-gut">geladen</span>' : ""}</li>`).join("")}</ul>`);
-      $("#wl-ol-ok").onclick = async () => { try { await json("/api/wunsch/ollama", { body: { an: $("#wl-ol-an").checked, immer: $("#wl-ol-immer").checked, modell: $("#wl-ol-modell").value, url: $("#wl-ol-url").value } }); status("Gespeichert."); zeige(); } catch (err) { status(fehlerText(err), true); } };
-      $("#wl-ol-test").onclick = async () => { status("Denke lokal …"); try { const r = await json("/api/wunsch/ollama/test", { body: {} }); status(`${r.modell}: ${r.text}`); } catch (err) { status(fehlerText(err), true); } };
+      const cloud = d.art === "cloud";
+      const badge = d.laeuft ? `<span class="hf-badge hf-gut">${cloud ? "Cloud verbunden" : "Ollama läuft"}</span>` : `<span class="hf-badge hf-warn">${esc(d.hinweis || "aus")}</span>`;
+      const modi = [["aus", "Aus", "Friday nimmt Ollama nie."], ["notfall", "Notfall", "Nur wenn Claude und OpenRouter nicht können."], ["sparen", "Sparen", "Ollama zuerst, Claude nur wenn's nicht klappt. Spart Guthaben."], ["immer", "Immer", "Nur Ollama, nie Claude."]];
+      const liste = [...new Set([d.modell, ...d.modelle.map((m) => m.name), ...d.empfohlen.map((m) => m.name)])];
+      el.innerHTML = sprache() + karte(`🧠 Ollama als Gehirn ${badge}`, `
+        <p class="hf-hinweis">Ollama ist ein zweites Gehirn für Friday. <b>Auf dem Mac</b>: kostenlos und ohne Internet, aber langsamer. <b>Cloud</b>: große Modelle auf ollama.com mit deinem eigenen Schlüssel, schnell und gut mit Werkzeugen.</p>
+        <div class="hf-reihe"><label class="wl-schalter"><input type="radio" name="wl-ol-art" value="lokal" ${cloud ? "" : "checked"}> 💻 Auf dem Mac</label><label class="wl-schalter"><input type="radio" name="wl-ol-art" value="cloud" ${cloud ? "checked" : ""}> ☁️ Ollama Cloud</label></div>
+        <div class="hf-reihe" style="margin-top:8px">${modi.map(([id, name, text]) => `<label class="wl-schalter" title="${esc(text)}"><input type="radio" name="wl-ol-modus" value="${id}" ${d.modus === id ? "checked" : ""}> ${name}</label>`).join("")}</div>
+        <p class="hf-hinweis" id="wl-ol-modus-text">${esc(modi.find((m) => m[0] === d.modus)?.[2] || "")}</p>
+        <div class="hf-reihe" style="margin-top:8px"><label class="hf-feld grow">Modell<select id="wl-ol-modell">${liste.map((m) => `<option${m === d.modell ? " selected" : ""}>${esc(m)}</option>`).join("")}</select></label>
+        ${cloud ? `<label class="hf-feld grow">API-Schlüssel ${d.schluesselDa ? '<span class="hf-badge hf-gut">gespeichert</span>' : ""}<input id="wl-ol-key" type="password" autocomplete="off" placeholder="${d.schluesselDa ? "leer lassen = behalten" : "von ollama.com → Settings → Keys"}"></label>` : `<label class="hf-feld grow">Adresse<input id="wl-ol-url" value="${esc(d.lokalUrl)}"></label>`}</div>
+        <div class="hf-reihe" style="margin-top:8px"><button class="hf-btn haupt" id="wl-ol-ok" type="button">Speichern</button><button class="hf-btn" id="wl-ol-test" type="button">Probe-Frage</button>${cloud && d.schluesselDa ? '<button class="hf-btn" id="wl-ol-weg" type="button">Schlüssel löschen</button>' : ""}</div>
+        ${d.stats?.anzahl ? `<p class="hf-hinweis">Schon ${d.stats.anzahl}-mal mit Ollama gedacht, zuletzt ${datum(d.stats.zuletzt)} ${zeit(d.stats.zuletzt)}.${d.stats.letzter_fehler ? ` Letzter Fehler: ${esc(d.stats.letzter_fehler)}` : ""}</p>` : ""}`)
+        + karte(cloud ? "📥 Ollama Cloud einrichten (einmalig)" : "📥 Auf dem Mac einrichten (einmalig)", (cloud
+          ? `<ol class="wl-schritte"><li>Auf <b>ollama.com</b> anmelden.</li><li>Settings → <b>Keys</b> → neuen Schlüssel erstellen und kopieren.</li><li>Hier oben einfügen, Modus wählen, Speichern, Probe-Frage. Den Schlüssel nie in einen Chat schreiben.</li></ol>`
+          : `<ol class="wl-schritte"><li>Auf <b>ollama.com</b> die Mac-App laden und öffnen.</li><li>Im Terminal: <code>ollama pull ${esc(d.modell)}</code></li><li>Modus wählen, Speichern, Probe-Frage.</li></ol>`)
+          + `<ul class="wl-artikel">${d.empfohlen.map((m) => `<li><b>${esc(m.name)}</b> · ${esc(m.groesse)} – ${esc(m.text)}${d.modelle.some((x) => x.name === m.name || x.name === `${m.name}:latest`) ? ' <span class="hf-badge hf-gut">da</span>' : ""}</li>`).join("")}</ul>`);
+      const wert = (n) => (el.querySelector(`input[name="${n}"]:checked`) || {}).value;
+      el.querySelectorAll('input[name="wl-ol-modus"]').forEach((r) => { r.onchange = () => { $("#wl-ol-modus-text").textContent = modi.find((m) => m[0] === wert("wl-ol-modus"))?.[2] || ""; }; });
+      el.querySelectorAll('input[name="wl-ol-art"]').forEach((r) => { r.onchange = async () => { try { await json("/api/wunsch/ollama", { body: { art: wert("wl-ol-art"), modus: d.modus === "aus" || wert("wl-ol-art") === "lokal" || d.schluesselDa ? d.modus : "aus" } }); zeige(); } catch (err) { status(fehlerText(err), true); } }; });
+      $("#wl-ol-ok").onclick = async () => {
+        const body = { art: wert("wl-ol-art"), modus: wert("wl-ol-modus"), modell: $("#wl-ol-modell").value };
+        if ($("#wl-ol-url")) body.url = $("#wl-ol-url").value;
+        if ($("#wl-ol-key") && $("#wl-ol-key").value.trim()) body.key = $("#wl-ol-key").value.trim();
+        try { await json("/api/wunsch/ollama", { body }); status("Gespeichert."); zeige(); } catch (err) { status(fehlerText(err), true); }
+      };
+      $("#wl-ol-test").onclick = async () => { status("Ollama denkt …"); try { const r = await json("/api/wunsch/ollama/test", { body: {} }); status(`${r.modell} (${r.sekunden} s): ${r.text}`); } catch (err) { status(fehlerText(err), true); } };
+      if ($("#wl-ol-weg")) $("#wl-ol-weg").onclick = async () => { try { await json("/api/wunsch/ollama", { body: { key: "-", modus: "aus" } }); status("Schlüssel gelöscht."); zeige(); } catch (err) { status(fehlerText(err), true); } };
     },
 
     async fritzbox(el) {

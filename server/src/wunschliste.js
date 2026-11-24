@@ -28,7 +28,7 @@ export const WUENSCHE = [
   { id: "pakete", reiter: "pakete", icon: "📦", titel: "Paket-Verfolgung", sprache: "Friday, wo ist mein Paket?" },
   { id: "rss", reiter: "feeds", icon: "📰", titel: "Eigene Nachrichtenquellen", sprache: "Friday, was gibt's Neues bei Heise?" },
   { id: "jellyfin", reiter: "mediathek", icon: "🎞", titel: "Eigene Mediathek (Jellyfin/Plex)", sprache: "Friday, spiel Iron Man." },
-  { id: "ollama", reiter: "ollama", icon: "🧠", titel: "Lokales KI-Gehirn (Ollama)", sprache: "Friday, denk lokal." },
+  { id: "ollama", reiter: "ollama", icon: "🧠", titel: "Ollama-Gehirn (Mac oder Cloud)", sprache: "Friday, denk sparsam." },
   { id: "fritzbox", reiter: "fritzbox", icon: "📶", titel: "Fritz!Box-Status", sprache: "Friday, ist das Internet langsam?" },
   { id: "geburtstage", reiter: "geburtstage", icon: "🎂", titel: "Geburtstage + Geschenk-Ideen", sprache: "Friday, wann hat Mama Geburtstag?" },
   { id: "widget", reiter: "widget", icon: "📱", titel: "iPhone-Widget", sprache: "–" },
@@ -138,8 +138,9 @@ export function wunschRouten(app, asyncRoute) {
   app.get("/api/wunsch/ollama", r(async () => ollama.status()));
   app.post("/api/wunsch/ollama", r(async (req) => ollama.einstellen(req.body || {})));
   app.post("/api/wunsch/ollama/test", r(async () => {
+    const start = Date.now();
     const a = await ollama.erstelle({ max_tokens: 120, system: "Antworte auf Deutsch in einem Satz.", messages: [{ role: "user", content: "Sag kurz Hallo und wer du bist." }] });
-    return { text: a.content.filter((b) => b.type === "text").map((b) => b.text).join(""), modell: a.model };
+    return { text: a.content.filter((b) => b.type === "text").map((b) => b.text).join(""), modell: a.model, sekunden: Math.round((Date.now() - start) / 100) / 10 };
   }));
 
   // Fritz!Box
