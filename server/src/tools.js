@@ -37,6 +37,8 @@ import { getAirQuality, getExchange, getCrypto, getHolidays, getISS, getWiki } f
 import { toolDefinitions as jarvisTools, istJarvisTool, runJarvisTool } from "./jarvis-paket.js";
 import { toolDefinitions as kontenTools, istKontenTool, runKontenTool } from "./konten.js";
 import { gesundheitUebersicht } from "./apple.js";
+// Werkzeugkasten (v1.161.0): 100 Rechner, Generatoren und Prüfer hinter EINEM Claude-Werkzeug (spart Tokens).
+import { toolDefinition as werkzeugkastenTool, runClaudeTool as runWerkzeugkasten } from "./werkzeugkasten.js";
 
 // Osiris Live-Lagekarte: lokal auf dem Mac (Port 3100), sonst automatisch osirisai.live.
 import { osirisUrl } from "./osiris.js";
@@ -357,7 +359,8 @@ export const toolDefinitions = [
   smartHomeTool,
   ...dienstTools,
   ...kernTools,
-  ...kontenTools, // v1.162.0: Meine Konten (nur lesen)
+  ...kontenTools, // v1.163.0: Meine Konten (nur lesen)
+  werkzeugkastenTool, // v1.162.0: 100 Werkzeuge, ein Eintrag
   ...jarvisTools, // v1.134.0: Dauer-Wächter, Dokumenten-Wissen, Apple Notizen/Kontakte/Musik
 ];
 
@@ -539,7 +542,7 @@ const LOGTITEL = {
   update: (i) => `Update: ${i.action || "prüfen"}`,
 };
 // Diese Bereiche schreiben ihr Logbuch selbst (mit genauerem Ergebnis).
-const LOGBUCH_SELBST = new Set(["spiel_bauen", "anrufe", "werkstatt", "add_task", "add_shopping", "set_reminder", "remember", "forget"]);
+const LOGBUCH_SELBST = new Set(["werkzeugkasten", "spiel_bauen", "anrufe", "werkstatt", "add_task", "add_shopping", "set_reminder", "remember", "forget"]);
 
 /**
  * Führt ein Werkzeug aus und hält es im Logbuch fest.
@@ -608,6 +611,7 @@ async function runToolIntern(name, input = {}, wer = {}) {
   if (istKernTool(name)) return runKernTool(name, input);
   if (istJarvisTool(name)) return runJarvisTool(name, input, wer);
   if (istKontenTool(name)) return runKontenTool(name, input);
+  if (name === "werkzeugkasten") return runWerkzeugkasten(input, wer);
   switch (name) {
     case "world_news": {
       if (!input.country) {

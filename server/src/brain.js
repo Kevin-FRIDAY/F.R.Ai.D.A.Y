@@ -53,6 +53,7 @@ import { fuerKontext as seeleKontext } from "./seele.js";
 import { sperre as deckelSperre } from "./kostendeckel.js";
 import { neuerWaechter as schleifenWaechter } from "./schleifen.js";
 import { quickCommand as jarvisQuick } from "./jarvis-paket.js";
+import { quickCommand as werkzeugQuick } from "./werkzeugkasten.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
@@ -238,7 +239,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Meine Konten (v1.162.0): "wie ist mein Kontostand?", "was habe ich diesen Monat ausgegeben?", "welche Abos habe ich?" –
+  // Meine Konten (v1.163.0): "wie ist mein Kontostand?", "was habe ich diesen Monat ausgegeben?", "welche Abos habe ich?" –
   // ohne Claude, nur lesen. "Überweise 50 Euro …" wird hier freundlich abgelehnt (Friday bewegt kein Geld).
   if (mode !== "translate" && !image && text) {
     try {
@@ -532,6 +533,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (d) { actions.push(...d.actions); return finish(d.answer); }
     } catch (err) {
       console.error("Verbindungs-Schnellbefehl:", err.message);
+    }
+  }
+
+  // Werkzeugkasten (v1.161.0): 100 Rechner & Helfer ohne Claude ("19 Prozent von 250", "QR-Code für …", "Brückentage 2027").
+  if (mode !== "translate" && !image && text) {
+    try {
+      const wk = await werkzeugQuick(text);
+      if (wk) { actions.push(...wk.actions); return finish(wk.answer); }
+    } catch (err) {
+      console.error("Werkzeugkasten:", err.message);
     }
   }
 

@@ -742,7 +742,7 @@
         else if (dokA) window.FridayDokwissen?.open(dokA.startsWith("dokwissen:") ? { frage: decodeURIComponent(dokA.slice(10)), ergebnis: data.answer } : {});
         const appleA = data.actions?.find((a) => a === "apple" || (typeof a === "string" && a.startsWith("apple:")));
         if (appleA) { const [, t, q] = appleA.split(":"); window.FridayApple?.open({ tab: t || "notizen", q: q ? decodeURIComponent(q) : "" }); }
-        // Meine Konten (v1.162.0): "konten", "konten:<tab>", "konten:umsaetze:<suche>"
+        // Meine Konten (v1.163.0): "konten", "konten:<tab>", "konten:umsaetze:<suche>"
         const kontenA = data.actions?.find((a) => a === "konten" || (typeof a === "string" && a.startsWith("konten:")));
         if (kontenA) { const [, t, q] = kontenA.split(":"); window.FridayKonten?.open({ tab: t || "uebersicht", ...(q ? { q: decodeURIComponent(q) } : {}) }); }
         // App-Zentrale (v1.139.0, im Test): "apps" = Übersicht, "apps:<id>" = eine App zeigen, "apps_oeffnen:<id>" = Öffnen-Knopf hervorheben.
@@ -752,6 +752,8 @@
         const appsA = aktion("apps:");
         if (appsA) window.FridayApps?.open({ id: appsA.slice(5), hervor: hat(`apps_oeffnen:${appsA.slice(5)}`) });
         else if (hat("apps")) window.FridayApps?.open();
+        // Werkzeugkasten (v1.162.0): 100 Rechner/Generatoren ohne Claude.
+        window.FridayWerkzeugkasten?.vonAussen(data.actions || []);
         // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede, Stimmungs-Sound.
         if (hat("profil")) window.FridayProfil?.open();
         if (hat("kuehlschrank")) window.FridayKuehl?.open({ tab: hat("kuehlschrank:rezepte") ? "rezepte" : "vorrat" });

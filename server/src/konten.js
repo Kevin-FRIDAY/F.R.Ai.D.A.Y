@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Meine Konten (v1.162.0) – Berliner Sparkasse, Revolut und jede andere Bank, NUR LESEN.
+// F.R.Ai.D.A.Y Meine Konten (v1.163.0) – Berliner Sparkasse, Revolut und jede andere Bank, NUR LESEN.
 //
 // Zwei Wege, beide kostenlos:
 //  1. Live über Enable Banking (PSD2-Kontoinformationsdienst, von der finnischen Finanzaufsicht zugelassen).
