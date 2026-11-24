@@ -15,6 +15,7 @@ import { quickCommand as zerlegeQuick } from "./teilebank.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
 import { quickCommand as sportQuick } from "./sport.js";
 import { quickCommand as archivQuick } from "./archiv.js";
+import { quickCommand as standortQuick } from "./standort.js";
 import { quickCommand as profilQuick, kurzinfo as profilKurzinfo } from "./profil.js";
 import { duFormFrei } from "./anrufe.js";
 import { quickCommand as appsQuick } from "./appzentrale.js";
@@ -437,6 +438,12 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     } catch (err) {
       console.error("App-Zentrale:", err.message);
     }
+  }
+
+  // Standort ("wo bin ich?", "Standort aus", "vergiss meinen Standort") – ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    const sq = standortQuick(text);
+    if (sq) { actions.push(...sq.actions); return finish(sq.answer); }
   }
 
   // Routen & Verbindungen ("wie lange brauche ich nach Hamburg?", "nächster Zug nach Köln") – ohne Claude.

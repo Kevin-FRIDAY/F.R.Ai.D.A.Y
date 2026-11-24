@@ -7,6 +7,9 @@
 import { config } from "./config.js";
 import * as store from "./store.js";
 import { findeTag, findeUhrzeit, ortszeit, teile, U } from "./datum.js";
+import * as google from "./googlemaps.js";
+import * as standortSpeicher from "./standort.js";
+import { laden as profilLaden } from "./profil.js";
 
 const UA = "F.R.Ai.D.A.Y-Assistent/1.103 (privater Sprachassistent)";
 
@@ -27,6 +30,23 @@ const ORTE_DATEI = "routen";
 export function getOrte() {
   const d = store.load(ORTE_DATEI, {});
   return { heim: d.heim || null, arbeit: d.arbeit || null };
+}
+
+// Adresse aus "Mein Profil" (v1.147.0), falls im Routen-Fenster noch kein Zuhause steht
+export function profilAdresse() {
+  try {
+    const p = profilLaden() || {};
+    const ort = [p.plz, p.ort].filter(Boolean).join(" ");
+    return p.strasse && ort ? `${p.strasse}, ${ort}` : "";
+  } catch { return ""; }
+}
+/** Zuhause: aus dem Routen-Fenster, sonst einmalig aus dem Profil übernehmen. */
+export async function heimOrt() {
+  const o = getOrte();
+  if (o.heim) return o.heim;
+  const adr = profilAdresse();
+  if (!adr) return null;
+  try { return await setzeOrt("heim", adr); } catch { return null; }
 }
 export async function setzeOrt(art, text) {
   if (!["heim", "arbeit"].includes(art)) throw new Error("Unbekannter Ort");
@@ -142,13 +162,25 @@ const PROFILE = {
   rad: ["https://routing.openstreetmap.de/routed-bike/route/v1/driving"],
   fuss: ["https://routing.openstreetmap.de/routed-foot/route/v1/driving"],
 };
-async function strasse(art, von, nach) {
+async function strasse(art, von, nach, zeit) {
+  let googleFehler = "";
+  if (google.googleBereit()) {
+    try {
+      const g = await google.route(art, von, nach, { zeit });
+      if (!g.fehler) return g;
+      googleFehler = g.fehler;
+    } catch (err) { googleFehler = err.message; }
+  }
+  const osm = await strasseOsm(art, von, nach);
+  return googleFehler ? { ...osm, googleFehler } : osm;
+}
+async function strasseOsm(art, von, nach) {
   for (const basis of PROFILE[art]) {
     try {
       const j = await holeJson(`${basis}/${von.lon},${von.lat};${nach.lon},${nach.lat}?overview=simplified&geometries=geojson&alternatives=false`, 14000);
       const r = j.routes?.[0];
       if (j.code === "Ok" && r) {
-        return { art, dauer: Math.round(r.duration), distanz: Math.round(r.distance), linie: duenn((r.geometry?.coordinates || []).map(([lo, la]) => [la, lo])) };
+        return { art, dauer: Math.round(r.duration), distanz: Math.round(r.distance), linie: duenn((r.geometry?.coordinates || []).map(([lo, la]) => [la, lo])), quelle: "OpenStreetMap" };
       }
     } catch { /* nächster Server */ }
   }
@@ -223,21 +255,40 @@ let zaehler = 0;
 export const holeErgebnis = (id) => ergebnisse.get(String(id)) || null;
 export const letzteRouteId = () => [...ergebnisse.keys()].pop() || "";
 
+// Gespeicherter Standort (vom iPhone, Mac oder Kurzbefehl), wenn das Gerät gerade keinen mitschickt
+function gemerkterStandort() {
+  const l = standortSpeicher.letzter();
+  if (!l) return null;
+  return { lat: l.lat, lon: l.lon, alterMin: l.alterMin, ort: l.ort };
+}
+function standortOrt(s) {
+  const alt = Number(s.alterMin) || 0;
+  return {
+    name: "Dein Standort", label: s.ort ? `Standort: ${s.ort}` : "Aktueller Standort", lat: s.lat, lon: s.lon, art: "standort",
+    ...(alt >= 15 ? { standortAlter: alt } : {}),
+  };
+}
+
 async function startOrt({ vonText, standort }) {
   const orte = getOrte();
+  const heim = orte.heim || (await heimOrt());
   if (vonText) {
     const t = vonText.toLowerCase();
-    if (/^(zu ?hause|daheim|home|heim)$/.test(t) && orte.heim) return { ...orte.heim, art: "heim", name: "Zuhause" };
+    if (/^(zu ?hause|daheim|home|heim)$/.test(t) && heim) return { ...heim, art: "heim", name: "Zuhause" };
     if (/^(der |meiner )?arbeit$/.test(t) && orte.arbeit) return { ...orte.arbeit, art: "arbeit", name: "Arbeit" };
-    if (/^(hier|meinem standort|mein standort|standort)$/.test(t) && standort) return { name: "Dein Standort", label: "Aktueller Standort", lat: standort.lat, lon: standort.lon, art: "standort" };
-    const o = await finde(vonText, standort || orte.heim);
+    const hier = standort || gemerkterStandort();
+    if (/^(hier|meinem standort|mein standort|standort|📍 mein standort)$/.test(t)) {
+      if (hier) return standortOrt(hier);
+      throw new Error("Deinen Standort kenne ich gerade nicht. Erlaube ihn im Routen-Fenster oder richte den Kurzbefehl „Friday Standort“ ein.");
+    }
+    const o = await finde(vonText, hier || heim);
     if (o) return { ...o, art: "adresse" };
     throw new Error(`Den Startort „${schoen(vonText)}“ habe ich nicht gefunden.`);
   }
-  if (standort && Number.isFinite(standort.lat) && Number.isFinite(standort.lon)) {
-    return { name: "Dein Standort", label: "Aktueller Standort", lat: standort.lat, lon: standort.lon, art: "standort" };
-  }
-  if (orte.heim) return { ...orte.heim, art: "heim", name: "Zuhause" };
+  if (standort && Number.isFinite(standort.lat) && Number.isFinite(standort.lon)) return standortOrt(standort);
+  const gemerkt = gemerkterStandort();
+  if (gemerkt) return standortOrt(gemerkt);
+  if (heim) return { ...heim, art: "heim", name: "Zuhause" };
   const stadt = await finde(config.city);
   if (stadt) return { ...stadt, art: "stadt", name: config.city, hinweis: "Startort ist deine Heimatstadt. Trag im Routen-Fenster deine Adresse ein, dann rechne ich genau ab Haustür." };
   throw new Error("Ich weiß nicht, wo du losfährst. Trag im Routen-Fenster deine Adresse ein.");
@@ -247,8 +298,9 @@ async function zielOrt(nachText, start) {
   const orte = getOrte();
   const t = nachText.toLowerCase();
   if (/^(hause|zu ?hause|daheim|heim)$/.test(t)) {
-    if (orte.heim) return { ...orte.heim, art: "heim", name: "Zuhause" };
-    throw new Error("Deine Heimadresse kenne ich noch nicht. Trag sie im Routen-Fenster ein.");
+    const heim = orte.heim || (await heimOrt());
+    if (heim) return { ...heim, art: "heim", name: "Zuhause" };
+    throw new Error("Deine Heimadresse kenne ich noch nicht. Trag sie im Routen-Fenster oder in deinem Profil ein.");
   }
   if (/^(der |meiner |die )?arbeit$/.test(t)) {
     if (orte.arbeit) return { ...orte.arbeit, art: "arbeit", name: "Arbeit" };
@@ -268,25 +320,28 @@ export async function plane(w) {
   const von = await startOrt({ vonText: w.von, standort: w.standort });
   const nach = await zielOrt(w.nach, von);
   const luft = luftlinie(von, nach);
+  if (nach.art === "heim" && von.art === "standort" && luft < 150) throw new Error("Du bist schon zu Hause, Boss.");
   if (luft < 30) throw new Error("Start und Ziel sind fast derselbe Ort.");
   const zeit = w.zeit ? new Date(w.zeit) : null;
   const jobs = [
-    strasse("auto", von, nach),
-    luft <= 300000 ? strasse("rad", von, nach) : Promise.resolve({ art: "rad", zuWeit: true }),
-    luft <= 40000 ? strasse("fuss", von, nach) : Promise.resolve({ art: "fuss", zuWeit: true }),
+    strasse("auto", von, nach, zeit),
+    luft <= 300000 ? strasse("rad", von, nach, zeit) : Promise.resolve({ art: "rad", zuWeit: true }),
+    luft <= 40000 ? strasse("fuss", von, nach, zeit) : Promise.resolve({ art: "fuss", zuWeit: true }),
     luft >= 400 ? oepnv(von, nach, zeit, w.ankunft) : Promise.resolve({ art: "oepnv", verbindungen: [], zuNah: true }),
   ];
   const [auto, rad, fuss, bahn] = await Promise.all(jobs);
   const id = String(++zaehler);
   const e = {
     id, erstellt: new Date().toISOString(),
-    von: { name: von.name, label: von.label, lat: von.lat, lon: von.lon, art: von.art },
+    von: { name: von.name, label: von.label, lat: von.lat, lon: von.lon, art: von.art, ...(von.standortAlter ? { standortAlter: von.standortAlter } : {}) },
     nach: { name: nach.name, label: nach.label, lat: nach.lat, lon: nach.lon, art: nach.art },
     hinweis: von.hinweis || "",
     zeit: zeit ? zeit.toISOString() : null, ankunft: Boolean(w.ankunft),
     modus: w.modus || "",
     luftlinie: Math.round(luft),
     auto, rad, fuss, oepnv: bahn,
+    google: google.googleBereit(),
+    googleKarte: google.karteAn(),
   };
   e.sprechText = sprechText(e);
   ergebnisse.set(id, e);
@@ -344,13 +399,17 @@ export function sprechText(e) {
     else teile_.push(`Die Strecke ${wie} konnte ich gerade nicht berechnen.`);
     if (s(e.auto)) teile_.push(`Mit dem Auto etwa ${dauerText(e.auto.dauer)}.`);
   } else {
-    if (s(e.auto)) teile_.push(`${ziel} brauchst du mit dem Auto etwa ${dauerText(e.auto.dauer)} für ${kmText(e.auto.distanz)}.`);
-    else teile_.push(`${ziel} sind es Luftlinie ${kmText(e.luftlinie)}.`);
+    if (s(e.auto)) {
+      const stau = e.auto.verkehr ? Math.round((e.auto.dauer - (e.auto.dauerOhneStau || e.auto.dauer)) / 60) : 0;
+      const ueber = e.auto.ueber ? `, über ${e.auto.ueber}` : "";
+      teile_.push(`${ziel} brauchst du mit dem Auto ${e.auto.verkehr ? "gerade" : "etwa"} ${dauerText(e.auto.dauer)} für ${kmText(e.auto.distanz)}${ueber}.${stau >= 3 ? ` Davon sind ${stau} Minuten Verkehr.` : e.auto.verkehr ? " Der Verkehr ist frei." : ""}`);
+    } else teile_.push(`${ziel} sind es Luftlinie ${kmText(e.luftlinie)}.`);
     if (v0) teile_.push(`Mit Bahn und Bus: ${verbindungSatz(v0)}`);
     if (s(e.rad) && e.rad.dauer < 3 * 3600) teile_.push(`Mit dem Fahrrad ${dauerText(e.rad.dauer)}.`);
     if (s(e.fuss) && e.fuss.dauer < 90 * 60) teile_.push(`Zu Fuß ${dauerText(e.fuss.dauer)}.`);
   }
   if (e.hinweis) teile_.push("Ich rechne ab deiner Heimatstadt, die genaue Adresse kannst du im Routen-Fenster eintragen.");
+  if (e.von.standortAlter) teile_.push(`Ich rechne ab deinem letzten Standort von ${standortSpeicher.alterText(e.von.standortAlter)}.`);
   return teile_.join(" ").replace(/\s+/g, " ").trim();
 }
 
@@ -447,9 +506,10 @@ export async function quickCommand(text, opts = {}) {
 // Für Claude (Werkzeug "route_planen")
 export async function routeFuerClaude(input = {}) {
   const e = await plane({ nach: input.nach, von: input.von, modus: input.modus, zeit: input.zeit, ankunft: input.ankunft });
-  const kurz = (r) => (r?.dauer ? { dauer: dauerText(r.dauer), strecke: kmText(r.distanz) } : r?.zuWeit ? "zu weit" : "nicht verfügbar");
+  const kurz = (r) => (r?.dauer ? { dauer: dauerText(r.dauer), strecke: kmText(r.distanz), ...(r.verkehr ? { mit_live_verkehr: true, davon_stau_minuten: Math.max(0, Math.round((r.dauer - (r.dauerOhneStau || r.dauer)) / 60)) } : {}), ...(r.ueber ? { ueber: r.ueber } : {}) } : r?.zuWeit ? "zu weit" : "nicht verfügbar");
   return {
     von: e.von.label, nach: e.nach.label,
+    ...(e.von.standortAlter ? { hinweis_start: `Start ist Boss' letzter bekannter Standort von ${standortSpeicher.alterText(e.von.standortAlter)}` } : {}),
     auto: kurz(e.auto), fahrrad: kurz(e.rad), zu_fuss: kurz(e.fuss),
     bahn_und_bus: (e.oepnv.verbindungen || []).slice(0, 3).map((v) => ({
       ab: uhr(v.ab), an: uhr(v.an), dauer: dauerText(v.dauer), umstiege: v.umstiege,
