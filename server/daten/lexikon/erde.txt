@@ -1,0 +1,75 @@
+# erde|Erde & Rekorde|🌍
+# Titel|Text|Aliase
+Mount Everest|Der Mount Everest im Himalaya ist mit 8.849 Metern der höchste Berg der Erde. 1953 standen Edmund Hillary und Tenzing Norgay als Erste oben.|everest,höchster berg der welt,hoechster berg
+K2|Der K2 im Karakorum ist mit 8.611 Metern der zweithöchste Berg der Erde und gilt als schwieriger als der Everest.|k 2
+Mont Blanc|Der Mont Blanc ist mit rund 4.806 Metern der höchste Berg der Alpen, an der Grenze von Frankreich und Italien.|höchster berg der alpen
+Zugspitze|Die Zugspitze ist mit 2.962 Metern der höchste Berg Deutschlands, an der Grenze zu Österreich.|höchster berg deutschlands,hoechster berg deutschlands
+Kilimandscharo|Der Kilimandscharo in Tansania ist mit 5.895 Metern der höchste Berg Afrikas.|kilimanjaro
+Aconcagua|Der Aconcagua in Argentinien ist mit 6.961 Metern der höchste Berg Amerikas.|
+Mount Kosciuszko|Der Mount Kosciuszko ist mit 2.228 Metern der höchste Berg des australischen Festlands.|
+Denali|Der Denali in Alaska ist mit 6.190 Metern der höchste Berg Nordamerikas.|mount mckinley
+Elbrus|Der Elbrus im Kaukasus ist mit 5.642 Metern der höchste Berg Russlands und oft auch Europas.|
+Nil|Der Nil in Afrika ist mit rund 6.650 Kilometern einer der zwei längsten Flüsse der Erde, je nach Messung knapp vor oder hinter dem Amazonas.|längster fluss der welt,laengster fluss
+Amazonas|Der Amazonas in Südamerika führt mit Abstand das meiste Wasser aller Flüsse und ist rund 6.400 bis 7.000 Kilometer lang.|amazonas fluss
+Rhein|Der Rhein ist rund 1.230 Kilometer lang, davon etwa 865 in Deutschland. Er entspringt in der Schweiz und mündet in den Niederlanden in die Nordsee.|rhein fluss
+Donau|Die Donau ist mit rund 2.850 Kilometern der zweitlängste Fluss Europas. Sie entspringt im Schwarzwald und fließt durch zehn Länder ins Schwarze Meer.|donau fluss
+Elbe|Die Elbe ist rund 1.094 Kilometer lang, entspringt in Tschechien und mündet bei Cuxhaven in die Nordsee.|
+Wolga|Die Wolga in Russland ist mit rund 3.530 Kilometern der längste Fluss Europas.|längster fluss europas
+Längster Fluss Deutschlands|Der längste Fluss durch Deutschland ist der Rhein mit etwa 865 Kilometern auf deutschem Gebiet. Der längste nur in Deutschland fließende Fluss ist die Weser mit Werra, rund 744 Kilometer.|längster fluss in deutschland
+Pazifik|Der Pazifische Ozean ist der größte und tiefste Ozean, größer als alle Landflächen zusammen. Im Marianengraben ist er fast 11.000 Meter tief.|pazifischer ozean,stiller ozean
+Atlantik|Der Atlantische Ozean ist der zweitgrößte Ozean und trennt Europa und Afrika von Amerika.|atlantischer ozean
+Marianengraben|Der Marianengraben im Pazifik ist mit rund 10.935 Metern die tiefste Stelle der Ozeane.|tiefste stelle des meeres
+Ozeane|Es gibt fünf Ozeane: Pazifik, Atlantik, Indischer Ozean, Südlicher Ozean und Arktischer Ozean.|weltmeere
+Kontinente|Es gibt sieben Kontinente: Asien, Afrika, Nordamerika, Südamerika, Antarktika, Europa und Australien. Asien ist der größte.|erdteile,wie viele kontinente
+Sahara|Die Sahara in Nordafrika ist mit rund 9 Millionen Quadratkilometern die größte heiße Wüste der Erde, fast so groß wie die USA.|größte wüste
+Antarktis|Die Antarktis ist der kälteste Ort der Erde, dort wurden minus 89 Grad gemessen. Sie ist mit Eis bedeckt, das bis zu 4,8 Kilometer dick ist.|antarktika,südpol
+Nordpol|Am Nordpol gibt es kein Land, nur Meereis auf dem Arktischen Ozean.|arktis
+Grönland|Grönland ist die größte Insel der Erde und gehört zu Dänemark. Der größte Teil ist von Eis bedeckt.|größte insel
+Kaspisches Meer|Das Kaspische Meer ist der größte See der Erde, obwohl es Meer heißt.|größter see
+Baikalsee|Der Baikalsee in Sibirien ist mit über 1.600 Metern der tiefste und älteste See der Erde und enthält etwa ein Fünftel des Süßwassers aller Seen.|baikal
+Bodensee|Der Bodensee ist mit 536 Quadratkilometern der größte See Deutschlands, er grenzt an Deutschland, Österreich und die Schweiz.|größter see deutschlands
+Müritz|Die Müritz in Mecklenburg-Vorpommern ist der größte See, der ganz in Deutschland liegt.|mueritz
+Totes Meer|Das Tote Meer liegt über 400 Meter unter dem Meeresspiegel, so tief wie kein anderes Land. Es ist so salzig, dass man darin nicht untergeht.|tiefster ort an land
+Victoriafälle|Die Victoriafälle zwischen Sambia und Simbabwe gehören zu den größten Wasserfällen der Erde.|victoria fälle
+Angel Falls|Der Salto Ángel in Venezuela ist mit 979 Metern der höchste Wasserfall der Erde.|höchster wasserfall,salto angel
+Niagarafälle|Die Niagarafälle liegen an der Grenze zwischen den USA und Kanada.|niagara
+Rheinfall|Der Rheinfall bei Schaffhausen in der Schweiz ist der wasserreichste Wasserfall Europas.|
+Russland|Russland ist das flächengrößte Land der Erde mit rund 17 Millionen Quadratkilometern und elf Zeitzonen.|größtes land
+Vatikanstadt|Die Vatikanstadt in Rom ist mit 0,44 Quadratkilometern das kleinste Land der Erde.|kleinstes land,vatikan
+Indien|Indien ist seit 2023 das bevölkerungsreichste Land der Erde mit über 1,4 Milliarden Menschen.|bevölkerungsreichstes land
+Weltbevölkerung|Auf der Erde leben über 8 Milliarden Menschen (Stand 2026, etwa 8,2 Milliarden). Die 8-Milliarden-Marke wurde im November 2022 erreicht.|wie viele menschen leben auf der erde
+Deutschland|Deutschland hat rund 83 Millionen Einwohner und 16 Bundesländer, die Hauptstadt ist Berlin. Fläche rund 357.600 Quadratkilometer, neun Nachbarländer.|bundesrepublik deutschland,brd
+Nachbarländer Deutschlands|Deutschland hat neun Nachbarländer: Dänemark, Polen, Tschechien, Österreich, die Schweiz, Frankreich, Luxemburg, Belgien und die Niederlande.|nachbarn deutschland
+Europäische Union|Die EU hat 27 Mitgliedsstaaten. Sie entstand 1993, ihre Vorläufer gibt es seit 1957. Wichtige Sitze sind Brüssel, Straßburg und Luxemburg.|eu,europaeische union
+Vereinte Nationen|Die UNO wurde 1945 gegründet, hat ihren Hauptsitz in New York und 193 Mitgliedsstaaten.|uno,un
+Äquator|Der Äquator teilt die Erde in Nord- und Südhalbkugel und ist rund 40.075 Kilometer lang.|aequator
+Zeitzonen|Die Erde ist in 24 Zeitzonen eingeteilt. Deutschland hat die Mitteleuropäische Zeit, im Sommer eine Stunde später, die Sommerzeit.|zeitzone
+Sommerzeit|Die Sommerzeit beginnt am letzten Sonntag im März, die Uhr wird von 2 auf 3 Uhr vorgestellt. Sie endet am letzten Sonntag im Oktober, dann geht es von 3 auf 2 Uhr zurück. Merkhilfe: Im Sommer stellt man die Gartenmöbel vor das Haus, im Winter zurück.|zeitumstellung,uhr umstellen
+Schaltjahr|Ein Schaltjahr hat 366 Tage mit dem 29. Februar. Es kommt alle vier Jahre, außer in vollen Jahrhunderten, die nicht durch 400 teilbar sind. 2028 ist das nächste.|schaltjahre,29. februar
+Burj Khalifa|Der Burj Khalifa in Dubai ist mit 828 Metern das höchste Gebäude der Welt.|höchstes gebäude der welt,hoechstes gebaeude
+Fernsehturm Berlin|Der Berliner Fernsehturm ist mit 368 Metern das höchste Bauwerk Deutschlands.|höchstes bauwerk deutschlands
+Chinesische Mauer|Die Chinesische Mauer ist mit allen Abschnitten über 21.000 Kilometer lang. Vom Weltall aus sieht man sie mit bloßem Auge übrigens nicht.|große mauer
+Eiffelturm|Der Eiffelturm in Paris wurde 1889 zur Weltausstellung gebaut und ist rund 330 Meter hoch.|eiffel turm
+Freiheitsstatue|Die Freiheitsstatue in New York war 1886 ein Geschenk Frankreichs an die USA.|statue of liberty
+Kolosseum|Das Kolosseum in Rom wurde im Jahr 80 eröffnet und bot Platz für rund 50.000 Zuschauer.|colosseum
+Neuschwanstein|Schloss Neuschwanstein bei Füssen ließ König Ludwig II. ab 1869 bauen. Es war Vorbild für das Disney-Schloss.|schloss neuschwanstein
+Brandenburger Tor|Das Brandenburger Tor in Berlin wurde 1791 fertig und ist Symbol der deutschen Einheit.|brandenburger tor berlin
+Kölner Dom|Der Kölner Dom ist mit 157 Metern eine der höchsten Kirchen der Welt, gebaut von 1248 bis 1880, Weltkulturerbe.|koelner dom
+Taj Mahal|Das Taj Mahal in Agra, Indien, ist ein Grabmal aus weißem Marmor, das ein Großmogul für seine Frau bauen ließ.|
+Machu Picchu|Machu Picchu ist eine Inka-Stadt hoch in den Anden in Peru aus dem 15. Jahrhundert.|
+Sieben Weltwunder der Antike|Die sieben Weltwunder der Antike: Pyramiden von Gizeh, Hängende Gärten von Babylon, Tempel der Artemis in Ephesos, Zeus-Statue von Olympia, Mausoleum von Halikarnassos, Koloss von Rhodos und Leuchtturm von Alexandria. Nur die Pyramiden stehen noch.|weltwunder der antike,7 weltwunder
+Neue sieben Weltwunder|Die neuen sieben Weltwunder von 2007: Chinesische Mauer, Petra, Christus-Statue in Rio, Machu Picchu, Chichén Itzá, Kolosseum und Taj Mahal.|neue weltwunder
+Heißester Ort der Erde|Die höchste je gemessene Lufttemperatur sind 56,7 Grad im Death Valley in den USA, 1913.|heissester ort,death valley
+Höchste Temperatur in Deutschland|Der deutsche Hitzerekord liegt bei 41,2 Grad, gemessen am 25. Juli 2019 in Lingen im Emsland.|hitzerekord deutschland
+Kälterekord Deutschland|Die kälteste gemessene Temperatur in Deutschland waren minus 37,8 Grad, 2001 am Funtensee in Bayern.|kältester ort deutschland
+Rügen|Rügen in der Ostsee ist mit rund 926 Quadratkilometern die größte Insel Deutschlands, bekannt für die Kreidefelsen.|größte insel deutschlands
+Sylt|Sylt ist die nördlichste deutsche Insel und die größte nordfriesische Insel.|
+Nordsee und Ostsee|Deutschland grenzt an Nordsee und Ostsee. Die Nordsee hat Ebbe und Flut und das Wattenmeer, die Ostsee ist ein fast salzarmes Binnenmeer ohne starke Gezeiten.|nordsee,ostsee
+Wattenmeer|Das Wattenmeer an der Nordsee ist das größte zusammenhängende Wattgebiet der Welt und UNESCO-Weltnaturerbe.|watt
+Schwarzwald|Der Schwarzwald in Baden-Württemberg ist das größte zusammenhängende Mittelgebirge Deutschlands, höchster Gipfel der Feldberg mit 1.493 Metern.|schwarzwald gebirge
+Harz|Der Harz ist das nördlichste Mittelgebirge Deutschlands, höchster Berg ist der Brocken mit 1.141 Metern.|brocken
+Alpen|Die Alpen sind das höchste Gebirge Europas, rund 1.200 Kilometer lang, durch acht Länder.|alpen gebirge
+Himalaya|Der Himalaya ist das höchste Gebirge der Erde mit allen 14 Achttausendern zusammen mit dem Karakorum.|himalaja
+Größte Städte der Welt|Die größten Ballungsräume der Welt sind Tokio, Delhi, Shanghai, Dhaka und São Paulo mit jeweils über 20 Millionen Menschen.|größte stadt der welt
+Istanbul|Istanbul ist die einzige Millionenstadt, die auf zwei Kontinenten liegt, in Europa und Asien.|
+Meeresspiegelanstieg|Der Meeresspiegel steigt durch den Klimawandel derzeit um etwa 4 Millimeter pro Jahr.|meeresspiegel

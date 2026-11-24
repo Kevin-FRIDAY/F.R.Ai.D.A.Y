@@ -1,0 +1,33 @@
+# sternzeichen|Sternzeichen & Kalender|♈
+# Titel|Text|Aliase
+Widder|Sternzeichen Widder: 21. März bis 20. April. Element Feuer. Gilt als mutig und tatkräftig.|sternzeichen widder
+Stier|Sternzeichen Stier: 21. April bis 20. Mai. Element Erde. Gilt als beständig und genussvoll.|sternzeichen stier
+Zwillinge|Sternzeichen Zwillinge: 21. Mai bis 21. Juni. Element Luft. Gilt als neugierig und kommunikativ.|sternzeichen zwilling
+Krebs|Sternzeichen Krebs: 22. Juni bis 22. Juli. Element Wasser. Gilt als einfühlsam und familiär.|sternzeichen krebs
+Löwe (Sternzeichen)|Sternzeichen Löwe: 23. Juli bis 23. August. Element Feuer. Gilt als selbstbewusst und großzügig.|sternzeichen löwe
+Jungfrau|Sternzeichen Jungfrau: 24. August bis 23. September. Element Erde. Gilt als genau und hilfsbereit.|sternzeichen jungfrau
+Waage|Sternzeichen Waage: 24. September bis 23. Oktober. Element Luft. Gilt als ausgeglichen und harmoniebedürftig.|sternzeichen waage
+Skorpion|Sternzeichen Skorpion: 24. Oktober bis 22. November. Element Wasser. Gilt als leidenschaftlich und willensstark.|sternzeichen skorpion
+Schütze|Sternzeichen Schütze: 23. November bis 21. Dezember. Element Feuer. Gilt als optimistisch und freiheitsliebend.|sternzeichen schütze,schuetze
+Steinbock|Sternzeichen Steinbock: 22. Dezember bis 20. Januar. Element Erde. Gilt als ehrgeizig und diszipliniert.|sternzeichen steinbock
+Wassermann|Sternzeichen Wassermann: 21. Januar bis 19. Februar. Element Luft. Gilt als originell und unabhängig.|sternzeichen wassermann
+Fische|Sternzeichen Fische: 20. Februar bis 20. März. Element Wasser. Gilt als fantasievoll und mitfühlend.|sternzeichen fische
+Sternzeichen|Die zwölf Sternzeichen der westlichen Astrologie: Widder, Stier, Zwillinge, Krebs, Löwe, Jungfrau, Waage, Skorpion, Schütze, Steinbock, Wassermann und Fische. Wissenschaftlich belegt ist ein Einfluss auf den Charakter nicht.|tierkreiszeichen,alle sternzeichen
+Chinesisches Horoskop|Das chinesische Horoskop hat zwölf Tiere im Jahreswechsel: Ratte, Büffel, Tiger, Hase, Drache, Schlange, Pferd, Ziege, Affe, Hahn, Hund und Schwein. 2026 ist das Jahr des Pferdes, 2027 das Jahr der Ziege.|chinesisches sternzeichen,jahr des pferdes
+Monate|Die zwölf Monate: Januar, Februar, März, April, Mai, Juni, Juli, August, September, Oktober, November, Dezember. 31 Tage haben Januar, März, Mai, Juli, August, Oktober und Dezember. Merkhilfe: an den Fingerknöcheln abzählen.|wie viele tage hat der monat,monatsnamen
+Wochentage|Die Wochentage sind Montag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag und Sonntag. Nach der Norm beginnt die Woche am Montag.|wochentag
+Jahr|Ein Jahr hat 365 Tage, im Schaltjahr 366, also 52 Wochen und einen Tag. Die Erde braucht für eine Runde um die Sonne etwa 365,24 Tage.|wie viele tage hat ein jahr
+Kalenderwoche|Die erste Kalenderwoche ist die Woche mit dem ersten Donnerstag des Jahres. Ein Jahr hat 52 oder 53 Kalenderwochen.|kw
+Ostern|Ostern ist am ersten Sonntag nach dem ersten Vollmond im Frühling. Es fällt deshalb zwischen den 22. März und den 25. April.|wann ist ostern
+Weihnachten|Weihnachten feiert die Geburt Jesu. In Deutschland ist Heiligabend am 24. Dezember, der 25. und 26. Dezember sind Feiertage.|heiligabend
+Advent|Der Advent beginnt am vierten Sonntag vor Weihnachten. An jedem Adventssonntag wird eine weitere Kerze angezündet.|adventssonntag
+Silvester|Silvester ist der letzte Tag des Jahres, der 31. Dezember, benannt nach Papst Silvester I.|neujahr
+Valentinstag|Der Valentinstag ist am 14. Februar, der Tag der Verliebten.|14. februar
+Muttertag|Der Muttertag ist in Deutschland am zweiten Sonntag im Mai.|
+Vatertag|Der Vatertag ist in Deutschland an Christi Himmelfahrt, 39 Tage nach Ostersonntag.|herrentag
+Halloween|Halloween ist am 31. Oktober, am Abend vor Allerheiligen. Kinder gehen verkleidet von Tür zu Tür: Süßes oder Saures.|
+Oktoberfest|Das Oktoberfest in München beginnt Mitte bis Ende September und dauert gut zwei Wochen. Es gibt es seit 1810, zur Hochzeit von Kronprinz Ludwig.|wiesn
+Karneval|Karneval, Fasching oder Fastnacht beginnt offiziell am 11.11. um 11:11 Uhr. Höhepunkt ist die Woche vor Aschermittwoch mit dem Rosenmontag.|fasching,fastnacht,rosenmontag
+Tag der Deutschen Einheit|Am 3. Oktober feiert Deutschland die Wiedervereinigung von 1990. Er ist bundesweiter Feiertag.|3. oktober
+Ramadan|Im Fastenmonat Ramadan fasten Musliminnen und Muslime von der Morgendämmerung bis zum Sonnenuntergang. Er endet mit dem Zuckerfest. Da er dem Mondkalender folgt, rückt er jedes Jahr etwa 11 Tage vor.|zuckerfest
+Chanukka|Chanukka ist das jüdische Lichterfest im Dezember, acht Tage lang wird jeden Abend eine weitere Kerze am Leuchter angezündet.|chanukka fest

@@ -1,0 +1,18 @@
+# bundeslaender|Bundesländer|🇩🇪
+# Name|Hauptstadt|Einwohner|Fläche km²|Zusatz|Aliase
+Baden-Württemberg|Stuttgart|11,3 Millionen|35.748|Land der Tüftler mit Schwarzwald, Bodensee und Firmen wie Mercedes-Benz, Porsche und Bosch.|bw,baden wuerttemberg,ländle
+Bayern|München|13,4 Millionen|70.542|Flächenmäßig das größte Bundesland, mit Alpen, Zugspitze, Oktoberfest und Schloss Neuschwanstein.|freistaat bayern
+Berlin|Berlin|3,8 Millionen|891|Hauptstadt und größte Stadt Deutschlands, zugleich Stadt und Bundesland.|bundesland berlin
+Brandenburg|Potsdam|2,6 Millionen|29.654|Umschließt Berlin, bekannt für viele Seen und den Spreewald.|land brandenburg
+Bremen|Bremen|0,7 Millionen|420|Kleinstes Bundesland, besteht aus den Städten Bremen und Bremerhaven.|freie hansestadt bremen,bundesland bremen
+Hamburg|Hamburg|1,9 Millionen|755|Stadtstaat mit dem größten Hafen Deutschlands und der Elbphilharmonie.|freie und hansestadt hamburg,bundesland hamburg
+Hessen|Wiesbaden|6,4 Millionen|21.116|Mit Frankfurt, dem Finanzzentrum Deutschlands und Sitz der Europäischen Zentralbank.|land hessen
+Mecklenburg-Vorpommern|Schwerin|1,6 Millionen|23.295|Ostseeküste mit Rügen, der größten Insel Deutschlands, und der Mecklenburgischen Seenplatte.|mv,mecklenburg vorpommern,meck pomm
+Niedersachsen|Hannover|8,1 Millionen|47.710|Zweitgrößtes Bundesland, mit Nordseeküste, Harz und Volkswagen in Wolfsburg.|land niedersachsen
+Nordrhein-Westfalen|Düsseldorf|18,1 Millionen|34.112|Bevölkerungsreichstes Bundesland, mit Ruhrgebiet, Köln und Dortmund.|nrw,nordrhein westfalen
+Rheinland-Pfalz|Mainz|4,2 Millionen|19.858|Weinland an Rhein und Mosel, mit Loreley und Nürburgring.|rlp,rheinland pfalz
+Saarland|Saarbrücken|1,0 Millionen|2.571|Kleinstes Flächenland, an der Grenze zu Frankreich und Luxemburg.|das saarland
+Sachsen|Dresden|4,1 Millionen|18.450|Mit Dresden, Leipzig, dem Erzgebirge und der Sächsischen Schweiz.|freistaat sachsen
+Sachsen-Anhalt|Magdeburg|2,2 Millionen|20.467|Land der Reformation mit Wittenberg und dem Harz mit dem Brocken.|sachsen anhalt
+Schleswig-Holstein|Kiel|3,0 Millionen|15.804|Nördlichstes Bundesland zwischen Nordsee und Ostsee, mit Sylt und Fehmarn.|sh,schleswig holstein
+Thüringen|Erfurt|2,1 Millionen|16.202|Das grüne Herz Deutschlands mit Thüringer Wald, Wartburg und Weimar.|freistaat thüringen,thueringen

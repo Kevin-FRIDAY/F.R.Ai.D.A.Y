@@ -1,0 +1,19 @@
+# notfall|Notfall & Wichtige Nummern|🚨
+# Titel|Text|Aliase
+Notruf 112|112 ist die Notrufnummer für Feuerwehr und Rettungsdienst, kostenlos in ganz Europa und auch ohne Guthaben oder SIM-Karte. Am Telefon sagen: Wo ist es passiert, was ist passiert, wie viele Verletzte, dann auf Rückfragen warten.|112,notruf,rettungsdienst,feuerwehr nummer,krankenwagen
+Polizei 110|110 ist der Notruf der Polizei in Deutschland, kostenlos.|110,polizei nummer,polizei notruf
+Ärztlicher Bereitschaftsdienst|Die 116 117 ist der ärztliche Bereitschaftsdienst, wenn die Hausarztpraxis zu hat und es kein lebensbedrohlicher Notfall ist. Auch Termine kann man darüber bekommen.|116117,116 117,bereitschaftsarzt,arzt am wochenende
+Giftnotruf|Bei Vergiftungen helfen die Giftinformationszentren, zum Beispiel Berlin unter 030 19240 oder München unter 089 19240. Bei Lebensgefahr immer 112.|giftnotruf nummer,vergiftung
+Telefonseelsorge|Die Telefonseelsorge ist rund um die Uhr kostenlos und anonym erreichbar unter 0800 111 0 111 oder 0800 111 0 222, auch per Chat auf telefonseelsorge.de.|seelsorge,0800 111 0 111
+Sperr-Notruf|Unter 116 116 sperrst du verlorene oder gestohlene Bank- und Kreditkarten, rund um die Uhr.|116116,karte sperren,ec karte sperren,kreditkarte sperren
+Hilfetelefon Gewalt gegen Frauen|Das Hilfetelefon Gewalt gegen Frauen ist rund um die Uhr kostenlos unter 116 016 erreichbar, auch anonym und in vielen Sprachen.|116016
+Nummer gegen Kummer|Kinder und Jugendliche erreichen die Nummer gegen Kummer kostenlos unter 116 111, Eltern unter 0800 111 0 550.|116111
+Pannenhilfe|Der ADAC-Pannendienst ist unter 089 20 20 4000 erreichbar, vom Handy auch unter 22 22 22. Bei Panne auf der Autobahn: Warnblinker, Warnweste, hinter die Leitplanke, Warndreieck aufstellen.|adac,panne,autopanne
+Unfall auf der Autobahn|Bei einem Unfall: Warnblinker an, Warnweste anziehen, Unfallstelle sichern, Erste Hilfe leisten, 112 wählen. Bei Stau immer eine Rettungsgasse bilden: ganz links nach links, alle anderen nach rechts.|rettungsgasse,unfall
+Brand|Bei einem Brand: Ruhe bewahren, alle warnen, Raum verlassen, Türen schließen, 112 anrufen. Nie den Aufzug benutzen. Fettbrand niemals mit Wasser löschen, Deckel drauf.|feuer,fettbrand,es brennt
+Rauchmelder|Rauchmelder sind in allen deutschen Bundesländern Pflicht. Einmal im Jahr den Testknopf drücken.|rauchmelder pflicht
+Stromausfall|Bei Stromausfall: Taschenlampe statt Kerzen, Kühlschrank geschlossen lassen, Radio mit Batterien für Infos. Die Warn-App NINA informiert über größere Lagen.|kein strom
+Warn-App|Die offiziellen Warn-Apps in Deutschland sind NINA und KATWARN. Bei großen Gefahren kommt auch eine Cell-Broadcast-Warnung direkt aufs Handy.|nina,katwarn,cell broadcast
+Notfallvorrat|Das Bundesamt für Bevölkerungsschutz empfiehlt Vorräte für 10 Tage: etwa 2 Liter Wasser pro Person und Tag, haltbare Lebensmittel, Medikamente, Taschenlampe, Radio, Bargeld.|notvorrat,vorrat krise
+Hausapotheke|In eine Hausapotheke gehören Pflaster, Verbandszeug, Fieberthermometer, Schmerzmittel, Desinfektion, Kühlpack und eine Pinzette.|erste hilfe kasten
+Verbandskasten Auto|Im Auto ist ein Verbandskasten nach DIN 13164 Pflicht, dazu Warndreieck und Warnweste.|verbandskasten

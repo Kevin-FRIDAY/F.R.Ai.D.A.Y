@@ -1,0 +1,129 @@
+# personen|Berühmte Menschen|👤
+# Name|Lebensdaten|Wofür bekannt|Aliase
+Albert Einstein|1879–1955|deutscher Physiker, der die Relativitätstheorie entwickelte. Seine Formel E gleich m c Quadrat ist weltberühmt, 1921 bekam er den Nobelpreis für Physik.|einstein
+Isaac Newton|1643–1727|englischer Physiker und Mathematiker. Er beschrieb die Schwerkraft und die Bewegungsgesetze und erfand die Infinitesimalrechnung mit.|newton
+Galileo Galilei|1564–1642|italienischer Astronom und Physiker. Er beobachtete mit dem Fernrohr die Jupitermonde und vertrat, dass die Erde um die Sonne kreist.|galilei,galileo
+Nikolaus Kopernikus|1473–1543|Astronom, der erklärte, dass sich die Erde um die Sonne dreht.|kopernikus
+Marie Curie|1867–1934|polnisch-französische Physikerin und Chemikerin. Sie erforschte die Radioaktivität und bekam als erster Mensch zwei Nobelpreise.|curie
+Charles Darwin|1809–1882|britischer Naturforscher, der die Evolutionstheorie durch natürliche Auslese begründete.|darwin
+Thomas Edison|1847–1931|amerikanischer Erfinder mit über 1.000 Patenten, bekannt für die alltagstaugliche Glühbirne und den Phonographen.|edison
+Nikola Tesla|1856–1943|Erfinder und Elektroingenieur, Pionier des Wechselstroms. Die Automarke Tesla ist nach ihm benannt.|tesla erfinder
+Leonardo da Vinci|1452–1519|italienisches Universalgenie: Maler der Mona Lisa und des Abendmahls, dazu Erfinder, Ingenieur und Anatom.|da vinci,leonardo
+Michelangelo|1475–1564|italienischer Bildhauer und Maler. Er schuf die Statue David und die Decke der Sixtinischen Kapelle.|michelangelo buonarroti
+Johann Wolfgang von Goethe|1749–1832|größter deutscher Dichter, Autor von Faust und Die Leiden des jungen Werthers.|goethe
+Friedrich Schiller|1759–1805|deutscher Dichter, schrieb Die Räuber, Wilhelm Tell und die Ode an die Freude.|schiller
+William Shakespeare|1564–1616|englischer Dramatiker, schrieb Romeo und Julia, Hamlet und Macbeth.|shakespeare
+Ludwig van Beethoven|1770–1827|deutscher Komponist aus Bonn. Er schrieb neun Sinfonien, die Neunte mit der Ode an die Freude ist heute die Europahymne. Später wurde er taub.|beethoven
+Wolfgang Amadeus Mozart|1756–1791|österreichischer Komponist aus Salzburg, Wunderkind, schrieb Die Zauberflöte und Eine kleine Nachtmusik.|mozart
+Johann Sebastian Bach|1685–1750|deutscher Barockkomponist, wirkte lange in Leipzig, schrieb Brandenburgische Konzerte und Matthäus-Passion.|bach
+Martin Luther|1483–1546|Theologe, der 1517 mit seinen 95 Thesen die Reformation auslöste und die Bibel ins Deutsche übersetzte.|luther
+Johannes Gutenberg|um 1400–1468|Mainzer Erfinder des Buchdrucks mit beweglichen Lettern.|gutenberg
+Karl der Große|747–814|Frankenkönig, ab 800 Kaiser. Er gilt als Vater Europas.|karl der grosse
+Julius Caesar|100–44 vor Christus|römischer Feldherr und Politiker, eroberte Gallien und wurde an den Iden des März ermordet.|caesar,cäsar
+Kleopatra|69–30 vor Christus|letzte Königin des alten Ägypten, verbündet mit Caesar und Marcus Antonius.|cleopatra
+Alexander der Große|356–323 vor Christus|makedonischer König, der ein Weltreich von Griechenland bis Indien eroberte.|alexander der grosse
+Napoleon Bonaparte|1769–1821|französischer General und Kaiser, eroberte große Teile Europas und schuf das Gesetzbuch Code civil.|napoleon
+Otto von Bismarck|1815–1898|preußischer Politiker, erster Reichskanzler des Deutschen Kaiserreichs ab 1871, führte die Sozialversicherung ein.|bismarck
+Konrad Adenauer|1876–1967|erster Bundeskanzler der Bundesrepublik Deutschland, von 1949 bis 1963.|adenauer
+Willy Brandt|1913–1992|Bundeskanzler von 1969 bis 1974, bekam für seine Ostpolitik 1971 den Friedensnobelpreis.|brandt
+Helmut Kohl|1930–2017|Bundeskanzler von 1982 bis 1998, Kanzler der Wiedervereinigung.|kohl
+Angela Merkel|geboren 1954|erste Bundeskanzlerin Deutschlands, regierte von 2005 bis 2021.|merkel
+Gerhard Schröder|geboren 1944|Bundeskanzler von 1998 bis 2005.|schröder,schroeder
+Olaf Scholz|geboren 1958|Bundeskanzler von 2021 bis 2025.|scholz
+Friedrich Merz|geboren 1955|seit Mai 2025 Bundeskanzler (Stand 2026).|merz
+Abraham Lincoln|1809–1865|16. Präsident der USA, schaffte die Sklaverei ab und wurde 1865 ermordet.|lincoln
+George Washington|1732–1799|erster Präsident der USA.|washington praesident
+John F. Kennedy|1917–1963|35. Präsident der USA, sagte 1963 in Berlin Ich bin ein Berliner und wurde im selben Jahr in Dallas ermordet.|kennedy,jfk
+Martin Luther King|1929–1968|amerikanischer Bürgerrechtler, berühmt für die Rede I have a dream, Friedensnobelpreis 1964.|mlk,martin luther king jr
+Nelson Mandela|1918–2013|kämpfte gegen die Apartheid in Südafrika, saß 27 Jahre in Haft und wurde 1994 erster schwarzer Präsident des Landes.|mandela
+Mahatma Gandhi|1869–1948|führte Indien mit gewaltlosem Widerstand in die Unabhängigkeit.|gandhi
+Winston Churchill|1874–1965|britischer Premierminister im Zweiten Weltkrieg, bekam 1953 den Literaturnobelpreis.|churchill
+Neil Armstrong|1930–2012|amerikanischer Astronaut, betrat 1969 als erster Mensch den Mond.|armstrong
+Juri Gagarin|1934–1968|sowjetischer Kosmonaut, 1961 erster Mensch im Weltall.|gagarin
+Steve Jobs|1955–2011|Mitgründer von Apple, stellte Macintosh, iPod, iPhone und iPad vor.|jobs
+Steve Wozniak|geboren 1950|Mitgründer von Apple und Erfinder des Apple I und Apple II.|woz,wozniak
+Tim Cook|geboren 1960|seit 2011 Chef von Apple (Stand 2026).|cook
+Bill Gates|geboren 1955|Mitgründer von Microsoft, heute vor allem Philanthrop.|gates
+Elon Musk|geboren 1971|Unternehmer, leitet Tesla und SpaceX und besitzt die Plattform X.|musk
+Mark Zuckerberg|geboren 1984|gründete 2004 Facebook, heute Chef von Meta.|zuckerberg
+Jeff Bezos|geboren 1964|gründete 1994 Amazon und die Raumfahrtfirma Blue Origin.|bezos
+Tim Berners-Lee|geboren 1955|britischer Informatiker, erfand 1989 am CERN das World Wide Web.|berners lee
+Alan Turing|1912–1954|britischer Mathematiker, Vater der Informatik, half im Zweiten Weltkrieg die Enigma zu knacken.|turing
+Konrad Zuse|1910–1995|deutscher Ingenieur, baute 1941 mit der Z3 den ersten funktionsfähigen programmierbaren Computer.|zuse
+Ada Lovelace|1815–1852|britische Mathematikerin, schrieb das erste Computerprogramm der Welt.|lovelace
+Sam Altman|geboren 1985|Chef von OpenAI, der Firma hinter ChatGPT.|altman
+Dario Amodei|geboren 1983|Mitgründer und Chef von Anthropic, der Firma hinter Claude, Fridays Gehirn.|amodei
+Carl Benz|1844–1929|deutscher Ingenieur, baute 1886 das erste Auto mit Verbrennungsmotor.|benz
+Bertha Benz|1849–1944|machte 1888 die erste Fernfahrt mit dem Auto, von Mannheim nach Pforzheim.|bertha
+Gottlieb Daimler|1834–1900|deutscher Ingenieur und Autopionier.|daimler
+Ferdinand Porsche|1875–1951|österreichischer Autokonstrukteur, entwickelte den VW Käfer.|porsche
+Rudolf Diesel|1858–1913|Erfinder des Dieselmotors.|diesel
+Wilhelm Conrad Röntgen|1845–1923|entdeckte 1895 die Röntgenstrahlen und bekam 1901 den ersten Physik-Nobelpreis.|röntgen,roentgen
+Robert Koch|1843–1910|deutscher Arzt, entdeckte die Erreger von Tuberkulose und Cholera.|koch
+Sigmund Freud|1856–1939|österreichischer Arzt, Begründer der Psychoanalyse.|freud
+Alexander von Humboldt|1769–1859|deutscher Naturforscher und Weltreisender, erforschte Südamerika.|humboldt
+Karl Marx|1818–1883|deutscher Philosoph und Ökonom, schrieb Das Kapital und mit Engels das Kommunistische Manifest.|marx
+Immanuel Kant|1724–1804|deutscher Philosoph der Aufklärung aus Königsberg.|kant
+Sokrates|um 470–399 vor Christus|griechischer Philosoph. Ich weiß, dass ich nichts weiß.|
+Platon|um 428–348 vor Christus|griechischer Philosoph, Schüler des Sokrates.|plato
+Aristoteles|384–322 vor Christus|griechischer Philosoph und Lehrer Alexanders des Großen.|
+Konfuzius|551–479 vor Christus|chinesischer Philosoph, dessen Lehre China bis heute prägt.|
+Pythagoras|um 570–510 vor Christus|griechischer Mathematiker, bekannt für den Satz des Pythagoras.|
+Archimedes|um 287–212 vor Christus|griechischer Mathematiker und Erfinder. Er rief der Legende nach Heureka in der Badewanne.|
+Hippokrates|um 460–370 vor Christus|griechischer Arzt, gilt als Vater der Medizin.|
+Christoph Kolumbus|1451–1506|Seefahrer, erreichte 1492 Amerika.|kolumbus
+Marco Polo|1254–1324|venezianischer Händler, reiste bis nach China.|
+Vincent van Gogh|1853–1890|niederländischer Maler, berühmt für Die Sternennacht und die Sonnenblumen.|van gogh
+Pablo Picasso|1881–1973|spanischer Maler, Mitbegründer des Kubismus, malte Guernica.|picasso
+Claude Monet|1840–1926|französischer Maler des Impressionismus, berühmt für seine Seerosen.|monet
+Frida Kahlo|1907–1954|mexikanische Malerin, bekannt für ihre Selbstporträts.|kahlo
+Rembrandt|1606–1669|niederländischer Maler des Barock, malte Die Nachtwache.|rembrandt van rijn
+Albrecht Dürer|1471–1528|Nürnberger Maler und Grafiker, malte den Feldhasen.|dürer,duerer
+Walt Disney|1901–1966|Filmproduzent, erfand Micky Maus und gründete Disneyland.|disney
+Charlie Chaplin|1889–1977|Stummfilm-Star, berühmt als Tramp mit Melone und Stock.|chaplin
+Marilyn Monroe|1926–1962|amerikanische Schauspielerin und Filmikone.|monroe
+Elvis Presley|1935–1977|King of Rock ’n’ Roll.|elvis
+Michael Jackson|1958–2009|King of Pop, sein Album Thriller ist das meistverkaufte aller Zeiten.|
+Freddie Mercury|1946–1991|Sänger der Band Queen, Bohemian Rhapsody.|mercury
+John Lennon|1940–1980|Mitglied der Beatles, schrieb Imagine.|lennon
+Robert Downey Jr.|geboren 1965|Schauspieler, spielte Tony Stark alias Iron Man im Marvel-Kinouniversum.|tony stark darsteller,iron man schauspieler
+Tony Stark|Comicfigur seit 1963|Iron Man aus den Marvel-Comics, Erfinder und Unternehmer. Seine KI-Assistenten heißen J.A.R.V.I.S. und F.R.I.D.A.Y., Vorbild für mich.|iron man
+Stan Lee|1922–2018|Comic-Autor, erfand bei Marvel Spider-Man, Iron Man und die X-Men mit.|
+Pelé|1940–2022|brasilianischer Fußballer, dreimal Weltmeister.|pele
+Diego Maradona|1960–2020|argentinischer Fußballer, Weltmeister 1986.|maradona
+Lionel Messi|geboren 1987|argentinischer Fußballer, Weltmeister 2022 und mehrfacher Weltfußballer.|messi
+Cristiano Ronaldo|geboren 1985|portugiesischer Fußballer, Rekordtorschütze der Champions League.|ronaldo,cr7
+Franz Beckenbauer|1945–2024|der Kaiser, Weltmeister als Spieler 1974 und als Teamchef 1990.|beckenbauer
+Gerd Müller|1945–2021|Bomber der Nation, Weltmeister 1974.|gerd mueller
+Michael Schumacher|geboren 1969|siebenfacher Formel-1-Weltmeister.|schumacher
+Sebastian Vettel|geboren 1987|viermaliger Formel-1-Weltmeister.|vettel
+Boris Becker|geboren 1967|gewann 1985 mit 17 Jahren als jüngster Spieler Wimbledon.|becker
+Steffi Graf|geboren 1969|Tennisspielerin, gewann 1988 den Golden Slam.|graf
+Usain Bolt|geboren 1986|jamaikanischer Sprinter, Weltrekord über 100 Meter mit 9,58 Sekunden.|bolt
+Muhammad Ali|1942–2016|Boxweltmeister im Schwergewicht. Schwebe wie ein Schmetterling, stich wie eine Biene.|ali
+Michael Jordan|geboren 1963|Basketball-Legende der Chicago Bulls.|jordan
+Anne Frank|1929–1945|jüdisches Mädchen, das sich vor den Nazis versteckte. Ihr Tagebuch wurde weltberühmt.|
+Sophie Scholl|1921–1943|Widerstandskämpferin der Weißen Rose gegen die Nazis.|scholl
+Mutter Teresa|1910–1997|Ordensschwester, half Armen in Kalkutta, Friedensnobelpreis 1979.|
+Papst Franziskus|1936–2025|Papst von 2013 bis 2025, der erste aus Südamerika.|franziskus
+Papst Leo XIV.|geboren 1955|seit Mai 2025 Papst, der erste aus den USA (Stand 2026).|leo xiv,aktueller papst
+Queen Elizabeth II.|1926–2022|britische Königin, regierte 70 Jahre lang.|elizabeth,queen
+König Charles III.|geboren 1948|seit 2022 König des Vereinigten Königreichs.|charles
+Stephen Hawking|1942–2018|britischer Physiker, erforschte Schwarze Löcher, schrieb Eine kurze Geschichte der Zeit.|hawking
+Max Planck|1858–1947|deutscher Physiker, Begründer der Quantenphysik.|planck
+Werner Heisenberg|1901–1976|deutscher Physiker, Unschärferelation.|heisenberg
+Otto Hahn|1879–1968|entdeckte 1938 mit Fritz Straßmann die Kernspaltung, Chemie-Nobelpreis.|hahn
+Lise Meitner|1878–1968|österreichische Physikerin, erklärte die Kernspaltung.|meitner
+Dmitri Mendelejew|1834–1907|russischer Chemiker, stellte 1869 das Periodensystem auf.|mendelejew
+Louis Pasteur|1822–1895|französischer Chemiker, erfand die Pasteurisierung und Impfungen gegen Tollwut.|pasteur
+Alexander Fleming|1881–1955|entdeckte 1928 das Penicillin, das erste Antibiotikum.|fleming
+Gregor Mendel|1822–1884|Mönch, der die Vererbungslehre begründete.|mendel
+Alfred Nobel|1833–1896|schwedischer Chemiker, erfand das Dynamit und stiftete den Nobelpreis.|nobel
+Guglielmo Marconi|1874–1937|Pionier der Funktechnik und des Radios.|marconi
+Alexander Graham Bell|1847–1922|meldete 1876 das Telefon zum Patent an.|bell
+Gebrüder Wright|1867–1912 und 1871–1948|Orville und Wilbur Wright, flogen 1903 als Erste mit einem Motorflugzeug.|brüder wright,wright
+Otto Lilienthal|1848–1896|deutscher Flugpionier, erster Mensch, der wiederholt im Gleitflug flog.|lilienthal
+Ferdinand von Zeppelin|1838–1917|Erfinder der Zeppelin-Luftschiffe.|zeppelin
+Hildegard von Bingen|1098–1179|Äbtissin, Heilkundige und Komponistin des Mittelalters.|hildegard
+Kaiser Wilhelm II.|1859–1941|letzter deutscher Kaiser bis 1918.|wilhelm ii
+Adolf Hitler|1889–1945|Diktator des nationalsozialistischen Deutschlands, verantwortlich für den Zweiten Weltkrieg und den Holocaust.|hitler

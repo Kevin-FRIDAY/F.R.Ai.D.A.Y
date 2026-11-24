@@ -1,0 +1,120 @@
+# elemente|Chemische Elemente|⚗️
+# Ordnungszahl|Symbol|Name|Atommasse|Gruppe|Zusatz
+1|H|Wasserstoff|1,008|Nichtmetall|Häufigstes Element im Universum, leichtestes Gas.
+2|He|Helium|4,003|Edelgas|Macht Ballons leicht und die Stimme hoch.
+3|Li|Lithium|6,94|Alkalimetall|Steckt in fast jedem Akku von Handy und E-Auto.
+4|Be|Beryllium|9,012|Erdalkalimetall|Sehr leicht und steif, giftig als Staub.
+5|B|Bor|10,81|Halbmetall|Wird für hitzefestes Glas wie Borosilikatglas genutzt.
+6|C|Kohlenstoff|12,011|Nichtmetall|Grundbaustein allen Lebens, kommt als Graphit und Diamant vor.
+7|N|Stickstoff|14,007|Nichtmetall|Macht etwa 78 Prozent der Luft aus.
+8|O|Sauerstoff|15,999|Nichtmetall|Macht etwa 21 Prozent der Luft aus, wir brauchen ihn zum Atmen.
+9|F|Fluor|18,998|Halogen|Reaktionsfreudigstes Element, als Fluorid in Zahnpasta.
+10|Ne|Neon|20,180|Edelgas|Leuchtet in Leuchtreklamen rot-orange.
+11|Na|Natrium|22,990|Alkalimetall|Bildet mit Chlor Kochsalz.
+12|Mg|Magnesium|24,305|Erdalkalimetall|Wichtig für Muskeln, brennt mit grellweißem Licht.
+13|Al|Aluminium|26,982|Metall|Häufigstes Metall der Erdkruste, leicht und rostfrei.
+14|Si|Silicium|28,085|Halbmetall|Grundstoff für Computerchips und Solarzellen.
+15|P|Phosphor|30,974|Nichtmetall|Steckt in Knochen, DNA und Streichholzschachteln.
+16|S|Schwefel|32,06|Nichtmetall|Gelber Feststoff, riecht in Verbindungen nach faulen Eiern.
+17|Cl|Chlor|35,45|Halogen|Desinfiziert Schwimmbadwasser.
+18|Ar|Argon|39,948|Edelgas|Häufigstes Edelgas der Luft, Schutzgas beim Schweißen.
+19|K|Kalium|39,098|Alkalimetall|Wichtig für Nerven und Herz, steckt viel in Bananen.
+20|Ca|Calcium|40,078|Erdalkalimetall|Baustoff für Knochen und Zähne.
+21|Sc|Scandium|44,956|Übergangsmetall|Wird in leichten Aluminium-Legierungen genutzt.
+22|Ti|Titan|47,867|Übergangsmetall|Leicht, fest und rostfrei, genutzt in Flugzeugen und Implantaten.
+23|V|Vanadium|50,942|Übergangsmetall|Macht Stahl zäher, zum Beispiel in Werkzeugen.
+24|Cr|Chrom|51,996|Übergangsmetall|Glänzende Beschichtung und Bestandteil von Edelstahl.
+25|Mn|Mangan|54,938|Übergangsmetall|Wichtig für die Stahlherstellung.
+26|Fe|Eisen|55,845|Übergangsmetall|Wichtigstes Gebrauchsmetall, Hauptbestandteil von Stahl und im Blut.
+27|Co|Cobalt|58,933|Übergangsmetall|Steckt in Akkus und färbt Glas blau.
+28|Ni|Nickel|58,693|Übergangsmetall|In Münzen, Edelstahl und Akkus.
+29|Cu|Kupfer|63,546|Übergangsmetall|Leitet Strom sehr gut, darum in fast jedem Kabel.
+30|Zn|Zink|65,38|Übergangsmetall|Schützt Stahl vor Rost (Verzinken).
+31|Ga|Gallium|69,723|Metall|Schmilzt schon in der Hand bei etwa 30 Grad.
+32|Ge|Germanium|72,630|Halbmetall|Halbleiter, früher in Transistoren.
+33|As|Arsen|74,922|Halbmetall|Bekannt als Gift.
+34|Se|Selen|78,971|Nichtmetall|Spurenelement, das der Körper in kleinen Mengen braucht.
+35|Br|Brom|79,904|Halogen|Eines von nur zwei Elementen, die bei Raumtemperatur flüssig sind.
+36|Kr|Krypton|83,798|Edelgas|Wird in manchen Lampen genutzt.
+37|Rb|Rubidium|85,468|Alkalimetall|Wird in sehr genauen Atomuhren genutzt.
+38|Sr|Strontium|87,62|Erdalkalimetall|Färbt Feuerwerk rot.
+39|Y|Yttrium|88,906|Übergangsmetall|In LEDs und Lasern.
+40|Zr|Zirconium|91,224|Übergangsmetall|Zirkonia-Keramik für Zahnkronen.
+41|Nb|Niob|92,906|Übergangsmetall|In supraleitenden Magneten.
+42|Mo|Molybdän|95,95|Übergangsmetall|Macht Stahl hitzefest.
+43|Tc|Technetium|[98]|Übergangsmetall|Leichtestes Element ohne stabile Form, in der Medizin genutzt.
+44|Ru|Ruthenium|101,07|Übergangsmetall|Edelmetall der Platingruppe.
+45|Rh|Rhodium|102,91|Übergangsmetall|Eines der teuersten Metalle, im Autokatalysator.
+46|Pd|Palladium|106,42|Übergangsmetall|Im Autokatalysator und in Schmuck.
+47|Ag|Silber|107,87|Übergangsmetall|Leitet Strom und Wärme am besten von allen Metallen.
+48|Cd|Cadmium|112,41|Übergangsmetall|Giftiges Schwermetall, früher in Akkus.
+49|In|Indium|114,82|Metall|Steckt als Indiumzinnoxid in Touchscreens.
+50|Sn|Zinn|118,71|Metall|Zum Löten und für Konservendosen.
+51|Sb|Antimon|121,76|Halbmetall|Flammschutz in Kunststoffen.
+52|Te|Tellur|127,60|Halbmetall|In manchen Solarzellen.
+53|I|Iod|126,90|Halogen|Wichtig für die Schilddrüse, steckt in Jodsalz.
+54|Xe|Xenon|131,29|Edelgas|In hellen Autoscheinwerfern und Ionentriebwerken.
+55|Cs|Caesium|132,91|Alkalimetall|Definiert die Sekunde in Atomuhren.
+56|Ba|Barium|137,33|Erdalkalimetall|Färbt Feuerwerk grün, Kontrastmittel beim Röntgen.
+57|La|Lanthan|138,91|Lanthanoid|In Kameralinsen und Akkus.
+58|Ce|Cer|140,12|Lanthanoid|Feuerstein in Feuerzeugen.
+59|Pr|Praseodym|140,91|Lanthanoid|In starken Magneten.
+60|Nd|Neodym|144,24|Lanthanoid|Macht die stärksten Dauermagnete, etwa in Kopfhörern und E-Motoren.
+61|Pm|Promethium|[145]|Lanthanoid|Radioaktiv, kommt kaum natürlich vor.
+62|Sm|Samarium|150,36|Lanthanoid|In hitzefesten Magneten.
+63|Eu|Europium|151,96|Lanthanoid|Leuchtet rot in Bildschirmen und Euro-Scheinen unter UV-Licht.
+64|Gd|Gadolinium|157,25|Lanthanoid|Kontrastmittel bei der MRT.
+65|Tb|Terbium|158,93|Lanthanoid|Leuchtet grün in Lampen.
+66|Dy|Dysprosium|162,50|Lanthanoid|In Magneten für Elektromotoren.
+67|Ho|Holmium|164,93|Lanthanoid|Hat das stärkste magnetische Moment.
+68|Er|Erbium|167,26|Lanthanoid|Verstärkt Licht in Glasfaserkabeln.
+69|Tm|Thulium|168,93|Lanthanoid|Eines der seltensten Lanthanoide.
+70|Yb|Ytterbium|173,05|Lanthanoid|In Lasern und Atomuhren.
+71|Lu|Lutetium|174,97|Lanthanoid|Schwerstes Lanthanoid.
+72|Hf|Hafnium|178,49|Übergangsmetall|In Computerchips und Kernreaktoren.
+73|Ta|Tantal|180,95|Übergangsmetall|In kleinen Kondensatoren von Handys.
+74|W|Wolfram|183,84|Übergangsmetall|Höchster Schmelzpunkt aller Metalle, früher Glühfaden in Lampen.
+75|Re|Rhenium|186,21|Übergangsmetall|In Triebwerken von Düsenflugzeugen.
+76|Os|Osmium|190,23|Übergangsmetall|Dichtestes natürliches Element.
+77|Ir|Iridium|192,22|Übergangsmetall|Sehr korrosionsfest, in Zündkerzen.
+78|Pt|Platin|195,08|Übergangsmetall|Edelmetall für Schmuck und Katalysatoren.
+79|Au|Gold|196,97|Übergangsmetall|Edelmetall, rostet nie, Wertanlage und Schmuck.
+80|Hg|Quecksilber|200,59|Übergangsmetall|Einziges bei Raumtemperatur flüssiges Metall, giftig.
+81|Tl|Thallium|204,38|Metall|Sehr giftig.
+82|Pb|Blei|207,2|Metall|Schweres, giftiges Metall, schützt vor Röntgenstrahlen.
+83|Bi|Bismut|208,98|Metall|Bildet schillernde Treppenkristalle.
+84|Po|Polonium|[209]|Halbmetall|Von Marie Curie entdeckt und nach Polen benannt.
+85|At|Astat|[210]|Halogen|Eines der seltensten Elemente der Erde.
+86|Rn|Radon|[222]|Edelgas|Radioaktives Gas, kann sich in Kellern sammeln.
+87|Fr|Francium|[223]|Alkalimetall|Extrem selten und radioaktiv.
+88|Ra|Radium|[226]|Erdalkalimetall|Von Marie und Pierre Curie entdeckt, leuchtet im Dunkeln.
+89|Ac|Actinium|[227]|Actinoid|Namensgeber der Actinoide.
+90|Th|Thorium|232,04|Actinoid|Möglicher Kernbrennstoff.
+91|Pa|Protactinium|231,04|Actinoid|Selten und radioaktiv.
+92|U|Uran|238,03|Actinoid|Brennstoff in Kernkraftwerken.
+93|Np|Neptunium|[237]|Actinoid|Erstes künstlich hergestelltes Transuran.
+94|Pu|Plutonium|[244]|Actinoid|Wird in Kernwaffen und Raumsonden-Batterien genutzt.
+95|Am|Americium|[243]|Actinoid|Steckt in manchen Rauchmeldern.
+96|Cm|Curium|[247]|Actinoid|Nach Marie und Pierre Curie benannt.
+97|Bk|Berkelium|[247]|Actinoid|Nach der Stadt Berkeley benannt.
+98|Cf|Californium|[251]|Actinoid|Starke Neutronenquelle.
+99|Es|Einsteinium|[252]|Actinoid|Nach Albert Einstein benannt.
+100|Fm|Fermium|[257]|Actinoid|Nach Enrico Fermi benannt.
+101|Md|Mendelevium|[258]|Actinoid|Nach Dmitri Mendelejew, dem Vater des Periodensystems, benannt.
+102|No|Nobelium|[259]|Actinoid|Nach Alfred Nobel benannt.
+103|Lr|Lawrencium|[266]|Actinoid|Letztes Actinoid.
+104|Rf|Rutherfordium|[267]|Übergangsmetall|Künstlich hergestellt, nach Ernest Rutherford benannt.
+105|Db|Dubnium|[268]|Übergangsmetall|Nach der russischen Stadt Dubna benannt.
+106|Sg|Seaborgium|[269]|Übergangsmetall|Nach Glenn Seaborg benannt.
+107|Bh|Bohrium|[270]|Übergangsmetall|Nach Niels Bohr benannt.
+108|Hs|Hassium|[269]|Übergangsmetall|Nach dem Bundesland Hessen benannt, in Darmstadt entdeckt.
+109|Mt|Meitnerium|[278]|Übergangsmetall|Nach Lise Meitner benannt, in Darmstadt entdeckt.
+110|Ds|Darmstadtium|[281]|Übergangsmetall|Nach der Stadt Darmstadt benannt.
+111|Rg|Roentgenium|[282]|Übergangsmetall|Nach Wilhelm Conrad Röntgen benannt.
+112|Cn|Copernicium|[285]|Übergangsmetall|Nach Nikolaus Kopernikus benannt.
+113|Nh|Nihonium|[286]|Metall|Erstes in Japan entdecktes Element.
+114|Fl|Flerovium|[289]|Metall|Nach Georgi Fljorow benannt.
+115|Mc|Moscovium|[290]|Metall|Nach der Region Moskau benannt.
+116|Lv|Livermorium|[293]|Metall|Nach dem Labor in Livermore benannt.
+117|Ts|Tenness|[294]|Halogen|Nach dem US-Bundesstaat Tennessee benannt.
+118|Og|Oganesson|[294]|Edelgas|Schwerstes bekanntes Element, nach Juri Oganessjan benannt.

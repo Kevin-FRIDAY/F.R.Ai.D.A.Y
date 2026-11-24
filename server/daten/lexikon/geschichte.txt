@@ -1,0 +1,92 @@
+# geschichte|Geschichte|📜
+# Jahr|Ereignis|Text|Aliase
+-3000|Erfindung der Schrift|Um 3000 vor Christus entwickeln die Sumerer in Mesopotamien die Keilschrift, etwa zeitgleich entstehen in Ägypten die Hieroglyphen.|keilschrift,hieroglyphen
+-2560|Bau der Cheops-Pyramide|Um 2560 vor Christus wird in Gizeh die Cheops-Pyramide fertig, mit ursprünglich rund 146 Metern fast 4.000 Jahre lang das höchste Bauwerk der Welt.|cheops pyramide,pyramiden von gizeh
+-776|Erste Olympische Spiele|776 vor Christus finden im griechischen Olympia die ersten überlieferten Olympischen Spiele statt.|antike olympische spiele
+-753|Gründung Roms|Der Sage nach wird Rom 753 vor Christus von Romulus gegründet. Merkspruch: sieben fünf drei, Rom kroch aus dem Ei.|rom gegründet
+-509|Römische Republik|509 vor Christus wird der letzte König vertrieben, Rom wird eine Republik.|
+-336|Alexander der Große wird König|336 vor Christus wird Alexander König von Makedonien und erobert danach ein Reich bis nach Indien.|
+-221|Erster Kaiser Chinas|221 vor Christus eint Qin Shihuangdi China. Er ließ die Terrakotta-Armee bauen.|qin shihuangdi
+-44|Ermordung Caesars|An den Iden des März, dem 15. März 44 vor Christus, wird Gaius Julius Caesar in Rom ermordet.|caesar ermordet,iden des märz
+9|Varusschlacht|Im Jahr 9 nach Christus besiegen Germanen unter Arminius drei römische Legionen, die Schlacht im Teutoburger Wald.|schlacht im teutoburger wald,hermann der cherusker
+79|Untergang von Pompeji|79 nach Christus begräbt ein Ausbruch des Vesuvs die Städte Pompeji und Herculaneum.|vesuv ausbruch,pompeji
+476|Ende des Weströmischen Reiches|476 setzt der Germane Odoaker den letzten weströmischen Kaiser ab. Oft gilt das als Beginn des Mittelalters.|untergang roms
+622|Hidschra|622 zieht Mohammed von Mekka nach Medina. Mit diesem Jahr beginnt die islamische Zeitrechnung.|
+800|Kaiserkrönung Karls des Großen|An Weihnachten 800 wird Karl der Große in Rom zum Kaiser gekrönt.|karl der große kaiser
+1066|Schlacht bei Hastings|1066 erobern die Normannen unter Wilhelm dem Eroberer England.|hastings
+1096|Erster Kreuzzug|1096 beginnt der erste Kreuzzug, 1099 erobern die Kreuzfahrer Jerusalem.|kreuzzüge
+1215|Magna Carta|1215 muss der englische König Johann Ohneland die Magna Carta unterschreiben, eine frühe Begrenzung königlicher Macht.|
+1347|Pest in Europa|Ab 1347 tötet der Schwarze Tod in wenigen Jahren etwa ein Drittel der Menschen Europas.|schwarzer tod,pest
+1450|Buchdruck|Um 1450 erfindet Johannes Gutenberg in Mainz den Buchdruck mit beweglichen Lettern.|gutenberg buchdruck
+1453|Fall Konstantinopels|1453 erobern die Osmanen Konstantinopel, das heutige Istanbul. Das Oströmische Reich endet.|konstantinopel
+1492|Kolumbus erreicht Amerika|Am 12. Oktober 1492 landet Christoph Kolumbus auf den Bahamas. Er glaubte, in Indien zu sein.|entdeckung amerikas,kolumbus amerika
+1498|Seeweg nach Indien|1498 erreicht Vasco da Gama als erster Europäer Indien auf dem Seeweg um Afrika.|vasco da gama
+1517|Reformation|1517 veröffentlicht Martin Luther in Wittenberg seine 95 Thesen gegen den Ablasshandel. Das ist der Beginn der Reformation.|95 thesen,thesenanschlag,luther thesen
+1519|Erste Weltumsegelung|1519 bis 1522 umsegelt die Expedition von Ferdinand Magellan als erste die Welt. Magellan selbst starb unterwegs.|magellan
+1618|Dreißigjähriger Krieg|Von 1618 bis 1648 verwüstet der Dreißigjährige Krieg Mitteleuropa. Er endet mit dem Westfälischen Frieden in Münster und Osnabrück.|30 jähriger krieg,westfälischer frieden
+1687|Newtons Gravitationsgesetz|1687 veröffentlicht Isaac Newton seine Principia mit den Bewegungsgesetzen und der Gravitation.|principia
+1765|Industrielle Revolution|Ab etwa 1760 beginnt in England die Industrielle Revolution. James Watt verbessert ab 1765 die Dampfmaschine entscheidend.|industrialisierung
+1776|Unabhängigkeit der USA|Am 4. Juli 1776 erklären die 13 Kolonien ihre Unabhängigkeit von Großbritannien. Seitdem ist der 4. Juli Nationalfeiertag der USA.|unabhängigkeitserklärung,4. juli
+1789|Französische Revolution|Am 14. Juli 1789 stürmen Pariser die Bastille. Die Revolution bringt Freiheit, Gleichheit, Brüderlichkeit und die Menschenrechte.|sturm auf die bastille
+1804|Napoleon wird Kaiser|1804 krönt sich Napoleon Bonaparte selbst zum Kaiser der Franzosen.|napoleon kaiser
+1815|Schlacht bei Waterloo|1815 wird Napoleon bei Waterloo endgültig geschlagen und nach St. Helena verbannt.|waterloo
+1835|Erste deutsche Eisenbahn|Am 7. Dezember 1835 fährt die erste deutsche Eisenbahn, der Adler, von Nürnberg nach Fürth.|adler eisenbahn,eisenbahn deutschland
+1848|Märzrevolution|1848 kämpfen Menschen in Deutschland für Freiheit und Einheit. In der Frankfurter Paulskirche tagt das erste gesamtdeutsche Parlament.|revolution 1848,paulskirche
+1861|Amerikanischer Bürgerkrieg|Von 1861 bis 1865 kämpfen Nord- und Südstaaten der USA. Der Sieg des Nordens beendet die Sklaverei.|sezessionskrieg
+1871|Gründung des Deutschen Kaiserreichs|Am 18. Januar 1871 wird im Spiegelsaal von Versailles das Deutsche Kaiserreich ausgerufen, Wilhelm I. wird Kaiser, Bismarck Reichskanzler.|reichsgründung,kaiserreich
+1886|Erstes Auto|1886 meldet Carl Benz sein Motorwagen-Patent an. Das gilt als Geburtsstunde des Automobils.|benz patent motorwagen
+1903|Erster Motorflug|Am 17. Dezember 1903 gelingt den Brüdern Wright der erste gesteuerte Motorflug.|gebrüder wright,erster flug
+1912|Untergang der Titanic|In der Nacht zum 15. April 1912 sinkt die Titanic nach der Kollision mit einem Eisberg. Rund 1.500 Menschen sterben.|titanic
+1914|Beginn des Ersten Weltkriegs|Nach dem Attentat von Sarajevo beginnt im August 1914 der Erste Weltkrieg. Er endet am 11. November 1918 und kostet rund 17 Millionen Menschen das Leben.|erster weltkrieg,1. weltkrieg
+1917|Russische Revolution|1917 stürzen Revolutionäre den Zaren. Im Oktober übernehmen die Bolschewiki unter Lenin die Macht.|oktoberrevolution
+1918|Ende des Ersten Weltkriegs|Am 11. November 1918 endet der Erste Weltkrieg mit dem Waffenstillstand. In Deutschland wird die Republik ausgerufen, Frauen bekommen das Wahlrecht.|novemberrevolution,frauenwahlrecht
+1919|Weimarer Republik|1919 tritt die Weimarer Verfassung in Kraft, die erste Demokratie in Deutschland.|weimarer verfassung
+1929|Weltwirtschaftskrise|Mit dem Börsenkrach im Oktober 1929, dem Schwarzen Donnerstag, beginnt die Weltwirtschaftskrise.|börsenkrach,schwarzer freitag
+1933|Machtergreifung Hitlers|Am 30. Januar 1933 wird Adolf Hitler Reichskanzler. Die Nationalsozialisten errichten eine Diktatur.|machtergreifung
+1939|Beginn des Zweiten Weltkriegs|Am 1. September 1939 überfällt Deutschland Polen. Der Zweite Weltkrieg beginnt und fordert bis 1945 über 60 Millionen Tote. Dazu kommt der Holocaust an rund sechs Millionen Jüdinnen und Juden.|zweiter weltkrieg,2. weltkrieg
+1945|Ende des Zweiten Weltkriegs|Am 8. Mai 1945 kapituliert Deutschland. Im August fallen Atombomben auf Hiroshima und Nagasaki, Japan kapituliert am 2. September. Im selben Jahr wird die UNO gegründet.|kriegsende,8. mai 1945,hiroshima
+1948|Berliner Luftbrücke|1948 und 1949 versorgen westliche Flugzeuge das blockierte West-Berlin, die Rosinenbomber.|luftbrücke,rosinenbomber
+1949|Gründung der Bundesrepublik und der DDR|Am 23. Mai 1949 tritt das Grundgesetz in Kraft, die Bundesrepublik Deutschland entsteht. Am 7. Oktober 1949 wird die DDR gegründet.|grundgesetz,gründung ddr,gründung brd
+1953|Volksaufstand in der DDR|Am 17. Juni 1953 protestieren in der DDR Hunderttausende, der Aufstand wird mit sowjetischen Panzern niedergeschlagen.|17. juni
+1957|Römische Verträge|1957 gründen sechs Staaten, darunter Deutschland, die Europäische Wirtschaftsgemeinschaft, den Vorläufer der EU. Im selben Jahr startet Sputnik.|ewg
+1961|Bau der Berliner Mauer|Am 13. August 1961 beginnt die DDR mit dem Bau der Berliner Mauer.|mauerbau
+1963|Kennedy in Berlin|Am 26. Juni 1963 sagt US-Präsident John F. Kennedy in Berlin: Ich bin ein Berliner. Im November wird er in Dallas ermordet.|ich bin ein berliner
+1969|Mondlandung|Am 20. Juli 1969 landet Apollo 11 auf dem Mond, Neil Armstrong betritt ihn als erster Mensch.|apollo 11
+1989|Fall der Berliner Mauer|Am 9. November 1989 öffnet die DDR die Grenze, die Berliner Mauer fällt nach 28 Jahren.|mauerfall,9. november 1989,wende
+1990|Deutsche Wiedervereinigung|Am 3. Oktober 1990 tritt die DDR der Bundesrepublik bei. Seitdem ist der 3. Oktober der Tag der Deutschen Einheit.|wiedervereinigung,tag der deutschen einheit
+1991|Ende der Sowjetunion|Im Dezember 1991 löst sich die Sowjetunion auf, der Kalte Krieg ist vorbei. Im selben Jahr wird das World Wide Web öffentlich.|zerfall der sowjetunion
+1993|Gründung der Europäischen Union|Am 1. November 1993 tritt der Vertrag von Maastricht in Kraft, die EU entsteht.|vertrag von maastricht
+2001|Anschläge vom 11. September|Am 11. September 2001 entführen Terroristen vier Flugzeuge in den USA und zerstören das World Trade Center. Fast 3.000 Menschen sterben.|11. september,9/11,world trade center
+2002|Einführung des Euro-Bargelds|Am 1. Januar 2002 kommt der Euro als Bargeld, die D-Mark wird abgelöst. Als Buchgeld gab es ihn schon seit 1999.|euro eingeführt,euro einführung
+2004|Tsunami im Indischen Ozean|Am 26. Dezember 2004 löst ein Seebeben einen Tsunami aus, rund 230.000 Menschen sterben.|tsunami 2004
+2007|Erstes iPhone|2007 stellt Steve Jobs das erste iPhone vor und verändert die Handywelt.|iphone vorgestellt
+2008|Finanzkrise|2008 erschüttert die Pleite der Bank Lehman Brothers die Welt, es folgt eine weltweite Finanz- und Wirtschaftskrise.|lehman brothers
+2011|Fukushima|Am 11. März 2011 beschädigen ein Erdbeben und ein Tsunami das Kernkraftwerk Fukushima in Japan. Deutschland beschließt danach den Atomausstieg.|atomunfall fukushima
+2014|Deutschland wird Fußball-Weltmeister|Am 13. Juli 2014 gewinnt Deutschland in Rio de Janeiro mit 1 zu 0 gegen Argentinien die WM, Tor von Mario Götze.|wm 2014
+2016|Brexit-Abstimmung|Am 23. Juni 2016 stimmen die Briten knapp für den Austritt aus der EU. Der Austritt erfolgt am 31. Januar 2020.|brexit
+2020|Corona-Pandemie|2020 breitet sich das Coronavirus weltweit aus. Es gibt Lockdowns, Ende 2020 werden die ersten Impfstoffe zugelassen, darunter der von Biontech aus Mainz.|covid,corona,pandemie
+2022|Russischer Angriff auf die Ukraine|Am 24. Februar 2022 beginnt Russland einen großangelegten Angriffskrieg gegen die Ukraine.|ukraine krieg
+2022|Start von ChatGPT|Ende November 2022 veröffentlicht OpenAI ChatGPT. Damit beginnt der große Boom der KI-Assistenten.|chatgpt
+2023|Atomausstieg in Deutschland|Am 15. April 2023 gehen die letzten drei Kernkraftwerke in Deutschland vom Netz.|atomausstieg
+-1200|Trojanischer Krieg|Der Sage nach belagern die Griechen um 1200 vor Christus zehn Jahre lang Troja und siegen mit dem Trojanischen Pferd.|troja,trojanisches pferd
+-1330|Tutanchamun|Um 1330 vor Christus regiert der junge Pharao Tutanchamun. Sein fast unberührtes Grab wird 1922 von Howard Carter entdeckt.|tutanchamun grab
+1356|Goldene Bulle|1356 regelt die Goldene Bulle die Wahl des römisch-deutschen Königs durch sieben Kurfürsten.|goldene bulle
+1543|Kopernikanische Wende|1543 erscheint das Werk von Nikolaus Kopernikus: Die Erde kreist um die Sonne und nicht umgekehrt.|heliozentrisches weltbild
+1610|Galileis Fernrohr|1610 entdeckt Galileo Galilei mit dem Fernrohr die vier großen Jupitermonde.|galilei jupitermonde
+1755|Erdbeben von Lissabon|Am 1. November 1755 zerstören ein Erdbeben, ein Tsunami und Brände Lissabon.|lissabon erdbeben
+1870|Deutsch-Französischer Krieg|1870 und 1871 kämpfen Deutschland und Frankreich, am Ende steht die Gründung des Kaiserreichs.|
+1896|Erste Olympische Spiele der Neuzeit|1896 finden in Athen die ersten modernen Olympischen Spiele statt, angeregt von Pierre de Coubertin.|olympia 1896
+1936|Olympische Spiele in Berlin|1936 missbrauchen die Nationalsozialisten die Spiele in Berlin für Propaganda. Jesse Owens gewinnt vier Goldmedaillen.|olympia 1936
+1954|Wunder von Bern|Am 4. Juli 1954 wird Deutschland in Bern mit 3 zu 2 gegen Ungarn erstmals Fußball-Weltmeister.|wm 1954
+1972|Olympische Spiele in München|1972 finden die Spiele in München statt, überschattet vom Anschlag auf die israelische Mannschaft.|olympia 1972
+1974|Deutschland Weltmeister 1974|1974 gewinnt die Bundesrepublik die Heim-WM mit 2 zu 1 gegen die Niederlande in München.|wm 1974
+1986|Tschernobyl|Am 26. April 1986 explodiert ein Reaktor im Kernkraftwerk Tschernobyl in der heutigen Ukraine, der schwerste Atomunfall der Geschichte.|tschernobyl unfall
+1990|Deutschland Weltmeister 1990|1990 wird Deutschland in Italien mit 1 zu 0 gegen Argentinien Weltmeister, Tor von Andreas Brehme.|wm 1990
+1997|Tod von Prinzessin Diana|Am 31. August 1997 stirbt Diana, Princess of Wales, bei einem Autounfall in Paris.|lady diana
+2005|Erste Bundeskanzlerin|2005 wird Angela Merkel die erste Bundeskanzlerin Deutschlands. Sie regiert 16 Jahre bis 2021.|angela merkel kanzlerin
+2006|Sommermärchen|2006 findet die Fußball-WM in Deutschland statt, das Sommermärchen. Deutschland wird Dritter, Italien Weltmeister.|wm 2006
+2009|Bitcoin startet|Anfang 2009 geht das Bitcoin-Netzwerk von Satoshi Nakamoto an den Start, die erste Kryptowährung.|bitcoin start
+2019|Erstes Foto eines Schwarzen Lochs|2019 zeigt das Event Horizon Telescope das erste Bild eines Schwarzen Lochs in der Galaxie M87.|foto schwarzes loch
+2024|Fußball-EM in Deutschland|Im Sommer 2024 findet die Fußball-Europameisterschaft in Deutschland statt. Spanien wird Europameister.|em 2024
+2024|Olympische Spiele in Paris|Im Sommer 2024 finden die Olympischen Spiele in Paris statt.|olympia 2024
+2026|Fußball-WM in Nordamerika|2026 findet die Fußball-WM erstmals mit 48 Mannschaften in den USA, Kanada und Mexiko statt.|wm 2026

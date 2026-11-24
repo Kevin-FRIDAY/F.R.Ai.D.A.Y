@@ -761,6 +761,8 @@
         else if (hat("gegenrede")) window.FridayGegen?.open();
         const wissenA = data.actions?.find((a) => a === "wissen" || (typeof a === "string" && a.startsWith("wissen:")));
         if (wissenA) window.FridayWissen?.oeffne(wissenA.startsWith("wissen:") ? decodeURIComponent(wissenA.slice(7)) : "");
+        const lexA = data.actions?.find((a) => a === "lexikon" || (typeof a === "string" && a.startsWith("lexikon:")));
+        if (lexA) window.FridayWissen?.oeffne(lexA.startsWith("lexikon:") ? decodeURIComponent(lexA.slice(8)) : "", "lexikon");
         if (hat("ideen:ausbau")) window.FridayIdeen?.open({ reiter: "ausbau" });
         const ideeA = aktion("idee:");
         if (ideeA) { try { window.FridayIdeen?.open({ wurf: JSON.parse(decodeURIComponent(ideeA.slice(5))) }); } catch { window.FridayIdeen?.open(); } }
@@ -1391,8 +1393,10 @@
     loadBrain();
   }
   // ---------- Wissen = Fridays Datenbank: alles, was gesprochen und gemacht wurde ----------
-  const W_ICON = { gespraech: "💬", aktion: "⚡", gedaechtnis: "🧠", aufgabe: "✅", erinnerung: "⏰", einkauf: "🛒", dokument: "📄", notiz: "📝", idee: "💡", entscheidung: "⚖️", ziel: "🎯", mission: "🚀", geraet: "🔌", vorrat: "🥫", lernen: "🎓" };
-  const W_NAME = { gespraech: "Gespräche", aktion: "Aktionen", gedaechtnis: "Gemerkt", aufgabe: "Aufgaben", erinnerung: "Erinnerungen", einkauf: "Einkauf", dokument: "Dokumente", notiz: "Notizen", idee: "Ideen", entscheidung: "Entscheidungen", ziel: "Ziele", mission: "Missionen", geraet: "Geräte", vorrat: "Vorrat", lernen: "Lernstapel" };
+  const W_ICON = { gespraech: "💬", aktion: "⚡", gedaechtnis: "🧠", aufgabe: "✅", erinnerung: "⏰", einkauf: "🛒", dokument: "📄", notiz: "📝", idee: "💡", entscheidung: "⚖️", ziel: "🎯", mission: "🚀", geraet: "🔌", vorrat: "🥫", lernen: "🎓",
+    kauf: "🛍️", produkt: "🏷️", gegenrede: "😈", ablauf: "🔁", werkzeug: "🛠️", unterlage: "🗂️", datei: "📚", webseite: "🌐", spiel: "🎮", protokoll: "📜", lexikon: "📖" };
+  const W_NAME = { gespraech: "Gespräche", aktion: "Aktionen", gedaechtnis: "Gemerkt", aufgabe: "Aufgaben", erinnerung: "Erinnerungen", einkauf: "Einkauf", dokument: "Dokumente", notiz: "Notizen", idee: "Ideen", entscheidung: "Entscheidungen", ziel: "Ziele", mission: "Missionen", geraet: "Geräte", vorrat: "Vorrat", lernen: "Lernstapel",
+    kauf: "Kaufberater", produkt: "Produkte", gegenrede: "Gegenrede", ablauf: "Abläufe", werkzeug: "Werkzeug-Einsätze", unterlage: "Lern-Archiv", datei: "Eigene Dateien", webseite: "Webseiten", spiel: "Spiele", protokoll: "Protokolle", lexikon: "Lexikon" };
   const W_KANAL = { web: "Dashboard", telegram: "Telegram", siri: "Siri", briefing: "Briefing" };
   let wTyp = "", wQ = "", wLetztes = "", wSuchTimer = null, wLaedt = false;
   const wMark = (t) => {
@@ -1436,12 +1440,17 @@
     if (wLaedt) return;
     wLaedt = true;
     const liste = $("wissen-liste");
+    // v1.156.0: Lexikon (eingebautes Wissen) hat eine eigene Ansicht in datenbank.js.
+    if (wTyp === "lexikon" && window.FridayDatenbank?.lexikon) {
+      try { $("wissen-mehr")?.classList.add("hidden"); await window.FridayDatenbank.lexikon(liste, wQ, weiter); } finally { wLaedt = false; }
+      return;
+    }
     if (!weiter) { wLetztes = ""; if (liste) liste.innerHTML = '<span class="muted">Lade …</span>'; }
     try {
       const u = new URLSearchParams({ typ: wTyp, q: wQ, limit: "120" });
       if (weiter && wLetztes) u.set("vor", wLetztes);
       const d = await (await api("/api/wissen/datenbank?" + u)).json();
-      if (!weiter) window.FridayDatenbank?.kern();
+      if (!weiter) { window.FridayDatenbank?.kern(); window.FridayDatenbank?.lexikonTreffer?.(wQ); }
       const tr = $("wissen-treffer");
       if (tr) tr.textContent = wQ || wTyp ? `${d.treffer || 0} Treffer${wTyp ? ` in ${W_NAME[wTyp] || wTyp}` : ""}${wQ ? ` zu „${wQ}“` : ""}` : "";
       let html = "", letzterTag = weiter && liste?.dataset.tag ? liste.dataset.tag : "";
@@ -1505,6 +1514,7 @@
     suche(q) { wQ = String(q || ""); const f = $("wissen-q"); if (f) f.value = wQ; ladeWissen(); },
     neu() { ladeWissen(); },
     get aktiverTyp() { return wTyp; },
+    get suchtext() { return wQ; },
   };
   $("wissen-export")?.addEventListener("click", async () => {
     try {

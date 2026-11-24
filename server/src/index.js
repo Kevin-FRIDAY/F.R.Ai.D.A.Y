@@ -37,6 +37,7 @@ import { startTelegram } from "./telegram.js";
 import * as store from "./store.js";
 import * as logbuch from "./logbuch.js";
 import * as datenbank from "./datenbank.js";
+import { statistik as lexikonStatistik, zufallsFakt as lexikonFakt } from "./wissensbank.js";
 const { alleEintraege } = datenbank;
 import { alleDokumente, dokument, antwortenSpeichern } from "./dokumente.js";
 import { auftragStand } from "./auftrag.js";
@@ -366,6 +367,14 @@ app.get("/api/wissen/export", (req, res) => {
 });
 // v1.130.0: Übersicht im Gehirn-Stil (Speicher-Karte, 30 Tage, Themen, Rückblick) + eigene Notizen.
 app.get("/api/wissen/uebersicht", (req, res) => res.json(datenbank.uebersicht()));
+// v1.156.0: Fridays Lexikon (eingebautes Wissen ohne Internet): Suche, Bereich, Seiten.
+app.get("/api/wissen/lexikon", (req, res) => {
+  const limit = Math.min(200, Math.max(5, Number(req.query.limit) || 60));
+  const offset = Math.max(0, Number(req.query.offset) || 0);
+  const r = datenbank.lexikonListe({ q: String(req.query.q || "").slice(0, 120), kat: String(req.query.kat || "").slice(0, 40), limit, offset });
+  res.json({ ...r, ...lexikonStatistik() });
+});
+app.get("/api/wissen/lexikon/zufall", (req, res) => res.json({ fakt: lexikonFakt() }));
 app.post("/api/wissen/notiz", (req, res) => { try { res.json(datenbank.notizSpeichern(req.body || {})); } catch (err) { res.status(400).json({ error: err.message }); } });
 app.delete("/api/wissen/notiz/:id", (req, res) => res.json({ ok: datenbank.notizLoeschen(req.params.id) }));
 app.get("/api/systemcheck", asyncRoute(async (req, res) => res.json(await runSystemCheck())));

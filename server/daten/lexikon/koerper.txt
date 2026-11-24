@@ -1,0 +1,50 @@
+# koerper|Körper & Gesundheit|❤️
+# Titel|Text|Aliase
+Herz|Das Herz schlägt in Ruhe etwa 60 bis 80 Mal pro Minute, rund 100.000 Mal am Tag, und pumpt dabei etwa 7.000 Liter Blut. Es ist etwa faustgroß.|herzschlag
+Puls|Der normale Ruhepuls bei Erwachsenen liegt bei etwa 60 bis 80 Schlägen pro Minute. Sportler haben oft weniger.|ruhepuls,herzfrequenz
+Blutdruck|Ein normaler Blutdruck liegt um 120 zu 80. Ab 140 zu 90 spricht man von Bluthochdruck, das sollte ein Arzt prüfen.|bluthochdruck,blutdruck normal
+Blut|Ein Erwachsener hat etwa 5 bis 6 Liter Blut. Rote Blutkörperchen transportieren Sauerstoff, weiße wehren Krankheiten ab, Blutplättchen stoppen Blutungen.|blutmenge
+Blutgruppen|Die Blutgruppen sind A, B, AB und 0, jeweils Rhesus positiv oder negativ. 0 negativ kann man fast allen spenden, AB positiv kann von allen empfangen.|blutgruppe
+Gehirn|Das Gehirn wiegt etwa 1,4 Kilo, hat rund 86 Milliarden Nervenzellen und verbraucht etwa 20 Prozent der Energie des Körpers.|hirn,menschliches gehirn
+Knochen|Ein Erwachsener hat 206 Knochen, ein Baby etwa 300, die später zusammenwachsen. Der längste ist der Oberschenkelknochen, der kleinste der Steigbügel im Ohr.|wie viele knochen
+Muskeln|Der Mensch hat über 600 Muskeln. Der größte ist der Gesäßmuskel, der stärkste im Verhältnis der Kaumuskel.|muskel
+Haut|Die Haut ist mit etwa 2 Quadratmetern das größte Organ des Menschen. Sie erneuert sich etwa alle vier Wochen.|größtes organ
+Lunge|Wir atmen etwa 12 bis 20 Mal pro Minute, über 20.000 Mal am Tag. Die Lunge hat ausgebreitet die Fläche eines Tennisplatzes.|lungen,atmung
+Leber|Die Leber ist die größte Drüse, entgiftet den Körper und kann sich zum Teil selbst erneuern.|
+Niere|Die zwei Nieren filtern täglich rund 1.500 Liter Blut und bilden daraus etwa 1,5 Liter Urin.|nieren
+Magen|Die Magensäure ist so sauer, dass sie Metall angreifen würde. Die Magenschleimhaut erneuert sich deshalb alle paar Tage.|magensäure
+Darm|Der Darm ist etwa 7 Meter lang und beherbergt Billionen Bakterien, die bei Verdauung und Abwehr helfen.|darmflora
+Augen|Das menschliche Auge kann etwa 10 Millionen Farben unterscheiden. Wir blinzeln etwa 15 bis 20 Mal pro Minute.|auge,sehen
+Ohren|Im Ohr sitzt der Gleichgewichtssinn. Das Gehör hört Töne zwischen etwa 20 und 20.000 Hertz, im Alter weniger.|ohr,hören
+Zähne|Erwachsene haben 32 Zähne inklusive Weisheitszähne, Kinder 20 Milchzähne. Zahnschmelz ist das härteste Material im Körper.|zahn,zahnschmelz
+Haare|Ein Mensch hat etwa 100.000 Kopfhaare, sie wachsen rund einen Zentimeter im Monat. 50 bis 100 Haare am Tag zu verlieren ist normal.|haar
+Schlaf|Erwachsene brauchen meist 7 bis 9 Stunden Schlaf. Im Schlaf sortiert das Gehirn Erinnerungen. Vor dem Schlafen hilft wenig Bildschirmlicht.|schlafen,wie viel schlaf
+Wasser trinken|Erwachsene sollten etwa 1,5 bis 2 Liter am Tag trinken, bei Hitze und Sport mehr.|wie viel trinken,trinkmenge
+Fieber|Ab etwa 38 Grad spricht man von Fieber, ab 39 von hohem Fieber. Normal sind 36,3 bis 37,4 Grad. Bei über 40 Grad oder Fieber länger als drei Tage zum Arzt.|körpertemperatur,temperatur normal
+Erkältung|Eine Erkältung wird von Viren ausgelöst und dauert meist etwa eine Woche. Antibiotika helfen nicht, Ruhe, Trinken und Zeit schon.|schnupfen
+Grippe|Die echte Grippe, Influenza, kommt plötzlich mit hohem Fieber und starken Gliederschmerzen. Eine Impfung im Herbst schützt.|influenza
+Kopfschmerzen|Viele Kopfschmerzen kommen von zu wenig Trinken, Verspannung, Stress oder Schlafmangel. Bei plötzlichem, extrem starkem Kopfschmerz sofort 112 anrufen.|kopfweh
+Vitamine|Vitamine braucht der Körper in kleinen Mengen. Vitamin C stärkt die Abwehr, Vitamin D bildet die Haut mit Sonnenlicht, B12 steckt vor allem in tierischen Lebensmitteln.|vitamin,vitamin d,vitamin c
+BMI|Der Body-Mass-Index ist Gewicht in Kilo geteilt durch Körpergröße in Metern zum Quadrat. 18,5 bis 25 gilt als Normalgewicht. Er sagt aber nichts über Muskeln aus.|body mass index
+Schritte pro Tag|Etwa 7.000 bis 10.000 Schritte am Tag gelten als gesund. Schon 7.000 senken das Risiko vieler Krankheiten deutlich.|10000 schritte,schritte
+Herzinfarkt|Warnzeichen für einen Herzinfarkt: starker Druck oder Schmerz in der Brust, oft in Arm, Kiefer oder Rücken ausstrahlend, Atemnot, kalter Schweiß, Übelkeit. Sofort 112 anrufen!|herzinfarkt anzeichen
+Schlaganfall|Schlaganfall erkennt man mit dem FAST-Test: Face, Gesicht hängt; Arms, ein Arm sinkt ab; Speech, Sprache verwaschen; Time, sofort 112 anrufen. Jede Minute zählt.|schlaganfall anzeichen,fast test
+Wiederbelebung|Bei Bewusstlosigkeit ohne normale Atmung: 112 anrufen, dann fest und schnell in der Mitte der Brust drücken, 100 bis 120 Mal pro Minute, etwa 5 bis 6 Zentimeter tief. Takt wie bei Stayin’ Alive. Nicht aufhören, bis Hilfe da ist.|herzdruckmassage,reanimation,erste hilfe herz
+Stabile Seitenlage|Wer bewusstlos ist, aber normal atmet, kommt in die stabile Seitenlage: auf die Seite drehen, Kopf überstrecken, Mund leicht nach unten, damit nichts in die Atemwege läuft. Dann 112 rufen und Atmung prüfen.|seitenlage
+Verbrennung|Bei Verbrennungen 10 bis 20 Minuten mit handwarmem, nicht eiskaltem Wasser kühlen. Keine Hausmittel wie Mehl oder Butter. Bei großen Flächen 112.|verbrennung erste hilfe,verbrannt
+Nasenbluten|Bei Nasenbluten den Kopf nach vorne beugen, nicht nach hinten, die Nasenflügel zusammendrücken und den Nacken kühlen.|nase blutet
+Zeckenbiss|Zecken möglichst schnell mit einer Zeckenzange dicht an der Haut herausziehen, nicht quetschen. Die Stelle wochenlang beobachten, ein roter Ring kann Borreliose bedeuten, dann zum Arzt.|zecke,zecken
+Sonnenbrand|Sonnenbrand vermeidet man mit Sonnencreme ab Lichtschutzfaktor 30, Mittagsschatten und Kleidung. Gekühlt wird mit feuchten Tüchern, nicht mit Eis.|sonnencreme,lsf
+Allergie|Bei einer Allergie reagiert das Immunsystem übertrieben auf harmlose Stoffe wie Pollen, Hausstaub oder Nüsse.|allergien,heuschnupfen
+Immunsystem|Das Immunsystem schützt den Körper vor Krankheitserregern. Schlaf, Bewegung und gesunde Ernährung stärken es.|abwehrkräfte
+Stress|Bei Stress schüttet der Körper Adrenalin und Cortisol aus. Kurzfristig hilft langsames Atmen, etwa vier Sekunden ein, vier halten, vier aus.|stress abbauen
+Koffein|Koffein wirkt nach etwa 30 Minuten und hält mehrere Stunden. Für Erwachsene gelten bis etwa 400 Milligramm am Tag als unbedenklich, das sind rund 4 Tassen Kaffee.|kaffee koffein
+Alkohol|Alkohol baut der Körper nur mit etwa 0,1 bis 0,15 Promille pro Stunde ab, Kaffee oder Duschen beschleunigt das nicht.|promille
+Zucker|Die WHO empfiehlt höchstens etwa 50 Gramm, besser 25 Gramm zugesetzten Zucker am Tag. Eine Dose Cola hat schon rund 35 Gramm.|zucker am tag
+Proteine|Eiweiß, auch Protein, braucht der Körper für Muskeln und Zellen. Empfohlen sind etwa 0,8 Gramm pro Kilo Körpergewicht am Tag, Sportler mehr.|eiweiß,protein
+Ballaststoffe|Ballaststoffe aus Vollkorn, Gemüse und Hülsenfrüchten halten lange satt und sind gut für den Darm. Ziel sind etwa 30 Gramm am Tag.|
+Hormone|Hormone sind Botenstoffe im Blut. Adrenalin macht wach, Insulin senkt den Blutzucker, Melatonin macht müde.|hormon,adrenalin,melatonin
+Diabetes|Bei Diabetes ist der Blutzucker dauerhaft zu hoch, weil Insulin fehlt oder nicht richtig wirkt. Typ 2 hängt stark mit Bewegung und Ernährung zusammen.|zuckerkrankheit
+Augen und Bildschirm|Die 20-20-20-Regel entlastet die Augen: alle 20 Minuten für 20 Sekunden etwas in etwa 6 Metern Entfernung ansehen.|bildschirmarbeit augen
+Organspende|In Deutschland kann man im Organspendeausweis oder im Online-Register festhalten, ob man Organe spenden möchte.|organspendeausweis
+Blutspende|Blut spenden dürfen gesunde Menschen ab 18 Jahren. Männer bis zu sechsmal, Frauen bis zu viermal im Jahr. Eine Spende sind etwa 500 Milliliter.|blut spenden

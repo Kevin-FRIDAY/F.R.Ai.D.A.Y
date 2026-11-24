@@ -94,6 +94,30 @@
 .db-zuletzt .db-z i { flex: none; width: 16px; height: 16px; border-radius: 50%; background: #38e08c; color: #04210f; font-style: normal; font-weight: 800; font-size: 11px; display: grid; place-items: center; box-shadow: 0 0 8px rgba(56,224,140,.6); }
 .db-zuletzt .db-z span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .db-zuletzt .db-z small { flex: none; opacity: .6; margin-left: auto; }
+/* v1.156.0: Fridays Lexikon – eingebautes Wissen ohne Internet */
+.db-lx-kats { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 10px; }
+.db-lx-kats button { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--u-rand-soft, rgba(255,138,30,.3)); background: rgba(255,138,30,.07); color: var(--text); font: 500 12px var(--font-ui, var(--font)); cursor: pointer; }
+.db-lx-kats button small { color: var(--cyan); font-weight: 600; }
+.db-lx-kats button.active, .db-lx-kats button:hover { border-color: var(--cyan); box-shadow: 0 0 10px color-mix(in srgb, var(--cyan) 35%, transparent); background: rgba(255,138,30,.16); }
+.db-lx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 9px; }
+.db-lx { position: relative; padding: 10px 12px 11px; border-radius: 14px; border: 1px solid var(--u-rand-soft, rgba(255,138,30,.3)); background: linear-gradient(180deg, rgba(255,138,30,.08), rgba(0,0,0,.25)); min-width: 0; }
+.db-lx h4 { margin: 0 0 4px; display: flex; align-items: baseline; gap: 7px; font: 650 14px var(--font-ui, var(--font)); color: #fff; }
+.db-lx h4 span { font-size: 15px; }
+.db-lx h4 small { margin-left: auto; font: 500 10.5px var(--font-ui, var(--font)); color: var(--cyan); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
+.db-lx p { margin: 0 0 14px; font: 400 13px/1.5 var(--font-ui, system-ui, -apple-system, sans-serif); color: var(--text); opacity: .92; }
+.db-lx h4 b { font-weight: inherit; min-width: 0; }
+.db-lx mark, .db-lx-box mark { background: rgba(255,170,60,.32); color: #fff; border-radius: 3px; padding: 0 1px; }
+.db-lx-box a { color: var(--cyan); }
+.db-lx .db-lx-b { display: block; margin-top: 6px; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.db-lx-vor { position: absolute; bottom: 6px; right: 8px; border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 2px 4px; }
+.db-lx-vor:hover { color: var(--cyan); }
+.db-lx-mehr { margin: 10px auto 2px; display: block; }
+.db-lx-box { margin: 0 2px 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid rgba(255,226,138,.45); background: rgba(255,226,138,.06); }
+.db-lx-box:empty { display: none; }
+.db-lx-box .db-h { margin: 0 0 7px; }
+.db-lx-box .db-lx-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.db-lx-leer { padding: 10px 2px; }
+@media (max-width: 900px) { .db-lx-grid { grid-template-columns: 1fr; } }
 `;
   document.head.appendChild(style);
 
@@ -102,15 +126,20 @@
   function karte(u) {
     const svg = $("db-karte");
     if (!svg) return;
-    const typen = Object.keys(u.quellen);
-    const max = Math.max(1, ...typen.map((t) => u.typen[t] || 0));
+    // v1.156.0: Lexikon als eigener Knoten; bei vielen Quellen zwei Ringe, Größe logarithmisch (sonst wären kleine Quellen unsichtbar).
+    const quellen = { ...(u.lexikon?.gesamt ? { lexikon: u.lexikonQuelle || { name: "Lexikon", farbe: "#ffe28a" } } : {}), ...u.quellen };
+    const anzahl = (t) => (t === "lexikon" ? u.lexikon?.gesamt || 0 : u.typen[t] || 0);
+    const typen = Object.keys(quellen);
+    const max = Math.max(1, ...typen.map(anzahl));
+    const zweiRinge = typen.length > 16;
     const aktiv = window.FridayWissen?.aktiverTyp || "";
     let linien = "", knoten = "";
     typen.forEach((t, i) => {
-      const q = u.quellen[t], n = u.typen[t] || 0;
+      const q = quellen[t], n = anzahl(t);
       const w = -Math.PI / 2 + (i / typen.length) * Math.PI * 2;
-      const x = 200 + Math.cos(w) * 165, y = 150 + Math.sin(w) * 118;
-      const r = n ? 7 + Math.sqrt(n / max) * 11 : 6;
+      const ring = zweiRinge && i % 2 ? 0.66 : 1;
+      const x = 200 + Math.cos(w) * 168 * ring, y = 150 + Math.sin(w) * 122 * ring;
+      const r = n ? 6 + (Math.log(1 + n) / Math.log(1 + max)) * (zweiRinge ? 9 : 12) : 5;
       const cx = 200 + (x - 200) * 0.5, cy = 150 + (y - 150) * 0.5 + (i % 2 ? 14 : -14);
       linien += `<path class="ln${n ? " an" : ""}" style="--f:${q.farbe};animation-delay:-${(i * 0.17).toFixed(2)}s" d="M200 150 Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}"/>`;
       const unten = y > 150;
@@ -129,6 +158,7 @@
     const aktiv = window.FridayWissen?.aktiverTyp || "";
     const typen = Object.keys(u.quellen).filter((t) => u.typen[t] > 0 || t === aktiv);
     box.innerHTML = `<button type="button" data-typ=""${aktiv ? "" : ' class="active"'}>Alles<small>${zahl(u.gesamt)}</small></button>`
+      + (u.lexikon?.gesamt ? `<button type="button" data-typ="lexikon"${aktiv === "lexikon" ? ' class="active"' : ""}>📖 Lexikon<small>${zahl(u.lexikon.gesamt)}</small></button>` : "")
       + typen.map((t) => `<button type="button" data-typ="${t}"${aktiv === t ? ' class="active"' : ""}>${u.quellen[t].icon} ${esc(u.quellen[t].name)}<small>${zahl(u.typen[t])}</small></button>`).join("");
   }
 
@@ -141,7 +171,7 @@
     // Untertitel in den Gehirn-Kopf (gehirn-stil.js) unter den Titel setzen
     const unter = $("db-unter"), titel = unter?.parentElement?.querySelector(".gs-titel");
     if (unter && titel && unter.parentElement !== titel) titel.append(unter);
-    $("db-unter").textContent = `${u.quellenAktiv} von ${anzQ} Quellen aktiv · ${mb(u.speicher.bytes)} · ${zahl(u.speicher.dateien)} Dateien`;
+    $("db-unter").textContent = `${u.quellenAktiv} von ${anzQ} Quellen aktiv · Lexikon ${zahl(u.lexikon?.gesamt)} · ${mb(u.speicher.bytes)} · ${zahl(u.speicher.dateien)} Dateien`;
     $("db-seit").textContent = `seit ${datum(u.seit)}`;
     const k = (titel, wert, unter, klasse = "") => `<div class="db-k ${klasse}"><small>${titel}</small><b>${wert}</b><em>${unter}</em></div>`;
     const anteil = u.gesamt ? Math.round(((u.typen.gespraech || 0) / u.gesamt) * 100) : 0;
@@ -149,8 +179,10 @@
       + k("Heute neu", `+${zahl(u.heute)}`, `${zahl(u.woche)} in 7 Tagen`)
       + k("Gemerkt", zahl(gemerkt), `${zahl(u.typen.notiz || 0)} eigene Notizen`)
       + k("Gespräche", zahl(u.typen.gespraech || 0), Object.entries(u.kanaele).map(([kn, n]) => `${({ web: "Dashboard", telegram: "Telegram", siri: "Siri" })[kn] || esc(kn)} ${n}`).join(" · ") || "noch keine")
+      + k("Lexikon", zahl(u.lexikon?.gesamt), `${zahl(u.lexikon?.kategorien?.length)} Bereiche, offline`)
+      + k("Wissen gesamt", zahl(u.wissenGesamt ?? u.gesamt), "Datenbank + Lexikon")
       + `<div class="db-k breit"><small>Speicher</small><b>${mb(u.speicher.bytes)}</b><em>${anteil} % Gespräche · Rest Wissen, Listen, Pläne</em><span class="gh-bar"><s style="width:${Math.max(3, Math.min(100, anteil))}%"></s></span></div>`;
-    $("db-quellen").textContent = `${u.quellenAktiv}/${anzQ} aktiv · antippen = filtern`;
+    $("db-quellen").textContent = `${u.quellenAktiv}/${anzQ} aktiv + Lexikon · antippen = filtern`;
     karte(u);
     filterKnoepfe(u);
     const max = Math.max(1, ...u.tage.map((t) => t.n));
@@ -215,5 +247,61 @@
   const wissenSheet = $("wissen");
   if (wissenSheet) new MutationObserver(() => { if (!wissenSheet.classList.contains("hidden")) zuletzt(); }).observe(wissenSheet, { attributes: true, attributeFilter: ["class"] });
 
-  window.FridayDatenbank = { kern, get stand() { return stand; } };
+  // ---------- v1.156.0: Lexikon-Ansicht ----------
+  let lxKat = "", lxOffset = 0, lxStat = null;
+  const lxMark = (t, q) => {
+    const h = esc(t || "");
+    if (!q) return h;
+    const r = esc(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return h.replace(new RegExp(r, "gi"), (m) => `<mark>${m}</mark>`);
+  };
+  const lxKarte = (e, q) => `<article class="db-lx" data-lx="${esc(e.id)}"><h4><span aria-hidden="true">${esc(e.icon)}</span><b>${lxMark(e.titel, q)}</b>${e.info ? `<small>${esc(e.info)}</small>` : ""}</h4>`
+    + `<p>${lxMark(e.text, q)}</p><span class="db-lx-b">${esc(e.bereich)}</span>`
+    + `<button class="db-lx-vor" type="button" data-sag="${esc(e.text)}" title="Vorlesen" aria-label="Vorlesen">🔊</button></article>`;
+  const sagen = (txt) => { try { if (window.Friday?.say) window.Friday.say(txt); else if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(txt); u.lang = "de-DE"; speechSynthesis.cancel(); speechSynthesis.speak(u); } } catch { /* egal */ } };
+
+  /** Lexikon in die Liste zeichnen (von app.js aufgerufen, wenn der Filter „Lexikon“ aktiv ist). */
+  async function lexikon(liste, q = "", weiter = false) {
+    if (!liste) return;
+    if (!weiter) { lxOffset = 0; liste.innerHTML = '<span class="muted">Lade Lexikon …</span>'; kern(); }
+    let d;
+    try { d = await (await api("/api/wissen/lexikon?" + new URLSearchParams({ q, kat: lxKat, limit: "60", offset: String(lxOffset) }))).json(); }
+    catch { liste.innerHTML = '<span class="muted">Lexikon nicht erreichbar.</span>'; return; }
+    lxStat = d;
+    const tr = $("wissen-treffer");
+    const katName = d.kategorien.find((k) => k.id === lxKat)?.name;
+    if (tr) tr.textContent = `${zahl(d.treffer)} ${d.treffer === 1 ? "Eintrag" : "Einträge"} im Lexikon${katName ? ` · ${katName}` : ""}${q ? ` zu „${q}“` : ""} · eingebaut, ohne Internet und ohne Claude`;
+    const kats = `<div class="db-lx-kats" role="tablist"><button type="button" data-lxkat=""${lxKat ? "" : ' class="active"'}>Alle Bereiche<small>${zahl(d.gesamt)}</small></button>`
+      + d.kategorien.map((k) => `<button type="button" data-lxkat="${esc(k.id)}"${lxKat === k.id ? ' class="active"' : ""}>${esc(k.icon)} ${esc(k.name)}<small>${zahl(k.n)}</small></button>`).join("") + "</div>";
+    const karten = d.eintraege.map((e) => lxKarte(e, q)).join("");
+    const mehr = d.mehr ? '<button class="chip db-lx-mehr" type="button" data-lxmehr="1">Mehr anzeigen</button>' : "";
+    if (!weiter) liste.innerHTML = kats + (karten ? `<div class="db-lx-grid">${karten}</div>` : `<div class="muted db-lx-leer">Dazu steht nichts im Lexikon${q ? ` zu „${esc(q)}“` : ""}. Frag mich einfach, dann denke ich mit Claude nach.</div>`) + mehr;
+    else { liste.querySelector(".db-lx-mehr")?.remove(); liste.querySelector(".db-lx-grid")?.insertAdjacentHTML("beforeend", karten); if (mehr) liste.insertAdjacentHTML("beforeend", mehr); }
+    const box = $("db-lx-box"); if (box) box.innerHTML = "";
+  }
+  /** Bei normaler Suche: bis zu 4 passende Lexikon-Einträge über der Liste. */
+  async function lexikonTreffer(q) {
+    let box = $("db-lx-box");
+    const liste = $("wissen-liste");
+    if (!box && liste) { box = document.createElement("div"); box.id = "db-lx-box"; box.className = "db-lx-box"; liste.parentElement.insertBefore(box, liste); }
+    if (!box) return;
+    const such = String(q || "").trim();
+    if (such.length < 2) { box.innerHTML = ""; return; }
+    try {
+      const d = await (await api("/api/wissen/lexikon?" + new URLSearchParams({ q: such, limit: "4" }))).json();
+      if (such !== String(window.FridayWissen?.suchtext ?? such)) return;
+      box.innerHTML = d.eintraege.length ? `<div class="db-h">📖 AUS DEM LEXIKON <span class="db-klein">${zahl(d.treffer)} Treffer · <a href="#" data-lxalle="1">alle zeigen</a></span></div><div class="db-lx-grid">${d.eintraege.map((e) => lxKarte(e, such)).join("")}</div>` : "";
+    } catch { box.innerHTML = ""; }
+  }
+  document.addEventListener("click", (e) => {
+    const k = e.target.closest("[data-lxkat]");
+    if (k) { lxKat = k.dataset.lxkat; window.FridayWissen?.typ("lexikon"); return; }
+    if (e.target.closest("[data-lxmehr]")) { lxOffset += 60; lexikon($("wissen-liste"), window.FridayWissen?.suchtext || "", true); return; }
+    const v = e.target.closest(".db-lx-vor");
+    if (v) { sagen(v.dataset.sag); return; }
+    const alle = e.target.closest("[data-lxalle]");
+    if (alle) { e.preventDefault(); lxKat = ""; window.FridayWissen?.typ("lexikon"); }
+  });
+
+  window.FridayDatenbank = { kern, lexikon, lexikonTreffer, get stand() { return stand; }, get lexikonStand() { return lxStat; } };
 })();
