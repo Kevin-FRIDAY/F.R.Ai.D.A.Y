@@ -1,4 +1,4 @@
-// Fridays Werkzeugkasten (v1.161.0): 100 kleine Werkzeuge für alle Bereiche – Rechner, Generatoren, Prüfer, Vorlagen.
+// Fridays Werkzeugkasten (v1.162.0): 100 kleine Werkzeuge für alle Bereiche – Rechner, Generatoren, Prüfer, Vorlagen.
 // Alle laufen OHNE Claude und ohne Guthaben (lokal auf dem Mac oder über kostenlose Dienste ohne Schlüssel).
 //
 // Warum EIN Werkzeugkasten statt 100 einzelner Claude-Werkzeuge?

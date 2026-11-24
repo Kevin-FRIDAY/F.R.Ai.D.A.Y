@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y – Werkzeugkasten (v1.161.0)
+// F.R.Ai.D.A.Y – Werkzeugkasten (v1.162.0)
 // 100 Werkzeuge in 13 Bereichen: Kacheln mit Suche, dann ein Formular pro Werkzeug, Ergebnis mit Tabelle,
 // Kopieren, Herunterladen (.ics, .txt, .csv), QR-Code (wird hier im Browser erzeugt) und Vorlesen.
 // Öffnen: Werkzeug-Menü → Alltag → Werkzeugkasten, „Friday, öffne den Werkzeugkasten“, oder Aktionen

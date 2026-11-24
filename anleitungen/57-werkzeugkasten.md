@@ -1,4 +1,4 @@
-# Fridays Werkzeugkasten – 100 Werkzeuge (v1.161.0)
+# Fridays Werkzeugkasten – 100 Werkzeuge (v1.162.0)
 
 Friday hat jetzt **100 kleine Werkzeuge**: Rechner, Generatoren, Prüfer und Vorlagen für Geld, Haushalt, Zeit,
 Gesundheit, Text, Sicherheit, Technik, Mathe, Reisen, Natur, Familie und Büro.

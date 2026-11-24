@@ -7,6 +7,8 @@ import { isAgentOnline } from "./agent-hub.js";
 import { agentsBrief } from "./agents.js";
 import { quickCommand as alexaQuick } from "./alexa.js";
 import { quickCommand as anrufQuick } from "./anrufe.js";
+import { quickCommand as weckrufQuick, fertigWunsch } from "./weckruf.js";
+import { notifyAll } from "./notify.js";
 import { quickCommand as tvQuick } from "./fernseher.js";
 import { quickCommand as dienstQuick, dienstKurzinfo } from "./dienste.js";
 import { offlineAnswer, notfallText } from "./offline.js";
@@ -51,6 +53,9 @@ import { sperre as deckelSperre } from "./kostendeckel.js";
 import { neuerWaechter as schleifenWaechter } from "./schleifen.js";
 import { quickCommand as jarvisQuick } from "./jarvis-paket.js";
 import { quickCommand as werkzeugQuick } from "./werkzeugkasten.js";
+// Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
+import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
+import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -58,8 +63,6 @@ const TEMPO = {
   schnell: { model: "claude-sonnet-5-5", effort: "low", fallback: true, websuche: true },
   gruendlich: { model: null, effort: "medium", fallback: true, websuche: true }, // null = CLAUDE_MODEL aus der .env (Opus)
 };
-// Sätze, mit denen Friday etwas nur ankündigt, statt es zu tun.
-const NUR_ANGEKUENDIGT = /\b(mach(e)? ich|ich mach(e)? (das|dir|es|mich)|ich (erstelle|schreibe|bereite|kümmere|kuemmere|stelle|suche|baue|plane|setze)|wird erledigt|bin dran|gleich (fertig|erledigt)|sofort,? boss|kommt sofort|ich fange (jetzt )?an|einen moment)\b/i;
 
 const client = kiClient();
 
@@ -87,6 +90,7 @@ Werkzeuge:
 - Für Wege, Fahrzeiten, Entfernungen und Bahn-/Busverbindungen nutze route_planen (kostenlos, zeigt die Karte im Dashboard).
 - Termine und Apple-Erinnerungen: kalender (Fridays eigene Erinnerungen mit Wecker: set_reminder). Musik: spotify, wenn verbunden, sonst mac. Lampen: hue für Philips Hue, smart_home für Home Assistant (Heizung, Steckdosen, Rollos, Sensoren). Aufgaben: todoist, wenn verbunden. Notizen und Wissen: notion.
 - Nachrichten und Anrufe an die Frau des Nutzers, ihn selbst oder hinterlegte Kontakte: anrufe. Wer "ruf meine Frau an und sag ihr …" sagt, hat damit bestätigt: direkt ausführen. Den Text in der Ich-Form des Nutzers formulieren.
+- Weckruf: Ist etwas wirklich wichtig und eilig (Gefahr, Frist, Boss hat "ruf mich an, wenn …" gesagt), lass sein iPhone mit weckruf (action wecken) klingeln. Nie für normale Antworten.
 - Mac-Aktionen gehen nur, wenn der Mac verbunden ist. Wenn nicht, sag es kurz.
 - Eigene Unterlagen (Verträge, Rechnungen, Anleitungen, PDFs): dokumente_suchen, und nenne immer die Quelle (Datei, Seite). Apple Notizen, Kontakte und die Music-App: apple_notizen, apple_kontakte, apple_musik. Soll ich etwas über längere Zeit beobachten ("sag mir Bescheid, wenn …"): dauer_waechter.
 - Bekommst du "wartet_auf_freigabe" zurück, sag kurz, dass die Aktion in der Glocke oben auf Boss' Freigabe wartet (oder per Knopf in Telegram), und tu nicht so, als sei sie erledigt.
@@ -94,6 +98,8 @@ Werkzeuge:
 
 Aufträge:
 - Wenn ${config.userName} dir einen Auftrag gibt, erledigst du ihn sofort in dieser Antwort. Sag nie "mache ich" oder "ich erstelle das", ohne es im selben Zug zu tun. Es gibt kein "später": nach deiner Antwort passiert nichts mehr.
+- Excel-Tabellen, Tabellen, Kalkulationen, Haushaltsbücher, Listen mit Spalten: immer tabelle_erstellen. Das erzeugt eine echte .xlsx-Datei, die am Mac aufgeht. Fülle sie gleich mit sinnvollem Inhalt und passenden Formeln, frag nicht erst lange nach.
+- Ehrlich melden: Sag nur "erledigt" oder "habe ich geschickt", wenn das Werkzeug wirklich Erfolg gemeldet hat. Meldet es einen Fehler, sag genau das und was Boss tun kann.
 - Listen, Pläne, Texte, Rezepte und Ideen, die man aufheben will, speicherst du mit dokument_erstellen (gesuchte Infos und Erklärungen erzählst du dagegen direkt). Fragebögen erstellst du mit fragebogen_erstellen, mit genau so vielen Fragen wie gewünscht. Danach erzählst du in zwei, drei Sätzen, was drinsteht, und dass es im Dashboard liegt.
 - Spiele baust du nie als Dokument und schreibst ihren Code nie in die Antwort: benutze spiel_bauen. Das Dashboard zeigt dann live, wie du programmierst, und startet das Spiel.
 - Soll ein neues Video entstehen ("mach mir ein 20-Sekunden-Video über …"), benutze video_erstellen. Vorhandene Clips mit Untertiteln schneiden ist video_schnitt.
@@ -156,6 +162,9 @@ function isoAgentText() {
 // Jede Frage und Antwort kommt in Fridays Datenbank (Fenster "Wissen"), egal über welchen Weg.
 export async function ask(opts) {
   const start = Date.now();
+  // Weckruf (v1.161.0): "… und ruf mich an, wenn du fertig bist" – Auftrag ausführen, danach klingeln.
+  const fw = opts?.mode !== "translate" && opts?.text ? fertigWunsch(opts.text) : { rufen: false };
+  if (fw.rufen) opts = { ...opts, text: fw.text };
   let res;
   try {
     res = await askIntern(opts);
@@ -164,6 +173,13 @@ export async function ask(opts) {
     throw err;
   }
   logbuchBefehl(opts, res, Date.now() - start);
+  const dauer = Date.now() - start;
+  const kanal = opts?.channel || "web";
+  // Bestellt ("ruf mich an, wenn …") oder ein langer Auftrag (über 3 Min.), während Boss weg ist.
+  if ((fw.rufen || (dauer > 180000 && kanal === "web")) && !res?.fehler) {
+    const kurz = String(res?.answer || "").replace(/\s+/g, " ").slice(0, 300);
+    notifyAll("✅ Friday ist fertig", `${String(opts.text || "").slice(0, 80)}: ${kurz}`, { art: "aufgabe", erzwingen: fw.rufen }).catch(() => {});
+  }
   store.archiviere({
     typ: "gespraech",
     kanal: opts?.channel || "web",
@@ -204,7 +220,22 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   const messages = [...history, { role: "user", content: userContent }];
   const actions = [];
   let claudeGefragt = false; // fürs Logbuch: hat Claude geantwortet?
+  // Auftrags-Kern: was wurde verlangt, und was ist wirklich passiert?
+  const auftrag = mode !== "translate" && text ? auftragErkennen(text) : null;
+  const protokoll = neuesProtokoll(auftrag);
+  let kernAktiv = false; // erst ab dem Claude-Teil prüfen (Schnellbefehle melden selbst ehrlich)
   let nichtGeklappt = false; // Claude nicht erreichbar und auch offline keine Antwort
+
+  // Weckruf-Befehle ("teste den Weckruf", "bitte nicht stören für 2 Stunden") – vor den Anrufen,
+  // weil "ruf mich zum Test an" sonst als Anruf an einen Kontakt verstanden würde.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const w = await weckrufQuick(text);
+      if (w) { actions.push(...w.actions); return finish(w.answer); }
+    } catch (err) {
+      console.error("Weckruf:", err.message);
+    }
+  }
 
   // Anrufe & Nachrichten ("ruf meine Frau an und sag ihr, dass …") – ohne Claude.
   // Ganz vorne, damit die Antwort auf "Was soll ich ihr sagen?" hier landet.
@@ -526,6 +557,8 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // Kosten-Deckel (v1.135.0): Grenze pro Stunde/Tag erreicht → nur Offline-Befehle, kein Claude.
   const deckel = deckelSperre();
   if (deckel) {
+    const v = tabellenVorlage();
+    if (v) return finish(`${v} Claude ist gerade wegen des Kosten-Deckels aus, darum ist es eine Vorlage zum Ausfüllen.`);
     actions.push("kosten_deckel");
     return finish(deckel);
   }
@@ -539,7 +572,8 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   const sparen = model === SPAR_MODELL && gewuenscht !== SPAR_MODELL;
   const ohneFallback = sparen || !tempo.fallback;
   const mitWebsuche = !sparen && tempo.websuche;
-  let nachgehakt = false;
+  let nachgehakt = 0;
+  kernAktiv = true;
   setzeAuftrag(channel, "verstehen", 8, "Friday liest den Auftrag …");
   // Der System-Text bleibt für die ganze Anfrage gleich. Würde er sich zwischen zwei Runden ändern
   // (neue Minute, neue Notiz im Gedächtnis), lehnt Claude die Denk-Blöcke der vorigen Runde ab (Fehler 400).
@@ -558,7 +592,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       ...(ohneFallback ? {} : { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" }),
       output_config: { effort: sparen ? "low" : tempo.effort },
       system,
-      messages,
+      messages: mitCachePunkt(messages),
     };
     if (mode !== "translate") params.tools = mitWebsuche ? [...toolDefinitions, WEB_SEARCH] : [...toolDefinitions];
     let response;
@@ -596,14 +630,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
         .map((b) => b.text)
         .join("")
         .trim();
-      // Nur angekündigt, nichts getan? Einmal nachhaken, damit Friday es wirklich erledigt.
-      if (!nachgehakt && actions.length === 0 && mode !== "translate" && NUR_ANGEKUENDIGT.test(answer) && round < 6) {
-        nachgehakt = true;
-        setzeAuftrag(channel, "arbeiten", 35, "Friday erledigt den Auftrag …");
-        messages.push({ role: "user", content: [{ type: "text", text: "[Hinweis vom System, nicht von Boss] Du hast den Auftrag nur angekündigt. Erledige ihn jetzt sofort vollständig mit deinen Werkzeugen (z. B. dokument_erstellen oder fragebogen_erstellen) und antworte danach kurz, dass er fertig ist. Kündige nichts mehr an." }] });
+      // Auftrags-Kern: Nur angekündigt oder ein Fehler? Bis zu zweimal nachhaken, damit Friday es wirklich erledigt.
+      if (mode !== "translate" && nachgehakt < (auftrag ? 2 : 1) && round < 6 && sollNachhaken(answer, auftrag, protokoll)) {
+        nachgehakt++;
+        setzeAuftrag(channel, "arbeiten", 35 + nachgehakt * 10, "Friday erledigt den Auftrag …");
+        messages.push({ role: "user", content: [{ type: "text", text: nachhakText(auftrag, protokoll) }] });
         continue;
       }
-      return finish(answer || "Erledigt, Boss.");
+      // Immer noch keine Tabelle? Dann baut Friday selbst eine passende Vorlage – statt nichts.
+      const v = protokoll.status() === "nicht_erledigt" ? tabellenVorlage() : "";
+      if (v) return finish(v);
+      return finish(answer || (protokoll.status() === "ok" ? "Erledigt, Boss." : ""));
     }
     setzeAuftrag(channel, "arbeiten", Math.min(80, 30 + round * 15), `Friday ${werkzeugName(toolUses[0].name)} …`, toolUses.map((t) => t.name));
 
@@ -613,10 +650,12 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
         actions.push(tool.name === "mac" ? `mac:${tool.input?.action}` : tool.name);
         try {
           const result = await runTool(tool.name, tool.input, { quelle: "claude", kanal: channel, auftrag: auftragId });
+          protokoll.eintragen(tool.name, result);
           if (result && Array.isArray(result.content)) return { type: "tool_result", tool_use_id: tool.id, content: result.content };
           const isError = Boolean(result && result.error);
           return { type: "tool_result", tool_use_id: tool.id, content: JSON.stringify(result ?? {}), is_error: isError };
         } catch (err) {
+          protokoll.eintragen(tool.name, { error: err.message });
           return { type: "tool_result", tool_use_id: tool.id, content: `Fehler: ${err.message}`, is_error: true };
         }
       }),
@@ -631,7 +670,19 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
 
   return finish("Das hat zu viele Schritte gebraucht, Boss. Versuch es bitte etwas einfacher.");
 
+  // Excel-Tabelle ohne Claude: passende Vorlage als echte Datei. Gibt den Antwort-Satz zurück (oder "").
+  function tabellenVorlage() {
+    if (auftrag?.art !== "tabelle" || protokoll.erfuellt() || protokoll.wartet()) return "";
+    const r = tabelleErstellen({ ...vorlageFuer(text), quelle: "vorlage" });
+    protokoll.eintragen("tabelle_erstellen", r);
+    if (r.error) return "";
+    actions.push("tabelle_erstellen");
+    return `Fertig, ${config.userName}. Die Excel-Tabelle „${r.titel}“ liegt im Archiv unter Tabellen${r.geoeffnet ? " und ist am Mac offen" : ""}. Spalten und Formeln sind schon drin, du musst nur noch ausfüllen.`;
+  }
+
   async function notfall(leer) {
+    const v = tabellenVorlage();
+    if (v) return finish(v);
     if (mode !== "translate" && !image && text) {
       try {
         const off = await offlineAnswer(text, { notfall: true });
@@ -653,11 +704,32 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   }
 
   function finish(answer) {
-    auftragFertig(channel, true);
+    // Ehrlich bleiben: "erledigt" nur, wenn wirklich etwas geklappt hat.
+    if (kernAktiv && mode !== "translate") answer = ehrlich(answer, auftrag, protokoll, config.userName);
+    const st = kernAktiv ? protokoll.status() : "";
+    auftragFertig(channel, !nichtGeklappt && st !== "fehler" && st !== "nicht_erledigt");
     if (keepHistory) {
       const userText = image ? `[Foto] ${text || ""}`.trim() : text;
       store.saveHistory(channel, [...history, { role: "user", content: userText }, { role: "assistant", content: answer }]);
     }
-    return { answer, actions, ...(claudeGefragt ? { claude: true } : {}), ...(nichtGeklappt ? { fehler: true } : {}) };
+    return {
+      answer, actions,
+      ...(claudeGefragt ? { claude: true } : {}),
+      ...(nichtGeklappt ? { fehler: true } : {}),
+      ...(kernAktiv && (auftrag || protokoll.schritte.length) ? { erledigt: { status: st, auftrag: auftrag?.art || null, schritte: protokoll.schritte.slice(0, 12) } } : {}),
+    };
   }
+}
+
+// Zwischenspeicher (Prompt-Cache) auch für das Gespräch: Bei Aufträgen mit mehreren Werkzeug-Runden muss Claude
+// den bisherigen Verlauf nicht jedes Mal neu lesen – schneller und billiger. Ein wandernder Merker am letzten Block.
+function mitCachePunkt(messages) {
+  const out = messages.map((m) => (Array.isArray(m.content) ? { ...m, content: m.content.map(({ cache_control, ...b }) => b) } : m));
+  const letzte = out[out.length - 1];
+  if (letzte && Array.isArray(letzte.content) && letzte.content.length) {
+    const i = letzte.content.length - 1;
+    const b = letzte.content[i];
+    if (b && ["text", "tool_result", "image"].includes(b.type)) letzte.content[i] = { ...b, cache_control: { type: "ephemeral" } };
+  }
+  return out;
 }

@@ -258,7 +258,7 @@ async function schrittAusfuehren(id, { vonHand = false } = {}) {
     m.problem = `Wartet auf deine Freigabe: ${neueFreigaben.map((g) => g.titel).join(", ")}. Danach „Weiter“ drücken.`;
     version(m, "Wartet auf Freigabe");
     speichern(l);
-    notifyAll("Mission wartet auf dich", `${m.titel}: ${m.problem}`).catch(() => {});
+    notifyAll("Mission wartet auf dich", `${m.titel}: ${m.problem}`, { art: "mission" }).catch(() => {});
     return { ok: true, mission: m };
   }
   const gescheitert = res?.fehler || /^(GEHT NICHT|FEHLT)\s*:/i.test(antwort);
@@ -272,7 +272,7 @@ async function schrittAusfuehren(id, { vonHand = false } = {}) {
       s2.status = "fehler"; s2.ergebnis = antwort; m.status = "fehler";
       m.problem = /^FEHLT/i.test(antwort) ? `Friday braucht Infos von dir: ${s2.letzterFehler}` : `Schritt ${idx + 1} ging auch auf anderem Weg nicht: ${s2.letzterFehler}`;
       version(m, `Gestoppt bei Schritt ${idx + 1}`);
-      notifyAll("Mission braucht dich", `${m.titel}: ${m.problem}`).catch(() => {});
+      notifyAll("Mission braucht dich", `${m.titel}: ${m.problem}`, { art: "mission" }).catch(() => {});
     }
     speichern(l);
     eintragen({ bereich: "aufgabe", titel: `Mission „${m.titel}“: Schritt ${idx + 1} hat nicht geklappt`, details: antwort, ok: false, kanal: "mission" });
@@ -318,7 +318,7 @@ function abschliessen(l, m) {
   version(m, "Mission abgeschlossen");
   speichern(l);
   eintragen({ bereich: "aufgabe", titel: `✅ Mission fertig: ${m.titel}`, details: m.schritte.map((s, i) => `${i + 1}. ${s.text}: ${(s.ergebnis || s.status).slice(0, 120)}`).join(" · "), kanal: "mission" });
-  notifyAll("Mission erledigt", `${m.titel} ist fertig, Boss.`).catch(() => {});
+  notifyAll("Mission erledigt", `${m.titel} ist fertig, Boss.`, { art: "aufgabe" }).catch(() => {});
 }
 
 // Hintergrund: nimmt die wichtigste wartende Mission und macht den nächsten Schritt.

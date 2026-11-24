@@ -29,7 +29,7 @@ const AUFGABEN = {
     const vorher = zustand.kosten_stufe || "normal";
     zustand.kosten_stufe = s.stufe;
     if (s.stufe !== vorher && s.stufe !== "normal") {
-      await notifyAll("Friday: Kosten-Deckel", s.stufe === "gesperrt" ? `Grenze erreicht. ${s.grund} Bis dahin nur Offline-Befehle.` : `Fast an der Grenze (${s.grund}). Friday spart jetzt.`).catch(() => {});
+      await notifyAll("Friday: Kosten-Deckel", s.stufe === "gesperrt" ? `Grenze erreicht. ${s.grund} Bis dahin nur Offline-Befehle.` : `Fast an der Grenze (${s.grund}). Friday spart jetzt.`, { art: "system", wichtig: s.stufe === "gesperrt" }).catch(() => {});
       return { text: `Stufe ${s.stufe} – Mitteilung geschickt`, gemeldet: true };
     }
     return { text: `Stufe ${s.stufe}, heute ${s.heute.toFixed(2)} $` };

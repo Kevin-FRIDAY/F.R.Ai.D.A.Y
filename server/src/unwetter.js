@@ -66,7 +66,7 @@ export async function pruefen(melde) {
   for (const w of neu) {
     gemeldet.add(w.id);
     logbuch.eintragen({ bereich: "wetter", titel: `DWD: ${w.stufeName} – ${w.ereignis || w.titel}`, details: w.text.slice(0, 300) });
-    try { await melde(`⚠️ ${w.stufeName} (${d.ort})`, `${w.titel}${w.bis ? ` · bis ${uhrzeit(w.bis)} Uhr` : ""}\n${w.tipp || w.text}`.slice(0, 900)); } catch { /* egal */ }
+    try { await melde(`⚠️ ${w.stufeName} (${d.ort})`, `${w.titel}${w.bis ? ` · bis ${uhrzeit(w.bis)} Uhr` : ""}\n${w.tipp || w.text}`.slice(0, 900), { art: "unwetter", wichtig: STUFEN[w.stufe].rang >= STUFEN.severe.rang }); } catch { /* egal */ }
   }
   st.gemeldet = [...gemeldet].slice(-200);
   st.zuletzt = d.stand;

@@ -3,6 +3,7 @@ import * as logbuch from "./logbuch.js";
 import { pruefeWerkzeug, freigabeAnfordern } from "./kommando.js";
 import fs from "node:fs";
 import { dokumentErstellen, fragebogenErstellen } from "./dokumente.js";
+import { tabelleErstellen, WERKZEUG as TABELLE_WERKZEUG } from "./tabellen.js";
 import path from "node:path";
 import { config, ROOT, IST_EVE } from "./config.js";
 import { EVE_SIMULIERT, simuliereWerkzeug } from "./eve-schutz.js";
@@ -59,6 +60,7 @@ export const toolDefinitions = [
     description: "Speichert einen fertigen Text für Boss als Dokument im Dashboard (Liste, Plan, Brief, Rezept, Zusammenfassung, Ideen …). Benutze es immer, wenn Boss dich bittet, etwas zu erstellen, zu schreiben oder auszuarbeiten, das länger als drei Sätze ist. Schreib den vollständigen Inhalt direkt hinein.",
     input_schema: { type: "object", properties: { titel: { type: "string" }, inhalt: { type: "string", description: "Der komplette, fertige Text (Zeilenumbrüche erlaubt)" } }, required: ["titel", "inhalt"] },
   },
+  TABELLE_WERKZEUG, // v1.161.0: echte Excel-Dateien
   {
     name: "fragebogen_erstellen",
     description: "Erstellt einen Fragebogen, den Boss im Dashboard Frage für Frage ausfüllen kann (z. B. 'Mach einen Fragebogen mit 30 Fragen, um mich kennenzulernen'). Die Antworten landen danach automatisch in deinem Gedächtnis. Schreib alle Fragen vollständig aus, genau so viele wie gewünscht.",
@@ -356,7 +358,7 @@ export const toolDefinitions = [
   smartHomeTool,
   ...dienstTools,
   ...kernTools,
-  werkzeugkastenTool, // v1.161.0: 100 Werkzeuge, ein Eintrag
+  werkzeugkastenTool, // v1.162.0: 100 Werkzeuge, ein Eintrag
   ...jarvisTools, // v1.134.0: Dauer-Wächter, Dokumenten-Wissen, Apple Notizen/Kontakte/Musik
 ];
 
@@ -506,6 +508,7 @@ const ACTLOG = {
 
 // Weitere Werkzeuge mit lesbarem Namen fürs Logbuch.
 const LOGTITEL = {
+  tabelle_erstellen: (i) => `Excel-Tabelle erstellt: ${i.titel || ""}`,
   ablauf_speichern: (i) => `Ablauf gemerkt: ${i.name || ""}`,
   ablauf_bewerten: (i) => `Ablauf ${i.geklappt ? "hat geklappt" : "ging schief"}: ${i.name || ""}`,
   seele_notiz: (i) => `Seele ergänzt: ${String(i.text || "").slice(0, 80)}`,
@@ -670,6 +673,11 @@ async function runToolIntern(name, input = {}, wer = {}) {
       const d = dokumentErstellen(input);
       if (d.error) return d;
       return { gespeichert: d.titel, id: d.id, hinweis: "Das Dashboard zeigt das Dokument gleich. Sag nur kurz, was drinsteht, lies es nicht komplett vor." };
+    }
+    case "tabelle_erstellen": {
+      const t = tabelleErstellen({ ...input, quelle: wer.quelle || "" });
+      if (t.error) return t;
+      return { ok: true, gespeichert: t.titel, id: t.id, blaetter: t.blaetter, datei: t.datei, am_mac_geoeffnet: t.geoeffnet, hinweis: `Die Excel-Datei ist gespeichert${t.geoeffnet ? " und am Mac geöffnet" : ""}; das Dashboard zeigt sie mit Download-Knopf. Sag in ein, zwei Sätzen, was drinsteht. Lies die Tabelle nicht vor.` };
     }
     case "fragebogen_erstellen": {
       const d = fragebogenErstellen(input);

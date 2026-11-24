@@ -705,7 +705,7 @@ function ligenAusText(t) {
   for (const l of LIGEN) {
     for (const w of l.worte || []) {
       const f = flach(w);
-      // "250 euro" ist Geld, nicht die Fußball-EM (v1.161.0)
+      // "250 euro" ist Geld, nicht die Fußball-EM (v1.162.0)
       if (f === "euro" && /\d(?:[.,]\d+)? euro\b/.test(t)) continue;
       if (new RegExp(`(^| )${f.replace(/ /g, " ")}( |$)`).test(t)) { treffer.push({ l, len: f.length }); break; }
     }

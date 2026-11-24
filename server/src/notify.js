@@ -1,12 +1,12 @@
 // Nachrichten nach außen: Push aufs iPhone (ntfy) und Telegram.
 import { config } from "./config.js";
 
-export async function sendPush(title, message) {
+export async function sendPush(title, message, { dringend = false } = {}) {
   if (!config.ntfyTopic) return false;
   try {
     const res = await fetch(`${config.ntfyServer}/${encodeURIComponent(config.ntfyTopic)}`, {
       method: "POST",
-      headers: { Title: encodeURIComponent(title), Tags: "robot", "Content-Type": "text/plain; charset=utf-8" },
+      headers: { Title: encodeURIComponent(title), Tags: dringend ? "rotating_light" : "robot", ...(dringend ? { Priority: "5" } : {}), "Content-Type": "text/plain; charset=utf-8" },
       body: message,
     });
     return res.ok;
@@ -48,7 +48,23 @@ export async function sendTelegramPhoto(jpeg, caption = "", chatId = config.tele
 }
 
 // Schickt eine Nachricht über alle eingerichteten Wege.
-export async function notifyAll(title, message, { ohneTelegram = false } = {}) {
-  const results = await Promise.all([sendPush(title, message), ohneTelegram ? false : sendTelegram(`${title}\n${message}`)]);
-  return results.some(Boolean);
+// art (v1.161.0 Weckruf): alarm, termin, aufgabe, mission, erinnerung, unwetter, friday, system, markt.
+// Ist die Meldung nach Kevins Regeln wichtig genug, klingelt zusätzlich das iPhone (Pushover/ntfy dringend)
+// oder Friday ruft echt an (Twilio). Ohne art bleibt alles wie bisher.
+export async function notifyAll(title, message, { ohneTelegram = false, art, wichtig, erzwingen } = {}) {
+  let w = null, laut = null;
+  if (art) {
+    try {
+      w = await import("./weckruf.js");
+      laut = w.entscheide(art, { titel: title, text: message, wichtig, erzwingen });
+    } catch (err) { console.error("Weckruf:", err.message); }
+  }
+  // Ohne Pushover macht ntfy selbst den lauten Teil (Priorität 5).
+  const ntfyLaut = Boolean(laut && !w.pushoverBereit());
+  const results = await Promise.all([sendPush(title, message, { dringend: ntfyLaut }), ohneTelegram ? false : sendTelegram(`${title}\n${message}`)]);
+  let geweckt = false;
+  if (laut) {
+    try { geweckt = (await w.wecken(laut, title, message, { ntfySchonLaut: ntfyLaut && results[0] })).ok; } catch (err) { console.error("Weckruf:", err.message); }
+  }
+  return results.some(Boolean) || geweckt;
 }

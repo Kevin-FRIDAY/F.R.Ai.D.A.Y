@@ -657,7 +657,7 @@
       const aktion = (p) => data.actions?.find((a) => typeof a === "string" && a.startsWith(p));
       try {
         // Friday hat ein Dokument oder einen Fragebogen erstellt: gleich zeigen.
-        if (hat("fragebogen_erstellen") || hat("dokument_erstellen")) window.FridayDokumente?.neuestes();
+        if (hat("fragebogen_erstellen") || hat("dokument_erstellen") || hat("tabelle_erstellen")) window.FridayDokumente?.neuestes();
         // Vollbild: im Browser umschalten (auf dem iPhone ist die Home-Bildschirm-App schon Vollbild).
         if (hat("vollbild") || hat("vollbild_aus")) {
           const r = window.FridayVollbild?.sprachBefehl(hat("vollbild"));
@@ -749,7 +749,7 @@
         const appsA = aktion("apps:");
         if (appsA) window.FridayApps?.open({ id: appsA.slice(5), hervor: hat(`apps_oeffnen:${appsA.slice(5)}`) });
         else if (hat("apps")) window.FridayApps?.open();
-        // Werkzeugkasten (v1.161.0): 100 Rechner/Generatoren ohne Claude.
+        // Werkzeugkasten (v1.162.0): 100 Rechner/Generatoren ohne Claude.
         window.FridayWerkzeugkasten?.vonAussen(data.actions || []);
         // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede, Stimmungs-Sound.
         if (hat("profil")) window.FridayProfil?.open();

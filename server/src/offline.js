@@ -8,7 +8,7 @@ import { getCrypto, getExchange, getHolidays, getISS, getWiki } from "./extras.j
 import { findCountry, getCountryNews, getOverview } from "./lagezentrum.js";
 import { isAgentOnline, sendToAgent } from "./agent-hub.js";
 import { getEnergie } from "./energie.js";
-import { ersatzBereit } from "./openrouter.js";
+import { ersatzBereit } from "./ki-client.js";
 import { extraAnswer, EXTRA_HILFE } from "./offline-extra.js";
 import { plusAnswer, plusNotfall, naechsteFeiertageOffline } from "./offline-plus.js";
 import { lagebildAnswer } from "./lagebild.js";

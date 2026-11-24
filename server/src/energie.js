@@ -43,6 +43,17 @@ export function costOf(model, usage = {}) {
 
 // Nach jeder erfolgreichen Anfrage aufrufen.
 export function recordUsage(model, usage, quelle = "chat") {
+  // Ollama (v1.161.0): lokal kostenlos, Cloud per Abo – zählt nie gegen das Claude-Guthaben
+  // und darf "Guthaben leer" nicht zurücksetzen.
+  if (String(model || "").startsWith("ollama/")) {
+    try {
+      const d = load();
+      d.kosten.push({ zeit: new Date().toISOString(), quelle: `${quelle} · Ollama`, modell: model, usd: 0 });
+      if (d.kosten.length > 40) d.kosten.shift();
+      save(d);
+    } catch { /* Anzeige ist nicht lebenswichtig */ }
+    return;
+  }
   // Ersatz-Gehirn (OpenRouter, v1.142.0): zählt nicht gegen das Claude-Guthaben und weckt es nicht auf,
   // läuft aber in den Kosten-Deckel (echtes Geld bei OpenRouter).
   if (String(model || "").startsWith("openrouter/")) {

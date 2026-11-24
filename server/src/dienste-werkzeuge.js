@@ -17,6 +17,22 @@ export const toolDefinitions = [
     },
   },
   {
+    name: "weckruf",
+    description:
+      "Lässt das iPhone des Nutzers klingeln wie ein Anruf (oder ruft echt an, je nach seinen Regeln). Aktion wecken: titel = kurz worum es geht, text = ein Satz. " +
+      "NUR für wirklich Wichtiges, das nicht warten kann (Gefahr, Frist läuft ab, er hat ausdrücklich 'ruf mich an, wenn …' gesagt). Nicht für normale Antworten. " +
+      "Aktion regeln: wann Friday klingelt.",
+    input_schema: {
+      type: "object",
+      properties: {
+        action: { type: "string", enum: ["wecken", "regeln"] },
+        titel: { type: "string" },
+        text: { type: "string" },
+      },
+      required: ["action"],
+    },
+  },
+  {
     name: "kalender",
     description:
       "Apple Kalender und Apple Erinnerungen auf dem Mac (iCloud). Aktionen: termine (value = Tage ab heute, 0 = heute, 1 = morgen; tage = Anzahl Tage, Standard 1), " +
