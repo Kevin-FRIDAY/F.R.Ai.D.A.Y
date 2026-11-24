@@ -9,10 +9,23 @@ const NAMEN = {
 };
 export const werkzeugName = (n) => NAMEN[n] || `benutzt ${String(n).replace(/_/g, " ")}`;
 
-export function setzeAuftrag(kanal, schritt, prozent, text) {
+export function setzeAuftrag(kanal, schritt, prozent, text, werkzeuge) {
   const alt = stand.get(kanal);
   const jetzt = Date.now();
-  stand.set(kanal, { schritt, prozent: Math.max(alt && schritt !== "verstehen" ? alt.prozent : 0, prozent), text, seit: alt && schritt !== "verstehen" ? alt.seit : jetzt, aktualisiert: jetzt });
+  const weiter = alt && schritt !== "verstehen";
+  const wz = Array.isArray(werkzeuge) ? werkzeuge.map(String).slice(0, 8) : weiter ? alt.werkzeuge || [] : [];
+  stand.set(kanal, { schritt, prozent: Math.max(weiter ? alt.prozent : 0, prozent), text, seit: weiter ? alt.seit : jetzt, aktualisiert: jetzt, werkzeuge: wz });
+}
+// Alle Aufträge, die gerade laufen (für das 3D-Büro: welcher Agent arbeitet gerade?).
+export function laufendeAuftraege(maxAlterMs = 120000) {
+  const jetzt = Date.now();
+  const out = [];
+  for (const [kanal, a] of stand) {
+    if (a.schritt === "fertig" || a.schritt === "fehler") continue;
+    if (jetzt - a.aktualisiert > maxAlterMs) continue;
+    out.push({ kanal, ...a });
+  }
+  return out;
 }
 export function auftragFertig(kanal, ok = true) {
   const alt = stand.get(kanal);

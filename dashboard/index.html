@@ -870,8 +870,19 @@
     <button id="agents-open" class="hidden" aria-hidden="true"></button>
     <section id="agents" class="sheet hidden" aria-label="Agenten-Team">
       <div class="panel sheet-box">
-        <header class="sheet-top"><h2>🤖 Agenten-Team <span id="agents-count" class="agents-count"></span></h2><button id="agents-x" class="ghost small">✕</button></header>
-        <p class="muted small-text">Fridays Team aus Spezial-Agenten. 🟢 einsatzbereit · 🟡 braucht den Mac · ⚪ braucht noch Einrichtung. Tipp auf ein Beispiel, um es ins Chatfeld zu übernehmen.</p>
+        <header class="sheet-top"><h2>🤖 Agenten-Team <span id="agents-count" class="agents-count"></span></h2>
+          <div class="bu-umschalter" role="group" aria-label="Ansicht"><button type="button" id="agents-ansicht-buero" class="ghost small">🏢 Büro</button><button type="button" id="agents-ansicht-liste" class="ghost small">☰ Liste</button></div>
+          <button id="agents-x" class="ghost small">✕</button></header>
+        <div id="buero" class="buero">
+          <div id="buero-kopf" class="bu-kopf"></div>
+          <div class="bu-buehne">
+            <canvas id="buero-leinwand" class="bu-leinwand" tabindex="0" aria-label="3D-Büro des Agenten-Teams. Ziehen zum Drehen, antippen für Details."></canvas>
+            <p id="buero-fallback" class="bu-fallback hidden"></p>
+            <aside id="buero-detail" class="bu-detail hidden" aria-live="polite"></aside>
+            <p class="bu-tipp">Ziehen = drehen · Zwei Finger/Mausrad = zoomen · Antippen = Details</p>
+          </div>
+        </div>
+        <p class="muted small-text agents-intro">Fridays Team aus Spezial-Agenten. 🟢 einsatzbereit · 🟡 braucht den Mac · ⚪ braucht noch Einrichtung. Tipp auf ein Beispiel, um es ins Chatfeld zu übernehmen.</p>
         <div id="agents-list" class="agents-list"><p class="muted">Lade Team…</p></div>
       </div>
     </section>
@@ -1339,8 +1350,11 @@
       <aside class="ws-side">
         <form id="ws-form" class="ws-form">
           <label for="ws-auftrag">Neuer Auftrag</label>
-          <textarea id="ws-auftrag" rows="4" placeholder="z. B. Friseursalon „Mira“ in Berlin-Neukölln, modern und hell, Leistungen mit Preisen, Online-Termin per Mail, Öffnungszeiten"></textarea>
-          <button id="ws-go" class="ws-go">Webseite bauen</button>
+          <textarea id="ws-auftrag" rows="4" placeholder="z. B. Friseursalon „Mira“ in Berlin-Neukölln, Leistungen mit Preisen, Online-Termin per Mail, Öffnungszeiten"></textarea>
+          <div class="ws-wahl"><span>Stil</span><div id="ws-stile" class="ws-stile" role="radiogroup" aria-label="Design-Stil"></div></div>
+          <label class="ws-wahl"><span>Branche</span><select id="ws-branche"><option value="">Automatisch erkennen</option></select></label>
+          <button id="ws-go" class="ws-go">✦ Webseite entwerfen (Claude)</button>
+          <button id="ws-sofort" type="button" class="ws-sofort" title="Friday baut sofort aus ihren Profi-Vorlagen – ohne Claude, kostet kein Guthaben">⚡ Sofort-Vorlage · kostenlos</button>
           <span id="ws-live-marke" class="ws-live-marke" title="Du siehst live, wie Friday programmiert – mit Countdown. Tipp: „… in 30 Minuten“"><span>⚡ Live-Bau mit Countdown</span></span>
         </form>
         <p id="ws-msg" class="ws-msg"></p>
@@ -1367,10 +1381,13 @@
       <div id="ws-detail" class="ws-detail hidden">
         <div class="ws-bar">
           <b id="ws-titel"></b>
+          <div id="ws-geraet" class="ws-geraet" role="group" aria-label="Vorschau-Größe"><button type="button" data-w="" class="on" title="Computer">🖥</button><button type="button" data-w="820" title="Tablet">▭</button><button type="button" data-w="390" title="Handy">📱</button></div>
+          <button id="ws-note" type="button" class="ws-note hidden" title="Qualitäts-Check"></button>
           <button id="ws-download" class="chip primary">Herunterladen</button>
           <button id="ws-ordner" class="chip">Im Finder</button>
         </div>
-        <iframe id="ws-frame" class="ws-frame" sandbox="allow-scripts allow-forms" title="Vorschau"></iframe>
+        <ul id="ws-checks" class="ws-checks hidden"></ul>
+        <div class="ws-frame-box"><iframe id="ws-frame" class="ws-frame" sandbox="allow-scripts allow-forms" title="Vorschau"></iframe></div>
         <div class="ws-bottom">
           <div class="ws-angebot"><h3>ANGEBOT</h3><p id="ws-angebot"></p><span id="ws-preis" class="ws-preis"></span> <button id="ws-copy" class="chip">Angebot kopieren</button></div>
           <div class="ws-actions">
@@ -1546,6 +1563,7 @@
   <script src="status-ring.js"></script>
   <script src="vendor/three.min.js"></script>
   <script src="vendor/GLTFLoader.js"></script>
+  <script src="buero.js"></script>
   <script src="face.js"></script>
   <script src="autostudio.js"></script>
   <script src="werkstatt.js"></script>

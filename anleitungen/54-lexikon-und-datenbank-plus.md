@@ -1,4 +1,4 @@
-# Fridays Lexikon + größere Datenbank (v1.156.0)
+# Fridays Lexikon + größere Datenbank (v1.159.0)
 
 Friday weiß jetzt viel mehr, **ohne Claude, ohne Guthaben und ohne Internet**.
 

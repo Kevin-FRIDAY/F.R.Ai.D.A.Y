@@ -21,6 +21,7 @@
             <div class="agent-top"><span class="agent-emoji">${escapeHtml(a.emoji)}</span><b>${escapeHtml(a.name)}</b><i class="agent-dot ${dot(a.status)}"></i></div>
             <p class="agent-purpose">${escapeHtml(a.purpose)}</p>
             <div class="agent-ex">${a.examples.map((x) => `<button type="button" class="agent-chip">${escapeHtml(x)}</button>`).join("")}</div>
+            ${a.arbeitet ? `<span class="agent-jetzt">⚡ ${escapeHtml(a.jetzt || "Arbeitet gerade …")}</span>` : a.zuletzt ? `<span class="agent-hint">Zuletzt: ${escapeHtml(String(a.zuletzt.titel || "").slice(0, 80))}</span>` : ""}
             <span class="agent-hint">${escapeHtml(a.hint)}</span>
           </div>`).join("")}</div></section>`;
       }).join("");
