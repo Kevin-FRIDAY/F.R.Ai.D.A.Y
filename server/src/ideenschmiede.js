@@ -1,6 +1,7 @@
 // Ideen-Schmiede (v1.106.0): Start-up-Konzepte, Nischen-Business, Kreativ- und Technik-Projekte
 // für Alltag und privaten Nutzen. Friday würfelt Ideen, prüft deine eigenen mit einem ehrlichen
 // Schnell-Check (Problem, Zielgruppe, Geld, Aufwand, Risiko) und hebt alles im Ideen-Tresor auf.
+// v1.164.0: Was schon in Friday eingebaut ist, wird nicht mehr vorgeschlagen; frische Ideen rücken nach.
 // Läuft OHNE Claude. Nur „Ausarbeiten mit KI“ (Geschäftsmodell-Leinwand, Namensideen, erste Kunden) braucht Guthaben.
 import * as store from "./store.js";
 import * as logbuch from "./logbuch.js";
@@ -18,13 +19,15 @@ export const BEREICHE = {
   technik: { name: "Technik", icon: "🛠" },
   friday: { name: "Für Friday", icon: "🤖" },
 };
-// [Bereich, Titel, Pitch, erster Schritt, Startkosten]
+// [Bereich, Titel, Pitch, erster Schritt, Startkosten, (optional) Friday-Module]
+// Steht im 6. Feld ein Modul (wie im Bauplan, z. B. "pflanzen.js" oder "werkzeug:packliste") und ist es
+// in Friday eingebaut, wird die Idee nicht mehr gewürfelt – Friday kann das dann ja schon selbst.
 const SAMEN = [
   ["alltag", "Nachbarschafts-Werkzeugverleih", "Bohrmaschine, Leiter, Hochdruckreiniger: einmal kaufen, im Haus per Liste verleihen.", "Zettel im Treppenhaus: Wer hat was? 10 Antworten sammeln.", "0–50 €"],
-  ["alltag", "Rechnungs- und Vertrags-Ordner mit Fristen-Wecker", "Alle Verträge an einem Ort, Friday erinnert vor Kündigungsfristen.", "Deine 5 wichtigsten Verträge mit Kündigungsfrist notieren.", "0 €"],
+  ["alltag", "Rechnungs- und Vertrags-Ordner mit Fristen-Wecker", "Alle Verträge an einem Ort, Friday erinnert vor Kündigungsfristen.", "Deine 5 wichtigsten Verträge mit Kündigungsfrist notieren.", "0 €", "vertraege.js"],
   ["alltag", "Wochen-Essensplan aus dem Angebotsprospekt", "Aus den Angeboten der Woche einen günstigen Essensplan für die Familie bauen.", "Einen Prospekt nehmen und daraus 5 Gerichte planen.", "0 €"],
-  ["alltag", "Familien-Notfallmappe", "Wichtige Nummern, Medikamente, Passwörter-Hinweise und Dokumente an einem sicheren Ort.", "Eine Seite mit den 10 wichtigsten Infos ausfüllen.", "0–20 €"],
-  ["alltag", "Garten- und Pflanzen-Gießplan", "Welche Pflanze wann Wasser braucht – mit Erinnerung.", "Alle Pflanzen fotografieren und Namen herausfinden.", "0 €"],
+  ["alltag", "Familien-Notfallmappe", "Wichtige Nummern, Medikamente, Passwörter-Hinweise und Dokumente an einem sicheren Ort.", "Eine Seite mit den 10 wichtigsten Infos ausfüllen.", "0–20 €", "notfall.js"],
+  ["alltag", "Garten- und Pflanzen-Gießplan", "Welche Pflanze wann Wasser braucht – mit Erinnerung.", "Alle Pflanzen fotografieren und Namen herausfinden.", "0 €", "pflanzen.js"],
   ["kreativ", "Mini-Doku über deine Stadt", "Jede Woche ein 60-Sekunden-Video über einen unbekannten Ort in deiner Stadt.", "Drei Orte aufschreiben und den ersten mit dem Handy filmen.", "0 €"],
   ["kreativ", "Persönliches Hörbuch für Kinder", "Gute-Nacht-Geschichten mit den Namen der eigenen Kinder, selbst eingesprochen.", "Eine 3-Minuten-Geschichte schreiben und aufnehmen.", "0 €"],
   ["kreativ", "Upcycling-Möbel", "Alte Möbel vom Sperrmüll aufarbeiten und verkaufen oder verschenken.", "Ein kleines Möbelstück abschleifen und neu streichen.", "30–80 €"],
@@ -37,10 +40,23 @@ const SAMEN = [
   ["nische", "Haustier-Sitting per App-Liste", "Katzen füttern und Gassi gehen in der Nachbarschaft – mit Foto-Update.", "In der Nachbarschaftsgruppe nachfragen, wer Bedarf hat.", "0 €"],
   ["nische", "Flohmarkt-Profi", "Für andere Sachen fotografieren, beschreiben und online verkaufen – gegen Anteil.", "Fünf eigene Sachen perfekt einstellen und verkaufen.", "0 €"],
   ["technik", "Energie-Spion für zu Hause", "Mit Zwischenstecker-Messgeräten die größten Stromfresser finden.", "Ein Messgerät besorgen und eine Woche lang Geräte messen.", "15–40 €"],
-  ["technik", "Friday als Haus-Info-Display", "Ein altes Tablet an die Wand: Wetter, Termine, Müllabfuhr, Bahn.", "Altes Tablet suchen und Fridays Kern-Seite öffnen.", "0–30 €"],
+  ["technik", "Friday als Haus-Info-Display", "Ein altes Tablet an die Wand: Wetter, Termine, Müllabfuhr, Bahn.", "Altes Tablet suchen und Fridays Kern-Seite öffnen.", "0–30 €", "core.html"],
   ["technik", "Pflanzen-Feuchtigkeitssensor", "Kleiner Sensor meldet per Telegram, wenn die Erde trocken ist.", "Einen ESP32 mit Bodenfeuchte-Sensor bestellen.", "10–20 €"],
   ["technik", "Lokaler Foto-Tresor", "Alle Familienfotos automatisch vom Handy auf eine eigene Festplatte sichern.", "Speicherbedarf prüfen und eine Festplatte aussuchen.", "60–120 €"],
   ["technik", "Briefkasten-Melder", "Sensor in der Klappe meldet: Post ist da.", "Einen Tür/Fenster-Sensor fürs Smart Home besorgen.", "10–25 €"],
+  // ---- Neu nachgerückt (v1.164.0) ----
+  ["alltag", "Tausch-Regal im Hausflur", "Ein Regal für Bücher, Spiele und Deko: Wer etwas bringt, darf etwas mitnehmen.", "Hausverwaltung fragen und ein altes Regal mit fünf eigenen Büchern starten.", "0 €"],
+  ["alltag", "Vorkoch-Sonntag", "Einmal pro Woche für drei, vier Tage vorkochen: spart Zeit, Geld und Stress unter der Woche.", "Zwei Gerichte aussuchen, die sich gut aufwärmen lassen, und Dosen besorgen.", "0–20 €"],
+  ["alltag", "Digitaler Frühjahrsputz", "Alte Fotos, Apps, Mails und Abos aufräumen, ein Bereich pro Wochenende.", "Heute 20 Minuten: alle Apps löschen, die du ein halbes Jahr nicht benutzt hast.", "0 €"],
+  ["kreativ", "Ein-Jahr-Zeitraffer", "Jeden Tag ein Foto vom selben Platz (Baum, Balkon, Straße), am Ende ein Video über ein ganzes Jahr.", "Platz festlegen, Handy-Halterung basteln, erstes Foto machen.", "0–15 €"],
+  ["kreativ", "Familien-Podcast", "Einmal im Monat 15 Minuten: Was ist passiert, was war lustig? In 20 Jahren unbezahlbar.", "Erste Folge mit dem Handy am Küchentisch aufnehmen.", "0 €"],
+  ["kreativ", "Stop-Motion-Film mit Lego", "Mit Figuren und dem Handy einen kurzen Trickfilm drehen, Friday macht die Musik dazu.", "Eine 10-Sekunden-Szene mit 50 Fotos legen.", "0 €"],
+  ["nische", "Fahrrad-Check vor der Haustür", "Mobiler Fahrrad-Service: Bremsen, Licht, Kette direkt beim Kunden, besonders im Frühling.", "Drei Fahrräder von Freunden durchchecken und Fotos vorher/nachher machen.", "50–150 € Werkzeug"],
+  ["nische", "Alte Fotos digitalisieren", "Dias, Negative und Fotoalben einscannen und als ordentliches Familien-Archiv zurückgeben.", "Ein eigenes Album scannen und die Zeit pro Seite messen.", "0–100 €"],
+  ["nische", "Umzugs-Starthilfe", "Checkliste, Ummelde-Fristen, Kartons und Helfer-Plan als Paket für Leute, die umziehen.", "Deine eigene Umzugs-Checkliste aufschreiben und zwei Bekannten anbieten.", "0 €"],
+  ["technik", "Eigene Wetterstation", "ESP32 mit Temperatur-, Feuchte- und Luftdrucksensor auf dem Balkon, Friday zeigt die Werte.", "Einen ESP32 und einen BME280-Sensor bestellen.", "15–30 €"],
+  ["technik", "Retro-Spielkonsole", "Ein Raspberry Pi wird zur Spielkonsole für alte Spiele, die du selbst besitzt.", "Raspberry Pi und zwei günstige Controller besorgen.", "60–100 €"],
+  ["technik", "Altes Handy als Küchen-Radio", "Ein ausgemustertes Handy mit Lautsprecher in der Küche: Radio, Rezepte, Timer.", "Altes Handy zurücksetzen und nur Radio-App plus Friday einrichten.", "0–20 €"],
 ];
 // Würfel-Bausteine für frische Kombinationen
 const FUER = ["Familien mit kleinen Kindern", "Senioren", "Haustierbesitzer", "Pendler", "kleine Handwerksbetriebe", "Studenten", "Gartenfreunde", "Vereine", "Nachbarn im Haus", "Hobby-Köche"];
@@ -50,9 +66,10 @@ const FORM = ["einen Abo-Service", "eine einfache App", "einen Vor-Ort-Service",
 export function wuerfeln(bereich = "") {
   if (bereich === "friday") {
     const v = ausbau.zufall();
+    if (!v) return { bereich: "friday", titel: "Alles eingebaut!", pitch: "Jede Idee aus dem Bauplan ist schon in Friday. Hol dir im Bauplan neue Vorschläge mit KI.", schritt: "Ideen-Schmiede → Friday ausbauen → Neue Vorschläge mit KI.", kosten: "–" };
     return { bereich: "friday", titel: v.titel, pitch: v.pitch, schritt: v.sprache && v.sprache !== "–" ? `Danach sagst du: „${v.sprache}“. Voraussetzung: ${v.braucht}.` : `Voraussetzung: ${v.braucht}.`, kosten: v.kosten, ausbau: v.id };
   }
-  const pool = SAMEN.filter((x) => !bereich || x[0] === bereich);
+  const pool = SAMEN.filter((x) => (!bereich || x[0] === bereich) && !(x[5] && ausbau.istGebaut(x[5])));
   if (Math.random() < 0.2 || !pool.length) {
     const fuer = pick(FUER), prob = pick(PROBLEM), form = pick(FORM);
     return { bereich: bereich || pick(Object.keys(BEREICHE)), titel: `${form.replace(/^(einen|eine|ein) /, "").replace(/^./, (c) => c.toUpperCase())} für ${fuer}`, pitch: `Viele ${fuer} ${prob}. Lösung: ${form}, genau dafür.`, schritt: `Sprich mit drei Leuten aus der Gruppe „${fuer}“ und frag, ob sie das Problem kennen.`, kosten: "0–50 €", gewuerfelt: true };
@@ -98,6 +115,7 @@ export function speichern(idee = {}) {
   if (["idee", "test", "umsetzung", "erledigt", "verworfen"].includes(idee.status)) e.status = idee.status;
   if (idee.check) e.check = idee.check;
   if (idee.ki) e.ki = idee.ki;
+  if (idee.ausbau && /^[a-z0-9-]{2,40}$/.test(idee.ausbau)) e.ausbau = idee.ausbau;
   if (!liste.includes(e)) { liste.push(e); logbuch.eintragen({ bereich: "idee", titel: `Ideen-Tresor: ${e.titel}` }); }
   store.save("ideen", liste.slice(-200));
   return e;
@@ -126,6 +144,7 @@ export function quickCommand(text) {
   if (AUSBAU.test(k)) {
     const a = ausbau.ausbau();
     const v = a.vorschlaege.find((x) => x.id === a.passend[0]) || ausbau.zufall();
+    if (!v) return { answer: "Alles aus meinem Bauplan ist schon eingebaut. Im Bauplan kannst du neue Vorschläge mit KI holen.", actions: ["ideen:ausbau"] };
     const grund = a.passend[0] ? ` Das passt zu dir, du hast ${v.passt}-mal danach gefragt.` : "";
     return { answer: `Mein Vorschlag: ${v.titel}. ${v.pitch}${grund} Im Bauplan stehen ${a.zahlen.offen} Ideen für mich.`, actions: ["ideen:ausbau"] };
   }
