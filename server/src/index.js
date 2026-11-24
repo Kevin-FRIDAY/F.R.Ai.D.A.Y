@@ -72,6 +72,7 @@ import { appsRouten } from "./appzentrale.js";
 import { zerlegeRouten } from "./teilebank.js";
 import { sportRouten } from "./sport.js";
 import { profilRouten } from "./profil.js";
+import { kontenRouten, kontenRueckrufRoute, kontenStart } from "./konten.js";
 import { marktplusRouten, marktWacheStart } from "./marktplus.js";
 import { eveWeiterleitung, eveStarten } from "./eve-prozess.js";
 import { eveSchutzAn } from "./eve-schutz.js";
@@ -183,6 +184,9 @@ app.get("/api/studio/poster/:name", (req, res) => {
   res.setHeader("Cache-Control", "private, max-age=86400");
   res.type("image/jpeg").sendFile(f);
 });
+
+// Meine Konten: die Bank schickt den Browser nach der Anmeldung hierher zurück (nur mit einmaligem "state" gültig).
+kontenRueckrufRoute(app, asyncRoute);
 
 app.use("/api", requireAuth);
 // Aktivität merken (für automatische Updates nur in ruhigen Momenten).
@@ -753,6 +757,7 @@ appsRouten(app, asyncRoute);
 zerlegeRouten(app);
 sportRouten(app, asyncRoute);
 profilRouten(app);
+kontenRouten(app, asyncRoute);
 marktplusRouten(app, asyncRoute);
 wacheRouten(app, asyncRoute);
 // Kontrollraum (v1.135.0): Regelwerk, Schleifen-Schutz, Gedächtnis, Herzschlag, Kosten-Deckel, Seele, Fähigkeiten, Änderungen.
@@ -776,6 +781,7 @@ wunschStart();
 wacheStart();
 marktWacheStart(); // Markt-Radar Plus: läuft in Eve, in Friday erst nach Freigabe
 kernStart();
+if (!IST_EVE) kontenStart(); // Meine Konten: alle 6 Std. frische Kontostände (nur lesen)
 zentraleStart(ask);
 jarvisStart();
 if (!IST_EVE) {
