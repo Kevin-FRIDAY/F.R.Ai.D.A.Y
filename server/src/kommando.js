@@ -26,6 +26,7 @@ export const NUR_LESEN = new Set([
   "country_info", "get_weather", "list_reminders", "list_protocols", "get_health", "welt_alarm", "markt_radar", "markt_plus",
   "dokument_erstellen", "fragebogen_erstellen", "web_search",
   "dokumente_suchen", "apple_kontakte", // v1.134.0 (nur lesen)
+  "werkzeugkasten", // v1.161.0: rechnet und erzeugt nur, wirkt nicht nach außen
 ]);
 // Werkzeuge, die nach außen wirken, Geräte schalten oder Friday selbst verändern.
 export const KRITISCH = new Set([

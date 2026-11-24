@@ -58,6 +58,7 @@ export const BEREICHE = {
   nachrichten: ["📰", "Eigene Nachrichten"],
   mediathek: ["🎞", "Mediathek"],
   netz: ["📶", "Fritz!Box & Internet"],
+  werkzeug: ["🧰", "Werkzeugkasten"],
   geburtstag: ["🎂", "Geburtstage"],
   familie: ["👪", "Familien-Pinnwand"],
   rueckblick: ["🌙", "Abend-Rückblick"],
