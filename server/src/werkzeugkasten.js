@@ -83,7 +83,8 @@ export async function quickCommand(text) {
   if (!t || t.length > 400) return null;
   const gleich = roh.length === t.length;
   if (/^(öffne|zeig|zeige|starte?)( mir)? (den |deinen |meinen )?werkzeugkasten$|^werkzeugkasten$|^(welche|was für) (werkzeuge|rechner) hast du$/.test(t)) {
-    return { answer: `Hier ist dein Werkzeugkasten mit ${WERKZEUGE.length} Werkzeugen, ${config.userName || "Boss"}. Alle laufen ohne Guthaben.`, actions: ["werkzeugkasten_oeffnen"] };
+    // v1.165.0: kein eigenes Fenster mehr – Friday erklärt, wie man die Werkzeuge per Sprache nutzt.
+    return { answer: `Ich habe ${WERKZEUGE.length} Werkzeuge eingebaut, ${config.userName || "Boss"}, alle ohne Guthaben. Sag einfach, was du brauchst, zum Beispiel „Mehrwertsteuer von 250 Euro“, „Brückentage 2027“, „QR-Code für meine Webseite“ oder „erstelle ein Passwort“.`, actions: [] };
   }
   for (const w of WERKZEUGE) {
     for (const [re, zuEingabe] of w.sprache || []) {
