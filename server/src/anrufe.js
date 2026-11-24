@@ -253,6 +253,15 @@ async function twilioAnruf(k, text) {
   return r.ok ? { ok: true, sid: r.data?.sid } : { ok: false, error: twilioFehler(r) };
 }
 
+// Weckruf (v1.161.0): Friday ruft Kevin selbst an und spricht die Meldung. Nur mit Twilio.
+export async function anrufAnMich(text) {
+  const k = kontakte().find((x) => x.rolle === "ich");
+  if (!k) return { ok: false, error: "Deine eigene Handynummer fehlt (Verbindungen → Anrufe & Nachrichten)." };
+  // Emojis vorlesen klingt seltsam ("Feuer Friday Warnung") – weg damit.
+  const t = String(text || "").replace(/[\p{Extended_Pictographic}\uFE0F\u200D]/gu, "").replace(/\s+/g, " ").trim();
+  return twilioAnruf(k, t.slice(0, 600));
+}
+
 // ---------- Der eigentliche Auftrag ----------
 const weg = () => {
   const w = d().anruf_weg;
