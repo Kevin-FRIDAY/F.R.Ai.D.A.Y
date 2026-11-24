@@ -657,7 +657,7 @@
       const aktion = (p) => data.actions?.find((a) => typeof a === "string" && a.startsWith(p));
       try {
         // Friday hat ein Dokument oder einen Fragebogen erstellt: gleich zeigen.
-        if (hat("fragebogen_erstellen") || hat("dokument_erstellen")) window.FridayDokumente?.neuestes();
+        if (hat("fragebogen_erstellen") || hat("dokument_erstellen") || hat("tabelle_erstellen")) window.FridayDokumente?.neuestes();
         // Vollbild: im Browser umschalten (auf dem iPhone ist die Home-Bildschirm-App schon Vollbild).
         if (hat("vollbild") || hat("vollbild_aus")) {
           const r = window.FridayVollbild?.sprachBefehl(hat("vollbild"));

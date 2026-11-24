@@ -24,7 +24,7 @@ export const STUFEN = [
 export const NUR_LESEN = new Set([
   "world_news", "list_tasks", "system_check", "check_mail", "air_quality", "currency", "crypto", "holidays", "iss", "lookup",
   "country_info", "get_weather", "list_reminders", "list_protocols", "get_health", "welt_alarm", "markt_radar", "markt_plus",
-  "dokument_erstellen", "fragebogen_erstellen", "web_search",
+  "dokument_erstellen", "fragebogen_erstellen", "tabelle_erstellen", "web_search",
   "dokumente_suchen", "apple_kontakte", // v1.134.0 (nur lesen)
 ]);
 // Werkzeuge, die nach außen wirken, Geräte schalten oder Friday selbst verändern.
