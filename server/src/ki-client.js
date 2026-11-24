@@ -6,6 +6,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { config } from "./config.js";
 import { isCreditError, markEmpty, getEnergie } from "./energie.js";
 import * as OR from "./openrouter.js";
+import * as OL from "./ollama.js";
 
 let claude = null;
 function claudeClient() {
@@ -43,7 +44,23 @@ function ersatzGrund(err) {
   return `Claude nicht erreichbar (${String(err?.message || err).slice(0, 80)})`;
 }
 
+// v1.160.0: Lokales KI-Gehirn (Ollama) als letzte Stufe – oder immer, wenn Boss "denk lokal" gesagt hat.
 async function mitErsatz(versuch, params) {
+  if (OL.immer()) { OL.eingesprungen("denk lokal"); return OL.erstelle(params); }
+  try {
+    return await mitErsatzOnline(versuch, params);
+  } catch (err) {
+    if (!OL.bereit() || (err?.status && !istAusfall(err)) || err?.ersatzNichtMoeglich) throw err;
+    console.error("Claude/OpenRouter fallen aus, lokales Gehirn springt ein:", String(err?.message || err).slice(0, 160));
+    OL.eingesprungen(ersatzGrund(err));
+    try { return await OL.erstelle(params); } catch (olFehler) {
+      console.error("Lokales Gehirn:", olFehler.message);
+      throw err;
+    }
+  }
+}
+
+async function mitErsatzOnline(versuch, params) {
   const ueberspringen = OR.ersatzBereit() ? claudeUeberspringen() : "";
   let claudeFehler = null;
   if (!ueberspringen) {
@@ -93,7 +110,7 @@ function streamMitErsatz(params, beta) {
           throw err;
         }
       }, params).then((msg) => {
-        if (String(msg.model || "").startsWith("openrouter/")) {
+        if (/^(openrouter|ollama)\//.test(String(msg.model || ""))) {
           // Ersatz kam am Stück: den Zuhörern einmal alles geben.
           const text = msg.content.filter((b) => b.type === "text").map((b) => b.text).join("");
           for (const [e, fn] of hoerer) {
@@ -127,5 +144,5 @@ export function kiClient() {
 }
 
 /** Kann Friday gerade denken (Claude mit Guthaben oder Ersatz-Gehirn)? */
-export const denkenMoeglich = () => OR.ersatzBereit() || (Boolean(config.anthropicKey) && getEnergie().zustand !== "tot");
-export const ersatzBereit = () => OR.ersatzBereit();
+export const denkenMoeglich = () => OL.bereit() || OR.ersatzBereit() || (Boolean(config.anthropicKey) && getEnergie().zustand !== "tot");
+export const ersatzBereit = () => OR.ersatzBereit() || OL.bereit();

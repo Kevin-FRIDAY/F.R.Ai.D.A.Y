@@ -52,6 +52,16 @@ export const BEREICHE = {
   apple: ["🍏", "Apple-Apps"],
   waechter: ["🔭", "Dauer-Wächter"],
   system: ["⚙", "System"],
+  // Wunschliste aus der Ideen-Schmiede (v1.160.0)
+  wetter: ["⛈", "Unwetter-Warnungen"],
+  paket: ["📦", "Pakete"],
+  nachrichten: ["📰", "Eigene Nachrichten"],
+  mediathek: ["🎞", "Mediathek"],
+  netz: ["📶", "Fritz!Box & Internet"],
+  geburtstag: ["🎂", "Geburtstage"],
+  familie: ["👪", "Familien-Pinnwand"],
+  rueckblick: ["🌙", "Abend-Rückblick"],
+  vorlieben: ["🧬", "Friday lernt dich kennen"],
   sonstiges: ["•", "Sonstiges"],
 };
 
