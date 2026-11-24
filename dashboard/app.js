@@ -749,6 +749,8 @@
         const appsA = aktion("apps:");
         if (appsA) window.FridayApps?.open({ id: appsA.slice(5), hervor: hat(`apps_oeffnen:${appsA.slice(5)}`) });
         else if (hat("apps")) window.FridayApps?.open();
+        // Werkzeugkasten (v1.162.0): 100 Rechner/Generatoren ohne Claude.
+        window.FridayWerkzeugkasten?.vonAussen(data.actions || []);
         // Helfer-Paket (v1.106.0): Kühlschrank, Kaufberater, Advocatus Diaboli, Ideen-Schmiede, Stimmungs-Sound.
         if (hat("profil")) window.FridayProfil?.open();
         if (hat("kuehlschrank")) window.FridayKuehl?.open({ tab: hat("kuehlschrank:rezepte") ? "rezepte" : "vorrat" });
