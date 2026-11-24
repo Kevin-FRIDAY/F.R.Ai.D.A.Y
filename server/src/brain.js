@@ -16,6 +16,7 @@ import { quickCommand as hausQuick } from "./werkstatt.js";
 import { quickCommand as zerlegeQuick } from "./teilebank.js";
 import { quickCommand as landQuick } from "./laenderinfo.js";
 import { quickCommand as sportQuick } from "./sport.js";
+import { quickCommand as kontenQuick } from "./konten.js";
 import { quickCommand as archivQuick } from "./archiv.js";
 import { quickCommand as standortQuick } from "./standort.js";
 import { quickCommand as profilQuick, kurzinfo as profilKurzinfo } from "./profil.js";
@@ -91,6 +92,7 @@ Werkzeuge:
 - Termine und Apple-Erinnerungen: kalender (Fridays eigene Erinnerungen mit Wecker: set_reminder). Musik: spotify, wenn verbunden, sonst mac. Lampen: hue für Philips Hue, smart_home für Home Assistant (Heizung, Steckdosen, Rollos, Sensoren). Aufgaben: todoist, wenn verbunden. Notizen und Wissen: notion.
 - Nachrichten und Anrufe an die Frau des Nutzers, ihn selbst oder hinterlegte Kontakte: anrufe. Wer "ruf meine Frau an und sag ihr …" sagt, hat damit bestätigt: direkt ausführen. Den Text in der Ich-Form des Nutzers formulieren.
 - Weckruf: Ist etwas wirklich wichtig und eilig (Gefahr, Frist, Boss hat "ruf mich an, wenn …" gesagt), lass sein iPhone mit weckruf (action wecken) klingeln. Nie für normale Antworten.
+- Bankkonten (Sparkasse, Revolut): konten – nur ansehen (Kontostand, Umsätze, Auswertung, Abos). Du kannst kein Geld bewegen, nichts überweisen und nichts bezahlen; bitte dann, es selbst in der Banking-App zu tun.
 - Mac-Aktionen gehen nur, wenn der Mac verbunden ist. Wenn nicht, sag es kurz.
 - Eigene Unterlagen (Verträge, Rechnungen, Anleitungen, PDFs): dokumente_suchen, und nenne immer die Quelle (Datei, Seite). Apple Notizen, Kontakte und die Music-App: apple_notizen, apple_kontakte, apple_musik. Soll ich etwas über längere Zeit beobachten ("sag mir Bescheid, wenn …"): dauer_waechter.
 - Bekommst du "wartet_auf_freigabe" zurück, sag kurz, dass die Aktion in der Glocke oben auf Boss' Freigabe wartet (oder per Knopf in Telegram), und tu nicht so, als sei sie erledigt.
@@ -234,6 +236,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (w) { actions.push(...w.actions); return finish(w.answer); }
     } catch (err) {
       console.error("Weckruf:", err.message);
+    }
+  }
+
+  // Meine Konten (v1.163.0): "wie ist mein Kontostand?", "was habe ich diesen Monat ausgegeben?", "welche Abos habe ich?" –
+  // ohne Claude, nur lesen. "Überweise 50 Euro …" wird hier freundlich abgelehnt (Friday bewegt kein Geld).
+  if (mode !== "translate" && !image && text) {
+    try {
+      const k = kontenQuick(text);
+      if (k) { actions.push(...k.actions); return finish(k.answer); }
+    } catch (err) {
+      console.error("Konten:", err.message);
     }
   }
 
