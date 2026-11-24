@@ -8,6 +8,66 @@
   if (!box) return;
 
   let sites = [], current = null, currentHtml = "", busy = false;
+  // v1.156.0: Stil-Wahl, Branche, Sofort-Vorlage, Geräte-Vorschau, Qualitäts-Note.
+  let stil = "";
+  try { stil = localStorage.getItem("friday_ws_stil") || ""; } catch { /* egal */ }
+  let optionenDa = false;
+  async function optionenLaden() {
+    if (optionenDa) return;
+    try {
+      const o = await (await api("/api/webseiten/optionen")).json();
+      $("ws-stile").innerHTML = [{ id: "", name: "Auto", a1: "#888", a2: "#ccc", bg: "#222", beschreibung: "passend zur Branche" }, ...o.stile].map((x) =>
+        `<button type="button" role="radio" data-stil="${escapeHtml(x.id)}" title="${escapeHtml(x.beschreibung)}" class="${x.id === stil ? "on" : ""}" aria-checked="${x.id === stil}"><i style="background:linear-gradient(135deg,${escapeHtml(x.a1)},${escapeHtml(x.a2)});box-shadow:inset 0 0 0 3px ${escapeHtml(x.bg)}"></i>${escapeHtml(x.name)}</button>`).join("");
+      $("ws-branche").innerHTML = `<option value="">Automatisch erkennen</option>${o.branchen.filter((b) => b.id !== "allgemein").map((b) => `<option value="${escapeHtml(b.id)}">${escapeHtml(b.name)}</option>`).join("")}<option value="allgemein">Sonstiges</option>`;
+      optionenDa = true;
+    } catch { /* offline */ }
+  }
+  $("ws-stile")?.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-stil]");
+    if (!b) return;
+    stil = b.dataset.stil;
+    try { localStorage.setItem("friday_ws_stil", stil); } catch { /* egal */ }
+    $("ws-stile").querySelectorAll("button").forEach((x) => { x.classList.toggle("on", x === b); x.setAttribute("aria-checked", String(x === b)); });
+  });
+  const wahl = () => ({ stil: stil || undefined, branche: $("ws-branche")?.value || undefined });
+
+  function geraet(w) {
+    $("ws-geraet").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.w === w));
+    $("ws-frame").style.width = w ? `${w}px` : "";
+    $("ws-frame").parentElement.classList.toggle("schmal", Boolean(w));
+  }
+  $("ws-geraet")?.addEventListener("click", (e) => { const b = e.target.closest("button[data-w]"); if (b) geraet(b.dataset.w); });
+
+  async function noteZeigen(site) {
+    const n = $("ws-note"), l = $("ws-checks");
+    n.classList.add("hidden"); l.classList.add("hidden");
+    try {
+      const q = await (await api(`/api/webseite/${encodeURIComponent(site.id)}/qualitaet`)).json();
+      if (current?.id !== site.id || q.punkte == null) return;
+      n.textContent = `Qualität ${q.punkte}/100`;
+      n.className = `ws-note ${q.punkte >= 90 ? "gut" : q.punkte >= 70 ? "mittel" : "schwach"}`;
+      l.innerHTML = q.checks.map((c) => `<li class="${c.ok ? "ok" : "fehlt"}">${c.ok ? "✓" : "✕"} <b>${escapeHtml(c.name)}</b>${c.ok ? "" : ` – ${escapeHtml(c.tipp)}`}</li>`).join("")
+        + `<li class="info">${q.abschnitte} Abschnitte · ${q.fotos} Fotos · ${q.groesse_kb.toLocaleString("de-DE")} KB</li>`;
+    } catch { /* egal */ }
+  }
+  $("ws-note")?.addEventListener("click", () => $("ws-checks").classList.toggle("hidden"));
+
+  async function sofort() {
+    if (busy) return;
+    const auftrag = String($("ws-auftrag").value || "").trim();
+    busy = true; $("ws-go").disabled = true; $("ws-sofort").disabled = true;
+    msg("Friday baut aus ihren Profi-Vorlagen und sucht passende Fotos …");
+    $("ws-state").textContent = "BAUT"; $("ws-state").className = "ws-state busy";
+    try {
+      const r = await (await api("/api/webseite/vorlage", { method: "POST", body: JSON.stringify({ auftrag, ...wahl() }) })).json();
+      if (!r.ok) { msg(r.error || "Das ging gerade nicht.", true); return; }
+      msg(`Fertig: ${r.titel}. Qualität ${r.qualitaet?.punkte ?? "–"}/100, ${r.qualitaet?.fotos ?? 0} Fotos. Preisvorschlag ${eur(r.preis_eur)}.`);
+      say(`Fertig, Chef. ${r.titel} steht. Mein Preisvorschlag: ${Math.round(r.preis_eur || 0)} Euro.`);
+      await loadList(r.id);
+    } catch { msg("Friday ist gerade nicht erreichbar.", true); }
+    finally { busy = false; $("ws-go").disabled = false; $("ws-sofort").disabled = false; $("ws-state").textContent = ""; $("ws-state").className = "ws-state"; }
+  }
+  $("ws-sofort")?.addEventListener("click", sofort);
   const eur = (v) => (v == null ? "–" : `${Number(v).toLocaleString("de-DE", { maximumFractionDigits: 2 })} €`);
   const msg = (t, err) => { const m = $("ws-msg"); m.textContent = t || ""; m.classList.toggle("error", Boolean(err)); };
 
@@ -16,7 +76,7 @@
     const sold = sites.filter((s) => s.status === "verkauft");
     $("ws-sum").textContent = `${sites.length} Projekte · ${sold.length} verkauft · ${eur(sold.reduce((a, s) => a + (s.verkauft_eur || 0), 0))} eingenommen`;
     $("ws-list").innerHTML = sites.map((s) => `<li><button type="button" data-id="${escapeHtml(s.id)}" class="${current?.id === s.id ? "on" : ""}">
-        <b>${escapeHtml(s.titel)}</b><span>${new Date(s.erstellt).toLocaleDateString("de-DE")} · ${s.status === "verkauft" ? `✓ verkauft ${eur(s.verkauft_eur)}` : `Entwurf · Vorschlag ${eur(s.preis_eur)}`}</span></button></li>`).join("")
+        <b>${escapeHtml(s.titel)}</b><span>${new Date(s.erstellt).toLocaleDateString("de-DE")} · ${s.status === "verkauft" ? `✓ verkauft ${eur(s.verkauft_eur)}` : `Entwurf · Vorschlag ${eur(s.preis_eur)}`}${s.qualitaet?.punkte != null ? ` · ★ ${s.qualitaet.punkte}` : ""}${s.quelle === "vorlage" ? " · ⚡ Vorlage" : ""}</span></button></li>`).join("")
       || `<li class="muted">Noch keine Webseiten. Beschreib oben deinen ersten Kunden.</li>`;
     const pick = selectId ? sites.find((s) => s.id === selectId) : current ? sites.find((s) => s.id === current.id) : sites[0];
     if (pick) show(pick); else { current = null; $("ws-detail").classList.add("hidden"); }
@@ -36,6 +96,7 @@
     try {
       currentHtml = (await (await api(`/api/webseite/${encodeURIComponent(site.id)}/html`)).json()).html || "";
       $("ws-frame").srcdoc = currentHtml;
+      noteZeigen(site);
     } catch { $("ws-frame").srcdoc = "<p style='font-family:sans-serif;padding:20px'>Vorschau nicht verfügbar.</p>"; }
   }
 
@@ -124,7 +185,7 @@
     clearInterval(live.timer);
     clearTimeout(live.ansageTimer);
     const box = $("ws-live");
-    busy = false; $("ws-go").disabled = false; $("ws-change-go").disabled = false;
+    busy = false; $("ws-go").disabled = false; $("ws-change-go").disabled = false; $("ws-sofort").disabled = false;
     $("ws-state").textContent = ""; $("ws-state").className = "ws-state";
     box.classList.remove("wl-ueber");
     if (j.status === "fertig" && j.ergebnis) {
@@ -136,7 +197,7 @@
       wl("wl-code").innerHTML = hl(live.code);
       const r = j.ergebnis;
       const knapp = sek <= j.schaetzung_s + 3 ? `${sek} Sekunden, wie versprochen.` : `${sek} Sekunden, etwas länger als gedacht.`;
-      msg(`Fertig in ${sek} s: ${r.titel}. Preisvorschlag ${eur(r.preis_eur)}.`);
+      msg(`${j.hinweis ? `${j.hinweis} ` : ""}Fertig in ${sek} s: ${r.titel}. Qualität ${r.qualitaet?.punkte ?? "–"}/100. Preisvorschlag ${eur(r.preis_eur)}.`, Boolean(j.hinweis));
       // Nicht mitten in die letzte Bau-Ansage hinein (höchstens 3 s warten). Schon fertige Bauten nicht noch mal ansagen.
       const fertigSatz = `Fertig, Chef. ${knapp} ${r.titel} steht. Mein Preisvorschlag: ${Math.round(r.preis_eur || 0)} Euro.`;
       if (!live.stumm) setTimeout(() => say(fertigSatz), Math.min(3000, Math.max(0, (live.frei || 0) - Date.now())));
@@ -161,7 +222,7 @@
     wl("wl-modell").textContent = job.modus === "schnell" ? "⚡ Tempo-Modus" : "";
     liveZeigen(true);
     box.scrollTop = 0; // Handy: Live-Ansicht steht oben
-    busy = true; $("ws-go").disabled = true; $("ws-change-go").disabled = true;
+    busy = true; $("ws-go").disabled = true; $("ws-change-go").disabled = true; $("ws-sofort").disabled = true;
     $("ws-state").textContent = "BAUT LIVE"; $("ws-state").className = "ws-state busy";
     msg("");
     if (sprechen && job.spruch) { say(job.spruch); live.frei = Date.now() + sprechDauer(job.spruch); }
@@ -173,7 +234,7 @@
   /** true = Live-Bau läuft, false = gesperrt (alter Weg), null = Fehler schon gemeldet. */
   async function buildLive(auftrag, basis) {
     let res;
-    try { res = await api("/api/webseite/live", { method: "POST", body: JSON.stringify({ auftrag, basis }) }); } catch { return false; }
+    try { res = await api("/api/webseite/live", { method: "POST", body: JSON.stringify({ auftrag, basis, ...wahl() }) }); } catch { return false; }
     if (res.status === 423) return false;
     const r = await res.json().catch(() => ({}));
     if (!r.ok) { msg(r.error || "Das ging gerade nicht.", true); return null; }
@@ -200,10 +261,10 @@
     msg(basis ? "Friday überarbeitet die Seite … (1–2 Minuten)" : "Friday baut die Webseite … (1–2 Minuten)");
     $("ws-state").textContent = "BAUT"; $("ws-state").className = "ws-state busy";
     try {
-      const res = await api("/api/webseite", { method: "POST", body: JSON.stringify({ auftrag, basis }) });
+      const res = await api("/api/webseite", { method: "POST", body: JSON.stringify({ auftrag, basis, ...wahl() }) });
       const r = await res.json();
       if (!r.ok) { msg(r.error, true); return; }
-      msg(`Fertig: ${r.titel}. Preisvorschlag ${eur(r.preis_eur)}.`);
+      msg(`${r.hinweis ? `${r.hinweis} ` : ""}Fertig: ${r.titel}. Qualität ${r.qualitaet?.punkte ?? "–"}/100. Preisvorschlag ${eur(r.preis_eur)}.`, Boolean(r.hinweis));
       say(`Fertig, Chef. ${r.titel} steht. Mein Preisvorschlag: ${Math.round(r.preis_eur || 0)} Euro.`);
       await loadList(r.id);
       window.FridayEnergie?.refresh();
@@ -242,7 +303,7 @@
     loadList(current.id);
   });
 
-  const open = (id) => { box.classList.remove("hidden"); loadList(id); laufendenBauHolen(); };
+  const open = (id) => { box.classList.remove("hidden"); optionenLaden(); loadList(id); laufendenBauHolen(); };
   $("webseiten-open")?.addEventListener("click", () => open());
   $("webseiten-x")?.addEventListener("click", () => box.classList.add("hidden"));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.classList.contains("hidden")) box.classList.add("hidden"); });

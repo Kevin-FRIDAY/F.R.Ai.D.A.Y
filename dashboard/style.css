@@ -3944,3 +3944,30 @@ body.reduce-anim #settings .set-pane.on { animation: none; }
 #settings .voice-mehr summary { cursor: pointer; color: var(--cyan); font-weight: 600; }
 #settings .chip { white-space: nowrap; }
 #settings label.chip.set-import-btn { border: 1px solid var(--u-rand-soft); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+
+/* ---------- v1.156.0 Webseiten-Werkstatt: Stil-Wahl, Sofort-Vorlage, Geräte-Vorschau, Qualitäts-Note ---------- */
+.ws-wahl { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muted); }
+.ws-wahl select { width: 100%; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0,0,0,.35); color: var(--text); font: 16px var(--font-ui, sans-serif); }
+.ws-stile { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 6px; }
+.ws-stile button { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0,0,0,.3); color: var(--text); font: 600 11px var(--font-ui, sans-serif); cursor: pointer; text-align: left; line-height: 1.15; transition: border-color .2s, background .2s; }
+.ws-stile button i { flex: none; width: 16px; height: 16px; border-radius: 50%; }
+.ws-stile button.on { border-color: var(--cyan, #ff8a1e); background: color-mix(in srgb, var(--cyan, #ff8a1e) 14%, transparent); box-shadow: 0 0 12px color-mix(in srgb, var(--cyan, #ff8a1e) 30%, transparent); }
+.ws-sofort { padding: 10px; border-radius: 10px; border: 1px dashed color-mix(in srgb, var(--cyan, #ff8a1e) 60%, transparent); background: rgba(0,0,0,.3); color: var(--text); font: 600 13px var(--font-ui, sans-serif); cursor: pointer; }
+.ws-sofort:hover { background: color-mix(in srgb, var(--cyan, #ff8a1e) 12%, transparent); }
+.ws-sofort:disabled { opacity: .5; }
+.ws-bar { flex-wrap: wrap; }
+.ws-geraet { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.ws-geraet button { padding: 5px 10px; border: 0; background: transparent; color: var(--muted); font-size: 14px; cursor: pointer; }
+.ws-geraet button.on { background: color-mix(in srgb, var(--cyan, #ff8a1e) 22%, transparent); color: #fff; }
+.ws-note { padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: rgba(0,0,0,.35); font: 700 12px ui-monospace, Menlo, monospace; letter-spacing: .04em; cursor: pointer; color: var(--text); }
+.ws-note.hidden, .ws-checks.hidden { display: none; }
+.ws-note.gut { color: #46e0a0; border-color: rgba(70,224,160,.55); box-shadow: 0 0 12px rgba(70,224,160,.25); }
+.ws-note.mittel { color: #ffcc4d; border-color: rgba(255,204,77,.5); }
+.ws-note.schwach { color: #ff5d6c; border-color: rgba(255,93,108,.5); }
+.ws-checks { list-style: none; margin: 0; padding: 10px 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px 14px; border: 1px solid var(--line); border-radius: 10px; background: rgba(0,0,0,.35); font-size: 12px; }
+.ws-checks li.ok { color: #9fe8c6; } .ws-checks li.fehlt { color: #ffb0b8; } .ws-checks li.info { grid-column: 1 / -1; color: var(--muted); }
+.ws-frame-box { flex: 1; display: flex; justify-content: center; min-height: 420px; }
+.ws-frame-box .ws-frame { transition: width .35s ease; }
+.ws-frame-box.schmal { background: repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 10px, transparent 10px 20px); border-radius: 12px; padding: 8px 0; }
+.ws-frame-box.schmal .ws-frame { flex: none; max-width: 100%; border-radius: 22px; box-shadow: 0 0 0 6px #111, 0 0 0 7px var(--line); }
+@media (max-width: 900px) { .ws-geraet { display: none; } .ws-frame-box { min-height: 70vh; } }

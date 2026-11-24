@@ -9,6 +9,9 @@ import { kiClient, ersatzBereit } from "./ki-client.js";
 import { config, IST_EVE, DATA_DIR } from "./config.js";
 import { istFrei } from "./eve.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty, einnahme } from "./energie.js";
+import { bauVorlage, erkenneBranche, erkenneStil, designVorgabe, vorlagenOptionen, STILE, BRANCHEN, ICONS } from "./webvorlagen.js";
+import { fuelleBilder, bilderAbziehen, bilderZurueck } from "./webbilder.js";
+import { politur, pruefeQualitaet } from "./webpolitur.js";
 
 const client = kiClient();
 export const WEB_DIR = process.env.FRIDAY_WEB_DIR || path.join(os.homedir(), "Friday-Webseiten");
@@ -28,15 +31,33 @@ const WEBSEITE_TOOL = {
   },
 };
 
-const SYSTEM = `Du bist die Webseiten-Werkstatt von F.R.Ai.D.A.Y. Du baust verkaufsfertige Webseiten für kleine Firmen und Selbstständige.
+// v1.156.0: Design-Bibel – damit jede Seite wie von einer guten Agentur aussieht.
+const SYSTEM = `Du bist die Webseiten-Werkstatt von F.R.Ai.D.A.Y und arbeitest wie ein preisgekröntes Web-Design-Studio. Du baust verkaufsfertige Webseiten für kleine Firmen und Selbstständige, die so hochwertig aussehen, dass der Kunde sofort Ja sagt.
 
-Anforderungen an die Webseite:
-- Eine einzige HTML-Datei, komplett eigenständig: alles CSS und JS inline, keine externen Skripte. Bilder nur als CSS-Verläufe, Inline-SVG oder Emoji, keine fremden Bild-URLs. Google Fonts per <link> sind erlaubt.
-- Modern, hochwertig, responsiv (Handy zuerst), barrierearm (Kontraste, Alt-Texte, semantisches HTML), schnell.
-- Sinnvolle Abschnitte für die Branche (z. B. Start mit klarer Botschaft, Leistungen, Preise, Über uns, Bewertungen als Platzhalter klar gekennzeichnet, Kontakt mit Formular als mailto oder Platzhalter, Anfahrt, Öffnungszeiten), Impressum- und Datenschutz-Platzhalter im Fußbereich.
-- Echte, glaubwürdige deutsche Texte. Erfinde keine echten Kundenbewertungen und keine falschen Fakten: Platzhalter wie [Telefonnummer] oder [Kundenstimme] klar markieren.
+TECHNIK
+- Eine einzige HTML-Datei: alles CSS und JS inline, keine externen Skripte oder Frameworks. Google Fonts per <link> sind erlaubt (genau 1–2 Schriften).
+- <html lang="de">, charset, viewport, <title> und <meta name="description"> mit Firma + Ort, Open-Graph-Titel, Favicon als Inline-SVG (data:-URL).
+- Handy zuerst: CSS-Variablen, clamp() für Schriftgrößen, Grid/Flex, Umbrüche bei 1024/860/560 px, nichts darf seitlich überstehen. Auf dem Handy ein Burger-Menü mit JS.
+- Barrierearm: semantisches HTML (header, nav, main, section mit aria-label, footer), genau eine h1, gute Kontraste, sichtbarer Fokus, Formular-Labels, @media (prefers-reduced-motion: reduce) schaltet Bewegung ab.
 
-Antworte immer, indem du das Werkzeug "webseite" genau einmal aufrufst; schreib keinen Text daneben.`;
+FOTOS
+- Echte Fotos sucht Friday selbst: schreib dafür <img data-bild="2–4 englische Suchwörter" alt="deutsche Beschreibung"> OHNE src (z. B. data-bild="hair salon interior"). 4–7 Fotos: Hero, Über uns, Galerie. Keine fremden Bild-URLs, keine Platzhalter-Dienste.
+- Bilder mit object-fit: cover in Rahmen mit fester aspect-ratio, abgerundeten Ecken und Schatten.
+
+DESIGN (Pflicht, das macht den Unterschied)
+- Ein klares Farbsystem mit 2 Akzentfarben (CSS-Variablen), großzügige Abstände (Abschnitte 90–130 px), maximale Breite ~1180 px.
+- Hero über die ganze Bildschirmhöhe: kleine Marke/Kicker über der h1, riesige h1 (clamp bis ~84 px) mit einem Wort im Farbverlauf, Unterzeile, zwei Knöpfe (Haupt + Neben), kleine Vertrauens-Punkte, rechts ein Foto im Rahmen mit 1–2 schwebenden Glas-Karten. Dahinter animierte, weich verschwommene Farbkugeln und/oder ein feines Raster.
+- Glas-Navigation (fixiert, backdrop-filter: blur), die beim Scrollen kleiner wird; dünner Lese-Fortschrittsbalken oben.
+- Bewegung: Abschnitte gleiten beim Scrollen weich herein (IntersectionObserver, gestaffelt), Zahlen zählen hoch, Karten heben sich beim Hover und leuchten dort, wo die Maus ist, ein Laufband mit Leistungen, Knöpfe mit Schatten-Hover. Alles flüssig (nur transform/opacity animieren).
+
+ABSCHNITTE (in dieser Reihenfolge, passend zur Branche)
+1 Hero · 2 Laufband · 3 drei Kennzahlen-Karten (Versprechen statt erfundener Fakten, z. B. „24 h Antwortzeit“) · 4 Leistungen als 4 Karten mit Inline-SVG-Symbol und Preis „ab …“ · 5 Über uns mit Foto und Haken-Liste · 6 Ablauf in 3–4 nummerierten Schritten · 7 Galerie (asymmetrisches Raster) · 8 Preise als 3 Pakete, das mittlere hervorgehoben („Beliebt“) · 9 Kundenstimmen als klar markierte Platzhalter · 10 FAQ als <details>-Akkordeon · 11 großes Abschluss-Band mit Aufruf · 12 Kontakt: Formular (öffnet mailto) + Telefon, Mail, Öffnungszeiten, Adresse · Fußbereich mit Impressum- und Datenschutz-Platzhalter.
+
+TEXTE
+- Echte, glaubwürdige, kurze deutsche Texte mit Persönlichkeit, Du-Form (außer Kanzlei/Praxis wirkt Sie besser). Überschriften als Nutzen, nicht als Etikett.
+- Erfinde keine echten Kundenbewertungen, Auszeichnungen, Jahreszahlen oder Kundenzahlen: Platzhalter wie [Telefonnummer], [Adresse] oder [Kundenstimme] klar markieren.
+
+Antworte immer, indem du das Werkzeug "webseite" genau einmal aufrufst; schreib keinen Text daneben. Fang mit "titel" an, dann "html".`;
 
 const slug = (s) => String(s || "projekt").toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-").slice(0, 40) || "projekt";
 
@@ -64,20 +85,54 @@ export function getSiteHtml(id) {
   return ok ? fs.readFileSync(path.join(WEB_DIR, ok, "index.html"), "utf8") : null;
 }
 
-export async function buildSite(auftrag, basisId = null) {
-  if (!config.anthropicKey && !ersatzBereit()) return { ok: false, error: "Ohne Claude-Schlüssel kann ich keine Webseiten bauen." };
+export { vorlagenOptionen };
+
+/** Stil und Branche: was der Nutzer gewählt hat, sonst aus dem Auftrag erkannt. */
+function wahl(text, { stil, branche } = {}) {
+  const b = BRANCHEN[branche] ? branche : erkenneBranche(text);
+  const s = STILE[stil] ? stil : erkenneStil(text, b);
+  return { branche: b, stil: s };
+}
+
+/** Nachricht an Claude: Auftrag + Design-Vorgabe, bei Überarbeitung die bisherige Seite (Fotos als kurze Marken). */
+function claudeNachricht(text, basis, w) {
+  if (!basis) return { user: `Auftrag: ${text}\n\n${designVorgabe(w.branche, w.stil)}`, liste: [] };
+  const { html, liste } = bilderAbziehen(getSiteHtml(basis));
+  return { user: `Überarbeite diese bestehende Webseite nach dem Wunsch unten und gib die komplette neue Datei zurück. Eingebettete Fotos stehen als src="bild:1", src="bild:2" … – lass diese Marken genau so stehen, wenn das Foto bleiben soll. Neue Fotos wie gewohnt mit data-bild ohne src.\n\nBestehende Seite:\n${html}\n\nWunsch: ${text}`, liste };
+}
+
+/** Feinschliff, echte Fotos, Qualitäts-Check – für Claude-Seiten und Vorlagen gleich. */
+async function fertigMachen(html, liste, titel) {
+  let h = politur(bilderZurueck(html, liste), { titel });
+  h = (await fuelleBilder(h, { icons: ICONS })).html;
+  return { html: h, qualitaet: pruefeQualitaet(h) };
+}
+
+/** v1.156.0 Sofort-Vorlage ohne Claude: in 1–20 Sekunden (je nach Fotos), kostet kein Guthaben. */
+export async function baueVorlage(auftrag, opt = {}) {
+  const text = String(auftrag || "").trim().slice(0, 2000);
+  const w = wahl(text, opt);
+  const v = bauVorlage({ auftrag: text, ...w });
+  const f = await fertigMachen(v.html, [], v.titel);
+  return speichern({ ...v, html: f.html }, f.html, null, text || `${BRANCHEN[w.branche].name}-Webseite`, { ...w, qualitaet: f.qualitaet, quelle: "vorlage" });
+}
+
+export async function buildSite(auftrag, basisId = null, opt = {}) {
   const text = String(auftrag || "").trim().slice(0, 2000);
   if (!text) return { ok: false, error: "Beschreib mir den Kunden und was die Seite können soll." };
-  let user = `Auftrag: ${text}`;
   const basis = basisId ? safeId(basisId) : null;
-  if (basis) user = `Überarbeite diese bestehende Webseite nach dem Wunsch unten und gib die komplette neue Datei zurück.\n\nBestehende Seite:\n${getSiteHtml(basis)}\n\nWunsch: ${text}`;
+  const w = basis ? { stil: readMeta(basis).stil || wahl(text, opt).stil, branche: readMeta(basis).branche || wahl(text, opt).branche } : wahl(text, opt);
+  // Ohne Claude: neue Seiten trotzdem als Profi-Vorlage bauen.
+  const rettung = async (grund) => (basis ? { ok: false, error: grund } : { ...(await baueVorlage(text, w)), hinweis: `${grund} Ich habe dir stattdessen meine Profi-Vorlage gebaut.` });
+  if (!config.anthropicKey && !ersatzBereit()) return rettung("Ohne Claude-Schlüssel kann ich nicht frei entwerfen.");
+  const { user, liste } = claudeNachricht(text, basis, w);
   const model = brainModel(config.model);
   const sparen = model === SPAR_MODELL;
   let res;
   try {
     const params = {
       model,
-      max_tokens: sparen ? 16000 : 32000,
+      max_tokens: sparen ? 20000 : 32000,
       system: SYSTEM,
       tools: [WEBSEITE_TOOL],
       tool_choice: { type: "auto" },
@@ -87,17 +142,18 @@ export async function buildSite(auftrag, basisId = null) {
     // Große Ausgabe: per Stream holen, damit es keine Zeitüberschreitung gibt.
     res = sparen ? await client.messages.stream(params).finalMessage() : await client.beta.messages.stream(params).finalMessage();
   } catch (err) {
-    if (isCreditError(err)) { markEmpty(); return { ok: false, error: "Mein Guthaben ist leer, Chef. Ohne Energie kann ich nicht bauen." }; }
-    return { ok: false, error: "Die Webseite hat gerade nicht geklappt. Versuch es gleich noch einmal." };
+    if (isCreditError(err)) { markEmpty(); return rettung("Mein Guthaben ist leer, Chef."); }
+    return rettung("Claude hat gerade nicht geantwortet.");
   }
   recordUsage(res.model || model, res.usage, "webseite");
   const block = (res.content || []).find((b) => b.type === "tool_use" && b.name === "webseite");
   const html = String(block?.input?.html || "");
-  if (!block || !/<html[\s>]/i.test(html)) return { ok: false, error: res.stop_reason === "max_tokens" ? "Die Seite wurde zu groß. Beschreib sie etwas knapper." : "Die Webseite kam nicht vollständig zurück." };
-  return speichern(block.input, html, basis, text);
+  if (!block || !/<html[\s>]/i.test(html)) return rettung(res.stop_reason === "max_tokens" ? "Die Seite wurde zu groß." : "Die Webseite kam nicht vollständig zurück.");
+  const f = await fertigMachen(html, liste, block.input.titel);
+  return speichern(block.input, f.html, basis, text, { ...w, qualitaet: f.qualitaet, quelle: "claude" });
 }
 
-function speichern(w, html, basis, text) {
+function speichern(w, html, basis, text, extra = {}) {
   const id = basis || `${new Date().toISOString().slice(0, 10)}-${slug(w.titel)}-${Date.now().toString(36).slice(-4)}`;
   const dir = path.join(WEB_DIR, id);
   fs.mkdirSync(dir, { recursive: true });
@@ -106,10 +162,17 @@ function speichern(w, html, basis, text) {
   fs.writeFileSync(path.join(dir, "index.html"), html);
   fs.writeFileSync(path.join(dir, "angebot.txt"), `${w.angebot}\n\nPreisvorschlag: ${w.preis_eur} €\n`);
   const alt = basis ? readMeta(basis) : {};
-  const meta = { ...alt, titel: String(w.titel).slice(0, 120), auftrag: alt.auftrag || text, angebot: w.angebot, preis_eur: Number(w.preis_eur) || null, erstellt: alt.erstellt || new Date().toISOString(), geaendert: new Date().toISOString(), status: alt.status || "entwurf" };
+  const meta = { ...alt, titel: String(w.titel).slice(0, 120), auftrag: alt.auftrag || text, angebot: w.angebot, preis_eur: Number(w.preis_eur) || null, erstellt: alt.erstellt || new Date().toISOString(), geaendert: new Date().toISOString(), status: alt.status || "entwurf",
+    ...(extra.stil ? { stil: extra.stil } : {}), ...(extra.branche ? { branche: extra.branche } : {}), ...(extra.quelle ? { quelle: extra.quelle } : {}), ...(extra.qualitaet ? { qualitaet: { punkte: extra.qualitaet.punkte, fotos: extra.qualitaet.fotos, abschnitte: extra.qualitaet.abschnitte, groesse_kb: extra.qualitaet.groesse_kb } } : {}) };
   fs.writeFileSync(path.join(dir, "projekt.json"), JSON.stringify(meta, null, 2));
   latestId = id;
   return { ok: true, id, ...meta };
+}
+
+/** Qualitäts-Check einer gespeicherten Seite (Note + Punkte mit Tipps). */
+export function getSiteQualitaet(id) {
+  const html = getSiteHtml(id);
+  return html == null ? null : pruefeQualitaet(html);
 }
 
 let latestId = null;
@@ -228,7 +291,7 @@ export function startSpruch(wunsch, sek, chef = "Chef") {
 
 const TEMPO_ZUSATZ = `
 
-TEMPO-MODUS: Der Kunde will die Seite sofort sehen. Baue sie kompakt und trotzdem hochwertig: 5–6 Abschnitte, knappes CSS (CSS-Variablen, wenige Regeln), kaum JS, kurze Texte. Insgesamt höchstens etwa 350 Zeilen. Fang sofort mit "titel" und dann "html" an.`;
+TEMPO-MODUS: Der Kunde will die Seite sofort sehen. Baue sie kompakt und trotzdem hochwertig nach der Design-Bibel: Hero, Leistungen, Über uns, Preise, FAQ, Kontakt (6–8 Abschnitte), knappes CSS mit Variablen, nur das nötige JS (Menü + Einblenden), kurze Texte, 3–4 Fotos per data-bild. Insgesamt höchstens etwa 450 Zeilen. Fang sofort mit "titel" und dann "html" an.`;
 
 let liveSeq = 0;
 const liveJobs = new Map();
@@ -257,6 +320,8 @@ export function rohText(roh, feld) {
 
 function phaseAus(html, job) {
   if (job.status === "fertig") return "Fertig";
+  if (job.schritt === "fotos") return "Sucht passende Fotos und poliert die Seite …";
+  if (job.schritt === "vorlage") return "Baut die Profi-Vorlage …";
   if (!html) return job.titel ? `Plant „${job.titel}“ …` : "Plant die Seite …";
   if (/<\/html>/i.test(html)) return job.angebotDa ? "Schreibt das Angebot …" : "Schreibt Angebot und Preis …";
   const rest = html.slice(-4000);
@@ -286,6 +351,8 @@ export function phaseSatz(phase) {
   if (p === "Legt das Grundgerüst an") return "Das baue ich gerade: das Grundgerüst.";
   if (/^Gestaltet das Design/.test(p)) return "Jetzt gestalte ich das Design, Farben und Schriften.";
   if (/^Schreibt/.test(p)) return "Die Seite steht. Jetzt schreibe ich noch Angebot und Preis.";
+  if (/^Sucht passende Fotos/.test(p)) return "Jetzt suche ich passende Fotos und poliere alles.";
+  if (/^Baut die Profi-Vorlage/.test(p)) return "Claude ist gerade nicht da. Ich baue dir meine Profi-Vorlage.";
   if (p === "Programmiert die Funktionen") return "Jetzt programmiere ich die Funktionen.";
   if ((m = p.match(/^Baut (.+)$/))) return `Das baue ich gerade: ${m[1]}.`;
   return "";
@@ -300,18 +367,20 @@ function liveStand(job, ab = 0) {
     spruch: job.spruch, wunsch: job.wunsch, schaetzung_s: job.schaetzung_s, erwartet_zeichen: job.erwartet_zeichen,
     vergangen_s: Math.round(vergangen * 10) / 10, titel: job.titel, zeichen: html.length,
     zeilen: html ? html.split("\n").length : 0, phase: phaseAus(html, job), sprich: phaseSatz(phaseAus(html, job)),
-    ab: von, code: html.slice(von), ergebnis: job.ergebnis || null, error: job.error || null,
+    ab: von, code: html.slice(von), ergebnis: job.ergebnis || null, error: job.error || null, hinweis: job.hinweis || null,
+    stil: job.stil, branche: job.branche,
   };
 }
 
 /** Startet den Live-Bau und kommt sofort zurück. Den Fortschritt holt das Dashboard über getLiveJob(). */
-export function startLive(auftrag, basisId = null, { chef } = {}) {
+export function startLive(auftrag, basisId = null, { chef, stil, branche } = {}) {
   if (!liveFrei()) return { ok: false, gesperrt: true, error: "Der Live-Bau ist noch im Test. Probier ihn in Eve aus und gib ihn dort frei." };
-  if (!config.anthropicKey && !ersatzBereit()) return { ok: false, error: "Ohne Claude-Schlüssel kann ich keine Webseiten bauen." };
   const text = String(auftrag || "").trim().slice(0, 2000);
   if (!text) return { ok: false, error: "Beschreib mir den Kunden und was die Seite können soll." };
+  if (!config.anthropicKey && !ersatzBereit() && basisId) return { ok: false, error: "Ohne Claude-Schlüssel kann ich keine Seite überarbeiten." };
   if (liveAktuell && liveAktuell.status === "baut") return { ok: true, laeuft_schon: true, job: liveStand(liveAktuell) };
   const basis = basisId ? safeId(basisId) : null;
+  const w = basis ? { stil: readMeta(basis).stil || wahl(text).stil, branche: readMeta(basis).branche || wahl(text).branche } : wahl(text, { stil, branche });
   const wunsch = zeitWunsch(text);
   const modus = wunsch && !basis ? "schnell" : "normal";
   const s = schaetzung(modus);
@@ -319,7 +388,7 @@ export function startLive(auftrag, basisId = null, { chef } = {}) {
   const job = {
     id: liveSeq, status: "baut", auftrag: text, basis, modus, wunsch: wunsch?.text || null,
     schaetzung_s: s.sek, erwartet_zeichen: basis ? Math.max(s.zeichen, getSiteHtml(basis).length) : s.zeichen,
-    spruch: startSpruch(wunsch, s.sek, chef || config.userName || "Chef"), start: Date.now(), html: "", titel: "",
+    spruch: startSpruch(wunsch, s.sek, chef || config.userName || "Chef"), start: Date.now(), html: "", titel: "", ...w,
   };
   liveJobs.set(job.id, job);
   for (const id of liveJobs.keys()) if (id < liveSeq - 5) liveJobs.delete(id);
@@ -329,9 +398,26 @@ export function startLive(auftrag, basisId = null, { chef } = {}) {
   return { ok: true, job: liveStand(job) };
 }
 
+/** Claude fällt aus → Friday baut live ihre Profi-Vorlage, damit trotzdem eine gute Seite entsteht. */
+async function liveRettung(job, grund) {
+  if (job.basis) throw new Error(grund);
+  job.schritt = "vorlage";
+  const v = bauVorlage({ auftrag: job.auftrag, stil: job.stil, branche: job.branche });
+  job.titel = v.titel.slice(0, 120);
+  // Den Code in Häppchen "tippen", damit die Live-Ansicht wächst.
+  for (let i = 0; i < v.html.length; i += 2400) { job.html = v.html.slice(0, i + 2400); await new Promise((ok) => setTimeout(ok, 60)); }
+  job.schritt = "fotos";
+  const f = await fertigMachen(v.html, [], v.titel);
+  job.ergebnis = speichern({ ...v, html: f.html }, f.html, null, job.auftrag, { stil: job.stil, branche: job.branche, qualitaet: f.qualitaet, quelle: "vorlage" });
+  job.ergebnis.qualitaet = f.qualitaet;
+  job.hinweis = `${grund} Ich habe dir stattdessen meine Profi-Vorlage gebaut.`;
+  job.schritt = "";
+  job.status = "fertig";
+}
+
 async function liveBauen(job) {
-  let user = `Auftrag: ${job.auftrag}`;
-  if (job.basis) user = `Überarbeite diese bestehende Webseite nach dem Wunsch unten und gib die komplette neue Datei zurück.\n\nBestehende Seite:\n${getSiteHtml(job.basis)}\n\nWunsch: ${job.auftrag}`;
+  if (!config.anthropicKey && !ersatzBereit()) return liveRettung(job, "Ohne Claude-Schlüssel kann ich nicht frei entwerfen.");
+  const { user, liste } = claudeNachricht(job.auftrag, job.basis, job);
   const schnell = job.modus === "schnell";
   const model = schnell ? SCHNELL_MODELL : brainModel(config.model);
   const sparen = model === SPAR_MODELL;
@@ -362,18 +448,22 @@ async function liveBauen(job) {
     });
     res = await stream.finalMessage();
   } catch (err) {
-    if (isCreditError(err)) { markEmpty(); throw new Error("Mein Guthaben ist leer, Chef. Ohne Energie kann ich nicht bauen."); }
+    if (isCreditError(err)) { markEmpty(); return liveRettung(job, "Mein Guthaben ist leer, Chef."); }
     console.error("Webseiten-Live:", String(err?.message || err).slice(0, 300));
-    throw new Error("Die Webseite hat gerade nicht geklappt. Versuch es gleich noch einmal.");
+    return liveRettung(job, "Claude hat gerade nicht geantwortet.");
   }
   recordUsage(res.model || model, res.usage, "webseite");
   const block = (res.content || []).find((b) => b.type === "tool_use" && b.name === "webseite");
   const html = String(block?.input?.html || "");
-  if (!block || !/<html[\s>]/i.test(html)) throw new Error(res.stop_reason === "max_tokens" ? "Die Seite wurde zu groß. Beschreib sie etwas knapper." : "Die Webseite kam nicht vollständig zurück.");
+  if (!block || !/<html[\s>]/i.test(html)) return liveRettung(job, res.stop_reason === "max_tokens" ? "Die Seite wurde zu groß." : "Die Webseite kam nicht vollständig zurück.");
   job.html = html;
   job.titel = String(block.input.titel || job.titel).slice(0, 120);
-  const r = speichern(block.input, html, job.basis, job.auftrag);
   tempoMerken(job.modus, (Date.now() - job.start) / 1000, html.length);
+  job.schritt = "fotos";
+  const f = await fertigMachen(html, liste, job.titel);
+  const r = speichern(block.input, f.html, job.basis, job.auftrag, { stil: job.stil, branche: job.branche, qualitaet: f.qualitaet, quelle: "claude" });
+  r.qualitaet = f.qualitaet;
+  job.schritt = "";
   job.ergebnis = r;
   job.status = "fertig";
 }
