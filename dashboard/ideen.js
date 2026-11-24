@@ -1,4 +1,5 @@
-// F.R.Ai.D.A.Y Ideen-Schmiede (v1.106.0, v1.130.0: Reiter „Friday ausbauen“ im Stil des Tool-Ökosystems)
+// F.R.Ai.D.A.Y Ideen-Schmiede (v1.106.0, v1.130.0: Reiter „Friday ausbauen“ im Stil des Tool-Ökosystems,
+// v1.164.0: Eingebautes verschwindet aus dem Bauplan, frische Ideen rücken nach)
 // Würfeln (Alltag, Kreativität, Nischen-Business, Technik), eigene Idee ehrlich prüfen, im Ideen-Tresor
 // aufheben und Schritt für Schritt vorantreiben. Ohne Claude; „Mit KI ausarbeiten“ braucht Guthaben.
 (() => {
@@ -153,7 +154,7 @@
     const alle = [...bau.vorschlaege, ...kiListe];
     const gr = Object.entries(bau.gruppen).filter(([, g]) => g.art === art);
     let html = gr.map(([id, g]) => {
-      const l = alle.filter((v) => v.gruppe === id && !v.ki);
+      const l = alle.filter((v) => v.gruppe === id && !v.ki && !v.schonDa);
       return l.length ? `<div class="ia-g" data-g="${id}" style="--c:${g.farbe}"><h4>${esc(g.name)}</h4><div class="ia-ks">${l.map(kachel).join("")}</div><span class="ia-port"></span></div>` : "";
     }).join("");
     const ki = kiListe.filter((v) => v.art === art);
@@ -165,6 +166,8 @@
       return `<div class="ia-intro"><b>Was soll Friday als Nächstes können?</b>
         <p>Links Dienste zum <b>Einbinden</b>, rechts Funktionen zum <b>Bauen</b>. Tipp eine Kachel an: Du siehst Nutzen, Aufwand und Kosten, kannst sie auf die Wunschliste setzen oder einen fertigen Bau-Auftrag kopieren.</p>
         <ul><li><b>${bau.zahlen.offen}</b> Vorschläge offen</li><li><b>${bau.zahlen.schonDa}</b> schon eingebaut</li><li><b>${bau.zahlen.wunschliste}</b> auf deiner Wunschliste</li><li><b>${bau.luecken.length}</b> Lücken aus deinen Gesprächen</li></ul>
+        ${(bau.gebaut || []).length ? `<details class="ia-gebaut"><summary>✓ Schon eingebaut und darum ausgeblendet (${bau.gebaut.length})</summary><p>${bau.gebaut.map((v) => esc(v.titel)).join(" · ")}</p></details>` : ""}
+        ${bau.abgehakt ? `<p class="ia-ok">✓ ${bau.abgehakt} ${bau.abgehakt === 1 ? "Wunsch ist" : "Wünsche sind"} jetzt eingebaut und im Tresor abgehakt.</p>` : ""}
         <p class="ia-tipp">Sag auch: „Friday, was kann man bei dir noch einbauen?“</p></div>`;
     }
     const g = bau.gruppen[wahl.gruppe] || {};
@@ -214,7 +217,7 @@
     ist("#ia-rechts").innerHTML = gruppenHtml("bauen");
     ist("#ia-kern").innerHTML = kernHtml();
     ist("#ia-kern-zahl").textContent = `${bau.zahlen.offen + kiListe.length} Ideen`;
-    ist("#ia-zahlen").innerHTML = `<b>${bau.zahlen.gesamt + kiListe.length}</b> Vorschläge · <b>${bau.zahlen.schonDa}</b> schon eingebaut · <b>${bau.zahlen.wunschliste}</b> auf der Wunschliste`;
+    ist("#ia-zahlen").innerHTML = `<b>${bau.zahlen.offen + kiListe.length}</b> Ideen offen · <b>${bau.zahlen.schonDa}</b> schon eingebaut (ausgeblendet) · <b>${bau.zahlen.wunschliste}</b> auf der Wunschliste`;
     ist("#ia-alltag-info").textContent = `aus ${bau.zahlen.gespraeche} Gesprächen der letzten ${bau.zahlen.tage} Tage`;
     const passend = bau.passend.map((id) => bau.vorschlaege.find((v) => v.id === id)).filter(Boolean);
     ist("#ia-passend").innerHTML = passend.length ? passend.map(kachel).join("") : '<p class="hf-leer">Noch zu wenig Gespräche. Je mehr du mit Friday sprichst, desto besser passen die Vorschläge.</p>';
@@ -248,7 +251,7 @@
     if (e.target.closest("[data-zu]")) { wahl = null; zeichne(); return; }
     if (e.target.closest("[data-wunsch]") && wahl) {
       try {
-        await json("/api/ideen", { body: { titel: wahl.titel, text: `${wahl.pitch}\nNutzen: ${wahl.nutzen}\nBraucht: ${wahl.braucht} · Kosten: ${wahl.kosten}`, bereich: "friday" } });
+        await json("/api/ideen", { body: { titel: wahl.titel, text: `${wahl.pitch}\nNutzen: ${wahl.nutzen}\nBraucht: ${wahl.braucht} · Kosten: ${wahl.kosten}`, bereich: "friday", ausbau: wahl.ki ? undefined : wahl.id } });
         await laden(); bau.zahlen.wunschliste++; zeichne();
       } catch (err) { ist("#ia-zahlen").textContent = err.message; }
       return;
@@ -264,7 +267,7 @@
     }
     const l = e.target.closest("[data-luecke]");
     if (l) {
-      try { await json("/api/ideen", { body: { titel: `Friday soll können: ${l.dataset.luecke}`.slice(0, 120), text: `Friday konnte das noch nicht beantworten: „${l.dataset.luecke}“`, bereich: "friday" } }); l.textContent = "✓"; l.disabled = true; await laden(); bau.zahlen.wunschliste++; ist("#ia-zahlen").innerHTML = `<b>${bau.zahlen.gesamt + kiListe.length}</b> Vorschläge · <b>${bau.zahlen.schonDa}</b> schon eingebaut · <b>${bau.zahlen.wunschliste}</b> auf der Wunschliste`; } catch (err) { ist("#ia-zahlen").textContent = err.message; }
+      try { await json("/api/ideen", { body: { titel: `Friday soll können: ${l.dataset.luecke}`.slice(0, 120), text: `Friday konnte das noch nicht beantworten: „${l.dataset.luecke}“`, bereich: "friday" } }); l.textContent = "✓"; l.disabled = true; await laden(); bau.zahlen.wunschliste++; ist("#ia-zahlen").innerHTML = `<b>${bau.zahlen.offen + kiListe.length}</b> Ideen offen · <b>${bau.zahlen.schonDa}</b> schon eingebaut (ausgeblendet) · <b>${bau.zahlen.wunschliste}</b> auf der Wunschliste`; } catch (err) { ist("#ia-zahlen").textContent = err.message; }
     }
   });
   ist("#ia-ki").addEventListener("click", async () => {
@@ -281,6 +284,9 @@
 .ia { display: flex; flex-direction: column; gap: 12px; }
 .ia.hidden, .id-p.hidden, .ia-auftrag.hidden { display: none; }
 .ia-kopf { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ia-gebaut { margin: 8px 0; font-size: 12.5px; color: var(--muted); }
+.ia-gebaut summary { cursor: pointer; color: #38e08c; }
+.ia-gebaut p { margin: 6px 0 0; line-height: 1.5; }
 .ia-zahlen { flex: 1; font: 500 12.5px ui-monospace, Menlo, monospace; color: var(--muted); }
 .ia-zahlen b { color: var(--cyan); }
 .ia-stage { position: relative; display: grid; grid-template-columns: minmax(260px, 1fr) minmax(300px, 1.05fr) minmax(260px, 1fr); gap: clamp(26px, 3.4vw, 56px); align-items: start; padding: 6px 4px 10px; border-radius: 14px; background: radial-gradient(ellipse at 50% 45%, rgba(255,138,42,.08), transparent 60%); }
