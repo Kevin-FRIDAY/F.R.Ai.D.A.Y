@@ -7,6 +7,8 @@ import { isAgentOnline } from "./agent-hub.js";
 import { agentsBrief } from "./agents.js";
 import { quickCommand as alexaQuick } from "./alexa.js";
 import { quickCommand as anrufQuick } from "./anrufe.js";
+import { quickCommand as weckrufQuick, fertigWunsch } from "./weckruf.js";
+import { notifyAll } from "./notify.js";
 import { quickCommand as tvQuick } from "./fernseher.js";
 import { quickCommand as dienstQuick, dienstKurzinfo } from "./dienste.js";
 import { offlineAnswer, notfallText } from "./offline.js";
@@ -86,6 +88,7 @@ Werkzeuge:
 - Für Wege, Fahrzeiten, Entfernungen und Bahn-/Busverbindungen nutze route_planen (kostenlos, zeigt die Karte im Dashboard).
 - Termine und Apple-Erinnerungen: kalender (Fridays eigene Erinnerungen mit Wecker: set_reminder). Musik: spotify, wenn verbunden, sonst mac. Lampen: hue für Philips Hue, smart_home für Home Assistant (Heizung, Steckdosen, Rollos, Sensoren). Aufgaben: todoist, wenn verbunden. Notizen und Wissen: notion.
 - Nachrichten und Anrufe an die Frau des Nutzers, ihn selbst oder hinterlegte Kontakte: anrufe. Wer "ruf meine Frau an und sag ihr …" sagt, hat damit bestätigt: direkt ausführen. Den Text in der Ich-Form des Nutzers formulieren.
+- Weckruf: Ist etwas wirklich wichtig und eilig (Gefahr, Frist, Boss hat "ruf mich an, wenn …" gesagt), lass sein iPhone mit weckruf (action wecken) klingeln. Nie für normale Antworten.
 - Mac-Aktionen gehen nur, wenn der Mac verbunden ist. Wenn nicht, sag es kurz.
 - Eigene Unterlagen (Verträge, Rechnungen, Anleitungen, PDFs): dokumente_suchen, und nenne immer die Quelle (Datei, Seite). Apple Notizen, Kontakte und die Music-App: apple_notizen, apple_kontakte, apple_musik. Soll ich etwas über längere Zeit beobachten ("sag mir Bescheid, wenn …"): dauer_waechter.
 - Bekommst du "wartet_auf_freigabe" zurück, sag kurz, dass die Aktion in der Glocke oben auf Boss' Freigabe wartet (oder per Knopf in Telegram), und tu nicht so, als sei sie erledigt.
@@ -155,6 +158,9 @@ function isoAgentText() {
 // Jede Frage und Antwort kommt in Fridays Datenbank (Fenster "Wissen"), egal über welchen Weg.
 export async function ask(opts) {
   const start = Date.now();
+  // Weckruf (v1.161.0): "… und ruf mich an, wenn du fertig bist" – Auftrag ausführen, danach klingeln.
+  const fw = opts?.mode !== "translate" && opts?.text ? fertigWunsch(opts.text) : { rufen: false };
+  if (fw.rufen) opts = { ...opts, text: fw.text };
   let res;
   try {
     res = await askIntern(opts);
@@ -163,6 +169,13 @@ export async function ask(opts) {
     throw err;
   }
   logbuchBefehl(opts, res, Date.now() - start);
+  const dauer = Date.now() - start;
+  const kanal = opts?.channel || "web";
+  // Bestellt ("ruf mich an, wenn …") oder ein langer Auftrag (über 3 Min.), während Boss weg ist.
+  if ((fw.rufen || (dauer > 180000 && kanal === "web")) && !res?.fehler) {
+    const kurz = String(res?.answer || "").replace(/\s+/g, " ").slice(0, 300);
+    notifyAll("✅ Friday ist fertig", `${String(opts.text || "").slice(0, 80)}: ${kurz}`, { art: "aufgabe", erzwingen: fw.rufen }).catch(() => {});
+  }
   store.archiviere({
     typ: "gespraech",
     kanal: opts?.channel || "web",
@@ -204,6 +217,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   const actions = [];
   let claudeGefragt = false; // fürs Logbuch: hat Claude geantwortet?
   let nichtGeklappt = false; // Claude nicht erreichbar und auch offline keine Antwort
+
+  // Weckruf-Befehle ("teste den Weckruf", "bitte nicht stören für 2 Stunden") – vor den Anrufen,
+  // weil "ruf mich zum Test an" sonst als Anruf an einen Kontakt verstanden würde.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const w = await weckrufQuick(text);
+      if (w) { actions.push(...w.actions); return finish(w.answer); }
+    } catch (err) {
+      console.error("Weckruf:", err.message);
+    }
+  }
 
   // Anrufe & Nachrichten ("ruf meine Frau an und sag ihr, dass …") – ohne Claude.
   // Ganz vorne, damit die Antwort auf "Was soll ich ihr sagen?" hier landet.

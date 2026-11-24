@@ -544,7 +544,7 @@ export async function wachePruefen({ vonHand = false } = {}) {
     }
     if (neue.length && frisch.melden) {
       const text = neue.map((h) => `• ${h.text}`).join("\n").slice(0, 1500);
-      notifyAll("📈 Markt-Wache", `${text}\n(Nur ein Hinweis, keine Anlageberatung.)`).catch(() => {});
+      notifyAll("📈 Markt-Wache", `${text}\n(Nur ein Hinweis, keine Anlageberatung.)`, { art: "markt" }).catch(() => {});
     }
   } finally { pruefLaeuft = false; }
   return { ...wacheStand(), neueHinweise: neue };

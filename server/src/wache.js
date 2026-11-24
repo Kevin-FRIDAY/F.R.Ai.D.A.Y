@@ -324,8 +324,9 @@ async function schlageAlarm({ raum, typ, satz, buf, mitFoto }) {
   const text = `${TYPEN[typ]?.icon || "•"} ${raum}: ${satz} (${uhr(Date.now())} Uhr)`;
   let gesendet = false;
   if (mitFoto && buf) gesendet = await sendTelegramPhoto(buf, `${titel}\n${text}`);
-  if (!gesendet) await notifyAll(titel, text);
-  else await notifyAll(titel, text, { ohneTelegram: true });
+  // Weckruf (v1.161.0): Alarm lässt das iPhone klingeln bzw. Friday ruft an – auch nachts.
+  if (!gesendet) await notifyAll(titel, text, { art: "alarm" });
+  else await notifyAll(titel, text, { ohneTelegram: true, art: "alarm" });
 }
 
 const cache = new Map();

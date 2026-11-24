@@ -23,7 +23,7 @@ export function stufeVon(name) {
 
 // Höchstens so oft pro Stunde (gefährliche Werkzeuge). Schützt vor durchdrehenden Schleifen.
 const STUNDEN_GRENZE = {
-  anrufe: 10, send_push: 20, mac: 60, update: 2, forget: 10, sort_mail: 6, run_protocol: 20, smart_home: 60, alexa: 40,
+  anrufe: 10, weckruf: 6, send_push: 20, mac: 60, update: 2, forget: 10, sort_mail: 6, run_protocol: 20, smart_home: 60, alexa: 40,
   fernseher: 60, hue: 80, video_schnitt: 6, webseite_bauen: 6, werkstatt: 10,
 };
 const STANDARD_GRENZE = 120; // alle anderen Werkzeuge
@@ -34,7 +34,7 @@ const GESCHUETZT = /(^|[\/\\\s"'])\.env\b|verbindungen\.json|github\.json|alexa\
 // Kevins feste Grenze: Friday bewegt kein echtes Geld und hat kein eigenes Konto/Wallet.
 const GELD = /(?<![\wäöüß])(?:überweis\w*|ueberweis\w*|bezahl\w*|zahl\w*|schick\w*|send\w*)\b.{0,40}(?:\d+(?:[.,]\d+)? ?(?:€|euro|eur|dollar|usd|\$|btc|eth|usdc))|\b(?:paypal|klarna|apple ?pay|kreditkarten?nummer|iban:? ?[a-z]{2}\d{2})\b|\b(?:krypto-?|bitcoin-?|eth-?)?wallet (?:anleg|erstell|einricht|öffn|aufladen)\w*|\b(?:bitcoin|krypto\w*|usdc|eth)\b.{0,20}(?:send|schick|überweis|kauf)\w*/i;
 // Text-Werkzeuge (Nachricht an die Frau, Notiz, Dokument) dürfen über Geld REDEN – sie bewegen keins.
-const NUR_TEXT = new Set(["anrufe", "send_push", "remember", "dokument_erstellen", "fragebogen_erstellen", "add_task", "add_shopping", "set_reminder", "notion", "todoist", "kalender", "seele_notiz", "faehigkeit_erstellen", "ablauf_speichern"]);
+const NUR_TEXT = new Set(["anrufe", "weckruf", "send_push", "remember", "dokument_erstellen", "fragebogen_erstellen", "add_task", "add_shopping", "set_reminder", "notion", "todoist", "kalender", "seele_notiz", "faehigkeit_erstellen", "ablauf_speichern"]);
 const SELBSTZERSTOERUNG = /\brm\s+-rf\b|\bsudo\s+rm\b|\bmkfs\b|lösch\w* (?:alles|alle dateien|den mac|die festplatte)|format\w* (?:die )?festplatte|\bkillall\b|launchctl\s+(?:unload|remove)/i;
 
 // Regeln, die Kevin im Kontrollraum an- und ausschalten kann. "geld" und "pfade" sind immer an.

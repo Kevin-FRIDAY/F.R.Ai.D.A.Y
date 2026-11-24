@@ -22,6 +22,7 @@ import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } fr
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir, startLive, getLiveJob, getLiveAktuell, liveFrei, baueVorlage, vorlagenOptionen, getSiteQualitaet } from "./webseiten.js";
 import { listeSpiele, spielHtml, starteSpiel, jobStand, aktuellerJob, spielWegwerfen, claudeBereit, vorlagenListe, plusFrei } from "./spiele.js";
 import { startScheduler, makeBriefing, getLatestBriefing } from "./scheduler.js";
+import { weckrufStart } from "./weckruf.js";
 import { helferRouten, helferStart } from "./helfer.js";
 import { wunschRouten, wunschStart, widgetRoute } from "./wunschliste.js";
 import { wacheRouten, wacheStart } from "./wache.js";
@@ -754,6 +755,7 @@ server.listen(config.port, config.host, () => {
 });
 logbuch.beimStart(runningVersion(), getUpdateStatus());
 startScheduler();
+weckrufStart(); // v1.161.0: Termin-Wächter für Weckrufe
 helferStart();
 wunschStart();
 wacheStart();
