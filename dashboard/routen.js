@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Routen & Verbindungen (v1.103.0, v1.156.0: Standort-Gedächtnis + Google Maps)
+// F.R.Ai.D.A.Y Routen & Verbindungen (v1.103.0, v1.157.0: Standort-Gedächtnis + Google Maps)
 // "Friday, wie lange brauche ich nach Hamburg?" → Fenster mit Karte, Fahrzeit für Auto, Fahrrad, zu Fuß
 // und Bahn-/Bus-Verbindungen mit Abfahrt, Gleis, Umstiegen und Verspätung. Alles kostenlos, ohne Claude.
 // Öffnen: Werkzeug-Menü → Routen & Verbindungen, oder per Sprache.
@@ -221,7 +221,7 @@
       }, (err) => nein(new Error(err.code === 1 ? "Standort nicht erlaubt. In Safari/Einstellungen den Standort für Friday zulassen." : "Standort gerade nicht verfügbar.")), { enableHighAccuracy: true, timeout: 12000, maximumAge: 120000 });
     });
   }
-  // v1.156.0: Solange Friday offen ist, laufend orten und den letzten Punkt an den Mac schicken.
+  // v1.157.0: Solange Friday offen ist, laufend orten und den letzten Punkt an den Mac schicken.
   // So weiß Friday auch über Telegram/Siri, wo Boss gerade ist. Nur wenn auf diesem Gerät erlaubt.
   let beobachter = null, gesendet = null, serverAn = true;
   const geraet = /iPhone/.test(navigator.userAgent) ? "iPhone" : /iPad/.test(navigator.userAgent) ? "iPad" : /Mac/.test(navigator.userAgent) ? "Mac" : "Gerät";

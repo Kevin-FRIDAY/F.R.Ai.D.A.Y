@@ -1,4 +1,4 @@
-// Fridays Standort-Gedächtnis (v1.156.0): "Friday, wie lange brauche ich nach Hause?" rechnet ab dem Ort,
+// Fridays Standort-Gedächtnis (v1.157.0): "Friday, wie lange brauche ich nach Hause?" rechnet ab dem Ort,
 // an dem Boss gerade ist – auch über Telegram oder Siri, wenn das Gerät gerade nichts mitschickt.
 // - Das Dashboard (iPhone-Web-App, Mac) schickt den Standort, solange Friday offen ist und Boss es erlaubt hat.
 // - Ein iPhone-Kurzbefehl (Automation) kann ihn auch im Hintergrund schicken: POST /api/standort/kurzbefehl.
@@ -7,7 +7,7 @@
 import * as store from "./store.js";
 
 const DATEI = "standort";
-const UA = "F.R.Ai.D.A.Y-Assistent/1.156 (privater Sprachassistent)";
+const UA = "F.R.Ai.D.A.Y-Assistent/1.157 (privater Sprachassistent)";
 export const MAX_ALTER_H = 6; // älter als 6 Stunden → nicht mehr für Routen nehmen
 
 function laden() {

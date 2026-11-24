@@ -1,4 +1,4 @@
-# Standort & Google Maps (ab v1.156.0)
+# Standort & Google Maps (ab v1.157.0)
 
 **„Friday, wie lange brauche ich nach Hause?“** – Friday rechnet jetzt ab dem Ort, an dem du gerade bist. Mit einem Google-Schlüssel sogar mit **Live-Verkehr**, jedem Abbiege-Schritt und der echten Google-Karte.
 

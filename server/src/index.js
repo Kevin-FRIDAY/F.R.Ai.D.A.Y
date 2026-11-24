@@ -632,7 +632,7 @@ app.get("/api/lage/:id/medien", asyncRoute(async (req, res) => {
   if (!country) return res.status(404).json({ error: "Land nicht gefunden" });
   res.json(await getMedia(country));
 }));
-// Standort-Gedächtnis (v1.156.0): letzter Punkt vom Gerät, nur lokal, abschaltbar
+// Standort-Gedächtnis (v1.157.0): letzter Punkt vom Gerät, nur lokal, abschaltbar
 standortRouten(app);
 // Google-Karte im Routen-Fenster: Schlüssel nur für angemeldete Geräte und nur, wenn die Karte an ist
 app.get("/api/routen/googlekarte", (req, res) => res.json({ an: googleKarteAn(), key: googleKartenSchluessel() }));

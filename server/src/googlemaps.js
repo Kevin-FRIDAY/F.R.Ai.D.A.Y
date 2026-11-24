@@ -1,4 +1,4 @@
-// Google Maps für Routen (v1.156.0): genaue Wege mit Live-Verkehr, Abbiege-Hinweisen auf Deutsch
+// Google Maps für Routen (v1.157.0): genaue Wege mit Live-Verkehr, Abbiege-Hinweisen auf Deutsch
 // und auf Wunsch die echte Google-Karte im Routen-Fenster.
 // Schlüssel: Google Cloud Console → APIs & Dienste → "Routes API" (und für die Karte "Maps JavaScript API")
 // aktivieren → Anmeldedaten → API-Schlüssel. Boss trägt ihn im Fenster Verbindungen ein (nie im Chat posten).

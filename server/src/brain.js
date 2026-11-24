@@ -569,7 +569,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       }
       return finish(answer || "Erledigt, Boss.");
     }
-    setzeAuftrag(channel, "arbeiten", Math.min(80, 30 + round * 15), `Friday ${werkzeugName(toolUses[0].name)} …`);
+    setzeAuftrag(channel, "arbeiten", Math.min(80, 30 + round * 15), `Friday ${werkzeugName(toolUses[0].name)} …`, toolUses.map((t) => t.name));
 
     // Alle Werkzeuge ausführen und die Ergebnisse gemeinsam zurückgeben.
     const results = await Promise.all(
