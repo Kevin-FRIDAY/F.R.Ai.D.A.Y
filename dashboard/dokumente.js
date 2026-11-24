@@ -47,6 +47,45 @@
       </div>`;
   }
 
+  // ---------- Excel-Tabelle (v1.161.0) ----------
+  let blatt = 0;
+  function zeigeTabelle(d) {
+    $("dok-titel").textContent = d.titel.toUpperCase();
+    const bl = d.blaetter || [];
+    const b = bl[blatt] || bl[0] || { spalten: [], zeilen: [] };
+    $("dok-sub").textContent = `Excel-Tabelle · ${bl.length > 1 ? `${bl.length} Blätter · ` : ""}${b.anzahl ?? b.zeilen.length} Zeilen · ${new Date(d.erstellt).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}`;
+    $("dok-prozent").textContent = "";
+    $("dok-spur").classList.add("hidden");
+    $("dok-ring").classList.add("still");
+    const zelle = (v) => { const s = String(v ?? ""); return s.startsWith("=") ? `<td class="tab-formel" title="${esc(s)}">ƒ ${esc(s.slice(1))}</td>` : `<td>${esc(s)}</td>`; };
+    $("dok-inhalt").innerHTML = `${bl.length > 1 ? `<div class="dok-knoepfe tab-blaetter">${bl.map((x, i) => `<button type="button" class="chip${i === blatt ? " haupt" : ""}" data-a="blatt" data-i="${i}">${esc(x.name)}</button>`).join("")}</div>` : ""}
+      <div class="tab-wrap"><table class="tab-vorschau">${b.spalten.length ? `<thead><tr>${b.spalten.map((s) => `<th>${esc(s)}</th>`).join("")}</tr></thead>` : ""}<tbody>${b.zeilen.map((z) => `<tr>${z.map(zelle).join("")}</tr>`).join("")}</tbody></table></div>
+      ${(b.anzahl || 0) > b.zeilen.length ? `<small class="tab-mehr">Vorschau: erste ${b.zeilen.length} von ${b.anzahl} Zeilen. In der Datei ist alles drin.</small>` : ""}
+      <div class="dok-knoepfe">
+        <button type="button" class="chip haupt" data-a="xlsx">⬇ Excel herunterladen</button>
+        <button type="button" class="chip" data-a="mac">💻 Am Mac öffnen</button>
+      </div>`;
+  }
+  async function herunterladen(knopf) {
+    try {
+      const r = await api(`/api/tabellen/${encodeURIComponent(doc.id)}/datei`, { headers: { "Content-Type": "" } });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || "Fehler");
+      const url = URL.createObjectURL(await r.blob());
+      const a = document.createElement("a");
+      a.href = url; a.download = `${doc.titel.replace(/[\\/:*?"<>|]/g, " ").trim() || "Tabelle"}.xlsx`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      knopf.textContent = "✓ Heruntergeladen";
+    } catch (err) { knopf.textContent = `✗ ${err.message}`; }
+  }
+  async function amMac(knopf) {
+    try {
+      const r = await api(`/api/tabellen/${encodeURIComponent(doc.id)}/oeffnen`, { method: "POST" });
+      const d = await r.json().catch(() => ({}));
+      knopf.textContent = r.ok ? "✓ Am Mac geöffnet" : `✗ ${d.error || "Ging nicht"}`;
+    } catch { knopf.textContent = "✗ Mac nicht erreichbar"; }
+  }
+
   // ---------- Fragebogen ----------
   function fortschritt() {
     const n = doc.fragen.length;
@@ -110,6 +149,9 @@
     const a = b.dataset.a;
     if (a === "vorlesen") F.say?.(`${doc.titel}. ${doc.inhalt}`);
     else if (a === "kopieren") navigator.clipboard?.writeText(`${doc.titel}\n\n${doc.inhalt}`).then(() => { b.textContent = "✓ Kopiert"; }).catch(() => {});
+    else if (a === "xlsx") herunterladen(b);
+    else if (a === "mac") amMac(b);
+    else if (a === "blatt") { blatt = Number(b.dataset.i) || 0; zeigeTabelle(doc); }
     else if (a === "weiter") weiter();
     else if (a === "ueberspringen") { if ($("fb-antwort")) $("fb-antwort").value = antworten[idx] || ""; weiter(); }
     else if (a === "zurueck" && idx > 0) { antworten[idx] = $("fb-antwort").value; idx--; zeigeFrage(); }
@@ -148,6 +190,9 @@
       const offen = antworten.findIndex((a) => !a.trim());
       idx = offen >= 0 ? offen : 0;
       zeigeFrage(still);
+    } else if (d.art === "tabelle") {
+      blatt = 0;
+      zeigeTabelle(d);
     } else {
       zeigeDokument(d);
     }

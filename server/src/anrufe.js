@@ -481,12 +481,25 @@ export function verstehe(t) {
   // "(kannst du) meine frau anrufen (und ihr sagen dass ...)"
   m = t.match(U(new RegExp(`^(.+?) anrufen(?:\\s+und\\s+(?:${DAT} )?(?:sagen|ausrichten|mitteilen|erzählen|schreiben)(?: ${DAT})?\\s*(.*))?$`)));
   if (m && (findeKontakt(m[1]) || /^(meine[mnr]? [^ ]+|mich)$/.test(m[1]))) return { wer: m[1], text: (m[2] || "").replace(/^das /, "dass "), art: "anruf" };
+  // v1.161.0: "(kannst du) meiner frau schreiben, dass ..." / "meiner frau eine nachricht schicken: ..."
+  m = t.match(U(/^(?:mal |bitte |noch )*(.+?) (?:mal |bitte |kurz )*(?:eine |ne )?(?:nachricht |sms |imessage )?(schreiben|schicken|senden|bescheid sagen|bescheid geben|sagen|ausrichten|mitteilen)(?: bitte)?\s*(.*)$/));
+  if (m && m[1].split(" ").length <= 4 && !/^(mir|mich|uns)$/.test(m[1])) {
+    const wer = m[1].replace(/ (eine|ne)$/, "");
+    const k = findeKontakt(wer);
+    const text = m[3].replace(/^das /, "dass ");
+    const istSag = /^(sagen|ausrichten|mitteilen)$/.test(m[2]);
+    if ((k || /^(meine[mnrs]?|unsere?[mnr]?) [^ ]+$/.test(wer)) && (!istSag || /^dass /.test(text))) return { wer, text, art: "nachricht", unbekannt: !k };
+  }
   // "schreib meiner frau (eine nachricht) (dass) ..."  /  "sag meiner frau bescheid dass ..."
   m = t.match(U(/^(schreib|schreibe|schick|schicke|sende|sag|sage|richte|teil|teile) (?:an )?(.+)$/));
   if (m) {
     const e = trenneEmpfaenger(m[2]);
     if (!e) return null;
     const istSag = /^(sag|sage|richte|teil|teile)$/.test(m[1]);
+    // v1.161.0: "schreib mir einen Brief/eine Liste …" ist ein Dokument, keine Nachricht.
+    const rest = m[2].split(" ").slice(e.wer.split(" ").length).join(" ");
+    if (/^(einen|ein|eine|das|den|die|mal einen|mal eine) (?!nachricht|sms|imessage|message|kurze nachricht|whatsapp)/.test(rest)) return null;
+    if (/^(mir|mich)$/.test(e.wer) && !/^(eine |ne |kurz |kurze )?(nachricht|sms|imessage|erinnerung)\b/.test(rest) && !/^dass /.test(e.text)) return null;
     // "sag mir …" ist fast immer eine Frage an Friday, keine Nachricht an sich selbst.
     if (istSag && (/^(mir|mich)$/.test(e.wer) || !/^dass /.test(e.text))) return null;
     return { wer: e.wer, text: e.text, art: "nachricht", unbekannt: e.unbekannt };
