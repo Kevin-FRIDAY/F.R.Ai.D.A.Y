@@ -1,28 +1,22 @@
 // F.R.Ai.D.A.Y – Werkzeugkasten (v1.162.0)
-// 100 Werkzeuge in 13 Bereichen: Kacheln mit Suche, dann ein Formular pro Werkzeug, Ergebnis mit Tabelle,
-// Kopieren, Herunterladen (.ics, .txt, .csv), QR-Code (wird hier im Browser erzeugt) und Vorlesen.
-// Öffnen: Werkzeug-Menü → Alltag → Werkzeugkasten, „Friday, öffne den Werkzeugkasten“, oder Aktionen
-//   werkzeugkasten_oeffnen | werkzeug_letzter | werkzeug_lauf:<id>:<b64> | werkzeug_offen:<id>:<b64> | werkzeugkasten (Claude)
+// Seit v1.165.0 ohne eigenes Fenster im Menü: die 100 Werkzeuge laufen per Sprache und über Claude.
+// Hier bleibt nur die Ergebnis-Karte (Formular eines Werkzeugs, Tabelle, Kopieren, Herunterladen, QR-Code, Vorlesen),
+// die von selbst aufgeht, wenn es etwas zu sehen gibt. Aktionen:
+//   werkzeug_letzter | werkzeug_lauf:<id>:<b64> | werkzeug_offen:<id>:<b64> | werkzeugkasten (Claude)
 (() => {
   "use strict";
   const H = window.FridayHelfer;
   if (!H) return;
   const { esc, json } = H;
-  let katalog = null, gruppe = "Alle", suche = "", aktiv = null;
-  const ZULETZT = "fridaywk_zuletzt";
-  const zuletzt = () => { try { return JSON.parse(localStorage.getItem(ZULETZT) || "[]"); } catch { return []; } };
-  const merke = (id) => { try { localStorage.setItem(ZULETZT, JSON.stringify([id, ...zuletzt().filter((x) => x !== id)].slice(0, 8))); } catch { /* egal */ } };
+  let katalog = null, aktiv = null;
 
+  // v1.165.0: Kein eigenes Werkzeugkasten-Fenster mehr (kein Menüeintrag, keine Kachel-Übersicht).
+  // Die Werkzeuge laufen per Sprache und über Claude. Dieses kleine Fenster erscheint nur noch,
+  // wenn ein Ergebnis etwas zu sehen hat (QR-Code, Tabelle, Datei) oder ein geheimes Werkzeug läuft.
   const f = H.fenster({
-    id: "werkzeugkasten", titel: "🧰 Werkzeugkasten", klasse: "wk-box",
+    id: "werkzeugkasten", titel: "🧰 Ergebnis", klasse: "wk-box",
     html: `
-      <div id="wk-liste">
-        <div class="hf-reihe"><input id="wk-suche" class="hf-input grow" type="search" placeholder="Werkzeug suchen … (z. B. Mehrwertsteuer, QR, Brückentage)" autocomplete="off"></div>
-        <p class="hf-hinweis wk-unter" id="wk-unter">Lädt …</p>
-        <div id="wk-gruppen" class="hf-tabs" role="tablist"></div>
-        <div id="wk-kacheln" class="wk-kacheln"></div>
-      </div>
-      <div id="wk-detail" class="hidden"></div>
+      <div id="wk-detail"></div>
       <div id="wk-status" class="hf-status"></div>`,
     onOpen: (o = {}) => start(o),
   });
@@ -37,39 +31,8 @@
   async function start(o = {}) {
     try { await laden(); } catch (err) { status(err.message || String(err), true); return; }
     if (o.id) return zeigeWerkzeug(o.id, { eingabe: o.eingabe, auto: o.auto, ergebnis: o.ergebnis });
-    zeigeListe();
+    f.zu?.();
   }
-
-  // ---------- Übersicht ----------
-  function zeigeListe() {
-    aktiv = null;
-    $("#wk-detail").classList.add("hidden");
-    $("#wk-liste").classList.remove("hidden");
-    $("#wk-unter").innerHTML = `${katalog.anzahl} Werkzeuge in ${katalog.gruppen.length} Bereichen – alle <b>ohne Guthaben</b>. 🎤 = geht auch per Sprache, 🌐 = braucht Internet (kostenlos), 🔒 = bleibt geheim.`;
-    const zl = zuletzt().filter((id) => katalog.werkzeuge.some((w) => w.id === id));
-    const gr = ["Alle", ...(zl.length ? ["⭐ Zuletzt"] : []), ...katalog.gruppen];
-    $("#wk-gruppen").innerHTML = gr.map((g) => `<button type="button" class="hf-tab${g === gruppe ? " an" : ""}" data-g="${esc(g)}">${esc(g)}</button>`).join("");
-    kacheln();
-    setTimeout(() => { if (matchMedia("(min-width: 900px)").matches) $("#wk-suche").focus(); }, 60);
-  }
-  function kacheln() {
-    const q = suche.trim().toLowerCase();
-    const zl = zuletzt();
-    let liste = katalog.werkzeuge;
-    if (gruppe === "⭐ Zuletzt") liste = zl.map((id) => liste.find((w) => w.id === id)).filter(Boolean);
-    else if (gruppe !== "Alle") liste = liste.filter((w) => w.gruppe === gruppe);
-    if (q) liste = katalog.werkzeuge.filter((w) => `${w.titel} ${w.info} ${w.gruppe} ${w.id}`.toLowerCase().includes(q));
-    $("#wk-kacheln").innerHTML = liste.length ? liste.map((w) => `
-      <button type="button" class="wk-kachel" data-id="${esc(w.id)}">
-        <span class="wk-icon">${w.icon}</span>
-        <span class="wk-text"><b>${esc(w.titel)}</b><span>${esc(w.info)}</span></span>
-        <span class="wk-marken">${w.sprache ? "🎤" : ""}${w.online ? "🌐" : ""}${w.geheim ? "🔒" : ""}</span>
-      </button>`).join("") : `<div class="hf-leer">Kein Werkzeug gefunden.</div>`;
-  }
-  $("#wk-gruppen").addEventListener("click", (e) => { const b = e.target.closest("[data-g]"); if (!b) return; gruppe = b.dataset.g; suche = ""; $("#wk-suche").value = ""; f.$$("#wk-gruppen .hf-tab").forEach((x) => x.classList.toggle("an", x === b)); kacheln(); });
-  $("#wk-suche").addEventListener("input", (e) => { suche = e.target.value; kacheln(); });
-  $("#wk-suche").addEventListener("keydown", (e) => { if (e.key === "Enter") { const k = f.$(".wk-kachel"); if (k) zeigeWerkzeug(k.dataset.id); } });
-  $("#wk-kacheln").addEventListener("click", (e) => { const b = e.target.closest("[data-id]"); if (b) zeigeWerkzeug(b.dataset.id); });
 
   // ---------- Ein Werkzeug ----------
   const heuteIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
@@ -87,14 +50,11 @@
   }
   function zeigeWerkzeug(id, { eingabe = {}, auto = false, ergebnis = null } = {}) {
     const w = katalog.werkzeuge.find((x) => x.id === id);
-    if (!w) { zeigeListe(); status(`Das Werkzeug „${id}“ gibt es nicht.`, true); return; }
+    if (!w) { $("#wk-detail").innerHTML = ""; status(`Das Werkzeug „${id}“ gibt es nicht.`, true); return; }
     aktiv = w;
     status("");
-    $("#wk-liste").classList.add("hidden");
     const d = $("#wk-detail");
-    d.classList.remove("hidden");
     d.innerHTML = `
-      <div class="hf-reihe wk-kopf"><button type="button" class="hf-mini" id="wk-zurueck">← Alle Werkzeuge</button><span class="hf-hinweis">${esc(w.gruppe)}</span></div>
       <div class="hf-karte">
         <h3>${w.icon} ${esc(w.titel)}</h3>
         <p class="hf-hinweis" style="margin:0 0 10px">${esc(w.info)}${w.geheim ? " 🔒 Wird nicht gespeichert und nicht vorgelesen." : ""}${w.online ? " 🌐 Fragt einen kostenlosen Dienst im Internet." : ""}</p>
@@ -103,9 +63,7 @@
         </form>
       </div>
       <div id="wk-ergebnis"></div>`;
-    $("#wk-zurueck").addEventListener("click", () => zeigeListe());
     $("#wk-form").addEventListener("submit", (e) => { e.preventDefault(); ausfuehren(); });
-    merke(w.id);
     if (ergebnis) zeigeErgebnis(ergebnis);
     else if (auto || !(w.felder || []).length) ausfuehren();
     else setTimeout(() => { const erstes = f.$("#wk-form [data-k]"); if (erstes && matchMedia("(min-width: 900px)").matches) erstes.focus(); }, 60);
@@ -197,7 +155,6 @@
     const a = (p) => actions.find((x) => typeof x === "string" && x.startsWith(p));
     const lauf = a("werkzeug_lauf:"), offen = a("werkzeug_offen:");
     if (lauf || offen) { const [, id, b] = (lauf || offen).split(":"); f.auf({ id, eingabe: ausB64(b || ""), auto: !!lauf }); return; }
-    if (actions.includes("werkzeugkasten_oeffnen")) { f.auf(); return; }
     if (actions.includes("werkzeug_letzter") || actions.includes("werkzeugkasten")) {
       // Claude oder Sprache: nur öffnen, wenn es etwas zu sehen gibt (Liste, QR, Datei) oder ein geheimes Werkzeug wartet.
       try {
@@ -213,15 +170,6 @@
   const style = document.createElement("style");
   style.textContent = `
 .wk-box { width: min(1100px, 100%); }
-.wk-unter { margin: 2px 0 0; }
-.wk-kacheln { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; margin-top: 10px; }
-.wk-kachel { display: flex; align-items: flex-start; gap: 10px; text-align: left; border: 1px solid var(--u-rand-soft, var(--line)); background: var(--u-karte, rgba(255,140,30,.05)); color: var(--text); border-radius: 12px; padding: 10px 12px; font: inherit; cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .15s; }
-.wk-kachel:hover, .wk-kachel:focus-visible { border-color: var(--cyan); box-shadow: 0 0 14px color-mix(in srgb, var(--cyan) 30%, transparent); transform: translateY(-1px); outline: 0; }
-.wk-icon { font-size: 22px; width: 30px; text-align: center; flex: none; line-height: 1.2; }
-.wk-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-.wk-text b { font-size: 14px; color: var(--u-titel, var(--text)); }
-.wk-text span { font-size: 12px; color: var(--muted); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.wk-marken { font-size: 11px; flex: none; opacity: .8; letter-spacing: 2px; }
 .wk-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; align-items: end; }
 .wk-form .breit { grid-column: 1 / -1; }
 .wk-los { grid-column: 1 / -1; }
@@ -245,7 +193,6 @@
 .wk-wi.auf { border-color: #45e38b; color: #45e38b; }
 .wk-fehler { color: #ffb4a8; }
 @media (max-width: 900px) {
-  .wk-kacheln { grid-template-columns: 1fr; }
   .wk-form { grid-template-columns: 1fr; }
   .wk-satz { font-size: 16px; }
 }`;

@@ -39,6 +39,7 @@ import { toolDefinitions as kontenTools, istKontenTool, runKontenTool } from "./
 import { gesundheitUebersicht } from "./apple.js";
 // Werkzeugkasten (v1.161.0): 100 Rechner, Generatoren und Prüfer hinter EINEM Claude-Werkzeug (spart Tokens).
 import { toolDefinition as werkzeugkastenTool, runClaudeTool as runWerkzeugkasten } from "./werkzeugkasten.js";
+import { toolDefinition as datenTool, runClaudeTool as runDaten } from "./oeffentlich.js";
 
 // Osiris Live-Lagekarte: lokal auf dem Mac (Port 3100), sonst automatisch osirisai.live.
 import { osirisUrl } from "./osiris.js";
@@ -367,6 +368,7 @@ export const toolDefinitions = [
   ...kernTools,
   ...kontenTools, // v1.163.0: Meine Konten (nur lesen)
   werkzeugkastenTool, // v1.162.0: 100 Werkzeuge, ein Eintrag
+  datenTool, // v1.167.0: öffentliche Datenquellen, ein Eintrag
   ...jarvisTools, // v1.134.0: Dauer-Wächter, Dokumenten-Wissen, Apple Notizen/Kontakte/Musik
 ];
 
@@ -618,6 +620,7 @@ async function runToolIntern(name, input = {}, wer = {}) {
   if (istJarvisTool(name)) return runJarvisTool(name, input, wer);
   if (istKontenTool(name)) return runKontenTool(name, input);
   if (name === "werkzeugkasten") return runWerkzeugkasten(input, wer);
+  if (name === "oeffentliche_daten") return runDaten(input);
   switch (name) {
     case "world_news": {
       if (!input.country) {
