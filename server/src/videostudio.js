@@ -120,7 +120,18 @@ export function normalisiereAuftrag(a = {}) {
     sprecher: plan.sprecher ?? Boolean(a.sprecher),
     stil: kurz(a.stil, 200),
   };
+  // v1.176.0 Großauftrag: fertiges Drehbuch von außen (Szenen, Sprechertext) statt eigener Regie.
+  const v = a.vorgabe;
+  if (v && Array.isArray(v.szenen) && v.szenen.length) {
+    auftrag.vorgabe = {
+      titel: kurz(v.titel, 70) || auftrag.thema,
+      stimmung: STIMMUNG_IDS.includes(v.stimmung) ? v.stimmung : null,
+      szenen: v.szenen.slice(0, 14).map((s, i) => ({ text: kurz(s?.text, 60), unter: kurz(s?.unter, 90), suche: kurz(s?.suche, 60) || auftrag.thema, farbe: /^#[0-9a-f]{6}$/i.test(s?.farbe || "") ? s.farbe : FARBEN[i % FARBEN.length] })),
+      sprecher: kurz(v.sprecher, 1500), beschreibung: kurz(v.beschreibung, 300), hashtags: kurz(v.hashtags, 120),
+    };
+  }
   auftrag.regie = regieWerte(plan, auftrag);
+  if (auftrag.vorgabe) auftrag.regie.anzahl = auftrag.vorgabe.szenen.length;
   return auftrag;
 }
 
@@ -242,6 +253,10 @@ const FARBEN = ["#ff8a1e", "#2ee6d0", "#a978ff", "#ff3fa8", "#4f8dff", "#ffc44d"
 
 async function drehbuch(a, anzahl, j) {
   const R = a.regie;
+  if (a.vorgabe) {
+    melde(j, "regie", "läuft", "Nehme das fertige Drehbuch aus dem Großauftrag …", 60);
+    return { ...a.vorgabe, szenen: a.vorgabe.szenen.map((s) => ({ ...s })), quelle: "Drehbuch aus dem Großauftrag" };
+  }
   const system = "Du bist die Regie in Fridays Video-Studio. Du schreibst Drehbücher für kurze Social-Media-Videos auf Deutsch. Der Auftrag ist eine ANWEISUNG an dich (worum es geht, wie es wirken soll) und KEIN Text fürs Video: setze sie um, übernimm keine Sätze daraus wörtlich ins Bild (Ausnahme: Texte in Anführungszeichen). Antworte NUR mit JSON, ohne Erklärung.";
   const vorgaben = [
     `Thema: ${a.thema}`,

@@ -47,6 +47,7 @@ import { quickCommand as wunschQuick } from "./wunschliste.js";
 import { fruehBefehl as sternFrueh, gaeste, vorrang as sternVorrang } from "./sternideen.js";
 import { quickCommand as wacheQuick } from "./wache.js";
 import { quickCommand as studioQuick } from "./videostudio.js";
+import { quickCommand as grossauftragQuick } from "./grossauftrag.js";
 // Kontrollraum (v1.135.0, Bausteine aus Conway-Research/automaton, MIT): Gedächtnis-Schubladen, Seele,
 // Fähigkeiten, Kosten-Deckel und Schleifen-Schutz.
 import { quickCommand as kernQuick, kontextFuer as kernKontext } from "./kern.js";
@@ -228,6 +229,16 @@ function logbuchBefehl(opts, res, dauer) {
 async function askVerstanden(opts) {
   const kanal = opts.channel || "web";
   const text = String(opts.text || "");
+  // v1.176.0 Großauftrag ("Drehbuch schreiben, Film drehen, Webseite und Auto bauen") – vor dem Zerlegen in
+  // Einzelbefehle, sonst würde jeder Teil einzeln (und ohne gemeinsames Drehbuch) laufen.
+  if (opts.mode !== "translate" && !opts.image && text && !sternVorrang() && !kennenlernen.laeuft()) {
+    try {
+      const ga = grossauftragQuick(text, kanal);
+      if (ga) return ga;
+    } catch (err) {
+      console.error("Großauftrag:", err.message);
+    }
+  }
   if (opts.mode === "translate" || opts.image || !text || opts.keepHistory === false) return askIntern(opts);
   // Laufende Vokabel-Abfrage (v1.169.0): jede Antwort ("dog", "danke") gehört dem Sprach-Trainer.
   if (sternVorrang() || kennenlernen.laeuft()) return askIntern(opts);
