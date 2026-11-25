@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y – Öffentliche Daten (v1.166.0)
+// F.R.Ai.D.A.Y – Öffentliche Daten (v1.167.0)
 // Kacheln für alle offenen Datenquellen (NINA, Pegel, Autobahn, Rückrufe, Strom, Ferien, Jobs, NASA, Wikipedia,
 // Eurostat, EZB …). Klick → Live-Abruf mit Ergebnis-Liste, Bild, Verlauf und Vorlesen.
 // Öffnen: Werkzeug-Menü → Welt → Öffentliche Daten, „Friday, öffne die öffentlichen Daten“, oder Aktionen

@@ -86,6 +86,16 @@ const pollenDwd = {
 };
 
 // ---------- Schulferien (OpenHolidays API) ----------
+const FERIEN_ART = /\b(oster|sommer|herbst|winter|weihnachts|pfingst|faschings)ferien\b/i;
+/** "wann sind die sommerferien in bayern" → ["Sommerferien", "bayern"]; "Bayern" → ["", "Bayern"]. */
+function ferienTeile(text) {
+  const t = String(text || "").trim();
+  const a = t.match(FERIEN_ART);
+  const art = a ? `${a[1][0].toUpperCase()}${a[1].slice(1).toLowerCase()}ferien` : "";
+  const ort = t.match(/\b(?:in|für|fuer)\s+(.+?)(?:\s+los)?$/i)?.[1]
+    || t.replace(FERIEN_ART, " ").replace(/\b(?:wann|sind|die|nächsten|naechsten|schulferien|ferien|beginnen|kommen|fangen|an|los|zeig|mir)\b/gi, " ").replace(/\s+/g, " ");
+  return [art, ort.trim()];
+}
 const schulferien = {
   id: "schulferien", titel: "Schulferien", icon: "🎒", gruppe: "Deutschland",
   info: "Die nächsten Schulferien in deinem Bundesland (auch andere Länder wählbar).",
@@ -95,7 +105,12 @@ const schulferien = {
     /^(?:wann (?:sind|beginnen|kommen|fangen) (?:die )?(?:nächsten |naechsten )?)?(?:schul)?ferien(?: an)?(?: (?:in|für|fuer) (.+?))?(?: los)?$/,
     /^(?:wann sind|wann beginnen|wann kommen|zeig mir) (?:die )?(?:nächsten |naechsten )?(?:schul)?(?:ferien|osterferien|sommerferien|herbstferien|winterferien|weihnachtsferien|pfingstferien|faschingsferien)(?: (?:in|für|fuer) (.+?))?$/,
   ],
-  async laden(q) {
+  // Sprache: ganze Frage, damit „Sommerferien in Bayern“ die Sommerferien zeigt.
+  ganzeFrage: true,
+  kurz: (k) => ferienTeile(k).filter(Boolean).join(" "),
+  async laden(eingabe) {
+    const [art, ortTeil] = ferienTeile(eingabe);
+    const q = ortTeil;
     let land = landSchluessel(q);
     if (!land) land = (await deOrt(ortOder(q))).land;
     const [kurz, name] = LAENDER[land] || [];
@@ -103,14 +118,17 @@ const schulferien = {
     const von = heute().iso;
     const bis = heute(500).iso;
     const liste = await gemerkt(`ferien:${kurz}`, 12 * 3600 * 1000, () => holen(`https://openholidaysapi.org/SchoolHolidays?countryIsoCode=DE&subdivisionCode=DE-${kurz}&languageIsoCode=DE&validFrom=${von}&validTo=${bis}`, { headers: { Accept: "application/json" } }));
-    const f = (Array.isArray(liste) ? liste : []).map((x) => ({ name: (x.name || []).find((n) => n.language === "DE")?.text || x.name?.[0]?.text || "Ferien", von: x.startDate, bis: x.endDate }))
+    const alle = (Array.isArray(liste) ? liste : []).map((x) => ({ name: (x.name || []).find((n) => n.language === "DE")?.text || x.name?.[0]?.text || "Ferien", von: x.startDate, bis: x.endDate }))
       .filter((x) => x.bis >= von).sort((a, b) => a.von.localeCompare(b.von));
+    // Bestimmte Ferien gewünscht (z. B. Sommerferien) → diese zuerst.
+    const passend = art ? alle.filter((x) => x.name.toLowerCase().startsWith(art.slice(0, 4).toLowerCase())) : [];
+    const f = passend.length ? [...passend, ...alle.filter((x) => !passend.includes(x))] : alle;
     if (!f.length) return { text: `Für ${name} habe ich keine kommenden Schulferien gefunden.`, zeilen: [] };
     const jetzt = f[0].von <= von;
     const tage = Math.round((new Date(f[0].von) - new Date(von)) / 864e5);
     const text = jetzt
       ? `In ${name} sind gerade ${f[0].name}, bis ${datum(f[0].bis, false)}.${f[1] ? ` Danach kommen die ${f[1].name} ab ${datum(f[1].von)}.` : ""}`
-      : `Die nächsten Ferien in ${name}: ${f[0].name} vom ${datum(f[0].von, false)} bis ${datum(f[0].bis)}, also in ${tage} ${tage === 1 ? "Tag" : "Tagen"}.`;
+      : passend.length ? `Die ${f[0].name} in ${name} sind vom ${datum(f[0].von, false)} bis ${datum(f[0].bis)}, also in ${tage} ${tage === 1 ? "Tag" : "Tagen"}.` : `Die nächsten Ferien in ${name}: ${f[0].name} vom ${datum(f[0].von, false)} bis ${datum(f[0].bis)}, also in ${tage} ${tage === 1 ? "Tag" : "Tagen"}.`;
     return { text, zeilen: f.slice(0, 10).map((x, i) => ({ titel: x.name, wert: `${datum(x.von, false)} – ${datum(x.bis)}`, farbe: i === 0 && jetzt ? "#3ddc84" : "#ff9a2a", unter: name })) };
   },
 };

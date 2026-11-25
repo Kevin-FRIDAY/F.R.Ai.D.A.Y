@@ -602,7 +602,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Öffentliche Daten (v1.166.0): NINA, Pegel, Autobahn, Rückrufe, Strom, Ferien, Jobs, NASA, Wikipedia, Eurostat, EZB … – ohne Claude.
+  // Öffentliche Daten (v1.167.0): NINA, Pegel, Autobahn, Rückrufe, Strom, Ferien, Jobs, NASA, Wikipedia, Eurostat, EZB … – ohne Claude.
   if (mode !== "translate" && !image && text) {
     try {
       const od = await datenQuick(text);

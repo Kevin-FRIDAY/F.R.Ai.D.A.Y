@@ -1,4 +1,4 @@
-// Öffentliche Daten (v1.166.0): eine Zentrale für kostenlose, offene Schnittstellen – Schwerpunkt Deutschland.
+// Öffentliche Daten (v1.167.0): eine Zentrale für kostenlose, offene Schnittstellen – Schwerpunkt Deutschland.
 // Jede Quelle ist ein Objekt { id, titel, icon, gruppe, info, quelle, link, eingabe, sprache, laden(eingabe) }.
 // - Sprache ohne Claude: quickCommand() (in brain.js vor dem Werkzeugkasten) → Antwort vorlesen + Fenster öffnen.
 // - Claude: ein einziges Werkzeug "oeffentliche_daten" (quelle + eingabe).

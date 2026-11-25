@@ -1,4 +1,4 @@
-# Öffentliche Daten (ab v1.166.0)
+# Öffentliche Daten (ab v1.167.0)
 
 Friday kennt jetzt 19 weitere offene Datenquellen von Ämtern, Bund, EU, NASA und Wikipedia.
 Alles ist **kostenlos**, braucht **kein Claude-Guthaben** und **keinen eigenen Schlüssel**.

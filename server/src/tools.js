@@ -362,7 +362,7 @@ export const toolDefinitions = [
   ...kernTools,
   ...kontenTools, // v1.163.0: Meine Konten (nur lesen)
   werkzeugkastenTool, // v1.162.0: 100 Werkzeuge, ein Eintrag
-  datenTool, // v1.166.0: öffentliche Datenquellen, ein Eintrag
+  datenTool, // v1.167.0: öffentliche Datenquellen, ein Eintrag
   ...jarvisTools, // v1.134.0: Dauer-Wächter, Dokumenten-Wissen, Apple Notizen/Kontakte/Musik
 ];
 

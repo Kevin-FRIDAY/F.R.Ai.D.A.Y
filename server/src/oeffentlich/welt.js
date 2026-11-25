@@ -158,7 +158,7 @@ const nobelpreis = {
     let d = await hole(y);
     if (!jahr && !(d.nobelPrizes || []).some((p) => p.laureates?.length)) { y -= 1; d = await hole(y); }
     const preise = (d.nobelPrizes || []).filter((p) => p.laureates?.length);
-    if (!preise.length) return { text: `Für ${kat ? KAT[kat] : "dieses Fach"} ${y} gibt es keinen Nobelpreis.`, zeilen: [] };
+    if (!preise.length) return { text: `Einen Nobelpreis${kat ? ` für ${KAT[kat]}` : ""} ${y} habe ich nicht gefunden.`, zeilen: [] };
     const namen = (p) => p.laureates.map((l) => l.knownName?.en || l.orgName?.en || l.fullName?.en || "?");
     const fach = (p) => KAT[nobelKat(KAT_EN[p.category?.en] || "")] || p.category?.en || "";
     const text = preise.length === 1

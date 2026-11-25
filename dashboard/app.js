@@ -764,7 +764,7 @@
         const gegenA = aktion("gegenrede:");
         if (gegenA) window.FridayGegen?.open({ id: gegenA.slice(10) });
         else if (hat("gegenrede")) window.FridayGegen?.open();
-        // Öffentliche Daten (v1.166.0): "daten", "daten:<id>:<eingabe>", "oeffentliche_daten" (Claude)
+        // Öffentliche Daten (v1.167.0): "daten", "daten:<id>:<eingabe>", "oeffentliche_daten" (Claude)
         window.FridayDaten?.vonAussen(data.actions || []);
         const wissenA = data.actions?.find((a) => a === "wissen" || (typeof a === "string" && a.startsWith("wissen:")));
         if (wissenA) window.FridayWissen?.oeffne(wissenA.startsWith("wissen:") ? decodeURIComponent(wissenA.slice(7)) : "");
