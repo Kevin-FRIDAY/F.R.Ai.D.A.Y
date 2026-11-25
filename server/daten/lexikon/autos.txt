@@ -1,0 +1,99 @@
+# autos|Autos & Verkehr|🚗
+# Titel|Text|Aliase
+Mercedes-Benz|Mercedes-Benz aus Stuttgart ist die älteste Automarke der Welt, benannt nach Mercedes Jellinek und Carl Benz.|mercedes,daimler
+Mercedes-AMG|AMG ist die Sportabteilung von Mercedes aus Affalterbach, bei AMG baut ein Mechaniker einen Motor komplett von Hand nach dem Prinzip ein Mann, ein Motor.|amg affalterbach
+Mercedes G-Klasse|Die G-Klasse ist ein kantiger Geländewagen, seit 1979 in Graz gebaut, als AMG G 63 mit V8-Biturbo.|g klasse,g63,g wagen
+Mercedes S-Klasse|Die S-Klasse ist das Flaggschiff von Mercedes und bringt oft neue Technik zuerst.|s klasse
+BMW Marke|BMW aus München baut Autos und Motorräder, die M-Modelle sind die Sportversionen.|bmw m
+BMW M3|Der BMW M3 ist seit 1986 eine Sportlimousine.|m3
+BMW M4|Der BMW M4 ist das Coupé zum M3.|m4
+Audi|Audi aus Ingolstadt gehört zu VW, das Logo mit vier Ringen steht für vier Marken der Auto Union.|vier ringe
+Audi RS|Die RS-Modelle sind die stärksten Audis, etwa der RS6 Avant.|rs6
+Porsche|Porsche aus Stuttgart-Zuffenhausen baut Sportwagen, Kultmodell ist der 911.|
+Porsche 911|Der Porsche 911 wird seit 1964 gebaut, mit Motor hinten.|elfer
+Volkswagen Marke|VW aus Wolfsburg ist einer der größten Autokonzerne der Welt, zu ihm gehören Audi, Porsche, Skoda, Seat und Lamborghini.|volkswagen konzern
+VW Käfer|Der VW Käfer wurde über 21 Millionen Mal gebaut.|kaefer
+VW Golf|Der Golf ist seit 1974 das meistverkaufte Auto Deutschlands.|golf auto
+Opel|Opel aus Rüsselsheim gehört heute zum Stellantis-Konzern.|
+Ford Marke|Ford aus Detroit hat in Köln seine Europazentrale.|
+Ferrari Marke|Ferrari aus Maranello baut rote Sportwagen und ist das erfolgreichste Formel-1-Team.|ferrari
+Lamborghini Marke|Lamborghini aus Sant'Agata Bolognese gehört zu Audi, Modelle tragen oft Stiernamen.|lamborghini
+Bugatti|Bugatti baut Hypercars wie den Chiron mit über 400 Kilometern pro Stunde.|bugatti chiron
+McLaren|McLaren aus England baut Supersportwagen und fährt in der Formel 1.|
+Aston Martin|Aston Martin ist das Auto von James Bond.|
+Rolls-Royce|Rolls-Royce gehört zu BMW und baut Luxuslimousinen mit der Kühlerfigur Spirit of Ecstasy.|rolls royce
+Bentley|Bentley gehört zu Volkswagen.|
+Toyota|Toyota aus Japan ist der größte Autohersteller der Welt nach Stückzahlen.|
+Honda Marke|Honda baut Autos und ist der größte Motorradhersteller.|
+Hyundai|Hyundai und Kia sind südkoreanische Hersteller.|kia
+BYD|BYD aus China ist der größte Hersteller von Elektroautos weltweit.|
+Volvo|Volvo aus Schweden erfand den Dreipunktgurt und gab das Patent frei.|
+Skoda|Skoda aus Tschechien gehört zu VW.|
+Fiat|Fiat aus Turin gehört zu Stellantis.|
+Stellantis|Stellantis ist ein Autokonzern mit Peugeot, Citroën, Fiat, Opel und Jeep.|peugeot,citroen,jeep
+Schnellstes Serienauto|Zu den schnellsten Serienautos gehören Bugatti Chiron Super Sport und Koenigsegg Jesko mit über 440 Kilometern pro Stunde.|schnellstes auto
+Verbrennungsmotor|Ein Verbrennungsmotor arbeitet im Viertakt: Ansaugen, Verdichten, Arbeiten, Ausstoßen.|viertakter
+V8|Ein V8 hat acht Zylinder in V-Form, typisch für Sportwagen und AMG.|v8 motor
+Turbolader|Ein Turbolader nutzt die Abgase, um mehr Luft in den Motor zu pressen.|turbo,biturbo
+Hubraum|Der Hubraum ist das Volumen aller Zylinder, etwa 4,0 Liter.|
+Drehmoment|Das Drehmoment in Newtonmetern beschreibt die Zugkraft eines Motors.|newtonmeter
+PS und kW|1 Kilowatt sind etwa 1,36 PS, 100 kW sind 136 PS.|kw in ps
+Allradantrieb|Beim Allradantrieb werden alle vier Räder angetrieben, bei Mercedes 4MATIC, bei Audi quattro.|4matic,quattro
+Automatikgetriebe|Ein Automatikgetriebe schaltet selbst, ein Doppelkupplungsgetriebe sehr schnell.|dsg
+Benzin und Diesel|Diesel verbraucht weniger, Benziner sind leiser. E10 enthält 10 Prozent Bioethanol.|e10
+Elektroauto Reichweite|Moderne Elektroautos schaffen meist 300 bis 600 Kilometer.|reichweite
+Ladesäule|An einer Schnellladesäule lädt ein Elektroauto in 20 bis 30 Minuten auf 80 Prozent.|laden e auto
+Wallbox|Eine Wallbox ist eine Ladestation für zu Hause.|
+Rekuperation|Bei der Rekuperation gewinnt ein Elektroauto beim Bremsen Strom zurück.|
+Wasserstoffauto|Wasserstoffautos fahren elektrisch mit Strom aus einer Brennstoffzelle, es gibt aber wenige Tankstellen.|brennstoffzelle
+Verbrauch|Ein Mittelklasse-Benziner braucht etwa 6 bis 8 Liter auf 100 Kilometer.|liter auf 100 km
+Spritsparen|Sprit spart man mit vorausschauendem Fahren, richtigem Reifendruck und weniger Gewicht.|sprit sparen
+Reifendruck|Den richtigen Reifendruck findet man im Tankdeckel oder an der Fahrertür.|
+Sommerreifen|Sommerreifen kommen von Ostern bis Oktober, als Merkregel von O bis O.|o bis o
+Ölwechsel|Ölwechsel sind meist alle 15.000 bis 30.000 Kilometer oder einmal im Jahr fällig.|
+Batterie Auto|Springt das Auto nicht an, ist oft die Batterie schwach, Starthilfe geht mit Kabel: Plus an Plus, Minus an Masse.|starthilfe
+Warndreieck|Das Warndreieck stellt man auf der Landstraße etwa 100 Meter, auf der Autobahn 150 bis 400 Meter hinter dem Auto auf.|
+Rettungsgasse|Bei Stau bildet man auf der Autobahn eine Rettungsgasse zwischen ganz links und den anderen Spuren.|
+Reißverschlussverfahren|Beim Reißverschlussverfahren fädelt man erst am Ende der Spur abwechselnd ein.|reissverschluss
+Rechts vor links|Ohne Schilder oder Ampel gilt rechts vor links.|
+Vorfahrtsstraße|Das gelbe Raute-Schild zeigt eine Vorfahrtsstraße an.|
+Richtgeschwindigkeit|Auf deutschen Autobahnen gilt ohne Schild kein Tempolimit, aber eine Richtgeschwindigkeit von 130.|autobahn tempolimit
+Geschwindigkeit innerorts|Innerorts gilt 50, außerorts 100, mit Anhänger oft 80.|
+Bußgeld|Wer innerorts 21 Kilometer pro Stunde zu schnell ist, bekommt einen Punkt und zahlt mindestens 115 Euro.|bussgeldkatalog
+Handy am Steuer|Handy am Steuer kostet 100 Euro und einen Punkt.|
+Führerscheinklassen|Klasse B ist das Auto bis 3,5 Tonnen, A das Motorrad, C der Lkw.|klasse b
+Begleitetes Fahren|Ab 17 darf man mit Begleitung fahren.|bf17
+Probezeit Führerschein|Die Probezeit dauert zwei Jahre, in ihr gilt 0,0 Promille.|
+Umweltzone|In Umweltzonen braucht man eine grüne Plakette.|umweltplakette
+Kfz-Steuer|Elektroautos sind bis 2030 von der Kfz-Steuer befreit.|
+Zulassung|Ein Auto lässt man bei der Zulassungsstelle zu, vieles geht inzwischen online.|auto anmelden
+Kennzeichen|Die Buchstaben vorne im Kennzeichen zeigen den Kreis, B ist Berlin, M München, HH Hamburg.|nummernschild
+Wunschkennzeichen|Ein Wunschkennzeichen kann man online reservieren.|
+Formel E|Die Formel E ist eine Rennserie für Elektroautos.|
+Le Mans|Die 24 Stunden von Le Mans sind das berühmteste Langstreckenrennen.|
+Nürburgring|Die Nordschleife des Nürburgrings in der Eifel heißt Grüne Hölle.|nordschleife,gruene hoelle
+Rallye Dakar|Die Rallye Dakar ist eine Wüstenrallye, heute in Saudi-Arabien.|
+Motorrad|Bekannte Motorradmarken sind BMW, Harley-Davidson, Ducati, Honda und KTM.|harley davidson,ducati
+E-Scooter|E-Scooter dürfen auf Radwegen fahren, höchstens 20 Kilometer pro Stunde, ab 14 Jahren.|e roller
+E-Bike|Pedelecs unterstützen bis 25 Kilometer pro Stunde und gelten als Fahrrad.|pedelec
+Lkw-Maut|Für Lastwagen ab 3,5 Tonnen gibt es Autobahnmaut.|
+Vignette|In Österreich und der Schweiz braucht man für die Autobahn eine Vignette.|
+Längste Autobahn|Die A7 ist mit fast 1.000 Kilometern die längste Autobahn Deutschlands, von Dänemark bis Füssen.|a7
+Autobahnnetz|Deutschland hat rund 13.000 Kilometer Autobahn.|
+Erste Autobahn|Die erste Autobahn Deutschlands war die AVUS in Berlin 1921, die erste kreuzungsfreie Fernstraße ging 1932 zwischen Köln und Bonn in Betrieb.|
+ICE Geschwindigkeit|Der ICE fährt bis zu 300 Kilometer pro Stunde.|
+Shinkansen|Der Shinkansen in Japan ist der erste Hochgeschwindigkeitszug der Welt von 1964.|
+Maglev|Magnetschwebebahnen erreichen über 600 Kilometer pro Stunde, der Transrapid wurde in Shanghai gebaut.|transrapid
+Hyperloop|Der Hyperloop ist eine Idee für Kapseln in Vakuumröhren, bisher nur getestet.|
+Flugzeug Größte|Der Airbus A380 ist das größte Passagierflugzeug.|a380
+Boeing 747|Die Boeing 747 heißt Jumbo-Jet.|jumbo jet
+Flughafen Frankfurt|Der Frankfurter Flughafen ist der größte in Deutschland.|fra
+Größter Flughafen|Atlanta und Dubai gehören zu den Flughäfen mit den meisten Passagieren.|
+Containerschiff|Die größten Containerschiffe tragen über 24.000 Container.|
+Hafen Hamburg|Der Hamburger Hafen ist der größte Seehafen Deutschlands.|
+Titanic|Die Titanic sank 1912 auf ihrer Jungfernfahrt nach einem Eisberg, über 1.500 Menschen starben.|
+Kreuzfahrtschiff|Die größten Kreuzfahrtschiffe haben Platz für über 7.000 Passagiere.|
+U-Boot|U-Boote tauchen, indem sie Wasser in Tanks fluten.|uboot
+Fahrrad Deutschland|In Deutschland gibt es über 80 Millionen Fahrräder.|
+Navigation|Navis berechnen Routen mit GPS und Verkehrsdaten.|navi
+Stau|Die meisten Staus in Deutschland gibt es in Nordrhein-Westfalen.|staus

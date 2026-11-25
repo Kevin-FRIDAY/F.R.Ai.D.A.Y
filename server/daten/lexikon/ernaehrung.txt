@@ -1,0 +1,178 @@
+# ernaehrung|Essen & Lebensmittel|🥗
+# Titel|Text|Aliase
+Apfel|Ein Apfel hat etwa 50 bis 60 Kilokalorien pro 100 Gramm, viel Wasser und Ballaststoffe. In Deutschland ist er das beliebteste Obst.|aepfel,apfel kalorien
+Banane|Eine Banane hat etwa 90 Kilokalorien pro 100 Gramm, viel Kalium und gibt schnell Energie.|bananen kalorien
+Orange|Eine Orange liefert reichlich Vitamin C und hat nur etwa 45 Kilokalorien pro 100 Gramm.|apfelsine,orangen
+Zitrone|Zitronen sind sauer durch Zitronensäure und reich an Vitamin C.|zitronen
+Kiwi|Eine Kiwi hat mehr Vitamin C als eine Orange.|kiwis
+Weintrauben|Weintrauben sind süß und für Hunde giftig.|trauben
+Mango|Die Mango ist in Indien die Nationalfrucht.|mangos
+Melone|Wassermelonen bestehen zu über 90 Prozent aus Wasser.|wassermelone
+Kirsche|Süßkirschen sind im Juni und Juli reif.|kirschen
+Pflaume|Pflaumen und Zwetschgen sind verwandt, Zwetschgen sind länglicher und besser zum Backen.|zwetschge,zwetschgen
+Birne|Birnen sind süß und reifen nach der Ernte nach.|birnen
+Pfirsich|Pfirsiche haben eine samtige Haut, Nektarinen eine glatte.|nektarine
+Granatapfel|Der Granatapfel enthält viele saftige rote Kerne.|
+Feige|Feigen gibt es frisch und getrocknet, sie sind sehr ballaststoffreich.|feigen
+Dattel|Datteln sind sehr süß und werden im Ramadan traditionell zum Fastenbrechen gegessen.|datteln
+Kokosnuss|Die Kokosnuss ist botanisch eine Steinfrucht, in ihr steckt Kokoswasser.|kokos
+Nüsse|Nüsse liefern gesunde Fette und Eiweiß, sind aber kalorienreich, etwa 600 Kilokalorien pro 100 Gramm.|nuss
+Walnuss|Walnüsse enthalten viel Omega-3.|walnuesse
+Erdnuss|Die Erdnuss ist botanisch keine Nuss, sondern eine Hülsenfrucht.|erdnuesse
+Mandel|Mandeln sind botanisch Steinfrüchte und enthalten viel Vitamin E.|mandeln
+Haselnuss|Haselnüsse sind der Hauptbestandteil von Nuss-Nougat-Creme.|haselnuesse
+Cashew|Cashewkerne wachsen an einem Apfel, dem Cashewapfel.|cashewkerne
+Kartoffel|Kartoffeln haben nur etwa 70 Kilokalorien pro 100 Gramm und liefern Vitamin C und Kalium.|kartoffeln
+Süßkartoffel|Die Süßkartoffel ist mit der Kartoffel nicht nah verwandt und enthält viel Beta-Carotin.|suesskartoffel
+Karotte|Karotten enthalten viel Beta-Carotin, eine Vorstufe von Vitamin A. Mit etwas Fett kann der Körper es besser aufnehmen.|moehre,moehren,karotten
+Brokkoli|Brokkoli ist sehr vitamin- und ballaststoffreich und sollte nur kurz gegart werden.|broccoli
+Blumenkohl|Blumenkohl ist kalorienarm und vielseitig, auch als Reis-Ersatz.|
+Spinat|Spinat hat weniger Eisen als lange behauptet, ein Kommafehler soll den Mythos befeuert haben.|spinat eisen
+Grünkohl|Grünkohl ist ein typisches Wintergemüse in Norddeutschland, oft mit Pinkel.|gruenkohl
+Paprika|Rote Paprika hat besonders viel Vitamin C.|
+Gurke|Gurken bestehen zu etwa 97 Prozent aus Wasser.|gurken
+Zucchini|Zucchini sind kalorienarm und gehören zu den Kürbissen.|
+Kürbis|Kürbisse sind die größten Beeren der Welt, der Hokkaido kann mit Schale gegessen werden.|kuerbis,hokkaido
+Aubergine|Auberginen sollte man nicht roh essen.|
+Zwiebel|Zwiebeln bringen beim Schneiden zum Weinen, weil ein reizendes Gas frei wird.|zwiebel
+Spargel|Spargelsaison in Deutschland ist von etwa April bis zum 24. Juni, dem Johannistag.|spargelzeit
+Rosenkohl|Rosenkohl schmeckt nach dem ersten Frost milder.|
+Hülsenfrüchte|Linsen, Bohnen, Erbsen und Kichererbsen sind reich an Eiweiß und Ballaststoffen.|huelsenfruechte
+Linsen|Linsen müssen nicht eingeweicht werden und haben viel Eiweiß.|
+Kichererbsen|Aus Kichererbsen macht man Hummus und Falafel.|
+Tofu|Tofu wird aus Sojamilch hergestellt und ist eine gute Eiweißquelle.|
+Quinoa|Quinoa ist ein Pseudogetreide aus den Anden und glutenfrei.|
+Haferflocken Nährwert|Haferflocken liefern Ballaststoffe, Eiweiß und halten lange satt.|
+Vollkorn|Vollkornprodukte enthalten das ganze Korn mit Schale und Keim und sättigen länger.|vollkornbrot
+Brot Deutschland|Deutschland hat über 3.000 Brotsorten, die deutsche Brotkultur ist immaterielles Kulturerbe.|brotsorten
+Brezel|Die Brezel ist typisch für Süddeutschland, die Lauge gibt ihr die braune Kruste.|breze,laugenbrezel
+Milch|Milch liefert Kalzium und Eiweiß. Frische Milch hält etwa eine Woche, H-Milch ungeöffnet Monate.|kuhmilch
+Joghurt|Joghurt entsteht, wenn Milchsäurebakterien Milch dick machen.|
+Quark|Quark ist sehr eiweißreich, besonders Magerquark.|magerquark
+Käse|Deutschland hat Hunderte Käsesorten, Frankreich angeblich über 1.000.|kaese
+Butter|Butter besteht zu mindestens 82 Prozent aus Fett.|
+Ei Nährwert|Ein Ei hat etwa 80 Kilokalorien und 7 Gramm Eiweiß.|eier kalorien
+Eier Frische|Ein frisches Ei sinkt in Wasser zu Boden, ein altes stellt sich auf oder schwimmt.|ei frisch testen
+Fleisch|Deutsche essen im Schnitt etwa 52 Kilogramm Fleisch pro Jahr, Tendenz sinkend.|fleischkonsum
+Rindfleisch|Rindfleisch liefert Eisen, Zink und Vitamin B12.|rind
+Schweinefleisch|Schweinefleisch ist das meistgegessene Fleisch in Deutschland.|schwein fleisch
+Hähnchenfleisch|Hähnchen muss immer durchgegart werden wegen Salmonellen.|huehnchen
+Fisch|Fetter Seefisch wie Lachs, Hering und Makrele liefert Omega-3 und Jod, ein bis zwei Portionen pro Woche werden empfohlen.|
+Wurst|Deutschland hat über 1.500 Wurstsorten.|wurstsorten
+Zucker|Die WHO empfiehlt, höchstens etwa 50 Gramm freien Zucker am Tag zu essen, besser 25.|wie viel zucker am tag
+Salz Menge|Empfohlen sind höchstens 6 Gramm Salz am Tag, etwa ein Teelöffel.|wie viel salz am tag
+Fett|Fett hat mit 9 Kilokalorien pro Gramm mehr als doppelt so viele wie Eiweiß oder Kohlenhydrate mit 4.|fette
+Kohlenhydrate|Kohlenhydrate sind der wichtigste Energielieferant, etwa aus Brot, Reis, Nudeln und Obst.|kohlenhydrat
+Eiweiß|Erwachsene brauchen etwa 0,8 Gramm Eiweiß pro Kilogramm Körpergewicht am Tag, Sportler mehr.|protein,eiweiss
+Ballaststoffe Menge|Empfohlen sind 30 Gramm Ballaststoffe am Tag, etwa aus Vollkorn, Gemüse und Hülsenfrüchten.|
+Wasser trinken Menge|Erwachsene sollten etwa 1,5 Liter am Tag trinken, bei Hitze und Sport mehr.|wie viel trinken
+Kaffee Menge|Bis zu etwa 400 Milligramm Koffein am Tag gelten für Erwachsene als unbedenklich, das sind etwa 3 bis 4 Tassen Kaffee.|wie viel kaffee
+Energydrink|Eine Dose Energydrink mit 250 Millilitern hat etwa 80 Milligramm Koffein, so viel wie eine Tasse Kaffee, und viel Zucker.|red bull koffein
+Cola Zucker|Ein Liter Cola enthält rund 100 Gramm Zucker, etwa 33 Stück Würfelzucker.|
+Grüner Tee|Grüner Tee enthält Koffein und Antioxidantien.|
+Alkohol Kalorien|Alkohol hat 7 Kilokalorien pro Gramm, ein halber Liter Bier etwa 210.|bier kalorien
+Bier|Deutschland hat über 1.500 Brauereien. Das Reinheitsgebot von 1516 erlaubt nur Wasser, Malz, Hopfen und Hefe.|reinheitsgebot
+Wein Sorten|Bekannte deutsche Rebsorten sind Riesling, Müller-Thurgau, Spätburgunder und Silvaner.|riesling
+Schokolade|Dunkle Schokolade mit viel Kakao enthält weniger Zucker und mehr Antioxidantien. Für Hunde und Katzen ist sie giftig.|
+Honig|Honig hat etwa 300 Kilokalorien pro 100 Gramm. Babys unter einem Jahr sollten keinen Honig essen.|
+Superfood|Superfood ist ein Werbebegriff. Heimische Lebensmittel wie Leinsamen, Grünkohl und Heidelbeeren sind ähnlich gesund wie teure Importe.|
+Mittelmeerküche|Die Mittelmeerküche mit Gemüse, Olivenöl, Fisch und Hülsenfrüchten gilt als besonders gesund.|mediterrane ernaehrung
+Vegetarisch|Vegetarier essen kein Fleisch und keinen Fisch, aber oft Eier und Milchprodukte.|vegetarier
+Flexitarier|Flexitarier essen überwiegend vegetarisch und nur selten Fleisch.|
+Nutri-Score|Der Nutri-Score bewertet Lebensmittel von A, grün, bis E, rot.|nutriscore
+Mindesthaltbarkeitsdatum|Das Mindesthaltbarkeitsdatum ist kein Verfallsdatum. Viele Lebensmittel sind danach noch gut, einfach anschauen, riechen, probieren.|mhd,abgelaufen
+Verbrauchsdatum|Beim Verbrauchsdatum, etwa bei Hackfleisch, darf man das Lebensmittel danach nicht mehr essen.|zu verbrauchen bis
+Lebensmittelvergiftung|Typische Auslöser sind Salmonellen in rohen Eiern und Geflügel. Viel trinken, bei Fieber oder Blut im Stuhl zum Arzt.|salmonellen
+Schimmel|Bei Brot, Obst und weichen Lebensmitteln mit Schimmel alles wegwerfen, bei Hartkäse reicht großzügiges Wegschneiden.|schimmel brot
+Einfrieren|Eingefroren halten die meisten Lebensmittel Monate. Aufgetautes Fleisch nicht wieder einfrieren, außer man hat es gekocht.|einfrieren
+Reste aufwärmen|Reis und Pilze kann man aufwärmen, wenn sie schnell gekühlt wurden. Speisen sollten dabei durch und durch heiß werden.|reis aufwaermen
+Döner|Der Döner im Brot wurde Anfang der 1970er-Jahre in Berlin populär.|doener
+Schnitzel|Das echte Wiener Schnitzel ist aus Kalbfleisch, aus Schwein heißt es Schnitzel Wiener Art.|wiener schnitzel
+Bratwurst|Die Thüringer und die Nürnberger Rostbratwurst sind geschützte Spezialitäten.|thueringer rostbratwurst
+Sauerkraut|Sauerkraut ist durch Milchsäuregärung haltbar gemachter Weißkohl und enthält Vitamin C.|
+Schwarzwälder Kirschtorte|Die Schwarzwälder Kirschtorte besteht aus Schokoladenbiskuit, Sahne, Kirschen und Kirschwasser.|
+Leberkäse|Leberkäse enthält in Bayern meist gar keine Leber.|leberkaes
+Weißwurst|Die Münchner Weißwurst isst man traditionell vor dem Mittagsläuten mit süßem Senf und Brezel.|weisswurst
+Labskaus|Labskaus ist ein norddeutsches Seemannsgericht aus Kartoffeln, Pökelfleisch und Roter Bete.|
+Königsberger Klopse|Königsberger Klopse sind Fleischbällchen in heller Soße mit Kapern.|
+Kässpätzle|Kässpätzle sind Spätzle mit Käse und Röstzwiebeln aus Schwaben und dem Allgäu.|kaesespaetzle
+Maultaschen|Maultaschen sind schwäbische gefüllte Teigtaschen, auch Herrgottsbscheißerle genannt.|
+Pizza Margherita|Die Pizza Margherita in den Farben Italiens soll 1889 für Königin Margherita erfunden worden sein.|margherita
+Sushi|Sushi ist gesäuerter Reis mit Fisch oder Gemüse aus Japan.|
+Ramen|Ramen sind japanische Nudelsuppen.|
+Paella|Die Paella stammt aus Valencia, mit Reis, Safran und Meeresfrüchten oder Huhn.|
+Tacos|Tacos sind mexikanische Maisfladen mit Füllung.|taco
+Burger|Der Hamburger ist nach der Stadt Hamburg benannt, wurde aber in den USA berühmt.|hamburger
+Pommes|Ob Pommes aus Belgien oder Frankreich stammen, ist umstritten.|pommes frites
+Croissant|Das Croissant hat Vorläufer im österreichischen Kipferl.|
+Baklava|Baklava ist ein süßes Gebäck aus Blätterteig, Nüssen und Sirup.|
+Hummus|Hummus ist ein Kichererbsenmus mit Sesampaste aus dem Nahen Osten.|humus
+Curry|Curry ist kein einzelnes Gewürz, sondern eine Gewürzmischung oder ein Gericht.|
+Kimchi|Kimchi ist fermentierter Kohl aus Korea.|
+Scharf|Die Schärfe von Chili kommt vom Capsaicin und wird in Scoville gemessen. Milch lindert besser als Wasser.|scoville,chili scharf
+Umami Lebensmittel|Viel Umami haben Parmesan, Tomaten, Pilze, Sojasoße und Fleischbrühe.|
+Gluten Lebensmittel|Gluten steckt in Weizen, Dinkel, Roggen und Gerste, nicht in Reis, Mais, Kartoffeln und Hirse.|glutenfrei
+Laktosefrei|Laktosefreie Milch enthält ein Enzym, das den Milchzucker schon aufgespalten hat. Hartkäse ist fast laktosefrei.|
+Erdnussallergie|Eine Erdnussallergie kann schwere Reaktionen auslösen, Betroffene tragen oft einen Notfallpen.|
+Rohmilch|Rohmilch ist nicht erhitzt und kann Keime enthalten, Schwangere und Kinder sollten sie meiden.|
+Bio|Bio-Lebensmittel stammen aus ökologischer Landwirtschaft ohne chemische Pflanzenschutzmittel und mit mehr Platz für Tiere.|bio siegel
+Fairtrade|Das Fairtrade-Siegel steht für faire Preise für Bauern in ärmeren Ländern.|fair trade
+Saisonkalender|Im Winter gibt es heimisch Kohl, Lauch und Wurzelgemüse, im Sommer Beeren, Tomaten und Zucchini.|saison obst gemuese
+Hering Matjes|Matjes sind junge, mild gesalzene Heringe.|matjes
+Kaffee Herkunft|Die meisten Kaffeebohnen kommen aus Brasilien, Vietnam und Kolumbien.|
+Espresso|Ein Espresso hat weniger Koffein als eine große Tasse Filterkaffee, aber mehr pro Milliliter.|
+Cappuccino|Ein Cappuccino besteht zu je einem Drittel aus Espresso, Milch und Milchschaum.|
+Latte Macchiato|Beim Latte Macchiato wird Espresso in heiße Milch gegossen, sodass Schichten entstehen.|
+Matcha|Matcha ist fein gemahlener grüner Tee aus Japan.|
+Kombucha|Kombucha ist ein fermentiertes Teegetränk.|
+Smoothie|Ein Smoothie ist ein Getränk aus püriertem Obst, er hat aber viel Fruchtzucker.|
+Lieblingsessen Deutschland|Zu den Lieblingsgerichten der Deutschen zählen Spaghetti Bolognese, Schnitzel, Pizza und Rouladen.|beliebtestes gericht
+Heidelbeere|Heidelbeeren enthalten viele Antioxidantien. Wilde Waldheidelbeeren färben die Zunge blau, Kulturheidelbeeren innen nicht.|blaubeere
+Himbeere|Himbeeren haben viele Ballaststoffe und wenig Zucker.|
+Johannisbeere|Schwarze Johannisbeeren haben etwa dreimal so viel Vitamin C wie Orangen.|
+Stachelbeere|Stachelbeeren sind säuerlich und reich an Vitamin C.|
+Rhabarber|Rhabarber ist eigentlich ein Gemüse. Die Blätter enthalten viel Oxalsäure und sind nicht essbar. Saison ist April bis Juni.|
+Ananas|Ananas enthält das Enzym Bromelain, darum wird Quark mit frischer Ananas bitter und Gelatine wird nicht fest.|
+Papaya|Papaya enthält das Enzym Papain, das Fleisch zart macht.|
+Avocado|Avocados haben viel gesundes Fett. Sie reifen bei Zimmertemperatur nach, neben Äpfeln schneller.|
+Olive|Oliven sind roh ungenießbar bitter und müssen eingelegt werden. Grüne Oliven sind unreif, schwarze reif.|
+Tomate|Tomaten gehören nicht in den Kühlschrank, dort verlieren sie Aroma. Das enthaltene Lycopin wird durch Kochen besser aufgenommen.|
+Rote Bete|Rote Bete färbt stark, auch den Urin, das ist harmlos. Sie enthält viel Nitrat, das den Blutdruck senken kann.|rote beete
+Knoblauch|Knoblauch wirkt leicht antibakteriell. Gegen den Geruch hilft Petersilie oder ein Glas Milch.|
+Ingwer|Ingwer hilft gegen Übelkeit und schmeckt scharf.|
+Kurkuma|Kurkuma färbt Curry gelb. Mit schwarzem Pfeffer wird der Wirkstoff Curcumin besser aufgenommen.|
+Zimt|Cassia-Zimt aus dem Supermarkt enthält Cumarin, darum nicht täglich viel davon essen. Ceylon-Zimt hat fast keines.|
+Chiasamen|Chiasamen quellen in Flüssigkeit stark auf und enthalten Omega-3 und Ballaststoffe.|chia
+Leinsamen|Leinsamen helfen bei der Verdauung, geschrotet werden sie besser aufgenommen.|
+Sonnenblumenkerne|Sonnenblumenkerne liefern Vitamin E und Magnesium.|
+Kürbiskerne|Kürbiskerne aus der Steiermark sind schalenlos und grün, sie liefern Zink und Eisen.|
+Pistazie|Pistazien kommen meist aus dem Iran und den USA, in Dubai-Schokolade sind sie Hauptzutat.|dubai schokolade
+Paranuss|Paranüsse enthalten sehr viel Selen, eine bis zwei am Tag reichen.|
+Macadamia|Macadamia-Nüsse sind die teuersten Nüsse und für Hunde giftig.|
+Eisen|Eisen steckt in Fleisch, Hülsenfrüchten, Haferflocken und Spinat. Mit Vitamin C wird es besser aufgenommen, mit Kaffee schlechter.|eisenmangel
+Magnesium|Magnesium hilft Muskeln und Nerven, es steckt in Nüssen, Vollkorn und Bananen.|magnesium krampf
+Kalzium|Kalzium für die Knochen steckt in Milchprodukten, grünem Gemüse und kalziumreichem Mineralwasser.|calcium
+Vitamin D|Vitamin D bildet der Körper mit Sonnenlicht. Im Winter ist der Spiegel in Deutschland oft niedrig.|sonnenvitamin
+Vitamin B12|Vitamin B12 kommt fast nur in tierischen Lebensmitteln vor. Veganer sollten es ergänzen.|b12
+Omega-3|Omega-3-Fettsäuren stecken in fettem Seefisch, Leinöl, Walnüssen und Algen.|omega 3
+Jod|Jod ist wichtig für die Schilddrüse. In Deutschland hilft Jodsalz, genug davon zu bekommen.|jodsalz
+Kalorienbedarf|Ein Erwachsener braucht etwa 1.800 bis 2.500 Kilokalorien am Tag, je nach Größe, Alter und Bewegung.|kalorien am tag
+Intervallfasten|Beim Intervallfasten isst man zum Beispiel nur innerhalb von acht Stunden am Tag, 16 zu 8. Es kann beim Abnehmen helfen.|16 8 fasten
+Low Carb|Bei Low Carb isst man wenig Kohlenhydrate wie Brot, Nudeln und Zucker.|lowcarb
+Vegan|Vegan heißt: keine tierischen Produkte, also auch keine Milch, Eier und Honig.|veganer
+Pflanzendrinks|Hafer-, Soja- und Mandeldrinks dürfen in der EU nicht Milch heißen. Soja hat am meisten Eiweiß.|hafermilch,sojamilch
+Ersatzfleisch|Fleischersatz wird meist aus Soja, Erbsen, Weizen oder Pilzen gemacht.|veggie burger
+Zuckerersatz|Süßstoffe wie Aspartam und Stevia haben kaum Kalorien. Erythrit und Xylit sind Zuckeralkohole, Xylit ist für Hunde giftig.|süßstoff,stevia
+Transfette|Gehärtete Fette mit Transfetten sind ungesund für das Herz, sie steckten früher oft in Gebäck und Fertigprodukten.|
+Glutamat|Glutamat ist ein Geschmacksverstärker für Umami. Für die meisten Menschen ist es in normalen Mengen unbedenklich.|geschmacksverstärker
+E-Nummern|E-Nummern sind in der EU zugelassene Zusatzstoffe, etwa E330 Zitronensäure. Nicht alle sind künstlich.|e nummer
+Fertiggerichte|Fertiggerichte enthalten oft viel Salz und Fett. Auf das Etikett schauen hilft.|
+Meal Prep|Beim Meal Prep kocht man vor, etwa am Sonntag für mehrere Tage, das spart Zeit und Geld.|vorkochen
+Lebensmittel retten|Mit Apps wie Too Good To Go kaufst du übrig gebliebenes Essen günstig. In Deutschland landen pro Kopf etwa 80 Kilo Lebensmittel im Jahr im Müll.|too good to go,lebensmittelverschwendung
+Leitungswasser|Leitungswasser ist in Deutschland eines der am besten kontrollierten Lebensmittel und viel günstiger als Mineralwasser.|wasser aus der leitung
+Mineralwasser|Mineralwasser kommt aus geschützten Quellen und muss amtlich anerkannt sein.|sprudel
+Kaffee und Wasser|Kaffee entwässert nicht wirklich, er zählt zur Trinkmenge, wenn man daran gewöhnt ist.|kaffee entwässert
+Alkoholfreies Bier|Alkoholfreies Bier darf bis 0,5 Prozent Alkohol enthalten, 0,0 ist komplett alkoholfrei. Es gilt als guter isotonischer Durstlöscher.|
+Frühstück Deutschland|Typisch deutsches Frühstück sind Brötchen mit Butter, Marmelade, Käse oder Wurst, dazu Kaffee und ein gekochtes Ei.|
+Abendbrot|Das Abendbrot mit Brot, Käse und Wurst ist in Deutschland traditionell eine kalte Mahlzeit.|
+Kaffee und Kuchen|Am Nachmittag gibt es in Deutschland traditionell Kaffee und Kuchen, besonders am Sonntag.|

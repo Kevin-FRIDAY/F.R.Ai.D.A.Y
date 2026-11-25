@@ -52,3 +52,117 @@ Rechnung|Eine Rechnung muss unter anderem Name und Anschrift beider Seiten, Datu
 Skonto|Skonto ist ein Preisnachlass, wenn man eine Rechnung schnell bezahlt, zum Beispiel 2 Prozent innerhalb von 10 Tagen.|
 Ratenzahlung|Bei der Ratenzahlung zahlt man einen Kauf in Teilbeträgen ab. Oft kostet das Zinsen, also genau hinschauen.|raten
 Paypal|PayPal ist ein Online-Bezahldienst. Wichtig: Ich bezahle nie selbst, das machst immer du.|paypal bezahlen
+Anleihe|Eine Anleihe ist ein Kredit an einen Staat oder eine Firma, man bekommt dafür Zinsen und am Ende das Geld zurück.|anleihen,bond,staatsanleihe
+Bundesanleihe|Bundesanleihen sind Schulden des deutschen Staates und gelten als sehr sicher.|bundesanleihen
+Rentenfonds|Ein Rentenfonds investiert in Anleihen, nicht in Renten im Sinne der Altersvorsorge.|
+Aktienindex|Ein Aktienindex fasst viele Aktien zusammen und zeigt, wie sich ein Markt entwickelt.|index
+MSCI World|Der MSCI World enthält rund 1.400 große Firmen aus 23 Industrieländern, ein beliebter Index für ETF-Sparpläne.|msci
+Euro Stoxx 50|Der Euro Stoxx 50 enthält die 50 größten Unternehmen der Eurozone.|
+MDAX|Der MDAX enthält 50 mittelgroße deutsche Börsenunternehmen nach den DAX-Firmen.|
+Nikkei|Der Nikkei 225 ist der wichtigste Aktienindex Japans.|
+Thesaurierend|Ein thesaurierender ETF legt Dividenden automatisch wieder an, ein ausschüttender zahlt sie aus.|ausschuettend
+TER|Die TER ist die jährliche Gesamtkostenquote eines Fonds, bei ETFs oft unter 0,3 Prozent.|gesamtkosten fonds
+Depot|Ein Depot ist ein Konto für Wertpapiere wie Aktien und ETFs.|wertpapierdepot
+Neobroker|Neobroker wie Trade Republic oder Scalable Capital sind günstige Online-Broker per App.|trade republic,scalable
+Order|Eine Order ist ein Kauf- oder Verkaufsauftrag an der Börse.|
+Limit-Order|Mit einer Limit-Order kauft oder verkauft man nur zu einem festgelegten Preis.|limit
+Stop-Loss|Ein Stop-Loss verkauft automatisch, wenn der Kurs unter eine Grenze fällt.|stop loss
+Volatilität|Volatilität beschreibt, wie stark ein Kurs schwankt.|schwankung
+Crash|Ein Börsencrash ist ein starker, plötzlicher Kurssturz, wie 1929, 2008 oder im März 2020.|boersencrash
+Blase|Eine Spekulationsblase entsteht, wenn Preise weit über den echten Wert steigen, etwa die Dotcom-Blase um 2000.|dotcom blase
+Leerverkauf|Beim Leerverkauf wettet man auf fallende Kurse.|short,shorten
+Hebel Börse|Mit Hebelprodukten verstärkt man Gewinne und Verluste, sie sind sehr riskant.|hebelprodukt
+Optionen|Eine Option ist das Recht, eine Aktie zu einem bestimmten Preis zu kaufen oder zu verkaufen.|call,put
+Derivat|Ein Derivat ist ein Finanzprodukt, dessen Wert von etwas anderem abhängt, etwa einer Aktie.|derivate
+Rohstoffe|Rohstoffe wie Öl, Gold, Kupfer und Weizen werden an Börsen gehandelt.|
+Ölpreis|Der Ölpreis wird meist für die Sorte Brent in Dollar pro Barrel angegeben, ein Barrel sind 159 Liter.|barrel,brent
+Goldpreis|Der Goldpreis wird in Dollar pro Feinunze angegeben.|
+Wechselkurs|Der Wechselkurs gibt an, wie viel eine Währung in einer anderen wert ist.|
+Leitwährung|Der US-Dollar ist die wichtigste Leitwährung der Welt.|
+Bargeld|In Deutschland wird noch vergleichsweise viel mit Bargeld bezahlt, der größte Euro-Schein ist seit 2019 der 200er.|500 euro schein
+Euromünzen|Es gibt acht Euromünzen von 1 Cent bis 2 Euro, die Rückseiten zeigen nationale Motive.|
+Falschgeld|Echte Euro-Scheine erkennt man an Fühlen, Sehen und Kippen: Relief, Wasserzeichen und Hologramm.|falschgeld erkennen
+Kontaktlos bezahlen|Kontaktlos zahlt man per Karte oder Handy, bis 50 Euro meist ohne PIN.|apple pay,google pay
+Girokonto|Ein Girokonto ist das Alltagskonto für Lohn, Miete und Karte.|
+Überweisung|Eine SEPA-Überweisung dauert höchstens einen Werktag, die Echtzeitüberweisung nur Sekunden.|echtzeitueberweisung
+Lastschrift|Bei einer Lastschrift zieht der Empfänger Geld ab, man kann sie 8 Wochen lang zurückgeben.|lastschrift zurueckgeben
+Dauerauftrag|Ein Dauerauftrag überweist regelmäßig einen festen Betrag, etwa die Miete.|
+Kreditkarte|Mit einer Kreditkarte zahlt man jetzt und das Geld wird später abgebucht. Bei Teilzahlung werden hohe Zinsen fällig.|
+Debitkarte|Bei einer Debitkarte wird das Geld sofort vom Konto abgebucht.|girocard
+Effektiver Jahreszins|Der effektive Jahreszins zeigt die echten Kosten eines Kredits inklusive Gebühren.|effektivzins
+Tilgung|Tilgung ist der Teil der Rate, der den Kredit tatsächlich verringert.|
+Baufinanzierung|Für ein Haus braucht man meist 10 bis 20 Prozent Eigenkapital, der Rest kommt als Kredit.|hauskredit,immobilienkredit
+Nebenkosten Hauskauf|Beim Hauskauf kommen etwa 10 Prozent Nebenkosten für Grunderwerbsteuer, Notar und Makler dazu.|kaufnebenkosten
+Grunderwerbsteuer|Die Grunderwerbsteuer liegt je nach Bundesland zwischen 3,5 und 6,5 Prozent.|
+Bausparvertrag|Beim Bausparvertrag spart man an und bekommt später einen Kredit mit festem Zins.|bausparen
+Riester-Rente|Die Riester-Rente ist eine staatlich geförderte private Altersvorsorge.|riester
+Betriebsrente|Bei der Betriebsrente spart der Arbeitgeber mit für das Alter.|bav
+Rentenlücke|Die Rentenlücke ist der Unterschied zwischen gesetzlicher Rente und dem, was man im Alter braucht.|
+Rentenalter|Das Rentenalter steigt in Deutschland schrittweise auf 67 Jahre.|wann rente
+Inflation Auswirkung|Bei 3 Prozent Inflation verliert Geld in 23 Jahren etwa die Hälfte seiner Kaufkraft.|kaufkraft
+Steuerklassen|Es gibt sechs Steuerklassen, Ledige haben Klasse 1, Verheiratete oft 3 und 5 oder 4 und 4.|steuerklasse
+Grundfreibetrag|Bis zum Grundfreibetrag von rund 12.000 Euro im Jahr zahlt man keine Einkommensteuer.|
+Spitzensteuersatz|Der Spitzensteuersatz von 42 Prozent gilt ab einem zu versteuernden Einkommen von rund 68.000 Euro für Ledige.|
+Solidaritätszuschlag|Den Soli zahlen seit 2021 nur noch Gutverdiener.|soli
+Kirchensteuer|Kirchenmitglieder zahlen 8 oder 9 Prozent ihrer Einkommensteuer als Kirchensteuer.|
+Abgeltungssteuer|Auf Kapitalerträge wie Zinsen und Dividenden fallen 25 Prozent Abgeltungsteuer plus Soli an.|kapitalertragsteuer
+Sparerpauschbetrag|Bis 1.000 Euro Kapitalerträge im Jahr sind steuerfrei, wenn man einen Freistellungsauftrag stellt.|freistellungsauftrag
+Werbungskosten|Werbungskosten wie Fahrtkosten und Arbeitsmittel senken die Steuer, pauschal gelten 1.230 Euro.|
+Pendlerpauschale|Die Pendlerpauschale beträgt pro Kilometer einfacher Strecke 30 Cent, ab dem 21. Kilometer 38 Cent.|entfernungspauschale
+Homeoffice-Pauschale|Pro Tag im Homeoffice kann man 6 Euro absetzen, maximal 1.260 Euro im Jahr.|
+Steuererstattung|Wer die Steuererklärung macht, bekommt im Schnitt über 1.000 Euro zurück.|
+Gewerbesteuer|Die Gewerbesteuer zahlen Gewerbetreibende an die Gemeinde.|
+Umsatzsteuer|Umsatzsteuer und Mehrwertsteuer meinen dasselbe, normal 19 Prozent, ermäßigt 7 Prozent.|
+Kleinunternehmerregelung|Bis 25.000 Euro Umsatz im Vorjahr muss man als Kleinunternehmer keine Umsatzsteuer ausweisen.|
+Einnahmenüberschussrechnung|Kleine Selbstständige ermitteln ihren Gewinn einfach per Einnahmen minus Ausgaben, die EÜR.|euer
+Buchhaltung|Buchhaltung erfasst alle Einnahmen und Ausgaben eines Unternehmens.|
+Bilanz|Eine Bilanz stellt Vermögen und Schulden eines Unternehmens gegenüber.|
+Cashflow|Der Cashflow zeigt, wie viel Geld tatsächlich hereinkommt und hinausgeht.|
+Fixkosten|Fixkosten sind feste Kosten wie Miete, variable Kosten hängen von der Menge ab.|variable kosten
+Gewinnmarge|Die Marge ist der Anteil des Gewinns am Umsatz.|marge
+Preisgestaltung|Ein Preis sollte Kosten decken, zum Markt passen und dem Kunden einen klaren Nutzen zeigen.|preis kalkulieren
+Stundensatz|Für einen Stundensatz rechnet man Wunscheinkommen plus Kosten geteilt durch abrechenbare Stunden.|stundensatz berechnen
+Rechnung Pflichtangaben|Eine Rechnung braucht Name und Anschrift, Steuernummer, Datum, Rechnungsnummer, Leistung, Betrag und Steuer.|rechnung schreiben
+Mahnung|Bei offenen Rechnungen schickt man erst eine freundliche Erinnerung, dann Mahnungen.|
+Inkasso|Ein Inkassobüro treibt offene Forderungen ein, unberechtigte Forderungen sollte man schriftlich bestreiten.|
+Schufa-Auskunft|Einmal im Jahr bekommt man kostenlos eine Selbstauskunft bei der Schufa.|schufa kostenlos
+Schuldnerberatung|Bei Schulden helfen kostenlose Schuldnerberatungen von Verbraucherzentrale, Caritas oder Diakonie.|schulden hilfe
+Privatinsolvenz|Mit einer Privatinsolvenz kann man nach drei Jahren schuldenfrei sein.|
+Haushaltsbuch|Ein Haushaltsbuch zeigt, wofür das Geld ausgegeben wird.|
+50-30-20-Regel|Nach der 50-30-20-Regel gehen 50 Prozent für Fixes, 30 für Wünsche und 20 ins Sparen.|50 30 20
+Sparquote|Die Deutschen sparen etwa 10 Prozent ihres verfügbaren Einkommens.|
+Vermögen Deutschland|Das mittlere Vermögen pro Haushalt liegt in Deutschland bei rund 100.000 Euro.|
+Krypto Risiko|Kryptowährungen schwanken extrem, man sollte nur Geld einsetzen, dessen Verlust man verkraftet.|
+Ethereum|Ethereum ist nach Bitcoin die zweitgrößte Kryptowährung und erlaubt Smart Contracts.|ether,eth
+Stablecoin|Ein Stablecoin ist eine Kryptowährung, die an eine Währung wie den Dollar gekoppelt ist.|
+Wallet|Eine Krypto-Wallet speichert die Schlüssel zu Kryptowährungen.|
+Digitaler Euro|Die EZB plant einen digitalen Euro als Ergänzung zum Bargeld.|
+Globalisierung|Globalisierung ist die weltweite Verflechtung von Handel, Arbeit und Kultur.|
+Zölle|Zölle sind Abgaben auf eingeführte Waren.|zoll
+Handelsbilanz|Die Handelsbilanz vergleicht Exporte und Importe eines Landes.|exportweltmeister
+Arbeitslosenquote|Die Arbeitslosenquote in Deutschland lag zuletzt bei rund 6 Prozent.|arbeitslosigkeit
+Bürgergeld|Das Bürgergeld ersetzte 2023 Hartz IV als Grundsicherung für Arbeitsuchende.|hartz 4,hartz iv
+Wohngeld|Wohngeld ist ein Zuschuss zur Miete für Haushalte mit geringem Einkommen.|
+Elterngeld|Elterngeld ersetzt nach der Geburt etwa 65 bis 67 Prozent des Nettoeinkommens.|
+Mutterschutz|Der Mutterschutz beginnt 6 Wochen vor der Geburt und endet meist 8 Wochen danach.|
+Kurzarbeit|Bei Kurzarbeit zahlt die Arbeitsagentur einen Teil des ausgefallenen Lohns.|kurzarbeitergeld
+Arbeitslosengeld|Das Arbeitslosengeld beträgt 60 Prozent des Nettolohns, mit Kind 67 Prozent.|alg 1
+Minijob|Im Minijob darf man aktuell bis 556 Euro im Monat verdienen.|minijob grenze
+Midijob|Im Übergangsbereich bis 2.000 Euro zahlt man geringere Sozialabgaben.|
+Sozialabgaben|Arbeitnehmer zahlen etwa 20 Prozent ihres Bruttolohns für Renten-, Kranken-, Pflege- und Arbeitslosenversicherung.|
+Lohnabrechnung|Auf der Lohnabrechnung stehen Brutto, Steuern, Sozialabgaben und Netto.|gehaltsabrechnung
+Tarifvertrag|Ein Tarifvertrag regelt Löhne und Arbeitszeit zwischen Gewerkschaften und Arbeitgebern.|
+Gewerkschaft|Gewerkschaften wie IG Metall oder Verdi vertreten Beschäftigte.|ig metall,verdi
+Streik|Ein Streik ist eine Arbeitsniederlegung, um bessere Bedingungen durchzusetzen.|
+Vermögenswirksame Leistungen|Bei vermögenswirksamen Leistungen zahlt der Arbeitgeber bis zu 40 Euro im Monat in einen Sparvertrag.|vl
+Gehaltsverhandlung|In der Gehaltsverhandlung hilft es, den Marktwert zu kennen und konkrete Erfolge zu nennen.|mehr gehalt
+Nebenkostenabrechnung|Die Nebenkostenabrechnung muss spätestens 12 Monate nach Ende des Abrechnungszeitraums kommen.|
+Strompreis|Der Strompreis für Haushalte liegt in Deutschland bei rund 35 bis 40 Cent pro Kilowattstunde.|strom kosten
+Stromverbrauch|Ein Single-Haushalt verbraucht etwa 1.500 Kilowattstunden Strom im Jahr, eine Familie mit vier Personen etwa 4.000.|
+Anbieterwechsel|Strom- und Gasanbieter zu wechseln spart oft Hunderte Euro im Jahr, die Belieferung ist immer gesichert.|stromanbieter wechseln
+Versicherungen wichtig|Wichtig sind Haftpflicht, Krankenversicherung und bei Bedarf Berufsunfähigkeit. Viele andere sind verzichtbar.|welche versicherungen braucht man
+Berufsunfähigkeitsversicherung|Die Berufsunfähigkeitsversicherung zahlt eine Rente, wenn man seinen Beruf nicht mehr ausüben kann.|bu
+Hausratversicherung|Die Hausratversicherung ersetzt Gegenstände in der Wohnung bei Feuer, Wasser oder Einbruch.|
+Rechtsschutzversicherung|Eine Rechtsschutzversicherung übernimmt Anwalts- und Gerichtskosten.|
+Stiftung Warentest|Die Stiftung Warentest prüft unabhängig Produkte und Finanzangebote.|warentest
+Verbraucherzentrale|Die Verbraucherzentralen beraten bei Verträgen, Geld und Abzocke.|

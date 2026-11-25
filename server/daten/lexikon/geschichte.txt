@@ -90,3 +90,180 @@
 2024|Fußball-EM in Deutschland|Im Sommer 2024 findet die Fußball-Europameisterschaft in Deutschland statt. Spanien wird Europameister.|em 2024
 2024|Olympische Spiele in Paris|Im Sommer 2024 finden die Olympischen Spiele in Paris statt.|olympia 2024
 2026|Fußball-WM in Nordamerika|2026 findet die Fußball-WM erstmals mit 48 Mannschaften in den USA, Kanada und Mexiko statt.|wm 2026
+-10000|Beginn der Landwirtschaft|Um 10.000 vor Christus beginnen Menschen im Fruchtbaren Halbmond im Nahen Osten, Getreide anzubauen und Tiere zu halten, die Jungsteinzeit beginnt.|neolithische revolution,jungsteinzeit
+-3300|Ötzi|Um 3300 vor Christus stirbt in den Ötztaler Alpen ein Mann, der 1991 als Gletschermumie Ötzi gefunden wird.|oetzi,gletschermumie
+-3100|Einigung Ägyptens|Um 3100 vor Christus wird Ägypten unter einem Pharao vereint.|altes aegypten
+-2500|Stonehenge|Um 2500 vor Christus werden in Südengland die großen Steine von Stonehenge aufgerichtet.|stonehenge
+-1750|Codex Hammurabi|Um 1750 vor Christus lässt König Hammurabi in Babylon eine der ältesten Gesetzessammlungen aufschreiben.|hammurabi gesetz
+-1600|Himmelsscheibe von Nebra|Um 1600 vor Christus entsteht in Mitteldeutschland die Himmelsscheibe von Nebra, die älteste konkrete Darstellung des Himmels.|nebra
+-1323|Tod Tutanchamuns|Um 1323 vor Christus stirbt der junge Pharao Tutanchamun.|
+-800|Griechische Stadtstaaten|Ab etwa 800 vor Christus entstehen in Griechenland Stadtstaaten wie Athen und Sparta.|polis
+-563|Geburt Buddhas|Um 563 vor Christus wird nach traditioneller Zählung Siddhartha Gautama geboren, der spätere Buddha.|
+-490|Schlacht bei Marathon|490 vor Christus besiegen die Athener die Perser bei Marathon. Ein Läufer soll die Siegesnachricht nach Athen gebracht haben.|marathon schlacht
+-480|Schlacht bei den Thermopylen|480 vor Christus halten 300 Spartaner unter König Leonidas das persische Heer auf.|300 spartaner,thermopylen
+-447|Bau des Parthenon|Ab 447 vor Christus entsteht auf der Akropolis in Athen der Parthenon-Tempel.|parthenon
+-399|Tod des Sokrates|399 vor Christus wird der Philosoph Sokrates in Athen zum Tod durch den Schierlingsbecher verurteilt.|
+-218|Hannibal überquert die Alpen|218 vor Christus zieht der Karthager Hannibal mit Elefanten über die Alpen nach Italien.|hannibal alpen
+-146|Zerstörung Karthagos|146 vor Christus zerstören die Römer Karthago.|
+-73|Spartacus-Aufstand|73 vor Christus beginnt der Sklavenaufstand unter Spartacus.|
+-49|Caesar überschreitet den Rubikon|49 vor Christus überschreitet Julius Caesar mit seinem Heer den Rubikon und löst einen Bürgerkrieg aus.|rubikon
+-27|Beginn des Römischen Kaiserreichs|27 vor Christus wird Augustus der erste römische Kaiser.|kaiserreich rom
+-4|Geburt Jesu|Jesus wurde vermutlich zwischen 7 und 4 vor Christus geboren, ein Rechenfehler im Mittelalter verschob die Zeitrechnung.|geburt von jesus
+30|Kreuzigung Jesu|Um das Jahr 30 wird Jesus in Jerusalem gekreuzigt.|
+64|Brand Roms|Im Jahr 64 brennt Rom, Kaiser Nero gibt den Christen die Schuld.|
+70|Zerstörung des Tempels in Jerusalem|Im Jahr 70 zerstören die Römer den Zweiten Tempel in Jerusalem, die Klagemauer ist ein Rest davon.|
+80|Eröffnung des Kolosseums|Im Jahr 80 wird in Rom das Kolosseum mit 100 Tagen Spielen eingeweiht.|kolosseum eroeffnung
+122|Hadrianswall|Ab 122 lässt Kaiser Hadrian in Nordengland einen Grenzwall bauen.|
+313|Mailänder Toleranzedikt|313 erlauben die Kaiser Konstantin und Licinius das Christentum im Römischen Reich.|toleranzedikt
+375|Beginn der Völkerwanderung|Um 375 stoßen die Hunnen nach Europa vor und lösen die Völkerwanderung aus.|voelkerwanderung
+395|Teilung des Römischen Reichs|395 wird das Römische Reich endgültig in ein West- und ein Oströmisches Reich geteilt.|
+537|Hagia Sophia|537 wird in Konstantinopel die Hagia Sophia eingeweiht, fast tausend Jahre die größte Kirche der Welt.|
+570|Geburt Mohammeds|Um 570 wird in Mekka Mohammed geboren, der Prophet des Islam.|
+732|Schlacht bei Tours und Poitiers|732 stoppt Karl Martell das Vordringen der arabischen Heere ins Frankenreich.|
+793|Beginn der Wikingerzeit|793 überfallen Wikinger das Kloster Lindisfarne in England, das gilt als Beginn der Wikingerzeit.|wikinger
+843|Vertrag von Verdun|843 wird das Frankenreich unter den Enkeln Karls des Großen geteilt, ein Grundstein für Frankreich und Deutschland.|
+962|Otto der Große wird Kaiser|962 wird Otto I. in Rom zum Kaiser gekrönt, Beginn des Heiligen Römischen Reichs.|heiliges roemisches reich
+1000|Leif Eriksson in Amerika|Um 1000 erreicht der Wikinger Leif Eriksson Nordamerika, fast 500 Jahre vor Kolumbus.|
+1054|Morgenländisches Schisma|1054 trennen sich die katholische und die orthodoxe Kirche.|schisma
+1077|Gang nach Canossa|1077 geht König Heinrich IV. im Büßergewand nach Canossa zu Papst Gregor VII.|canossa
+1099|Eroberung Jerusalems|1099 erobern die Kreuzfahrer Jerusalem.|
+1158|Gründung Münchens|1158 wird München erstmals urkundlich erwähnt.|muenchen gegruendet
+1163|Baubeginn Notre-Dame|1163 beginnt in Paris der Bau der Kathedrale Notre-Dame.|notre dame
+1248|Baubeginn Kölner Dom|1248 beginnt der Bau des Kölner Doms, fertig wird er erst 1880.|koelner dom bau
+1271|Marco Polo reist nach China|1271 bricht Marco Polo nach China auf.|
+1291|Gründung der Schweiz|1291 schließen Uri, Schwyz und Unterwalden den Rütlischwur, der Beginn der Eidgenossenschaft.|ruetlischwur
+1337|Beginn des Hundertjährigen Krieges|1337 beginnt der Hundertjährige Krieg zwischen England und Frankreich, er dauert bis 1453.|hundertjaehriger krieg
+1386|Gründung der Uni Heidelberg|1386 wird in Heidelberg die älteste Universität im heutigen Deutschland gegründet.|aelteste universitaet deutschland
+1415|Jan Hus verbrannt|1415 wird der Reformator Jan Hus in Konstanz als Ketzer verbrannt.|
+1431|Tod der Jeanne d'Arc|1431 wird Jeanne d'Arc in Rouen verbrannt.|
+1455|Gutenberg-Bibel|Um 1455 druckt Johannes Gutenberg in Mainz seine berühmte Bibel.|gutenberg bibel
+1478|Spanische Inquisition|1478 wird die Spanische Inquisition gegründet.|inquisition
+1503|Mona Lisa|Ab 1503 malt Leonardo da Vinci die Mona Lisa.|mona lisa gemalt
+1508|Sixtinische Kapelle|1508 bis 1512 malt Michelangelo die Decke der Sixtinischen Kapelle.|sixtinische kapelle
+1521|Fall von Tenochtitlan|1521 erobert Hernán Cortés die Aztekenhauptstadt Tenochtitlan.|azteken
+1525|Deutscher Bauernkrieg|1524 und 1525 erheben sich Bauern in Süd- und Mitteldeutschland gegen ihre Herren.|bauernkrieg
+1532|Eroberung des Inkareichs|Ab 1532 erobert Francisco Pizarro das Reich der Inka.|inka
+1555|Augsburger Religionsfrieden|1555 dürfen die Landesherren im Reich zwischen katholisch und lutherisch wählen.|religionsfrieden
+1588|Untergang der Armada|1588 scheitert die Spanische Armada beim Angriff auf England.|armada
+1600|Gründung der Ostindien-Kompanie|1600 wird die britische Ostindien-Kompanie gegründet.|
+1607|Jamestown|1607 gründen Engländer mit Jamestown die erste dauerhafte Siedlung in Nordamerika.|
+1620|Mayflower|1620 landen die Pilgerväter mit der Mayflower in Amerika.|pilgervaeter
+1632|Taj Mahal|Ab 1632 lässt Großmogul Shah Jahan für seine verstorbene Frau das Taj Mahal bauen.|
+1633|Galileo vor der Inquisition|1633 muss Galileo Galilei seine Lehre abschwören, dass sich die Erde um die Sonne dreht.|galilei prozess
+1648|Westfälischer Friede|1648 endet in Münster und Osnabrück der Dreißigjährige Krieg.|westfaelischer friede,ende dreissigjaehriger krieg
+1666|Großer Brand von London|1666 brennt ein großer Teil Londons nieder.|
+1683|Belagerung Wiens|1683 scheitern die Osmanen bei der zweiten Belagerung Wiens.|tuerkenbelagerung
+1701|Königreich Preußen|1701 krönt sich Friedrich I. zum König in Preußen.|preussen
+1756|Siebenjähriger Krieg|1756 bis 1763 kämpfen Preußen und Großbritannien gegen Österreich, Frankreich und Russland.|siebenjaehriger krieg
+1769|Dampfmaschine|1769 lässt James Watt seine verbesserte Dampfmaschine patentieren, Startschuss der Industrialisierung.|
+1773|Boston Tea Party|1773 werfen Siedler in Boston aus Protest gegen Steuern Tee ins Hafenbecken.|
+1781|Kritik der reinen Vernunft|1781 veröffentlicht Immanuel Kant sein Hauptwerk.|
+1783|Erster Ballonflug|1783 steigt in Paris der erste bemannte Heißluftballon der Brüder Montgolfier auf.|montgolfiere
+1791|Zauberflöte|1791 wird Mozarts Zauberflöte in Wien uraufgeführt, kurz vor seinem Tod.|zauberfloete
+1799|Napoleon übernimmt die Macht|1799 übernimmt Napoleon Bonaparte durch einen Staatsstreich die Macht in Frankreich.|
+1806|Ende des Heiligen Römischen Reichs|1806 legt Franz II. die Kaiserkrone nieder, das Heilige Römische Reich endet nach rund 850 Jahren.|
+1810|Erstes Oktoberfest|1810 feiert München mit einem Pferderennen die Hochzeit von Kronprinz Ludwig, das erste Oktoberfest.|oktoberfest geschichte
+1812|Napoleons Russlandfeldzug|1812 scheitert Napoleon mit der Grande Armée in Russland.|russlandfeldzug
+1813|Völkerschlacht bei Leipzig|1813 wird Napoleon bei Leipzig entscheidend geschlagen.|voelkerschlacht
+1817|Laufmaschine|1817 erfindet Karl Drais in Mannheim die Laufmaschine, den Vorläufer des Fahrrads.|draisine
+1824|Neunte Sinfonie|1824 wird Beethovens Neunte mit der Ode an die Freude uraufgeführt, heute die Europahymne.|ode an die freude
+1832|Hambacher Fest|1832 fordern beim Hambacher Fest Zehntausende Einheit und Freiheit, Schwarz-Rot-Gold wird zum Symbol.|hambacher fest
+1859|Darwins Evolutionstheorie|1859 veröffentlicht Charles Darwin Über die Entstehung der Arten.|entstehung der arten
+1863|Rotes Kreuz|1863 wird in Genf das Rote Kreuz gegründet.|
+1865|Ende des US-Bürgerkriegs|1865 endet der Amerikanische Bürgerkrieg, die Sklaverei wird abgeschafft, Abraham Lincoln wird ermordet.|sklaverei abgeschafft
+1869|Suezkanal|1869 wird der Suezkanal eröffnet.|
+1876|Telefon|1876 meldet Alexander Graham Bell das Telefon zum Patent an.|
+1883|Krankenversicherung|1883 führt Bismarck die gesetzliche Krankenversicherung ein, später folgen Unfall- und Rentenversicherung.|sozialversicherung
+1885|Benz Patent-Motorwagen|1885 baut Carl Benz das erste Auto, 1886 meldet er es zum Patent an.|
+1888|Dreikaiserjahr|1888 regieren in Deutschland nacheinander drei Kaiser: Wilhelm I., Friedrich III. und Wilhelm II.|dreikaiserjahr
+1889|Eiffelturm|1889 wird zur Weltausstellung in Paris der Eiffelturm fertig.|
+1895|Röntgenstrahlen und Kino|1895 entdeckt Wilhelm Conrad Röntgen die nach ihm benannten Strahlen, in Paris zeigen die Brüder Lumière den ersten Film.|
+1900|Bürgerliches Gesetzbuch|1900 tritt in Deutschland das BGB in Kraft.|bgb
+1901|Erste Nobelpreise|1901 werden die ersten Nobelpreise vergeben.|nobelpreis
+1905|Relativitätstheorie|1905 veröffentlicht Albert Einstein die spezielle Relativitätstheorie, sein Wunderjahr.|wunderjahr
+1908|Ford Model T|1908 kommt das Ford Model T auf den Markt, ab 1913 vom Fließband.|tin lizzie
+1911|Amundsen am Südpol|Am 14. Dezember 1911 erreicht Roald Amundsen als Erster den Südpol.|suedpol
+1920|Frauenwahlrecht USA|1920 dürfen in den USA Frauen wählen, in Deutschland schon seit 1918.|frauenwahlrecht
+1923|Hyperinflation|1923 kostet in Deutschland ein Brot zeitweise Milliarden Mark, danach kommt die Rentenmark.|hyperinflation,inflation 1923
+1927|Lindbergh überquert den Atlantik|1927 fliegt Charles Lindbergh als Erster allein nonstop über den Atlantik.|lindbergh
+1928|Penicillin|1928 entdeckt Alexander Fleming das Penicillin.|
+1937|Hindenburg-Katastrophe|1937 geht das Luftschiff Hindenburg in Lakehurst in Flammen auf, das Ende der großen Zeppeline.|hindenburg
+1938|Novemberpogrome|Am 9. November 1938 zerstören Nationalsozialisten Synagogen und jüdische Geschäfte, Hunderte Juden werden getötet.|reichspogromnacht,kristallnacht
+1941|Angriff auf Pearl Harbor|Am 7. Dezember 1941 greift Japan Pearl Harbor an, die USA treten in den Zweiten Weltkrieg ein.|pearl harbor
+1942|Wannseekonferenz|1942 planen NS-Beamte bei der Wannseekonferenz die Ermordung der europäischen Juden.|
+1943|Stalingrad|Anfang 1943 kapituliert die deutsche 6. Armee in Stalingrad, die Wende im Krieg im Osten.|stalingrad
+1944|D-Day|Am 6. Juni 1944 landen alliierte Truppen in der Normandie.|d day,normandie
+1946|Nürnberger Prozesse|1945 und 1946 werden in Nürnberg führende Nationalsozialisten verurteilt.|nuernberger prozesse
+1947|Indiens Unabhängigkeit|1947 wird Indien unabhängig von Großbritannien, Pakistan entsteht als eigener Staat.|
+1950|Koreakrieg|1950 beginnt der Koreakrieg, der 1953 mit einem Waffenstillstand endet.|koreakrieg
+1955|Bundeswehr gegründet|1955 wird die Bundeswehr gegründet und die Bundesrepublik tritt der NATO bei.|
+1959|Kubanische Revolution|1959 übernimmt Fidel Castro die Macht in Kuba.|
+1962|Kubakrise|Im Oktober 1962 steht die Welt wegen sowjetischer Raketen auf Kuba am Rand eines Atomkriegs.|kubakrise
+1964|Beatles in Amerika|1964 erobern die Beatles Amerika.|
+1965|Vietnamkrieg|1965 schicken die USA Kampftruppen nach Vietnam, der Krieg endet 1975.|vietnamkrieg
+1967|Erste Herztransplantation|1967 verpflanzt Christiaan Barnard in Kapstadt erstmals ein menschliches Herz.|
+1968|Studentenbewegung|1968 protestieren Studenten weltweit, Martin Luther King wird ermordet.|68er
+1971|Erster Mikroprozessor|1971 stellt Intel mit dem 4004 den ersten Mikroprozessor vor.|intel 4004
+1973|Ölkrise|1973 drosseln die Ölstaaten die Förderung, in Deutschland gibt es autofreie Sonntage.|oelkrise
+1976|Gründung von Apple|1976 gründen Steve Jobs, Steve Wozniak und Ronald Wayne die Firma Apple.|apple gegruendet
+1977|Deutscher Herbst|1977 erschüttert der Terror der RAF die Bundesrepublik.|raf
+1979|Iranische Revolution|1979 stürzt die Islamische Revolution im Iran den Schah.|
+1981|Erster IBM-PC|1981 stellt IBM den Personal Computer vor.|ibm pc
+1983|Internet-Protokoll|Am 1. Januar 1983 stellt das Arpanet auf TCP/IP um, die Geburtsstunde des Internets.|geburtstag internet
+1984|Macintosh|1984 stellt Apple den ersten Macintosh vor.|erster mac
+1985|Gorbatschow an der Macht|1985 wird Michail Gorbatschow Chef der Sowjetunion und leitet Reformen ein.|glasnost,perestroika
+1987|Reagan in Berlin|1987 ruft Ronald Reagan in Berlin: Mr. Gorbachev, tear down this wall!|
+1992|Vertrag von Maastricht|1992 wird der Vertrag von Maastricht unterzeichnet, aus der EG wird die Europäische Union.|maastricht
+1994|Ende der Apartheid|1994 wird Nelson Mandela der erste schwarze Präsident Südafrikas. Im selben Jahr ereignet sich der Völkermord in Ruanda.|apartheid,ruanda
+1995|Srebrenica|1995 ermorden bosnisch-serbische Truppen in Srebrenica rund 8.000 Muslime.|
+1998|Gründung von Google|1998 gründen Larry Page und Sergey Brin Google.|google gegruendet
+1999|Euro als Buchgeld|1999 wird der Euro als Buchgeld eingeführt, die Münzen und Scheine folgen 2002.|
+2003|Irakkrieg|2003 marschieren die USA und Verbündete in den Irak ein.|irakkrieg
+2010|Instagram und iPad|2010 kommen das iPad und Instagram auf den Markt.|
+2012|Higgs-Teilchen|2012 wird am CERN das Higgs-Boson nachgewiesen.|higgs boson
+2015|Flüchtlingskrise|2015 kommen über eine Million Geflüchtete nach Deutschland, viele aus Syrien.|fluechtlinge 2015
+2017|Trump wird Präsident|2017 wird Donald Trump US-Präsident.|
+2018|DSGVO|Im Mai 2018 tritt die Datenschutz-Grundverordnung in der EU in Kraft.|
+2021|Regierungswechsel Deutschland|2021 endet die Ära Merkel, Olaf Scholz wird Bundeskanzler.|ampel
+2021|Sturm auf das Kapitol|Am 6. Januar 2021 stürmen Anhänger von Donald Trump das US-Kapitol.|kapitol
+2025|Friedrich Merz Kanzler|Im Mai 2025 wird Friedrich Merz Bundeskanzler.|merz kanzler
+2025|Neuer Papst|Im Mai 2025 wird Robert Prevost als Leo XIV. erster Papst aus den USA.|papst leo
+-2560|Cheops-Pyramide|Die Große Pyramide von Gizeh wurde um 2560 vor Christus für Pharao Cheops gebaut. Sie war fast 4.000 Jahre lang das höchste Bauwerk der Welt.|pyramide gebaut,cheops
+-1750|Codex Hammurapi|König Hammurapi von Babylon ließ eine der ältesten Gesetzessammlungen der Welt in Stein meißeln, mit dem Grundsatz Auge um Auge.|hammurapi,auge um auge
+-1332|Tutanchamun wird Pharao|Der Kindkönig Tutanchamun bestieg mit etwa neun Jahren den Thron. Sein fast unberührtes Grab wurde 1922 entdeckt.|
+79|Ausbruch des Vesuv|Der Vesuv verschüttete die Städte Pompeji und Herculaneum unter Asche, die bis heute fast unversehrt erhalten sind.|pompeji,vesuv
+476|Ende des Weströmischen Reichs|Der letzte weströmische Kaiser Romulus Augustulus wurde abgesetzt, das gilt als Beginn des Mittelalters.|untergang roms
+1453|Fall von Konstantinopel|Die Osmanen eroberten Konstantinopel, das heutige Istanbul. Das Byzantinische Reich endete.|konstantinopel,byzanz
+1494|Vertrag von Tordesillas|Spanien und Portugal teilten die Neue Welt unter sich auf, darum spricht man in Brasilien Portugiesisch.|
+1543|Kopernikus' Weltbild|Nikolaus Kopernikus veröffentlichte, dass sich die Erde um die Sonne dreht, nicht umgekehrt.|heliozentrisch
+1564|Geburt Shakespeares|William Shakespeare wurde in Stratford-upon-Avon geboren.|
+1572|Bartholomäusnacht|In Paris wurden Tausende Protestanten, die Hugenotten, ermordet.|hugenotten
+1609|Keplers Gesetze|Johannes Kepler veröffentlichte, dass Planeten auf Ellipsen um die Sonne kreisen.|
+1712|Geburt Friedrichs des Großen|Friedrich II. von Preußen, später der Alte Fritz genannt, wurde in Berlin geboren.|
+1770|Geburt Beethovens|Ludwig van Beethoven wurde in Bonn geboren.|
+1787|US-Verfassung|Die Verfassung der Vereinigten Staaten wurde unterzeichnet, sie ist die älteste noch gültige geschriebene Staatsverfassung.|amerikanische verfassung
+1830|Erste Personeneisenbahn|Zwischen Liverpool und Manchester fuhr die erste Eisenbahn für Passagiere nach Fahrplan.|
+1840|Erste Briefmarke|Großbritannien gab die One Penny Black heraus, die erste Briefmarke der Welt.|penny black
+1844|Weberaufstand|Die schlesischen Weber erhoben sich gegen Hunger und Ausbeutung.|weberaufstand
+1861|Beginn des US-Bürgerkriegs|Die Südstaaten traten aus der Union aus, der Krieg drehte sich vor allem um die Sklaverei.|amerikanischer bürgerkrieg
+1867|Kauf Alaskas|Die USA kauften Alaska für 7,2 Millionen Dollar von Russland.|alaska gekauft
+1886|Freiheitsstatue|Die Freiheitsstatue, ein Geschenk Frankreichs, wurde in New York eingeweiht.|
+1896|Erste moderne Olympische Spiele|In Athen fanden die ersten Olympischen Spiele der Neuzeit statt, angeregt von Pierre de Coubertin.|olympia 1896
+1906|Erdbeben von San Francisco|Ein schweres Erdbeben und Brände zerstörten große Teile von San Francisco.|
+1922|Grab des Tutanchamun entdeckt|Howard Carter fand im Tal der Könige das fast unberührte Grab des Pharaos.|
+1924|Erste Olympische Winterspiele|In Chamonix in Frankreich fanden die ersten Winterspiele statt.|
+1930|Erste Fußball-WM|Die erste Fußball-Weltmeisterschaft fand in Uruguay statt, Uruguay gewann.|wm 1930
+1956|Ungarischer Volksaufstand|Die Ungarn erhoben sich gegen die sowjetische Herrschaft, der Aufstand wurde von Panzern niedergeschlagen.|
+1958|Gründung der EWG|Die Europäische Wirtschaftsgemeinschaft trat in Kraft, ein Vorläufer der EU.|römische verträge
+1966|Kulturrevolution|Mao Zedong startete in China die Kulturrevolution, Millionen Menschen wurden verfolgt.|
+1970|Kniefall von Warschau|Bundeskanzler Willy Brandt kniete am Denkmal für den Aufstand im Warschauer Ghetto, eine Geste der Versöhnung.|brandt kniefall
+1972|Olympia-Attentat München|Palästinensische Terroristen nahmen bei den Spielen israelische Sportler als Geiseln, elf starben.|münchen 1972
+1974|Deutschland Weltmeister|Deutschland wurde im eigenen Land zum zweiten Mal Fußball-Weltmeister.|wm 1974
+1991|Zerfall der Sowjetunion|Die Sowjetunion löste sich in 15 Staaten auf, Gorbatschow trat zurück.|ende udssr
+1997|Hongkong an China|Großbritannien gab Hongkong nach 156 Jahren an China zurück.|
+2002|Euro-Bargeld|Am 1. Januar wurde in Deutschland und elf weiteren Ländern das Euro-Bargeld eingeführt, die D-Mark verschwand.|euro bargeld,einführung euro
+2005|Merkel wird Kanzlerin|Angela Merkel wurde die erste Bundeskanzlerin Deutschlands und blieb 16 Jahre im Amt.|
+2009|Barack Obama Präsident|Barack Obama wurde der erste schwarze Präsident der USA.|
+2014|Deutschland Weltmeister in Brasilien|Deutschland gewann zum vierten Mal die WM, im Halbfinale 7:1 gegen Brasilien, im Finale 1:0 gegen Argentinien durch Götze.|wm 2014,7 zu 1
+2022|ChatGPT erscheint|OpenAI veröffentlichte ChatGPT, das KI-Chatprogramme schlagartig bekannt machte.|
+2023|Atomausstieg Deutschland|Am 15. April wurden die letzten drei deutschen Kernkraftwerke abgeschaltet.|akw abgeschaltet

@@ -52,3 +52,103 @@ Bewerbung|Eine Bewerbung besteht meist aus Anschreiben, Lebenslauf und Zeugnisse
 Umzug|Nach einem Umzug musst du dich innerhalb von zwei Wochen beim Bürgeramt ummelden. Der Vermieter muss dir eine Wohnungsgeberbestätigung geben.|ummelden,umziehen
 Kfz-Versicherung|Die Kfz-Haftpflicht ist in Deutschland Pflicht. Wechseln kann man meist zum 30. November, damit es ab 1. Januar gilt.|autoversicherung wechseln
 Haftpflichtversicherung|Eine private Haftpflichtversicherung zahlt, wenn du anderen aus Versehen einen Schaden zufügst. Sie gilt als eine der wichtigsten Versicherungen.|privathaftpflicht
+Rundfunkbeitrag|Der Rundfunkbeitrag kostet 18,36 Euro im Monat pro Wohnung, egal wie viele Geräte. Wer Bürgergeld oder BAföG bekommt, kann sich befreien lassen.|gez,rundfunkgebühr,rundfunkbeitrag
+Steuererklärung Frist|Die Steuererklärung ist für Pflichtige bis 31. Juli des Folgejahres fällig, mit Steuerberater später. Freiwillig darfst du vier Jahre rückwirkend abgeben, oft gibt es Geld zurück.|steuererklärung,abgabefrist steuer
+Elster|Elster ist das kostenlose Online-Portal des Finanzamts für die Steuererklärung. Du brauchst ein Benutzerkonto mit Zertifikat.|elster online
+Lohnsteuerklassen|Es gibt sechs Steuerklassen: I für Ledige, II für Alleinerziehende, III und V für Ehepaare mit unterschiedlichem Einkommen, IV für Ehepaare mit ähnlichem Einkommen, VI für einen Zweitjob.|steuerklasse,steuerklassen
+Minijob|Ein Minijob ist eine Arbeit bis 603 Euro im Monat (Stand 2026, die Grenze wächst mit dem Mindestlohn). Du zahlst keine Steuern und meist keine Sozialabgaben, nur Rentenbeitrag, von dem du dich befreien lassen kannst.|450 euro job,minijob grenze,603 euro
+Mindestlohn|Der gesetzliche Mindestlohn liegt seit 2026 bei 13,90 Euro pro Stunde und soll 2027 auf 14,60 Euro steigen.|mindestlohn deutschland
+Probezeit Job|In der Probezeit, höchstens sechs Monate, können beide Seiten mit zwei Wochen Frist kündigen.|probezeit
+Kündigungsfrist Arbeit|Ohne Vertragsregel kannst du als Arbeitnehmer mit vier Wochen zum 15. oder Monatsende kündigen. Für den Arbeitgeber wird die Frist mit der Betriebszugehörigkeit länger. Kündigungen müssen schriftlich auf Papier sein.|kündigung job,kündigen arbeit
+Arbeitszeugnis|Du hast Anspruch auf ein Arbeitszeugnis. Es muss wohlwollend formuliert sein, darum gibt es eine Zeugnissprache: stets zu unserer vollsten Zufriedenheit ist eine Eins.|zeugnissprache
+Überstunden|Überstunden muss der Arbeitgeber bezahlen oder mit Freizeit ausgleichen, wenn er sie angeordnet oder geduldet hat, außer der Vertrag regelt es anders.|
+Mutterschutz|Der Mutterschutz beginnt sechs Wochen vor der Geburt und endet acht Wochen danach, in dieser Zeit gibt es Mutterschaftsgeld.|mutterschutz dauer
+Elterngeld|Elterngeld ersetzt etwa 65 Prozent des Nettoeinkommens, bis 1.800 Euro im Monat, meist bis zu 14 Monate für beide Eltern zusammen.|elterngeld höhe
+Bürgergeld|Bürgergeld ist die Grundsicherung für Arbeitssuchende, früher Hartz IV. Der Regelsatz für Alleinstehende liegt bei 563 Euro plus Miete und Heizung.|hartz 4,hartz iv,grundsicherung
+Wohngeld|Wohngeld ist ein Zuschuss zur Miete für Haushalte mit kleinem Einkommen. Beantragt wird es bei der Wohngeldstelle der Stadt.|mietzuschuss
+Arbeitslosengeld|Arbeitslosengeld I gibt es nach mindestens 12 Monaten Beschäftigung, etwa 60 Prozent des Nettolohns, mit Kind 67 Prozent. Melde dich spätestens drei Monate vor Jobende arbeitssuchend.|alg 1,arbeitslos melden
+Rente Eintrittsalter|Die Regelaltersgrenze steigt schrittweise auf 67 Jahre, für alle ab Jahrgang 1964.|renteneintritt,rentenalter
+Krankenversicherung|In Deutschland gibt es eine Pflicht zur Krankenversicherung. Gesetzlich versichert sind etwa 90 Prozent, privat zum Beispiel Beamte und Gutverdiener.|gesetzlich privat versichert
+Hausratversicherung|Die Hausratversicherung zahlt bei Einbruch, Feuer, Leitungswasser und Sturm für die Dinge in deiner Wohnung.|hausratversicherung
+Mieterhöhung|Die Miete darf in drei Jahren höchstens um 20 Prozent steigen, in vielen Städten nur um 15 Prozent, und nur bis zur ortsüblichen Vergleichsmiete.|miete erhöhen,kappungsgrenze
+Mietpreisbremse|In Gebieten mit Mietpreisbremse darf die Miete bei Neuvermietung höchstens 10 Prozent über der ortsüblichen Vergleichsmiete liegen, mit Ausnahmen.|
+Schönheitsreparaturen|Streichen beim Auszug musst du nur, wenn es wirksam im Vertrag steht. Starre Fristen wie alle drei Jahre sind meist unwirksam.|renovieren auszug,streichen auszug
+Hausordnung Nachtruhe|Nachtruhe gilt meist von 22 bis 6 Uhr. In dieser Zeit sollst du Zimmerlautstärke einhalten.|nachtruhe,lärm nachts
+Parken Halteverbot|Im eingeschränkten Halteverbot darfst du bis drei Minuten halten oder zum Be- und Entladen. Im absoluten Halteverbot gar nicht.|halteverbot
+Parkscheibe|Die Parkscheibe stellst du auf die nächste halbe Stunde nach deiner Ankunft.|parkuhr
+Handy am Steuer|Handy am Steuer kostet 100 Euro und einen Punkt. Auch an der roten Ampel ist es verboten, wenn der Motor läuft.|handy auto strafe
+Rettungsgasse|Bei Stau auf Autobahnen bildest du sofort eine Rettungsgasse: ganz links fährt nach links, alle anderen nach rechts.|
+Reißverschlussverfahren|Wenn eine Spur endet, fährt man bis zum Ende der Spur und fädelt dann abwechselnd ein.|reissverschluss
+Rechts vor links|Wenn keine Schilder oder Ampeln regeln, hat der Verkehr von rechts Vorfahrt.|vorfahrt
+Fahrrad Regeln|Auf dem Rad gilt 0,0 Handy, Licht bei Dunkelheit, Radwege nur nutzen müssen, wenn ein blaues Schild da ist. Ab 1,6 Promille droht die MPU.|fahrrad verkehrsregeln
+E-Scooter Regeln|E-Scooter dürfen auf Radwegen und Straßen fahren, nicht auf Gehwegen. Erlaubt ab 14 Jahren, nur eine Person, es gelten Promillegrenzen wie beim Auto.|escooter
+Führerschein Umtausch|Alte Papierführerscheine und Kartenführerscheine bis 2013 müssen nach Geburtsjahr gestaffelt bis 2033 in den neuen EU-Kartenführerschein umgetauscht werden.|führerschein tauschen
+Umweltplakette|Für Umweltzonen in Städten brauchst du eine grüne Plakette. Sie kostet beim TÜV oder der Zulassungsstelle etwa 5 bis 10 Euro.|grüne plakette,umweltzone
+Vignette|In Österreich, der Schweiz, Tschechien und Slowenien brauchst du auf Autobahnen eine Vignette, oft digital.|maut ausland
+Reiseapotheke|In die Reiseapotheke gehören Schmerzmittel, Pflaster, Desinfektion, Mittel gegen Durchfall, Sonnencreme, Insektenschutz und eigene Medikamente.|
+Handgepäck Flüssigkeiten|Im Handgepäck sind Flüssigkeiten meist nur in Behältern bis 100 Milliliter in einem durchsichtigen Ein-Liter-Beutel erlaubt. Mit neuen Scannern lockern manche Flughäfen das.|flüssigkeiten flugzeug
+Roaming EU|In der EU telefonierst und surfst du zu Hause-Preisen. In der Schweiz und Großbritannien gilt das nicht immer.|roaming
+Krankenversicherung Ausland|Die europäische Krankenversicherungskarte, die Rückseite deiner Karte, gilt in der EU. Außerhalb lohnt eine Auslandsreise-Krankenversicherung, die kostet nur wenige Euro im Jahr.|auslandskrankenversicherung
+Pass verloren im Ausland|Bei verlorenem Pass im Ausland: Anzeige bei der Polizei, dann zur deutschen Botschaft oder zum Konsulat für ein Reisedokument.|ausweis verloren ausland
+Bargeld Limit Reise|Bei Einreise in die EU musst du mehr als 10.000 Euro Bargeld anmelden.|bargeld zoll
+Zoll Freimengen|Aus Nicht-EU-Ländern darfst du Waren bis 430 Euro zollfrei mitbringen, mit dem Flugzeug. Dazu zum Beispiel 200 Zigaretten und ein Liter Spirituosen.|zollfrei
+Paket nicht da|Wenn ein Paket nicht ankommt, wende dich an den Verkäufer. Er trägt das Risiko, bis die Ware bei dir ist.|paket verloren
+Abfluss verstopft|Bei verstopftem Abfluss hilft oft ein Pümpel. Hausmittel: Natron und Essig hinein, kurz warten, mit heißem Wasser nachspülen.|abfluss frei
+Schimmel|Schimmel entsteht durch Feuchtigkeit. Regelmäßig stoßlüften, Möbel etwas von der Wand, Raumtemperatur nicht unter 16 Grad. Größere Flächen meldest du dem Vermieter.|schimmel wand
+Glühbirne wechseln|Vor dem Wechseln Lampe ausschalten und abkühlen lassen. Achte auf Fassung wie E27, E14 oder GU10.|lampe wechseln,e27
+Sicherung raus|Wenn die Sicherung fliegt, zuerst das Gerät suchen, das den Fehler macht, ausstecken, dann im Sicherungskasten den Schalter wieder hoch.|fi schalter,sicherung
+Wasserhahn tropft|Ein tropfender Hahn verschwendet bis zu 2.000 Liter im Jahr. Oft hilft eine neue Dichtung oder Kartusche.|
+Fenster putzen|Zum Fensterputzen warmes Wasser mit etwas Spüli, danach mit Abzieher und Mikrofasertuch trocknen. Nicht in praller Sonne putzen, sonst gibt es Streifen.|
+Backofen reinigen|Backofen mit Paste aus Natron und Wasser einstreichen, über Nacht wirken lassen und abwischen.|
+Entkalken|Wasserkocher und Kaffeemaschine entkalkst du mit Zitronensäure oder Essigessenz in Wasser.|kalk entfernen
+Kühlschrank Temperatur|Der Kühlschrank sollte etwa 7 Grad haben, im untersten Fach ist es am kältesten, das Gemüsefach ist etwas wärmer.|
+Gefrierfach Temperatur|Das Gefrierfach sollte minus 18 Grad haben.|tiefkühler temperatur
+Wäsche Symbole|Die Zahl im Bottich ist die maximale Temperatur. Ein Strich darunter heißt Schonwaschgang, zwei Striche Wolle. Ein durchgestrichenes Dreieck heißt nicht bleichen.|pflegesymbole,waschsymbole
+Weiße Wäsche|Weiße Wäsche wäschst du getrennt, bei 40 oder 60 Grad mit Vollwaschmittel, das Bleiche enthält.|
+Wolle waschen|Wolle wäschst du kalt bis 30 Grad im Wollprogramm mit Wollwaschmittel, liegend trocknen.|
+Hemd bügeln|Beim Hemd erst Kragen, dann Manschetten, Ärmel, Schultern und zum Schluss Vorder- und Rückenteil.|bügeln
+Krawatte binden|Der einfache Knoten: breites Ende über das schmale, einmal herum, von unten durch die Halsschlaufe und vorne durch die Schlinge.|krawattenknoten
+Schuhe putzen|Schuhe erst bürsten, dann Creme auftragen, einziehen lassen und polieren. Wildleder nur bürsten und imprägnieren.|
+Geschenk verpacken|Papier etwa drei Finger breit überstehen lassen, Kanten falten, mit Klebeband fixieren und Schleife binden.|
+Danke-Karte|Eine Danke-Karte schreibt man innerhalb von zwei Wochen, persönlich mit Bezug auf das Geschenk.|danke schreiben
+Hochzeitsgeschenk|Zur Hochzeit sind Geld oder Dinge von der Wunschliste üblich, oft 50 bis 150 Euro pro Person, je nach Nähe.|hochzeit geld
+Taufe|Zur Taufe schenkt man oft Kreuz, Kinderbibel, Sparbuch oder Geld.|taufgeschenk
+Kondolenz|Bei einem Todesfall schreibt man eine Beileidskarte: kurz, ehrlich, zum Beispiel: In stiller Anteilnahme.|beileid,trauerkarte
+Begrüßung im Geschäftsleben|Der Ranghöhere oder Ältere bietet die Hand an. Blick in die Augen, kurzer fester Händedruck.|händedruck
+Tischmanieren|Das Besteck wird von außen nach innen benutzt. Messer und Gabel parallel auf 4 Uhr heißt: fertig.|besteck,tischregeln
+Pünktlichkeit|In Deutschland gilt Pünktlichkeit als höflich. Bei privaten Feiern sind 10 bis 15 Minuten später okay, beim Job nicht.|
+E-Mail schreiben|Eine gute E-Mail hat einen klaren Betreff, eine Anrede, kurze Absätze und einen Gruß. Bei Fremden Sehr geehrte, sonst Hallo oder Liebe.|mail schreiben
+Passwort sicher|Ein sicheres Passwort ist lang, mindestens 12 Zeichen, mit Wörtern, Zahlen und Zeichen. Für jedes Konto ein eigenes, am besten mit Passwort-Manager.|sicheres passwort
+Zwei-Faktor-Anmeldung|Bei der Zwei-Faktor-Anmeldung brauchst du neben dem Passwort einen zweiten Nachweis, zum Beispiel einen Code aufs Handy. Das schützt sehr gut.|2fa,zwei faktor
+Phishing|Phishing sind gefälschte Mails oder SMS, die Passwörter oder Geld erbeuten wollen. Nie auf Links klicken, Banken fragen nie per Mail nach PINs.|betrug mail,fake mail
+Enkeltrick|Beim Enkeltrick geben sich Betrüger am Telefon als Verwandte in Not aus. Auflegen und die Person unter der bekannten Nummer zurückrufen.|schockanruf
+Fake-Shop erkennen|Fake-Shops locken mit sehr günstigen Preisen, zeigen kein Impressum und wollen nur Vorkasse. Prüfe den Shop beim Fakeshop-Finder der Verbraucherzentrale.|fakeshop
+Verbraucherzentrale|Die Verbraucherzentrale berät günstig bei Verträgen, Abofallen, Energie und Versicherungen.|
+Schufa|Die Schufa speichert, wie zuverlässig du Kredite und Rechnungen zahlst. Eine kostenlose Auskunft bekommst du einmal im Jahr.|schufa auskunft
+Dispo|Der Dispokredit ist das Minus auf dem Girokonto. Er ist teuer, oft über 10 Prozent Zinsen.|dispokredit,überziehen
+Bargeldlos zahlen|Kontaktlos zahlen geht mit Karte oder Handy, bis 50 Euro meist ohne PIN.|kontaktlos
+Lastschrift zurückholen|Eine SEPA-Lastschrift kannst du innerhalb von acht Wochen ohne Grund zurückbuchen lassen.|lastschrift widerspruch
+Überweisung Dauer|Eine normale Überweisung dauert in der EU höchstens einen Bankarbeitstag. Echtzeit-Überweisungen kommen in Sekunden an.|echtzeitüberweisung
+Rechnung Mahnung|Eine Rechnung ist nach 30 Tagen fällig, wenn nichts anderes drauf steht. Danach darf gemahnt werden, Mahngebühren müssen angemessen sein.|mahnung
+Mahnbescheid|Ein gerichtlicher Mahnbescheid kommt in einem gelben Umschlag. Du hast zwei Wochen für einen Widerspruch, sonst wird er gültig.|gelber brief
+Einspruch Bußgeld|Gegen einen Bußgeldbescheid kannst du innerhalb von zwei Wochen Einspruch einlegen.|bußgeldbescheid einspruch
+Anwalt Beratungshilfe|Wer wenig Geld hat, bekommt beim Amtsgericht einen Beratungshilfeschein, die Anwaltsberatung kostet dann nur 15 Euro.|beratungsschein
+Testament|Ein Testament ist gültig, wenn du es komplett mit der Hand schreibst, mit Datum, Ort und Unterschrift. Oder beim Notar.|testament schreiben
+Patientenverfügung|In der Patientenverfügung legst du fest, welche Behandlung du willst, wenn du selbst nicht mehr entscheiden kannst.|
+Vorsorgevollmacht|Mit einer Vorsorgevollmacht bestimmst du, wer für dich entscheiden darf, wenn du es nicht mehr kannst. Ehepartner dürfen das sonst nur eingeschränkt.|vollmacht
+Organspendeausweis|Mit dem Organspendeausweis legst du fest, ob du nach dem Tod Organe spenden willst. Seit 2024 geht das auch im Online-Register.|organspende
+Blutspende|Blut spenden dürfen gesunde Menschen ab 18 Jahren. Männer bis zu sechsmal, Frauen bis zu viermal im Jahr.|blut spenden
+Wahl Briefwahl|Briefwahl beantragst du mit der Wahlbenachrichtigung oder online bei deiner Stadt. Der Brief muss bis 18 Uhr am Wahltag ankommen.|briefwahl
+Ummelden|Nach einem Umzug musst du dich innerhalb von zwei Wochen beim Bürgeramt ummelden, mit Ausweis und Wohnungsgeberbestätigung.|ummeldung,anmelden wohnung
+Auto ummelden|Nach dem Umzug muss die Adresse im Fahrzeugschein geändert werden. Das Kennzeichen darfst du meist behalten.|
+Hund anmelden|Einen Hund meldest du bei der Stadt an und zahlst Hundesteuer. In vielen Bundesländern braucht es Haftpflicht und Chip.|hundesteuer
+Fundbüro|Verlorene Dinge landen beim Fundbüro der Stadt oder beim Fundservice der Bahn. Finder bekommen ab 10 Euro Wert Finderlohn von 5 Prozent.|finderlohn,etwas verloren
+Briefkasten Leerung|Briefkästen werden je nach Ort ein- oder mehrmals täglich geleert, die Uhrzeit steht auf dem Kasten.|
+Einschreiben|Ein Einschreiben ist ein Brief mit Nachweis. Beim Einwurf-Einschreiben bestätigt der Bote den Einwurf, beim Rückschein unterschreibt der Empfänger.|
+Paket Größe|Bei DHL kostet ein Paket bis 2 Kilo knapp 6 Euro, das Päckchen bis 2 Kilo ist günstiger, aber nicht versichert.|paketpreis
+Weihnachtsbaum entsorgen|Weihnachtsbäume werden meist im Januar an festen Tagen abgeholt. Lametta und Schmuck vorher entfernen.|tannenbaum entsorgen
+Sperrmüll|Sperrmüll wie Möbel meldest du bei der Stadt an, oft ist es einmal im Jahr kostenlos.|sperrmüll anmelden
+Batterien entsorgen|Batterien gehören nie in den Hausmüll. Jeder Laden, der Batterien verkauft, muss alte zurücknehmen.|altbatterien
+Elektroschrott|Kleine Elektrogeräte unter 25 Zentimetern kannst du in großen Supermärkten und Elektromärkten abgeben, auch ohne Neukauf.|altgeräte entsorgen
+Glascontainer|Glas wird nach Farben getrennt: weiß, braun, grün. Blaues und andere Farben kommen zu Grün. Einwurf nicht an Sonn- und Feiertagen.|altglas
+Biotonne|In die Biotonne gehören Essensreste, Obst, Gemüse, Kaffeesatz und Gartenabfälle, aber keine Plastiktüten, auch keine kompostierbaren.|biomüll

@@ -59,3 +59,109 @@ Bäume|Bäume speichern CO2. Eine große Buche bindet etwa 12 Kilo CO2 im Jahr. 
 Regenwald|Tropische Regenwälder wie am Amazonas beherbergen mehr als die Hälfte aller Tier- und Pflanzenarten der Erde.|amazonas regenwald
 Wüste|Eine Wüste ist ein Gebiet mit sehr wenig Niederschlag. Die größte ist die Antarktis, die größte heiße Wüste die Sahara.|wüsten
 Mikroplastik|Mikroplastik sind Plastikteilchen kleiner als 5 Millimeter. Man findet sie inzwischen überall, sogar im Blut von Menschen.|plastik im meer
+Proton|Ein Proton ist ein positiv geladenes Teilchen im Atomkern. Die Anzahl der Protonen bestimmt das Element.|protonen
+Neutron|Ein Neutron ist ein ungeladenes Teilchen im Atomkern.|neutronen
+Elektron|Ein Elektron ist ein winziges, negativ geladenes Teilchen, das den Atomkern umgibt und Strom leitet.|elektronen
+Isotop|Isotope sind Atome desselben Elements mit unterschiedlich vielen Neutronen, etwa Kohlenstoff-12 und Kohlenstoff-14.|isotope
+Radioaktivität|Radioaktive Atomkerne zerfallen von selbst und senden dabei Strahlung aus.|radioaktiv,strahlung
+Halbwertszeit|Die Halbwertszeit ist die Zeit, nach der die Hälfte eines radioaktiven Stoffs zerfallen ist.|
+C14-Methode|Mit der Radiokarbonmethode bestimmt man das Alter organischer Funde bis etwa 50.000 Jahre.|radiokarbon,c 14
+Periodensystem|Das Periodensystem ordnet alle 118 chemischen Elemente nach Ordnungszahl, Dmitri Mendelejew stellte es 1869 auf.|periodensystem der elemente
+Chemische Reaktion|Bei einer chemischen Reaktion entstehen aus Ausgangsstoffen neue Stoffe, etwa beim Verbrennen.|
+Oxidation|Oxidation ist eine Reaktion mit Sauerstoff oder Elektronenabgabe, Rost ist oxidiertes Eisen.|rost
+Säure und Base|Säuren haben einen pH-Wert unter 7, Basen oder Laugen über 7, Wasser ist mit 7 neutral.|ph wert
+pH-Wert|Der pH-Wert zeigt, wie sauer oder basisch etwas ist: Zitronensaft etwa 2, Wasser 7, Seife etwa 10.|
+Salz Chemie|Kochsalz ist Natriumchlorid, NaCl.|natriumchlorid
+Kohlenstoff|Kohlenstoff ist die Grundlage allen Lebens, Diamant und Graphit bestehen beide aus reinem Kohlenstoff.|
+Sauerstoff Luft|Die Luft besteht zu etwa 78 Prozent aus Stickstoff, 21 Prozent Sauerstoff und knapp 1 Prozent Argon.|luft zusammensetzung
+Ozon|Ozon ist eine Form von Sauerstoff aus drei Atomen, oben schützt es vor UV-Strahlung, am Boden reizt es die Atemwege.|
+Methan|Methan ist ein starkes Treibhausgas, das etwa aus Rindermägen, Reisfeldern und Erdgas stammt.|
+Wasserstoff Energie|Wasserstoff kann als Energiespeicher dienen, beim Verbrennen entsteht nur Wasser.|wasserstoff auto
+Legierung|Eine Legierung ist eine Mischung aus Metallen, etwa Bronze aus Kupfer und Zinn oder Messing aus Kupfer und Zink.|bronze,messing,stahl
+Siedepunkt|Wasser siedet auf Meereshöhe bei 100 Grad, auf der Zugspitze schon bei etwa 90 Grad.|wann kocht wasser
+Gefrierpunkt|Wasser gefriert bei 0 Grad, Salzwasser erst bei niedrigeren Temperaturen, darum streut man Salz.|
+Anomalie des Wassers|Wasser ist bei 4 Grad am dichtesten, darum frieren Seen von oben zu und Fische überleben unten.|
+Absoluter Nullpunkt|Der absolute Nullpunkt liegt bei minus 273,15 Grad Celsius oder 0 Kelvin, kälter geht es nicht.|null kelvin
+Kelvin|Kelvin ist die Temperatureinheit der Physik, 0 Grad Celsius sind 273,15 Kelvin.|
+Fahrenheit umrechnen|Celsius in Fahrenheit: mal 1,8 plus 32. 20 Grad Celsius sind 68 Grad Fahrenheit.|celsius fahrenheit
+Druck|Druck ist Kraft pro Fläche. Der Luftdruck auf Meereshöhe beträgt etwa 1.013 Hektopascal.|luftdruck
+Newtonsche Gesetze|Newtons Gesetze: Ein Körper bleibt in Ruhe oder Bewegung, wenn keine Kraft wirkt. Kraft ist Masse mal Beschleunigung. Zu jeder Kraft gibt es eine Gegenkraft.|bewegungsgesetze
+Trägheit|Trägheit ist das Bestreben eines Körpers, in seinem Bewegungszustand zu bleiben, deshalb fliegt man bei einer Vollbremsung nach vorne.|
+Reibung|Reibung bremst Bewegungen, ohne sie könnten wir nicht laufen.|
+Hebel|Mit einem Hebel kann man mit wenig Kraft viel bewegen. Archimedes: Gebt mir einen festen Punkt und ich hebe die Welt.|hebelgesetz
+Auftrieb|Ein Körper im Wasser wird um das Gewicht des verdrängten Wassers leichter, das Prinzip des Archimedes.|archimedisches prinzip
+Fliegen Physik|Flugzeuge fliegen, weil die Tragflächen die Luft nach unten lenken und so Auftrieb erzeugen.|warum fliegt ein flugzeug
+Schallgeschwindigkeit|Schall ist in Luft etwa 343 Meter pro Sekunde schnell, rund 1.235 Kilometer pro Stunde.|mach 1
+Überschall|Wer schneller als der Schall fliegt, erzeugt einen Überschallknall. Die Concorde flog mit doppelter Schallgeschwindigkeit.|ueberschall,concorde
+Blitz Abstand|Sekunden zwischen Blitz und Donner geteilt durch drei ergibt grob die Entfernung des Gewitters in Kilometern.|wie weit ist das gewitter
+Donner|Donner entsteht, weil der Blitz die Luft explosionsartig auf bis zu 30.000 Grad erhitzt.|
+Licht|Licht ist eine elektromagnetische Welle, das sichtbare Spektrum reicht von Violett bis Rot.|
+Farben Licht|Weißes Licht besteht aus allen Regenbogenfarben, ein Prisma fächert sie auf.|prisma
+Warum ist der Himmel blau|Der Himmel ist blau, weil die Luft blaues Licht stärker streut als rotes.|himmel blau
+Abendrot|Bei Sonnenauf- und -untergang ist der Weg durch die Luft länger, das Blau wird weggestreut, Rot bleibt.|morgenrot,sonnenuntergang rot
+Infrarot|Infrarotstrahlung ist Wärmestrahlung, unsichtbar für das Auge.|
+Ultraviolett|UV-Strahlung ist unsichtbar und verursacht Sonnenbrand.|uv strahlung
+Röntgenstrahlung|Röntgenstrahlen durchdringen Gewebe, Knochen halten sie besser auf.|
+Mikrowellen|Mikrowellen bringen Wassermoleküle zum Schwingen und erhitzen so das Essen.|
+Radiowellen|Radiowellen übertragen Radio, Handy und WLAN.|
+Spannung Strom|Spannung in Volt treibt den Strom an, Stromstärke in Ampere, Leistung in Watt ist Spannung mal Strom.|volt,ampere
+Steckdose Spannung|In Deutschland hat die Steckdose 230 Volt Wechselspannung mit 50 Hertz.|230 volt
+Gleichstrom und Wechselstrom|Batterien liefern Gleichstrom, das Stromnetz Wechselstrom.|
+Kurzschluss|Ein Kurzschluss entsteht, wenn Strom ohne Widerstand fließt, die Sicherung schaltet dann ab.|
+Leiter|Metalle wie Kupfer leiten Strom gut, Gummi und Plastik isolieren.|isolator
+Supraleiter|Supraleiter leiten Strom bei sehr tiefen Temperaturen ganz ohne Widerstand.|
+Halbleiter|Halbleiter wie Silizium sind die Grundlage von Computerchips.|silizium
+Elektromagnet|Ein Elektromagnet ist eine Spule, die mit Strom magnetisch wird.|
+Erdmagnetfeld|Das Erdmagnetfeld schützt uns vor dem Sonnenwind, Kompassnadeln zeigen danach.|
+Energieformen|Energie gibt es als Bewegung, Wärme, Licht, Strom, chemische Energie und Kernenergie, sie wird nur umgewandelt.|
+Wirkungsgrad|Der Wirkungsgrad gibt an, wie viel der eingesetzten Energie nutzbar wird. Ein Elektromotor schafft über 90 Prozent, ein Benzinmotor etwa 30.|
+Photovoltaik|Photovoltaik wandelt Sonnenlicht direkt in Strom um.|solaranlage,pv anlage
+Windkraft|Windräder wandeln die Bewegung des Windes in Strom um, in Deutschland liefern sie den größten Anteil am Ökostrom.|windrad,windenergie
+Wasserkraft|Wasserkraftwerke nutzen fließendes oder gestautes Wasser.|
+Atomkraft Deutschland|Deutschland hat im April 2023 die letzten Atomkraftwerke abgeschaltet.|atomausstieg
+Kohleausstieg|Deutschland will spätestens 2038 aus der Kohleverstromung aussteigen.|
+Biogas|Biogas entsteht aus Gülle und Pflanzen durch Gärung.|
+Geothermie|Geothermie nutzt die Wärme aus der Erde.|erdwaerme
+Treibhausgase|Die wichtigsten Treibhausgase sind Kohlendioxid, Methan, Lachgas und Wasserdampf.|
+Pariser Klimaabkommen|2015 einigten sich fast alle Staaten, die Erderwärmung auf deutlich unter 2 Grad, möglichst 1,5 Grad zu begrenzen.|klimaabkommen
+CO2-Fußabdruck|Der CO2-Fußabdruck eines Deutschen liegt bei rund 10 Tonnen pro Jahr.|co2 fussabdruck
+Artensterben|Laut Weltbiodiversitätsrat sind rund eine Million Arten vom Aussterben bedroht.|
+Zellteilung|Bei der Mitose teilt sich eine Zelle in zwei gleiche Tochterzellen.|mitose
+Chromosomen|Menschen haben 46 Chromosomen, 23 Paare. Frauen haben zwei X-Chromosomen, Männer X und Y.|
+Genom|Das menschliche Genom besteht aus rund 3 Milliarden Basenpaaren, es wurde 2003 vollständig entschlüsselt.|humangenom
+Gentechnik|Mit der Genschere CRISPR kann man Erbgut gezielt verändern, Nobelpreis 2020.|crispr,genschere
+Klonen|1996 wurde das Schaf Dolly als erstes geklontes Säugetier geboren.|dolly
+Stammzellen|Stammzellen können sich in verschiedene Zelltypen entwickeln.|
+Enzym|Enzyme sind Eiweiße, die chemische Reaktionen im Körper beschleunigen.|enzyme
+Stoffwechsel|Der Stoffwechsel sind alle chemischen Vorgänge, mit denen der Körper Energie gewinnt und Stoffe aufbaut.|metabolismus
+Symbiose|Eine Symbiose ist eine Partnerschaft zum gegenseitigen Nutzen, etwa Clownfisch und Anemone.|
+Parasit|Ein Parasit lebt auf Kosten eines anderen Lebewesens, etwa Zecken oder Bandwürmer.|parasiten
+Säugetiere|Säugetiere säugen ihre Jungen mit Milch, haben meist Fell und sind warmblütig.|saeugetier
+Reptilien|Reptilien wie Schlangen und Echsen sind wechselwarm und haben Schuppen.|reptil
+Amphibien|Amphibien wie Frösche leben im Wasser und an Land.|amphibie,lurche
+Insekten|Insekten haben sechs Beine und drei Körperteile, es sind die artenreichste Tiergruppe.|insekt
+Wirbeltiere|Wirbeltiere haben eine Wirbelsäule: Fische, Amphibien, Reptilien, Vögel und Säugetiere.|wirbellose
+Artenzahl|Bekannt sind rund 2 Millionen Arten, geschätzt gibt es aber viel mehr, vielleicht 8 Millionen.|wie viele arten
+Fotosynthese Gleichung|Kohlendioxid und Wasser werden mit Licht zu Traubenzucker und Sauerstoff.|
+Wasserkreislauf|Wasser verdunstet, bildet Wolken, regnet ab und fließt über Flüsse ins Meer zurück.|
+Gezeiten Ursache|Ebbe und Flut entstehen vor allem durch die Anziehungskraft des Mondes.|ebbe und flut
+Jahreszeiten Ursache|Jahreszeiten entstehen durch die schräge Erdachse, nicht durch die Entfernung zur Sonne.|
+Erdbeben Deutschland|Leichte Erdbeben gibt es in Deutschland vor allem am Oberrheingraben, in der Kölner Bucht und im Vogtland.|
+Mineralien|Mineralien sind natürliche Feststoffe mit fester Zusammensetzung, etwa Quarz oder Feldspat.|mineral
+Härteste Stoff|Diamant ist das härteste natürliche Material.|haertestes material
+Edelsteine|Bekannte Edelsteine sind Diamant, Rubin, Saphir und Smaragd.|edelstein
+Bernstein|Bernstein ist versteinertes Baumharz, oft mit eingeschlossenen Insekten.|
+Kristall|In einem Kristall sind die Atome regelmäßig angeordnet.|kristalle
+Plasma|Plasma ist der vierte Aggregatzustand, ein heißes Gas aus geladenen Teilchen, etwa in Blitzen und Sternen.|
+Nanotechnologie|Nanotechnologie arbeitet mit Strukturen kleiner als 100 Nanometer, ein Nanometer ist ein Milliardstel Meter.|nano
+Graphen|Graphen ist eine Schicht aus Kohlenstoff, nur ein Atom dick, und extrem stabil.|
+Higgs-Boson|Das Higgs-Teilchen erklärt, warum Teilchen eine Masse haben.|higgs
+Teilchenbeschleuniger|Der größte Teilchenbeschleuniger ist der LHC am CERN bei Genf mit 27 Kilometern Umfang.|lhc
+Antimaterie|Antimaterie ist das Spiegelbild normaler Materie, treffen beide aufeinander, zerstrahlen sie.|
+Schrödingers Katze|Schrödingers Katze ist ein Gedankenexperiment: Eine Katze in einer Kiste ist nach der Quantenphysik gleichzeitig tot und lebendig, bis man nachschaut.|
+Unschärferelation|Nach Heisenberg kann man Ort und Impuls eines Teilchens nicht gleichzeitig genau messen.|heisenberg
+Zeitdilatation|Bei hoher Geschwindigkeit oder starker Schwerkraft vergeht die Zeit langsamer, GPS-Satelliten müssen das berücksichtigen.|
+E gleich mc²|Einsteins Formel E gleich m mal c Quadrat besagt, dass Masse und Energie gleichwertig sind.|e mc2,e=mc2
+Entropie|Entropie ist ein Maß für Unordnung, sie nimmt in geschlossenen Systemen immer zu.|
+Perpetuum mobile|Ein Perpetuum mobile, eine Maschine, die ewig ohne Energiezufuhr läuft, ist physikalisch unmöglich.|
+Wissenschaftliche Methode|Wissenschaft heißt: beobachten, Hypothese aufstellen, im Experiment prüfen, Ergebnisse veröffentlichen und von anderen überprüfen lassen.|

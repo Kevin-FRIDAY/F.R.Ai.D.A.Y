@@ -1,0 +1,178 @@
+# pflanzen|Pflanzen & Garten|🌿
+# Titel|Text|Aliase
+Eiche|Die Eiche ist ein Symbolbaum Deutschlands, kann über 1.000 Jahre alt werden und trägt Eicheln. Ihr Holz ist sehr hart.|eichen,eicheln
+Buche|Die Rotbuche ist der häufigste Laubbaum Deutschlands. Ohne den Menschen wäre Deutschland großteils Buchenwald.|rotbuche,bucheckern
+Fichte|Die Fichte ist der häufigste Baum in deutschen Wäldern, leidet aber stark unter Trockenheit und Borkenkäfer.|fichten
+Kiefer|Die Waldkiefer wächst auch auf sandigen, trockenen Böden, etwa in Brandenburg.|kiefern,waldkiefer
+Tanne|Tannen erkennt man an aufrecht stehenden Zapfen. Die Nordmanntanne ist der beliebteste Weihnachtsbaum.|nordmanntanne
+Tanne oder Fichte|Fichte sticht, Tanne nicht: Tannennadeln sind weich und flach, Fichtennadeln spitz. Tannenzapfen stehen, Fichtenzapfen hängen.|unterschied tanne fichte
+Birke|Die Birke hat eine weiße Rinde und ist ein Pionierbaum, ihr Pollen löst oft Allergien aus.|birken
+Linde|Linden haben herzförmige Blätter und duftende Blüten, aus denen man Tee macht. Viele Dorfplätze haben eine Dorflinde.|lindenbaum
+Ahorn|Ahornbäume haben gelappte Blätter und Flugsamen, die wie Propeller fliegen. Aus Zuckerahorn macht man Ahornsirup.|ahornsirup
+Kastanie|Die Rosskastanie ist nicht essbar, die Esskastanie oder Marone schon.|rosskastanie,maronen,esskastanie
+Ginkgo|Der Ginkgo ist ein lebendes Fossil, seine Art gab es schon zur Zeit der Dinosaurier.|gingko
+Mammutbaum|Mammutbäume in Kalifornien gehören zu den größten und ältesten Lebewesen, der Küstenmammutbaum wird über 110 Meter hoch.|sequoia
+Affenbrotbaum|Der Baobab speichert in seinem dicken Stamm Tausende Liter Wasser.|baobab
+Palme|Palmen sind eigentlich keine Bäume im botanischen Sinn, sondern eher riesige Gräser-Verwandte ohne echtes Holz.|palmen,kokospalme
+Bambus|Bambus ist ein Gras und kann bis zu einem Meter am Tag wachsen.|
+Weide|Weiden wachsen gern am Wasser, aus ihrer Rinde wurde früher ein Schmerzmittel gewonnen, Vorläufer von Aspirin.|trauerweide
+Pappel|Pappeln wachsen sehr schnell, im Frühsommer fliegt ihre Samenwolle wie Schnee.|
+Esche|Die Esche leidet seit einigen Jahren unter dem Eschentriebsterben, einer Pilzkrankheit.|
+Kirschbaum|In Japan feiert man die Kirschblüte als Hanami.|kirschbluete,hanami
+Apfelbaum|Apfelbäume blühen im April und Mai, es gibt weltweit Tausende Apfelsorten.|apfel baum
+Olivenbaum|Olivenbäume können über 2.000 Jahre alt werden.|olive
+Kaktus|Kakteen speichern Wasser in ihrem Stamm, ihre Stacheln sind umgewandelte Blätter.|kakteen
+Aloe vera|Aloe vera ist eine Sukkulente, ihr Gel kühlt bei Sonnenbrand.|aloe
+Sukkulente|Sukkulenten speichern Wasser in Blättern oder Stamm und brauchen wenig Gießen.|sukkulenten
+Rose|Rosen gibt es in über 30.000 Sorten, die Rote Rose gilt als Zeichen der Liebe.|rosen
+Tulpe|Tulpen stammen ursprünglich aus Zentralasien. In den Niederlanden löste der Handel um 1637 die Tulpenmanie aus.|tulpen,tulpenmanie
+Sonnenblume|Junge Sonnenblumen drehen sich mit der Sonne, ausgewachsene schauen nach Osten.|sonnenblumen
+Löwenzahn|Der Löwenzahn wird zur Pusteblume, jeder Schirm trägt einen Samen. Die Blätter kann man essen.|loewenzahn,pusteblume
+Gänseblümchen|Das Gänseblümchen blüht fast das ganze Jahr und schließt nachts seine Blüte.|gaenseblumchen
+Brennnessel|Brennnesseln haben Brennhaare mit Ameisensäure, sie sind Futter für viele Schmetterlingsraupen und als Tee essbar.|brennessel
+Klee|Ein vierblättriges Kleeblatt gilt als Glücksbringer, etwa eins von 5.000 Kleeblättern hat vier Blätter.|kleeblatt,vierblaettriges kleeblatt
+Lavendel|Lavendel duftet beruhigend und lockt Bienen an.|
+Orchidee|Orchideen sind eine der größten Pflanzenfamilien mit rund 28.000 Arten, die Vanille ist auch eine.|orchideen
+Lotus|Die Lotusblume hat Blätter, an denen Wasser und Schmutz abperlen, der Lotuseffekt.|lotuseffekt
+Seerose|Seerosen wachsen in Teichen, ihre Blätter schwimmen auf dem Wasser.|
+Venusfliegenfalle|Die Venusfliegenfalle fängt Insekten mit klappenden Blättern.|fleischfressende pflanze
+Mimose|Die Mimose klappt ihre Blätter bei Berührung zusammen.|mimosen
+Efeu|Efeu klettert an Mauern hoch und bleibt immergrün, die Beeren sind giftig.|
+Moos|Moose haben keine Wurzeln und speichern viel Wasser.|moose
+Farn|Farne vermehren sich über Sporen und sind viel älter als Blütenpflanzen.|farne
+Pilze|Pilze sind weder Pflanzen noch Tiere, sondern ein eigenes Reich. Der größte Organismus der Welt ist ein Hallimasch-Pilz in den USA.|pilz
+Fliegenpilz|Der Fliegenpilz ist rot mit weißen Punkten und giftig.|
+Knollenblätterpilz|Der Grüne Knollenblätterpilz ist der gefährlichste Giftpilz, er verursacht die meisten tödlichen Pilzvergiftungen.|knollenblaetterpilz
+Steinpilz|Der Steinpilz ist ein begehrter Speisepilz.|
+Pfifferling|Pfifferlinge sind gelbe Speisepilze, die im Sommer in Wäldern wachsen.|eierschwammerl
+Champignon|Der Champignon ist der meistgegessene Speisepilz.|champignons
+Pilze sammeln|Nur Pilze essen, die man sicher kennt. Im Zweifel einen Pilzsachverständigen fragen, bei Vergiftung den Giftnotruf anrufen.|
+Giftpflanzen|Giftig sind unter anderem Tollkirsche, Eibe, Fingerhut, Maiglöckchen, Herbstzeitlose, Goldregen und Oleander.|giftige pflanzen
+Maiglöckchen|Maiglöckchen duften süß, sind aber stark giftig und werden mit Bärlauch verwechselt.|maigloeckchen
+Bärlauch|Bärlauch riecht nach Knoblauch, das unterscheidet ihn vom giftigen Maiglöckchen.|baerlauch
+Tollkirsche|Die Tollkirsche hat schwarze, sehr giftige Beeren.|
+Eibe|Die Eibe ist fast komplett giftig, nur der rote Samenmantel nicht.|eiben
+Fingerhut|Der Fingerhut ist giftig, aus ihm gewinnt man aber Herzmedikamente.|digitalis
+Riesenbärenklau|Der Riesenbärenklau verursacht bei Berührung und Sonnenlicht schwere Verbrennungen auf der Haut.|herkulesstaude
+Ambrosia|Ambrosia ist eine eingeschleppte Pflanze mit stark allergieauslösenden Pollen.|
+Kartoffelpflanze|Die Kartoffel stammt aus den Anden, ihre grünen Teile und Beeren sind giftig.|
+Tomatenpflanze|Tomaten brauchen viel Sonne und Wasser, man pflanzt sie nach den Eisheiligen Mitte Mai aus.|tomaten pflanzen
+Eisheilige|Die Eisheiligen vom 11. bis 15. Mai gelten als letzte Frostgefahr, danach pflanzt man empfindliche Pflanzen aus.|
+Kompost|Auf den Kompost gehören Obst- und Gemüsereste, Kaffeesatz, Laub und Rasenschnitt, kein Fleisch und keine gekochten Speisen.|komposthaufen
+Rasen mähen|Rasen mäht man in der Wachstumszeit etwa einmal pro Woche, nicht kürzer als 4 Zentimeter.|rasen
+Zimmerpflanzen gießen|Die meisten Zimmerpflanzen gießt man, wenn die oberste Erdschicht trocken ist. Staunässe schadet mehr als kurze Trockenheit.|
+Pflegeleichte Zimmerpflanzen|Pflegeleicht sind Bogenhanf, Grünlilie, Efeutute, Zamioculcas, Einblatt und Kakteen.|einfache zimmerpflanzen
+Monstera|Die Monstera hat große, gelöcherte Blätter und ist eine beliebte Zimmerpflanze.|fensterblatt
+Bonsai|Bonsai sind kleine Bäume in Schalen, durch Schnitt klein gehalten.|
+Basilikum|Basilikum liebt Wärme und gehört an Tomaten und Pizza.|basilikum pflanze
+Petersilie|Petersilie ist reich an Vitamin C.|
+Minze|Minze wuchert stark, im Topf bleibt sie im Zaum.|pfefferminze
+Rosmarin|Rosmarin ist ein mediterranes Kraut, das Trockenheit gut verträgt.|
+Thymian|Thymian schmeckt würzig und hilft als Tee bei Husten.|
+Kamille|Kamillentee beruhigt den Magen und lindert Entzündungen.|kamillentee
+Salbei|Salbei hilft als Tee bei Halsschmerzen.|
+Hopfen|Hopfen gibt dem Bier seinen bitteren Geschmack, die Hallertau in Bayern ist das größte Anbaugebiet der Welt.|
+Raps|Rapsfelder blühen im Mai leuchtend gelb, aus Raps macht man Öl.|rapsfeld
+Weizen|Weizen ist eines der wichtigsten Getreide der Welt, aus ihm macht man Mehl für Brot und Nudeln.|
+Roggen|Roggen ist typisch für dunkles Brot in Deutschland.|
+Gerste|Gerste wird für Bier und als Tierfutter genutzt.|
+Hafer|Hafer kennt man als Haferflocken.|haferflocken
+Mais|Mais stammt aus Mexiko, er wird als Futter, Lebensmittel und für Biogas angebaut.|
+Reispflanze|Reis wächst oft in gefluteten Feldern und ernährt mehr als die Hälfte der Menschheit.|reisfeld
+Kaffeepflanze|Kaffee wächst als Strauch in den Tropen, die Bohnen sind Samen in roten Kirschen.|kaffeestrauch
+Teepflanze|Schwarzer und grüner Tee stammen von derselben Pflanze, der Teepflanze, nur die Verarbeitung ist anders.|
+Kakao|Kakaobäume wachsen in den Tropen, vor allem in der Elfenbeinküste und Ghana. Aus den Bohnen macht man Schokolade.|kakaobaum
+Baumwolle|Baumwolle wächst als Faser um die Samen der Pflanze.|
+Vanille|Vanille ist die Schote einer Orchidee und das zweitteuerste Gewürz nach Safran.|
+Safran|Safran ist das teuerste Gewürz der Welt, er besteht aus den Blütenfäden einer Krokusart.|
+Pfeffer|Schwarzer, grüner und weißer Pfeffer stammen von derselben Pflanze.|
+Zimt|Zimt ist die getrocknete Rinde des Zimtbaums.|
+Ingwer|Ingwer ist eine Wurzel und wirkt gegen Übelkeit.|
+Knoblauchpflanze|Knoblauch gehört wie Zwiebel und Lauch zu den Lauchgewächsen.|
+Erdbeere|Die Erdbeere ist botanisch keine Beere, sondern eine Sammelnussfrucht, die Nüsschen sind außen.|erdbeeren
+Banane botanisch|Die Banane ist botanisch eine Beere, die Bananenstaude ist kein Baum, sondern eine Riesenstaude.|bananenstaude
+Tomate Obst|Botanisch ist die Tomate eine Frucht, in der Küche gilt sie als Gemüse.|ist die tomate obst
+Ananas|Eine Ananas braucht etwa zwei Jahre, bis sie reif ist.|
+Avocadobaum|Aus einem Avocadokern kann man mit Zahnstochern im Wasserglas eine Pflanze ziehen.|avocado kern
+Wein|Weinreben wachsen in Deutschland vor allem an Mosel, Rhein und Main. Der Rheingau ist für Riesling bekannt.|weinrebe,reben
+Herbstlaub|Blätter werden im Herbst bunt, weil der Baum das grüne Chlorophyll abbaut und gelbe und rote Farbstoffe sichtbar werden.|warum werden blaetter bunt
+Jahresringe|An den Jahresringen eines Baumstamms kann man sein Alter ablesen, jeder Ring ist ein Jahr.|
+Chlorophyll|Chlorophyll ist der grüne Farbstoff der Pflanzen, mit dem sie Licht für die Photosynthese einfangen.|blattgruen
+Bestäubung|Bei der Bestäubung bringen Bienen, andere Insekten oder der Wind Pollen von Blüte zu Blüte.|
+Pollenflug|Im Frühjahr fliegen vor allem Hasel, Erle und Birke, im Sommer Gräser. Allergiker leiden dann unter Heuschnupfen.|heuschnupfen,pollen
+Saatgut|Saatgut sind Samen für die Aussaat, alte Sorten bewahren die Vielfalt.|samen
+Hochbeet|Ein Hochbeet ist rückenschonend und erwärmt sich schneller, so kann man früher ernten.|
+Unkraut|Unkraut nennt man Pflanzen, die dort wachsen, wo man sie nicht will. Viele sind wichtig für Insekten.|
+Blumenwiese|Eine Blumenwiese bietet Bienen und Schmetterlingen viel mehr Futter als kurzer Rasen.|
+Mistel|Misteln wachsen auf Bäumen als Halbschmarotzer, unter dem Mistelzweig küsst man sich an Weihnachten.|mistelzweig
+Weihnachtsstern|Der Weihnachtsstern stammt aus Mexiko, die roten Blätter sind keine Blüten.|poinsettie
+Christrose|Die Christrose blüht mitten im Winter.|
+Krokus|Krokusse gehören zu den ersten Frühlingsblumen.|
+Schneeglöckchen|Schneeglöckchen blühen oft schon im Februar durch den Schnee.|schneegloeckchen
+Narzisse|Narzissen, auch Osterglocken, blühen im Frühling gelb.|osterglocke
+Hortensie|Bei manchen Hortensien hängt die Blütenfarbe vom Boden ab, saurer Boden macht sie blau.|hortensien
+Geranie|Geranien sind die beliebtesten Balkonblumen in Deutschland.|geranien
+Edelweiß|Das Edelweiß wächst in den Alpen und steht unter Naturschutz.|edelweiss
+Enzian|Der blaue Enzian ist eine typische Alpenblume.|
+Kornblume|Die Kornblume war früher häufig in Getreidefeldern.|
+Mohn|Klatschmohn blüht rot am Feldrand.|klatschmohn
+Lupine|Lupinen haben eiweißreiche Samen und verbessern den Boden.|
+Heidekraut|Die Lüneburger Heide blüht im August und September lila.|heide
+Brombeere|Brombeeren wachsen an stacheligen Ranken und sind sehr robust.|
+Himbeere|Himbeeren sind hohl, wenn man sie pflückt.|
+Heidelbeere|Wilde Heidelbeeren färben den Mund blau, Kulturheidelbeeren innen nicht.|blaubeere
+Holunder|Aus Holunderblüten macht man Sirup, die rohen Beeren sind leicht giftig.|holunderbluete
+Hagebutte|Die Hagebutte ist die Frucht der Rose und reich an Vitamin C.|
+Sanddorn|Sanddorn wächst an der Küste und hat sehr viel Vitamin C.|
+Schlehe|Schlehen erntet man nach dem ersten Frost.|
+Mispel|Mispeln sind alte Obstsorten, die erst nach Frost genießbar werden.|
+Quitte|Quitten sind roh hart, ergeben aber gutes Gelee.|
+Ulme|Ulmen waren früher häufig in Städten, viele starben am Ulmensterben, einer Pilzkrankheit, die Käfer übertragen.|ulmensterben
+Erle|Die Erle wächst gern an Bächen und Flüssen. Ihr frisch geschnittenes Holz färbt sich orange.|
+Lärche|Die Lärche ist der einzige heimische Nadelbaum, der im Herbst seine Nadeln abwirft.|
+Douglasie|Die Douglasie stammt aus Nordamerika und wächst in deutschen Wäldern schnell, sie gilt als klimafest.|
+Robinie|Die Robinie stammt aus Nordamerika, ihre Blüten liefern Akazienhonig.|akazienhonig
+Platane|Platanen erkennt man an der fleckig abblätternden Rinde, sie sind beliebte Stadtbäume.|
+Walnussbaum|Der Walnussbaum wird bis 25 Meter hoch, seine Blätter halten Mücken fern.|
+Haselstrauch|Die Hasel blüht schon im Februar und ist für Pollenallergiker oft der Start der Saison.|haselnussstrauch
+Flieder|Flieder blüht im Mai lila oder weiß und duftet stark.|
+Forsythie|Die Forsythie blüht im Frühling leuchtend gelb, bevor die Blätter kommen. Bienen finden in ihr aber kaum Nahrung.|
+Rhododendron|Rhododendren mögen sauren Boden und Halbschatten, sie sind giftig.|
+Buchsbaum|Der Buchsbaum ist eine beliebte Hecke, wird aber oft vom Buchsbaumzünsler, einer Raupe, kahl gefressen.|buchsbaumzünsler
+Thuja|Thuja oder Lebensbaum ist eine immergrüne Hecke, aber giftig und für Insekten wertlos.|lebensbaum
+Kirschlorbeer|Kirschlorbeer ist eine immergrüne Hecke, giftig und ökologisch wenig wertvoll. In der Schweiz ist der Verkauf verboten.|
+Sommerflieder|Der Sommerflieder lockt viele Schmetterlinge an und heißt darum auch Schmetterlingsflieder.|schmetterlingsflieder
+Dahlie|Dahlien blühen von Juli bis zum ersten Frost. Die Knollen müssen im Winter frostfrei lagern.|
+Pfingstrose|Pfingstrosen blühen um Pfingsten mit großen, duftenden Blüten und werden sehr alt.|
+Clematis|Die Clematis oder Waldrebe ist eine Kletterpflanze mit großen Blüten. Ihr Kopf will Sonne, ihr Fuß Schatten.|waldrebe
+Glyzinie|Die Glyzinie oder der Blauregen klettert an Hauswänden und hat lange hängende lila Blüten, ist aber giftig.|blauregen
+Kapuzinerkresse|Die Kapuzinerkresse hat essbare Blüten und Blätter, scharf wie Kresse.|essbare blüten
+Ringelblume|Ringelblumen sind orange, essbar und werden als Salbe für die Haut genutzt.|
+Sonnenhut|Der Sonnenhut, Echinacea, wird gegen Erkältungen eingenommen, die Wirkung ist umstritten.|echinacea
+Johanniskraut|Johanniskraut wird gegen leichte depressive Verstimmung eingesetzt, kann aber die Pille unwirksam machen.|
+Baldrian|Baldrian hilft beim Einschlafen und beruhigt. Katzen mögen den Geruch.|
+Arnika|Arnika wächst auf Bergwiesen und wird als Salbe bei Prellungen genutzt.|
+Schachtelhalm|Schachtelhalme sind uralte Pflanzen, die es schon vor den Dinosauriern gab.|zinnkraut
+Wasserlinse|Wasserlinsen sind die kleinsten Blütenpflanzen der Welt und bedecken Teiche wie ein grüner Teppich.|entengrütze
+Riesenseerose|Die Riesenseerose Victoria aus dem Amazonas hat Blätter mit bis zu drei Metern Durchmesser.|victoria seerose
+Rafflesia|Die Rafflesia hat mit bis zu einem Meter die größte Einzelblüte der Welt und riecht nach Aas.|größte blüte
+Titanwurz|Die Titanwurz hat einen bis drei Meter hohen Blütenstand und stinkt nach Verwesung.|
+Sequoia|Der Küstenmammutbaum Hyperion ist mit rund 116 Metern der höchste Baum der Welt.|höchster baum
+Drachenbaum|Der Drachenbaum auf den Kanaren hat roten Saft, das Drachenblut.|
+Zuckerrohr|Aus Zuckerrohr wird Rohrzucker und Rum gemacht. In Deutschland kommt Zucker meist aus Zuckerrüben.|
+Zuckerrübe|Aus der Zuckerrübe wird in Deutschland der meiste Zucker gewonnen.|
+Hanf|Hanf liefert Fasern, Öl und Samen. Bestimmte Sorten enthalten THC und werden als Cannabis genutzt.|
+Flachs|Aus Flachs wird Leinen gemacht und Leinöl gepresst.|lein
+Kork|Kork ist die Rinde der Korkeiche, die alle neun Jahre geschält wird, ohne dass der Baum stirbt.|korkeiche
+Kautschuk|Naturkautschuk kommt aus dem Saft des Kautschukbaums und ist Grundlage für Gummi.|gummibaum
+Gummibaum (Zimmerpflanze)|Der Gummibaum ist eine pflegeleichte Zimmerpflanze und mit dem Kautschukbaum verwandt.|
+Bogenhanf|Bogenhanf, auch Sansevieria, ist eine sehr robuste Zimmerpflanze, die kaum Wasser braucht.|sansevieria,schwiegermutterzunge
+Efeutute|Die Efeutute ist eine pflegeleichte Hänge-Zimmerpflanze, die auch mit wenig Licht auskommt.|
+Einblatt|Das Einblatt zeigt durch hängende Blätter, wenn es Wasser braucht.|
+Glücksfeder|Die Glücksfeder, Zamioculcas, verträgt Trockenheit und wenig Licht.|zamioculcas
+Weihnachtskaktus|Der Weihnachtskaktus blüht um Weihnachten, wenn er im Herbst kühl und dunkler steht.|
+Gießen im Urlaub|Für den Urlaub helfen Tonkegel, Wasserspeicher-Kugeln oder ein Docht vom Wasserglas zur Pflanze.|pflanzen urlaub
+Umtopfen|Zimmerpflanzen topfst du im Frühjahr um, wenn die Wurzeln unten aus dem Topf wachsen, in einen etwas größeren Topf.|
+Dünger|Pflanzen brauchen vor allem Stickstoff, Phosphor und Kalium. Zimmerpflanzen düngst du von Frühling bis Herbst etwa alle zwei Wochen.|düngen
+Rasen vertikutieren|Vertikutieren entfernt Moos und Filz aus dem Rasen, am besten im Frühjahr.|vertikutieren
+Obstbaum schneiden|Obstbäume schneidest du meist im späten Winter, damit Licht in die Krone kommt.|baumschnitt

@@ -53,7 +53,7 @@ Qualle|Manche Quallen gibt es seit über 500 Millionen Jahren. Sie bestehen zu e
 Seepferdchen|Bei Seepferdchen bekommen die Männchen die Babys.|seepferdchen männchen
 Goldfisch|Goldfische haben ein viel besseres Gedächtnis als drei Sekunden, sie merken sich Dinge über Monate.|goldfische
 Hummel|Hummeln fliegen schon bei Kälte und summen Blüten an, damit sie Pollen freigeben.|hummeln
-Regenwurm|Regenwürmer lockern und düngen den Boden. Unter einem Quadratmeter Wiese leben oft über 100.
+Regenwurm|Regenwürmer lockern und düngen den Boden. Unter einem Quadratmeter Wiese leben oft über 100.|
 Storch|Weißstörche ziehen im Winter bis nach Afrika und kehren oft zum selben Nest zurück.|störche
 Kuckuck|Der Kuckuck legt seine Eier in fremde Nester und lässt andere Vögel brüten.|
 Hamster|Hamster tragen Futter in ihren Backentaschen und sind nachtaktiv.|hamster haustier
@@ -61,3 +61,261 @@ Kaninchen|Kaninchen brauchen Gesellschaft, mindestens einen Artgenossen, und ihr
 Wellensittich|Wellensittiche stammen aus Australien und sind gesellig, man hält sie mindestens zu zweit.|wellensittiche
 Mammut|Mammuts waren behaarte Elefanten der Eiszeit. Die letzten starben vor etwa 4.000 Jahren auf einer Insel in Sibirien.|wollhaarmammut
 Tyrannosaurus Rex|Der Tyrannosaurus Rex lebte vor rund 68 bis 66 Millionen Jahren, war bis zu 12 Meter lang und hatte bananengroße Zähne.|t rex,t-rex
+Leopard|Der Leopard ist eine Großkatze aus Afrika und Asien mit Rosetten im Fell. Er klettert hervorragend und schleppt seine Beute oft auf Bäume.|leoparden
+Jaguar|Der Jaguar ist die größte Katze Amerikas und hat den kräftigsten Biss aller Großkatzen. Er schwimmt gern.|jaguare
+Puma|Der Puma, auch Berglöwe, lebt in Amerika von Kanada bis Patagonien. Er kann nicht brüllen, sondern faucht und pfeift.|berglöwe,berglowe
+Luchs|Der Luchs ist die größte Katze Europas und an den Pinselohren zu erkennen. In Deutschland lebt er wieder im Harz und im Bayerischen Wald.|luchse
+Schneeleopard|Der Schneeleopard lebt im Hochgebirge Zentralasiens und nutzt seinen langen Schwanz als Balancierstange und Schal.|
+Hyäne|Hyänen leben in Afrika, jagen oft selbst und sind keine reinen Aasfresser. Die Tüpfelhyäne lebt in Gruppen, die von Weibchen angeführt werden.|hyaene,hyaenen
+Erdmännchen|Erdmännchen leben in Gruppen in Südafrika. Einer hält immer aufrecht stehend Wache.|erdmaennchen
+Elch|Der Elch ist die größte Hirschart der Welt, Männchen können über 2 Meter Schulterhöhe erreichen.|elche
+Rothirsch|Der Rothirsch ist das größte Wildtier Deutschlands. Im Herbst röhren die Männchen in der Brunft.|hirsch
+Reh|Das Reh ist die häufigste Hirschart in Deutschland. Rehe sind keine Kinder der Hirsche, sondern eine eigene Art.|rehe
+Wildschwein|Wildschweine leben in Rotten, sind Allesfresser und sehr intelligent. Die Jungen heißen Frischlinge und haben Streifen.|wildschweine,frischling
+Dachs|Der Dachs lebt in großen unterirdischen Bauen, die über Generationen genutzt werden.|dachse
+Marder|Marder wie der Steinmarder knabbern gern Kabel in Autos an. Sie sind nachtaktiv.|steinmarder,marder auto
+Waschbär|Der Waschbär stammt aus Nordamerika und hat sich in Deutschland stark ausgebreitet, besonders um Kassel.|waschbaer
+Biber|Der Biber ist das größte Nagetier Europas. Er baut Dämme und Burgen und staut so Bäche auf.|biber damm
+Otter|Fischotter leben an Flüssen und Seen, Seeotter im Pazifik halten sich beim Schlafen an den Pfoten.|fischotter,seeotter
+Maulwurf|Der Maulwurf gräbt mit Schaufelhänden Gänge und frisst vor allem Regenwürmer. Er steht in Deutschland unter Schutz.|maulwuerfe
+Feldhase|Der Feldhase ist größer als ein Kaninchen, hat längere Ohren und lebt nicht im Bau. Er schafft bis zu 70 Kilometer pro Stunde.|hase,hasen
+Murmeltier|Murmeltiere leben in den Alpen und halten bis zu sechs Monate Winterschlaf. Bei Gefahr pfeifen sie.|murmeltiere
+Gämse|Die Gämse ist ein Kletterkünstler der Alpen.|gemse,gaemse
+Steinbock (Tier)|Der Alpensteinbock klettert an fast senkrechten Felswänden, die Männchen haben bis zu einem Meter lange Hörner.|alpensteinbock
+Wisent|Der Wisent ist das größte Landtier Europas, ein Wildrind, das fast ausgestorben war.|europäischer bison
+Bison|Der amerikanische Bison wurde im 19. Jahrhundert fast ausgerottet, heute leben wieder Hunderttausende.|buffalo
+Lama|Lamas stammen aus den Anden und dienen als Lasttiere. Sie spucken, wenn sie sich ärgern.|lamas
+Alpaka|Alpakas sind kleiner als Lamas und werden vor allem wegen ihrer weichen Wolle gehalten.|alpakas
+Esel|Esel sind trittsicher und genügsam, sie gelten zu Unrecht als stur, eher als vorsichtig.|
+Ziege|Ziegen wurden vor rund 10.000 Jahren domestiziert und sind geschickte Kletterer.|ziegen
+Schaf|Schafe liefern Wolle, Milch und Fleisch. Ein Schaf erkennt Dutzende Gesichter wieder.|schafe
+Huhn|Das Haushuhn stammt vom Bankivahuhn aus Südostasien ab. Es gibt mehr Hühner als Menschen auf der Erde.|hühner,huehner
+Ente|Enten haben wasserabweisende Federn, weil sie sie mit Fett aus der Bürzeldrüse einölen.|enten
+Gans|Gänse sind wachsam und wurden früher als Wachtiere gehalten, berühmt sind die Gänse vom Kapitol in Rom.|gaense
+Schwan|Höckerschwäne können über 12 Kilogramm wiegen und zählen zu den schwersten flugfähigen Vögeln.|schwäne
+Truthahn|Der Truthahn stammt aus Nordamerika und ist dort das Essen zu Thanksgiving.|pute,truthuhn
+Pfau|Der männliche Pfau schlägt ein Rad aus über 100 schillernden Federn, um Weibchen zu beeindrucken.|pfauen
+Flamingo|Flamingos sind rosa, weil sie kleine Krebse und Algen mit Farbstoffen fressen.|flamingos
+Pelikan|Der Pelikan fängt Fische mit seinem dehnbaren Kehlsack.|
+Albatros|Der Wanderalbatros hat mit bis zu 3,5 Metern die größte Flügelspannweite aller Vögel und segelt tagelang ohne Flügelschlag.|albatross
+Kondor|Der Andenkondor ist einer der größten flugfähigen Vögel mit über 3 Metern Spannweite.|andenkondor
+Geier|Geier sind Aasfresser und haben einen sehr säurehaltigen Magen, der Krankheitserreger abtötet.|
+Rabe|Kolkraben sind sehr intelligent, sie planen voraus und benutzen Werkzeuge.|kolkrabe,raben
+Krähe|Krähen erkennen menschliche Gesichter und merken sich, wer sie schlecht behandelt hat.|kraehe
+Elster|Die Elster erkennt sich als einer der wenigen Vögel im Spiegel selbst.|
+Amsel|Die Amsel ist einer der häufigsten Vögel Deutschlands, das Männchen ist schwarz mit gelbem Schnabel.|schwarzdrossel
+Spatz|Der Haussperling, auch Spatz, lebt fast überall, wo Menschen leben.|haussperling,sperling
+Rotkehlchen|Das Rotkehlchen singt auch im Winter und verteidigt sein Revier.|
+Meise|Kohlmeisen und Blaumeisen sind häufige Gäste am Futterhaus.|kohlmeise,blaumeise
+Specht|Spechte hämmern bis zu 20 Mal pro Sekunde gegen Holz, ein Polster im Schädel schützt ihr Gehirn.|buntspecht
+Nachtigall|Die Nachtigall singt nachts besonders schön und kann über 200 Strophen.|
+Schwalbe|Schwalben fliegen im Herbst bis nach Afrika und kommen im Frühling zurück.|rauchschwalbe
+Mauersegler|Mauersegler verbringen fast ihr ganzes Leben in der Luft, sie schlafen sogar im Flug.|
+Kranich|Kraniche ziehen in großen Keilformationen und rasten im Herbst zu Zehntausenden in Mecklenburg-Vorpommern.|kraniche
+Uhu|Der Uhu ist die größte Eule Europas.|
+Schleiereule|Die Schleiereule hat ein herzförmiges Gesicht und hört so gut, dass sie Mäuse im Dunkeln fängt.|
+Seeadler|Der Seeadler ist der größte Greifvogel Deutschlands und Vorbild für den Bundesadler.|
+Weißkopfseeadler|Der Weißkopfseeadler ist das Wappentier der USA.|bald eagle
+Steinadler|Der Steinadler lebt in den Alpen und jagt Murmeltiere.|
+Mäusebussard|Der Mäusebussard ist der häufigste Greifvogel Deutschlands und sitzt oft auf Zaunpfählen.|bussard
+Turmfalke|Der Turmfalke kann im Rüttelflug in der Luft stehen.|
+Kiwi (Vogel)|Der Kiwi ist ein flugunfähiger Vogel aus Neuseeland, der nachts mit seinem langen Schnabel nach Würmern sucht.|kiwi vogel
+Emu|Der Emu ist nach dem Strauß der zweitgrößte Vogel und lebt in Australien.|
+Dodo|Der Dodo war ein flugunfähiger Vogel auf Mauritius und starb um 1690 durch den Menschen aus.|
+Tukan|Der Tukan hat einen riesigen, aber leichten Schnabel, der ihm auch zum Kühlen dient.|tukane
+Ara|Aras sind große Papageien aus Südamerika und können über 60 Jahre alt werden.|
+Kakadu|Kakadus haben eine aufstellbare Federhaube und sind sehr gesellig.|
+Pinguin Kaiser|Der Kaiserpinguin ist die größte Pinguinart, die Männchen brüten das Ei im antarktischen Winter auf ihren Füßen aus.|kaiserpinguin
+Robbe|Robben wie Seehunde und Kegelrobben leben auch an Nord- und Ostsee.|seehund,kegelrobbe
+Seelöwe|Seelöwen können ihre Hinterflossen nach vorne drehen und damit an Land laufen.|
+Walross|Walrosse haben lange Stoßzähne, mit denen sie sich aufs Eis ziehen.|
+Orca|Der Orca oder Schwertwal ist der größte Delfin und jagt in Gruppen sogar Wale und Haie.|schwertwal,killerwal
+Buckelwal|Buckelwale singen lange, komplexe Lieder und springen spektakulär aus dem Wasser.|
+Pottwal|Der Pottwal taucht über 2.000 Meter tief und hat das größte Gehirn aller Tiere.|
+Narwal|Der Narwal hat einen bis zu 3 Meter langen Stoßzahn, eigentlich ein Zahn, der ihm das Einhorn-Image eingebracht hat.|
+Beluga|Der Belugawal ist weiß und kann Laute nachahmen.|weißwal,weisswal
+Weißer Hai|Der Weiße Hai wird bis zu 6 Meter lang. Angriffe auf Menschen sind sehr selten.|weisser hai
+Walhai|Der Walhai ist der größte Fisch der Welt, bis zu 18 Meter lang, und frisst nur Plankton.|
+Hammerhai|Der Hammerhai hat einen breiten Kopf, mit dem er besser sieht und elektrische Felder spürt.|
+Rochen|Rochen sind mit Haien verwandt, der Mantarochen erreicht 7 Meter Spannweite.|mantarochen
+Clownfisch|Der Clownfisch lebt geschützt zwischen den Nesseln der Seeanemone, bekannt aus Findet Nemo.|nemo,anemonenfisch
+Lachs|Lachse wandern aus dem Meer flussaufwärts zurück zu ihrem Geburtsort, um zu laichen.|
+Thunfisch|Der Rote Thun kann über 600 Kilogramm wiegen und 70 Kilometer pro Stunde schwimmen.|thun
+Hering|Heringe leben in riesigen Schwärmen und waren früher das wichtigste Speisefisch der Ostsee.|
+Aal|Europäische Aale wandern zum Laichen bis in die Sargassosee im Atlantik.|aale
+Piranha|Piranhas leben in Südamerika und haben scharfe Zähne, sind aber meist scheu.|piranhas
+Kugelfisch|Kugelfische blähen sich bei Gefahr auf, viele sind sehr giftig.|fugu
+Seestern|Seesterne können verlorene Arme nachwachsen lassen.|seesterne
+Seeigel|Seeigel sind stachelige Meeresbewohner und mit Seesternen verwandt.|
+Koralle|Korallen sind winzige Tiere, die riesige Riffe bauen. Das Great Barrier Reef ist das größte von Lebewesen gebaute Gebilde.|korallen,korallenriff
+Hummer|Hummer können sehr alt werden und haben zwei unterschiedlich große Scheren.|
+Krabbe|Krabben laufen meist seitwärts.|krabben
+Garnele|Garnelen, oft Shrimps genannt, sind kleine Krebstiere.|shrimps,crevette
+Tintenfisch|Tintenfische stoßen bei Gefahr eine Tintenwolke aus.|sepia,kalmar
+Riesenkalmar|Der Riesenkalmar hat die größten Augen im Tierreich, so groß wie ein Teller.|
+Schnecke|Schnecken kriechen auf einer Schleimspur, Weinbergschnecken leben über zehn Jahre.|schnecken,weinbergschnecke
+Muschel|Muscheln filtern das Wasser, eine Miesmuschel bis zu 2 Liter pro Stunde.|muscheln
+Libelle|Libellen sind sehr geschickte Flieger und jagen andere Insekten in der Luft.|libellen
+Marienkäfer|Marienkäfer fressen Blattläuse, ein Käfer bis zu 50 am Tag. Die Punkte verraten nicht das Alter.|marienkaefer
+Glühwürmchen|Glühwürmchen erzeugen kaltes Licht durch eine chemische Reaktion.|gluehwuermchen
+Heuschrecke|Wüstenheuschrecken können riesige Schwärme bilden, die ganze Ernten fressen.|heuschrecken
+Grille|Grillen zirpen, indem sie ihre Flügel aneinander reiben.|grillen
+Wespe|Wespen können mehrmals stechen, weil ihr Stachel keine Widerhaken hat.|wespen
+Hornisse|Die Hornisse ist die größte Wespe Europas und weniger aggressiv als ihr Ruf.|hornissen
+Termite|Termiten bauen riesige Hügel mit eingebauter Klimaanlage.|termiten
+Fliege|Die Stubenfliege schmeckt mit den Füßen.|stubenfliege
+Floh|Flöhe springen etwa das Hundertfache ihrer Körperlänge.|floehe
+Zecke|Zecken können Borreliose und FSME übertragen. Nach einem Ausflug den Körper absuchen.|zecken
+Skorpion (Tier)|Skorpione leuchten unter UV-Licht. Nur wenige Arten sind für Menschen gefährlich.|skorpione
+Vogelspinne|Vogelspinnen sind große, behaarte Spinnen, ihr Biss ist meist nicht schlimmer als ein Wespenstich.|
+Schwarze Witwe|Die Schwarze Witwe ist eine Giftspinne mit roter Sanduhr-Zeichnung am Bauch.|
+Tausendfüßer|Trotz des Namens haben die meisten Tausendfüßer deutlich weniger als tausend Beine.|tausendfuessler
+Chamäleon|Chamäleons wechseln die Farbe vor allem zur Verständigung und können ihre Augen unabhängig bewegen.|chamaeleon
+Gecko|Geckos laufen dank Millionen feiner Härchen an den Füßen sogar an Glasdecken.|geckos
+Leguan|Der grüne Leguan ist ein Pflanzenfresser aus Mittel- und Südamerika.|
+Komodowaran|Der Komodowaran ist die größte Echse der Welt, bis zu 3 Meter lang.|komodo waran
+Alligator|Alligatoren haben eine breitere, U-förmige Schnauze als Krokodile und leben vor allem in den USA und China.|
+Python|Pythons sind Würgeschlangen ohne Gift. Der Netzpython wird über 6 Meter lang.|pythons
+Anakonda|Die Grüne Anakonda ist die schwerste Schlange der Welt.|
+Kobra|Kobras spreizen bei Gefahr ihren Nackenschild. Die Königskobra ist die längste Giftschlange.|königskobra
+Kreuzotter|Die Kreuzotter ist die bekannteste Giftschlange Deutschlands und hat ein Zickzackband auf dem Rücken.|
+Ringelnatter|Die Ringelnatter ist harmlos und an gelben Flecken am Hinterkopf zu erkennen.|
+Frosch|Frösche atmen auch über die Haut. Aus Kaulquappen werden durch Metamorphose Frösche.|froesche,kaulquappe
+Kröte|Kröten haben eine warzige Haut und wandern im Frühling zu ihren Laichgewässern.|kroete,erdkroete
+Pfeilgiftfrosch|Pfeilgiftfrösche sind leuchtend bunt und gehören zu den giftigsten Tieren der Welt.|
+Salamander|Der Feuersalamander ist schwarz-gelb und kommt in feuchten Wäldern vor.|feuersalamander
+Lemur|Lemuren leben nur auf Madagaskar.|lemuren,katta
+Orang-Utan|Orang-Utans leben auf Borneo und Sumatra, ihr Name bedeutet Waldmensch.|orang utan
+Bonobo|Bonobos sind eng mit Schimpansen verwandt und lösen Konflikte eher friedlich.|
+Pavian|Paviane leben in großen Gruppen in Afrika.|
+Gibbon|Gibbons schwingen sich mit langen Armen durch die Bäume und singen im Duett.|
+Ameisenbär|Der Große Ameisenbär frisst mit seiner 60 Zentimeter langen Zunge bis zu 30.000 Ameisen am Tag.|
+Gürteltier|Gürteltiere haben einen Panzer aus Knochenplatten.|
+Schnabeltier|Das Schnabeltier ist ein Säugetier, das Eier legt, einen Entenschnabel hat und Gift am Sporn trägt.|
+Wombat|Wombats aus Australien machen würfelförmigen Kot.|
+Tasmanischer Teufel|Der Beutelteufel ist das größte fleischfressende Beuteltier.|beutelteufel
+Okapi|Das Okapi ist eine Waldgiraffe aus dem Kongo mit Zebrastreifen an den Beinen.|
+Tapir|Tapire haben einen kurzen Rüssel und sind mit Pferden und Nashörnern verwandt.|
+Warzenschwein|Warzenschweine knien beim Fressen auf den Vorderbeinen.|
+Gnu|Gnus ziehen jedes Jahr in riesigen Herden durch die Serengeti.|gnus
+Antilope|Antilopen wie Gazellen und Springböcke sind schnelle Läufer in Afrika und Asien.|gazelle
+Dromedar|Das Dromedar hat einen Höcker, das Trampeltier zwei. Im Höcker ist Fett, kein Wasser.|trampeltier
+Yak|Yaks leben im Hochland von Tibet und vertragen große Kälte.|
+Elefant Asiatisch|Der Asiatische Elefant ist kleiner als der afrikanische und hat kleinere Ohren.|asiatischer elefant
+Panther|Ein schwarzer Panther ist kein eigene Art, sondern ein schwarzer Leopard oder Jaguar.|schwarzer panther
+Polarfuchs|Der Polarfuchs hat im Winter weißes Fell und hält Temperaturen bis minus 50 Grad aus.|eisfuchs
+Rentier|Bei Rentieren tragen auch die Weibchen ein Geweih.|rentiere
+Wolf in Deutschland|Seit 2000 leben wieder wilde Wölfe in Deutschland, heute über 200 Rudel, vor allem im Norden und Osten.|woelfe deutschland
+Braunbär|Braunbären leben in Europa, Asien und Nordamerika, der Grizzly ist eine Unterart.|grizzly
+Hai Zähne|Haie verlieren im Leben Tausende Zähne, die immer nachwachsen.|
+Kakerlake|Kakerlaken gibt es seit über 300 Millionen Jahren, sie können wochenlang ohne Kopf leben.|schabe
+Seidenraupe|Die Raupe des Seidenspinners liefert die Seide.|seidenspinner
+Blattlaus|Blattläuse vermehren sich im Sommer ohne Männchen extrem schnell.|blattlaeuse
+Taube|Brieftauben finden über Hunderte Kilometer zurück nach Hause.|tauben,brieftaube
+Möwe|Möwen sind clevere Allesfresser an Küsten und in Städten.|moewe
+Kormoran|Kormorane tauchen nach Fischen und trocknen danach ihre Flügel in der Sonne.|
+Eisvogel|Der Eisvogel ist leuchtend blau-orange und taucht blitzschnell nach Fischen.|
+Fasan|Der Fasan stammt aus Asien und wurde in Europa für die Jagd eingeführt.|
+Wachtel|Die Wachtel ist der kleinste Hühnervogel Europas.|
+Kanarienvogel|Kanarienvögel wurden früher in Bergwerken als Warnung vor Gas gehalten.|kanarienvogel
+Meerschweinchen|Meerschweinchen stammen aus den Anden und sollten nie allein gehalten werden.|
+Chinchilla|Chinchillas haben das dichteste Fell aller Landtiere.|
+Frettchen|Frettchen sind domestizierte Iltisse und verspielte Haustiere.|
+Hamster Backen|Hamster transportieren Futter in ihren Backentaschen.|
+Ratte|Ratten sind sehr intelligent und können lachen, wenn man sie kitzelt.|ratten
+Maus|Mäuse kommunizieren mit Ultraschall-Lauten.|maeuse
+Siebenschläfer|Der Siebenschläfer hält bis zu sieben Monate Winterschlaf.|siebenschlaefer
+Delfin Schlaf|Delfine schlafen mit einer Gehirnhälfte, die andere bleibt wach.|
+Kraken Intelligenz|Kraken können Schraubgläser öffnen und sich tarnen, sie gelten als intelligenteste Wirbellose.|
+Hundegrößen|Der kleinste Hund ist der Chihuahua, zu den größten gehören Doggen und Irische Wolfshunde.|groesster hund,kleinster hund
+Labrador|Der Labrador Retriever ist einer der beliebtesten Familienhunde.|
+Schäferhund|Der Deutsche Schäferhund ist ein klassischer Polizei- und Diensthund.|deutscher schaeferhund
+Dackel|Der Dackel oder Dachshund wurde für die Jagd im Dachsbau gezüchtet.|dachshund,teckel
+Golden Retriever|Der Golden Retriever ist freundlich und gilt als idealer Familienhund.|
+Husky|Huskys sind Schlittenhunde aus Sibirien mit oft blauen Augen.|
+Mops|Der Mops hat eine kurze Schnauze und leidet daher oft unter Atemproblemen.|
+Pudel|Pudel sind sehr intelligent und haaren kaum.|
+Hunderassen Anzahl|Weltweit gibt es über 350 anerkannte Hunderassen.|wie viele hunderassen
+Katzenrassen|Beliebte Katzenrassen sind Maine Coon, Perser, Siam, Britisch Kurzhaar und Bengal.|maine coon,perserkatze
+Katze Schnurren|Katzen schnurren meist, wenn sie sich wohlfühlen, aber manchmal auch bei Schmerz zur Beruhigung.|warum schnurren katzen
+Pferderassen|Bekannte Pferderassen sind Haflinger, Araber, Friese, Trakehner und Shetlandpony.|haflinger,pony
+Rind|Hausrinder stammen vom Auerochsen ab, der 1627 ausstarb.|auerochse
+Bienenvolk|Ein Bienenvolk hat im Sommer bis zu 50.000 Bienen, eine Königin und einige Hundert Drohnen.|bienenkoenigin
+Honigbiene Tanz|Honigbienen zeigen anderen per Schwänzeltanz, wo Blüten sind.|schwaenzeltanz
+Tiere ausgestorben|Bekannte ausgestorbene Tiere sind Mammut, Dodo, Säbelzahnkatze, Beutelwolf und Wandertaube.|ausgestorbene tiere
+Säbelzahnkatze|Die Säbelzahnkatze lebte bis vor etwa 10.000 Jahren und hatte bis zu 20 Zentimeter lange Eckzähne.|saebelzahntiger
+Velociraptor|Der Velociraptor war etwa so groß wie ein Truthahn und hatte Federn, anders als in Jurassic Park.|raptor
+Triceratops|Der Triceratops war ein Pflanzenfresser mit drei Hörnern und Nackenschild.|
+Brachiosaurus|Der Brachiosaurus war ein riesiger Langhals-Dinosaurier, bis zu 13 Meter hoch.|
+Stegosaurus|Der Stegosaurus hatte Knochenplatten auf dem Rücken und Stacheln am Schwanz.|
+Archaeopteryx|Der Archaeopteryx, gefunden in Bayern, gilt als Bindeglied zwischen Dinosauriern und Vögeln.|urvogel
+Flugsaurier|Flugsaurier wie der Pteranodon waren keine Dinosaurier, sondern eine eigene Reptiliengruppe.|pteranodon
+Megalodon|Der Megalodon war ein Riesenhai von bis zu 15 Metern Länge, ausgestorben vor rund 3,6 Millionen Jahren.|
+Giftigstes Tier|Als giftigstes Tier gilt die Würfelqualle, an Land der Pfeilgiftfrosch und der Inlandtaipan.|giftigste schlange
+Ältestes Tier|Grönlandhaie können über 270 Jahre alt werden, manche Schwämme und Muscheln noch älter.|aeltestes tier,ältestes lebewesen
+Gefährlichstes Tier|Das gefährlichste Tier für Menschen ist die Mücke, weil sie Malaria und andere Krankheiten überträgt.|
+Lautestes Tier|Der Pottwal ist das lauteste Tier, an Land der Brüllaffe.|
+Kleinstes Säugetier|Die Etruskerspitzmaus und die Hummelfledermaus sind die kleinsten Säugetiere, nur wenige Gramm schwer.|
+Schlafen Tiere|Koalas und Faultiere schlafen bis zu 20 Stunden am Tag, Giraffen nur etwa 2 Stunden.|welches tier schlaeft am meisten
+Tierschutz Notruf|Wer ein verletztes Wildtier findet, ruft am besten die Polizei, den Tierschutzverein oder eine Wildtierstation an.|verletztes tier gefunden
+Hermelin|Das Hermelin ist ein kleines Marderchen, das im Winter weiß wird. Nur die Schwanzspitze bleibt schwarz.|wiesel
+Iltis|Der Iltis ist ein Marder, von dem das Frettchen abstammt. Er kann bei Gefahr übel riechen.|
+Nerz|Der Nerz ist ein Marder am Wasser. In Europa ist der Europäische Nerz fast ausgestorben.|
+Mungo|Mungos sind flinke Raubtiere aus Afrika und Asien, die sogar Kobras besiegen können.|
+Wüstenfuchs|Der Fennek oder Wüstenfuchs hat riesige Ohren, mit denen er Wärme abgibt und Beute unter dem Sand hört.|fennek
+Rotfuchs Stadt|Füchse leben inzwischen auch in Großstädten wie Berlin und finden dort viel Nahrung.|stadtfuchs
+Goldschakal|Der Goldschakal wandert seit einigen Jahren aus Südosteuropa nach Deutschland ein.|schakal
+Kojote|Der Kojote ist ein Wildhund Nordamerikas, kleiner als der Wolf.|
+Dingo|Der Dingo ist ein wilder Hund in Australien, der vor Tausenden Jahren mit Menschen kam.|
+Erdferkel|Das Erdferkel aus Afrika frisst nachts mit seiner langen Zunge Ameisen und Termiten.|
+Pangolin|Das Schuppentier ist mit Schuppen bedeckt und rollt sich bei Gefahr zusammen. Es ist das am häufigsten geschmuggelte Säugetier der Welt.|schuppentier
+Nacktmull|Nacktmulle leben unter der Erde in Afrika, spüren kaum Schmerz, bekommen fast nie Krebs und werden über 30 Jahre alt.|
+Capybara|Das Wasserschwein aus Südamerika ist das größte Nagetier der Welt, bis 65 Kilo schwer, und gilt als sehr friedlich.|wasserschwein
+Stachelschwein|Stachelschweine sind Nagetiere mit langen Stacheln, die sie nicht schießen können, sondern nur aufstellen.|
+Gepard Jagd|Geparden jagen am Tag, weil Löwen und Hyänen nachts aktiv sind. Ihre Sprints dauern nur 20 bis 30 Sekunden.|
+Serval|Der Serval ist eine afrikanische Wildkatze mit sehr langen Beinen und großen Ohren, die Vögel aus der Luft fängt.|
+Ozelot|Der Ozelot ist eine gefleckte Wildkatze aus Mittel- und Südamerika.|
+Wildkatze|Die Europäische Wildkatze lebt wieder in deutschen Wäldern, etwa in der Eifel und im Harz. Sie sieht einer getigerten Hauskatze ähnlich.|europäische wildkatze
+Mähnenwolf|Der Mähnenwolf aus Südamerika sieht aus wie ein Fuchs auf Stelzen und frisst viel Obst.|
+Roter Panda|Der Rote Panda ist kleiner als der Große Panda und eher mit Mardern und Waschbären verwandt.|kleiner panda,katzenbär
+Gibbon Gesang|Gibbons singen jeden Morgen laute Duette, die man kilometerweit hört.|
+Mandrill|Der Mandrill ist der größte Affe, der kein Menschenaffe ist, mit einem bunten Gesicht.|
+Kapuzineraffe|Kapuzineraffen sind sehr schlau und nutzen Steine als Werkzeug, um Nüsse zu knacken.|
+Plumplori|Plumploris sind kleine Halbaffen mit großen Augen und das einzige giftige Primat.|
+Koboldmaki|Koboldmakis haben die größten Augen im Verhältnis zum Körper aller Säugetiere.|
+Hirscheber|Der Hirscheber aus Indonesien hat Hauer, die durch die Oberlippe wachsen.|
+Manati|Seekühe wie Manatis und Dugongs fressen Seegras und sind mit Elefanten verwandt. Seefahrer hielten sie früher für Meerjungfrauen.|seekuh,dugong
+Seeotter|Seeotter halten sich beim Schlafen an den Pfoten, damit sie nicht auseinandertreiben, und knacken Muscheln mit Steinen.|
+Seehund|Seehunde leben im Wattenmeer der Nordsee. Ein allein liegendes Junges ist nicht verlassen, also Abstand halten und nicht anfassen.|heuler
+Kegelrobbe|Die Kegelrobbe ist das größte Raubtier Deutschlands, Männchen wiegen bis 300 Kilo. Man sieht sie zum Beispiel auf Helgoland.|größtes raubtier deutschland
+Schweinswal|Der Schweinswal ist der einzige heimische Wal in Nord- und Ostsee.|
+Blauwal Herz|Das Herz eines Blauwals wiegt etwa 180 Kilo, so viel wie zwei Menschen.|
+Flughund|Flughunde sind große Fledermäuse, die Früchte fressen. Manche haben fast zwei Meter Spannweite.|
+Vampirfledermaus|Vampirfledermäuse trinken tatsächlich Blut, meist von Rindern, und teilen es mit hungrigen Artgenossen.|
+Kakapo|Der Kakapo aus Neuseeland ist ein flugunfähiger, nachtaktiver Papagei, von dem es nur noch etwa 250 Tiere gibt.|
+Paradiesvogel|Paradiesvögel aus Neuguinea haben prachtvolle Federn und führen auffällige Balztänze auf.|
+Blaufußtölpel|Der Blaufußtölpel von den Galápagos-Inseln zeigt bei der Balz stolz seine blauen Füße.|
+Papageitaucher|Papageitaucher haben bunte Schnäbel und brüten an Klippen, etwa auf Island und Helgoland.|puffin
+Wiedehopf|Der Wiedehopf hat eine auffällige Federhaube und war Vogel des Jahres 2022.|
+Haussperling|Der Spatz, eigentlich Haussperling, ist einer der häufigsten Vögel in Deutschland, wird aber seltener.|
+Grünspecht|Der Grünspecht sucht am Boden nach Ameisen und lacht laut.|
+Zaunkönig|Der Zaunkönig ist einer der kleinsten Vögel Deutschlands, singt aber sehr laut.|
+Goldhähnchen|Das Wintergoldhähnchen ist mit 5 Gramm der kleinste Vogel Europas.|kleinster vogel europas
+Feldlerche|Die Feldlerche singt hoch in der Luft und ist durch die Landwirtschaft selten geworden.|
+Stieglitz|Der Stieglitz oder Distelfink hat ein rotes Gesicht und frisst gern Distelsamen.|distelfink
+Pirol|Der Pirol ist leuchtend gelb, versteckt sich aber gut in Baumkronen.|
+Uhu Größe|Der Uhu ist die größte Eule der Welt, mit bis zu 1,7 Metern Spannweite.|größte eule
+Blutegel|Blutegel werden in der Medizin eingesetzt, weil ihr Speichel das Blut verdünnt.|egel
+Nacktschnecke|Spanische Wegschnecken fressen Gärten kahl. Helfen können Schneckenzäune, Laufenten und Igel.|schnecken garten
+Weinbergschnecke|Die Weinbergschnecke ist die größte Landschnecke Deutschlands und steht unter Schutz.|
+Ohrwurm|Ohrwürmer krabbeln nicht in Ohren. Sie fressen Blattläuse und sind nützlich im Garten.|
+Gottesanbeterin|Die Gottesanbeterin hält ihre Fangbeine wie zum Gebet. Weibchen fressen manchmal das Männchen.|
+Stabheuschrecke|Stabheuschrecken sehen aus wie Zweige und sind gute Tarnkünstler.|
+Wanze|Die Stinkwanze verströmt einen Geruch, wenn sie gestört wird. Die Bettwanze sticht Menschen nachts.|bettwanzen
+Silberfischchen|Silberfischchen leben in feuchten Räumen wie Bädern. Sie sind harmlos, zeigen aber zu viel Feuchtigkeit.|
+Motte|Kleidermotten fressen Wolle, Lebensmittelmotten Mehl und Nudeln. Hilft: Vorräte in dichte Dosen, Lavendel und Zedernholz.|motten
+Pfeilschwanzkrebs|Pfeilschwanzkrebse gibt es seit über 400 Millionen Jahren, ihr blaues Blut wird für Medizin-Tests genutzt.|blaues blut
+Mantarochen|Mantarochen haben bis 7 Meter Spannweite und das größte Gehirn aller Fische.|manta
+Mondfisch|Der Mondfisch ist der schwerste Knochenfisch der Welt, über zwei Tonnen.|schwerster fisch
+Grönlandhai|Der Grönlandhai kann über 250, vielleicht sogar 400 Jahre alt werden.|
+Anglerfisch|Tiefsee-Anglerfische locken Beute mit einer leuchtenden Angel am Kopf.|

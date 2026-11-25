@@ -31,3 +31,64 @@ Karneval|Karneval, Fasching oder Fastnacht beginnt offiziell am 11.11. um 11:11 
 Tag der Deutschen Einheit|Am 3. Oktober feiert Deutschland die Wiedervereinigung von 1990. Er ist bundesweiter Feiertag.|3. oktober
 Ramadan|Im Fastenmonat Ramadan fasten Musliminnen und Muslime von der Morgendämmerung bis zum Sonnenuntergang. Er endet mit dem Zuckerfest. Da er dem Mondkalender folgt, rückt er jedes Jahr etwa 11 Tage vor.|zuckerfest
 Chanukka|Chanukka ist das jüdische Lichterfest im Dezember, acht Tage lang wird jeden Abend eine weitere Kerze am Leuchter angezündet.|chanukka fest
+Neujahr|Neujahr am 1. Januar ist in ganz Deutschland ein Feiertag.|1. januar
+Heilige Drei Könige|Am 6. Januar ist Heilige Drei Könige, Feiertag in Bayern, Baden-Württemberg und Sachsen-Anhalt. Sternsinger ziehen von Haus zu Haus und schreiben den Segen an die Tür.|dreikönigstag,6. januar,sternsinger
+Internationaler Frauentag|Der Frauentag am 8. März ist in Berlin und Mecklenburg-Vorpommern ein Feiertag.|frauentag,8. märz
+Karfreitag|Karfreitag ist der Freitag vor Ostern, an dem Christen an die Kreuzigung Jesu denken. Er ist in ganz Deutschland ein stiller Feiertag.|karfreitag
+Ostermontag|Der Ostermontag ist bundesweit ein Feiertag.|
+Tag der Arbeit|Der 1. Mai ist der Tag der Arbeit und in ganz Deutschland ein Feiertag. Am Vorabend wird in den Mai getanzt.|1. mai,maifeiertag,tanz in den mai
+Christi Himmelfahrt|Christi Himmelfahrt ist 39 Tage nach Ostern immer an einem Donnerstag, bundesweiter Feiertag und zugleich Vatertag.|himmelfahrt
+Pfingsten|Pfingsten ist 50 Tage nach Ostern. Christen feiern, dass der Heilige Geist zu den Jüngern kam. Pfingstmontag ist bundesweiter Feiertag.|pfingstmontag
+Fronleichnam|Fronleichnam ist 60 Tage nach Ostern, ein Donnerstag, Feiertag in katholisch geprägten Ländern wie Bayern, Baden-Württemberg, Hessen, NRW, Rheinland-Pfalz und Saarland.|
+Mariä Himmelfahrt|Am 15. August ist Mariä Himmelfahrt, Feiertag im Saarland und in vielen Gemeinden Bayerns.|15. august
+Weltkindertag|Der Weltkindertag am 20. September ist in Thüringen ein Feiertag.|20. september
+Reformationstag|Am 31. Oktober ist Reformationstag, Feiertag in Norddeutschland und den östlichen Bundesländern. Er erinnert an Luthers Thesen von 1517.|31. oktober
+Allerheiligen|Am 1. November ist Allerheiligen, Feiertag in Bayern, Baden-Württemberg, NRW, Rheinland-Pfalz und Saarland. Viele besuchen die Gräber ihrer Angehörigen.|1. november
+Buß- und Bettag|Der Buß- und Bettag ist der Mittwoch vor dem letzten Sonntag im Kirchenjahr, nur in Sachsen ein Feiertag.|bußtag
+Volkstrauertag|Am Volkstrauertag, zwei Sonntage vor dem ersten Advent, wird an die Opfer von Krieg und Gewalt erinnert.|
+Totensonntag|Der Totensonntag oder Ewigkeitssonntag ist der letzte Sonntag vor dem Advent, an dem evangelische Christen der Verstorbenen gedenken.|ewigkeitssonntag
+Heiligabend|Heiligabend am 24. Dezember ist kein gesetzlicher Feiertag, aber die Bescherung findet in Deutschland meist am Abend statt.|24. dezember
+Erster Weihnachtstag|Der 25. Dezember ist der erste Weihnachtstag und bundesweit Feiertag.|25. dezember
+Zweiter Weihnachtstag|Der 26. Dezember ist der zweite Weihnachtstag und bundesweit Feiertag.|26. dezember,stefanstag
+Nikolaus|Am 6. Dezember ist Nikolaustag. Kinder stellen am Abend davor Schuhe oder Stiefel vor die Tür.|nikolaustag,6. dezember
+Martinstag|Am 11. November ist Sankt Martin, Kinder ziehen mit Laternen durch die Straßen, es gibt Martinsgans.|sankt martin,laternenumzug
+Elfter Elfter|Am 11. November um 11 Uhr 11 beginnt die Karnevalssession, die fünfte Jahreszeit.|11.11.,karnevalsbeginn
+Rosenmontag|Rosenmontag ist der Höhepunkt des Karnevals mit großen Umzügen, besonders in Köln, Düsseldorf und Mainz. Kein gesetzlicher Feiertag.|
+Aschermittwoch|Am Aschermittwoch endet der Karneval und die 40-tägige Fastenzeit bis Ostern beginnt.|fastenzeit
+Gründonnerstag|Gründonnerstag ist der Donnerstag vor Ostern, an dem Christen an das letzte Abendmahl denken.|
+Erntedank|Erntedank wird meist am ersten Sonntag im Oktober gefeiert, um für die Ernte zu danken.|erntedankfest
+Sommerzeit|Die Uhren werden am letzten Sonntag im März um eine Stunde vorgestellt, von 2 auf 3 Uhr. Merksatz: Im Frühling stellt man die Gartenmöbel vor das Haus.|zeitumstellung frühling,uhr vorstellen
+Winterzeit|Am letzten Sonntag im Oktober werden die Uhren um eine Stunde zurückgestellt, von 3 auf 2 Uhr. Man darf eine Stunde länger schlafen.|zeitumstellung herbst,uhr zurückstellen
+Schaltjahr|Ein Schaltjahr hat 366 Tage, mit dem 29. Februar. Es kommt alle vier Jahre, außer in vollen Jahrhunderten, die nicht durch 400 teilbar sind. Nächste: 2028, 2032.|29. februar,schalttag
+Sommeranfang|Der astronomische Sommer beginnt am 20. oder 21. Juni, dem längsten Tag des Jahres.|sommersonnenwende,längster tag
+Winteranfang|Der astronomische Winter beginnt am 21. oder 22. Dezember, dem kürzesten Tag des Jahres.|wintersonnenwende,kürzester tag
+Frühlingsanfang|Der astronomische Frühling beginnt am 20. oder 21. März, dann sind Tag und Nacht gleich lang.|tagundnachtgleiche
+Herbstanfang|Der astronomische Herbst beginnt am 22. oder 23. September.|
+Meteorologische Jahreszeiten|Meteorologen lassen die Jahreszeiten immer am Monatsersten beginnen: Frühling am 1. März, Sommer am 1. Juni, Herbst am 1. September, Winter am 1. Dezember.|
+Siebenschläfer|Der Siebenschläfertag ist am 27. Juni. Bauernregel: Wie das Wetter am Siebenschläfer, so bleibt es sieben Wochen.|27. juni
+Eisheilige|Die Eisheiligen vom 11. bis 15. Mai gelten als letzte Frostgefahr. Danach pflanzt man empfindliche Pflanzen aus.|eisheiligen
+Hundstage|Die Hundstage vom 23. Juli bis 23. August gelten als heißeste Zeit des Jahres, benannt nach dem Hundsstern Sirius.|
+Schulferien|Die Sommerferien dauern in Deutschland sechs Wochen und werden zwischen den Bundesländern gestaffelt, damit nicht alle gleichzeitig reisen.|sommerferien,ferien
+Brückentag|Ein Brückentag liegt zwischen einem Feiertag und dem Wochenende, zum Beispiel der Freitag nach Himmelfahrt. Mit einem Urlaubstag gibt es vier freie Tage.|
+Chinesisches Neujahr|Das chinesische Neujahr fällt auf einen Tag zwischen 21. Januar und 20. Februar. 2026 ist das Jahr des Pferdes, 2027 das Jahr der Ziege.|chinesisches neujahrsfest,frühlingsfest
+Zuckerfest|Das Zuckerfest am Ende des Ramadan ist eines der wichtigsten Feste im Islam. Es heißt auf Arabisch Eid al-Fitr.|eid al fitr
+Opferfest|Das Opferfest ist das höchste islamische Fest, etwa 70 Tage nach dem Zuckerfest.|eid al adha
+Diwali|Diwali ist das hinduistische Lichterfest im Oktober oder November.|lichterfest
+Pessach|Pessach erinnert Juden an den Auszug aus Ägypten. Es fällt meist in den April.|passah
+Jom Kippur|Jom Kippur ist der höchste jüdische Feiertag, der Versöhnungstag, mit Fasten.|
+Thanksgiving|Thanksgiving ist das Erntedankfest in den USA am vierten Donnerstag im November, mit Truthahn. Am Tag danach ist Black Friday.|
+Black Friday|Black Friday ist der Freitag nach Thanksgiving, ein großer Rabatt-Tag im Handel, auch in Deutschland.|
+Cyber Monday|Der Montag nach Black Friday mit Rabatten im Onlinehandel.|
+Tag der Erde|Der Earth Day am 22. April soll an den Schutz der Umwelt erinnern.|earth day
+Welttag des Buches|Am 23. April ist Welttag des Buches, dem Todestag von Shakespeare und Cervantes.|
+Weltgesundheitstag|Am 7. April ist Weltgesundheitstag, der Gründungstag der WHO.|
+Star-Wars-Tag|Am 4. Mai ist Star-Wars-Tag, wegen des Wortspiels May the Fourth be with you.|may the 4th
+Pi-Tag|Am 14. März ist Pi-Tag, weil das Datum in den USA 3/14 geschrieben wird.|pi day
+Tag der Muttersprache|Der Internationale Tag der Muttersprache ist am 21. Februar.|
+Kalenderwoche berechnen|In Deutschland beginnt die Woche am Montag. Die erste Kalenderwoche ist die, in der der erste Donnerstag des Jahres liegt.|kw berechnen
+Gregorianischer Kalender|Unser Kalender wurde 1582 von Papst Gregor XIII. eingeführt und ersetzte den julianischen. Damals wurden zehn Tage übersprungen.|kalender geschichte
+Julianischer Kalender|Der julianische Kalender wurde 46 vor Christus von Julius Caesar eingeführt. Die orthodoxe Kirche nutzt ihn teilweise heute noch, darum feiern manche Weihnachten am 7. Januar.|
+Monatsnamen Herkunft|Juli ist nach Julius Caesar benannt, August nach Kaiser Augustus. September bis Dezember heißen eigentlich der siebte bis zehnte Monat, weil das Jahr bei den Römern im März begann.|warum heißt september
+Wochentage Herkunft|Die Wochentage sind nach Göttern und Himmelskörpern benannt: Sonntag nach der Sonne, Montag nach dem Mond, Donnerstag nach dem Gott Donar, Freitag nach der Göttin Frija.|warum heißt donnerstag
+Geburtsstein|Jeder Monat hat einen Geburtsstein, zum Beispiel Granat im Januar, Diamant im April, Rubin im Juli, Saphir im September.|monatsstein
+Hochzeitstage|Hochzeitstage haben Namen: 1 Jahr Papierhochzeit, 5 Holz, 10 Rosen, 25 Silber, 40 Rubin, 50 Gold, 60 Diamant.|silberhochzeit,goldene hochzeit

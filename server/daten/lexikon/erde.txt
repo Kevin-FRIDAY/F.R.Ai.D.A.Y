@@ -73,3 +73,170 @@ Himalaya|Der Himalaya ist das höchste Gebirge der Erde mit allen 14 Achttausend
 Größte Städte der Welt|Die größten Ballungsräume der Welt sind Tokio, Delhi, Shanghai, Dhaka und São Paulo mit jeweils über 20 Millionen Menschen.|größte stadt der welt
 Istanbul|Istanbul ist die einzige Millionenstadt, die auf zwei Kontinenten liegt, in Europa und Asien.|
 Meeresspiegelanstieg|Der Meeresspiegel steigt durch den Klimawandel derzeit um etwa 4 Millimeter pro Jahr.|meeresspiegel
+Kangchendzönga|Der Kangchendzönga im Himalaya ist mit 8.586 Metern der dritthöchste Berg der Erde.|kangchenjunga
+Lhotse|Der Lhotse neben dem Everest ist mit 8.516 Metern der vierthöchste Berg.|
+Nanga Parbat|Der Nanga Parbat in Pakistan ist 8.126 Meter hoch und gilt als Schicksalsberg der Deutschen.|
+Achttausender|Es gibt 14 Berge über 8.000 Meter, alle im Himalaya und Karakorum.|achttausender anzahl
+Matterhorn|Das Matterhorn in der Schweiz ist 4.478 Meter hoch und berühmt für seine Pyramidenform.|
+Großglockner|Der Großglockner ist mit 3.798 Metern der höchste Berg Österreichs.|grossglockner
+Dufourspitze|Die Dufourspitze ist mit 4.634 Metern der höchste Berg der Schweiz.|
+Watzmann|Der Watzmann in den Berchtesgadener Alpen ist 2.713 Meter hoch.|
+Brocken|Der Brocken im Harz ist mit 1.141 Metern der höchste Berg Norddeutschlands.|
+Feldberg|Der Feldberg ist mit 1.493 Metern der höchste Berg des Schwarzwalds.|
+Fichtelberg|Der Fichtelberg im Erzgebirge ist mit 1.215 Metern der höchste Berg Sachsens.|
+Wasserkuppe|Die Wasserkuppe in der Rhön ist mit 950 Metern der höchste Berg Hessens und Wiege des Segelflugs.|
+Ätna|Der Ätna auf Sizilien ist mit rund 3.300 Metern der höchste aktive Vulkan Europas.|aetna,etna
+Vesuv|Der Vesuv bei Neapel begrub im Jahr 79 Pompeji.|
+Fuji|Der Fuji ist mit 3.776 Metern Japans höchster Berg und ein Vulkan.|fujisan,fudschijama
+Mauna Kea|Der Mauna Kea auf Hawaii ist vom Meeresboden gemessen über 10.000 Meter hoch und damit höher als der Everest.|
+Mount Rushmore|Am Mount Rushmore in South Dakota sind die Köpfe von vier US-Präsidenten in den Fels gehauen.|
+Table Mountain|Der Tafelberg ist der flache Hausberg von Kapstadt.|tafelberg
+Ararat|Der Ararat in der Türkei ist 5.137 Meter hoch, dort soll die Arche Noah gestrandet sein.|
+Kaukasus|Der Kaukasus zwischen Schwarzem und Kaspischem Meer ist Heimat des Elbrus.|
+Anden|Die Anden sind mit rund 7.000 Kilometern das längste Gebirge der Welt über Land.|
+Rocky Mountains|Die Rocky Mountains ziehen sich durch Kanada und die USA.|rockies
+Ural|Der Ural gilt als Grenze zwischen Europa und Asien.|
+Pyrenäen|Die Pyrenäen trennen Spanien und Frankreich, mittendrin liegt Andorra.|pyrenaeen
+Karpaten|Die Karpaten ziehen sich in einem Bogen durch Osteuropa.|
+Apenninen|Die Apenninen bilden das Rückgrat Italiens.|
+Dolomiten|Die Dolomiten in Südtirol sind UNESCO-Welterbe.|
+Erzgebirge|Das Erzgebirge an der Grenze zu Tschechien ist bekannt für Bergbau und Holzkunst wie Nussknacker.|
+Bayerischer Wald|Der Bayerische Wald ist Deutschlands ältester Nationalpark, gegründet 1970.|
+Sächsische Schweiz|Die Sächsische Schweiz ist ein Elbsandsteingebirge mit der Basteibrücke.|saechsische schweiz,bastei
+Grand Canyon|Der Grand Canyon in Arizona ist bis zu 1.800 Meter tief, ausgegraben vom Colorado River.|
+Jangtse|Der Jangtse ist mit rund 6.300 Kilometern der längste Fluss Asiens, an ihm steht der Drei-Schluchten-Damm.|yangtze
+Mississippi|Der Mississippi ist zusammen mit dem Missouri das größte Flusssystem Nordamerikas.|
+Ganges|Der Ganges ist der heilige Fluss der Hindus.|
+Mekong|Der Mekong fließt durch sechs Länder Südostasiens.|
+Kongo|Der Kongo ist der tiefste Fluss der Welt, über 200 Meter tief.|kongo fluss
+Themse|Die Themse fließt durch London.|thames
+Seine|Die Seine fließt durch Paris.|
+Tiber|Der Tiber fließt durch Rom.|
+Weser|Die Weser entsteht in Hann. Münden aus Werra und Fulda und mündet bei Bremerhaven in die Nordsee.|
+Main|Der Main fließt durch Frankfurt und Würzburg und mündet bei Mainz in den Rhein.|
+Mosel|Die Mosel ist bekannt für steile Weinberge und mündet in Koblenz am Deutschen Eck in den Rhein.|
+Neckar|Der Neckar fließt durch Stuttgart und Heidelberg.|
+Oder|Die Oder bildet einen großen Teil der Grenze zu Polen.|
+Isar|Die Isar fließt durch München.|
+Spree|Die Spree fließt durch Berlin.|
+Ems|Die Ems mündet in den Dollart an der Nordsee.|
+Saale|Die Saale fließt durch Thüringen und Sachsen-Anhalt, durch Jena und Halle.|
+Ruhr|Die Ruhr gab dem Ruhrgebiet den Namen.|
+Inn|Der Inn kommt aus der Schweiz und mündet bei Passau in die Donau.|
+Chiemsee|Der Chiemsee ist mit 80 Quadratkilometern der größte See Bayerns, das Bayerische Meer.|
+Starnberger See|Der Starnberger See ist einer der tiefsten Seen Deutschlands, hier starb König Ludwig II.|
+Gardasee|Der Gardasee ist der größte See Italiens.|lago di garda
+Genfersee|Der Genfersee zwischen Schweiz und Frankreich ist der größte See Westeuropas.|lac leman
+Ladogasee|Der Ladogasee in Russland ist der größte See Europas.|
+Obere See|Der Obere See an der Grenze von USA und Kanada ist der flächenmäßig größte Süßwassersee der Welt.|lake superior
+Große Seen|Die Großen Seen Nordamerikas sind Oberer See, Michigansee, Huronsee, Eriesee und Ontariosee.|great lakes
+Victoriasee|Der Victoriasee ist der größte See Afrikas, aus ihm fließt der Nil.|
+Titicacasee|Der Titicacasee zwischen Peru und Bolivien ist der höchstgelegene schiffbare See der Welt, auf 3.810 Metern.|
+Aralsee|Der Aralsee ist durch Bewässerung fast ausgetrocknet, eine der größten Umweltkatastrophen.|
+Mittelmeer|Das Mittelmeer verbindet Europa, Afrika und Asien und ist über die Straße von Gibraltar mit dem Atlantik verbunden.|
+Ostsee|Die Ostsee ist ein Brackmeer mit wenig Salz und kaum Gezeiten.|
+Nordsee|Die Nordsee hat starke Gezeiten und das Wattenmeer.|
+Schwarzes Meer|Das Schwarze Meer liegt zwischen Europa und Asien, der Bosporus verbindet es mit dem Mittelmeer.|
+Rotes Meer|Das Rote Meer zwischen Afrika und Arabien ist über den Suezkanal mit dem Mittelmeer verbunden.|
+Karibik|Die Karibik ist ein Meer mit Tausenden Inseln zwischen Nord- und Südamerika.|karibisches meer
+Indischer Ozean|Der Indische Ozean ist der drittgrößte Ozean.|indik
+Arktischer Ozean|Der Arktische Ozean um den Nordpol ist der kleinste Ozean.|nordpolarmeer
+Südlicher Ozean|Der Südliche Ozean umgibt die Antarktis.|suedpolarmeer
+Panamakanal|Der Panamakanal verbindet seit 1914 Atlantik und Pazifik.|
+Suezkanal Bedeutung|Durch den Suezkanal läuft etwa ein Zehntel des Welthandels.|
+Straße von Gibraltar|Die Straße von Gibraltar ist an der engsten Stelle nur 14 Kilometer breit.|strasse von gibraltar
+Bosporus|Der Bosporus trennt in Istanbul Europa und Asien.|
+Ärmelkanal|Der Ärmelkanal trennt England und Frankreich, seit 1994 fährt der Eurotunnel darunter.|aermelkanal,eurotunnel
+Straße von Hormus|Durch die Straße von Hormus fließt ein großer Teil des weltweit verschifften Öls.|hormus
+Nord-Ostsee-Kanal|Der Nord-Ostsee-Kanal ist die meistbefahrene künstliche Wasserstraße der Welt.|kiel kanal
+Größte Insel|Grönland ist die größte Insel der Welt, Australien gilt als Kontinent.|groesste insel
+Madagaskar|Madagaskar ist die viertgrößte Insel der Welt mit vielen Tieren, die es nur dort gibt.|
+Borneo|Borneo ist die drittgrößte Insel und teilt sich auf Indonesien, Malaysia und Brunei.|
+Island|Island liegt auf dem Mittelatlantischen Rücken und hat Vulkane, Geysire und Gletscher.|
+Sizilien|Sizilien ist die größte Insel im Mittelmeer.|
+Mallorca|Mallorca ist die größte Baleareninsel und eines der beliebtesten Urlaubsziele der Deutschen.|malle
+Kreta|Kreta ist die größte griechische Insel.|
+Zypern|Zypern ist seit 1974 geteilt.|
+Kanarische Inseln|Die Kanaren gehören zu Spanien, liegen aber vor Afrika, größte Insel ist Teneriffa mit dem Teide.|kanaren,teneriffa
+Malediven|Die Malediven sind das flachste Land der Welt und vom Meeresspiegelanstieg bedroht.|
+Hawaii|Hawaii ist der 50. Bundesstaat der USA und eine Vulkaninselkette im Pazifik.|
+Galápagos|Auf den Galápagos-Inseln studierte Charles Darwin Finken und Schildkröten.|galapagos
+Osterinsel|Die Osterinsel ist berühmt für ihre großen Steinfiguren, die Moai.|moai
+Helgoland|Helgoland ist Deutschlands einzige Hochseeinsel.|
+Usedom|Usedom teilen sich Deutschland und Polen.|
+Fehmarn|Fehmarn ist Deutschlands drittgrößte Insel.|
+Föhr|Föhr ist eine nordfriesische Insel im Wattenmeer.|foehr
+Insel Mainau|Die Mainau im Bodensee ist eine Blumeninsel.|mainau
+Gobi|Die Gobi ist eine kalte Wüste in der Mongolei und China.|wueste gobi
+Atacama|Die Atacama in Chile ist die trockenste Wüste der Welt außerhalb der Pole.|trockenster ort
+Kalahari|Die Kalahari ist eine Savanne und Wüste im südlichen Afrika.|
+Namib|Die Namib in Namibia hat einige der höchsten Dünen der Welt.|
+Death Valley|Im Death Valley in Kalifornien wurde mit 56,7 Grad die höchste Lufttemperatur gemessen.|tal des todes
+Arabische Wüste|Die Rub al-Chali in Arabien ist das größte Sandmeer der Welt.|rub al khali
+Amazonas-Regenwald|Der Amazonas-Regenwald ist der größte Regenwald der Erde, rund 60 Prozent liegen in Brasilien.|regenwald amazonas
+Serengeti|Die Serengeti in Tansania ist berühmt für die große Tierwanderung.|
+Savanne|Eine Savanne ist eine Graslandschaft mit vereinzelten Bäumen, typisch für Afrika.|
+Tundra|Die Tundra ist eine baumlose Landschaft mit Dauerfrostboden im hohen Norden.|
+Taiga|Die Taiga ist der große Nadelwaldgürtel im Norden Russlands und Kanadas, das größte Waldgebiet der Erde.|
+Steppe|Eine Steppe ist eine trockene Graslandschaft ohne Bäume.|
+Gletscher|Gletscher sind Eisströme. Die Alpengletscher schrumpfen wegen des Klimawandels stark.|
+Fjord|Ein Fjord ist ein von Gletschern ausgehobenes, ins Meer geflutetes Tal, typisch für Norwegen.|fjorde
+Geysir|Ein Geysir schießt regelmäßig heißes Wasser in die Höhe, bekannt sind Strokkur in Island und Old Faithful in den USA.|geysire
+Höhle|Die größte Höhle der Welt ist die Son-Doong-Höhle in Vietnam.|hoehle
+Tropfsteinhöhle|In Tropfsteinhöhlen hängen Stalaktiten von der Decke, Stalagmiten wachsen vom Boden.|stalaktit,stalagmit
+Great Barrier Reef|Das Great Barrier Reef vor Australien ist das größte Korallenriff der Welt.|
+Kontinentaldrift|Vor rund 300 Millionen Jahren bildeten alle Kontinente den Superkontinent Pangäa.|pangaea,pangaea
+Erdalter|Die Erde ist rund 4,54 Milliarden Jahre alt.|wie alt ist die erde
+Erdumfang|Der Erdumfang am Äquator beträgt rund 40.075 Kilometer.|umfang der erde
+Erddurchmesser|Die Erde hat einen Durchmesser von rund 12.742 Kilometern.|
+Erdoberfläche|Etwa 71 Prozent der Erdoberfläche sind mit Wasser bedeckt.|wasseranteil erde
+Erddrehung|Die Erde dreht sich am Äquator mit etwa 1.670 Kilometern pro Stunde.|
+Breitengrad|Breitengrade laufen parallel zum Äquator, Längengrade von Pol zu Pol.|laengengrad
+Nullmeridian|Der Nullmeridian verläuft durch Greenwich in London.|greenwich
+Polarkreis|Nördlich des Polarkreises geht im Sommer die Sonne mindestens einen Tag lang nicht unter, die Mitternachtssonne.|mitternachtssonne,polarnacht
+Wendekreise|Die Wendekreise begrenzen das Gebiet, in dem die Sonne mittags senkrecht stehen kann.|
+Tropen|Die Tropen liegen zwischen den Wendekreisen, dort ist es das ganze Jahr warm.|
+Monsun|Der Monsun ist ein jahreszeitlicher Wind, der in Südasien starke Regenzeit bringt.|
+El Niño|El Niño ist eine Erwärmung des Pazifiks, die das Wetter weltweit beeinflusst.|el nino
+Jetstream|Der Jetstream ist ein schneller Höhenwind, der unser Wetter steuert.|
+Hoch und Tief|Ein Hochdruckgebiet bringt meist schönes Wetter, ein Tief Wolken und Regen.|hochdruckgebiet,tiefdruckgebiet
+Föhn|Der Föhn ist ein warmer, trockener Fallwind in den Alpen.|foehn
+Nebel|Nebel ist eine Wolke am Boden.|
+Hagel|Hagelkörner entstehen in Gewitterwolken, wenn Tropfen mehrmals hoch- und runtergewirbelt werden.|
+Schnee|Jede Schneeflocke ist sechseckig.|schneeflocke
+Taifun|Taifun heißt ein Wirbelsturm im Westpazifik, Hurrikan im Atlantik und Zyklon im Indischen Ozean.|zyklon
+Tsunami|Ein Tsunami ist eine riesige Welle, meist durch ein Seebeben. 2004 starben im Indischen Ozean über 200.000 Menschen.|
+Richterskala|Die Stärke von Erdbeben wird heute meist mit der Momenten-Magnitude angegeben, jede Stufe ist etwa 32-mal stärker.|magnitude,erdbebenstaerke
+Stärkstes Erdbeben|Das stärkste gemessene Erdbeben war 1960 in Chile mit Magnitude 9,5.|staerkstes erdbeben
+Ring of Fire|Der Pazifische Feuerring ist eine Zone mit vielen Vulkanen und Erdbeben rund um den Pazifik.|feuerring
+Supervulkan|Der Yellowstone in den USA ist ein Supervulkan.|yellowstone
+Kontinente Größe|Asien ist der größte Kontinent, danach kommen Afrika, Nordamerika, Südamerika, Antarktis, Europa und Australien.|groesster kontinent
+Kleinster Kontinent|Australien ist der kleinste Kontinent.|
+Größtes Land Afrika|Algerien ist flächenmäßig das größte Land Afrikas, Nigeria hat die meisten Einwohner.|
+Größtes Land Südamerika|Brasilien ist das größte Land Südamerikas.|
+Kanada Größe|Kanada ist nach Russland das zweitgrößte Land der Welt.|
+Bevölkerungsreichstes Land|Indien hat seit 2023 mehr Einwohner als China, beide über 1,4 Milliarden.|meiste einwohner
+Kleinste Länder|Die kleinsten Länder der Welt sind Vatikanstadt, Monaco, Nauru, Tuvalu und San Marino.|kleinstes land
+Liechtenstein|Liechtenstein ist ein kleines Fürstentum zwischen der Schweiz und Österreich.|
+San Marino|San Marino ist die älteste noch bestehende Republik der Welt.|
+Andorra|Andorra liegt in den Pyrenäen zwischen Spanien und Frankreich.|
+Längste Grenze|Die längste Grenze der Welt liegt zwischen Kanada und den USA, fast 9.000 Kilometer.|
+Höchste Hauptstadt|La Paz in Bolivien ist der höchstgelegene Regierungssitz der Welt.|
+Tiefster Punkt an Land|Das Ufer des Toten Meeres liegt über 430 Meter unter dem Meeresspiegel.|
+Tiefster Punkt Deutschland|Der tiefste Punkt Deutschlands liegt bei Neuendorf-Sachsenbande in Schleswig-Holstein, rund 3,5 Meter unter dem Meer.|
+Mittelpunkt Deutschlands|Als geografischer Mittelpunkt Deutschlands gilt Niederdorla in Thüringen.|
+Mittelpunkt Europas|Je nach Berechnung liegt der Mittelpunkt Europas in Litauen, der Ukraine oder Deutschland.|
+Größe Deutschland|Deutschland ist rund 357.600 Quadratkilometer groß und hat rund 84 Millionen Einwohner.|flaeche deutschland
+Größte Stadt Europas|Istanbul ist die größte Stadt Europas, Moskau und London folgen.|groesste stadt europas
+Regenreichster Ort|Mawsynram in Indien gilt als regenreichster Ort der Welt.|
+Kältester Ort|Die tiefste Temperatur wurde in der Antarktis gemessen, rund minus 89 Grad bei der Wostok-Station.|kaeltester ort der welt
+Bewohnter kältester Ort|Oimjakon in Sibirien gilt als kältester bewohnter Ort, mit unter minus 67 Grad.|oimjakon
+Welterbe Deutschland|Deutschland hat über 50 UNESCO-Welterbestätten, etwa den Kölner Dom, das Wattenmeer und den Aachener Dom.|unesco welterbe
+Nationalparks Deutschland|Deutschland hat 16 Nationalparks, darunter Bayerischer Wald, Wattenmeer, Harz, Jasmund und Sächsische Schweiz.|
+Seen Deutschland|Die größten Seen Deutschlands sind Bodensee, Müritz und Chiemsee.|groesster see deutschland
+Ruhrgebiet|Das Ruhrgebiet ist mit rund 5 Millionen Menschen der größte Ballungsraum Deutschlands.|ruhrpott
+Lüneburger Heide|Die Lüneburger Heide in Niedersachsen blüht im Spätsommer lila.|lueneburger heide
+Spreewald|Im Spreewald fährt man mit Kähnen durch Kanäle, bekannt sind die Spreewaldgurken.|spreewaldgurken
+Allgäu|Das Allgäu ist eine Voralpenlandschaft in Bayern und Baden-Württemberg mit viel Milchwirtschaft.|
+Eifel|Die Eifel ist ein Mittelgebirge mit Maaren, kreisrunden Vulkanseen.|maar
+Rügen Kreidefelsen|Die Kreidefelsen auf Rügen malte Caspar David Friedrich.|koenigsstuhl

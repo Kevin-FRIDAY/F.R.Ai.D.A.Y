@@ -1,0 +1,139 @@
+# glaube|Religion & Mythologie|🏛️
+# Titel|Text|Aliase
+Christentum|Das Christentum ist mit über 2 Milliarden Gläubigen die größte Religion. Es beruft sich auf Jesus Christus, die heilige Schrift ist die Bibel.|christen
+Islam|Der Islam ist mit fast 2 Milliarden Gläubigen die zweitgrößte Religion. Muslime glauben an einen Gott, Allah, die heilige Schrift ist der Koran.|muslime
+Judentum|Das Judentum ist die älteste der drei abrahamitischen Religionen, die heilige Schrift ist die Tora.|juden
+Hinduismus|Der Hinduismus ist die drittgrößte Religion, vor allem in Indien, mit vielen Göttern wie Brahma, Vishnu und Shiva.|hindus
+Buddhismus|Der Buddhismus geht auf Buddha zurück. Ziel ist es, durch den Edlen Achtfachen Pfad das Leiden zu überwinden.|buddhisten
+Sikhismus|Der Sikhismus entstand im 15. Jahrhundert im Punjab, der wichtigste Ort ist der Goldene Tempel in Amritsar.|sikhs
+Daoismus|Der Daoismus aus China strebt nach Einklang mit dem Dao, dem Weg der Natur.|taoismus
+Konfuzianismus|Der Konfuzianismus ist eine Lehre von Moral, Familie und Ordnung nach Konfuzius.|
+Shintoismus|Der Shinto ist die traditionelle Religion Japans mit Naturgöttern, den Kami.|shinto
+Altes Testament|Das Alte Testament ist der erste Teil der christlichen Bibel und entspricht weitgehend der hebräischen Bibel.|
+Neues Testament|Das Neue Testament erzählt vom Leben Jesu und der frühen Kirche, mit vier Evangelien.|evangelien
+Zehn Gebote|Die Zehn Gebote empfing Mose nach der Bibel am Berg Sinai, etwa du sollst nicht töten und nicht stehlen.|zehn gebote liste
+Vaterunser|Das Vaterunser ist das wichtigste Gebet der Christen, Jesus hat es nach der Bibel gelehrt.|vater unser
+Schöpfungsgeschichte|Nach der Bibel erschuf Gott die Welt in sechs Tagen und ruhte am siebten.|genesis
+Arche Noah|Noah baute nach der Bibel eine Arche und rettete Tiere vor der Sintflut.|noah
+Adam und Eva|Adam und Eva sind nach der Bibel die ersten Menschen, sie aßen vom verbotenen Baum.|
+Weihnachten Bedeutung|An Weihnachten feiern Christen die Geburt Jesu.|
+Ostern Bedeutung|An Ostern feiern Christen die Auferstehung Jesu, Karfreitag erinnert an seine Kreuzigung.|karfreitag
+Pfingsten|Pfingsten ist 50 Tage nach Ostern und erinnert an den Heiligen Geist.|
+Himmelfahrt|Christi Himmelfahrt ist 40 Tage nach Ostern, in Deutschland auch Vatertag.|christi himmelfahrt
+Fronleichnam|Fronleichnam ist ein katholisches Fest mit Prozessionen, 60 Tage nach Ostern.|
+Allerheiligen|Allerheiligen am 1. November ist in katholischen Bundesländern Feiertag.|
+Reformationstag|Am 31. Oktober erinnert der Reformationstag an Luthers 95 Thesen von 1517.|reformation
+Katholisch|Die katholische Kirche wird vom Papst in Rom geleitet und hat rund 1,4 Milliarden Mitglieder.|katholiken
+Evangelisch|Evangelische Christen gehen auf die Reformation Martin Luthers zurück.|protestanten,evangelisch
+Orthodox|Orthodoxe Kirchen gibt es vor allem in Osteuropa, Griechenland und Russland.|orthodoxe kirche
+Papst|Der Papst ist das Oberhaupt der katholischen Kirche und Bischof von Rom, seit 2025 ist es Leo XIV.|papst leo
+Vatikan|Der Vatikan ist der kleinste Staat der Welt, mitten in Rom, mit dem Petersdom.|petersdom
+Taufe|Mit der Taufe wird ein Mensch in die christliche Kirche aufgenommen.|
+Konfirmation|Bei der Konfirmation bestätigen evangelische Jugendliche mit etwa 14 ihre Taufe.|
+Kommunion|Bei der Erstkommunion empfangen katholische Kinder mit etwa 9 zum ersten Mal die Hostie.|erstkommunion
+Fünf Säulen des Islam|Die fünf Säulen des Islam sind Glaubensbekenntnis, Gebet, Almosen, Fasten im Ramadan und Pilgerfahrt nach Mekka.|
+Koran|Der Koran ist die heilige Schrift des Islam mit 114 Suren.|quran
+Moschee|Eine Moschee ist ein islamisches Gotteshaus, der Muezzin ruft zum Gebet.|
+Zuckerfest|Das Zuckerfest feiert das Ende des Ramadan.|eid
+Opferfest|Das Opferfest ist das höchste islamische Fest.|
+Kaaba|Die Kaaba in Mekka ist das wichtigste Heiligtum des Islam, Muslime beten in ihre Richtung.|
+Tora|Die Tora besteht aus den fünf Büchern Mose.|thora
+Synagoge|Eine Synagoge ist ein jüdisches Gotteshaus.|
+Sabbat|Der Sabbat ist der jüdische Ruhetag von Freitagabend bis Samstagabend.|schabbat
+Jom Kippur|Jom Kippur ist der höchste jüdische Feiertag, ein Tag des Fastens und der Versöhnung.|
+Pessach|Pessach erinnert an den Auszug der Israeliten aus Ägypten.|passah
+Bar Mizwa|Mit der Bar Mizwa wird ein jüdischer Junge mit 13 religiös mündig, Mädchen mit der Bat Mizwa mit 12.|bat mizwa
+Koscher|Koscher sind Speisen, die nach jüdischen Regeln erlaubt sind, Schwein etwa nicht.|
+Halal|Halal ist im Islam erlaubtes Essen, Schwein und Alkohol sind verboten.|
+Karma|Karma ist im Hinduismus und Buddhismus die Folge der eigenen Taten.|
+Wiedergeburt|Nach hinduistischem und buddhistischem Glauben wird man nach dem Tod wiedergeboren.|reinkarnation
+Nirwana|Nirwana ist im Buddhismus das Ende des Kreislaufs der Wiedergeburten.|nirvana
+Meditation|Meditation ist das gezielte Lenken der Aufmerksamkeit, um zur Ruhe zu kommen.|meditieren
+Yoga|Yoga stammt aus Indien und verbindet Körperübungen, Atmung und Meditation.|
+Diwali|Diwali ist das hinduistische Lichterfest.|
+Holi|Holi ist das hinduistische Fest der Farben.|
+Atheismus|Atheisten glauben nicht an Götter, in Deutschland gehört knapp die Hälfte keiner Kirche an.|atheist,konfessionslos
+Agnostiker|Agnostiker meinen, man könne nicht wissen, ob es Gott gibt.|agnostizismus
+Zeus|Zeus ist der oberste Gott der Griechen, er herrscht vom Olymp und schleudert Blitze.|
+Hera|Hera ist die Frau von Zeus und Göttin der Ehe.|
+Poseidon|Poseidon ist der griechische Gott des Meeres mit dem Dreizack.|neptun gott
+Hades|Hades herrscht über die Unterwelt.|
+Athene|Athene ist die Göttin der Weisheit, Athen ist nach ihr benannt.|athena
+Apollon|Apollon ist der Gott des Lichts, der Musik und der Weissagung.|apollo gott
+Aphrodite|Aphrodite ist die Göttin der Liebe, bei den Römern Venus.|venus goettin
+Ares|Ares ist der Kriegsgott, bei den Römern Mars.|mars gott
+Hermes|Hermes ist der Götterbote mit Flügelschuhen.|merkur gott
+Artemis|Artemis ist die Göttin der Jagd.|
+Dionysos|Dionysos ist der Gott des Weins und des Rausches.|bacchus
+Prometheus|Prometheus brachte den Menschen das Feuer und wurde dafür bestraft.|
+Herakles|Herakles, bei den Römern Herkules, musste zwölf Heldentaten vollbringen.|herkules
+Achilles|Achilles war der stärkste Held vor Troja, nur an der Ferse verwundbar.|achill
+Odysseus Mythos|Odysseus erfand das Trojanische Pferd und irrte zehn Jahre über das Meer.|
+Medusa|Medusa hatte Schlangen als Haare, wer sie ansah, wurde zu Stein.|
+Pandora|Pandora öffnete die Büchse, aus der alles Übel in die Welt kam, nur die Hoffnung blieb.|
+Ikarus|Ikarus flog mit Wachsflügeln zu nah an die Sonne und stürzte ab.|
+Narziss|Narziss verliebte sich in sein eigenes Spiegelbild.|
+Orpheus|Orpheus wollte seine Frau Eurydike aus der Unterwelt holen.|
+Minotaurus|Der Minotaurus war halb Mensch, halb Stier und lebte im Labyrinth auf Kreta.|
+Zyklop|Zyklopen sind Riesen mit nur einem Auge.|
+Olymp|Der Olymp ist der höchste Berg Griechenlands und Sitz der Götter.|olympos
+Titanen|Die Titanen sind ein älteres Göttergeschlecht, das Zeus besiegte.|
+Jupiter Gott|Jupiter ist der oberste römische Gott, entspricht Zeus.|
+Odin|Odin ist der oberste nordische Gott, er hat nur ein Auge und zwei Raben.|wotan
+Thor Gott|Thor ist der nordische Donnergott mit dem Hammer Mjölnir, der Donnerstag ist nach ihm benannt.|donar
+Loki|Loki ist der listige Gott der nordischen Mythologie.|
+Freya|Freya ist die nordische Göttin der Liebe, der Freitag ist nach ihr oder Frigg benannt.|frigg
+Walhalla|Walhalla ist die Halle Odins für gefallene Krieger.|valhalla
+Ragnarök|Ragnarök ist der Weltuntergang in der nordischen Mythologie.|ragnarok
+Yggdrasil|Yggdrasil ist der Weltenbaum, der die neun Welten verbindet.|
+Walküren|Walküren bringen gefallene Krieger nach Walhalla.|walkuere
+Ra|Ra ist der ägyptische Sonnengott.|re gott
+Osiris|Osiris ist der ägyptische Gott des Totenreichs.|
+Isis|Isis ist eine ägyptische Göttin der Magie und Mutterschaft.|
+Anubis|Anubis hat einen Schakalkopf und begleitet die Toten.|
+Horus|Horus hat einen Falkenkopf und ist Gott des Himmels.|
+Nibelungen|Das Nibelungenlied erzählt von Siegfried, der den Drachen tötet, und dem Schatz im Rhein.|siegfried,nibelungenlied
+König Artus|König Artus und die Ritter der Tafelrunde suchen den Heiligen Gral, sein Schwert heißt Excalibur.|artus,excalibur
+Merlin|Merlin ist der Zauberer an der Seite von König Artus.|
+Robin Hood|Robin Hood bestiehlt die Reichen und gibt den Armen, er lebt im Sherwood Forest.|
+Loreley|Die Loreley ist ein Felsen am Rhein, die Sage erzählt von einer Frau, die Schiffer ins Verderben singt.|lorelei
+Rattenfänger von Hameln|Der Rattenfänger lockte nach der Sage 1284 die Kinder aus Hameln.|hameln
+Drache|Drachen sind Fabelwesen, in Europa oft böse, in China Glücksbringer.|drachen
+Einhorn|Das Einhorn ist ein weißes Fabelpferd mit einem Horn auf der Stirn.|einhorn
+Phönix|Der Phönix verbrennt und steigt aus seiner Asche neu auf.|phoenix
+Vampir|Vampire sind Untote, die Blut trinken und Knoblauch und Sonnenlicht scheuen.|
+Werwolf|Ein Werwolf verwandelt sich bei Vollmond in einen Wolf.|
+Golem|Der Golem ist eine Lehmfigur aus der jüdischen Sage, die zum Leben erweckt wird.|
+Yeti|Der Yeti ist ein sagenhafter Schneemensch im Himalaya.|bigfoot
+Nessie|Nessie ist das sagenhafte Ungeheuer von Loch Ness in Schottland.|loch ness
+Atlantis|Atlantis ist eine sagenhafte versunkene Insel, von der Platon erzählte.|
+El Dorado|El Dorado ist eine sagenhafte Goldstadt in Südamerika.|
+Bermudadreieck|Im Bermudadreieck sollen Schiffe verschwinden, statistisch passiert dort aber nicht mehr als anderswo.|bermuda dreieck
+Heiliger Gral|Der Heilige Gral ist der Kelch aus dem Abendmahl, nach dem Ritter suchen.|gral
+Sankt Martin|Sankt Martin teilte seinen Mantel mit einem Bettler, am 11. November gibt es Laternenumzüge.|martinstag
+Nikolaus|Der heilige Nikolaus bringt am 6. Dezember Geschenke in die Stiefel.|nikolaustag
+Weihnachtsmann|Der Weihnachtsmann geht auf den heiligen Nikolaus zurück, Coca-Cola prägte sein rotes Bild mit.|
+Christkind|In Süddeutschland und Österreich bringt das Christkind die Geschenke.|
+Osterhase|Der Osterhase bringt die Ostereier, er ist seit dem 17. Jahrhundert belegt.|
+Heilige Drei Könige|Die Heiligen Drei Könige Caspar, Melchior und Balthasar brachten dem Jesuskind Gold, Weihrauch und Myrrhe, Feiertag am 6. Januar.|drei koenige
+Sternsinger|Sternsinger schreiben C+M+B an die Tür, das bedeutet Christus segne dieses Haus.|
+Bibel|Die Bibel ist die heilige Schrift der Christen, aus dem Alten und dem Neuen Testament. Sie ist das meistübersetzte Buch der Welt.|
+Jesus Gleichnisse|Bekannte Gleichnisse Jesu sind der barmherzige Samariter, der verlorene Sohn und das Senfkorn.|barmherziger samariter,verlorener sohn
+Apostel|Die zwölf Apostel waren die engsten Jünger Jesu, darunter Petrus, Johannes und Judas.|jünger jesu
+Maria|Maria ist die Mutter Jesu und wird besonders in der katholischen und orthodoxen Kirche verehrt.|mutter gottes
+Engel|Engel sind in Judentum, Christentum und Islam Boten Gottes, etwa Gabriel und Michael.|erzengel
+Teufel|Der Teufel oder Satan ist im Christentum der Widersacher Gottes.|satan
+Paradies|Das Paradies ist der Garten Eden aus der Schöpfungsgeschichte, im Glauben auch der Ort nach dem Tod.|garten eden
+Sintflut|Die Sintflut ist eine große Flut, von der viele Kulturen erzählen, etwa die Bibel mit Noah und das Gilgamesch-Epos.|
+Turmbau zu Babel|Nach der Bibel wollten Menschen einen Turm bis zum Himmel bauen, Gott verwirrte ihre Sprachen.|babel
+David und Goliath|Der junge David besiegte den Riesen Goliath mit einer Steinschleuder. Heute steht es für Klein gegen Groß.|
+Mose|Mose führte nach der Bibel die Israeliten aus Ägypten und empfing am Berg Sinai die Zehn Gebote.|moses
+Abraham|Abraham gilt als Stammvater von Judentum, Christentum und Islam, darum heißen sie abrahamitische Religionen.|abrahamitische religionen
+Ramadan Fasten|Im Ramadan fasten Muslime von Sonnenaufgang bis Sonnenuntergang, abends wird das Fasten mit dem Iftar gebrochen.|iftar
+Mekka Pilgerfahrt|Die Pilgerfahrt Hadsch nach Mekka sollte jeder Muslim einmal im Leben machen, wenn er kann.|hadsch
+Sunniten und Schiiten|Die zwei großen Richtungen im Islam trennten sich im Streit um die Nachfolge Mohammeds. Etwa 85 Prozent der Muslime sind Sunniten.|schiiten,sunniten
+Buddha Lehre|Buddha lehrte die vier edlen Wahrheiten über das Leiden und den achtfachen Pfad zu seiner Überwindung.|achtfacher pfad
+Ganesha|Ganesha ist der hinduistische Gott mit dem Elefantenkopf, er beseitigt Hindernisse.|
+Shiva|Shiva ist einer der Hauptgötter im Hinduismus, der Zerstörer und Erneuerer.|
+Ganges|Der Ganges ist für Hindus ein heiliger Fluss, Baden darin soll von Sünden reinigen.|heiliger fluss
+Kloster|In Klöstern leben Mönche oder Nonnen in Gemeinschaft nach festen Regeln wie Beten und Arbeiten.|mönch,nonne

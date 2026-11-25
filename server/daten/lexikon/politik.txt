@@ -1,0 +1,103 @@
+# politik|Politik, Staat & Recht|⚖️
+# Titel|Text|Aliase
+Gewaltenteilung|In Deutschland ist die Staatsgewalt geteilt: Gesetze macht das Parlament (Legislative), die Regierung führt aus (Exekutive), Gerichte urteilen (Judikative).|legislative,exekutive,judikative
+Bundesregierung|Die Bundesregierung besteht aus dem Bundeskanzler und den Bundesministern.|kabinett
+Bundestagswahl|Der Bundestag wird alle vier Jahre gewählt, mit Erststimme für eine Person im Wahlkreis und Zweitstimme für eine Partei.|erststimme,zweitstimme
+Fünf-Prozent-Hürde|Eine Partei braucht mindestens 5 Prozent der Zweitstimmen, um in den Bundestag zu kommen, oder drei Direktmandate.|fuenf prozent huerde,sperrklausel
+Koalition|Eine Koalition ist ein Bündnis mehrerer Parteien, um gemeinsam zu regieren.|koalitionsvertrag
+Opposition|Die Opposition sind die Parteien im Parlament, die nicht regieren und die Regierung kontrollieren.|
+Misstrauensvotum|Mit einem konstruktiven Misstrauensvotum kann der Bundestag den Kanzler abwählen, wenn er gleichzeitig einen neuen wählt.|
+Vertrauensfrage|Mit der Vertrauensfrage prüft der Kanzler, ob er noch eine Mehrheit hat, scheitert sie, kann es Neuwahlen geben.|
+Bundesversammlung|Die Bundesversammlung wählt alle fünf Jahre den Bundespräsidenten.|
+Landtag|Der Landtag ist das Parlament eines Bundeslandes.|landtage
+Ministerpräsident|Ein Ministerpräsident ist der Regierungschef eines Bundeslandes, in Stadtstaaten heißt er Bürgermeister.|landesregierung
+Kommunalwahl|Bei Kommunalwahlen wählt man Gemeinderat, Stadtrat oder Bürgermeister, oft schon ab 16.|
+Bürgermeister|Der Bürgermeister leitet eine Gemeinde oder Stadt.|oberbuergermeister
+Landrat|Der Landrat leitet einen Landkreis.|
+Europawahl|Das Europäische Parlament wird alle fünf Jahre gewählt, in Deutschland ab 16 Jahren.|
+EU-Kommission|Die EU-Kommission schlägt Gesetze vor und überwacht ihre Einhaltung.|eu kommission
+Europäischer Rat|Im Europäischen Rat treffen sich die Staats- und Regierungschefs der EU.|
+EU-Mitglieder|Die EU hat 27 Mitgliedstaaten, Großbritannien trat 2020 aus.|eu staaten anzahl
+Brexit|Brexit ist der Austritt Großbritanniens aus der EU, vollzogen am 31. Januar 2020.|
+Schengen|Im Schengenraum gibt es grundsätzlich keine Grenzkontrollen, benannt nach einem Ort in Luxemburg.|schengenraum
+Eurozone|In der Eurozone zahlen 21 EU-Länder mit dem Euro, zuletzt kam Bulgarien 2026 dazu.|euroraum
+UN-Sicherheitsrat|Der UN-Sicherheitsrat hat 15 Mitglieder, die fünf ständigen USA, Russland, China, Großbritannien und Frankreich haben ein Vetorecht.|sicherheitsrat
+UN-Generalversammlung|In der UN-Generalversammlung hat jedes der 193 Mitglieder eine Stimme.|
+NATO Mitglieder|Die NATO hat 32 Mitglieder, zuletzt kamen Finnland 2023 und Schweden 2024 dazu.|nato staaten
+Artikel 5 NATO|Nach Artikel 5 gilt ein Angriff auf ein NATO-Mitglied als Angriff auf alle.|beistandspflicht
+Menschenrechte|Die Allgemeine Erklärung der Menschenrechte wurde 1948 von der UN verabschiedet.|menschenrechte erklaerung
+Grundrechte|Die Grundrechte stehen in Artikel 1 bis 19 des Grundgesetzes, etwa Meinungsfreiheit und Gleichheit.|
+Artikel 1 Grundgesetz|Artikel 1 des Grundgesetzes: Die Würde des Menschen ist unantastbar.|menschenwuerde
+Meinungsfreiheit|Meinungsfreiheit erlaubt, seine Meinung frei zu sagen, Grenzen sind etwa Beleidigung und Volksverhetzung.|
+Pressefreiheit|Pressefreiheit schützt Journalisten vor staatlicher Zensur.|
+Religionsfreiheit|In Deutschland darf jeder seinen Glauben frei wählen und ausüben oder keinen haben.|
+Versammlungsfreiheit|Jeder darf sich friedlich versammeln, Demonstrationen unter freiem Himmel muss man anmelden.|demonstration anmelden
+Rechtsstaat|Im Rechtsstaat ist auch der Staat an Gesetze gebunden, und jeder kann vor Gericht klagen.|
+Unschuldsvermutung|Jeder gilt als unschuldig, bis seine Schuld vor Gericht bewiesen ist.|
+Amtsgericht|Das Amtsgericht ist die unterste Instanz für kleinere Zivil- und Strafsachen.|
+Landgericht|Das Landgericht ist für größere Streitwerte und schwere Straftaten zuständig.|
+Berufung|Mit der Berufung lässt man ein Urteil von der nächsten Instanz neu prüfen.|revision
+Staatsanwaltschaft|Die Staatsanwaltschaft ermittelt bei Straftaten und erhebt Anklage.|staatsanwalt
+Anwalt|Ein Rechtsanwalt berät und vertritt vor Gericht. Bei geringem Einkommen gibt es Beratungshilfe.|rechtsanwalt,beratungshilfe
+Notar|Ein Notar beurkundet etwa Hauskäufe und Testamente.|
+Schöffe|Schöffen sind ehrenamtliche Richter aus dem Volk.|schoeffen
+Verjährung|Normale Ansprüche verjähren nach drei Jahren zum Jahresende.|
+Strafmündigkeit|In Deutschland ist man ab 14 strafmündig, bis 21 gilt oft Jugendstrafrecht.|
+Geschäftsfähigkeit|Kinder unter 7 sind geschäftsunfähig, bis 18 beschränkt geschäftsfähig, Taschengeld-Käufe sind aber erlaubt.|taschengeldparagraph
+Testament|Ein Testament muss handschriftlich geschrieben und unterschrieben sein oder vom Notar beurkundet werden.|testament schreiben
+Pflichtteil|Kinder und Ehepartner haben auch ohne Testament Anspruch auf einen Pflichtteil.|
+Vorsorgevollmacht|Mit einer Vorsorgevollmacht bestimmt man, wer entscheidet, wenn man es selbst nicht mehr kann.|
+Patientenverfügung|In einer Patientenverfügung legt man fest, welche Behandlungen man im Notfall will.|
+Mietvertrag|Mietverträge sind meist unbefristet, Mieter können mit drei Monaten Frist kündigen.|
+Mieterhöhung|Die Miete darf in drei Jahren um höchstens 20 Prozent steigen, in vielen Städten nur 15 Prozent.|kappungsgrenze
+Mietpreisbremse|In angespannten Märkten darf die Miete bei Neuvermietung höchstens 10 Prozent über der Vergleichsmiete liegen.|
+Eigenbedarf|Vermieter können bei Eigenbedarf für sich oder Familie kündigen, mit gesetzlicher Frist.|eigenbedarfskuendigung
+Schönheitsreparaturen|Viele Klauseln zu Schönheitsreparaturen im Mietvertrag sind unwirksam.|renovieren auszug
+Probezeit|In der Probezeit kann mit zwei Wochen Frist gekündigt werden, sie dauert höchstens sechs Monate.|
+Kündigungsschutz|Nach sechs Monaten in Betrieben mit mehr als zehn Mitarbeitern gilt der Kündigungsschutz.|
+Abmahnung|Eine Abmahnung warnt vor einer Kündigung wegen eines Fehlverhaltens.|
+Arbeitszeugnis|Ein Arbeitszeugnis muss wohlwollend formuliert sein, gut ist etwa stets zu unserer vollen Zufriedenheit.|zeugnis sprache
+Betriebsrat|Ein Betriebsrat vertritt die Interessen der Beschäftigten, ab fünf Mitarbeitern kann er gewählt werden.|
+Mobbing|Bei Mobbing am Arbeitsplatz hilft es, alles aufzuschreiben und Betriebsrat oder Anwalt einzubeziehen.|
+Gleichbehandlungsgesetz|Das Allgemeine Gleichbehandlungsgesetz verbietet Diskriminierung wegen Herkunft, Geschlecht, Religion, Behinderung, Alter oder sexueller Identität.|agg
+Urheberrecht|Das Urheberrecht schützt Werke wie Texte, Musik und Bilder bis 70 Jahre nach dem Tod des Urhebers.|copyright
+Recht am eigenen Bild|Fotos von Menschen darf man meist nur mit deren Einwilligung veröffentlichen.|
+Impressumspflicht|Geschäftliche Webseiten brauchen ein Impressum mit Name und Anschrift.|impressum
+Markenrecht|Marken lassen sich beim Deutschen Patent- und Markenamt schützen.|marke anmelden
+Patent|Ein Patent schützt eine Erfindung bis zu 20 Jahre.|patente
+Datenschutz Auskunft|Nach der DSGVO kann man von jeder Firma Auskunft verlangen, welche Daten sie über einen speichert.|auskunftsrecht
+Recht auf Vergessenwerden|Man kann Löschung seiner Daten verlangen und Suchmaschinen bitten, alte Links zu entfernen.|
+Einbürgerung|In Deutschland kann man sich meist nach fünf Jahren einbürgern lassen, die doppelte Staatsbürgerschaft ist seit 2024 erlaubt.|
+Wahlalter|Bei Bundestagswahlen wählt man ab 18, bei Europawahlen und manchen Landtagswahlen ab 16.|ab wann waehlen
+Briefwahl|Briefwahl beantragt man mit der Wahlbenachrichtigung oder online bei der Gemeinde.|
+Volksentscheid|Auf Bundesebene gibt es keine Volksentscheide, in den Ländern und Gemeinden schon.|volksabstimmung
+Petition|Petitionen an den Bundestag kann jeder online einreichen.|
+Lobbyregister|Im Lobbyregister des Bundestags müssen sich Interessenvertreter eintragen.|
+Parteien Deutschland|Im Bundestag sind derzeit vor allem CDU/CSU, AfD, SPD, Grüne und Die Linke vertreten.|parteien im bundestag
+Links und rechts|Die Begriffe links und rechts in der Politik stammen aus der Sitzordnung der französischen Nationalversammlung 1789.|politisch links rechts
+Föderale Ordnung|Deutschland ist ein Bundesstaat aus 16 Ländern, die für Schule, Polizei und Kultur zuständig sind.|bundesstaat
+Kultusministerkonferenz|Die Kultusministerkonferenz stimmt die Bildungspolitik der Länder ab.|kmk
+Schulpflicht|In Deutschland gilt Schulpflicht, Homeschooling ist nicht erlaubt.|
+Wehrpflicht|Die Wehrpflicht ist seit 2011 ausgesetzt, ein neuer Wehrdienst wird diskutiert.|
+Zivildienst|Den Zivildienst gab es als Ersatz für den Wehrdienst bis 2011.|
+Staatsoberhaupt|Das Staatsoberhaupt Deutschlands ist der Bundespräsident, die Regierung führt der Kanzler.|
+Hauptstadt Bonn|Bonn war von 1949 bis 1990 Hauptstadt, Regierung und Parlament zogen bis 1999 nach Berlin.|bonner republik
+Nationalhymne|Die deutsche Nationalhymne ist die dritte Strophe des Lieds der Deutschen: Einigkeit und Recht und Freiheit.|einigkeit und recht und freiheit
+Bundesflagge|Die Bundesflagge ist Schwarz-Rot-Gold.|deutschlandflagge
+Bundesadler|Der Bundesadler ist das Wappentier Deutschlands.|
+Kalter Krieg|Der Kalte Krieg war die Konfrontation zwischen USA und Sowjetunion von 1947 bis 1991 ohne direkten Krieg.|
+Eiserner Vorhang|Der Eiserne Vorhang trennte im Kalten Krieg Ost- und Westeuropa.|
+Warschauer Pakt|Der Warschauer Pakt war das Militärbündnis der Ostblockstaaten, 1991 aufgelöst.|
+Wirtschaftswunder|Das Wirtschaftswunder war der schnelle Aufschwung Westdeutschlands in den 1950er-Jahren.|
+Marshallplan|Mit dem Marshallplan halfen die USA nach 1948 beim Wiederaufbau Westeuropas.|
+Soziale Marktwirtschaft|Die Soziale Marktwirtschaft verbindet freien Markt mit sozialem Ausgleich, geprägt von Ludwig Erhard.|
+Generationenvertrag|Die gesetzliche Rente funktioniert im Umlageverfahren: Die Arbeitenden zahlen die Renten der Älteren.|umlageverfahren
+Schuldenbremse|Die Schuldenbremse im Grundgesetz begrenzt die Neuverschuldung des Bundes.|
+Staatsverschuldung|Deutschland hat Staatsschulden von rund 2,5 Billionen Euro, etwa 63 Prozent der Wirtschaftsleistung.|staatsschulden
+Bundeshaushalt|Der Bundeshaushalt umfasst knapp 500 Milliarden Euro im Jahr, der größte Posten ist Arbeit und Soziales.|
+Lobby|Lobbyisten versuchen, Politiker im Sinne ihrer Interessen zu beeinflussen.|
+Extremismus|Extremisten lehnen die freiheitlich-demokratische Grundordnung ab, der Verfassungsschutz beobachtet sie.|
+Wahlbeteiligung|Bei der Bundestagswahl 2025 lag die Wahlbeteiligung bei über 82 Prozent, so hoch wie seit 1987 nicht.|
+Ampelkoalition|Die Ampel war die Koalition aus SPD, Grünen und FDP von 2021 bis 2024.|ampel koalition
+Große Koalition|Eine Große Koalition ist ein Bündnis der beiden größten Parteien, meist Union und SPD.|groko
+Politische Bildung|Die Bundeszentrale für politische Bildung bietet kostenlos Informationen und den Wahl-O-Mat.|bpb,wahl o mat

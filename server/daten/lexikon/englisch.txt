@@ -1,0 +1,390 @@
+# englisch|Englisch-Wörter|🇬🇧
+# Deutsch|Englisch|Aliase
+Hund|dog|
+Katze|cat|
+Pferd|horse|
+Kuh|cow|
+Schwein|pig|
+Vogel|bird|
+Fisch|fish|
+Maus|mouse|
+Hase|rabbit (Kaninchen) oder hare (Feldhase)|
+Bär|bear|
+Löwe|lion|
+Elefant|elephant|
+Affe|monkey|
+Schaf|sheep|
+Ziege|goat|
+Huhn|chicken|
+Ente|duck|
+Biene|bee|
+Schmetterling|butterfly|
+Spinne|spider|
+Haus|house|
+Wohnung|flat (britisch) oder apartment (amerikanisch)|
+Zimmer|room|
+Küche|kitchen|
+Badezimmer|bathroom|
+Schlafzimmer|bedroom|
+Wohnzimmer|living room|
+Tür|door|
+Fenster|window|
+Tisch|table|
+Stuhl|chair|
+Bett|bed|
+Schrank|cupboard oder wardrobe (Kleiderschrank)|
+Lampe|lamp|
+Schlüssel|key|
+Dach|roof|
+Treppe|stairs|
+Garten|garden (britisch) oder yard (amerikanisch)|
+Keller|basement oder cellar|
+Wand|wall|
+Wasser|water|
+Brot|bread|
+Milch|milk|
+Käse|cheese|
+Butter|butter|
+Ei|egg|
+Fleisch|meat|
+Apfel|apple|
+Banane|banana|
+Erdbeere|strawberry|
+Kartoffel|potato|
+Tomate|tomato|
+Zwiebel|onion|
+Knoblauch|garlic|
+Reis|rice|
+Nudeln|pasta oder noodles|
+Zucker|sugar|
+Salz|salt|
+Pfeffer|pepper|
+Kaffee|coffee|
+Tee|tea|
+Saft|juice|
+Bier|beer|
+Wein|wine|
+Kuchen|cake|
+Frühstück|breakfast|
+Mittagessen|lunch|
+Abendessen|dinner|
+Rechnung (Restaurant)|the bill (britisch) oder the check (amerikanisch)|
+Trinkgeld|tip|
+Auto|car|
+Zug|train|
+Bus|bus|
+Flugzeug|plane oder airplane|
+Fahrrad|bike oder bicycle|
+Schiff|ship|
+Bahnhof|train station|
+Flughafen|airport|
+Haltestelle|stop|
+Fahrkarte|ticket|
+Straße|street oder road|
+Ampel|traffic light|
+Kreuzung|crossing oder intersection|
+Brücke|bridge|
+Tankstelle|petrol station (britisch) oder gas station (amerikanisch)|
+Parkplatz|car park (britisch) oder parking lot (amerikanisch)|
+Autobahn|motorway (britisch) oder highway (amerikanisch)|
+Führerschein|driving licence (britisch) oder driver's license (amerikanisch)|
+Stau|traffic jam|
+Unfall|accident|
+Kopf|head|
+Auge|eye|
+Ohr|ear|
+Nase|nose|
+Mund|mouth|
+Zahn|tooth, Mehrzahl teeth|
+Haar|hair|
+Hand|hand|
+Finger|finger|
+Arm|arm|
+Bein|leg|
+Fuß|foot, Mehrzahl feet|
+Herz|heart|
+Bauch|belly oder stomach|
+Rücken|back|
+Knie|knee|
+Schulter|shoulder|
+Hals|neck (außen) oder throat (innen)|
+Haut|skin|
+Blut|blood|
+Arzt|doctor|
+Krankenhaus|hospital|
+Apotheke|pharmacy (amerikanisch) oder chemist's (britisch)|
+Medikament|medicine|
+Schmerzen|pain|
+Kopfschmerzen|headache|
+Fieber|fever|
+Erkältung|cold|
+Husten|cough|
+Notfall|emergency|
+Hilfe|help|
+Polizei|police|
+Feuerwehr|fire brigade (britisch) oder fire department (amerikanisch)|
+Krankenwagen|ambulance|
+Montag|Monday|
+Dienstag|Tuesday|
+Mittwoch|Wednesday|
+Donnerstag|Thursday|
+Freitag|Friday, wie dein Assistent|
+Samstag|Saturday|
+Sonntag|Sunday|
+Januar|January|
+Februar|February|
+März|March|
+April|April|
+Mai|May|
+Juni|June|
+Juli|July|
+August|August|
+September|September|
+Oktober|October|
+November|November|
+Dezember|December|
+Woche|week|
+Monat|month|
+Jahr|year|
+heute|today|
+morgen|tomorrow|
+gestern|yesterday|
+Uhr|clock (Wanduhr) oder watch (Armbanduhr)|
+Stunde|hour|
+Minute|minute|
+Frühling|spring|
+Sommer|summer|
+Herbst|autumn (britisch) oder fall (amerikanisch)|
+Winter|winter|
+eins|one|
+zwei|two|
+drei|three|
+vier|four|
+fünf|five|
+sechs|six|
+sieben|seven|
+acht|eight|
+neun|nine|
+zehn|ten|
+elf|eleven|
+zwölf|twelve|
+zwanzig|twenty|
+hundert|hundred|
+tausend|thousand|
+Million|million|
+Milliarde|billion, Vorsicht: billion ist auf Deutsch eine Milliarde|
+rot|red|
+blau|blue|
+grün|green|
+gelb|yellow|
+schwarz|black|
+weiß|white|
+grau|grey (britisch) oder gray (amerikanisch)|
+orange|orange|
+lila|purple|
+rosa|pink|
+braun|brown|
+gold|gold|
+silber|silver|
+Mutter|mother|
+Vater|father|
+Eltern|parents|
+Bruder|brother|
+Schwester|sister|
+Sohn|son|
+Tochter|daughter|
+Oma|grandma oder grandmother|
+Opa|grandpa oder grandfather|
+Onkel|uncle|
+Tante|aunt|
+Cousin|cousin|
+Ehefrau|wife|
+Ehemann|husband|
+Freund|friend (Freund) oder boyfriend (fester Freund)|
+Freundin|friend oder girlfriend (feste Freundin)|
+Kind|child, Mehrzahl children|
+Baby|baby|
+Nachbar|neighbour (britisch) oder neighbor (amerikanisch)|
+Hallo|hello oder hi|
+Tschüss|bye oder goodbye|
+Danke|thank you oder thanks|
+Bitte (Bitte schön)|you're welcome|
+Bitte (Bitte um etwas)|please|
+Entschuldigung|sorry oder excuse me|
+Ja|yes|
+Nein|no|
+Guten Morgen|good morning|
+Gute Nacht|good night|
+Wie geht es dir|How are you?|
+Ich verstehe nicht|I don't understand|
+Sprechen Sie Deutsch|Do you speak German?|
+Wo ist die Toilette|Where is the toilet? In Amerika eher: Where is the restroom?|
+Was kostet das|How much is it?|
+Ich liebe dich|I love you|
+Herzlichen Glückwunsch|Congratulations|
+Alles Gute zum Geburtstag|Happy birthday|
+Frohe Weihnachten|Merry Christmas|
+Frohes neues Jahr|Happy New Year|
+groß|big oder tall (Person)|
+klein|small oder little|
+gut|good|
+schlecht|bad|
+schön|beautiful oder nice|
+hässlich|ugly|
+alt|old|
+neu|new|
+jung|young|
+schnell|fast oder quick|
+langsam|slow|
+heiß|hot|
+kalt|cold|
+warm|warm|
+teuer|expensive|
+billig|cheap|
+leicht|easy (einfach) oder light (Gewicht)|
+schwer|difficult (schwierig) oder heavy (Gewicht)|
+müde|tired|
+glücklich|happy|
+traurig|sad|
+wütend|angry|
+hungrig|hungry|
+durstig|thirsty|
+krank|sick oder ill|
+gesund|healthy|
+laut|loud|
+leise|quiet|
+voll|full|
+leer|empty|
+gehen|to go oder to walk|
+kommen|to come|
+essen|to eat|
+trinken|to drink|
+schlafen|to sleep|
+arbeiten|to work|
+spielen|to play|
+lesen|to read|
+schreiben|to write|
+sprechen|to speak oder to talk|
+hören|to hear oder to listen|
+sehen|to see|
+machen|to make oder to do|
+kaufen|to buy|
+verkaufen|to sell|
+bezahlen|to pay|
+fahren|to drive|
+fliegen|to fly|
+schwimmen|to swim|
+laufen|to run|
+lernen|to learn|
+lehren|to teach|
+helfen|to help|
+denken|to think|
+wissen|to know|
+finden|to find|
+suchen|to look for oder to search|
+öffnen|to open|
+schließen|to close|
+warten|to wait|
+lieben|to love|
+brauchen|to need|
+geben|to give|
+nehmen|to take|
+bekommen|to get, Vorsicht: become heißt werden|
+werden|to become|
+vergessen|to forget|
+erinnern|to remember|
+anrufen|to call|
+fragen|to ask|
+antworten|to answer|
+Handy|mobile phone (britisch) oder cell phone (amerikanisch), Handy ist kein englisches Wort|
+Computer|computer|
+Bildschirm|screen|
+Tastatur|keyboard|
+Maus (Computer)|mouse|
+Drucker|printer|
+Akku|battery|
+Ladekabel|charger oder charging cable|
+Passwort|password|
+Datei|file|
+Ordner|folder|
+Fernseher|TV oder television|
+Fernbedienung|remote control|
+Steckdose|socket (britisch) oder outlet (amerikanisch)|
+Glühbirne|light bulb|
+Geld|money|
+Bargeld|cash|
+Bank|bank|
+Konto|account|
+Geldautomat|cash machine oder ATM|
+Preis|price|
+Rabatt|discount|
+Quittung|receipt|
+Geschäft|shop (britisch) oder store (amerikanisch)|
+Supermarkt|supermarket|
+Markt|market|
+Kasse|checkout|
+Wechselgeld|change|
+Steuer|tax|
+Gehalt|salary|
+Schule|school|
+Lehrer|teacher|
+Schüler|pupil oder student|
+Universität|university|
+Buch|book|
+Stift|pen|
+Bleistift|pencil|
+Heft|notebook|
+Hausaufgaben|homework|
+Prüfung|exam|
+Arbeit (Job)|job oder work|
+Chef|boss|
+Kollege|colleague|
+Büro|office|
+Besprechung|meeting|
+Urlaub|holiday (britisch) oder vacation (amerikanisch)|
+Feierabend|end of the working day, ein eigenes Wort gibt es nicht|
+Sonne|sun|
+Mond|moon|
+Stern|star|
+Himmel|sky (sichtbar) oder heaven (religiös)|
+Wolke|cloud|
+Regen|rain|
+Schnee|snow|
+Wind|wind|
+Gewitter|thunderstorm|
+Wetter|weather|
+Meer|sea|
+Strand|beach|
+Berg|mountain|
+Fluss|river|
+See|lake|
+Wald|forest|
+Baum|tree|
+Blume|flower|
+Gras|grass|
+Erde|earth|
+Kleidung|clothes|
+Hemd|shirt|
+Hose|trousers (britisch) oder pants (amerikanisch)|
+Rock|skirt|
+Kleid|dress|
+Jacke|jacket|
+Mantel|coat|
+Schuhe|shoes|
+Socken|socks|
+Mütze|hat oder cap|
+Schal|scarf|
+Handschuhe|gloves|
+Brille|glasses|
+Tasche|bag|
+Regenschirm|umbrella|
+Gift (falscher Freund)|Das englische gift heißt Geschenk, nicht Gift. Gift heißt auf Englisch poison|
+Chef (falscher Freund)|Das englische chef heißt Koch, Chef heißt boss|
+Handy (falscher Freund)|Das englische handy heißt praktisch oder handlich|
+eventuell (falscher Freund)|Das englische eventually heißt schließlich, eventuell heißt maybe oder possibly|
+sensibel (falscher Freund)|Das englische sensible heißt vernünftig, sensibel heißt sensitive|
+also (falscher Freund)|Das englische also heißt auch, das deutsche also heißt so oder therefore|
+bekommen (falscher Freund)|Das englische become heißt werden, bekommen heißt get oder receive|
+Rente (falscher Freund)|Das englische rent heißt Miete, Rente heißt pension|
+Brief (falscher Freund)|Das englische brief heißt kurz, Brief heißt letter|
+Kind (falscher Freund)|Das englische kind heißt nett oder Art, Kind heißt child|

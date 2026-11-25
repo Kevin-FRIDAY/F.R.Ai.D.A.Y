@@ -111,3 +111,346 @@ HD|High Definition, hohe Bildauflösung|
 4K|Bildauflösung von etwa 4.000 Pixeln in der Breite|
 F.R.I.D.A.Y.|Female Replacement Intelligent Digital Assistant Youth, so heißt Tony Starks KI in den Marvel-Filmen. Bei mir schreibt man es F.R.Ai.D.A.Y.|friday,f.r.ai.d.a.y
 J.A.R.V.I.S.|Just A Rather Very Intelligent System, die erste KI von Tony Stark.|jarvis
+Abs.|Absatz|abs
+Abt.|Abteilung|abt
+a. D.|außer Dienst|ad
+Anm.|Anmerkung|anm
+Az.|Aktenzeichen|az
+Bd.|Band|bd
+Bf.|Bahnhof|bf
+Hbf.|Hauptbahnhof|hbf
+bspw.|beispielsweise|bspw
+bzgl.|bezüglich|bzgl
+ebd.|ebenda|ebd
+eigtl.|eigentlich|eigtl
+etc.|et cetera, und so weiter|etc
+exkl.|exklusive, ausgenommen|exkl
+f.|folgende Seite|
+ff.|fortfolgende Seiten|ff
+geb.|geboren oder geborene|geb
+gest.|gestorben|gest
+ggü.|gegenüber|ggue
+i. A.|im Auftrag|ia
+i. V.|in Vertretung|iv
+i. d. R.|in der Regel|idr
+i. H. v.|in Höhe von|ihv
+Jh.|Jahrhundert|jh
+jmd.|jemand|jmd
+Kap.|Kapitel|kap
+lt.|laut|lt
+max.|maximal|max
+min.|minimal oder Minute|min
+Mio.|Million oder Millionen|mio
+Mrd.|Milliarde oder Milliarden|mrd
+mtl.|monatlich|mtl
+o. Ä.|oder Ähnliches|oae
+o. g.|oben genannt|og
+Pkt.|Punkt|pkt
+s.|siehe|
+s. o.|siehe oben|so
+s. u.|siehe unten|su
+sog.|sogenannt|sog
+Std.|Stunde|std
+tägl.|täglich|taegl
+u. Ä.|und Ähnliches|uae
+u. U.|unter Umständen|uu
+u. v. m.|und vieles mehr|uvm
+usf.|und so fort|usf
+v. a.|vor allem|va
+vgl.|vergleiche|vgl
+v. Chr.|vor Christus|vor christus
+n. Chr.|nach Christus|nach christus
+vs.|versus, gegen|vs
+z. T.|zum Teil|zt
+z. Hd.|zu Händen|zhd
+zz.|zurzeit|zz
+Dr.|Doktor|dr
+Prof.|Professor|prof
+Dipl.-Ing.|Diplom-Ingenieur|dipl ing
+B. A.|Bachelor of Arts|ba
+M. Sc.|Master of Science|msc
+MBA|Master of Business Administration|
+PhD|Doktor der Philosophie, internationaler Doktortitel|
+Hr.|Herr|hr
+Fr.|Frau oder Freitag|fr
+Mo.|Montag|
+Di.|Dienstag|
+Mi.|Mittwoch|
+Do.|Donnerstag|
+Sa.|Samstag|
+So.|Sonntag|
+Jan.|Januar|
+Feb.|Februar|
+Aug.|August|
+Sept.|September|
+Okt.|Oktober|
+Nov.|November|
+Dez.|Dezember|
+KW|Kalenderwoche|kalenderwoche
+MEZ|Mitteleuropäische Zeit|
+MESZ|Mitteleuropäische Sommerzeit|
+UTC|Koordinierte Weltzeit|weltzeit
+GMT|Greenwich Mean Time, mittlere Zeit am Nullmeridian|
+km/h|Kilometer pro Stunde|kmh,stundenkilometer
+kWh|Kilowattstunde, Einheit für Energie, etwa auf der Stromrechnung|kilowattstunde
+PS|Pferdestärke, alte Einheit für Leistung, 1 PS sind etwa 0,735 Kilowatt, oder Postskriptum, Nachsatz im Brief|
+CO2|Kohlendioxid|co 2
+H2O|Wasser|h 2 o
+DNA|Desoxyribonukleinsäure, Träger der Erbinformation|dns
+RNA|Ribonukleinsäure|
+mRNA|Boten-RNA, Bauplan-Abschrift, auch Grundlage mancher Impfstoffe|
+HIV|Humanes Immundefizienz-Virus, Erreger von Aids|
+Aids|erworbenes Immunschwächesyndrom|aids
+ADHS|Aufmerksamkeitsdefizit-Hyperaktivitätsstörung|adhs
+EKG|Elektrokardiogramm, Aufzeichnung der Herzströme|
+MRT|Magnetresonanztomographie, Bildgebung ohne Röntgenstrahlen|kernspin
+CT|Computertomographie, Schichtbilder mit Röntgenstrahlen|
+OP|Operation|
+ICU|Intensivstation (englisch Intensive Care Unit)|
+RKI|Robert Koch-Institut, Bundesbehörde für Infektionskrankheiten|
+AU|Arbeitsunfähigkeitsbescheinigung, Krankschreibung|
+GKV|Gesetzliche Krankenversicherung|
+PKV|Private Krankenversicherung|
+BMI|Body-Mass-Index, Verhältnis von Gewicht zu Größe|
+IQ|Intelligenzquotient|
+LSD|Lysergsäurediethylamid, eine Droge|
+THC|Tetrahydrocannabinol, Wirkstoff in Cannabis|
+StVO|Straßenverkehrs-Ordnung|
+BGB|Bürgerliches Gesetzbuch|
+StGB|Strafgesetzbuch|
+GG|Grundgesetz|
+HGB|Handelsgesetzbuch|
+ZPO|Zivilprozessordnung|
+StPO|Strafprozessordnung|
+BVerfG|Bundesverfassungsgericht in Karlsruhe|
+BGH|Bundesgerichtshof|
+EuGH|Europäischer Gerichtshof|
+EGMR|Europäischer Gerichtshof für Menschenrechte|
+GbR|Gesellschaft bürgerlichen Rechts|
+KG|Kommanditgesellschaft|
+OHG|Offene Handelsgesellschaft|
+SE|Europäische Aktiengesellschaft (Societas Europaea)|
+Ltd.|Limited, britische Kapitalgesellschaft|ltd
+Inc.|Incorporated, amerikanische Kapitalgesellschaft|inc
+Co.|Compagnie, Kompanie, Firmenpartner|co
+IHK|Industrie- und Handelskammer|
+HWK|Handwerkskammer|
+USt-IdNr.|Umsatzsteuer-Identifikationsnummer|ust id,ustid
+EStG|Einkommensteuergesetz|
+ELSTER|Elektronische Steuererklärung des Finanzamts|elster
+BZSt|Bundeszentralamt für Steuern|
+GEMA|Gesellschaft für musikalische Aufführungsrechte|
+SEPA|Einheitlicher Euro-Zahlungsverkehrsraum (Single Euro Payments Area)|
+EZB|Europäische Zentralbank|
+IWF|Internationaler Währungsfonds|imf
+WTO|Welthandelsorganisation|
+OECD|Organisation für wirtschaftliche Zusammenarbeit und Entwicklung|
+OPEC|Organisation erdölexportierender Länder|
+G7|Gruppe der sieben großen Industrieländer|g 7
+G20|Gruppe der zwanzig wichtigsten Wirtschaftsmächte|g 20
+BIP|Bruttoinlandsprodukt, Wert aller Waren und Dienstleistungen eines Landes in einem Jahr|
+DAX|Deutscher Aktienindex der 40 größten Börsenunternehmen|
+IPO|Börsengang (Initial Public Offering)|
+KGV|Kurs-Gewinn-Verhältnis|
+ROI|Return on Investment, Rendite einer Investition|
+P2P|Peer-to-Peer, direkte Verbindung zwischen zwei Teilnehmern|
+UNICEF|Kinderhilfswerk der Vereinten Nationen|
+UNHCR|Flüchtlingshilfswerk der Vereinten Nationen|
+IOC|Internationales Olympisches Komitee|
+DOSB|Deutscher Olympischer Sportbund|
+NBA|National Basketball Association, US-Basketball-Profiliga|
+NFL|National Football League, US-Football-Profiliga|
+NHL|National Hockey League, Eishockey-Profiliga Nordamerikas|
+MLB|Major League Baseball|
+UFC|Ultimate Fighting Championship, Kampfsport-Liga|
+F1|Formel 1|
+WM|Weltmeisterschaft|
+EM|Europameisterschaft|
+DM|Deutsche Meisterschaft oder Deutsche Mark|
+ESA|Europäische Weltraumorganisation|
+DLR|Deutsches Zentrum für Luft- und Raumfahrt|
+ISS|Internationale Raumstation|
+UFO|unbekanntes Flugobjekt|ufo
+CIA|US-Auslandsgeheimdienst|
+FBI|US-Bundespolizei|
+NSA|US-Geheimdienst für Fernmeldeaufklärung|
+KGB|früherer Geheimdienst der Sowjetunion|
+MI6|britischer Auslandsgeheimdienst|
+BSI|Bundesamt für Sicherheit in der Informationstechnik|
+BAMF|Bundesamt für Migration und Flüchtlinge|
+BfV|Bundesamt für Verfassungsschutz|
+NRW|Nordrhein-Westfalen|nrw
+BaWü|Baden-Württemberg|bawue
+MV|Mecklenburg-Vorpommern|
+USA|Vereinigte Staaten von Amerika|us,amerika
+UK|Vereinigtes Königreich Großbritannien und Nordirland|
+UdSSR|Union der Sozialistischen Sowjetrepubliken, Sowjetunion|sowjetunion
+VAE|Vereinigte Arabische Emirate|
+DSL|Digital Subscriber Line, Internetanschluss über die Telefonleitung|
+ISDN|früheres digitales Telefonnetz|
+VoIP|Telefonieren über das Internet|
+SMS|Short Message Service, Kurznachricht|
+MMS|Multimedia-Nachricht|
+NFC|Nahfeldkommunikation, etwa zum kontaktlosen Bezahlen|
+RFID|Funkerkennung, etwa in Etiketten und Ausweisen|
+OLED|organische Leuchtdiode, Bildschirmtechnik mit echtem Schwarz|
+HDMI|Anschluss für Bild und Ton|
+VGA|alter Monitoranschluss|
+HDD|Festplatte mit drehenden Scheiben|
+NAS|Netzwerkspeicher|
+OS|Betriebssystem (Operating System)|
+UI|Benutzeroberfläche (User Interface)|
+UX|Nutzungserlebnis (User Experience)|
+SaaS|Software als Dienst über das Internet|
+AWS|Amazon Web Services, Cloud von Amazon|
+IT|Informationstechnik|
+IoT|Internet der Dinge|
+VR|Virtuelle Realität|
+AR|Erweiterte Realität|
+NPC|Nicht-Spieler-Figur im Videospiel|
+FPS|Bilder pro Sekunde oder Ego-Shooter (First-Person-Shooter)|
+RPG|Rollenspiel|
+MMORPG|Online-Rollenspiel mit sehr vielen Spielern|
+DLC|herunterladbare Erweiterung für ein Spiel|
+CSS|Cascading Style Sheets, Gestaltung von Webseiten|
+JSON|Datenformat für Programme (JavaScript Object Notation)|
+XML|Auszeichnungssprache für Daten|
+SQL|Abfragesprache für Datenbanken|
+HTTP|Protokoll zur Übertragung von Webseiten|
+HTTPS|verschlüsseltes HTTP|
+FTP|Protokoll zur Dateiübertragung|
+SSH|sichere Fernsteuerung von Computern|
+DNS|Namensdienst, übersetzt Webadressen in IP-Adressen|
+IP|Internetprotokoll|
+LAN|lokales Netzwerk|
+VPN|virtuelles privates Netzwerk|
+ID|Identität, Kennung|
+QR|Quick Response, Schnellantwort-Code|
+OCR|Texterkennung in Bildern|
+TTS|Text zu Sprache, Vorlesestimme|
+STT|Sprache zu Text, Spracherkennung|
+GPT|Generative Pre-trained Transformer, Bauart vieler Sprachmodelle|
+AGI|Allgemeine künstliche Intelligenz, die Menschen in fast allem ebenbürtig wäre|
+ML|Maschinelles Lernen|
+NLP|Verarbeitung natürlicher Sprache|
+CAD|computergestütztes Konstruieren|
+PR|Öffentlichkeitsarbeit (Public Relations) oder Pull Request|
+CRM|Kundenbeziehungs-Verwaltung|
+ERP|Software zur Unternehmensplanung|
+USP|Alleinstellungsmerkmal|
+TBA|wird noch bekannt gegeben (to be announced)|
+TBD|noch festzulegen (to be determined)|
+ETA|voraussichtliche Ankunftszeit|
+AKA|auch bekannt als|aka
+RIP|ruhe in Frieden|rip
+PS:|Postskriptum, Nachsatz|
+P.S.|Postskriptum, Nachsatz unter einem Brief|
+NB|nota bene, wohlgemerkt|
+RSVP|um Antwort wird gebeten|uawg
+u. A. w. g.|um Antwort wird gebeten|
+MfG|mit freundlichen Grüßen|mfg
+LG|liebe Grüße|lg
+VG|viele Grüße|vg
+HDL|hab dich lieb|hdl
+GLG|ganz liebe Grüße|glg
+ILY|I love you, ich liebe dich|
+IDK|I don't know, ich weiß nicht|
+TBH|to be honest, ehrlich gesagt|
+NP|kein Problem (no problem)|
+THX|Danke (thanks)|thx
+PLS|bitte (please)|pls
+AFK|nicht an der Tastatur, kurz weg|afk
+BRB|bin gleich zurück|brb
+GOAT|greatest of all time, der Beste aller Zeiten|goat
+DM (Nachricht)|Direktnachricht in sozialen Netzwerken|direktnachricht
+POV|Point of view, Blickwinkel|pov
+TL;DR|zu lang, nicht gelesen, also die Kurzfassung|tldr
+DIN|Deutsches Institut für Normung|din
+DIN A4|Papierformat 21 mal 29,7 Zentimeter|a4
+ISO|Internationale Organisation für Normung|
+CE|Kennzeichen, dass ein Produkt EU-Vorgaben erfüllt|
+DEKRA|Prüforganisation, etwa für Hauptuntersuchungen|
+HU|Hauptuntersuchung beim Auto|
+AU (Auto)|Abgasuntersuchung|abgasuntersuchung
+ABS|Antiblockiersystem beim Bremsen|
+ESP|Elektronisches Stabilitätsprogramm|
+SUV|Geländelimousine (Sport Utility Vehicle)|
+E-Auto|Elektroauto|eauto
+PHEV|Plug-in-Hybrid|
+AMG|Mercedes-Tochter für Hochleistungsautos, benannt nach Aufrecht, Melcher und Großaspach|
+BMW|Bayerische Motoren Werke|
+VW|Volkswagen|
+MAN|Maschinenfabrik Augsburg-Nürnberg|
+BASF|Badische Anilin- und Sodafabrik|
+SAP|Softwarekonzern aus Walldorf|
+H&M|Hennes & Mauritz, Modekette|hm
+C&A|Modekette, benannt nach Clemens und August Brenninkmeyer|
+IKEA|Ingvar Kamprad Elmtaryd Agunnaryd|
+DHL|Paketdienst, benannt nach Dalsey, Hillblom und Lynn|
+UPS|United Parcel Service, Paketdienst|
+DPD|Paketdienst|
+S-Bahn|Stadtschnellbahn|sbahn
+U-Bahn|Untergrundbahn|ubahn
+IC|Intercity|
+RE|Regional-Express|
+RB|Regionalbahn|
+ZOB|Zentraler Omnibusbahnhof|
+BVG|Berliner Verkehrsbetriebe|
+HVV|Hamburger Verkehrsverbund|
+MVV|Münchner Verkehrsverbund|
+BAB|Bundesautobahn|
+LKW-Maut|Straßenbenutzungsgebühr für Lastwagen|
+WC|Toilette (Water Closet)|wc
+Kita|Kindertagesstätte|kita
+Uni|Universität|uni
+FH|Fachhochschule|
+VHS|Volkshochschule oder alte Videokassette|
+OGS|Offene Ganztagsschule|
+IGS|Integrierte Gesamtschule|
+NC|Numerus clausus, Zulassungsgrenze an Unis|
+ECTS|Leistungspunkte im Studium|
+FSJ|Freiwilliges Soziales Jahr|
+BFD|Bundesfreiwilligendienst|
+Bundeswehr|Streitkräfte Deutschlands|bw armee
+SEK|Spezialeinsatzkommando der Polizei|
+GSG 9|Spezialeinheit der Bundespolizei|gsg9
+KSK|Kommando Spezialkräfte der Bundeswehr|
+UNO|Vereinte Nationen|
+OSZE|Organisation für Sicherheit und Zusammenarbeit in Europa|
+EWR|Europäischer Wirtschaftsraum|
+EFTA|Europäische Freihandelsassoziation|
+NGO|Nichtregierungsorganisation|ngo
+WWF|Umweltschutzorganisation World Wide Fund For Nature|
+BUND|Bund für Umwelt und Naturschutz Deutschland|
+NABU|Naturschutzbund Deutschland|
+AA|Auswärtiges Amt|
+MdB|Mitglied des Bundestages|
+MdL|Mitglied des Landtages|
+EP|Europäisches Parlament|
+Grüne|Bündnis 90/Die Grünen, Partei|gruene
+BSW|Bündnis Sahra Wagenknecht, Partei|
+Linke|Die Linke, Partei|
+FAZ|Frankfurter Allgemeine Zeitung|
+SZ|Süddeutsche Zeitung|
+dpa|Deutsche Presse-Agentur|
+WDR|Westdeutscher Rundfunk|
+NDR|Norddeutscher Rundfunk|
+BR|Bayerischer Rundfunk|
+SWR|Südwestrundfunk|
+MDR|Mitteldeutscher Rundfunk|
+RBB|Rundfunk Berlin-Brandenburg|
+HR (Sender)|Hessischer Rundfunk|hessischer rundfunk
+RTL|Fernsehsender, früher Radio Télévision Luxembourg|
+ORF|Österreichischer Rundfunk|
+SRF|Schweizer Radio und Fernsehen|
+BBC|British Broadcasting Corporation|
+CNN|US-Nachrichtensender Cable News Network|
+MTV|Musikfernsehsender Music Television|
+HiFi|hohe Klangtreue (High Fidelity)|hifi
+MP4|Videodateiformat|
+MOV|Apples Videoformat QuickTime|
+WAV|unkomprimiertes Audioformat|
+ZIP|gepacktes Dateiarchiv|
+EXE|ausführbare Programmdatei unter Windows|
+DMG|Installationsdatei für den Mac|
+PDF/A|PDF-Format zur Langzeitarchivierung|

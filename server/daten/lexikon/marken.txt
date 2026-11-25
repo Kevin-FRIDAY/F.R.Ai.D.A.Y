@@ -1,0 +1,107 @@
+# marken|Firmen & Marken|🏢
+# Titel|Text|Aliase
+Apple|Apple aus Cupertino in Kalifornien baut iPhone, Mac, iPad und Apple Watch. Gegründet 1976, zeitweise das wertvollste Unternehmen der Welt.|apple firma
+Microsoft|Microsoft aus Redmond macht Windows, Office, die Xbox und betreibt die Cloud Azure, gegründet 1975 von Bill Gates und Paul Allen.|
+Google|Google gehört zum Konzern Alphabet und betreibt die größte Suchmaschine, YouTube, Android und Gmail.|alphabet
+Amazon|Amazon wurde 1994 von Jeff Bezos als Online-Buchhandel gegründet, heute auch Cloud-Riese mit AWS.|
+Meta|Meta, früher Facebook, besitzt Facebook, Instagram und WhatsApp.|facebook firma
+Samsung|Samsung aus Südkorea ist einer der größten Hersteller von Handys, Fernsehern und Speicherchips.|
+Sony|Sony aus Japan macht die PlayStation, Kameras, Musik und Filme.|
+Intel|Intel aus Kalifornien baut Prozessoren für PCs.|
+AMD|AMD baut Prozessoren und Grafikkarten, Konkurrent von Intel und Nvidia.|
+OpenAI|OpenAI entwickelt ChatGPT und wurde 2015 gegründet.|
+Tesla|Tesla baut Elektroautos und Batteriespeicher, Chef ist Elon Musk. In Grünheide bei Berlin steht eine Fabrik.|tesla gigafactory
+SpaceX Firma|SpaceX von Elon Musk baut wiederverwendbare Raketen und betreibt Starlink.|
+Netflix|Netflix begann 1997 als DVD-Verleih per Post und ist heute der größte Streamingdienst.|
+Disney|Disney besitzt Pixar, Marvel, Star Wars und den Streamingdienst Disney+.|walt disney company
+Coca-Cola|Coca-Cola wurde 1886 in Atlanta erfunden, das Rezept ist geheim.|coca cola
+Pepsi|Pepsi ist der größte Konkurrent von Coca-Cola.|pepsico
+McDonald's|McDonald's ist die größte Fast-Food-Kette der Welt.|mcdonalds
+Burger King|Burger King ist bekannt für den Whopper.|
+Starbucks|Starbucks aus Seattle ist die größte Kaffeehauskette der Welt.|
+Nike|Nike aus den USA ist der größte Sportartikelhersteller, Logo ist der Swoosh.|
+Adidas|Adidas aus Herzogenaurach ist der größte Sportartikelhersteller Europas, mit drei Streifen.|
+Puma|Puma aus Herzogenaurach wurde von Rudolf Dassler gegründet, dem Bruder von Adi Dassler.|
+Lego|Lego aus Dänemark macht die bekannten Klemmbausteine, der Name kommt von leg godt, spiel gut.|
+Playmobil|Playmobil stammt aus Zirndorf bei Nürnberg, die Figuren gibt es seit 1974.|
+Haribo|Haribo steht für Hans Riegel Bonn und erfand die Gummibärchen.|
+Ritter Sport|Ritter Sport macht quadratische Schokolade aus Waldenbuch.|
+Milka|Milka-Schokolade mit der lila Kuh kommt ursprünglich aus der Schweiz.|
+Nutella|Nutella von Ferrero aus Italien ist eine Nuss-Nougat-Creme.|ferrero
+Dr. Oetker|Dr. Oetker aus Bielefeld wurde mit Backpulver bekannt.|oetker
+Aldi|Aldi steht für Albrecht Diskont und ist in Aldi Nord und Aldi Süd geteilt.|aldi nord,aldi sued
+Lidl|Lidl gehört zur Schwarz-Gruppe aus Neckarsulm, wie Kaufland.|kaufland
+Rewe|Rewe ist eine große deutsche Supermarktkette aus Köln.|
+Edeka|Edeka ist der größte Lebensmittelhändler Deutschlands.|
+dm|dm ist die größte Drogeriekette Deutschlands, gegründet in Karlsruhe.|dm drogerie
+Rossmann|Rossmann ist eine Drogeriekette aus Burgwedel bei Hannover.|
+Otto|Otto aus Hamburg war lange der größte Versandhändler Deutschlands.|otto versand
+Zalando|Zalando aus Berlin ist ein Online-Modehändler.|
+MediaMarkt|MediaMarkt und Saturn sind große Elektronikmärkte.|saturn
+Deutsche Telekom|Die Telekom aus Bonn ist der größte Telefonkonzern Europas.|telekom
+Vodafone|Vodafone ist ein britischer Telefonkonzern mit großem Deutschland-Geschäft.|
+Deutsche Bahn|Die Deutsche Bahn gehört dem Bund und betreibt den größten Teil des Zugverkehrs.|db bahn
+Lufthansa|Die Lufthansa ist die größte deutsche Fluggesellschaft, Logo ist ein Kranich.|
+Deutsche Post|Die Deutsche Post gehört zum Konzern DHL Group.|
+Siemens Konzern|Siemens aus München baut Industrietechnik, Züge und Medizintechnik.|
+Bosch Konzern|Bosch aus Gerlingen bei Stuttgart ist der größte Autozulieferer der Welt.|
+SAP Konzern|SAP aus Walldorf ist Europas größtes Softwareunternehmen.|
+BASF Konzern|BASF aus Ludwigshafen ist der größte Chemiekonzern der Welt.|
+Bayer|Bayer aus Leverkusen erfand das Aspirin.|bayer ag
+Allianz|Die Allianz aus München ist einer der größten Versicherer der Welt.|
+Deutsche Bank|Die Deutsche Bank aus Frankfurt ist die größte Bank Deutschlands.|
+Commerzbank|Die Commerzbank ist eine große Bank aus Frankfurt.|
+Sparkasse|Sparkassen sind öffentlich-rechtliche Banken, es gibt in Deutschland über 340.|sparkassen
+Volksbank|Volksbanken und Raiffeisenbanken sind Genossenschaftsbanken.|raiffeisen
+Wirecard|Wirecard war ein Zahlungsdienstleister, der 2020 nach einem Bilanzskandal pleiteging.|
+Henkel|Henkel aus Düsseldorf macht Persil, Pritt und Schwarzkopf.|persil
+Beiersdorf|Beiersdorf aus Hamburg macht Nivea und Tesa.|nivea
+Miele|Miele aus Gütersloh baut hochwertige Haushaltsgeräte.|
+Stihl|Stihl baut Motorsägen.|
+Kärcher|Kärcher aus Winnenden baut Hochdruckreiniger.|kaercher
+Würth|Würth aus Künzelsau ist Weltmarktführer für Schrauben und Montagematerial.|wuerth
+Faber-Castell|Faber-Castell ist einer der ältesten Bleistiftfabrikanten der Welt, gegründet 1761.|
+Montblanc|Montblanc aus Hamburg ist bekannt für Füllhalter.|
+Steiff|Steiff aus Giengen macht Teddybären mit Knopf im Ohr.|teddybaer
+Rolex|Rolex aus Genf ist die bekannteste Luxusuhrenmarke.|
+Swatch|Swatch ist ein Schweizer Uhrenkonzern, zu ihm gehören Omega und Longines.|omega
+Louis Vuitton|Louis Vuitton gehört zu LVMH, dem größten Luxuskonzern der Welt.|lvmh
+Gucci|Gucci ist eine italienische Luxusmarke aus Florenz.|
+Chanel Marke|Chanel ist eine französische Modemarke, bekannt für Chanel No. 5.|
+Zara|Zara gehört zum spanischen Konzern Inditex, dem größten Modekonzern.|inditex
+H&M Konzern|H&M aus Schweden ist eine große Modekette.|
+Uniqlo|Uniqlo ist eine japanische Modekette.|
+Primark|Primark ist eine irische Billig-Modekette.|
+Shein|Shein ist ein chinesischer Online-Modehändler mit sehr billigen Preisen.|
+Temu|Temu ist ein chinesischer Online-Marktplatz mit extrem günstigen Waren.|
+AliExpress|AliExpress gehört zum chinesischen Konzern Alibaba.|alibaba
+eBay|eBay ist ein Online-Marktplatz, Kleinanzeigen heißt in Deutschland heute Kleinanzeigen.|kleinanzeigen
+PayPal Firma|PayPal ist ein Online-Bezahldienst, früher Teil von eBay.|
+Visa|Visa und Mastercard sind die größten Kreditkartennetze.|mastercard
+Uber|Uber vermittelt Fahrten und Essen per App.|
+Airbnb|Airbnb vermittelt private Unterkünfte.|
+Booking.com|Booking.com ist eines der größten Hotelportale.|booking
+TikTok|TikTok gehört dem chinesischen Konzern ByteDance.|bytedance
+Huawei|Huawei aus China baut Handys und Netzwerktechnik.|
+Xiaomi|Xiaomi aus China baut Handys, Haushaltsgeräte und Autos.|
+Lenovo|Lenovo aus China ist der größte PC-Hersteller der Welt.|
+Dell|Dell baut Computer und Server.|
+HP|HP baut Drucker und Laptops.|hewlett packard
+Logitech|Logitech aus der Schweiz baut Mäuse, Tastaturen und Webcams.|
+Nintendo|Nintendo aus Kyoto machte früher Spielkarten und heute Konsolen wie die Switch.|
+Valve|Valve betreibt die Spieleplattform Steam.|steam
+Ubisoft|Ubisoft aus Frankreich macht Assassin's Creed.|
+Spotify Firma|Spotify aus Stockholm ist der größte Musikstreamingdienst.|
+IKEA Firma|IKEA wurde 1943 von Ingvar Kamprad in Schweden gegründet.|
+Red Bull|Red Bull aus Österreich ist der größte Energydrink-Hersteller und besitzt Formel-1-Teams und Fußballklubs.|
+Nestlé|Nestlé aus der Schweiz ist der größte Lebensmittelkonzern der Welt.|nestle
+Unilever|Unilever macht Dove, Knorr und Langnese.|
+Procter & Gamble|Procter & Gamble macht Pampers, Ariel und Gillette.|p&g
+Shell|Shell ist ein großer Ölkonzern.|
+Aramco|Saudi Aramco ist der größte Ölkonzern der Welt.|saudi aramco
+Boeing|Boeing aus den USA ist einer der zwei größten Flugzeugbauer.|
+Airbus|Airbus ist ein europäischer Flugzeugbauer mit Werken in Toulouse und Hamburg.|
+Rheinmetall|Rheinmetall aus Düsseldorf ist Deutschlands größter Rüstungskonzern.|
+Berkshire Hathaway|Berkshire Hathaway ist die Holding von Warren Buffett.|
+Wertvollste Unternehmen|Zu den wertvollsten Unternehmen der Welt gehören Nvidia, Apple, Microsoft, Alphabet und Amazon.|
+Mittelstand|Der deutsche Mittelstand umfasst Millionen kleine und mittlere Firmen, viele sind Weltmarktführer in Nischen.|hidden champions

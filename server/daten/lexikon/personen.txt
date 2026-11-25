@@ -127,3 +127,512 @@ Ferdinand von Zeppelin|1838–1917|Erfinder der Zeppelin-Luftschiffe.|zeppelin
 Hildegard von Bingen|1098–1179|Äbtissin, Heilkundige und Komponistin des Mittelalters.|hildegard
 Kaiser Wilhelm II.|1859–1941|letzter deutscher Kaiser bis 1918.|wilhelm ii
 Adolf Hitler|1889–1945|Diktator des nationalsozialistischen Deutschlands, verantwortlich für den Zweiten Weltkrieg und den Holocaust.|hitler
+Johannes Kepler|1571–1630|deutscher Astronom, der die Gesetze der Planetenbewegung entdeckte.|kepler
+Tycho Brahe|1546–1601|dänischer Astronom, dessen genaue Messungen Kepler nutzte.|brahe
+Edwin Hubble|1889–1953|US-Astronom, der zeigte, dass sich das Universum ausdehnt.|hubble
+Carl Sagan|1934–1996|US-Astronom und Wissenschaftserklärer, bekannt durch die Serie Unser Kosmos.|sagan
+Richard Feynman|1918–1988|US-Physiker, Nobelpreis 1965 für Quantenelektrodynamik, berühmt für seine Vorlesungen.|feynman
+Niels Bohr|1885–1962|dänischer Physiker, der das Bohrsche Atommodell entwickelte, Nobelpreis 1922.|bohr
+Erwin Schrödinger|1887–1961|österreichischer Physiker, bekannt für die Schrödinger-Gleichung und Schrödingers Katze.|schroedinger
+Paul Dirac|1902–1984|britischer Physiker, der die Antimaterie vorhersagte.|dirac
+Enrico Fermi|1901–1954|italienischer Physiker, baute 1942 den ersten Kernreaktor.|fermi
+Robert Oppenheimer|1904–1967|US-Physiker, wissenschaftlicher Leiter des Manhattan-Projekts zum Bau der Atombombe.|oppenheimer,j robert oppenheimer
+Albert Schweitzer|1875–1965|deutsch-französischer Arzt und Theologe, gründete ein Urwaldspital in Gabun, Friedensnobelpreis 1952.|schweitzer
+Heinrich Hertz|1857–1894|deutscher Physiker, wies elektromagnetische Wellen nach, nach ihm ist die Einheit Hertz benannt.|hertz
+Michael Faraday|1791–1867|englischer Naturforscher, Entdecker der elektromagnetischen Induktion.|faraday
+James Clerk Maxwell|1831–1879|schottischer Physiker, beschrieb Elektrizität und Magnetismus in einheitlichen Gleichungen.|maxwell
+James Watt|1736–1819|schottischer Erfinder, verbesserte die Dampfmaschine entscheidend, nach ihm ist das Watt benannt.|watt
+Alessandro Volta|1745–1827|italienischer Physiker, baute die erste Batterie, nach ihm ist das Volt benannt.|volta
+André-Marie Ampère|1775–1836|französischer Physiker, nach ihm ist die Einheit Ampere benannt.|ampere
+Georg Simon Ohm|1789–1854|deutscher Physiker, Entdecker des Ohmschen Gesetzes.|ohm
+Anders Celsius|1701–1744|schwedischer Astronom, der die Celsius-Temperaturskala entwarf.|celsius
+Daniel Gabriel Fahrenheit|1686–1736|deutscher Physiker, erfand das Quecksilberthermometer und die Fahrenheit-Skala.|fahrenheit
+Blaise Pascal|1623–1662|französischer Mathematiker und Philosoph, baute eine frühe Rechenmaschine.|pascal
+René Descartes|1596–1650|französischer Philosoph, berühmt für den Satz Ich denke, also bin ich.|descartes
+Gottfried Wilhelm Leibniz|1646–1716|deutscher Universalgelehrter, Miterfinder der Infinitesimalrechnung und des Binärsystems.|leibniz
+Carl Friedrich Gauß|1777–1855|deutscher Mathematiker, gilt als Fürst der Mathematiker.|gauss,gauß
+Leonhard Euler|1707–1783|Schweizer Mathematiker, einer der produktivsten Mathematiker aller Zeiten.|euler
+Euklid|um 300 v. Chr.|griechischer Mathematiker, sein Werk Die Elemente prägte die Geometrie über 2.000 Jahre.|euclid
+Emmy Noether|1882–1935|deutsche Mathematikerin, Begründerin der modernen Algebra.|noether
+Srinivasa Ramanujan|1887–1920|indischer Mathematiker mit genialen Formeln, weitgehend Autodidakt.|ramanujan
+John von Neumann|1903–1957|ungarisch-amerikanischer Mathematiker, Vater der modernen Computerarchitektur.|von neumann
+Claude Shannon|1916–2001|US-Mathematiker, Begründer der Informationstheorie.|shannon
+Grace Hopper|1906–1992|US-Informatikerin, entwickelte einen der ersten Compiler.|hopper
+Dennis Ritchie|1941–2011|US-Informatiker, erfand die Programmiersprache C und entwickelte Unix mit.|ritchie
+Linus Torvalds|geboren 1969|finnischer Programmierer, Schöpfer von Linux und Git.|torvalds
+Guido van Rossum|geboren 1956|niederländischer Programmierer, Erfinder der Sprache Python.|van rossum
+Larry Page|geboren 1973|US-Informatiker, Mitgründer von Google.|page
+Sergey Brin|geboren 1973|Mitgründer von Google, in Moskau geboren.|brin
+Sundar Pichai|geboren 1972|Chef von Google und dem Mutterkonzern Alphabet.|pichai
+Satya Nadella|geboren 1967|Chef von Microsoft seit 2014.|nadella
+Paul Allen|1953–2018|Mitgründer von Microsoft.|
+Jensen Huang|geboren 1963|Gründer und Chef von Nvidia, dem Hersteller von Grafikkarten und KI-Chips.|huang
+Demis Hassabis|geboren 1976|britischer KI-Forscher, Gründer von DeepMind, Chemie-Nobelpreis 2024 für AlphaFold.|hassabis
+Geoffrey Hinton|geboren 1947|britisch-kanadischer Informatiker, Pionier der neuronalen Netze, Physik-Nobelpreis 2024.|hinton
+Yann LeCun|geboren 1960|französischer KI-Forscher, Pionier der Bilderkennung mit neuronalen Netzen.|lecun
+Daniela Amodei|geboren 1987|Mitgründerin und Präsidentin von Anthropic.|
+Ilya Sutskever|geboren 1986|KI-Forscher, Mitgründer von OpenAI.|sutskever
+Jack Dorsey|geboren 1976|Mitgründer von Twitter.|dorsey
+Jack Ma|geboren 1964|chinesischer Unternehmer, Gründer von Alibaba.|
+Warren Buffett|geboren 1930|US-Investor, einer der reichsten Menschen der Welt, das Orakel von Omaha.|buffett
+Henry Ford|1863–1947|US-Unternehmer, der mit dem Fließband das Auto für alle bezahlbar machte.|ford
+John D. Rockefeller|1839–1937|US-Ölmagnat, galt als reichster Mensch der Neuzeit.|rockefeller
+Andrew Carnegie|1835–1919|US-Stahlunternehmer und großer Spender.|carnegie
+Coco Chanel|1883–1971|französische Modeschöpferin, erfand das kleine Schwarze und Chanel No. 5.|chanel
+Karl Lagerfeld|1933–2019|deutscher Modeschöpfer, lange Chefdesigner von Chanel.|lagerfeld
+Adolf Dassler|1900–1978|deutscher Unternehmer, Gründer von Adidas.|adi dassler
+Rudolf Dassler|1898–1974|Gründer von Puma, Bruder von Adi Dassler.|
+Werner von Siemens|1816–1892|deutscher Erfinder und Unternehmer, Gründer von Siemens.|siemens
+Robert Bosch|1861–1942|deutscher Unternehmer, Gründer von Bosch.|bosch
+August Horch|1868–1951|deutscher Autobauer, Gründer von Horch und Audi.|horch
+Enzo Ferrari|1898–1988|italienischer Rennfahrer und Gründer von Ferrari.|
+Ferruccio Lamborghini|1916–1993|italienischer Unternehmer, der zuerst Traktoren und dann Sportwagen baute.|lamborghini
+Soichiro Honda|1906–1991|japanischer Ingenieur, Gründer von Honda.|
+Kiichiro Toyoda|1894–1952|japanischer Unternehmer, Gründer der Toyota-Autosparte.|toyoda
+Ingvar Kamprad|1926–2018|schwedischer Unternehmer, Gründer von IKEA.|kamprad
+Dietrich Mateschitz|1944–2022|österreichischer Unternehmer, Mitgründer von Red Bull.|mateschitz
+Richard Branson|geboren 1950|britischer Unternehmer, Gründer der Virgin-Gruppe.|branson
+Oprah Winfrey|geboren 1954|US-Talkmasterin und Medienunternehmerin.|oprah
+Arnold Schwarzenegger|geboren 1947|österreichisch-amerikanischer Bodybuilder, Schauspieler wie in Terminator und Gouverneur von Kalifornien.|schwarzenegger,arnie
+Sylvester Stallone|geboren 1946|US-Schauspieler, bekannt als Rocky und Rambo.|stallone
+Tom Hanks|geboren 1956|US-Schauspieler, zweifacher Oscar-Gewinner, etwa für Forrest Gump.|hanks
+Leonardo DiCaprio|geboren 1974|US-Schauspieler aus Titanic, Oscar 2016 für The Revenant.|dicaprio
+Brad Pitt|geboren 1963|US-Schauspieler, etwa in Fight Club und Ocean's Eleven.|
+Angelina Jolie|geboren 1975|US-Schauspielerin und UN-Sonderbotschafterin.|jolie
+Johnny Depp|geboren 1963|US-Schauspieler, bekannt als Captain Jack Sparrow.|depp
+Tom Cruise|geboren 1962|US-Schauspieler, bekannt aus Top Gun und Mission: Impossible.|cruise
+Will Smith|geboren 1968|US-Schauspieler und Rapper, etwa in Men in Black.|
+Denzel Washington|geboren 1954|US-Schauspieler mit zwei Oscars.|
+Morgan Freeman|geboren 1937|US-Schauspieler mit markanter Stimme.|freeman
+Meryl Streep|geboren 1949|US-Schauspielerin mit Rekord an Oscar-Nominierungen.|streep
+Scarlett Johansson|geboren 1984|US-Schauspielerin, spielt Black Widow bei Marvel.|johansson
+Chris Hemsworth|geboren 1983|australischer Schauspieler, spielt Thor bei Marvel.|hemsworth
+Chris Evans|geboren 1981|US-Schauspieler, spielt Captain America bei Marvel.|
+Gwyneth Paltrow|geboren 1972|US-Schauspielerin, spielt Pepper Potts in Iron Man.|paltrow
+Paul Bettany|geboren 1971|britischer Schauspieler, Stimme von J.A.R.V.I.S. und später Vision bei Marvel.|bettany
+Kerry Condon|geboren 1983|irische Schauspielerin, Stimme von F.R.I.D.A.Y. in den Marvel-Filmen.|condon
+Samuel L. Jackson|geboren 1948|US-Schauspieler, spielt Nick Fury bei Marvel.|samuel jackson
+Jon Favreau|geboren 1966|US-Regisseur von Iron Man und Darsteller von Happy Hogan.|favreau
+Kevin Feige|geboren 1973|Chef der Marvel Studios.|feige
+Steven Spielberg|geboren 1946|US-Regisseur von Der weiße Hai, E.T., Jurassic Park und Schindlers Liste.|spielberg
+George Lucas|geboren 1944|US-Filmemacher, Schöpfer von Star Wars und Indiana Jones.|lucas
+James Cameron|geboren 1954|kanadischer Regisseur von Titanic, Terminator und Avatar.|cameron
+Christopher Nolan|geboren 1970|britischer Regisseur von Inception, The Dark Knight und Oppenheimer.|nolan
+Quentin Tarantino|geboren 1963|US-Regisseur von Pulp Fiction und Kill Bill.|tarantino
+Alfred Hitchcock|1899–1980|britischer Regisseur, Meister der Spannung, etwa mit Psycho.|hitchcock
+Stanley Kubrick|1928–1999|US-Regisseur von 2001: Odyssee im Weltraum und Shining.|kubrick
+Martin Scorsese|geboren 1942|US-Regisseur von Taxi Driver und GoodFellas.|scorsese
+Peter Jackson|geboren 1961|neuseeländischer Regisseur der Herr-der-Ringe-Filme.|
+Hayao Miyazaki|geboren 1941|japanischer Trickfilmer, Mitgründer von Studio Ghibli, etwa Chihiros Reise ins Zauberland.|miyazaki
+Til Schweiger|geboren 1963|deutscher Schauspieler und Regisseur, etwa Keinohrhasen.|schweiger
+Michael Bully Herbig|geboren 1968|deutscher Komiker und Regisseur von Der Schuh des Manitu.|bully herbig,bully
+Loriot|1923–2011|deutscher Humorist, bekannt für Sketche wie die Nudel und Pappa ante portas.|vicco von buelow
+Heinz Erhardt|1909–1979|deutscher Komiker und Wortakrobat.|erhardt
+Otto Waalkes|geboren 1948|ostfriesischer Komiker, bekannt für die Ottifanten.|otto
+Hape Kerkeling|geboren 1964|deutscher Komiker und Autor von Ich bin dann mal weg.|kerkeling
+Stefan Raab|geboren 1966|deutscher Entertainer, bekannt aus TV total.|raab
+Thomas Gottschalk|geboren 1950|deutscher Moderator von Wetten, dass..?|gottschalk
+Günther Jauch|geboren 1956|deutscher Moderator von Wer wird Millionär?|jauch
+Heidi Klum|geboren 1973|deutsches Model und Moderatorin von Germany's Next Topmodel.|klum
+Helene Fischer|geboren 1984|deutsche Schlagersängerin, bekannt für Atemlos durch die Nacht.|
+Herbert Grönemeyer|geboren 1956|deutscher Sänger, etwa mit Männer und Bochum.|groenemeyer
+Udo Lindenberg|geboren 1946|deutscher Rockmusiker mit Hut und Sonnenbrille.|lindenberg
+Nena|geboren 1960|deutsche Sängerin, weltbekannt durch 99 Luftballons.|
+Rammstein|seit 1994|deutsche Rockband, weltweit bekannt durch Du hast und Sonne.|
+Die Toten Hosen|seit 1982|Punkrockband aus Düsseldorf, etwa mit Tage wie diese.|toten hosen
+Die Ärzte|seit 1982|Punkrockband aus Berlin, die beste Band der Welt nach eigenen Worten.|aerzte
+Kraftwerk|seit 1970|Düsseldorfer Band, Pioniere der elektronischen Musik.|
+Scorpions|seit 1965|Rockband aus Hannover, bekannt durch Wind of Change.|
+Peter Maffay|geboren 1949|deutscher Rocksänger und Schöpfer von Tabaluga.|maffay
+Udo Jürgens|1934–2014|österreichischer Sänger, etwa Griechischer Wein und Mit 66 Jahren.|udo juergens
+Falco|1957–1998|österreichischer Popsänger, mit Rock Me Amadeus als erster deutschsprachiger Nummer-eins-Hit in den USA.|
+Marlene Dietrich|1901–1992|deutsch-amerikanische Schauspielerin und Sängerin, ein Weltstar.|dietrich
+Romy Schneider|1938–1982|österreichisch-französische Schauspielerin, berühmt als Sissi.|
+Christoph Waltz|geboren 1956|österreichisch-deutscher Schauspieler mit zwei Oscars, etwa für Inglourious Basterds.|waltz
+Daniel Brühl|geboren 1978|deutscher Schauspieler, bekannt aus Good Bye, Lenin!|bruehl
+Diane Kruger|geboren 1976|deutsche Schauspielerin in Hollywood, etwa Troja.|kruger
+Hans Zimmer|geboren 1957|deutscher Filmkomponist, etwa Der König der Löwen, Inception und Dune.|zimmer
+Taylor Swift|geboren 1989|US-Popsängerin mit Rekord-Tourneen.|swift
+Beyoncé|geboren 1981|US-Sängerin, eine der erfolgreichsten Künstlerinnen aller Zeiten.|beyonce
+Rihanna|geboren 1988|Sängerin aus Barbados und Unternehmerin.|
+Adele|geboren 1988|britische Sängerin, etwa mit Hello und Rolling in the Deep.|
+Ed Sheeran|geboren 1991|britischer Sänger, etwa mit Shape of You.|sheeran
+Billie Eilish|geboren 2001|US-Sängerin, jüngste Gewinnerin aller vier Grammy-Hauptpreise in einem Jahr.|eilish
+Justin Bieber|geboren 1994|kanadischer Popsänger.|bieber
+Lady Gaga|geboren 1986|US-Sängerin und Schauspielerin.|gaga
+Madonna|geboren 1958|US-Sängerin, die Queen of Pop.|
+Whitney Houston|1963–2012|US-Sängerin, berühmt für I Will Always Love You.|houston
+Prince|1958–2016|US-Musiker, etwa mit Purple Rain.|
+David Bowie|1947–2016|britischer Musiker, etwa mit Space Oddity und Heroes.|bowie
+Bob Marley|1945–1981|jamaikanischer Reggae-Musiker.|marley
+Bob Dylan|geboren 1941|US-Liedermacher, Literaturnobelpreis 2016.|dylan
+Jimi Hendrix|1942–1970|US-Gitarrist, gilt als bester Rockgitarrist aller Zeiten.|hendrix
+Kurt Cobain|1967–1994|Sänger der Grunge-Band Nirvana.|cobain
+Paul McCartney|geboren 1942|Bassist und Sänger der Beatles.|mccartney
+Mick Jagger|geboren 1943|Sänger der Rolling Stones.|jagger
+Frank Sinatra|1915–1998|US-Sänger, etwa mit My Way und New York, New York.|sinatra
+Louis Armstrong|1901–1971|US-Jazztrompeter, etwa mit What a Wonderful World.|armstrong satchmo,satchmo
+Johnny Cash|1932–2003|US-Countrysänger, der Mann in Schwarz.|cash
+Eminem|geboren 1972|US-Rapper, einer der meistverkauften Rapper.|
+Drake|geboren 1986|kanadischer Rapper.|
+Kanye West|geboren 1977|US-Rapper und Produzent.|ye
+Jay-Z|geboren 1969|US-Rapper und Unternehmer.|jay z
+Tupac Shakur|1971–1996|US-Rapper.|tupac,2pac
+Elton John|geboren 1947|britischer Sänger und Pianist, etwa mit Candle in the Wind.|
+Celine Dion|geboren 1968|kanadische Sängerin von My Heart Will Go On.|dion
+ABBA|seit 1972|schwedische Popgruppe, etwa mit Dancing Queen und Mamma Mia.|abba
+Queen|seit 1970|britische Rockband mit Freddie Mercury, etwa Bohemian Rhapsody.|band queen
+The Beatles|1960–1970|britische Band aus Liverpool, die erfolgreichste der Musikgeschichte.|beatles
+AC/DC|seit 1973|australische Hardrock-Band, etwa mit Highway to Hell.|acdc
+Metallica|seit 1981|US-Metal-Band.|
+Coldplay|seit 1996|britische Popband mit Chris Martin.|
+Antonio Vivaldi|1678–1741|italienischer Barockkomponist von Die vier Jahreszeiten.|vivaldi
+Georg Friedrich Händel|1685–1759|deutsch-englischer Barockkomponist, etwa Der Messias.|haendel,handel
+Joseph Haydn|1732–1809|österreichischer Komponist, Vater der Sinfonie, schuf die Melodie der deutschen Nationalhymne.|haydn
+Franz Schubert|1797–1828|österreichischer Komponist, bekannt für Lieder wie Der Erlkönig.|schubert
+Frédéric Chopin|1810–1849|polnischer Komponist und Pianist.|chopin
+Robert Schumann|1810–1856|deutscher Komponist der Romantik.|schumann
+Clara Schumann|1819–1896|deutsche Pianistin und Komponistin.|
+Johannes Brahms|1833–1897|deutscher Komponist, etwa Brahms' Wiegenlied.|brahms
+Richard Wagner|1813–1883|deutscher Komponist, schuf Der Ring des Nibelungen und gründete die Bayreuther Festspiele.|wagner
+Giuseppe Verdi|1813–1901|italienischer Opernkomponist, etwa Aida und La Traviata.|verdi
+Peter Tschaikowsky|1840–1893|russischer Komponist von Schwanensee und Der Nussknacker.|tschaikowski,tchaikovsky
+Johann Strauss (Sohn)|1825–1899|österreichischer Walzerkönig, An der schönen blauen Donau.|johann strauss
+Antonín Dvořák|1841–1904|tschechischer Komponist der Sinfonie Aus der Neuen Welt.|dvorak
+Claude Debussy|1862–1918|französischer Komponist, etwa Clair de Lune.|debussy
+Igor Strawinsky|1882–1971|russischer Komponist von Le Sacre du Printemps.|strawinsky
+Carl Orff|1895–1982|deutscher Komponist der Carmina Burana.|orff
+Leonard Bernstein|1918–1990|US-Dirigent und Komponist der West Side Story.|bernstein
+Ennio Morricone|1928–2020|italienischer Filmkomponist, etwa Spiel mir das Lied vom Tod.|morricone
+John Williams|geboren 1932|US-Filmkomponist von Star Wars, Indiana Jones, Harry Potter und Jurassic Park.|
+Thomas Mann|1875–1955|deutscher Schriftsteller, Buddenbrooks, Literaturnobelpreis 1929.|mann
+Hermann Hesse|1877–1962|deutsch-schweizerischer Schriftsteller, Siddhartha und Der Steppenwolf, Nobelpreis 1946.|hesse
+Franz Kafka|1883–1924|Prager Schriftsteller, Die Verwandlung und Der Process.|kafka
+Bertolt Brecht|1898–1956|deutscher Dramatiker, Die Dreigroschenoper.|brecht
+Heinrich Heine|1797–1856|deutscher Dichter, etwa Die Loreley.|heine
+Gebrüder Grimm|1785–1863 und 1786–1859|Jacob und Wilhelm Grimm sammelten Märchen wie Rotkäppchen und Hänsel und Gretel und begannen das Deutsche Wörterbuch.|brueder grimm,grimm
+Erich Kästner|1899–1974|deutscher Autor von Emil und die Detektive und Das doppelte Lottchen.|kaestner
+Michael Ende|1929–1995|deutscher Autor von Die unendliche Geschichte und Momo.|ende
+Cornelia Funke|geboren 1958|deutsche Autorin von Tintenherz.|funke
+Astrid Lindgren|1907–2002|schwedische Kinderbuchautorin von Pippi Langstrumpf.|lindgren
+Hans Christian Andersen|1805–1875|dänischer Märchendichter, Die kleine Meerjungfrau.|andersen
+Günter Grass|1927–2015|deutscher Schriftsteller, Die Blechtrommel, Nobelpreis 1999.|grass
+Heinrich Böll|1917–1985|deutscher Schriftsteller, Nobelpreis 1972.|boell
+Erich Maria Remarque|1898–1970|deutscher Schriftsteller, Im Westen nichts Neues.|remarque
+Friedrich Nietzsche|1844–1900|deutscher Philosoph, Also sprach Zarathustra.|nietzsche
+Georg Wilhelm Friedrich Hegel|1770–1831|deutscher Philosoph des Idealismus.|hegel
+Arthur Schopenhauer|1788–1860|deutscher Philosoph des Pessimismus.|schopenhauer
+Jean-Paul Sartre|1905–1980|französischer Philosoph des Existenzialismus.|sartre
+Simone de Beauvoir|1908–1986|französische Philosophin, Das andere Geschlecht.|beauvoir
+Hannah Arendt|1906–1975|deutsch-amerikanische politische Denkerin.|arendt
+John Locke|1632–1704|englischer Philosoph der Aufklärung.|locke
+Voltaire|1694–1778|französischer Philosoph der Aufklärung.|
+Jean-Jacques Rousseau|1712–1778|Genfer Philosoph, Der Gesellschaftsvertrag.|rousseau
+Niccolò Machiavelli|1469–1527|italienischer Staatsdenker, Der Fürst.|machiavelli
+Laozi|6. Jahrhundert v. Chr.|chinesischer Weiser, Begründer des Daoismus.|laotse,lao tse
+Buddha|um 563–483 v. Chr.|Siddhartha Gautama, Begründer des Buddhismus.|siddhartha gautama
+Jesus von Nazaret|um 4 v. Chr. bis um 30 n. Chr.|Wanderprediger aus Galiläa, für Christen der Sohn Gottes.|jesus,jesus christus
+Mohammed|um 570–632|Religionsstifter des Islam.|muhammad,prophet mohammed
+Moses|biblische Gestalt|führte nach der Bibel die Israeliten aus Ägypten und empfing die Zehn Gebote.|
+Abraham|biblische Gestalt|Stammvater von Juden, Christen und Muslimen.|
+Charles Dickens|1812–1870|englischer Schriftsteller, Oliver Twist und Eine Weihnachtsgeschichte.|dickens
+Jane Austen|1775–1817|englische Schriftstellerin, Stolz und Vorurteil.|austen
+Mark Twain|1835–1910|US-Schriftsteller, Tom Sawyer und Huckleberry Finn.|twain
+Ernest Hemingway|1899–1961|US-Schriftsteller, Der alte Mann und das Meer, Nobelpreis 1954.|hemingway
+George Orwell|1903–1950|britischer Schriftsteller, 1984 und Farm der Tiere.|orwell
+J. R. R. Tolkien|1892–1973|britischer Autor von Der Hobbit und Der Herr der Ringe.|tolkien
+J. K. Rowling|geboren 1965|britische Autorin der Harry-Potter-Bücher.|rowling
+Stephen King|geboren 1947|US-Horrorautor, Es und Shining.|
+Agatha Christie|1890–1976|britische Krimiautorin, meistverkaufte Romanautorin aller Zeiten.|christie
+Arthur Conan Doyle|1859–1930|britischer Autor, Schöpfer von Sherlock Holmes.|conan doyle
+Jules Verne|1828–1905|französischer Autor, In 80 Tagen um die Welt und 20.000 Meilen unter dem Meer.|verne
+Victor Hugo|1802–1885|französischer Schriftsteller, Die Elenden und Der Glöckner von Notre-Dame.|hugo
+Leo Tolstoi|1828–1910|russischer Schriftsteller, Krieg und Frieden.|tolstoi
+Fjodor Dostojewski|1821–1881|russischer Schriftsteller, Schuld und Sühne.|dostojewski
+Dante Alighieri|1265–1321|italienischer Dichter der Göttlichen Komödie.|dante
+Homer|8. Jahrhundert v. Chr.|griechischer Dichter der Ilias und der Odyssee.|
+Miguel de Cervantes|1547–1616|spanischer Dichter von Don Quijote.|cervantes
+Karl May|1842–1912|deutscher Autor von Winnetou und Old Shatterhand.|may
+Wilhelm Busch|1832–1908|deutscher Zeichner und Dichter von Max und Moritz.|busch
+Antoine de Saint-Exupéry|1900–1944|französischer Pilot und Autor von Der kleine Prinz.|saint exupery
+Raffael|1483–1520|italienischer Maler der Renaissance, Die Schule von Athen.|raphael
+Sandro Botticelli|1445–1510|italienischer Maler, Die Geburt der Venus.|botticelli
+Caravaggio|1571–1610|italienischer Barockmaler mit starken Licht-Schatten-Kontrasten.|
+Peter Paul Rubens|1577–1640|flämischer Barockmaler.|rubens
+Jan Vermeer|1632–1675|niederländischer Maler, Das Mädchen mit dem Perlenohrring.|vermeer
+Francisco de Goya|1746–1828|spanischer Maler.|goya
+Caspar David Friedrich|1774–1840|deutscher Maler der Romantik, Der Wanderer über dem Nebelmeer.|caspar david friedrich
+Gustav Klimt|1862–1918|österreichischer Maler, Der Kuss.|klimt
+Edvard Munch|1863–1944|norwegischer Maler, Der Schrei.|munch
+Salvador Dalí|1904–1989|spanischer Surrealist mit zerfließenden Uhren.|dali
+Andy Warhol|1928–1987|US-Pop-Art-Künstler, Campbell-Suppendosen und Marilyn-Bilder.|warhol
+Wassily Kandinsky|1866–1944|russischer Maler, Pionier der abstrakten Kunst.|kandinsky
+Paul Klee|1879–1940|deutsch-schweizerischer Maler.|klee
+Henri Matisse|1869–1954|französischer Maler mit kräftigen Farben.|matisse
+Pierre-Auguste Renoir|1841–1919|französischer Impressionist.|renoir
+Paul Cézanne|1839–1906|französischer Maler, Wegbereiter der Moderne.|cezanne
+Banksy|unbekannt|anonymer britischer Street-Art-Künstler.|
+Gerhard Richter|geboren 1932|deutscher Maler, einer der teuersten lebenden Künstler.|
+Joseph Beuys|1921–1986|deutscher Aktionskünstler mit Filz und Fett.|beuys
+Auguste Rodin|1840–1917|französischer Bildhauer von Der Denker.|rodin
+Antoni Gaudí|1852–1926|katalanischer Architekt der Sagrada Família.|gaudi
+Le Corbusier|1887–1965|schweizerisch-französischer Architekt der Moderne.|
+Walter Gropius|1883–1969|deutscher Architekt und Gründer des Bauhauses.|gropius
+Ludwig Mies van der Rohe|1886–1969|deutscher Architekt, Weniger ist mehr.|mies van der rohe
+Zaha Hadid|1950–2016|irakisch-britische Architektin geschwungener Bauten.|hadid
+Gustave Eiffel|1832–1923|französischer Ingenieur, baute den Eiffelturm.|eiffel
+Ramses II.|um 1303–1213 v. Chr.|einer der mächtigsten Pharaonen Ägyptens.|ramses
+Tutanchamun|um 1341–1323 v. Chr.|ägyptischer Pharao, dessen fast unberührtes Grab 1922 gefunden wurde.|tutenchamun
+Nofretete|um 1370–1330 v. Chr.|ägyptische Königin, ihre Büste steht in Berlin.|nefertiti
+Hammurabi|um 1810–1750 v. Chr.|babylonischer König mit einer der ersten Gesetzessammlungen.|
+Augustus|63 v. Chr.–14 n. Chr.|erster römischer Kaiser.|kaiser augustus
+Nero|37–68|römischer Kaiser, berüchtigt wegen des Brandes von Rom.|
+Konstantin der Große|um 272–337|römischer Kaiser, förderte das Christentum.|konstantin
+Hannibal|247–183 v. Chr.|karthagischer Feldherr, zog mit Elefanten über die Alpen.|
+Spartacus|um 109–71 v. Chr.|Anführer eines großen Sklavenaufstands gegen Rom.|spartakus
+Attila|um 406–453|König der Hunnen.|
+Arminius|um 17 v. Chr.–21 n. Chr.|Cheruskerfürst, besiegte im Jahr 9 die Römer im Teutoburger Wald.|hermann der cherusker
+Barbarossa|um 1122–1190|Friedrich I., römisch-deutscher Kaiser mit dem roten Bart.|friedrich barbarossa
+Richard Löwenherz|1157–1199|englischer König und Kreuzfahrer.|loewenherz
+Dschingis Khan|um 1162–1227|Gründer des Mongolischen Reiches, des größten zusammenhängenden Landreichs der Geschichte.|genghis khan
+Saladin|1137–1193|Sultan, der 1187 Jerusalem eroberte.|
+Jeanne d'Arc|um 1412–1431|französische Nationalheldin, die Jungfrau von Orléans.|johanna von orleans,jeanne darc
+Heinrich VIII.|1491–1547|englischer König mit sechs Ehefrauen.|heinrich der achte
+Elisabeth I.|1533–1603|englische Königin, unter ihr wurde England Seemacht.|elizabeth i
+Ludwig XIV.|1638–1715|französischer Sonnenkönig, baute Versailles.|sonnenkoenig
+Marie Antoinette|1755–1793|französische Königin, in der Revolution hingerichtet.|
+Friedrich der Große|1712–1786|König von Preußen, der Alte Fritz.|alter fritz,friedrich ii
+Maria Theresia|1717–1780|Herrscherin über Österreich und Ungarn.|
+Katharina die Große|1729–1796|Zarin von Russland, gebürtige Deutsche.|
+Peter der Große|1672–1725|russischer Zar, gründete Sankt Petersburg.|
+Kaiserin Elisabeth|1837–1898|Kaiserin von Österreich, genannt Sisi.|sisi,sissi
+König Ludwig II.|1845–1886|bayerischer Märchenkönig, baute Neuschwanstein.|ludwig ii,maerchenkoenig
+Queen Victoria|1819–1901|britische Königin, Namensgeberin des Viktorianischen Zeitalters.|victoria
+Zar Nikolaus II.|1868–1918|letzter Zar Russlands.|nikolaus ii
+Wladimir Lenin|1870–1924|russischer Revolutionär, Gründer der Sowjetunion.|lenin
+Josef Stalin|1878–1953|Diktator der Sowjetunion, verantwortlich für Millionen Tote.|stalin
+Michail Gorbatschow|1931–2022|letzter Staatschef der Sowjetunion, ermöglichte das Ende des Kalten Krieges, Friedensnobelpreis 1990.|gorbatschow,gorbi
+Boris Jelzin|1931–2007|erster Präsident Russlands.|jelzin
+Wladimir Putin|geboren 1952|Präsident Russlands, befahl 2022 den Angriff auf die Ukraine.|putin
+Wolodymyr Selenskyj|geboren 1978|Präsident der Ukraine seit 2019.|selenskyj,zelensky
+Mao Zedong|1893–1976|Gründer der Volksrepublik China.|mao
+Deng Xiaoping|1904–1997|chinesischer Politiker, der China wirtschaftlich öffnete.|deng
+Xi Jinping|geboren 1953|Staats- und Parteichef Chinas.|xi
+Ho Chi Minh|1890–1969|vietnamesischer Revolutionsführer.|
+Fidel Castro|1926–2016|kubanischer Revolutionsführer.|castro
+Che Guevara|1928–1967|argentinischer Revolutionär.|che
+Simón Bolívar|1783–1830|Befreier Südamerikas von der spanischen Herrschaft.|bolivar
+Franklin D. Roosevelt|1882–1945|US-Präsident im Zweiten Weltkrieg, viermal gewählt.|roosevelt,fdr
+Theodore Roosevelt|1858–1919|US-Präsident, Namensgeber des Teddybären.|teddy roosevelt
+Thomas Jefferson|1743–1826|US-Präsident und Hauptautor der Unabhängigkeitserklärung.|jefferson
+Benjamin Franklin|1706–1790|US-Gründervater und Erfinder des Blitzableiters.|franklin
+Ronald Reagan|1911–2004|US-Präsident und früherer Schauspieler.|reagan
+Barack Obama|geboren 1961|erster afroamerikanischer US-Präsident von 2009 bis 2017, Friedensnobelpreis 2009.|obama
+Donald Trump|geboren 1946|US-Präsident von 2017 bis 2021 und erneut seit 2025.|trump
+Joe Biden|geboren 1942|US-Präsident von 2021 bis 2025.|biden
+Kamala Harris|geboren 1964|US-Vizepräsidentin von 2021 bis 2025.|harris
+Hillary Clinton|geboren 1947|US-Außenministerin und Präsidentschaftskandidatin 2016.|
+Bill Clinton|geboren 1946|US-Präsident von 1993 bis 2001.|
+Margaret Thatcher|1925–2013|britische Premierministerin, die Eiserne Lady.|thatcher
+Charles de Gaulle|1890–1970|französischer General und Präsident.|de gaulle
+Emmanuel Macron|geboren 1977|französischer Präsident seit 2017.|macron
+Ursula von der Leyen|geboren 1958|Präsidentin der EU-Kommission seit 2019.|von der leyen
+Helmut Schmidt|1918–2015|deutscher Bundeskanzler von 1974 bis 1982.|schmidt
+Ludwig Erhard|1897–1977|Bundeskanzler und Vater des Wirtschaftswunders.|erhard
+Kurt Georg Kiesinger|1904–1988|deutscher Bundeskanzler von 1966 bis 1969.|kiesinger
+Theodor Heuss|1884–1963|erster Bundespräsident Deutschlands.|heuss
+Richard von Weizsäcker|1920–2015|Bundespräsident, berühmt für seine Rede zum 8. Mai 1985.|weizsaecker
+Frank-Walter Steinmeier|geboren 1956|Bundespräsident seit 2017.|steinmeier
+Joachim Gauck|geboren 1940|Bundespräsident von 2012 bis 2017.|gauck
+Erich Honecker|1912–1994|Staatschef der DDR bis 1989.|honecker
+Walter Ulbricht|1893–1973|Staatschef der DDR, ließ die Mauer bauen.|ulbricht
+Rosa Luxemburg|1871–1919|Sozialistin und Mitgründerin der KPD.|luxemburg
+Friedrich Ebert|1871–1925|erster Reichspräsident der Weimarer Republik.|ebert
+Claus Schenk Graf von Stauffenberg|1907–1944|Offizier, verübte am 20. Juli 1944 ein Attentat auf Hitler.|stauffenberg
+Oskar Schindler|1908–1974|Unternehmer, der über 1.000 Juden vor dem Holocaust rettete.|schindler
+Dietrich Bonhoeffer|1906–1945|Theologe und Widerstandskämpfer.|bonhoeffer
+Golda Meir|1898–1978|israelische Premierministerin.|
+Indira Gandhi|1917–1984|indische Premierministerin.|
+Benazir Bhutto|1953–2007|erste Premierministerin eines muslimischen Landes, Pakistan.|bhutto
+Dalai Lama|geboren 1935|Tendzin Gyatsho, geistliches Oberhaupt der Tibeter, Friedensnobelpreis 1989.|
+Malala Yousafzai|geboren 1997|pakistanische Kinderrechtsaktivistin, jüngste Friedensnobelpreisträgerin.|malala
+Greta Thunberg|geboren 2003|schwedische Klimaaktivistin, Gründerin von Fridays for Future.|thunberg
+Rosa Parks|1913–2005|US-Bürgerrechtlerin, die 1955 ihren Busplatz nicht räumte.|parks
+Malcolm X|1925–1965|US-Bürgerrechtler.|
+Harriet Tubman|um 1822–1913|befreite viele Sklaven über die Underground Railroad.|tubman
+Florence Nightingale|1820–1910|britische Begründerin der modernen Krankenpflege.|nightingale
+Henri Dunant|1828–1910|Schweizer Gründer des Roten Kreuzes, erster Friedensnobelpreisträger.|dunant
+Edward Jenner|1749–1823|englischer Arzt, entwickelte die Pockenimpfung.|jenner
+Ignaz Semmelweis|1818–1865|Arzt, der das Händewaschen in Kliniken einführte.|semmelweis
+Rudolf Virchow|1821–1902|deutscher Arzt und Pathologe.|virchow
+Paul Ehrlich|1854–1915|deutscher Arzt, Begründer der Chemotherapie.|
+Christiaan Barnard|1922–2001|südafrikanischer Chirurg der ersten Herztransplantation 1967.|barnard
+Uğur Şahin|geboren 1965|Mitgründer von Biontech, entwickelte mit Özlem Türeci den ersten mRNA-Impfstoff gegen Corona.|ugur sahin
+Özlem Türeci|geboren 1967|Mitgründerin von Biontech.|oezlem tuereci
+Katalin Karikó|geboren 1955|ungarische Biochemikerin, Nobelpreis 2023 für die mRNA-Forschung.|kariko
+Jane Goodall|1934–2025|britische Verhaltensforscherin, erforschte Schimpansen.|goodall
+David Attenborough|geboren 1926|britischer Tierfilmer.|attenborough
+Heinz Sielmann|1917–2006|deutscher Tierfilmer.|sielmann
+Bernhard Grzimek|1909–1987|Frankfurter Zoodirektor und Tierfilmer, Serengeti darf nicht sterben.|grzimek
+Jacques Cousteau|1910–1997|französischer Meeresforscher.|cousteau
+Ferdinand Magellan|um 1480–1521|portugiesischer Seefahrer, seine Expedition umsegelte erstmals die Welt.|magellan
+Vasco da Gama|um 1469–1524|portugiesischer Seefahrer, fand den Seeweg nach Indien.|da gama
+James Cook|1728–1779|britischer Seefahrer, erkundete den Pazifik.|captain cook
+Amerigo Vespucci|1454–1512|italienischer Seefahrer, nach ihm wurde Amerika benannt.|vespucci
+Roald Amundsen|1872–1928|norwegischer Polarforscher, erreichte 1911 als Erster den Südpol.|amundsen
+Edmund Hillary|1919–2008|neuseeländischer Bergsteiger, 1953 mit Tenzing Norgay erster auf dem Everest.|hillary
+Reinhold Messner|geboren 1944|Südtiroler Bergsteiger, bestieg als Erster alle 14 Achttausender.|messner
+Leif Eriksson|um 970–1020|Wikinger, erreichte wohl um 1000 als erster Europäer Nordamerika.|
+Buzz Aldrin|geboren 1930|zweiter Mensch auf dem Mond.|aldrin
+Valentina Tereschkowa|geboren 1937|erste Frau im Weltraum, 1963.|tereschkowa
+Sigmund Jähn|1937–2019|erster Deutscher im All, 1978.|jaehn
+Matthias Maurer|geboren 1970|deutscher ESA-Astronaut auf der ISS 2021/22.|maurer
+Wernher von Braun|1912–1977|deutscher Raketeningenieur, baute die Saturn-V-Rakete für die Mondlandung.|von braun
+Zinédine Zidane|geboren 1972|französischer Fußballstar und Trainer.|zidane
+Johan Cruyff|1947–2016|niederländischer Fußballer, prägte den totalen Fußball.|cruyff
+Lothar Matthäus|geboren 1961|deutscher Rekordnationalspieler, Weltmeister 1990.|matthaeus
+Miroslav Klose|geboren 1978|WM-Rekordtorschütze mit 16 Toren.|klose
+Thomas Müller|geboren 1989|Fußballer des FC Bayern, Weltmeister 2014.|
+Manuel Neuer|geboren 1986|Torwart des FC Bayern, Weltmeister 2014.|neuer
+Philipp Lahm|geboren 1983|Kapitän der Weltmeister von 2014.|lahm
+Mario Götze|geboren 1992|schoss das Siegtor im WM-Finale 2014.|goetze
+Jürgen Klopp|geboren 1967|Trainer, gewann mit Liverpool die Champions League.|klopp
+Joachim Löw|geboren 1960|Bundestrainer beim WM-Titel 2014.|jogi loew,loew
+Julian Nagelsmann|geboren 1987|Bundestrainer seit 2023.|nagelsmann
+Jamal Musiala|geboren 2003|Fußballer des FC Bayern und der Nationalmannschaft.|musiala
+Florian Wirtz|geboren 2003|deutscher Nationalspieler.|wirtz
+Erling Haaland|geboren 2000|norwegischer Torjäger.|haaland
+Kylian Mbappé|geboren 1998|französischer Stürmer, Weltmeister 2018.|mbappe
+Neymar|geboren 1992|brasilianischer Fußballstar.|
+Harry Kane|geboren 1993|englischer Stürmer, seit 2023 beim FC Bayern.|kane
+Uwe Seeler|1936–2022|Hamburger Fußballidol.|seeler
+Fritz Walter|1920–2002|Kapitän der Weltmeister von 1954.|
+Sepp Herberger|1897–1977|Trainer der Weltmeister von 1954.|herberger
+Dirk Nowitzki|geboren 1978|deutscher Basketballstar, NBA-Meister 2011 mit Dallas.|nowitzki
+Dennis Schröder|geboren 1993|Kapitän der deutschen Basketball-Weltmeister 2023.|schroeder
+LeBron James|geboren 1984|US-Basketballstar, NBA-Rekordpunktesammler.|lebron
+Kobe Bryant|1978–2020|US-Basketballstar der Lakers.|kobe
+Roger Federer|geboren 1981|Schweizer Tennisspieler mit 20 Grand-Slam-Titeln.|federer
+Rafael Nadal|geboren 1986|spanischer Tennisspieler, 14 Mal French-Open-Sieger.|nadal
+Novak Djokovic|geboren 1987|serbischer Tennisspieler mit den meisten Grand-Slam-Titeln der Männer.|djokovic
+Serena Williams|geboren 1981|US-Tennisspielerin mit 23 Grand-Slam-Titeln.|serena
+Alexander Zverev|geboren 1997|deutscher Tennisspieler, Olympiasieger 2021.|zverev
+Lewis Hamilton|geboren 1985|britischer Formel-1-Fahrer, siebenfacher Weltmeister.|hamilton
+Max Verstappen|geboren 1997|niederländischer Formel-1-Weltmeister.|verstappen
+Ayrton Senna|1960–1994|brasilianischer Formel-1-Legende.|senna
+Niki Lauda|1949–2019|österreichischer Formel-1-Weltmeister.|lauda
+Nico Rosberg|geboren 1985|Formel-1-Weltmeister 2016.|rosberg
+Mick Schumacher|geboren 1999|Rennfahrer, Sohn von Michael Schumacher.|
+Michael Phelps|geboren 1985|US-Schwimmer mit 23 olympischen Goldmedaillen.|phelps
+Simone Biles|geboren 1997|US-Turnerin, erfolgreichste der Geschichte.|biles
+Carl Lewis|geboren 1961|US-Leichtathlet mit neun olympischen Goldmedaillen.|
+Jesse Owens|1913–1980|US-Leichtathlet, gewann 1936 in Berlin vier Goldmedaillen.|owens
+Mike Tyson|geboren 1966|US-Boxer, jüngster Schwergewichtsweltmeister.|tyson
+Wladimir Klitschko|geboren 1976|ukrainischer Boxweltmeister.|klitschko
+Vitali Klitschko|geboren 1971|ukrainischer Boxweltmeister, Bürgermeister von Kiew.|
+Henry Maske|geboren 1964|deutscher Boxweltmeister.|maske
+Magnus Carlsen|geboren 1990|norwegischer Schachweltmeister.|carlsen
+Garri Kasparow|geboren 1963|Schachweltmeister, verlor 1997 gegen den Computer Deep Blue.|kasparow
+Tiger Woods|geboren 1975|US-Golfstar.|woods
+Tom Brady|geboren 1977|US-Football-Quarterback mit sieben Super-Bowl-Siegen.|brady
+Wayne Gretzky|geboren 1961|kanadische Eishockeylegende.|gretzky
+Katarina Witt|geboren 1965|Eiskunstläuferin, zweifache Olympiasiegerin.|witt
+Magdalena Neuner|geboren 1987|deutsche Biathletin.|neuner
+Sven Hannawald|geboren 1974|gewann als Erster alle vier Springen der Vierschanzentournee.|hannawald
+Jan Ullrich|geboren 1973|Tour-de-France-Sieger 1997.|ullrich
+Mr. Bean|Figur seit 1990|britische Komikfigur von Rowan Atkinson.|rowan atkinson
+Harry Potter|Romanfigur|Zauberlehrling aus den Büchern von J. K. Rowling.|
+Sherlock Holmes|Romanfigur|berühmter Detektiv aus London, Baker Street 221b.|
+James Bond|Romanfigur|britischer Geheimagent 007 von Ian Fleming.|007
+Iron Man|Comicfigur|Superheld in Rüstung, Tony Stark, erfunden 1963 von Stan Lee und anderen.|
+Pepper Potts|Filmfigur|Tony Starks Assistentin und spätere Ehefrau.|
+Peter Parker|Comicfigur|Spider-Man, Schüler aus Queens.|spider man,spiderman
+Bruce Wayne|Comicfigur|Batman, Milliardär aus Gotham City.|batman
+Clark Kent|Comicfigur|Superman vom Planeten Krypton.|superman
+Thor|Comicfigur und Gott|nordischer Donnergott, bei Marvel ein Avenger mit Hammer Mjölnir.|
+Darth Vader|Filmfigur|Bösewicht aus Star Wars, Vater von Luke Skywalker.|vader
+Yoda|Filmfigur|weiser Jedi-Meister aus Star Wars.|
+Micky Maus|Trickfigur seit 1928|berühmteste Figur von Walt Disney.|mickey mouse
+Donald Duck|Trickfigur seit 1934|cholerische Ente aus Entenhausen.|
+Biene Maja|Kinderbuchfigur seit 1912|Biene aus dem Buch von Waldemar Bonsels.|
+Pumuckl|Figur seit 1962|frecher Kobold mit roten Haaren von Ellis Kaut.|
+Der Sandmann|Figur seit 1959|Unser Sandmännchen aus dem DDR-Fernsehen.|sandmaennchen
+Sendung mit der Maus|seit 1971|Lach- und Sachgeschichten im WDR.|die maus
+Shakira|geboren 1977|Kolumbianische Sängerin, Welthits wie Hips Don't Lie und Waka Waka, dem Lied zur Fußball-WM 2010.|shakira mebarak
+Bruce Lee|1940 bis 1973|Kampfkunst-Legende aus Hongkong und den USA, Filme wie Der Mann mit der Todeskralle, machte Kung-Fu weltweit bekannt.|
+Jackie Chan|geboren 1954|Schauspieler aus Hongkong, bekannt für Actionkomödien wie Rush Hour, macht seine Stunts meist selbst.|
+Hypatia|um 355 bis 415|Mathematikerin und Philosophin in Alexandria, eine der ersten bekannten Wissenschaftlerinnen.|hypatia von alexandria
+Paracelsus|1493 bis 1541|Schweizer Arzt, gilt als Vater der Arzneimittelkunde. Von ihm stammt: Die Dosis macht das Gift.|die dosis macht das gift
+Gianni Versace|1946 bis 1997|Italienischer Modeschöpfer, gründete das Modehaus Versace mit dem Medusa-Logo.|versace
+Giorgio Armani|1934 bis 2025|Italienischer Modeschöpfer, berühmt für elegante Herrenanzüge.|armani
+Christian Dior|1905 bis 1957|Französischer Modeschöpfer, prägte 1947 den New Look.|dior
+Yves Saint Laurent|1936 bis 2008|Französischer Modeschöpfer, brachte den Hosenanzug für Frauen in die Haute Couture.|ysl
+Katy Perry|geboren 1984|US-Sängerin mit Hits wie Firework und Roar, flog 2025 kurz ins All.|
+Ariana Grande|geboren 1993|US-Sängerin und Schauspielerin, bekannt für ihre große Stimmlage, Hits wie 7 rings, spielte Glinda im Film Wicked.|
+Bruno Mars|geboren 1985|US-Sänger mit Hits wie Uptown Funk und Die With A Smile mit Lady Gaga.|
+The Weeknd|geboren 1990|Kanadischer Sänger, Blinding Lights gilt als einer der erfolgreichsten Songs der Geschichte.|abel tesfaye
+The Rolling Stones|seit 1962|Britische Rockband um Mick Jagger und Keith Richards, Hits wie Satisfaction, eine der langlebigsten Bands der Welt.|rolling stones,mick jagger
+Nirvana|1987 bis 1994|US-Grunge-Band um Kurt Cobain, Hit Smells Like Teen Spirit.|kurt cobain
+Pink Floyd|1965 bis 2014|Britische Rockband, Alben wie The Dark Side of the Moon und The Wall.|
+Roland Kaiser|geboren 1952|Deutscher Schlagersänger, Hits wie Santa Maria und Joana.|
+Andrea Berg|geboren 1966|Deutsche Schlagersängerin, Du hast mich tausendmal belogen ist ihr bekanntester Hit.|
+Mark Forster|geboren 1983|Deutscher Popsänger, Hits wie Chöre und 194 Länder, Coach bei The Voice Kids.|
+Lena Meyer-Landrut|geboren 1991|Gewann 2010 den Eurovision Song Contest für Deutschland mit Satellite.|lena,satellite
+Capital Bra|geboren 1994|Deutscher Rapper mit den meisten Nummer-eins-Hits in Deutschland.|
+Apache 207|geboren 1997|Deutscher Rapper und Sänger, Hits wie Roller und Komet mit Udo Lindenberg.|
+Sido|geboren 1980|Berliner Rapper, bekannt aus der Anfangszeit mit Maske, Hits wie Bilder im Kopf.|
+Peter Fox|geboren 1971|Berliner Musiker, Sänger von Seeed, Soloalbum Stadtaffe mit Haus am See.|seeed,haus am see
+Sarah Connor|geboren 1980|Deutsche Sängerin, Hits wie From Sarah With Love und Wie schön du bist.|
+Tokio Hotel|seit 2001|Band aus Magdeburg um die Zwillinge Bill und Tom Kaulitz, Durchbruch mit Durch den Monsun.|kaulitz
+Shirin David|geboren 1995|Deutsche Rapperin und Sängerin, Hits wie Gib ihm und Bauch Beine Po.|
+Theodor Fontane|1819 bis 1898|Deutscher Schriftsteller, Effi Briest und Wanderungen durch die Mark Brandenburg.|fontane,effi briest
+Rainer Maria Rilke|1875 bis 1926|Dichter aus Prag, Gedichte wie Der Panther.|rilke
+Georg Büchner|1813 bis 1837|Dichter und Revolutionär, Woyzeck und Dantons Tod. Nach ihm ist der wichtigste deutsche Literaturpreis benannt.|büchner,woyzeck
+Gotthold Ephraim Lessing|1729 bis 1781|Dichter der Aufklärung, Nathan der Weise mit der Ringparabel über Toleranz.|lessing,nathan der weise
+Stefan Zweig|1881 bis 1942|Österreichischer Schriftsteller, Schachnovelle und Die Welt von Gestern.|zweig,schachnovelle
+Edgar Allan Poe|1809 bis 1849|US-Schriftsteller, Erfinder der Detektivgeschichte und Meister des Gruselns, Der Rabe.|poe
+Dan Brown|geboren 1964|US-Autor von Thrillern wie Sakrileg, im Original The Da Vinci Code.|da vinci code
+Rainer Werner Fassbinder|1945 bis 1982|Deutscher Regisseur, drehte über 40 Filme, etwa Die Ehe der Maria Braun.|fassbinder
+Wim Wenders|geboren 1945|Deutscher Regisseur, Der Himmel über Berlin, Paris Texas und Perfect Days.|wenders
+Werner Herzog|geboren 1942|Deutscher Regisseur, Fitzcarraldo und viele Dokumentarfilme, bekannt für seine Stimme.|
+Wolfgang Petersen|1941 bis 2022|Deutscher Regisseur, Das Boot, dann in Hollywood Air Force One und Troja.|das boot
+Matthias Schweighöfer|geboren 1981|Deutscher Schauspieler und Regisseur, Komödien wie Der Schlussmacher und Army of Thieves.|
+Elyas M'Barek|geboren 1982|Deutscher Schauspieler, bekannt als Lehrer Zeki Müller in Fack ju Göhte.|fack ju göhte
+Sandra Hüller|geboren 1978|Deutsche Schauspielerin, für Anatomie eines Falls 2024 für den Oscar nominiert.|
+Keanu Reeves|geboren 1964|Schauspieler, Neo in Matrix und John Wick, gilt als besonders bescheiden.|
+Zendaya|geboren 1996|US-Schauspielerin, Spider-Man, Dune und Euphoria.|
+Margot Robbie|geboren 1990|Australische Schauspielerin, spielte Barbie im Film 2023.|
+Ryan Gosling|geboren 1980|Kanadischer Schauspieler, La La Land und Ken im Film Barbie.|
+Cillian Murphy|geboren 1976|Irischer Schauspieler, Oscar für Oppenheimer, bekannt aus Peaky Blinders.|
+Audrey Hepburn|1929 bis 1993|Schauspielerin und Stilikone, Frühstück bei Tiffany, später UNICEF-Botschafterin.|
+Clint Eastwood|geboren 1930|US-Schauspieler und Regisseur, Western wie Zwei glorreiche Halunken, Oscar für Erbarmungslos.|
+Sean Connery|1930 bis 2020|Schottischer Schauspieler, der erste James Bond im Kino.|
+Daniel Craig|geboren 1968|Britischer Schauspieler, spielte James Bond von 2006 bis 2021.|
+Rowan Atkinson|geboren 1955|Britischer Komiker, bekannt als Mr. Bean und Blackadder.|
+Jim Carrey|geboren 1962|Kanadischer Komiker, Die Maske und Die Truman Show.|
+Robin Williams|1951 bis 2014|US-Komiker und Schauspieler, Club der toten Dichter, Mrs. Doubtfire und die Stimme des Dschinni in Aladdin.|
+Klaas Heufer-Umlauf|geboren 1983|Deutscher Moderator, mit Joko Winterscheidt bekannt aus Joko und Klaas gegen ProSieben.|klaas
+Jan Böhmermann|geboren 1981|Deutscher Satiriker, Moderator des ZDF Magazin Royale.|böhmermann
+Dieter Bohlen|geboren 1954|Musikproduzent, Modern Talking mit Cheri Cheri Lady, langjähriger Juror bei DSDS.|modern talking
+Barbara Schöneberger|geboren 1974|Deutsche Moderatorin und Sängerin, eine der bekanntesten Fernsehgesichter.|
+Annalena Baerbock|geboren 1980|Grünen-Politikerin, Außenministerin von 2021 bis 2025, seit 2025 Präsidentin der UN-Generalversammlung.|baerbock
+Robert Habeck|geboren 1969|Grünen-Politiker, Wirtschaftsminister und Vizekanzler von 2021 bis 2025.|habeck
+Christian Lindner|geboren 1979|FDP-Politiker, Finanzminister bis November 2024.|lindner
+Markus Söder|geboren 1967|CSU-Politiker, seit 2018 bayerischer Ministerpräsident.|söder
+Lars Klingbeil|geboren 1978|SPD-Politiker, seit 2025 Vizekanzler und Bundesfinanzminister.|klingbeil
+Papst Benedikt XVI.|1927 bis 2022|Joseph Ratzinger aus Bayern, Papst von 2005 bis 2013, trat als erster Papst seit Jahrhunderten zurück.|ratzinger,wir sind papst
+Johannes Paul II.|1920 bis 2005|Karol Wojtyła aus Polen, Papst von 1978 bis 2005, trug zum Ende des Kommunismus in Osteuropa bei.|
+Elisabeth II.|1926 bis 2022|Britische Königin von 1952 bis 2022, 70 Jahre auf dem Thron, so lange wie kein britischer Monarch vor ihr.|queen elizabeth,queen
+Prinzessin Diana|1961 bis 1997|Ehefrau von Prinz Charles, die Prinzessin der Herzen, starb bei einem Autounfall in Paris.|lady di,diana
+Prinz William|geboren 1982|Britischer Thronfolger, Sohn von König Charles und Diana.|william
+Adolf und Rudolf Dassler|1900 bis 1978 und 1898 bis 1974|Brüder aus Herzogenaurach, Adi gründete Adidas, Rudolf Puma.|adidas gründer,puma gründer,dassler
+Margarete Steiff|1847 bis 1909|Gründerin der Spielzeugfirma Steiff, bekannt für den Teddybär mit Knopf im Ohr.|steiff
+Melitta Bentz|1873 bis 1950|Erfand 1908 in Dresden den Kaffeefilter, Gründerin der Firma Melitta.|melitta
+Hans Riegel|1893 bis 1945|Gründer von Haribo in Bonn, erfand 1922 die Gummibärchen.|haribo gründer
+Heinrich Hoffmann|1809 bis 1894|Frankfurter Arzt, schrieb den Struwwelpeter.|struwwelpeter
+Otfried Preußler|1923 bis 2013|Kinderbuchautor, Der Räuber Hotzenplotz, Die kleine Hexe und Krabat.|hotzenplotz,krabat
+Janosch|geboren 1931|Kinderbuchautor und Zeichner, Oh wie schön ist Panama mit Tiger und Bär.|tigerente
+Paul Maar|geboren 1937|Kinderbuchautor, Erfinder des Sams.|sams
+James Krüss|1926 bis 1997|Kinderbuchautor von Helgoland, Timm Thaler oder Das verkaufte Lachen.|timm thaler
+Gaius Julius Caesar|100 bis 44 v. Chr.|Römischer Feldherr und Diktator, eroberte Gallien und wurde an den Iden des März ermordet. Von ihm stammt der Name Kaiser.|cäsar,caesar
+Pjotr Iljitsch Tschaikowski|1840 bis 1893|Russischer Komponist, Schwanensee und Der Nussknacker.|tschaikowski,tschaikowsky,schwanensee

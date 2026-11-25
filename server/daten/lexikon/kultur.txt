@@ -1,0 +1,150 @@
+# kultur|Kunst, Bücher & Filme|🎭
+# Titel|Text|Aliase
+Mona Lisa|Die Mona Lisa von Leonardo da Vinci hängt im Louvre in Paris, hinter Panzerglas. 1911 wurde sie gestohlen und 1913 wiedergefunden.|gioconda
+Das letzte Abendmahl|Das letzte Abendmahl malte Leonardo da Vinci als Wandbild in Mailand.|abendmahl
+Die Erschaffung Adams|Die Erschaffung Adams ist ein Fresko von Michelangelo an der Decke der Sixtinischen Kapelle.|
+David (Michelangelo)|Der David von Michelangelo ist eine über 5 Meter hohe Marmorstatue in Florenz.|david statue
+Die Geburt der Venus|Die Geburt der Venus malte Sandro Botticelli, sie hängt in den Uffizien in Florenz.|
+Die Nachtwache|Die Nachtwache von Rembrandt hängt im Rijksmuseum in Amsterdam.|nachtwache
+Das Mädchen mit dem Perlenohrring|Das Mädchen mit dem Perlenohrring malte Jan Vermeer um 1665.|perlenohrring
+Sternennacht|Die Sternennacht malte Vincent van Gogh 1889, sie hängt im MoMA in New York.|starry night
+Sonnenblumen (van Gogh)|Van Gogh malte mehrere Bilder mit Sonnenblumen in einer Vase.|van gogh sonnenblumen
+Der Schrei|Der Schrei von Edvard Munch gibt es in mehreren Versionen, er gilt als Symbol der Angst.|
+Der Kuss|Der Kuss von Gustav Klimt hängt im Belvedere in Wien, mit viel Blattgold.|
+Guernica|Guernica malte Pablo Picasso 1937 gegen die Bombardierung der baskischen Stadt.|
+Die Beständigkeit der Erinnerung|Das Bild mit den zerfließenden Uhren malte Salvador Dalí 1931.|zerfliessende uhren
+Impression, Sonnenaufgang|Monets Bild Impression, Sonnenaufgang gab dem Impressionismus den Namen.|impressionismus name
+Seerosen Monet|Claude Monet malte in Giverny über 250 Bilder seiner Seerosen.|
+Wanderer über dem Nebelmeer|Das Bild von Caspar David Friedrich hängt in der Hamburger Kunsthalle.|
+Die große Welle|Die große Welle vor Kanagawa ist ein japanischer Holzschnitt von Hokusai.|hokusai
+American Gothic|American Gothic von Grant Wood zeigt ein Farmerpaar mit Heugabel.|
+Campbell's Soup Cans|Andy Warhols Suppendosen sind Ikonen der Pop-Art.|suppendosen
+Venus von Milo|Die Venus von Milo ist eine antike griechische Statue ohne Arme im Louvre.|
+Nofretete Büste|Die Büste der Nofretete steht im Neuen Museum in Berlin.|nofretete bueste
+Der Denker|Der Denker ist eine Bronzeskulptur von Auguste Rodin.|
+Impressionismus|Der Impressionismus malte Licht und Augenblicke in flüchtigen Pinselstrichen, etwa Monet und Renoir.|
+Expressionismus|Der Expressionismus zeigt Gefühle mit kräftigen Farben, etwa die Brücke und der Blaue Reiter.|blauer reiter
+Kubismus|Der Kubismus zerlegt Dinge in geometrische Formen, Picasso und Braque begründeten ihn.|
+Surrealismus|Der Surrealismus zeigt Traumbilder, etwa Dalí und Magritte.|
+Pop-Art|Pop-Art nutzt Motive aus Werbung und Alltag, etwa Warhol und Lichtenstein.|pop art
+Bauhaus|Das Bauhaus war eine Kunstschule ab 1919 in Weimar und Dessau, ihr Stil ist schlicht und funktional.|
+Jugendstil|Der Jugendstil um 1900 liebt geschwungene, pflanzliche Formen.|art nouveau
+Gotik|Die Gotik prägte Kirchen mit Spitzbögen und großen Fenstern, etwa den Kölner Dom.|gotisch
+Romanik|Die Romanik mit Rundbögen und dicken Mauern, etwa der Dom zu Speyer.|romanisch
+Barock Kunst|Barock bedeutet Pracht und Bewegung, etwa Schloss Versailles und Rubens.|
+Fresko|Ein Fresko wird auf frischen, feuchten Putz gemalt.|
+Aquarell|Aquarellfarben sind wasserlöslich und durchscheinend.|
+Ölgemälde|Ölfarben trocknen langsam und leuchten stark.|oelmalerei
+Graffiti|Graffiti sind Bilder und Schriftzüge an Wänden, Street Art ist oft legal beauftragt.|street art
+Louvre|Der Louvre in Paris ist das meistbesuchte Kunstmuseum der Welt.|
+Uffizien|Die Uffizien in Florenz zeigen Renaissance-Kunst.|
+Prado|Der Prado in Madrid zeigt Werke von Goya und Velázquez.|
+Museumsinsel|Die Museumsinsel in Berlin mit fünf Museen ist UNESCO-Welterbe, dort steht das Pergamonmuseum.|pergamonmuseum
+Documenta|Die Documenta in Kassel ist alle fünf Jahre eine der wichtigsten Ausstellungen zeitgenössischer Kunst.|
+Teuerstes Gemälde|Das teuerste je verkaufte Gemälde ist Salvator Mundi, Leonardo da Vinci zugeschrieben, für 450 Millionen Dollar.|salvator mundi
+Faust|Faust ist das Hauptwerk von Goethe: Ein Gelehrter schließt einen Pakt mit dem Teufel Mephisto.|faust goethe
+Die Leiden des jungen Werthers|Goethes Briefroman von 1774 machte ihn auf einen Schlag berühmt.|werther
+Die Räuber|Die Räuber ist das erste Drama von Friedrich Schiller.|raeuber
+Wilhelm Tell|Wilhelm Tell ist ein Drama von Schiller über den Schweizer Freiheitshelden mit der Armbrust.|
+Der Zauberberg|Der Zauberberg ist ein Roman von Thomas Mann, der in einem Sanatorium in Davos spielt.|
+Buddenbrooks|Buddenbrooks von Thomas Mann erzählt den Verfall einer Lübecker Kaufmannsfamilie.|
+Die Verwandlung|In Kafkas Die Verwandlung wacht Gregor Samsa als Käfer auf.|
+Der Steppenwolf|Der Steppenwolf ist ein Roman von Hermann Hesse.|
+Im Westen nichts Neues|Der Antikriegsroman von Remarque über den Ersten Weltkrieg, 2023 als Film mit vier Oscars.|
+Das Parfum|Das Parfum von Patrick Süskind ist einer der erfolgreichsten deutschen Romane.|parfum
+Die unendliche Geschichte|Die unendliche Geschichte von Michael Ende erzählt von Bastian und dem Land Phantásien.|unendliche geschichte
+Momo|Momo von Michael Ende kämpft gegen die grauen Herren, die Zeit stehlen.|
+Emil und die Detektive|Emil und die Detektive von Erich Kästner spielt in Berlin.|
+Struwwelpeter|Der Struwwelpeter ist ein Kinderbuch von Heinrich Hoffmann aus dem Jahr 1845.|
+Der Hobbit|Der Hobbit von Tolkien erschien 1937 und ist die Vorgeschichte zum Herrn der Ringe.|hobbit
+Der Herr der Ringe|Im Herrn der Ringe muss Frodo den Einen Ring im Feuer des Schicksalsbergs zerstören.|herr der ringe
+Harry Potter Bücher|Die Harry-Potter-Reihe hat sieben Bände und gehört zu den meistverkauften Büchern der Welt.|
+1984 (Roman)|George Orwells Roman 1984 beschreibt einen Überwachungsstaat mit dem Großen Bruder.|big brother,1984 orwell
+Schöne neue Welt|Schöne neue Welt von Aldous Huxley ist eine Zukunftsvision mit gezüchteten Menschen.|
+Der kleine Prinz|Der kleine Prinz von Saint-Exupéry: Man sieht nur mit dem Herzen gut.|kleine prinz
+Don Quijote|Don Quijote kämpft gegen Windmühlen, ein Roman von Cervantes.|
+Romeo und Julia|Romeo und Julia ist eine Tragödie von Shakespeare über zwei verfeindete Familien in Verona.|
+Hamlet|Hamlet ist Shakespeares Tragödie über einen dänischen Prinzen: Sein oder Nichtsein.|sein oder nichtsein
+Odyssee (Epos)|Homers Odyssee erzählt die zehnjährige Heimreise des Odysseus nach dem Trojanischen Krieg.|odysseus
+Krieg und Frieden|Krieg und Frieden von Tolstoi spielt zur Zeit Napoleons in Russland.|
+Moby Dick|Moby Dick von Herman Melville erzählt von Kapitän Ahab und dem weißen Wal.|
+Robinson Crusoe|Robinson Crusoe von Daniel Defoe strandet auf einer einsamen Insel.|
+Die Schatzinsel|Die Schatzinsel von Robert Louis Stevenson ist ein Piratenroman.|schatzinsel
+Alice im Wunderland|Alice im Wunderland von Lewis Carroll folgt dem weißen Kaninchen.|
+Pinocchio|Pinocchio ist eine Holzpuppe, deren Nase beim Lügen wächst.|
+Frankenstein|Frankenstein von Mary Shelley aus dem Jahr 1818 gilt als erster Science-Fiction-Roman.|
+Dracula|Dracula von Bram Stoker machte den Vampir aus Transsilvanien berühmt.|
+Per Anhalter durch die Galaxis|Der Roman von Douglas Adams, in dem 42 die Antwort auf alles ist.|hitchhiker
+Dune (Roman)|Dune von Frank Herbert spielt auf dem Wüstenplaneten Arrakis, 2021 und 2024 verfilmt.|dune
+Bibel Bestseller|Die Bibel ist das meistverkaufte Buch der Welt.|meistverkauftes buch
+Märchen|Bekannte Grimms Märchen sind Rotkäppchen, Hänsel und Gretel, Schneewittchen, Aschenputtel und Dornröschen.|grimms maerchen
+Rotkäppchen|Rotkäppchen wird vom bösen Wolf getäuscht, der die Großmutter frisst.|
+Hänsel und Gretel|Hänsel und Gretel finden im Wald ein Lebkuchenhaus einer Hexe.|haensel und gretel
+Schneewittchen|Schneewittchen lebt bei den sieben Zwergen und isst einen vergifteten Apfel.|
+Aschenputtel|Aschenputtel verliert auf dem Ball einen Schuh, englisch heißt sie Cinderella.|cinderella
+Dornröschen|Dornröschen schläft hundert Jahre, bis ein Prinz sie wachküsst.|dornroeschen
+Der Froschkönig|Im Froschkönig verwandelt sich ein Frosch in einen Prinzen.|froschkoenig
+Rumpelstilzchen|Rumpelstilzchen verrät seinen Namen, als er ums Feuer tanzt.|
+Die Bremer Stadtmusikanten|Esel, Hund, Katze und Hahn ziehen nach Bremen, um Musiker zu werden.|bremer stadtmusikanten
+Frau Holle|Frau Holle lässt es schneien, wenn sie ihre Betten schüttelt.|
+Oscar|Der Oscar ist der wichtigste Filmpreis, verliehen von der Academy in Los Angeles.|academy award,oscars
+Meiste Oscars|Ben Hur, Titanic und Der Herr der Ringe: Die Rückkehr des Königs gewannen je 11 Oscars.|rekord oscars
+Berlinale|Die Berlinale ist das Filmfestival in Berlin, der Hauptpreis ist der Goldene Bär.|goldener baer
+Cannes|In Cannes wird die Goldene Palme vergeben.|goldene palme
+Hollywood|Hollywood ist ein Stadtteil von Los Angeles und Zentrum der US-Filmindustrie.|
+Bollywood|Bollywood ist die Filmindustrie in Mumbai, sie produziert die meisten Filme der Welt.|
+Babelsberg|Die Studios in Babelsberg bei Potsdam sind das älteste Großatelier-Filmstudio der Welt.|studio babelsberg
+Metropolis|Metropolis von Fritz Lang aus dem Jahr 1927 ist ein Meilenstein des Science-Fiction-Films.|
+Titanic (Film)|Titanic von James Cameron aus dem Jahr 1997 mit Leonardo DiCaprio und Kate Winslet.|titanic film
+Avatar|Avatar von James Cameron ist der erfolgreichste Film aller Zeiten an den Kinokassen.|erfolgreichster film
+Star Wars|Star Wars von George Lucas startete 1977, eine Saga um Jedi, die Macht und Darth Vader.|krieg der sterne
+Der Pate|Der Pate von Francis Ford Coppola aus dem Jahr 1972 gilt als einer der besten Filme.|
+Casablanca (Film)|Casablanca mit Humphrey Bogart: Ich seh dir in die Augen, Kleines.|
+Forrest Gump|Forrest Gump: Das Leben ist wie eine Schachtel Pralinen.|
+Matrix|Matrix aus dem Jahr 1999 zeigt eine Welt als Computersimulation.|the matrix
+Jurassic Park|Jurassic Park von Spielberg holt Dinosaurier per Gentechnik zurück.|
+Zurück in die Zukunft|Zurück in die Zukunft: Marty McFly reist mit einem DeLorean durch die Zeit.|back to the future
+Terminator|Terminator: Ein Killer-Roboter aus der Zukunft, gespielt von Arnold Schwarzenegger. Ich komme wieder.|
+Interstellar|Interstellar von Christopher Nolan reist durch ein Wurmloch zu fernen Planeten.|
+Inception|Inception von Christopher Nolan spielt in Träumen in Träumen.|
+Der König der Löwen|Der König der Löwen von Disney aus dem Jahr 1994 mit Simba und Hakuna Matata.|koenig der loewen
+Toy Story|Toy Story aus dem Jahr 1995 war der erste komplett am Computer animierte Spielfilm.|
+Die Eiskönigin|Die Eiskönigin, englisch Frozen, mit dem Lied Lass jetzt los.|frozen
+Findet Nemo|Findet Nemo von Pixar sucht einen kleinen Clownfisch.|
+Shrek|Shrek ist ein grüner Oger in einem Märchen-Parodie-Film.|
+Marvel Cinematic Universe|Das Marvel Cinematic Universe begann 2008 mit Iron Man und umfasst über 30 Filme.|mcu
+Iron Man (Film)|Iron Man aus dem Jahr 2008 mit Robert Downey Jr. startete das Marvel-Kinouniversum.|iron man film
+Avengers: Endgame|Avengers: Endgame aus dem Jahr 2019 war zeitweise der erfolgreichste Film aller Zeiten, Tony Stark opfert sich.|endgame
+J.A.R.V.I.S. Bedeutung|J.A.R.V.I.S. steht für Just A Rather Very Intelligent System, Tony Starks erste KI.|jarvis bedeutung
+F.R.I.D.A.Y. Bedeutung|F.R.I.D.A.Y. ist Tony Starks KI nach J.A.R.V.I.S., ab Avengers: Age of Ultron, gesprochen von Kerry Condon.|friday marvel
+Vibranium|Vibranium ist ein erfundenes Metall aus Wakanda, aus dem Captain Americas Schild ist.|
+Infinity-Steine|Die sechs Infinity-Steine sind Raum, Geist, Realität, Macht, Zeit und Seele.|infinity steine
+Arc-Reaktor|Der Arc-Reaktor ist Tony Starks erfundene Energiequelle in seiner Brust.|arc reaktor
+Batman Filme|Die Dark-Knight-Trilogie von Christopher Nolan gilt als beste Batman-Verfilmung.|dark knight
+James-Bond-Filme|Es gibt über 25 offizielle Bond-Filme, der erste war James Bond jagt Dr. No von 1962.|bond filme
+Harry Potter Filme|Die acht Harry-Potter-Filme liefen von 2001 bis 2011.|
+Herr der Ringe Filme|Peter Jackson drehte die Herr-der-Ringe-Trilogie in Neuseeland.|
+Game of Thrones|Game of Thrones ist eine Fantasy-Serie von 2011 bis 2019 über den Kampf um den Eisernen Thron.|got
+Breaking Bad|Breaking Bad erzählt von einem Chemielehrer, der Drogenhersteller wird.|
+Friends|Friends ist eine Sitcom über sechs Freunde in New York von 1994 bis 2004.|
+Die Simpsons|Die Simpsons laufen seit 1989 und sind die langlebigste US-Zeichentrickserie.|simpsons
+Stranger Things|Stranger Things ist eine Netflix-Serie im Stil der 1980er.|
+Tatort|Der Tatort läuft seit 1970 sonntags in der ARD, die älteste deutsche Krimireihe.|
+Dark (Serie)|Dark ist die erste deutsche Netflix-Serie, eine Zeitreise-Geschichte.|
+Babylon Berlin|Babylon Berlin ist eine Serie im Berlin der 1920er-Jahre.|
+Das Boot|Das Boot von Wolfgang Petersen aus dem Jahr 1981 spielt in einem U-Boot.|
+Lola rennt|Lola rennt von Tom Tykwer aus dem Jahr 1998.|
+Good Bye, Lenin!|Good Bye, Lenin! aus dem Jahr 2003: Ein Sohn verheimlicht seiner Mutter den Mauerfall.|
+Das Leben der Anderen|Das Leben der Anderen gewann 2007 den Oscar, es geht um die Stasi.|
+Der Schuh des Manitu|Der Schuh des Manitu von Bully Herbig aus dem Jahr 2001 war lange der erfolgreichste deutsche Film.|
+Sissi Filme|Die Sissi-Filme mit Romy Schneider laufen jedes Jahr zu Weihnachten.|
+Dinner for One|Dinner for One läuft jedes Silvester im deutschen Fernsehen: Same procedure as every year.|same procedure
+Drei Haselnüsse für Aschenbrödel|Der tschechisch-deutsche Märchenfilm von 1973 ist ein Weihnachtsklassiker.|aschenbroedel
+Kevin allein zu Haus|Kevin allein zu Haus aus dem Jahr 1990 ist ein Weihnachtsklassiker.|home alone
+Theater|Bekannte deutsche Bühnen sind das Burgtheater in Wien, die Schaubühne und das Berliner Ensemble.|
+Ballett|Berühmte Ballette sind Schwanensee, Der Nussknacker und Dornröschen von Tschaikowsky.|schwanensee
+Comic|Bekannte Comics sind Asterix, Tim und Struppi, Micky Maus, Peanuts und Spider-Man.|comics
+Asterix|Asterix und Obelix leben in einem gallischen Dorf, das sich mit Zaubertrank gegen die Römer wehrt.|obelix
+Manga|Manga sind japanische Comics, man liest sie von rechts nach links. Bekannt sind One Piece und Dragon Ball.|anime,one piece
+Anime|Anime sind japanische Zeichentrickfilme und Serien, etwa Pokémon und Studio-Ghibli-Filme.|
+Pokémon|Pokémon ist die erfolgreichste Medienmarke der Welt, mit Spielen, Karten und Serie.|pokemon,pikachu
