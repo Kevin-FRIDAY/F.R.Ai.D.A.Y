@@ -98,6 +98,7 @@ import { selbstlernenRouten, selbstlernenStart } from "./selbstlernen.js";
 import { entscheidenRouten, entscheidenStart } from "./entscheiden.js";
 import { unternehmenRouten, unternehmenStart } from "./unternehmen.js";
 import { entwicklungRouten, entwicklungStart } from "./entwicklung.js";
+import { forschungRouten, forschungStart } from "./forschung.js";
 import { funktionstestStart } from "./funktionstest.js";
 
 const missing = checkConfig();
@@ -836,6 +837,7 @@ selbstlernenRouten(app, asyncRoute);
 entscheidenRouten(app, asyncRoute);
 unternehmenRouten(app, asyncRoute);
 entwicklungRouten(app, asyncRoute);
+forschungRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
@@ -866,6 +868,7 @@ selbstlernenStart().catch(() => {});
 entscheidenStart().catch(() => {});
 unternehmenStart().catch(() => {});
 entwicklungStart().catch(() => {});
+forschungStart().catch(() => {});
 grossauftragStart();
 if (!IST_EVE) kontenStart(); // Meine Konten: alle 6 Std. frische Kontostände (nur lesen)
 zentraleStart(ask);
