@@ -64,3 +64,94 @@ Sommersonnenwende|Die Sommersonnenwende um den 21. Juni ist auf der Nordhalbkuge
 Tagundnachtgleiche|An der Tagundnachtgleiche, um den 20. März und den 22. oder 23. September, sind Tag und Nacht überall etwa gleich lang. Dann beginnen Frühling und Herbst.|äquinoktium
 Gezeiten|Ebbe und Flut entstehen vor allem durch die Anziehungskraft des Mondes. Etwa alle 12 Stunden und 25 Minuten wiederholt sich das Hochwasser.|ebbe und flut,ebbe,flut
 Jahreszeiten|Jahreszeiten entstehen, weil die Erdachse um rund 23,4 Grad geneigt ist. So bekommt im Sommer die Nordhalbkugel mehr Sonnenlicht, nicht weil die Erde näher an der Sonne ist.|warum gibt es jahreszeiten
+Phobos und Deimos|Der Mars hat zwei kleine Monde, Phobos und Deimos, wohl eingefangene Asteroiden.|marsmonde
+Io|Io ist ein Jupitermond und der vulkanisch aktivste Körper im Sonnensystem.|io mond
+Kallisto|Kallisto ist ein Jupitermond mit sehr alter, verkraterter Oberfläche.|callisto
+Enceladus|Der Saturnmond Enceladus spritzt Wasserfontänen aus einem Ozean unter dem Eis ins All.|
+Triton|Triton ist der größte Neptunmond und kreist rückwärts um seinen Planeten.|
+Charon|Charon ist der größte Mond des Zwergplaneten Pluto.|
+Eris|Eris ist ein Zwergplanet hinter Pluto, seine Entdeckung führte 2006 zur Herabstufung Plutos.|
+Haumea|Haumea ist ein eiförmiger Zwergplanet, der sich in nur vier Stunden dreht.|
+Kuipergürtel|Der Kuipergürtel ist ein Ring aus eisigen Körpern jenseits von Neptun, Pluto gehört dazu.|kuiper guertel
+Asteroidengürtel|Der Asteroidengürtel liegt zwischen Mars und Jupiter.|asteroidenguertel
+Oortsche Wolke|Die Oortsche Wolke ist eine riesige Hülle aus Kometen weit außerhalb des Sonnensystems.|oort wolke
+Halleyscher Komet|Der Halleysche Komet kommt alle etwa 76 Jahre zurück, das nächste Mal 2061.|halley
+Saturnringe|Die Saturnringe bestehen aus Eis- und Gesteinsbrocken und sind nur etwa 10 bis 100 Meter dick.|ringe des saturn
+Großer Roter Fleck|Der Große Rote Fleck auf dem Jupiter ist ein Sturm, größer als die Erde, seit mindestens 350 Jahren.|roter fleck jupiter
+Olympus Mons|Der Olympus Mons auf dem Mars ist mit rund 22 Kilometern der höchste Vulkan im Sonnensystem.|
+Valles Marineris|Die Valles Marineris auf dem Mars sind ein Canyonsystem, so lang wie die USA breit.|
+Marsrover|Die NASA-Rover Curiosity und Perseverance erkunden den Mars, Perseverance hatte den Hubschrauber Ingenuity dabei.|curiosity,perseverance,ingenuity
+Wasser auf dem Mars|Auf dem Mars gibt es Wassereis an den Polen und im Boden, früher floss dort flüssiges Wasser.|
+Mondentfernung|Der Mond ist im Schnitt etwa 384.400 Kilometer entfernt und entfernt sich jedes Jahr um 3,8 Zentimeter.|wie weit ist der mond
+Sonnenentfernung|Die Erde ist im Schnitt etwa 150 Millionen Kilometer von der Sonne entfernt, eine Astronomische Einheit.|astronomische einheit,wie weit ist die sonne
+Mondrückseite|Wir sehen vom Mond immer dieselbe Seite, die Rückseite ist aber nicht dunkler, sie wird genauso beleuchtet.|dunkle seite des mondes
+Mondgestein|Die Apollo-Missionen brachten 382 Kilogramm Mondgestein zur Erde.|
+Apollo 11|Am 20. Juli 1969 landeten Neil Armstrong und Buzz Aldrin mit Apollo 11 auf dem Mond, Michael Collins blieb im Orbit.|apollo
+Apollo 13|Apollo 13 musste 1970 nach einer Explosion umkehren, die Crew kam gerettet zurück. Houston, wir haben ein Problem.|
+Artemis|Mit dem Artemis-Programm will die NASA wieder Menschen zum Mond bringen.|artemis programm
+Spaceshuttle|Das Spaceshuttle flog von 1981 bis 2011, zwei der fünf Raumfähren verunglückten.|space shuttle
+Mir|Die russische Raumstation Mir war von 1986 bis 2001 im All.|raumstation mir
+Tiangong|Tiangong ist Chinas eigene Raumstation.|chinesische raumstation
+Starship|Starship von SpaceX ist die größte Rakete, die je gebaut wurde, sie soll wiederverwendbar sein.|
+Falcon 9|Die Falcon 9 von SpaceX landet ihre erste Stufe wieder und fliegt sie mehrfach.|
+Starlink|Starlink ist ein Netz aus Tausenden SpaceX-Satelliten für Internet aus dem All.|
+Saturn V|Die Saturn V war die Mondrakete der Apollo-Missionen, 110 Meter hoch.|saturn 5
+Raumanzug|Ein Raumanzug ist ein kleines Raumschiff mit Sauerstoff, Kühlung und Druck.|
+Schwerelosigkeit|Astronauten auf der ISS sind nicht ohne Schwerkraft, sie fallen ständig um die Erde, daher fühlen sie sich schwerelos.|schwerelos
+ISS Umlauf|Die ISS umkreist die Erde in etwa 90 Minuten in rund 400 Kilometern Höhe, die Crew sieht 16 Sonnenaufgänge am Tag.|
+Kármán-Linie|Die Kármán-Linie in 100 Kilometern Höhe gilt als Grenze zum Weltall.|weltraum grenze
+Weltraumschrott|Um die Erde kreisen Millionen Trümmerteile, sogenannter Weltraumschrott.|
+Geostationär|Geostationäre Satelliten in 36.000 Kilometern Höhe stehen scheinbar still über einem Punkt, etwa für Fernsehen.|
+Kepler-Teleskop|Das Kepler-Teleskop fand Tausende Exoplaneten.|
+Euclid|Das ESA-Teleskop Euclid kartiert dunkle Materie und dunkle Energie.|
+Event Horizon Telescope|2019 zeigte das Event Horizon Telescope das erste Bild eines Schwarzen Lochs in der Galaxie M87.|bild schwarzes loch
+Sagittarius A*|Im Zentrum der Milchstraße sitzt das Schwarze Loch Sagittarius A* mit vier Millionen Sonnenmassen.|sagittarius a
+Ereignishorizont|Hinter dem Ereignishorizont eines Schwarzen Lochs kann nicht einmal Licht entkommen.|
+Gravitationswellen|Gravitationswellen sind Erschütterungen der Raumzeit, 2015 erstmals gemessen.|
+Dunkle Energie|Dunkle Energie treibt die beschleunigte Ausdehnung des Universums an, sie macht etwa 68 Prozent aus.|
+Rotverschiebung|Das Licht entfernter Galaxien ist ins Rote verschoben, weil sie sich von uns entfernen.|
+Hintergrundstrahlung|Die kosmische Hintergrundstrahlung ist das Nachglühen des Urknalls.|
+Alter des Universums|Das Universum ist rund 13,8 Milliarden Jahre alt.|wie alt ist das universum
+Größe der Milchstraße|Die Milchstraße hat einen Durchmesser von rund 100.000 Lichtjahren und enthält 100 bis 400 Milliarden Sterne.|
+Lokale Gruppe|Die Milchstraße gehört mit Andromeda und rund 80 kleineren Galaxien zur Lokalen Gruppe.|
+Andromeda Kollision|In etwa 4 bis 5 Milliarden Jahren könnten Milchstraße und Andromeda verschmelzen.|
+Roter Riese|Wenn der Sonne in etwa 5 Milliarden Jahren der Wasserstoff ausgeht, bläht sie sich zum Roten Riesen auf.|zukunft der sonne
+Weißer Zwerg|Ein Weißer Zwerg ist der heiße Rest eines Sterns wie der Sonne.|
+Pulsar|Ein Pulsar ist ein schnell rotierender Neutronenstern, der Strahlung wie ein Leuchtturm aussendet.|
+Quasar|Quasare sind extrem helle Zentren ferner Galaxien mit riesigen Schwarzen Löchern.|
+Nebel (Astronomie)|Ein Nebel im All ist eine Wolke aus Gas und Staub, in der Sterne entstehen können, etwa der Orionnebel.|orionnebel
+Sternschnuppe|Eine Sternschnuppe ist ein Staubkorn, das in der Atmosphäre verglüht.|sternschnuppen
+Meteorit|Ein Meteorit ist ein Stein aus dem All, der den Erdboden erreicht.|
+Chicxulub|Vor 66 Millionen Jahren schlug in Mexiko ein Asteroid ein und löste das Aussterben der Dinosaurier aus.|dinosaurier aussterben
+Nördlinger Ries|Das Nördlinger Ries in Bayern ist ein Einschlagkrater von vor rund 15 Millionen Jahren.|ries krater
+Beteigeuze|Beteigeuze ist ein roter Riesenstern im Orion, der irgendwann als Supernova explodieren wird.|betelgeuse
+Vega|Vega ist einer der hellsten Sterne am Nordhimmel.|
+Kassiopeia|Kassiopeia ist ein Sternbild in W-Form.|
+Kreuz des Südens|Das Kreuz des Südens ist ein Sternbild des Südhimmels und auf vielen Flaggen.|
+Plejaden|Die Plejaden sind ein Sternhaufen, auch Siebengestirn.|siebengestirn
+Venus Helligkeit|Nach Sonne und Mond ist die Venus das hellste Objekt am Himmel.|abendstern,morgenstern
+Planeten Reihenfolge|Die Planeten von innen nach außen: Merkur, Venus, Erde, Mars, Jupiter, Saturn, Uranus, Neptun. Merkspruch: Mein Vater erklärt mir jeden Sonntag unseren Nachthimmel.|reihenfolge der planeten
+Größter Planet|Jupiter ist der größte Planet, über 1.300 Erden würden hineinpassen.|
+Heißester Planet|Die Venus ist mit rund 460 Grad der heißeste Planet, heißer als der Merkur.|
+Monde Anzahl|Saturn hat mit über 140 bekannten Monden die meisten, Jupiter folgt mit über 90.|meiste monde
+Tag auf dem Mars|Ein Marstag, ein Sol, dauert 24 Stunden und 37 Minuten.|sol
+Uranus Neigung|Uranus rollt quasi auf seiner Bahn, seine Achse ist um rund 98 Grad gekippt.|
+Neptun Wind|Auf Neptun wehen die schnellsten Winde im Sonnensystem, über 2.000 Kilometer pro Stunde.|
+Sonnenwind|Der Sonnenwind ist ein Strom geladener Teilchen von der Sonne, er erzeugt Polarlichter.|
+Sonnensturm|Starke Sonnenstürme können Satelliten und Stromnetze stören.|sonnensturm
+Sonnenflecken|Sonnenflecken sind kühlere Stellen auf der Sonne, ihre Zahl schwankt in einem Elf-Jahres-Zyklus.|
+Kernfusion Sonne|In der Sonne verschmelzen jede Sekunde rund 600 Millionen Tonnen Wasserstoff zu Helium.|
+Licht Mond Erde|Licht braucht vom Mond zur Erde etwa 1,3 Sekunden.|
+Parsec|Ein Parsec sind etwa 3,26 Lichtjahre.|
+Teleskop Tipp|Für Anfänger reicht ein Fernglas, um Mondkrater, Jupitermonde und die Plejaden zu sehen.|sterne beobachten
+Lichtverschmutzung|Künstliches Licht macht den Nachthimmel heller, in Städten sieht man kaum Sterne.|
+Sternenpark|In Sternenparks wie der Rhön oder dem Westhavelland ist der Himmel besonders dunkel.|
+Außerirdisches Leben|Bisher wurde kein außerirdisches Leben gefunden. Kandidaten für Suche sind Mars, Europa, Enceladus und Exoplaneten.|aliens,gibt es aliens
+Fermi-Paradoxon|Das Fermi-Paradoxon fragt: Wenn es so viele Sterne gibt, warum haben wir noch keine Außerirdischen getroffen?|fermi paradox
+Drake-Gleichung|Die Drake-Gleichung schätzt die Zahl möglicher Zivilisationen in der Milchstraße.|
+SETI|SETI sucht mit Radioteleskopen nach Signalen außerirdischer Intelligenz.|
+Goldene Schallplatte|Die Voyager-Sonden tragen eine goldene Schallplatte mit Grüßen und Musik der Erde.|voyager platte
+Laika|Die Hündin Laika flog 1957 als erstes Lebewesen in eine Erdumlaufbahn.|weltraumhund
+Ulf Merbold|Ulf Merbold flog 1983 als erster Westdeutscher ins All.|merbold
+Thomas Reiter|Thomas Reiter war der erste Deutsche auf der ISS und bei einem Weltraumspaziergang.|reiter
+Raumfahrt Deutschland|Deutschland ist über das DLR und die ESA an der Raumfahrt beteiligt, Raketen starten aber in Französisch-Guayana.|kourou

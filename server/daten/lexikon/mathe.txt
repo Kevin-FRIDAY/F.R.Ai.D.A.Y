@@ -1,0 +1,90 @@
+# mathe|Mathe & Zahlen|🔢
+# Titel|Text|Aliase
+Grundrechenarten|Die vier Grundrechenarten sind Addition (plus), Subtraktion (minus), Multiplikation (mal) und Division (geteilt).|plus minus mal geteilt
+Punkt vor Strich|Mal und geteilt rechnet man vor plus und minus, Klammern zuerst.|punkt vor strichrechnung
+Bruch|Ein Bruch wie drei Viertel besteht aus Zähler oben und Nenner unten.|brueche,bruchrechnung
+Brüche addieren|Brüche addiert man, indem man sie auf den gleichen Nenner bringt und die Zähler addiert.|
+Brüche multiplizieren|Brüche multipliziert man, indem man Zähler mal Zähler und Nenner mal Nenner rechnet.|
+Kürzen|Beim Kürzen teilt man Zähler und Nenner durch dieselbe Zahl, zwei Viertel sind ein Halb.|kuerzen
+Dezimalzahl|Eine Dezimalzahl hat Nachkommastellen, ein Viertel ist 0,25.|kommazahl
+Prozent Grundwert|Prozentwert gleich Grundwert mal Prozentsatz durch 100. 20 Prozent von 50 sind 10.|prozent ausrechnen
+Prozentpunkte|Steigt ein Wert von 10 auf 12 Prozent, sind das 2 Prozentpunkte, aber 20 Prozent mehr.|prozentpunkt
+Promille|Ein Promille ist ein Tausendstel.|
+Potenz|Eine Potenz ist wiederholtes Malnehmen, 2 hoch 3 ist 2 mal 2 mal 2 gleich 8.|hoch,potenzen
+Quadratzahl|Quadratzahlen sind 1, 4, 9, 16, 25, 36, 49, 64, 81, 100.|quadratzahlen
+Wurzel|Die Quadratwurzel aus 9 ist 3, weil 3 mal 3 gleich 9 ist.|quadratwurzel
+Wurzel aus 2|Die Wurzel aus 2 ist etwa 1,414 und eine irrationale Zahl.|
+Gerade und ungerade Zahlen|Gerade Zahlen sind durch 2 teilbar, ungerade nicht.|gerade zahl
+Teiler|Teiler einer Zahl sind Zahlen, durch die sie ohne Rest teilbar ist, die Teiler von 12 sind 1, 2, 3, 4, 6 und 12.|
+Primzahlen bis 100|Die Primzahlen bis 50 sind 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43 und 47. Bis 100 gibt es 25 Primzahlen.|
+Größte bekannte Primzahl|Die größten bekannten Primzahlen sind Mersenne-Primzahlen mit über 40 Millionen Stellen.|
+Natürliche Zahlen|Natürliche Zahlen sind 1, 2, 3 und so weiter, manchmal mit der 0.|
+Ganze Zahlen|Ganze Zahlen umfassen auch die negativen Zahlen.|negative zahlen
+Rationale Zahlen|Rationale Zahlen lassen sich als Bruch schreiben.|
+Irrationale Zahlen|Irrationale Zahlen wie Pi oder Wurzel 2 haben unendlich viele Nachkommastellen ohne Muster.|
+Eulersche Zahl|Die Eulersche Zahl e ist etwa 2,718 und taucht bei Wachstum und Zinseszins auf.|zahl e
+Imaginäre Zahl|Die imaginäre Einheit i ist die Wurzel aus minus 1.|imaginaere zahl
+Million Milliarde|Eine Million hat 6 Nullen, eine Milliarde 9, eine Billion 12. Im Englischen heißt die Milliarde billion.|billion,milliarde
+Googol|Ein Googol ist eine 1 mit 100 Nullen, die Firma Google ist danach benannt.|
+Unendlich Zeichen|Das Zeichen für Unendlich ist eine liegende Acht.|
+Dreieck Winkelsumme|Die Winkel in einem Dreieck ergeben zusammen immer 180 Grad.|winkelsumme dreieck
+Viereck Winkelsumme|Die Winkel in einem Viereck ergeben zusammen 360 Grad.|
+Rechter Winkel|Ein rechter Winkel hat 90 Grad.|
+Kreisumfang|Der Kreisumfang ist 2 mal Pi mal Radius oder Pi mal Durchmesser.|umfang kreis
+Rechteck Fläche|Die Fläche eines Rechtecks ist Länge mal Breite.|flaeche rechteck
+Dreieck Fläche|Die Fläche eines Dreiecks ist Grundseite mal Höhe geteilt durch 2.|flaeche dreieck
+Würfel Volumen|Das Volumen eines Würfels ist Kantenlänge hoch 3.|volumen wuerfel
+Quader Volumen|Das Volumen eines Quaders ist Länge mal Breite mal Höhe.|
+Kugel Volumen|Das Volumen einer Kugel ist vier Drittel mal Pi mal Radius hoch 3.|
+Zylinder Volumen|Das Volumen eines Zylinders ist Pi mal Radius zum Quadrat mal Höhe.|
+Platonische Körper|Es gibt fünf platonische Körper: Tetraeder, Würfel, Oktaeder, Dodekaeder und Ikosaeder.|
+Vieleck Namen|Fünfeck heißt Pentagon, Sechseck Hexagon, Achteck Oktagon.|pentagon,hexagon
+Gleichung|In einer Gleichung steht links und rechts vom Gleichheitszeichen gleich viel. Was man auf einer Seite macht, macht man auch auf der anderen.|gleichungen loesen
+Variable|Eine Variable ist ein Platzhalter für eine unbekannte Zahl, meist x.|
+Funktion Mathe|Eine Funktion ordnet jedem x genau ein y zu, etwa y gleich 2x.|funktion
+Lineare Funktion|Eine lineare Funktion ist eine Gerade, y gleich m x plus b, m ist die Steigung.|gerade
+Parabel|Eine Parabel ist der Graph einer quadratischen Funktion wie y gleich x Quadrat.|
+Mitternachtsformel|Die Mitternachtsformel löst quadratische Gleichungen: x gleich minus b plus minus Wurzel aus b Quadrat minus 4ac, geteilt durch 2a.|abc formel,pq formel
+Binomische Formeln|Erste binomische Formel: a plus b zum Quadrat ist a Quadrat plus 2ab plus b Quadrat.|binomische formel
+Ableitung|Die Ableitung gibt die Steigung einer Funktion an. Die Ableitung von x Quadrat ist 2x.|differenzieren
+Integral|Ein Integral berechnet die Fläche unter einer Kurve.|integralrechnung
+Logarithmus|Der Logarithmus beantwortet, hoch wie viel man eine Zahl nehmen muss. Der Zehnerlogarithmus von 1000 ist 3.|log
+Wahrscheinlichkeit|Die Wahrscheinlichkeit, mit einem Würfel eine 6 zu würfeln, ist ein Sechstel, etwa 17 Prozent.|zufall
+Münzwurf|Bei einem fairen Münzwurf ist Kopf oder Zahl je 50 Prozent wahrscheinlich, egal was vorher kam.|kopf oder zahl
+Lotto Wahrscheinlichkeit|Die Chance auf sechs Richtige plus Superzahl im Lotto 6 aus 49 ist etwa 1 zu 140 Millionen.|lotto gewinnen
+Geburtstagsparadoxon|Schon bei 23 Menschen ist die Chance über 50 Prozent, dass zwei am selben Tag Geburtstag haben.|geburtstagsproblem
+Median|Der Median ist der mittlere Wert einer sortierten Liste, er ist weniger anfällig für Ausreißer als der Durchschnitt.|zentralwert
+Statistik|Statistik sammelt und wertet Daten aus. Korrelation bedeutet nicht Kausalität.|korrelation
+Binärzahlen|Im Binärsystem gibt es nur 0 und 1. Die Zahl 5 ist binär 101.|dualsystem
+Hexadezimal|Das Hexadezimalsystem nutzt 0 bis 9 und A bis F, Farben im Web werden so geschrieben.|hex
+Einmaleins|Das kleine Einmaleins sind alle Produkte von 1 mal 1 bis 10 mal 10.|einmaleins
+Neunerprobe|Eine Zahl ist durch 9 teilbar, wenn ihre Quersumme durch 9 teilbar ist.|quersumme
+Teilbarkeitsregeln|Durch 2 teilbar bei gerader Endziffer, durch 3 wenn die Quersumme durch 3 teilbar ist, durch 5 bei Endziffer 0 oder 5.|teilbarkeit
+Zinsrechnung|Zinsen gleich Kapital mal Zinssatz mal Zeit durch 100.|zinsen berechnen
+Regel von 72|Teilt man 72 durch den Zinssatz, erhält man grob die Jahre, bis sich Geld verdoppelt. Bei 6 Prozent sind das 12 Jahre.|72er regel
+Maßstab|Ein Maßstab von 1 zu 25.000 bedeutet: 1 Zentimeter auf der Karte sind 250 Meter in echt.|
+Längeneinheiten|1 Kilometer sind 1.000 Meter, 1 Meter 100 Zentimeter, 1 Zentimeter 10 Millimeter.|meter zentimeter
+Flächeneinheiten|1 Quadratkilometer sind 100 Hektar, 1 Hektar sind 10.000 Quadratmeter, etwa ein Fußballfeld und etwas mehr.|hektar
+Volumeneinheiten|1 Liter ist ein Kubikdezimeter, 1.000 Liter sind ein Kubikmeter.|liter kubikmeter
+Gewichtseinheiten|1 Tonne sind 1.000 Kilogramm, 1 Kilogramm 1.000 Gramm.|tonne kilogramm
+Meile|Eine Landmeile sind etwa 1,609 Kilometer, eine Seemeile 1,852 Kilometer.|meilen,seemeile
+Zoll|Ein Zoll oder Inch sind 2,54 Zentimeter, Bildschirmgrößen werden in Zoll angegeben.|inch
+Fuß|Ein Fuß sind 30,48 Zentimeter.|feet,fuss
+Pfund Gewicht|Ein englisches Pfund sind etwa 454 Gramm, ein deutsches Pfund sind 500 Gramm.|lbs
+Unze|Eine Unze sind etwa 28,35 Gramm, eine Feinunze Gold 31,1 Gramm.|feinunze
+Gallone|Eine US-Gallone sind etwa 3,79 Liter.|
+Knoten|Ein Knoten ist eine Seemeile pro Stunde, etwa 1,85 Kilometer pro Stunde.|knoten geschwindigkeit
+Byte Einheiten|1 Kilobyte sind 1.000 Byte, 1 Megabyte 1.000 Kilobyte, dann folgen Gigabyte, Terabyte und Petabyte.|megabyte,gigabyte,terabyte
+Zeiteinheiten|Eine Minute hat 60 Sekunden, eine Stunde 3.600 Sekunden, ein Tag 86.400 Sekunden.|sekunden am tag
+Sekunden im Jahr|Ein Jahr hat rund 31,5 Millionen Sekunden.|
+Dutzend|Ein Dutzend sind 12 Stück, ein Gros 144.|gros
+Römische Zahl M|In römischen Zahlen ist I 1, V 5, X 10, L 50, C 100, D 500 und M 1000. 2025 ist MMXXV.|roemische zahlen umrechnen
+Zahl 42|42 ist in Per Anhalter durch die Galaxis die Antwort auf die Frage nach dem Leben, dem Universum und dem ganzen Rest.|antwort auf alles
+Magisches Quadrat|In einem magischen Quadrat ergeben alle Reihen, Spalten und Diagonalen dieselbe Summe.|
+Möbiusband|Ein Möbiusband hat nur eine Seite und eine Kante.|moebiusband
+Fraktal|Ein Fraktal ist ein Muster, das sich im Kleinen immer wiederholt, wie bei Romanesco oder Küstenlinien.|fraktale
+Unendlichkeit Hilbert|Hilberts Hotel zeigt: Ein volles Hotel mit unendlich vielen Zimmern kann immer noch neue Gäste aufnehmen.|hilberts hotel
+Fermats letzter Satz|Fermats letzter Satz wurde über 350 Jahre lang nicht bewiesen, erst 1994 von Andrew Wiles.|
+Millennium-Probleme|Für die sieben Millennium-Probleme der Mathematik ist je eine Million Dollar ausgesetzt, gelöst ist bisher nur eines.|
+Kopfrechnen Tipp|Mal 5 rechnet man als mal 10 geteilt durch 2, mal 9 als mal 10 minus die Zahl.|kopfrechnen
+Schätzen|Beim Überschlagen rundet man die Zahlen, um schnell ein ungefähres Ergebnis zu prüfen.|ueberschlagen
