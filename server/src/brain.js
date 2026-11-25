@@ -68,6 +68,9 @@ import { quickCommand as weltIntelQuick } from "./weltintelligenz.js";
 import { quickCommand as hausIntelQuick } from "./hausintelligenz.js";
 import { quickCommand as lebenQuick } from "./lebensmanager.js";
 import { quickCommand as umgebungQuick } from "./umgebung.js";
+import { quickCommand as sicherheitQuick } from "./sicherheit.js";
+import { quickCommand as arztQuick } from "./systemarzt.js";
+import { quickCommand as vorausQuick } from "./vorausschau.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
@@ -473,7 +476,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // "neues Projekt Garage", "wie hängt Garage mit Auto zusammen?", "zeig mir das Wissensnetz" – ohne Claude.
   if (mode !== "translate" && !image && text && !gastModus) {
     try {
-      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text) || await leitungQuick(text) || await weltIntelQuick(text) || await lebenQuick(text) || await umgebungQuick(text) || await hausIntelQuick(text);
+      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text) || await leitungQuick(text) || await weltIntelQuick(text) || await lebenQuick(text) || await umgebungQuick(text) || await hausIntelQuick(text) || await sicherheitQuick(text) || await arztQuick(text) || await vorausQuick(text);
       if (gq) { actions.push(...gq.actions); return finish(gq.answer); }
     } catch (err) {
       console.error("Gedächtnis-Ebenen:", err.message);

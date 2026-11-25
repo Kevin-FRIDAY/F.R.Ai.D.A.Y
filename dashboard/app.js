@@ -860,7 +860,7 @@
   });
 
   // Für das Lagezentrum (lagezentrum.js).
-  window.Friday = Object.assign(window.Friday || {}, { api, say, send, escapeHtml, relTime, refreshStatus: () => refreshStatus() });
+  window.Friday = Object.assign(window.Friday || {}, { api, say, send, escapeHtml, relTime, refreshStatus: () => refreshStatus(), neueAnmeldung: (t) => { if (typeof t === "string" && t.split(".").length === 3) { token = t; storage.set("friday_token", t); } } });
 
   // ---------- Seitenleiste: Einstellungen & Gehirn ----------
   const openSheet = (id) => $(id)?.classList.remove("hidden");
