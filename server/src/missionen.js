@@ -77,6 +77,14 @@ export async function planeSchritte(ziel, { art = "mission", kontext = "" } = {}
       })).filter((s) => s.text),
     };
   }
+  // Ohne Claude (v1.180.0): zuerst die lokale Aufgabenplanung – Agenten-Schritte, die ohne Claude laufen.
+  if (art !== "ziel") {
+    try {
+      const { lokalerPlan } = await import("./agentenleitung.js");
+      const lp = lokalerPlan(ziel);
+      if (lp.lokal) return { mitClaude: false, lokal: true, hinweis: `${r.leer ? "Ohne Guthaben" : "Claude war nicht erreichbar"} – ${lp.hinweis}`, schritte: lp.schritte };
+    } catch { /* weiter mit dem Standard-Plan */ }
+  }
   // Ohne Claude: einfacher Plan, den Boss selbst anpassen kann.
   const ersatz = art === "ziel"
     ? ["Ziel genau aufschreiben: Woran merke ich, dass ich es geschafft habe?", "Informationen sammeln, was dafür nötig ist", "Ersten kleinen Schritt für diese Woche festlegen und erledigen", "Nach einer Woche prüfen: Was lief gut, was nicht?", "Nächste Schritte planen"]
@@ -105,13 +113,18 @@ function warteschlange(l) {
     .sort((a, b) => (a.status === "laeuft" ? -1 : 0) - (b.status === "laeuft" ? -1 : 0) || a.prioritaet - b.prioritaet || a.erstellt.localeCompare(b.erstellt));
 }
 
-export async function neu({ titel, ziel, prioritaet, schritte, starten = true, planen = true }) {
+export async function neu({ titel, ziel, prioritaet, schritte, starten = true, planen = true, lokal = false }) {
   const z = String(ziel || titel || "").trim().slice(0, 2000);
   if (!z) return { error: "Was soll Friday erledigen?" };
   const p = Number(prioritaet) || erkennePrioritaet(z).prio;
   let plan = { schritte: [], mitClaude: false };
-  if (Array.isArray(schritte) && schritte.length) plan.schritte = schritte.map((s) => ({ text: String(s?.text || s).slice(0, 400), ...(s?.agent ? { agent: String(s.agent) } : {}) })).filter((s) => s.text);
-  else if (planen) {
+  if (Array.isArray(schritte) && schritte.length) plan.schritte = schritte.map((s) => ({ text: String(s?.text || s).slice(0, 400), ...(s?.agent ? { agent: String(s.agent) } : {}), ...(s?.einsatz ? { einsatz: String(s.einsatz).slice(0, 40), eingabe: String(s.eingabe || "").slice(0, 300) } : {}) })).filter((s) => s.text);
+  else if (planen && lokal) {
+    // Lokale Aufgabenplanung zuerst (kostet nichts); nur wenn sie nichts findet, plant Claude.
+    const { lokalerPlan } = await import("./agentenleitung.js");
+    const lp = lokalerPlan(z);
+    plan = lp.lokal ? { mitClaude: false, hinweis: lp.hinweis, schritte: lp.schritte } : await planeSchritte(z, {});
+  } else if (planen) {
     const kontext = darf("missionen", "gedaechtnis") ? store.getMemories().slice(-20).map((m) => `- ${m.text}`).join("\n") : "";
     plan = await planeSchritte(z, { kontext });
   } else plan.schritte = [{ text: z }];
@@ -127,7 +140,7 @@ export async function neu({ titel, ziel, prioritaet, schritte, starten = true, p
     geaendert: jetzt(),
     versionen: [],
   };
-  version(m, `Mission angelegt (${m.schritte.length} Schritte${plan.mitClaude ? ", von Claude geplant" : ""})`);
+  version(m, `Mission angelegt (${m.schritte.length} Schritte${plan.mitClaude ? ", von Claude geplant" : m.schritte.some((x) => x.einsatz) ? ", lokal geplant" : ""})`);
   const l = alle();
   l.push(m);
   speichern(l);
@@ -241,7 +254,12 @@ async function schrittAusfuehren(id, { vonHand = false } = {}) {
   const offenVorher = new Set(kommandoStand().offen.map((g) => g.id));
   let res;
   try {
-    res = await askFn({ text: prompt(m, s, idx, rueckfall), channel: "mission", keepHistory: false });
+    if (s.einsatz) {
+      // Lokaler Agenten-Schritt (v1.180.0): läuft ohne Claude, der Kontroll-Agent prüft das Ergebnis.
+      const { schrittLokal } = await import("./agentenleitung.js");
+      const r = await schrittLokal(s, m.schritte.slice(0, idx));
+      res = { answer: r.ok ? r.text : `GEHT NICHT: ${r.text}`, fehler: !r.ok };
+    } else res = await askFn({ text: prompt(m, s, idx, rueckfall), channel: "mission", keepHistory: false });
   } catch (err) {
     res = { answer: `GEHT NICHT: ${err.message}`, fehler: true };
   } finally {

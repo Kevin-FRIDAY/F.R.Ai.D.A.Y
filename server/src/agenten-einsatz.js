@@ -375,9 +375,16 @@ export const letzterBericht = (id) => berichteLaden().letzte?.[id] || null;
  * @param {string} id  Agenten-ID (z. B. "strom")
  * @param {string} [eingabe]  optionale Eingabe (Thema, Autobahn, Text …)
  */
-export async function einsetzen(id, eingabe = "", { name = id, kanal = "dashboard" } = {}) {
+// Agenten-Leitung (v1.180.0): Kontroll-Agent prüft jeden Bericht, Unternehmensleitung pausiert Dauer-Versager.
+let leitungModul = null;
+const leitung = async () => (leitungModul ||= await import("./agentenleitung.js").catch(() => null));
+
+export async function einsetzen(id, eingabe = "", { name = id, kanal = "dashboard", kpiId = id, muss = [] } = {}) {
   const e = EINSAETZE[id];
   if (!e) return { agent: id, ok: false, titel: "Unbekannter Agent", text: `Den Agenten „${id}“ kann ich nicht losschicken.`, punkte: [], at: new Date().toISOString() };
+  const L = await leitung();
+  const pause = L?.pausiert(kpiId);
+  if (pause) return { agent: id, ok: false, pausiert: pause, titel: name, text: `${name} ist von der Unternehmensleitung pausiert (zu viele Fehler hintereinander) bis ${uhr(pause)} Uhr. Im Gehirn-Cockpit → Agenten kannst du die Pause aufheben.`, punkte: [], at: new Date().toISOString() };
   if (laufend.has(id)) return { agent: id, ok: false, beschaeftigt: true, titel: name, text: `${name} ist schon unterwegs.`, punkte: [], at: new Date().toISOString() };
   const start = Date.now();
   const kanalId = `agent:${id}`;
@@ -398,8 +405,10 @@ export async function einsetzen(id, eingabe = "", { name = id, kanal = "dashboar
     laufend.delete(id);
     try { auftragFertig(kanalId, bericht?.ok !== false); } catch { /* egal */ }
   }
-  berichtSpeichern(id, bericht);
-  logbuchEintrag({ bereich: "agent", titel: `${name}: ${bericht.titel}`, details: bericht.text, kanal, ok: bericht.ok, dauer_ms: bericht.dauer_ms, aktionen: [`agent_${id}`] });
+  // Kontroll-Agent: echter Ergebnis-Test, erst dann zählt der Einsatz als gelungen.
+  try { if (L) bericht.pruefung = L.nachEinsatz(kpiId, id, bericht, { muss, eingabe, name }); } catch { /* Prüfung darf den Einsatz nie aufhalten */ }
+  berichtSpeichern(kpiId, bericht);
+  logbuchEintrag({ bereich: "agent", titel: `${name}: ${bericht.titel}`, details: bericht.text, kanal, ok: bericht.ok && bericht.pruefung?.status !== "fehler", dauer_ms: bericht.dauer_ms, aktionen: [`agent_${id}`] });
   return bericht;
 }
 

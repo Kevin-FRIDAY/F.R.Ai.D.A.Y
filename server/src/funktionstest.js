@@ -103,6 +103,18 @@ const PRUEFUNGEN = [
     const a = n.aktiviere(f.text, { limit: 10, mindest: 0.1 });
     return a.treffer.some((t) => t.id === `f-${f.id}`) ? ok(`${netz.stand.knoten} Knoten, ${netz.stand.synapsen} Synapsen; letzter Fakt wird wiedergefunden.`) : fehler("Ein vorhandener Fakt wird über seine eigenen Wörter nicht gefunden.");
   } },
+  { id: "kontroll-agent", bereich: "Agenten", name: "Agent arbeitet echt, Kontroll-Agent prüft", lauf: async () => {
+    const { einsetzen } = await import("./agenten-einsatz.js");
+    const L = await import("./agentenleitung.js");
+    // 1) Echter Einsatz (System-Check läuft lokal, braucht kein Internet) muss die Prüfung bestehen.
+    const b = await einsetzen("system", "", { name: "Funktionsprüfung", kanal: "funktionstest", kpiId: "_funktionstest" });
+    if (b.ok === false) return fehler(`System-Agent kam nicht durch: ${b.text}`);
+    if (b.pruefung?.status !== "bestanden") return fehler(`Kontroll-Agent lehnt echten Bericht ab: ${(b.pruefung?.gruende || []).join("; ")}`);
+    // 2) Ein kaputter Bericht darf NICHT durchgehen.
+    const kaputt = L.pruefeBericht("wetter", { ok: true, titel: "Wetter", text: "Morgen undefined, sonnig und warm.", punkte: [] });
+    if (kaputt.status !== "fehler") return fehler("Kontroll-Agent hat einen kaputten Bericht durchgelassen.");
+    return ok(`Echter Einsatz geprüft und bestanden, kaputter Bericht erkannt (${kaputt.gruende.length} Gründe).`);
+  } },
   { id: "haus", bereich: "Werkstätten", name: "Haus-Werkstatt entwirft ein Einfamilienhaus", lauf: async () => {
     const { planHouse } = await import("./haus.js");
     const h = planHouse("bau mir ein Einfamilienhaus mit 2 Etagen");

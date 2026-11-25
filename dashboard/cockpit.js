@@ -58,9 +58,12 @@
     } catch (err) { status(err.message, true); return null; }
   }
 
-  async function laden() {
+  // Nicht neu zeichnen, während Boss gerade etwas eintippt (sonst wären Formulare weg).
+  const tipptGerade = () => { const s = $("#ck-seite"); const a = document.activeElement; return Boolean(s && ((a && s.contains(a) && /INPUT|SELECT|TEXTAREA/.test(a.tagName)) || [...s.querySelectorAll("input[type=text],input:not([type]),textarea")].some((i) => i.value.trim()))); };
+  async function laden(auto = false) {
     clearTimeout(poll);
     if (!w.offen()) return;
+    if (auto === true && tipptGerade()) { poll = setTimeout(() => laden(true), 4000); return; }
     status("");
     const u = await kopf();
     const seite = $("#ck-seite");
@@ -77,7 +80,7 @@
       else if (tab === "tests") await tests(seite);
     } catch (err) { status(err.message, true); }
     // sanft auffrischen (Formulare nicht zerstören: KI- und Test-Reiter nur auf Knopfdruck)
-    if (["uebersicht", "agenten", "missionen", "system", "warnungen", "freigaben"].includes(tab)) poll = setTimeout(laden, tab === "system" ? 3000 : 8000);
+    if (["uebersicht", "agenten", "missionen", "system", "warnungen", "freigaben"].includes(tab)) poll = setTimeout(() => laden(true), tab === "system" ? 3000 : 8000);
   }
 
   // ---------- ◎ Übersicht (31) ----------
@@ -206,6 +209,7 @@
         <p class="klein">${x.arbeitet ? `<b>arbeitet:</b> ${esc(x.jetzt || x.taetigkeit || "…")}${x.prozent ? ` ${balken(x.prozent)}` : ""}` : esc(x.statusText || x.status || "")}</p>
         ${x.letzterEinsatz || x.einsatz?.zeit ? `<p class="klein">Letzter Einsatz: ${zeit(x.letzterEinsatz?.zeit || x.einsatz?.zeit)}</p>` : ""}</div>`).join("")}</div>
       <p class="hf-hinweis">${a.aktiv} von ${a.gesamt} Agenten aktiv, ${a.arbeiten} arbeiten gerade. Losschicken im Agenten-Team (3D-Büro) oder per Sprache.</p>`;
+    window.FridayCockpit?.agentenNachher?.(el, () => agenten(el));
   }
 
   // ---------- 🎯 Missionsübersicht (34) ----------
@@ -216,8 +220,10 @@
       const fertig = (x.schritte || []).filter((s) => s.status === "fertig").length, alle = (x.schritte || []).length;
       return `<li class="hf-zeile"><span class="name"><b>${esc(x.titel)}</b><br><span class="klein">${esc(x.status)} · ${fertig}/${alle} Schritte · ${zeit(x.erstellt)}${x.wiederholen ? ` · 🔁 ${esc(x.wiederholen)}` : ""}</span></span>${alle ? balken(Math.round((fertig / alle) * 100)) : ""}</li>`;
     }).join("")}</ul>` : `<p class="hf-hinweis">Keine.</p>`}</div>`;
-    el.innerHTML = `<div class="hf-zwei">${gruppe("Laufend & wartend", liste.filter((x) => ["laeuft", "wartet", "pausiert", "freigabe"].includes(x.status)))}${gruppe("Abgeschlossen", liste.filter((x) => !["laeuft", "wartet", "pausiert", "freigabe"].includes(x.status)))}</div>
+    const extraM = window.FridayCockpit?.missionenExtra ? await window.FridayCockpit.missionenExtra().catch(() => "") : "";
+    el.innerHTML = `${extraM}<div class="hf-zwei">${gruppe("Laufend & wartend", liste.filter((x) => ["laeuft", "wartet", "pausiert", "freigabe"].includes(x.status)))}${gruppe("Abgeschlossen", liste.filter((x) => !["laeuft", "wartet", "pausiert", "freigabe"].includes(x.status)))}</div>
       <p class="hf-hinweis">Neue Mission: „Friday, starte eine Mission: …“ oder in der Modul-Zentrale → Missionen.</p>`;
+    window.FridayCockpit?.missionenNachher?.(el, () => missionen(el));
   }
 
   // ---------- 💾 Gedächtnis-Monitor (35) ----------
