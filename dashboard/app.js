@@ -718,6 +718,9 @@
         else if (hat("video_schnitt")) window.FridayStudio?.open({ tab: "schneiden" });
         if (hat("archiv")) window.FridayArchiv?.open();
         if (hat("gehirn")) window.FridayGehirn?.open();
+        // Gehirn-Cockpit (v1.178.0): "cockpit" oder "cockpit:<reiter>"
+        const cockpitA = data.actions?.find((a) => a === "cockpit" || (typeof a === "string" && a.startsWith("cockpit:")));
+        if (cockpitA) window.FridayCockpit?.open({ tab: cockpitA.startsWith("cockpit:") ? cockpitA.slice(8) : "uebersicht" });
         if (hat("oekosystem")) window.FridayOekosystem?.open();
         // Agenten-Einsatz (v1.165.0): Büro öffnen und den losgeschickten Agenten zeigen
         const bueroA = aktion("buero:");

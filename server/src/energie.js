@@ -54,6 +54,17 @@ export function recordUsage(model, usage, quelle = "chat") {
     } catch { /* Anzeige ist nicht lebenswichtig */ }
     return;
   }
+  // Multi-KI-Schwarm (v1.178.0): ChatGPT, Gemini, DeepSeek, Grok. Kosten und Kosten-Deckel bucht ki-schwarm.js
+  // schon beim Antworten (auch wenn recordUsage gar nicht aufgerufen wird) – hier nur fürs Energie-Fenster notieren.
+  if (/^(openai|gemini|deepseek|grok)\//.test(String(model || ""))) {
+    try {
+      const d = load();
+      d.kosten.push({ zeit: new Date().toISOString(), quelle: `${quelle} · ${String(model).split("/")[0]}`, modell: model, usd: Math.round((Number(usage?.cost_usd) || 0) * 10000) / 10000 });
+      if (d.kosten.length > 40) d.kosten.shift();
+      save(d);
+    } catch { /* Anzeige ist nicht lebenswichtig */ }
+    return;
+  }
   // Ersatz-Gehirn (OpenRouter, v1.142.0): zählt nicht gegen das Claude-Guthaben und weckt es nicht auf,
   // läuft aber in den Kosten-Deckel (echtes Geld bei OpenRouter).
   if (String(model || "").startsWith("openrouter/")) {

@@ -60,7 +60,7 @@ function speichern(d) {
 function planVon(d, id) {
   const a = AUFGABEN[id];
   const p = d.plan[id] || {};
-  return { an: p.an !== false, art: a.art, minuten: p.minuten || a.minuten, zeit: p.zeit || a.zeit };
+  return { an: p.an !== undefined ? p.an !== false : a.standardAn !== false, art: a.art, minuten: p.minuten || a.minuten, zeit: p.zeit || a.zeit };
 }
 function lokal(d = new Date()) {
   return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString();
@@ -115,6 +115,16 @@ async function takt() {
     timer = setTimeout(takt, TAKT_MS); // setTimeout statt setInterval: nie zwei Takte gleichzeitig
     timer.unref?.();
   }
+}
+
+/**
+ * v1.178.0 (Mark XII): weitere Module hängen ihre Hintergrund-Aufgaben hier ein, statt eigene Zeitgeber zu bauen
+ * (keine Doppelmodule). def = { name, text, art: "intervall"|"taeglich", minuten?, zeit?, standardAn?, lauf: async (zustand) => ({ text }) }
+ */
+export function aufgabeRegistrieren(id, def) {
+  if (!id || !def || typeof def.lauf !== "function" || AUFGABEN[id]) return false;
+  AUFGABEN[id] = { art: "intervall", minuten: 60, ...def };
+  return true;
 }
 
 export function herzschlagStart() {
