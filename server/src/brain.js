@@ -54,6 +54,7 @@ import { sperre as deckelSperre } from "./kostendeckel.js";
 import { neuerWaechter as schleifenWaechter } from "./schleifen.js";
 import { quickCommand as jarvisQuick } from "./jarvis-paket.js";
 import { quickCommand as werkzeugQuick } from "./werkzeugkasten.js";
+import { quickCommand as datenQuick } from "./oeffentlich.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
@@ -598,6 +599,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (d) { actions.push(...d.actions); return finish(d.answer); }
     } catch (err) {
       console.error("Verbindungs-Schnellbefehl:", err.message);
+    }
+  }
+
+  // Öffentliche Daten (v1.167.0): NINA, Pegel, Autobahn, Rückrufe, Strom, Ferien, Jobs, NASA, Wikipedia, Eurostat, EZB … – ohne Claude.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const od = await datenQuick(text);
+      if (od) { actions.push(...od.actions); return finish(od.answer); }
+    } catch (err) {
+      console.error("Öffentliche Daten:", err.message);
     }
   }
 
