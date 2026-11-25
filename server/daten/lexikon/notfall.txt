@@ -17,3 +17,38 @@ Warn-App|Die offiziellen Warn-Apps in Deutschland sind NINA und KATWARN. Bei gro
 Notfallvorrat|Das Bundesamt für Bevölkerungsschutz empfiehlt Vorräte für 10 Tage: etwa 2 Liter Wasser pro Person und Tag, haltbare Lebensmittel, Medikamente, Taschenlampe, Radio, Bargeld.|notvorrat,vorrat krise
 Hausapotheke|In eine Hausapotheke gehören Pflaster, Verbandszeug, Fieberthermometer, Schmerzmittel, Desinfektion, Kühlpack und eine Pinzette.|erste hilfe kasten
 Verbandskasten Auto|Im Auto ist ein Verbandskasten nach DIN 13164 Pflicht, dazu Warndreieck und Warnweste.|verbandskasten
+Stabile Seitenlage|Bei Bewusstlosen, die normal atmen: Person auf die Seite drehen, oberes Bein angewinkelt, Kopf leicht nach hinten, Mund nach unten. Notruf 112 und Atmung weiter prüfen.|seitenlage,bewusstlos
+Wiederbelebung|Wenn jemand nicht atmet: 112 rufen, dann fest und schnell in der Brustmitte drücken, 100 bis 120 mal pro Minute, etwa 5 Zentimeter tief. Takt zum Beispiel Stayin' Alive. Nicht aufhören, bis Hilfe kommt.|herzdruckmassage,reanimation,cpr
+Defibrillator|Ein AED-Defibrillator hängt oft in Bahnhöfen, Ämtern und Läden. Einschalten, er sagt dir jeden Schritt an. Du kannst nichts falsch machen.|aed,defi
+Herzinfarkt Anzeichen|Typisch sind starke Brustschmerzen, die in Arm, Kiefer oder Rücken ziehen, Atemnot, Übelkeit und kalter Schweiß. Bei Frauen oft nur Übelkeit und Bauchschmerzen. Sofort 112.|herzinfarkt
+Schlaganfall Anzeichen|FAST-Test: Gesicht hängt beim Lächeln, Arm sinkt ab, Sprache verwaschen, dann sofort 112 und die Uhrzeit merken. Jede Minute zählt.|schlaganfall,fast test
+Verschlucken|Wenn jemand erstickt und nicht husten kann: bis zu fünf kräftige Schläge zwischen die Schulterblätter, dann bis zu fünf Oberbauchstöße, abwechselnd. Notruf.|ersticken,heimlich griff
+Verbrennung|Brandwunde 10 bis 20 Minuten mit handwarmem, nicht eiskaltem Wasser kühlen, nicht bei großen Flächen. Keine Hausmittel wie Mehl oder Butter. Steril abdecken.|verbrannt,brandwunde
+Nasenbluten|Kopf nach vorne beugen, nicht nach hinten, Nasenflügel zusammendrücken, kalter Lappen in den Nacken. Hört es nach 20 Minuten nicht auf, zum Arzt.|nase blutet
+Schnittwunde|Kleine Schnitte unter Wasser ausspülen und mit Pflaster versorgen. Stark blutende Wunden fest abdrücken, Verband drauf und 112.|schnitt,blutung
+Insektenstich Allergie|Schwellung im Hals, Atemnot oder Schwindel nach einem Stich sind ein Notfall, sofort 112. Allergiker tragen einen Notfall-Pen.|allergischer schock,bienenstich
+Zeckenbiss|Zecke mit Pinzette oder Zeckenkarte nah an der Haut greifen und langsam herausziehen. Stelle beobachten, bei rotem Ring zum Arzt.|zecke entfernen
+Hitzschlag|Bei Hitzschlag: in den Schatten, Kleidung lockern, kühlen, trinken lassen wenn wach. Bei Verwirrung oder Bewusstlosigkeit 112.|sonnenstich,hitze notfall
+Unterkühlung|Unterkühlte Menschen langsam aufwärmen, mit Decken, warme süße Getränke, wenn wach. Nicht abrubbeln.|kälte notfall
+Vergiftung Kind|Wenn ein Kind etwas Giftiges geschluckt hat: kein Erbrechen auslösen, Packung aufheben und den Giftnotruf anrufen.|kind gift geschluckt
+Gasgeruch|Bei Gasgeruch: keine Schalter betätigen, kein Feuer, Fenster auf, Haus verlassen, von draußen den Notruf des Gasversorgers oder 112 anrufen.|gas riecht
+Wasserrohrbruch|Bei Rohrbruch sofort den Haupthahn zudrehen, meist im Keller beim Wasserzähler, und Strom in betroffenen Räumen aus.|wasserschaden
+Unwetter|Bei Gewitter und Sturm drinnen bleiben, Fenster zu, weg von Bäumen. Im Freien in die Hocke, Füße zusammen, nicht unter einzelne Bäume.|gewitter schutz,sturm
+Hochwasser|Bei Hochwasser Keller nicht betreten, Strom aus, höhere Stockwerke aufsuchen und Warnungen in NINA oder im Radio folgen.|überschwemmung
+Erdbeben|Bei Erdbeben drinnen: unter einen Tisch, Kopf schützen, festhalten. Draußen: weg von Gebäuden und Leitungen.|
+Sirenen|Ein auf- und abschwellender Heulton von einer Minute heißt Warnung: Radio oder Warn-App einschalten. Ein Dauerton von einer Minute heißt Entwarnung. Bundesweiter Warntag ist jeden zweiten Donnerstag im September.|sirene,warntag
+Cell Broadcast|Cell Broadcast schickt Warnungen direkt aufs Handy, auch ohne App, mit einem lauten Ton.|warnung handy
+Kind vermisst|Wenn ein Kind vermisst wird, sofort 110 rufen und nicht lange warten. Ein aktuelles Foto bereithalten.|vermisst
+Diebstahl melden|Diebstahl meldest du bei der Polizei, in vielen Bundesländern auch online über die Internetwache.|anzeige erstatten,online anzeige
+Wildunfall|Nach einem Wildunfall Warnblinker, Warnweste, Warndreieck, Polizei 110 rufen. Tier nicht anfassen. Bescheinigung für die Versicherung holen.|reh angefahren
+Autounfall Ablauf|Unfallstelle sichern, Verletzte versorgen, 112 bei Verletzten, sonst Daten tauschen und Fotos machen. Bei Streit die Polizei rufen.|unfall,verkehrsunfall
+Unfallflucht|Wer nach einem Unfall wegfährt, begeht Unfallflucht, eine Straftat. Mindestens angemessen warten und Polizei rufen, auch bei Kratzer an parkendem Auto.|fahrerflucht
+Kreditkarte verloren|Karte sofort sperren über den Sperr-Notruf 116 116 oder in der Banking-App.|karte sperren
+Handy verloren|Handy über Wo ist oder Find My Device orten und sperren, SIM-Karte beim Anbieter sperren lassen, Anzeige bei der Polizei.|handy gestohlen
+Ausgesperrt|Wenn du ausgesperrt bist, frage zuerst Nachbarn oder Vermieter nach einem Ersatzschlüssel. Bei Schlüsseldiensten vorher den Festpreis nennen lassen, Abzocke ist häufig.|schlüsseldienst,tür zu
+Krankenhaus Notaufnahme|Die Notaufnahme ist für echte Notfälle. Wer warten kann, geht zum Bereitschaftsdienst 116 117. In der Notaufnahme wird nach Dringlichkeit behandelt, nicht nach Ankunft.|notaufnahme
+Zahnarzt Notdienst|Den zahnärztlichen Notdienst am Wochenende findest du über die Landeszahnärztekammer oder 116 117.|zahnschmerzen wochenende
+Apotheken Notdienst|Notdienst-Apotheken findest du mit aponet.de oder der Telefonnummer 22 8 33 aus dem Festnetz.|apotheke nachts
+Tierarzt Notdienst|Tierärztliche Notdienste findest du über die Tierärztekammer oder Tierkliniken in der Nähe.|tier notfall
+Kinder Notfall|Für Kinder ist die 112 bei Notfällen richtig. Bei Fieber und Unsicherheit hilft 116 117 und der Kinderarzt-Notdienst.|kind notfall
+Seelische Krise|In einer seelischen Krise hilft die Telefonseelsorge rund um die Uhr unter 0800 111 0 111 oder 0800 111 0 222, kostenlos und anonym. Bei akuter Gefahr 112.|krise,suizid,lebensmüde

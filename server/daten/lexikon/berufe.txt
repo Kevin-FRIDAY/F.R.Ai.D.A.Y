@@ -1,0 +1,105 @@
+# berufe|Berufe & Ausbildung|👷
+# Beruf|Was man macht und wie man es wird|Aliase
+Ausbildung (dual)|In der dualen Ausbildung lernst du im Betrieb und in der Berufsschule, meist zwei bis dreieinhalb Jahre, und bekommst Ausbildungsvergütung. Deutschland hat über 320 anerkannte Ausbildungsberufe.|duale ausbildung,lehre
+Studium|Ein Bachelor dauert meist drei Jahre, ein Master zwei weitere. An staatlichen Unis zahlst du in Deutschland meist nur einen Semesterbeitrag von 100 bis 400 Euro.|bachelor,master,uni
+Meister|Der Meisterbrief ist die höchste Qualifikation im Handwerk. Er erlaubt, einen eigenen Betrieb zu führen und Lehrlinge auszubilden, und gilt als gleichwertig mit dem Bachelor.|meisterbrief,meisterprüfung
+Mindestausbildungsvergütung|Azubis bekommen gesetzlich mindestens etwa 682 Euro im ersten Lehrjahr (Stand 2025), in vielen Branchen deutlich mehr.|azubi gehalt,ausbildungsgehalt
+Elektroniker|Elektroniker installieren und warten elektrische Anlagen in Häusern, Fabriken und Maschinen. Ausbildung dreieinhalb Jahre.|elektriker
+Anlagenmechaniker SHK|Anlagenmechaniker für Sanitär, Heizung und Klima bauen Bäder, Heizungen und Wärmepumpen ein. Sehr gefragter Beruf.|installateur,heizungsbauer,klempner
+Kfz-Mechatroniker|Kfz-Mechatroniker warten und reparieren Autos, auch Elektronik und E-Autos. Einer der beliebtesten Ausbildungsberufe bei jungen Männern.|automechaniker,mechaniker
+Tischler|Tischler, in Süddeutschland Schreiner, bauen Möbel, Fenster, Türen und Treppen aus Holz.|schreiner
+Zimmerer|Zimmerer bauen Dachstühle, Holzhäuser und Holzkonstruktionen. Nach der Lehre gehen manche auf die Walz, eine Wanderschaft von drei Jahren und einem Tag.|walz,wanderschaft
+Maurer|Maurer errichten Wände, Mauern und Rohbauten aus Stein und Beton.|
+Dachdecker|Dachdecker decken und dichten Dächer ab, bauen auch Solaranlagen und Dachfenster ein.|
+Maler und Lackierer|Maler und Lackierer streichen Wände, tapezieren, lackieren und dämmen Fassaden.|maler
+Fliesenleger|Fliesenleger verlegen Fliesen und Platten in Bad, Küche und Böden.|
+Friseur|Friseure schneiden, färben und stylen Haare. Ausbildung drei Jahre.|frisör
+Bäcker|Bäcker backen Brot, Brötchen und Gebäck, oft schon ab 3 Uhr nachts.|
+Konditor|Konditoren stellen Torten, Pralinen und feines Gebäck her.|
+Fleischer|Fleischer, auch Metzger, verarbeiten Fleisch zu Wurst und Fleischwaren.|metzger
+Koch|Köche bereiten Speisen in Restaurants, Kantinen und Hotels zu. Ausbildung drei Jahre, viel Abend- und Wochenendarbeit.|köchin
+Hotelfachmann|Hotelfachleute arbeiten an Rezeption, Service und Verwaltung im Hotel.|hotelfachfrau
+Kaufmann im Einzelhandel|Kaufleute im Einzelhandel beraten Kunden, kassieren und kümmern sich um Ware. Einer der häufigsten Ausbildungsberufe.|verkäufer,einzelhandelskaufmann
+Industriekaufmann|Industriekaufleute arbeiten in Einkauf, Vertrieb, Personal und Buchhaltung von Firmen.|industriekauffrau
+Kaufmann für Büromanagement|Arbeiten in der Verwaltung: Termine, Post, Rechnungen, Organisation. Der häufigste Ausbildungsberuf bei Frauen.|bürokauffrau,bürokaufmann
+Bankkaufmann|Bankkaufleute beraten Kunden zu Konto, Kredit und Geldanlage.|bankkauffrau,banker
+Steuerfachangestellter|Steuerfachangestellte erstellen in Steuerkanzleien Buchhaltung, Lohnabrechnungen und Steuererklärungen.|
+Fachinformatiker|Fachinformatiker programmieren Software oder betreuen Netzwerke und Server. Fachrichtungen sind zum Beispiel Anwendungsentwicklung und Systemintegration.|it ausbildung,informatiker ausbildung
+Softwareentwickler|Softwareentwickler schreiben Programme und Apps. Der Weg geht über Studium, Ausbildung oder auch Quereinstieg.|programmierer,entwickler
+Mechatroniker|Mechatroniker bauen und warten Maschinen, die Mechanik und Elektronik verbinden, etwa Roboter in Fabriken.|
+Industriemechaniker|Industriemechaniker bauen, warten und reparieren Maschinen in der Produktion.|
+Zerspanungsmechaniker|Zerspanungsmechaniker fräsen und drehen Metallteile an computergesteuerten Maschinen.|cnc fräser
+Pflegefachmann|Pflegefachleute pflegen kranke und alte Menschen in Kliniken, Heimen und zu Hause. Ausbildung drei Jahre, sehr gefragt.|krankenpfleger,pflegefachfrau,altenpfleger
+Medizinischer Fachangestellter|MFA arbeiten in Arztpraxen: Empfang, Blut abnehmen, Abrechnung.|arzthelferin,mfa
+Notfallsanitäter|Notfallsanitäter versorgen Patienten im Rettungswagen und dürfen viele Maßnahmen selbst durchführen. Ausbildung drei Jahre.|sanitäter,rettungssanitäter
+Hebamme|Hebammen begleiten Schwangerschaft, Geburt und die Zeit danach. In Deutschland ist es seit 2020 ein Studium.|
+Physiotherapeut|Physiotherapeuten helfen mit Übungen und Massagen, wenn der Körper nach Verletzung oder Krankheit wieder beweglich werden soll.|physio,krankengymnast
+Ergotherapeut|Ergotherapeuten helfen Menschen, Alltagsfähigkeiten wieder zu lernen, etwa nach einem Schlaganfall.|
+Logopäde|Logopäden behandeln Sprach-, Sprech- und Schluckstörungen.|sprachtherapeut
+Apotheker|Apotheker studieren Pharmazie und beraten zu Medikamenten. PTA sind ihre ausgebildeten Assistenten.|pta
+Arzt|Ärzte studieren Medizin, mindestens sechs Jahre, danach folgt die Facharztausbildung mit noch etwa fünf Jahren.|ärztin,mediziner,medizinstudium
+Zahnarzt|Zahnärzte studieren Zahnmedizin, etwa fünf bis sechs Jahre.|
+Tierarzt|Tierärzte studieren Veterinärmedizin und behandeln Haus- und Nutztiere.|veterinär
+Psychotherapeut|Psychotherapeuten behandeln seelische Erkrankungen mit Gesprächen. Der Weg geht über ein eigenes Studium und Weiterbildung.|therapeut
+Psychiater|Psychiater sind Ärzte für seelische Erkrankungen und dürfen Medikamente verschreiben.|
+Erzieher|Erzieher betreuen Kinder in Kita, Hort und Heim. Die Ausbildung dauert je nach Bundesland zwei bis fünf Jahre.|erzieherin,kita
+Lehrer|Lehrer studieren Lehramt für zwei Fächer, danach folgt das Referendariat von etwa 18 Monaten.|lehrerin,lehramt
+Sozialarbeiter|Sozialarbeiter unterstützen Menschen in schwierigen Lagen, etwa bei Armut, Sucht oder in Familien. Studium Soziale Arbeit.|sozialpädagoge
+Polizist|Polizisten werden in einer Ausbildung oder einem Studium bei Landes- oder Bundespolizei. Sport- und Gesundheitstest gehören zur Bewerbung.|polizei beruf,polizistin
+Feuerwehrmann|Berufsfeuerwehrleute haben meist erst eine handwerkliche Ausbildung und dann die Feuerwehr-Ausbildung. Die meisten Feuerwehrleute in Deutschland sind freiwillig und ehrenamtlich.|feuerwehr beruf
+Soldat|Bei der Bundeswehr gibt es Mannschaften, Unteroffiziere und Offiziere. Offiziere studieren meist an einer Bundeswehr-Universität.|bundeswehr beruf
+Richter|Richter studieren Jura, machen zwei Staatsexamen und brauchen sehr gute Noten.|richterin
+Rechtsanwalt|Anwälte studieren Jura, machen zwei Staatsexamen und werden dann zugelassen.|anwalt,jurist
+Notar|Notare beurkunden wichtige Verträge wie Hauskäufe, Testamente und Firmengründungen.|
+Architekt|Architekten planen Gebäude. Nach dem Studium und Berufserfahrung trägt man sich in die Architektenkammer ein.|architektin
+Bauingenieur|Bauingenieure berechnen und planen Brücken, Straßen und Gebäude, damit sie sicher stehen.|statiker
+Maschinenbauingenieur|Maschinenbauingenieure entwickeln Maschinen, Motoren und Anlagen.|ingenieur
+Elektroingenieur|Elektroingenieure entwickeln Stromnetze, Elektronik und Steuerungen.|elektrotechnik studium
+Wirtschaftsprüfer|Wirtschaftsprüfer prüfen die Bücher großer Firmen. Das Examen gilt als eines der schwersten.|
+Steuerberater|Steuerberater beraten zu Steuern und erstellen Steuererklärungen und Bilanzen.|
+Journalist|Journalisten recherchieren und berichten. Typisch sind Studium und ein Volontariat bei einer Zeitung oder einem Sender.|reporter,volontariat
+Fotograf|Fotografen machen Porträts, Werbe- oder Pressefotos. Es gibt eine Ausbildung, viele lernen es auch selbst.|
+Mediengestalter|Mediengestalter gestalten Werbung, Websites, Druckprodukte oder Videos.|grafikdesigner
+Grafikdesigner|Grafikdesigner entwerfen Logos, Plakate und Layouts, meist nach einem Design-Studium.|designer
+Pilot|Verkehrspiloten machen eine Ausbildung an einer Flugschule, etwa zwei Jahre. Airlines wie Lufthansa bilden auch selbst aus.|pilotin,pilot werden
+Flugbegleiter|Flugbegleiter sorgen an Bord für Sicherheit und Service. Die Schulung dauert einige Wochen.|stewardess,flugbegleiterin
+Fluglotse|Fluglotsen leiten Flugzeuge sicher durch den Luftraum. Die Ausbildung bei der DFS dauert etwa drei Jahre.|
+Lokführer|Lokführer fahren Züge. Es gibt eine Ausbildung und Quereinstieg bei der Bahn.|triebfahrzeugführer,lokomotivführer
+Berufskraftfahrer|Berufskraftfahrer fahren LKW oder Busse und brauchen eine Zusatzqualifikation.|lkw fahrer,busfahrer
+Landwirt|Landwirte bauen Getreide und Gemüse an oder halten Tiere. Ausbildung drei Jahre, auch Studium möglich.|bauer
+Gärtner|Gärtner arbeiten in Fachrichtungen wie Garten- und Landschaftsbau, Zierpflanzen oder Gemüse.|landschaftsgärtner
+Förster|Förster pflegen den Wald und kümmern sich um Bäume, Tiere und Holzernte. Meist mit Studium Forstwirtschaft.|
+Tierpfleger|Tierpfleger arbeiten im Zoo, Tierheim oder in Kliniken.|zoo pfleger
+Florist|Floristen binden Sträuße und gestalten mit Blumen.|blumenhändler
+Goldschmied|Goldschmiede fertigen und reparieren Schmuck.|juwelier
+Optiker|Augenoptiker messen die Sehstärke und fertigen Brillen.|augenoptiker
+Hörakustiker|Hörakustiker testen das Gehör und passen Hörgeräte an.|
+Zahntechniker|Zahntechniker fertigen Zahnersatz wie Kronen und Prothesen im Labor.|
+Kosmetiker|Kosmetiker pflegen Haut und Nägel und beraten zu Pflege.|kosmetikerin
+Fachkraft für Lagerlogistik|Arbeiten im Lager, nehmen Waren an, lagern sie und verschicken sie, oft mit Gabelstapler.|lagerist,lagerarbeiter
+Fachkraft für Schutz und Sicherheit|Sicherheitsleute schützen Gebäude, Veranstaltungen und Personen.|security
+Immobilienmakler|Makler vermitteln Wohnungen und Häuser. Für die Arbeit braucht man eine Erlaubnis nach Gewerbeordnung.|makler
+Versicherungskaufmann|Versicherungskaufleute beraten zu Versicherungen und Vorsorge.|versicherungsvertreter
+Personalreferent|Personaler kümmern sich um Einstellungen, Verträge und Mitarbeiter.|hr,personaler
+Projektmanager|Projektmanager planen Projekte, halten Zeit und Budget im Blick und koordinieren Teams.|projektleiter
+Datenanalyst|Datenanalysten werten Daten aus und machen daraus Entscheidungen und Grafiken.|data analyst,data scientist
+Cybersecurity-Experte|IT-Sicherheitsexperten schützen Firmen vor Hackerangriffen.|it sicherheit beruf
+KI-Entwickler|KI-Entwickler bauen und trainieren Modelle für künstliche Intelligenz, meist mit Informatik- oder Mathestudium.|ki ingenieur,machine learning
+Influencer|Influencer verdienen Geld mit Reichweite in sozialen Netzwerken, meist durch Werbung. Einkünfte müssen versteuert werden, Werbung muss gekennzeichnet sein.|content creator
+Youtuber|Youtuber verdienen mit Werbung, Sponsoren und Mitgliedschaften. Für Werbegeld von YouTube braucht man 1.000 Abonnenten und viele Stunden Wiedergabezeit.|youtube geld verdienen
+Selbstständig machen|Für ein Gewerbe meldest du dich beim Gewerbeamt an, das kostet 20 bis 60 Euro. Freiberufler wie Künstler oder Programmierer melden sich nur beim Finanzamt.|gewerbe anmelden,selbstständigkeit
+Kleinunternehmer|Als Kleinunternehmer mit weniger als 25.000 Euro Umsatz im Vorjahr musst du keine Umsatzsteuer ausweisen (Stand 2025).|kleinunternehmerregelung
+Quereinstieg|Ein Quereinstieg ist der Wechsel in einen Beruf ohne die passende Ausbildung, zum Beispiel in Pflege, Kita, IT oder Lehramt, oft mit Weiterbildung.|quereinsteiger
+Umschulung|Eine Umschulung ist eine verkürzte zweite Ausbildung, oft von der Arbeitsagentur bezahlt, meist zwei Jahre.|
+Bildungsgutschein|Mit einem Bildungsgutschein der Arbeitsagentur bekommst du eine Weiterbildung bezahlt.|weiterbildung bezahlt
+Aufstiegs-BAföG|Das Aufstiegs-BAföG fördert Meister, Techniker und Fachwirte mit Zuschuss und günstigem Darlehen, unabhängig vom Alter.|meister bafög
+BAföG|BAföG ist Geld vom Staat für Schüler und Studenten. Bei Studenten ist die Hälfte Zuschuss, die andere Hälfte ein zinsloses Darlehen. Höchstsatz etwa 992 Euro.|bafoeg
+Werkstudent|Werkstudenten arbeiten neben dem Studium bis 20 Stunden pro Woche im Semester und zahlen nur Rentenversicherung.|werkstudentenjob
+Praktikum|Pflichtpraktika im Studium werden oft nicht bezahlt. Freiwillige Praktika über drei Monate müssen mit Mindestlohn bezahlt werden.|praktikant
+Freiwilliges Soziales Jahr|Im FSJ arbeitest du 6 bis 18 Monate in sozialen Einrichtungen, mit Taschengeld. Ähnlich ist der Bundesfreiwilligendienst.|fsj,bufdi,bundesfreiwilligendienst
+Wehrdienst|Seit 2026 gibt es in Deutschland einen neuen freiwilligen Wehrdienst. Junge Männer bekommen einen Fragebogen, die Wehrpflicht ist weiter ausgesetzt.|wehrpflicht,bundeswehr freiwillig
+Bewerbungsgespräch|Im Bewerbungsgespräch kommt es auf gute Vorbereitung an: Firma kennen, Stärken mit Beispielen, eigene Fragen stellen, pünktlich sein.|vorstellungsgespräch
+Lebenslauf|Ein Lebenslauf ist meist tabellarisch, rückwärts sortiert, das Neueste oben, höchstens zwei Seiten. Ein Foto ist in Deutschland freiwillig.|cv
+Anschreiben|Das Anschreiben ist eine Seite: Warum diese Firma, warum ich, was ich mitbringe. Viele Firmen verzichten inzwischen darauf.|bewerbungsschreiben
+Gehalt verhandeln|Informiere dich vorher über übliche Gehälter, nenne eine konkrete Zahl am oberen Ende und begründe sie mit deiner Leistung.|gehaltsverhandlung
+Brutto und Netto|Brutto ist das Gehalt vor Abzügen. Netto ist, was nach Steuern und Sozialabgaben ankommt, bei Ledigen etwa 60 bis 65 Prozent.|brutto netto,nettolohn

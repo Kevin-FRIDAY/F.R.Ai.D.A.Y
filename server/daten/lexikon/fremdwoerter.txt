@@ -597,3 +597,391 @@ Asyl|Zuflucht, Schutz vor Verfolgung|asylbewerber
 Diaspora|Volksgruppe, die außerhalb ihrer Heimat lebt|
 Integration|Eingliederung in eine Gemeinschaft|integrieren
 Toleranzgrenze|Grenze dessen, was man noch hinnimmt|
+Abstrakt|nicht greifbar, nur gedanklich, das Gegenteil von konkret|
+Absurd|völlig unsinnig und widersinnig|
+Abonnement|ein fester Bezug, etwa einer Zeitung oder eines Streamingdienstes, gegen regelmäßige Zahlung|abo
+Adressat|der Empfänger einer Nachricht oder eines Briefes|
+Aggressiv|angriffslustig, feindselig|aggression
+Agenda|die Liste der Punkte, die besprochen oder erledigt werden sollen|tagesordnung
+Akklimatisieren|sich an ein neues Klima oder eine neue Umgebung gewöhnen|
+Aktiv|tätig, handelnd, Gegenteil von passiv|
+Akzeptabel|annehmbar, in Ordnung|
+Algorithmus|eine genaue Schritt-für-Schritt-Anleitung, nach der ein Computer ein Problem löst|algorithmen
+Allianz|ein Bündnis von Staaten oder Partnern|
+Ambitioniert|ehrgeizig, mit hohen Zielen|ambitionen
+Amnestie|ein Straferlass für viele Verurteilte auf einmal|
+Amortisieren|eine Ausgabe hat sich durch Gewinne oder Ersparnisse bezahlt gemacht|amortisation
+Amüsant|unterhaltsam, lustig|
+Analogie|ein Vergleich, der Ähnlichkeiten zwischen zwei Dingen zeigt|
+Animieren|anregen, zu etwas ermuntern|
+Annullieren|für ungültig erklären, etwa einen Flug oder eine Ehe|
+Antizipieren|etwas vorwegnehmen, schon vorher daran denken|
+Apokalypse|Weltuntergang, große Katastrophe|apokalyptisch
+Applaus|Beifall, Klatschen|
+Argument|ein Grund, der eine Behauptung stützt|argumentieren
+Aspekt|ein Gesichtspunkt, eine Seite einer Sache|
+Atmosphäre|die Lufthülle der Erde oder die Stimmung an einem Ort|
+Attraktiv|anziehend, reizvoll|
+Audienz|ein offizieller Empfang bei einer hohen Persönlichkeit, etwa beim Papst|
+Autorität|Ansehen und Macht einer Person oder einer Institution|autoritär
+Avancieren|aufsteigen, befördert werden|
+Balance|das Gleichgewicht|
+Bagatelle|eine Kleinigkeit ohne Bedeutung|bagatellisieren
+Barrierefrei|so gestaltet, dass auch Menschen mit Behinderung es ohne Hilfe nutzen können|barrierefreiheit
+Beta-Version|eine Testversion eines Programms, die noch Fehler haben kann|beta
+Bilanz|eine Gegenüberstellung von Vermögen und Schulden, oder ein Fazit|
+Blasiert|überheblich und gelangweilt tuend|
+Bonus|eine Zusatzzahlung oder ein Extra|
+Brutal|roh, gewalttätig, rücksichtslos|
+Budget|der geplante Geldbetrag für einen Zweck|
+Cholerisch|leicht reizbar, neigt zu Wutausbrüchen|choleriker
+Cineast|ein großer Filmliebhaber|
+Clever|schlau, gewitzt|
+Comedy|lustige Unterhaltung, etwa Stand-up oder Sitcom|
+Courage|Mut, besonders Zivilcourage|
+Dauerhaft|lange Zeit bestehend|
+Debakel|eine schwere Niederlage, ein Zusammenbruch|
+Debatte|eine Streitdiskussion mit Argumenten|debattieren
+Debüt|der erste öffentliche Auftritt|
+Dekoration|Schmuck und Ausstattung eines Raums|deko
+Dekret|ein Erlass, eine Verordnung von oben|
+Delikat|köstlich, aber auch heikel und schwierig|delikatesse
+Demonstration|eine öffentliche Kundgebung, oder das Vorführen von etwas|demo
+Dementi|eine offizielle Gegendarstellung, mit der etwas bestritten wird|dementieren
+Depression|eine ernste psychische Erkrankung mit anhaltender Niedergeschlagenheit und Antriebslosigkeit, behandelbar|depressiv
+Desaster|ein Unglück, ein völliger Fehlschlag|
+Desinteresse|fehlendes Interesse|
+Desolat|trostlos, in sehr schlechtem Zustand|
+Dezent|unauffällig, zurückhaltend|
+Dialog|ein Gespräch zwischen zwei oder mehr Personen|
+Differenz|ein Unterschied, auch eine Meinungsverschiedenheit|
+Digital|in Zahlen, also Nullen und Einsen, gespeichert, Gegenteil von analog|digitalisierung
+Dimension|eine Ausdehnung wie Länge, Breite, Höhe, oder das Ausmaß|
+Diplom|eine Urkunde über einen Abschluss|
+Direkt|unmittelbar, ohne Umweg|
+Dirigent|der Leiter eines Orchesters|
+Diskurs|eine öffentliche Debatte über ein Thema|
+Diskussion|ein Gespräch, in dem Meinungen ausgetauscht werden|diskutieren
+Dispens|eine Befreiung von einer Pflicht|
+Disput|ein Streitgespräch|
+Distanz|Abstand, Entfernung|distanziert
+Dokumentation|eine Sammlung von Unterlagen oder ein Sachfilm|doku
+Drastisch|sehr deutlich und stark|
+Dynamisch|voller Bewegung und Schwung|dynamik
+Edition|eine Ausgabe, etwa eines Buches oder Produkts|
+Effekt|eine Wirkung|
+Ekstase|ein rauschhafter Zustand höchster Begeisterung|
+Elan|Schwung, Begeisterung|
+Elegant|geschmackvoll und anmutig|eleganz
+Elite|die Besten oder die Führungsschicht einer Gruppe|
+Emotion|ein Gefühl|emotional
+Endemisch|nur in einem bestimmten Gebiet vorkommend, etwa Tiere auf einer Insel|
+Energisch|entschlossen, tatkräftig|
+Engagement|Einsatz für eine Sache, oder ein Auftrag für einen Künstler|engagiert
+Enorm|außerordentlich groß|
+Ensemble|eine Gruppe von Künstlern, die zusammen auftreten|
+Episode|eine Folge einer Serie oder ein kurzer Abschnitt|
+Erotik|sinnliche Anziehung|erotisch
+Eskalation|eine Verschärfung, bei der etwas außer Kontrolle gerät|eskalieren
+Etabliert|fest eingeführt und anerkannt|etablieren
+Etappe|ein Abschnitt einer Strecke oder Entwicklung|
+Ethnie|eine Volksgruppe mit gemeinsamer Kultur und Sprache|ethnisch
+Exakt|genau|
+Exemplarisch|beispielhaft|exemplar
+Exil|der Aufenthalt außerhalb der Heimat, meist erzwungen|
+Exotisch|fremdartig, aus fernen Ländern|
+Experiment|ein wissenschaftlicher Versuch|experimentieren
+Explosion|ein plötzliches, heftiges Zerplatzen|
+Export|Ausfuhr von Waren ins Ausland|exportieren
+Extrem|äußerst, bis an die Grenze|
+Fabel|eine kurze Geschichte, in der Tiere sprechen und eine Lehre vermitteln|
+Fabrikat|ein hergestelltes Produkt einer Marke|
+Fanfare|ein Blechblasinstrument oder ein feierliches Signal|
+Fassade|die Vorderseite eines Gebäudes, auch ein falscher äußerer Schein|
+Favorit|der Bevorzugte oder der wahrscheinliche Sieger|favorisieren
+Festival|ein großes Fest mit Musik, Film oder Kultur|
+Fiasko|ein völliger Misserfolg|
+Figur|eine Gestalt, ein Körperbau oder eine Rolle in einer Geschichte|
+Filiale|eine Zweigstelle eines Geschäfts oder einer Bank|
+Finesse|ein Kniff, eine Feinheit|
+Fixieren|festmachen, oder etwas fest anstarren|
+Flair|eine besondere Ausstrahlung|
+Fokus|Brennpunkt, der Schwerpunkt der Aufmerksamkeit|fokussieren
+Formalität|eine Vorschrift, die man einhalten muss|
+Format|die Größe oder Form, auch eine Art Sendung|
+Forum|ein Ort für Diskussionen, auch online|
+Fossile Brennstoffe|Kohle, Öl und Gas, die aus Pflanzen- und Tierresten der Urzeit entstanden sind|
+Fraktion|eine Gruppe von Abgeordneten einer Partei im Parlament|
+Fragment|ein Bruchstück|
+Frequenz|die Häufigkeit, etwa Schwingungen pro Sekunde|
+Frivol|leichtfertig, schlüpfrig|
+Frontal|von vorn|
+Funktion|die Aufgabe oder Wirkungsweise|funktionieren
+Galant|höflich und zuvorkommend, besonders gegenüber Frauen|
+Garantie|eine Zusicherung, dass etwas hält oder funktioniert|
+Generation|alle Menschen, die etwa zur selben Zeit geboren sind|
+Generell|allgemein, grundsätzlich|
+Geste|eine Bewegung mit Händen oder Kopf, die etwas ausdrückt|gestik
+Gigantisch|riesig|
+Glamour|ein glänzender, verführerischer Glanz|
+Gratis|kostenlos|
+Gravierend|schwerwiegend|
+Grazie|Anmut|graziös
+Gremium|ein Ausschuss, eine Gruppe von Fachleuten, die berät|
+Guerilla|kleine Kampfgruppen, die aus dem Hinterhalt angreifen|
+Handicap|eine Benachteiligung oder Behinderung|
+Hektisch|aufgeregt, überstürzt|hektik
+Heroisch|heldenhaft|
+Hobby|eine Freizeitbeschäftigung|
+Horizont|die Linie, wo Himmel und Erde sich scheinbar berühren, auch der Wissensbereich|
+Humor|die Fähigkeit, über Dinge zu lachen|humorvoll
+Hymne|ein feierliches Lied, etwa die Nationalhymne|
+Ikone|ein Heiligenbild, oder eine berühmte Person, die als Vorbild gilt|
+Image|das Bild, das andere von einer Person oder Firma haben|
+Imitieren|nachahmen|
+Immobilie|ein Grundstück oder Gebäude|
+Import|Einfuhr von Waren aus dem Ausland|importieren
+Impuls|ein Anstoß, eine Anregung|
+Indiz|ein Hinweis, ein Anzeichen, vor Gericht kein Beweis|indizien
+Industrie|die maschinelle Herstellung von Waren in Fabriken|
+Infektion|eine Ansteckung mit Krankheitserregern|infiziert
+Inflation|die Geldentwertung, die Preise steigen allgemein|
+Information|eine Auskunft, eine Mitteilung|informieren
+Inkognito|unerkannt, unter fremdem Namen|
+Inkompetent|unfähig, ohne nötiges Wissen|
+Inkonsequent|nicht folgerichtig, wankelmütig|
+Insider|jemand, der von innen Bescheid weiß|
+Inspektion|eine Überprüfung, etwa beim Auto|
+Instabil|nicht stabil, wackelig|
+Institution|eine Einrichtung, etwa eine Behörde oder Schule|
+Instruktion|eine Anweisung|
+Intakt|unbeschädigt, funktionsfähig|
+Intelligenz|die Fähigkeit zu denken, zu verstehen und Probleme zu lösen|intelligent
+Interesse|Aufmerksamkeit und Neugier für etwas|
+International|zwischen mehreren Staaten|
+Interview|ein Gespräch mit Fragen und Antworten, etwa für eine Zeitung|
+Investor|jemand, der Geld in etwas steckt, um Gewinn zu machen|
+Irrational|nicht vernunftgemäß|
+Isoliert|abgesondert, allein|isolation
+Jubiläum|ein Jahrestag, etwa zehn Jahre einer Firma|
+Juristisch|rechtlich|
+Kabinett|die Regierung mit allen Ministern|
+Kalkulation|eine Berechnung, besonders von Kosten|kalkulieren
+Kampagne|eine geplante Aktion, etwa für Werbung oder Wahlen|
+Kandidat|ein Bewerber|
+Kapitulation|die Aufgabe im Kampf|kapitulieren
+Karriere|die berufliche Laufbahn|
+Kategorisch|unbedingt, ausnahmslos|
+Klassifizieren|in Gruppen einteilen|
+Koalition|ein Bündnis mehrerer Parteien zur Regierung|
+Kollege|jemand, der im selben Betrieb oder Beruf arbeitet|
+Kombinieren|zusammenfügen, oder logisch schlussfolgern|kombination
+Komfort|Bequemlichkeit|komfortabel
+Kommentar|eine Anmerkung oder Meinungsäußerung|
+Kommerziell|auf Gewinn ausgerichtet|
+Kommunikation|die Verständigung zwischen Menschen|kommunizieren
+Kompensieren|ausgleichen|kompensation
+Kondition|die körperliche Leistungsfähigkeit, oder eine Bedingung|
+Konferenz|eine größere Besprechung oder Tagung|
+Konflikt|ein Streit, ein Widerspruch|
+Konfus|verwirrt, durcheinander|
+Konsultieren|um Rat fragen, etwa einen Arzt|
+Konsum|der Verbrauch von Waren|konsumieren
+Kontakt|eine Verbindung, Berührung|
+Kontingent|eine zugeteilte Menge|
+Kontrast|ein starker Gegensatz|
+Konzentration|die gesammelte Aufmerksamkeit|konzentrieren
+Korrekt|richtig, fehlerfrei|
+Korrespondenz|der Briefwechsel|
+Kosmos|das Weltall|kosmisch
+Kultiviert|gebildet, mit feinen Umgangsformen|
+Kuriosität|eine Merkwürdigkeit|
+Labyrinth|ein Irrgarten|
+Lamentieren|jammern, klagen|
+Lautmalerei|siehe Onomatopoesie, Wörter, die Geräusche nachahmen wie Kuckuck|
+Legendär|berühmt wie eine Legende|
+Liquidieren|eine Firma auflösen, oder im schlimmen Sinn töten|
+Lizenz|eine Erlaubnis, etwas zu nutzen|
+Logik|die Lehre vom folgerichtigen Denken|logisch
+Luxus|Aufwand, der über das Nötige weit hinausgeht|luxuriös
+Magisch|zauberhaft|magie
+Majestätisch|erhaben, würdevoll|
+Mandat|ein Auftrag, etwa der Sitz eines Abgeordneten im Parlament|
+Manie|eine krankhafte Leidenschaft oder Hochstimmung|
+Marathon|ein Langstreckenlauf über 42,195 Kilometer, auch eine sehr lange Sache|
+Marode|heruntergekommen, kaputt|
+Medium|ein Mittel zur Übertragung, etwa Zeitung, Fernsehen oder Internet|medien
+Meditation|eine Übung zur Entspannung und Konzentration|meditieren
+Minimalismus|ein Leben oder Stil mit möglichst wenig|minimalistisch
+Mission|ein Auftrag|
+Modifizieren|abändern|
+Moment|ein Augenblick|
+Monolog|ein Selbstgespräch|
+Monumental|gewaltig groß|
+Motiv|ein Beweggrund oder ein Bildgegenstand|
+Mutig|tapfer, ohne Angst|
+Nation|ein Volk mit eigenem Staat|national
+Natürlich|von der Natur gegeben, oder selbstverständlich|
+Nervös|unruhig, aufgeregt|
+Niveau|die Stufe, das Qualitätsniveau|
+Nomination|die Ernennung als Kandidat, etwa für einen Preis|nominiert
+Normal|üblich, der Regel entsprechend|
+Notiz|eine kurze Aufzeichnung|
+Nuance|eine feine Abstufung|
+Obskur|unklar, verdächtig|
+Offerte|ein Angebot|
+Offiziell|amtlich, öffentlich bestätigt|
+Ominös|bedenklich, unheilvoll|
+Operation|ein chirurgischer Eingriff, oder ein Unternehmen|
+Opposition|die Parteien im Parlament, die nicht regieren|
+Orchester|eine große Gruppe von Musikern mit verschiedenen Instrumenten|
+Organisation|eine Planung, oder eine Vereinigung|organisieren
+Panik|plötzliche, heftige Angst|
+Parlament|die gewählte Volksvertretung|
+Partner|jemand, der mit einem zusammenarbeitet oder lebt|
+Patent|ein Schutzrecht für eine Erfindung, oder geschickt|
+Patient|eine Person in ärztlicher Behandlung|
+Pause|eine Unterbrechung zum Ausruhen|
+Periode|ein Zeitabschnitt, auch die Monatsblutung|
+Persönlichkeit|die Gesamtheit der Eigenschaften eines Menschen|
+Pietät|Ehrfurcht, Respekt vor Toten|pietätlos
+Pikant|scharf gewürzt, oder heikel|
+Plädoyer|eine Rede vor Gericht oder für eine Sache|
+Planet|ein Himmelskörper, der um einen Stern kreist|
+Plenum|die Vollversammlung, etwa im Bundestag|
+Pointe|der überraschende Schluss eines Witzes|
+Polemik|scharfe, unsachliche Kritik|polemisch
+Portion|eine abgemessene Menge|
+Posieren|sich in Pose werfen|
+Potent|leistungsfähig, mächtig|
+Prachtvoll|herrlich, prunkvoll|
+Präsent|anwesend, oder ein Geschenk|präsenz
+Präsentation|eine Vorstellung, ein Vortrag|präsentieren
+Präsident|der Vorsitzende oder das Staatsoberhaupt|
+Praxis|die Anwendung, oder die Räume eines Arztes|praktisch
+Premium|hochwertig, von bester Qualität|
+Primitiv|einfach, ursprünglich, auch abwertend für unkultiviert|
+Prinzipiell|grundsätzlich|
+Privat|persönlich, nicht öffentlich|
+Probe|ein Versuch, eine Übung, oder eine kleine Menge zum Testen|
+Profil|die Seitenansicht, auch das Benutzerkonto in Netzwerken|
+Profit|der Gewinn|profitieren
+Programm|ein Plan, oder eine Software|
+Promotion|die Erlangung des Doktortitels, oder Werbung|
+Prominent|bekannt, berühmt|prominenz,promi
+Propagieren|für etwas werben|
+Protest|ein Widerspruch, eine Gegenrede|protestieren
+Protokoll|eine schriftliche Aufzeichnung, oder die Regeln für offizielle Anlässe|
+Provinz|ein Landesteil, oder abwertend das Land außerhalb der Großstadt|provinziell
+Prozent|ein Hundertstel|
+Psyche|die Seele, das Gemüt|
+Publikum|die Zuschauer oder Zuhörer|
+Qualifikation|die Befähigung, oder die Ausscheidung im Sport|qualifizieren
+Qualität|die Güte, Beschaffenheit|
+Quantität|die Menge|
+Quote|ein Anteil, etwa die Einschaltquote|
+Rasant|sehr schnell|
+Raffiniert|schlau, ausgeklügelt, auch gereinigt wie Zucker|
+Reaktion|eine Antwort auf etwas, eine Gegenwirkung|reagieren
+Rebell|ein Aufständischer|
+Recherche|eine gründliche Nachforschung|recherchieren
+Referenz|eine Empfehlung oder ein Bezug|
+Reform|eine Neugestaltung, Verbesserung|reformieren
+Regie|die Leitung bei Film oder Theater|regisseur
+Region|ein Gebiet|
+Rekord|eine Höchstleistung|
+Rekrutieren|anwerben|
+Relikt|ein Überbleibsel aus alter Zeit|
+Renommiert|angesehen, bekannt|renommee
+Rentabel|gewinnbringend|
+Reparatur|die Instandsetzung|reparieren
+Reportage|ein lebendiger Bericht von vor Ort|
+Reserve|ein Vorrat, oder Zurückhaltung|reserviert
+Residenz|der Wohnsitz eines Herrschers|
+Resonanz|Widerhall, Echo, oder Reaktion auf etwas|
+Respektabel|achtbar|
+Restaurant|eine Gaststätte|
+Resultat|ein Ergebnis|
+Revolution|ein Umsturz, eine grundlegende Veränderung|
+Rezept|eine Kochanleitung, oder eine Arztverordnung|
+Rivalität|ein Wettstreit|
+Robust|widerstandsfähig, kräftig|
+Romantisch|gefühlvoll, schwärmerisch|
+Rustikal|ländlich, derb|
+Sabotage|absichtliche Beschädigung, um etwas zu verhindern|sabotieren
+Saison|die Hauptzeit, etwa Urlaubs- oder Fußballsaison|
+Sanktion|eine Strafmaßnahme, etwa gegen ein Land|
+Satisfaktion|Genugtuung|
+Schikane|absichtliche Quälerei, oder eine Kurve auf der Rennstrecke|schikanieren
+Seminar|ein Kurs, eine Lehrveranstaltung|
+Sensation|ein aufsehenerregendes Ereignis|
+Sensibel|empfindsam, feinfühlig|sensibilität
+Sentimental|rührselig, übertrieben gefühlvoll|
+Separat|getrennt, gesondert|
+Serie|eine Folge, etwa im Fernsehen|
+Service|der Kundendienst, die Bedienung|
+Signal|ein Zeichen|
+Simpel|einfach|
+Situation|eine Lage|
+Skandal|ein Ereignis, das Empörung auslöst|skandalös
+Skizze|eine schnelle Zeichnung, ein Entwurf|
+Solide|fest, zuverlässig|
+Solo|allein, etwa ein Musikstück für einen Spieler|
+Sozial|die Gemeinschaft betreffend, hilfsbereit|
+Spektakulär|aufsehenerregend|spektakel
+Spezialist|ein Fachmann für ein Gebiet|
+Spezifisch|eigentümlich, besonders|
+Sponsoring|die finanzielle Förderung gegen Werbung|
+Stadium|ein Entwicklungsabschnitt|
+Standard|eine Norm, ein Durchschnittsmaß|
+Statistik|die Auswertung von Zahlen und Daten|
+Status|der Stand, die Stellung|
+Stil|eine Art und Weise, etwas zu gestalten|stilvoll
+Stimulieren|anregen|
+Strapaze|eine große Anstrengung|strapaziös
+Substanz|der Stoff, das Wesentliche|
+Symmetrie|die Spiegelgleichheit|symmetrisch
+Symptomatisch|bezeichnend, typisch|
+Szenario|ein möglicher Ablauf in der Zukunft|
+Szene|ein Abschnitt in Film oder Theater, oder ein Milieu|
+Talentiert|begabt|
+Technologie|die Gesamtheit der technischen Verfahren|
+Telepathie|Gedankenübertragung ohne Worte, wissenschaftlich nicht belegt|
+Tempo|die Geschwindigkeit|
+Terrain|das Gelände|
+Terror|Schreckensherrschaft, Gewalt, um Angst zu verbreiten|terrorismus
+Testament|der letzte Wille|
+Theorie|eine Lehrmeinung, ein Erklärungsmodell|
+Thermik|aufsteigende warme Luft, die Vögel und Segelflieger nutzen|
+Titel|eine Überschrift, oder eine Bezeichnung wie Doktor|
+Total|vollständig|
+Tourist|ein Reisender, der Orte besichtigt|tourismus
+Toxin|ein Giftstoff|
+Tragisch|unglücklich, erschütternd|tragödie
+Training|das Üben, um besser zu werden|
+Transport|die Beförderung|
+Trauma|eine seelische oder körperliche Verletzung|traumatisch
+Trend|eine Entwicklungsrichtung, eine Mode|
+Tribüne|ein Zuschauerbereich mit Sitzreihen|
+Triumph|ein großer Sieg|
+Turbo|ein Lader, der Motoren mehr Leistung gibt, auch: sehr schnell|
+Typisch|kennzeichnend|
+Universität|eine Hochschule|
+Usus|Brauch, Sitte|
+Vakuum|ein luftleerer Raum|
+Variante|eine Abwandlung|
+Ventil|eine Vorrichtung zum Öffnen und Schließen eines Durchlasses|
+Version|eine Fassung, Ausführung|
+Veto|ein Einspruch, der etwas verhindert|
+Vibration|eine Schwingung|
+Virus|ein winziger Krankheitserreger, oder ein Schadprogramm|viren
+Visite|der Krankenbesuch des Arztes in der Klinik|
+Visuell|das Sehen betreffend|
+Volumen|der Rauminhalt|
+Votum|eine Stimme, ein Urteil|
+Zelebrieren|feierlich begehen|
+Zentral|in der Mitte, hauptsächlich|
+Zeremoniell|feierlich nach festen Regeln|
+Zitat|eine wörtlich übernommene Stelle|zitieren
+Zivil|bürgerlich, nicht militärisch|
+Zone|ein Gebiet, ein Bereich|
