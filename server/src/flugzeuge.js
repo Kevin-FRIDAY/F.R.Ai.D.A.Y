@@ -5,7 +5,7 @@
 //     Dazwischen rechnet das Dashboard die Flugzeuge mit Tempo + Kurs weiter (wirkt live).
 //   adsb.lol – genaue Live-Daten im Umkreis (250 sm), wenn man nah heranzoomt oder ein Flugzeug antippt.
 //   adsbdb.com – Steckbrief: Typ, Hersteller, Kennzeichen, Halter, Foto, Strecke (von/nach), Airline.
-// Ab v1.171.0 noch mehr adsb.lol (frei, ohne Schlüssel, Daten unter ODbL-Lizenz):
+// Ab v1.173.0 noch mehr adsb.lol (frei, ohne Schlüssel, Daten unter ODbL-Lizenz):
 //   - Live-Schicht alle 60 Sek.: Militärflüge weltweit (/v2/mil) + alle Notfall-Codes 7700/7600/7500 (/v2/sqk)
 //   - Ersatz-Weltkarte, wenn OpenSky ausfällt oder das Tageskontingent leer ist: ~45 Regionen à 250 sm (/v2/point)
 //   - Flugsuche live über Rufzeichen (/v2/callsign), Strecke (von → nach) über /api/0/routeset als Ersatz für adsbdb

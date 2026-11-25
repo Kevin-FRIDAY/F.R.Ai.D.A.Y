@@ -187,6 +187,17 @@ export const BRANCHEN = {
     faq: [["Wie lange dauert ein Projekt?", "Eine Landingpage oft 2 Wochen, größere Projekte 6–12 Wochen."], ["Arbeitet ihr remote?", "Ja, und gern auch vor Ort beim Kickoff."], ["Was kostet die Betreuung?", "Je nach Umfang, transparent als Monatspaket."]],
     bilder: { hero: "modern office technology", about: "team meeting startup", galerie: ["laptop design workspace", "creative team brainstorming", "city skyline night"] }, zeiten: [["Mo–Fr", "9–18 Uhr"], ["Termine", "auch online"], ["Support", "[Angabe eintragen]"]], preis: 1490,
   },
+  // v1.172.0: Eigene Seite ("bau eine Webseite von uns und stell uns vor") – keine Preise, kein Verkauf.
+  persoenlich: {
+    name: "Persönlich (wir selbst)", re: /$^/, stil: "neon", beispiel: "Das sind wir", icons: ["herz", "stern", "funke", "uhr"], ohnePreise: true,
+    kicker: "Hallo, schön dass du da bist", h1: "Das sind wir. Schön, dich kennenzulernen.", sub: "Hier erzählen wir, wer wir sind, was uns antreibt und woran wir gerade arbeiten. Ganz persönlich, ohne Werbung.",
+    cta: "Schreib uns", stats: [["1", "", "Zuhause"], ["100", " %", "wir selbst"], ["24", " h", "für Ideen offen"]],
+    leistungen: [["Wer wir sind", "[Kurz beschreiben: Wer gehört dazu, was macht euch aus?]", ""], ["Was uns antreibt", "[Was ist euch wichtig, was liebt ihr?]", ""], ["Unsere Projekte", "Woran wir gerade bauen, zum Beispiel unser KI-Assistent F.R.Ai.D.A.Y.", ""], ["Unsere Freizeit", "[Hobbys, Reisen, Lieblingsorte eintragen]", ""]],
+    pakete: [],
+    ablauf: [["Der Anfang", "[Wie alles begann]"], ["Heute", "[Wo ihr gerade steht]"], ["Als Nächstes", "[Was ihr euch vornehmt]"]],
+    faq: [["Wie erreiche ich euch?", "Am einfachsten über das Formular unten."], ["Woran arbeitet ihr gerade?", "[Aktuelles Projekt eintragen]"], ["Wo seid ihr zu Hause?", "[Ort eintragen, nur wenn ihr das zeigen wollt]"]],
+    bilder: { hero: "happy couple sunset", about: "family together home", galerie: ["travel adventure mountains", "cozy home living room", "technology workspace night"] }, zeiten: [["Antwort", "meist innerhalb von 1–2 Tagen"], ["Am besten", "per Mail"], ["Treffen", "nach Absprache"]], preis: null,
+  },
   allgemein: {
     name: "Unternehmen", re: /$^/, stil: "hell", beispiel: "Musterfirma", icons: ["stern", "schild", "uhr", "herz"],
     kicker: "Willkommen", h1: "Qualität, auf die du dich verlassen kannst.", sub: "Persönlicher Service, faire Preise und ein Team, das sich kümmert. Erfahre, was wir für dich tun können.",
@@ -206,6 +217,18 @@ export function erkenneBranche(text) {
   const t = String(text || "").toLowerCase();
   for (const [id, b] of Object.entries(BRANCHEN)) if (id !== "allgemein" && b.re.test(t)) return id;
   return "allgemein";
+}
+
+/** v1.172.0: Ist das eine Seite für den Nutzer selbst ("von uns", "stell uns vor") statt für einen Kunden? Dann kein Angebot und kein Preis. */
+export function istEigeneSeite(text) {
+  const t = String(text || "").toLowerCase().replace(/ü/g, "ue");
+  if (/\b(ohne|kein(?:en|e)?)\s+(?:verkaufs-?)?(?:preis|angebot)|nicht\s+(?:zum\s+)?verkauf(?:en)?\b|nicht\s+fuer\s+(?:einen\s+)?kunden|fuer\s+(?:uns|mich)\s+selbst|privat\w*\s+(?:web)?seite/.test(t)) return true;
+  if (/\bstell\w*\s+(?:uns|mich|(?:meine|unsere)\s+\w+)\s+(?:\w+\s+){0,3}vor\b|\b(?:uns|mich)\s+vorzustellen|\b(?:uns|mich)\s+vorstell/.test(t)) return true;
+  if (/\bkund(?:e|in|en)\b/.test(t)) return false;
+  if (/\b(?:web)?seite\s+(?:von|ueber)\s+(?:uns|mir|mich)\b(?!\s*-|\s*(?:bereich|abschnitt|teil|seite))/.test(t)) return true;
+  if (/\b(?:website|homepage|webseite|internetseite)\s+(?:von|ueber|fuer)\s+(?:uns|mir|mich)\b(?!\s*-|\s*(?:bereich|abschnitt|teil))/.test(t)) return true;
+  if (/\b(?:unsere|meine)\s+(?:eigene\s+|private\s+|persoenliche\s+)?(?:web)?(?:seite|site|homepage|internetseite)\b/.test(t)) return true;
+  return false;
 }
 
 const STIL_WOERTER = [
@@ -345,18 +368,21 @@ const f=d.querySelector(".formular");f&&f.addEventListener("submit",e=>{e.preven
 d.querySelectorAll("[data-jahr]").forEach(el=>el.textContent=new Date().getFullYear())})();`;
 
 /** Baut die komplette Seite. Bilder kommen als <img data-bild="…"> und werden danach von webbilder.js gefüllt. */
-export function bauVorlage({ auftrag = "", stil, branche, name, ort } = {}) {
-  const bId = BRANCHEN[branche] ? branche : erkenneBranche(auftrag);
+export function bauVorlage({ auftrag = "", stil, branche, name, ort, eigen } = {}) {
+  // Eigene Seite ohne erkannte Branche → persönliche Vorstellung; mit Branche (eigener Betrieb) bleibt der Inhalt, nur ohne Angebot.
+  let bId = BRANCHEN[branche] ? branche : erkenneBranche(auftrag);
+  if (eigen && bId === "allgemein") bId = "persoenlich";
   const b = BRANCHEN[bId];
   const sId = STILE[stil] ? stil : erkenneStil(auftrag, bId);
   const s = STILE[sId];
+  const privat = Boolean(b.ohnePreise);
   const firma = (name || erkenneName(auftrag) || b.beispiel).slice(0, 40);
   const stadt = (ort || erkenneOrt(auftrag)).slice(0, 40);
   const F = esc(firma), O = esc(stadt);
   const initial = esc(firma.replace(/^(salon|studio|praxis|kanzlei|haus|café|cafe|garage|meisterbetrieb)\s+/i, "").charAt(0).toUpperCase() || "F");
   const ic = (i) => b.icons[i % b.icons.length];
   const fonts = [...new Set([s.kopf, s.fliess])].map((f) => `family=${f.replace(/ /g, "+")}:wght@400;500;600;700${f === "Archivo" ? ";800;900" : ""}`).join("&");
-  const titel = `${firma}${stadt ? ` – ${b.name} in ${stadt}` : ` – ${b.name}`}`;
+  const titel = privat ? `${firma}${firma === b.beispiel ? "" : " – Das sind wir"}${stadt ? ` · ${stadt}` : ""}` : `${firma}${stadt ? ` – ${b.name} in ${stadt}` : ` – ${b.name}`}`;
   const beschreibung = `${b.sub.split(".")[0]}. ${firma}${stadt ? ` in ${stadt}` : ""}.`;
   const bild = (q, alt, cls = "") => `<img data-bild="${esc(q)}" data-icon="${ic(0)}" alt="${esc(alt)}"${cls ? ` class="${cls}"` : ""}>`;
   const reihe = (arr) => arr.map((x, i) => x.replace("{i}", String(i)));
@@ -380,14 +406,14 @@ export function bauVorlage({ auftrag = "", stil, branche, name, ort } = {}) {
 <style>
 ${css(s)}
 </style>
-<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@type": "LocalBusiness", name: firma, description: beschreibung, address: stadt ? { "@type": "PostalAddress", addressLocality: stadt } : undefined }).replace(/</g, "\\u003c")}</script>
+<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@type": privat ? "WebSite" : "LocalBusiness", name: firma, description: beschreibung, address: stadt ? { "@type": "PostalAddress", addressLocality: stadt } : undefined }).replace(/</g, "\\u003c")}</script>
 </head>
 <body data-stil="${sId}" data-branche="${bId}">
 <div class="fortschritt" aria-hidden="true"></div>
 <header class="nav" id="top">
   <div class="wrap">
     <a class="logo" href="#start"><i>${initial}</i>${F}</a>
-    <nav class="links" aria-label="Hauptmenü"><a href="#leistungen">Leistungen</a><a href="#ueber-uns">Über uns</a><a href="#preise">Preise</a><a href="#faq">Fragen</a><a href="#kontakt">Kontakt</a></nav>
+    <nav class="links" aria-label="Hauptmenü">${privat ? `<a href="#leistungen">Wir</a><a href="#ueber-uns">Über uns</a><a href="#ablauf">Geschichte</a><a href="#galerie">Einblicke</a><a href="#kontakt">Kontakt</a>` : `<a href="#leistungen">Leistungen</a><a href="#ueber-uns">Über uns</a><a href="#preise">Preise</a><a href="#faq">Fragen</a><a href="#kontakt">Kontakt</a>`}</nav>
     <a class="knopf" href="#kontakt">${esc(b.cta)}</a>
     <button class="burger" type="button" aria-label="Menü öffnen" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
@@ -401,13 +427,13 @@ ${css(s)}
       <span class="kicker rv">${esc(b.kicker)}${stadt ? ` · ${O}` : ""}</span>
       <h1 class="rv" style="--i:1">${esc(b.h1).replace(/\s(\S+)\.?$/, (m, w) => ` <span class="verlauf">${w}</span>`)}</h1>
       <p class="sub rv" style="--i:2">${esc(b.sub)}</p>
-      <div class="aktionen rv" style="--i:3"><a class="knopf" href="#kontakt">${esc(b.cta)} ${svg("pfeil")}</a><a class="knopf leer" href="#leistungen">Leistungen ansehen</a></div>
+      <div class="aktionen rv" style="--i:3"><a class="knopf" href="#kontakt">${esc(b.cta)} ${svg("pfeil")}</a><a class="knopf leer" href="#leistungen">${privat ? "Mehr über uns" : "Leistungen ansehen"}</a></div>
       <div class="vertrauen rv" style="--i:4">${b.stats.map((x) => `<span>${svg("check")}${esc(x[2])}</span>`).slice(0, 3).join("")}</div>
     </div>
     <div class="hero-bild rv" style="--i:2">
       ${bild(b.bilder.hero, `${b.name} ${firma}`)}
       <div class="schwebe s1">${svg(ic(0))}<div><b>${esc(b.stats[0][0] + b.stats[0][1])}</b>${esc(b.stats[0][2])}</div></div>
-      <div class="schwebe s2">${svg(ic(1))}<div><b>${esc(b.leistungen[0][0])}</b>${esc(b.leistungen[0][2])}</div></div>
+      <div class="schwebe s2">${svg(ic(1))}<div><b>${esc(b.leistungen[0][0])}</b>${esc(privat ? "persönlich" : b.leistungen[0][2])}</div></div>
     </div>
   </div>
 </section>
@@ -418,11 +444,11 @@ ${css(s)}
   ${b.stats.map((x, i) => `<div class="zahl rv" style="--i:${i}"><b><span data-zahl="${Number(x[0]) || 0}">${esc(x[0])}</span>${esc(x[1])}</b><span>${esc(x[2])}</span></div>`).join("\n  ")}
 </div>
 
-<section id="leistungen" aria-label="Leistungen">
+<section id="leistungen" aria-label="${privat ? "Das sind wir" : "Leistungen"}">
   <div class="wrap">
-    <div class="kopf rv"><span class="marke">Leistungen</span><h2>Was wir für dich tun</h2><p>Alles aus einer Hand, klar erklärt und mit fairen Preisen.</p></div>
+    <div class="kopf rv">${privat ? `<span class="marke">Das sind wir</span><h2>Was uns ausmacht</h2><p>Ein kleiner Einblick in unser Leben, unsere Ideen und unsere Projekte.</p>` : `<span class="marke">Leistungen</span><h2>Was wir für dich tun</h2><p>Alles aus einer Hand, klar erklärt und mit fairen Preisen.</p>`}</div>
     <div class="karten">
-      ${b.leistungen.map((l, i) => `<article class="karte rv" style="--i:${i}"><div class="sym">${svg(ic(i))}</div><h3>${esc(l[0])}</h3><p>${esc(l[1])}</p><span class="preis">${esc(l[2])}</span></article>`).join("\n      ")}
+      ${b.leistungen.map((l, i) => `<article class="karte rv" style="--i:${i}"><div class="sym">${svg(ic(i))}</div><h3>${esc(l[0])}</h3><p>${esc(l[1])}</p>${l[2] ? `<span class="preis">${esc(l[2])}</span>` : ""}</article>`).join("\n      ")}
     </div>
   </div>
 </section>
@@ -433,15 +459,16 @@ ${css(s)}
     <div class="rv" style="--i:1">
       <span class="marke">Über uns</span>
       <h2>${F}${stadt ? ` – mitten in ${O}` : ""}</h2>
-      <p class="muted" style="margin-top:18px;font-size:18px">[Kurz erzählen: Wer steckt dahinter, seit wann gibt es euch, was ist euch wichtig?] Wir nehmen uns Zeit, hören zu und machen nur, was wirklich zu dir passt.</p>
-      <ul class="haken">${b.stats.map((x) => `<li>${svg("check")}<span><b>${esc(x[0] + x[1])}</b> ${esc(x[2])}</span></li>`).join("")}<li>${svg("check")}<span>Persönliche Ansprechperson von Anfang bis Ende</span></li></ul>
+      ${privat ? `<p class="muted" style="margin-top:18px;font-size:18px">[Erzählt hier eure Geschichte: Wer seid ihr, wie habt ihr euch gefunden, was liebt ihr?] Wir sind neugierig, bauen gern Neues und freuen uns über jeden, der vorbeischaut.</p>
+      <ul class="haken"><li>${svg("check")}<span>Echte Menschen, keine Werbung</span></li><li>${svg("check")}<span>Neugierig auf Technik und neue Ideen</span></li><li>${svg("check")}<span>[Was euch noch wichtig ist]</span></li></ul>` : `<p class="muted" style="margin-top:18px;font-size:18px">[Kurz erzählen: Wer steckt dahinter, seit wann gibt es euch, was ist euch wichtig?] Wir nehmen uns Zeit, hören zu und machen nur, was wirklich zu dir passt.</p>
+      <ul class="haken">${b.stats.map((x) => `<li>${svg("check")}<span><b>${esc(x[0] + x[1])}</b> ${esc(x[2])}</span></li>`).join("")}<li>${svg("check")}<span>Persönliche Ansprechperson von Anfang bis Ende</span></li></ul>`}
     </div>
   </div>
 </section>
 
 <section id="ablauf" aria-label="Ablauf">
   <div class="wrap">
-    <div class="kopf rv"><span class="marke">So einfach geht's</span><h2>In ${b.ablauf.length} Schritten zum Ziel</h2></div>
+    <div class="kopf rv">${privat ? `<span class="marke">Unsere Geschichte</span><h2>Wie alles kam</h2>` : `<span class="marke">So einfach geht's</span><h2>In ${b.ablauf.length} Schritten zum Ziel</h2>`}</div>
     <div class="schritte" style="--n:${b.ablauf.length}">
       ${b.ablauf.map((a, i) => `<div class="schritt rv" style="--i:${i}"><h3>${esc(a[0])}</h3><p>${esc(a[1])}</p></div>`).join("\n      ")}
     </div>
@@ -450,14 +477,14 @@ ${css(s)}
 
 <section id="galerie" aria-label="Einblicke" style="padding-top:0">
   <div class="wrap">
-    <div class="kopf rv"><span class="marke">Einblicke</span><h2>Ein Blick hinter die Kulissen</h2></div>
+    <div class="kopf rv"><span class="marke">Einblicke</span><h2>${privat ? "Momente, die uns wichtig sind" : "Ein Blick hinter die Kulissen"}</h2></div>
     <div class="galerie">
       ${reihe([b.bilder.hero, ...b.bilder.galerie].map((q, i) => `<figure class="rv" style="--i:{i}">${bild(i === 0 ? `${q} detail` : q, `${b.name}: Eindruck ${i + 1}`)}<figcaption>${esc([b.leistungen[0][0], b.leistungen[1][0], b.leistungen[2][0], b.leistungen[3][0]][i] || b.name)}</figcaption></figure>`)).join("\n      ")}
     </div>
   </div>
 </section>
 
-<section id="preise" aria-label="Preise" style="background:var(--bg2)">
+${privat ? "" : `<section id="preise" aria-label="Preise" style="background:var(--bg2)">
   <div class="wrap">
     <div class="kopf rv"><span class="marke">Preise</span><h2>Klare Pakete. Keine Überraschungen.</h2><p>Alle Preise sind Richtwerte. Du bekommst vorher immer ein verbindliches Angebot.</p></div>
     <div class="pakete">
@@ -476,14 +503,14 @@ ${css(s)}
   </div>
 </section>
 
-<section id="faq" aria-label="Häufige Fragen" style="padding-top:0">
+`}<section id="faq" aria-label="Häufige Fragen" style="padding-top:0">
   <div class="wrap faq">
     <div class="kopf rv"><span class="marke">Fragen</span><h2>Häufige Fragen</h2></div>
     ${b.faq.map((f, i) => `<details class="rv" style="--i:${i}"${i === 0 ? " open" : ""}><summary>${esc(f[0])}</summary><p>${esc(f[1])}</p></details>`).join("\n    ")}
   </div>
 </section>
 
-<div class="wrap"><div class="band rv"><h2>Bereit für den nächsten Schritt?</h2><p>Schreib uns kurz, was du brauchst. Wir melden uns innerhalb von 24 Stunden mit einem klaren Vorschlag.</p><a class="knopf" href="#kontakt">${esc(b.cta)} ${svg("pfeil")}</a></div></div>
+<div class="wrap"><div class="band rv">${privat ? `<h2>Lust, Hallo zu sagen?</h2><p>Wir freuen uns über jede Nachricht, ob Idee, Frage oder einfach ein Gruß.</p>` : `<h2>Bereit für den nächsten Schritt?</h2><p>Schreib uns kurz, was du brauchst. Wir melden uns innerhalb von 24 Stunden mit einem klaren Vorschlag.</p>`}<a class="knopf" href="#kontakt">${esc(b.cta)} ${svg("pfeil")}</a></div></div>
 
 <section id="kontakt" aria-label="Kontakt">
   <div class="wrap">
@@ -492,15 +519,15 @@ ${css(s)}
       <form class="formular rv" data-mail="[email@firma.de]">
         <div class="zwei"><label>Name<input name="name" autocomplete="name" required></label><label>Telefon<input name="tel" type="tel" autocomplete="tel"></label></div>
         <label>E-Mail<input name="email" type="email" autocomplete="email" required></label>
-        <label>Deine Nachricht<textarea name="nachricht" rows="5" placeholder="Worum geht es? Wunschtermin?"></textarea></label>
+        <label>Deine Nachricht<textarea name="nachricht" rows="5" placeholder="${privat ? "Was möchtest du uns sagen?" : "Worum geht es? Wunschtermin?"}"></textarea></label>
         <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px"><input type="checkbox" required style="width:auto;margin-top:3px"> Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage genutzt werden (siehe Datenschutz).</label>
         <button class="knopf" type="submit">Nachricht senden ${svg("pfeil")}</button>
       </form>
       <div class="info rv" style="--i:1">
         <div class="info-k"><div class="sym">${svg("tel")}</div><div><b>Telefon</b><a href="tel:[Telefonnummer]">[Telefonnummer]</a></div></div>
         <div class="info-k"><div class="sym">${svg("mail")}</div><div><b>E-Mail</b><a href="mailto:[email@firma.de]">[email@firma.de]</a></div></div>
-        <div class="info-k"><div class="sym">${svg("uhr")}</div><div style="flex:1"><b>Öffnungszeiten</b><table class="zeiten">${b.zeiten.map((z) => `<tr><td>${esc(z[0])}</td><td>${esc(z[1])}</td></tr>`).join("")}</table></div></div>
-        <a class="karte-ort" href="https://www.openstreetmap.org/search?query=${encodeURIComponent(`${firma} ${stadt}`.trim())}" target="_blank" rel="noopener">${svg("ort")}&nbsp; [Straße, PLZ ${O || "Ort"}] · Karte öffnen</a>
+        <div class="info-k"><div class="sym">${svg("uhr")}</div><div style="flex:1"><b>${privat ? "Erreichbar" : "Öffnungszeiten"}</b><table class="zeiten">${b.zeiten.map((z) => `<tr><td>${esc(z[0])}</td><td>${esc(z[1])}</td></tr>`).join("")}</table></div></div>
+        ${privat ? "" : `<a class="karte-ort" href="https://www.openstreetmap.org/search?query=${encodeURIComponent(`${firma} ${stadt}`.trim())}" target="_blank" rel="noopener">${svg("ort")}&nbsp; [Straße, PLZ ${O || "Ort"}] · Karte öffnen</a>`}
       </div>
     </div>
   </div>
@@ -511,7 +538,7 @@ ${css(s)}
   <div class="wrap">
     <div class="fuss">
       <div><a class="logo" href="#start"><i>${initial}</i>${F}</a><p style="margin-top:14px;max-width:340px">${esc(b.sub.split(".")[0])}.</p></div>
-      <div><h4>Seiten</h4><a href="#leistungen">Leistungen</a><a href="#preise">Preise</a><a href="#faq">Fragen</a><a href="#kontakt">Kontakt</a></div>
+      <div><h4>Seiten</h4>${privat ? `<a href="#leistungen">Wir</a><a href="#ablauf">Geschichte</a><a href="#galerie">Einblicke</a><a href="#kontakt">Kontakt</a>` : `<a href="#leistungen">Leistungen</a><a href="#preise">Preise</a><a href="#faq">Fragen</a><a href="#kontakt">Kontakt</a>`}</div>
       <div><h4>Rechtliches</h4><a href="#impressum">Impressum [Platzhalter]</a><a href="#datenschutz">Datenschutz [Platzhalter]</a></div>
     </div>
     <div class="unten"><span>© <span data-jahr></span> ${F}. Alle Rechte vorbehalten.</span><span class="fb-credits" data-bildnachweis></span></div>
@@ -524,6 +551,7 @@ ${JS}
 </body>
 </html>
 `;
+  if (eigen || privat) return { titel, html, angebot: "", preis_eur: null, eigen: true, stil: sId, branche: bId, name: firma, ort: stadt };
   const preis = b.preis;
   const angebot = `Hallo${firma !== b.beispiel ? ` ${firma}` : ""}, ich habe euch eine moderne Webseite entworfen: ${s.name}-Design, perfekt fürs Handy, mit Animationen, ${b.leistungen.length} Leistungen, Preis-Paketen, Ablauf, Galerie, häufigen Fragen und einem Kontaktformular. Texte und Preise sind Vorschläge – ich passe sie mit euren echten Angaben, Fotos und Bewertungen an. Impressum und Datenschutz ergänze ich mit euren Daten. Im Preis enthalten sind zwei Korrekturrunden und die Einrichtung bei eurem Anbieter. Sollen wir kurz telefonieren?`;
   return { titel, html, angebot, preis_eur: preis, stil: sId, branche: bId, name: firma, ort: stadt };

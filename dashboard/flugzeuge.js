@@ -1,7 +1,7 @@
 // F.R.Ai.D.A.Y Weltgeschehen: ALLE Flugzeuge, die öffentlich ihre Position senden (ADS-B).
 // Weltweit über OpenSky (alle paar Minuten), dazwischen rechnet Friday jedes Flugzeug mit Tempo + Kurs weiter.
 // Nah herangezoomt kommen genaue Live-Daten aus adsb.lol dazu.
-// v1.171.0: adsb.lol-Live-Schicht (Militär & Staat + Notfall-Codes weltweit, jede Minute), Notfall-Hinweis oben,
+// v1.173.0: adsb.lol-Live-Schicht (Militär & Staat + Notfall-Codes weltweit, jede Minute), Notfall-Hinweis oben,
 // Ersatz-Weltkarte aus adsb.lol, wenn OpenSky streikt. Antippen -> Steckbrief
 // (Airline, Strecke von → nach, Typ, Kennzeichen, Halter, Foto, Höhe, Tempo, Steigen/Sinken, Squawk).
 (() => {

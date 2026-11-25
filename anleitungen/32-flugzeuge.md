@@ -5,7 +5,7 @@ Kein Schlüssel nötig.
 
 ## So geht's
 - Weltgeschehen → **Ebenen** → **Flugzeuge** an. Weit weg: farbige Punkte. Nah dran: kleine Flugzeuge in Flugrichtung.
-- Farben: gelb = Linien- & Frachtflüge, hellblau = Privat & Geschäftsflieger, lila = Hubschrauber, grau = am Boden, rot = Notfall-Code, grün = Militär & Staat (neu ab 1.171.0).
+- Farben: gelb = Linien- & Frachtflüge, hellblau = Privat & Geschäftsflieger, lila = Hubschrauber, grau = am Boden, rot = Notfall-Code, grün = Militär & Staat (neu ab 1.173.0).
 - **✈ Filter & Suche**: Arten an/aus, Suche nach Flugnummer (LH400 oder DLH400), Kennung oder Land.
 - **Flugzeug antippen** → Steckbrief: Airline, Strecke von → nach (gestrichelt auf dem Globus), Höhe (Meter + Fuß),
   Tempo, Kurs, Steigen/Sinken, Squawk, Wind und Temperatur draußen, Typ (z. B. Boeing 747-8), Kennzeichen, Halter und Foto.
@@ -15,8 +15,8 @@ Kein Schlüssel nötig.
 - „Friday, zeig mir alle Flugzeuge“ · „Friday, wie viele Flugzeuge sind in der Luft?“
 - „Friday, zeig mir den Flug LH 400“
 - „Friday, zeig mir die Hubschrauber“ · „Friday, zeig mir Flugzeuge mit Notfall“
-- Neu ab 1.171.0: „Friday, was fliegt über mir?“ (nächstes Flugzeug über deinem Wohnort aus den Einstellungen)
-- Neu ab 1.171.0: „Friday, zeig mir Militärflugzeuge“ · „Friday, gibt es gerade einen Luftnotfall?“
+- Neu ab 1.173.0: „Friday, was fliegt über mir?“ (nächstes Flugzeug über deinem Wohnort aus den Einstellungen)
+- Neu ab 1.173.0: „Friday, zeig mir Militärflugzeuge“ · „Friday, gibt es gerade einen Luftnotfall?“
 
 ## Wie aktuell ist das?
 - Die Weltkarte kommt vom OpenSky Network. Ohne Konto darf Friday dort nur etwa alle **15 Minuten** abrufen.
@@ -35,7 +35,7 @@ Kein Schlüssel nötig.
 - Militär- und manche Regierungsflüge senden oft nicht oder werden ausgeblendet – die sind nicht öffentlich.
 - Strecke und Foto stammen aus der freien Datenbank adsbdb.com und fehlen bei manchen Flügen.
 
-## Neu ab Version 1.171.0: mehr adsb.lol
+## Neu ab Version 1.173.0: mehr adsb.lol
 adsb.lol ist ein freies Netz von Hobby-Antennen (ohne Schlüssel, Daten unter der offenen ODbL-Lizenz). Friday nutzt es jetzt viel mehr:
 - **Militär & Staat (grün):** jede Minute alle Militär- und Regierungsflugzeuge weltweit, die öffentlich senden.
 - **Notfälle live:** jede Minute alle Flugzeuge mit Squawk 7700 (Notfall), 7600 (Funkausfall) oder 7500 (Entführung).
