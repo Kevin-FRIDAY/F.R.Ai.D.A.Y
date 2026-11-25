@@ -96,6 +96,7 @@ import { vorausRouten, vorausStart } from "./vorausschau.js";
 import { kontextRouten, kontextStart } from "./kontext.js";
 import { selbstlernenRouten, selbstlernenStart } from "./selbstlernen.js";
 import { entscheidenRouten, entscheidenStart } from "./entscheiden.js";
+import { unternehmenRouten, unternehmenStart } from "./unternehmen.js";
 import { funktionstestStart } from "./funktionstest.js";
 
 const missing = checkConfig();
@@ -832,6 +833,7 @@ vorausRouten(app, asyncRoute);
 kontextRouten(app, asyncRoute);
 selbstlernenRouten(app, asyncRoute);
 entscheidenRouten(app, asyncRoute);
+unternehmenRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
@@ -860,6 +862,7 @@ vorausStart().catch(() => {});
 kontextStart().catch(() => {});
 selbstlernenStart().catch(() => {});
 entscheidenStart().catch(() => {});
+unternehmenStart().catch(() => {});
 grossauftragStart();
 if (!IST_EVE) kontenStart(); // Meine Konten: alle 6 Std. frische Kontostände (nur lesen)
 zentraleStart(ask);

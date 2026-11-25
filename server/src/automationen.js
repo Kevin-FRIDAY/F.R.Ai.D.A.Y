@@ -83,6 +83,16 @@ export function beschreibe(r) {
 async function ausfuehren(r, grund = "") {
   if (laufend.has(r.id)) return { error: "Läuft schon." };
   if (notfallAktiv()) return { error: "Notfallmodus ist an." };
+  // Schattenmodus (v1.185.0): Selbst Ausgelöstes nur aufschreiben, nicht ausführen. "Von Hand gestartet" läuft normal.
+  if (grund !== "Von Hand gestartet") {
+    const S = await import("./schatten.js");
+    if (S.an()) {
+      S.notiere("Automation", `„${r.name}“ ausführen (${beschreibe(r)})`, grund);
+      const l = alle(); const r2 = l.find((y) => y.id === r.id);
+      if (r2) { r2.zuletzt = new Date().toISOString(); r2.ergebnis = "Schattenmodus: nur aufgeschrieben, nicht ausgeführt."; speichern(l); }
+      return { ok: true, ergebnis: "Schattenmodus: nur aufgeschrieben." };
+    }
+  }
   laufend.add(r.id);
   let ergebnis = "", ok = true;
   try {
