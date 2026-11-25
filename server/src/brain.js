@@ -58,6 +58,8 @@ import { quickCommand as datenQuick } from "./oeffentlich.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
+// Sprachverständnis (v1.166.0): mehrere Befehle in einem Satz, Folgefragen, Rückfragen, Korrekturen, Rückgängig.
+import * as verstehen from "./verstehen.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -107,6 +109,9 @@ Aufträge:
 - Spiele baust du nie als Dokument und schreibst ihren Code nie in die Antwort: benutze spiel_bauen. Das Dashboard zeigt dann live, wie du programmierst, und startet das Spiel.
 - Soll ein neues Video entstehen ("mach mir ein 20-Sekunden-Video über …"), benutze video_erstellen. Vorhandene Clips mit Untertiteln schneiden ist video_schnitt.
 - Wenn etwas wirklich nicht geht, sag ehrlich und kurz, warum.
+- Mehrere Aufträge in einem Satz ("mach X und dann Y"): erledige alle in dieser Reihenfolge und bestätige jeden kurz. Keinen weglassen.
+- Folgefragen wie "und morgen?", "und in Hamburg?" oder "nein, ich meinte …" beziehen sich auf die letzte Frage im Verlauf. Bei einer Korrektur nimm das Falsche zurück, wenn das geht, und mach es richtig.
+- Ist ein Auftrag wirklich mehrdeutig und ein Fehler wäre ärgerlich (falsche Person, Löschen, Geld, etwas Verschicken), frag genau einmal kurz nach. Sonst nimm die wahrscheinlichste Deutung, erledige es und sag in einem Halbsatz, wie du es verstanden hast.
 
 Gedächtnis und Lernen:
 - Erklärt dir Boss, wie er etwas Mehrstufiges haben will, oder hat ein Weg aus mehreren Schritten gut geklappt, speichere ihn mit ablauf_speichern. Steht unten ein passender Ablauf, halte dich daran und sag danach mit ablauf_bewerten, ob er geklappt hat.
@@ -165,12 +170,13 @@ function isoAgentText() {
 // Jede Frage und Antwort kommt in Fridays Datenbank (Fenster "Wissen"), egal über welchen Weg.
 export async function ask(opts) {
   const start = Date.now();
+  if (opts?.text && opts.mode !== "translate") opts = { ...opts, text: verstehen.bereinigen(opts.text) };
   // Weckruf (v1.161.0): "… und ruf mich an, wenn du fertig bist" – Auftrag ausführen, danach klingeln.
   const fw = opts?.mode !== "translate" && opts?.text ? fertigWunsch(opts.text) : { rufen: false };
   if (fw.rufen) opts = { ...opts, text: fw.text };
   let res;
   try {
-    res = await askIntern(opts);
+    res = await askVerstanden(opts);
   } catch (err) {
     logbuchBefehl(opts, { answer: `Fehler: ${err.message}`, actions: [], fehler: true }, Date.now() - start);
     throw err;
@@ -212,8 +218,67 @@ function logbuchBefehl(opts, res, dauer) {
   });
 }
 
-async function askIntern({ text, channel = "web", image, mode = "normal", targetLang, keepHistory = true, standort }) {
-  const history = keepHistory ? store.getHistory(channel) : [];
+// Sprachverständnis vor dem eigentlichen Gehirn: Gesprächsbefehle, Folgefragen/Rückfragen/Korrekturen
+// und mehrere Befehle in einem Satz. Alles andere geht unverändert an askIntern.
+async function askVerstanden(opts) {
+  const kanal = opts.channel || "web";
+  const text = String(opts.text || "");
+  if (opts.mode === "translate" || opts.image || !text || opts.keepHistory === false) return askIntern(opts);
+  const vorher = verstehen.schnappschuss();
+  const fertig = (res, frage = text) => {
+    verstehen.merke(kanal, { frage, antwort: res.answer, actions: res.actions, claude: res.claude, angelegt: verstehen.neuSeit(vorher) });
+    return res;
+  };
+
+  // 1. "Was hast du gesagt?", "mach das rückgängig", "merk dir das", "worüber haben wir geredet?"
+  const g = verstehen.gespraechsBefehl(text, kanal);
+  if (g) return { answer: g.answer, actions: g.actions };
+
+  // 2. Folgefrage, Antwort auf Rückfrage oder Korrektur → ganzer Satz, aber nur, wenn ein Schnellbefehl ihn versteht.
+  const u = verstehen.umschreiben(text, kanal);
+  if (u) {
+    const alt = verstehen.letzter(kanal)?.angelegt;
+    const r = await askIntern({ ...opts, text: u.text, nurSchnell: true });
+    if (r) {
+      if (u.art === "korrektur" && alt) {
+        const weg = verstehen.zuruecknehmenAlt(alt);
+        if (weg) r.answer = `Korrigiert. ${r.answer}`;
+      }
+      r.actions = [...r.actions, `verstehen:${u.art}`];
+      return fertig(r, u.text);
+    }
+  }
+
+  // 3. Mehrere Befehle in einem Satz: jeden Teil einzeln, Unbekanntes gesammelt an Claude.
+  const teile = verstehen.zerlegen(text);
+  if (teile) {
+    const antworten = [];
+    const actions = [];
+    const offen = [];
+    for (const teil of teile) {
+      const r = await askIntern({ ...opts, text: teil, keepHistory: false, nurSchnell: true });
+      if (r) { antworten.push(r.answer); actions.push(...r.actions); } else { offen.push(teil); antworten.push(null); }
+    }
+    if (offen.length < teile.length) {
+      let extra = {};
+      if (offen.length) {
+        const r = await askIntern({ ...opts, text: offen.join(" und "), keepHistory: false, verlaufLesen: true });
+        antworten[antworten.indexOf(null)] = r.answer;
+        actions.push(...r.actions);
+        extra = { ...(r.claude ? { claude: true } : {}), ...(r.fehler ? { fehler: true } : {}), ...(r.erledigt ? { erledigt: r.erledigt } : {}) };
+      }
+      const answer = verstehen.verbinde(antworten);
+      store.saveHistory(kanal, [...store.getHistory(kanal), { role: "user", content: text }, { role: "assistant", content: answer }]);
+      return fertig({ answer, actions: [...actions, "verstehen:mehrfach"], ...extra }, teile.at(-1));
+    }
+  }
+
+  // 4. Normal – Satzstücke ("und morgen?") nicht im Lexikon raten, die versteht Claude mit dem Verlauf.
+  return fertig(await askIntern({ ...opts, satzstueck: verstehen.istSatzstueck(text) }));
+}
+
+async function askIntern({ text, channel = "web", image, mode = "normal", targetLang, keepHistory = true, standort, nurSchnell = false, verlaufLesen = false, satzstueck = false }) {
+  const history = keepHistory || verlaufLesen ? store.getHistory(channel) : [];
 
   const userContent = [];
   if (image) userContent.push({ type: "image", source: { type: "base64", media_type: image.mediaType, data: image.data } });
@@ -569,7 +634,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
 
   // Fridays Lexikon (v1.156.0): rund 1.600 Wissens-Einträge ohne Claude und ohne Internet
   // ("Was ist ein ETF?", "Wer war Marie Curie?", "Hauptstadt von Bayern", "Was passierte 1989?").
-  if (mode !== "translate" && !image && text) {
+  if (mode !== "translate" && !image && text && !satzstueck) {
     try {
       const lx = lexikonQuick(text);
       if (lx) { actions.push(...lx.actions); return finish(lx.answer); }
@@ -577,6 +642,9 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       console.error("Lexikon:", err.message);
     }
   }
+
+  // Nur Schnellbefehle gewünscht (Sprachverständnis probiert einen Satz aus): hier aufhören, nichts ist passiert.
+  if (nurSchnell) return null;
 
   // Kosten-Deckel (v1.135.0): Grenze pro Stunde/Tag erreicht → nur Offline-Befehle, kein Claude.
   const deckel = deckelSperre();
@@ -714,8 +782,8 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       } catch (err) {
         console.error("Offline-Gehirn (Notfall):", err.message);
       }
-      // Claude nicht erreichbar: im Lexikon auch ungefähre Treffer suchen.
-      try {
+      // Claude nicht erreichbar: im Lexikon auch ungefähre Treffer suchen (nicht bei Satzstücken wie "und morgen?").
+      if (!satzstueck) try {
         const lx = lexikonQuick(text, { locker: true });
         if (lx) { actions.push(...lx.actions); return finish(lx.answer); }
       } catch (err) {
