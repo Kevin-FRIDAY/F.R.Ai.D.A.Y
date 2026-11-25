@@ -83,6 +83,9 @@ import { eveWeiterleitung, eveStarten } from "./eve-prozess.js";
 import { eveSchutzAn } from "./eve-schutz.js";
 import * as produkt from "./produkt.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
+import { ereignisRouten } from "./ereignisbus.js";
+import { cockpitRouten } from "./cockpit.js";
+import { funktionstestStart } from "./funktionstest.js";
 
 const missing = checkConfig();
 if (missing.length) {
@@ -801,6 +804,10 @@ grossauftragRouten(app);
 // OpenJarvis-Paket (v1.134.0): Freigabe-Glocke, Dauer-Wächter, Dokumenten-Wissen, Apple-Apps, Whisper.
 jarvisRouten(app, asyncRoute);
 
+// Mark XII (v1.178.0): Ereignis-Bus (Live-Strom) und Gehirn-Cockpit (KI-Schwarm, Labor, Tests, Warnungen, System, Freigaben).
+ereignisRouten(app);
+cockpitRouten(app, asyncRoute);
+
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
 
@@ -817,6 +824,7 @@ wunschStart();
 wacheStart();
 marktWacheStart(); // Markt-Radar Plus: läuft in Eve, in Friday erst nach Freigabe
 kernStart();
+funktionstestStart().catch((err) => console.error("Funktionsprüfung:", err.message));
 grossauftragStart();
 if (!IST_EVE) kontenStart(); // Meine Konten: alle 6 Std. frische Kontostände (nur lesen)
 zentraleStart(ask);

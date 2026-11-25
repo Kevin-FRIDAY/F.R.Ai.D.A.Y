@@ -6,6 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DATA_DIR, config } from "./config.js";
+import { sende as busSenden } from "./ereignisbus.js";
 
 const DIR = path.join(DATA_DIR, "logbuch");
 const STAND = path.join(DATA_DIR, "logbuch-stand.json");
@@ -144,6 +145,8 @@ export function eintragen(e = {}) {
     fs.mkdirSync(DIR, { recursive: true });
     fs.appendFileSync(path.join(DIR, `${tag.slice(0, 7)}.jsonl`), JSON.stringify(eintrag) + "\n");
     cache.delete(tag.slice(0, 7));
+    // v1.178.0 Ereignis-Bus: jeder Logbuch-Eintrag ist auch ein Ereignis für alle Module (Cockpit, Warnungen …).
+    busSenden(eintrag.ok ? "logbuch" : "fehler", eintrag, { quelle: eintrag.bereich, wichtig: !eintrag.ok });
     return eintrag;
   } catch {
     return null;

@@ -1,5 +1,5 @@
 // Fridays Gehirn: redet mit Claude und benutzt die Werkzeuge.
-import { kiClient } from "./ki-client.js";
+import { kiClient, kostenlosBereit } from "./ki-client.js";
 import { config } from "./config.js";
 import { toolDefinitions, runTool } from "./tools.js";
 import * as store from "./store.js";
@@ -60,6 +60,7 @@ import { quickCommand as werkzeugQuick } from "./werkzeugkasten.js";
 import { quickCommand as agentEinsatzQuick } from "./agenten-einsatz.js";
 import { agentLosschicken } from "./agents.js";
 import { quickCommand as datenQuick } from "./oeffentlich.js";
+import { quickCommand as cockpitQuick } from "./cockpit.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
@@ -459,6 +460,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
+  // Gehirn-Cockpit (v1.178.0, Mark XII): "öffne das Cockpit", "welche KIs sind aktiv?", "frag den Schwarm: …",
+  // "zeig mir die Warnungen", "starte die Funktionsprüfung" – ohne Claude (die Schwarm-Frage fragt die KIs selbst).
+  if (mode !== "translate" && !image && text) {
+    try {
+      const ck = await cockpitQuick(text);
+      if (ck) { actions.push(...ck.actions); if (ck.claude) claudeGefragt = true; return finish(ck.answer); }
+    } catch (err) {
+      console.error("Gehirn-Cockpit:", err.message);
+    }
+  }
+
   // Kontrollraum (v1.135.0): "öffne den Kontrollraum", "zeig mir deine Seele", "was hast du heute ausgegeben?" – ohne Claude.
   if (mode !== "translate" && !image && text) {
     try {
@@ -738,7 +750,8 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   if (nurSchnell) return null;
 
   // Kosten-Deckel (v1.135.0): Grenze pro Stunde/Tag erreicht → nur Offline-Befehle, kein Claude.
-  const deckel = deckelSperre();
+  // v1.178.0: Ist ein kostenloses Gehirn (Ollama) eingerichtet, denkt Friday damit weiter statt nur offline.
+  const deckel = kostenlosBereit() ? null : deckelSperre();
   if (deckel) {
     const v = tabellenVorlage();
     if (v) return finish(`${v} Claude ist gerade wegen des Kosten-Deckels aus, darum ist es eine Vorlage zum Ausfüllen.`);
