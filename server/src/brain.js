@@ -77,6 +77,7 @@ import { quickCommand as entscheidenQuick } from "./entscheiden.js";
 import { quickCommand as firmaQuick } from "./unternehmen.js";
 import { quickCommand as laborQuick } from "./entwicklung.js";
 import { quickCommand as forschungQuick } from "./forschung.js";
+import { quickCommand as zwillingQuick } from "./zwilling.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
@@ -484,7 +485,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // "neues Projekt Garage", "wie hängt Garage mit Auto zusammen?", "zeig mir das Wissensnetz" – ohne Claude.
   if (mode !== "translate" && !image && text && !gastModus) {
     try {
-      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text) || await leitungQuick(text) || await weltIntelQuick(text) || await lebenQuick(text) || await umgebungQuick(text) || await hausIntelQuick(text) || await sicherheitQuick(text) || await arztQuick(text) || await vorausQuick(text) || await selbstlernenQuick(text) || await kontextQuick(text) || await entscheidenQuick(text) || await firmaQuick(text) || await laborQuick(text) || await forschungQuick(text);
+      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text) || await leitungQuick(text) || await weltIntelQuick(text) || await lebenQuick(text) || await umgebungQuick(text) || await hausIntelQuick(text) || await sicherheitQuick(text) || await arztQuick(text) || await vorausQuick(text) || await selbstlernenQuick(text) || await kontextQuick(text) || await entscheidenQuick(text) || await firmaQuick(text) || await laborQuick(text) || await forschungQuick(text) || await zwillingQuick(text);
       if (gq) { actions.push(...gq.actions); return finish(gq.answer); }
     } catch (err) {
       console.error("Gedächtnis-Ebenen:", err.message);

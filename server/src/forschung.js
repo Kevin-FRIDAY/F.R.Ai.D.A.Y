@@ -325,14 +325,14 @@ export async function quickCommand(text) {
   if (/^(öffne|oeffne|zeig|zeige)( mir)? (die |das |den )?(forschung|forschungs-?zentrale|forschungs-?radar|technik-?radar|technologie-?radar|forschungs-?datenbank)$/.test(k)) return { answer: "Hier ist die Forschungs-Zentrale.", actions: ["cockpit:forschung"] };
   if ((m = t.match(/^(?:such|suche|finde?|zeig)\w*(?: mir)? (?:studien|forschung|paper|fachartikel) (?:zu|über|ueber|zum|zur|für) (.{2,100})$/i)) || (m = t.match(/^was sagt die (?:forschung|wissenschaft) (?:zu|über|ueber|zum|zur) (.{2,100})$/i))) {
     const r = await studienSuchen(m[1]);
-    if (r.error) return { answer: r.error };
+    if (r.error) return { answer: r.error, actions: [] };
     if (!r.treffer.length) return { answer: r.quellen.every((q) => !q.ok) ? "Die Studien-Quellen sind gerade nicht erreichbar." : `Zu „${r.begriff}“ habe ich keine Studien gefunden. ${r.hinweis}`.trim(), actions: ["cockpit:forschung"] };
     return { answer: `${r.treffer.length} Studien zu „${r.begriff}“. Die neuesten: ${r.treffer.slice(0, 3).map((x) => `${x.titel} (${x.quelle}, ${String(x.datum).slice(0, 4)})`).join(" · ")}. ${r.hinweis}`.trim(), actions: ["cockpit:forschung"] };
   }
   if (/^(was gibt('?s| es) neues in (der )?(technik|forschung|wissenschaft)|(technik|technologie|forschungs|wirtschafts)-?radar|welche (technik-?)?trends gibt es|trends)$/.test(k)) return { answer: satzRadar(), actions: ["cockpit:forschung"] };
   if ((m = t.match(/^(?:technologie-?vergleich|vergleiche? die technologien?) (.{3,200})$/i))) {
     const r = await vergleichen(m[1]);
-    return r.error ? { answer: r.error } : { answer: r.fazit.join(" "), actions: ["cockpit:forschung"] };
+    return r.error ? { answer: r.error, actions: [] } : { answer: r.fazit.join(" "), actions: ["cockpit:forschung"] };
   }
   if (/^(krisen-?)?früh-?warnung|^gibt es (gerade )?(eine )?krise|^wie (ist|steht) die krisenlage/.test(k)) {
     const r = await fruehwarnung();
