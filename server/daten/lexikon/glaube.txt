@@ -117,3 +117,23 @@ Christkind|In Süddeutschland und Österreich bringt das Christkind die Geschenk
 Osterhase|Der Osterhase bringt die Ostereier, er ist seit dem 17. Jahrhundert belegt.|
 Heilige Drei Könige|Die Heiligen Drei Könige Caspar, Melchior und Balthasar brachten dem Jesuskind Gold, Weihrauch und Myrrhe, Feiertag am 6. Januar.|drei koenige
 Sternsinger|Sternsinger schreiben C+M+B an die Tür, das bedeutet Christus segne dieses Haus.|
+Bibel|Die Bibel ist die heilige Schrift der Christen, aus dem Alten und dem Neuen Testament. Sie ist das meistübersetzte Buch der Welt.|
+Jesus Gleichnisse|Bekannte Gleichnisse Jesu sind der barmherzige Samariter, der verlorene Sohn und das Senfkorn.|barmherziger samariter,verlorener sohn
+Apostel|Die zwölf Apostel waren die engsten Jünger Jesu, darunter Petrus, Johannes und Judas.|jünger jesu
+Maria|Maria ist die Mutter Jesu und wird besonders in der katholischen und orthodoxen Kirche verehrt.|mutter gottes
+Engel|Engel sind in Judentum, Christentum und Islam Boten Gottes, etwa Gabriel und Michael.|erzengel
+Teufel|Der Teufel oder Satan ist im Christentum der Widersacher Gottes.|satan
+Paradies|Das Paradies ist der Garten Eden aus der Schöpfungsgeschichte, im Glauben auch der Ort nach dem Tod.|garten eden
+Sintflut|Die Sintflut ist eine große Flut, von der viele Kulturen erzählen, etwa die Bibel mit Noah und das Gilgamesch-Epos.|
+Turmbau zu Babel|Nach der Bibel wollten Menschen einen Turm bis zum Himmel bauen, Gott verwirrte ihre Sprachen.|babel
+David und Goliath|Der junge David besiegte den Riesen Goliath mit einer Steinschleuder. Heute steht es für Klein gegen Groß.|
+Mose|Mose führte nach der Bibel die Israeliten aus Ägypten und empfing am Berg Sinai die Zehn Gebote.|moses
+Abraham|Abraham gilt als Stammvater von Judentum, Christentum und Islam, darum heißen sie abrahamitische Religionen.|abrahamitische religionen
+Ramadan Fasten|Im Ramadan fasten Muslime von Sonnenaufgang bis Sonnenuntergang, abends wird das Fasten mit dem Iftar gebrochen.|iftar
+Mekka Pilgerfahrt|Die Pilgerfahrt Hadsch nach Mekka sollte jeder Muslim einmal im Leben machen, wenn er kann.|hadsch
+Sunniten und Schiiten|Die zwei großen Richtungen im Islam trennten sich im Streit um die Nachfolge Mohammeds. Etwa 85 Prozent der Muslime sind Sunniten.|schiiten,sunniten
+Buddha Lehre|Buddha lehrte die vier edlen Wahrheiten über das Leiden und den achtfachen Pfad zu seiner Überwindung.|achtfacher pfad
+Ganesha|Ganesha ist der hinduistische Gott mit dem Elefantenkopf, er beseitigt Hindernisse.|
+Shiva|Shiva ist einer der Hauptgötter im Hinduismus, der Zerstörer und Erneuerer.|
+Ganges|Der Ganges ist für Hindus ein heiliger Fluss, Baden darin soll von Sünden reinigen.|heiliger fluss
+Kloster|In Klöstern leben Mönche oder Nonnen in Gemeinschaft nach festen Regeln wie Beten und Arbeiten.|mönch,nonne

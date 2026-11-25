@@ -141,7 +141,6 @@
 1503|Mona Lisa|Ab 1503 malt Leonardo da Vinci die Mona Lisa.|mona lisa gemalt
 1508|Sixtinische Kapelle|1508 bis 1512 malt Michelangelo die Decke der Sixtinischen Kapelle.|sixtinische kapelle
 1521|Fall von Tenochtitlan|1521 erobert Hernán Cortés die Aztekenhauptstadt Tenochtitlan.|azteken
-1522|Erste Weltumsegelung|1522 kehrt Magellans Expedition nach der ersten Weltumsegelung zurück, Magellan selbst starb unterwegs.|weltumsegelung
 1525|Deutscher Bauernkrieg|1524 und 1525 erheben sich Bauern in Süd- und Mitteldeutschland gegen ihre Herren.|bauernkrieg
 1532|Eroberung des Inkareichs|Ab 1532 erobert Francisco Pizarro das Reich der Inka.|inka
 1555|Augsburger Religionsfrieden|1555 dürfen die Landesherren im Reich zwischen katholisch und lutherisch wählen.|religionsfrieden
@@ -229,3 +228,42 @@
 2021|Sturm auf das Kapitol|Am 6. Januar 2021 stürmen Anhänger von Donald Trump das US-Kapitol.|kapitol
 2025|Friedrich Merz Kanzler|Im Mai 2025 wird Friedrich Merz Bundeskanzler.|merz kanzler
 2025|Neuer Papst|Im Mai 2025 wird Robert Prevost als Leo XIV. erster Papst aus den USA.|papst leo
+-2560|Cheops-Pyramide|Die Große Pyramide von Gizeh wurde um 2560 vor Christus für Pharao Cheops gebaut. Sie war fast 4.000 Jahre lang das höchste Bauwerk der Welt.|pyramide gebaut,cheops
+-1750|Codex Hammurapi|König Hammurapi von Babylon ließ eine der ältesten Gesetzessammlungen der Welt in Stein meißeln, mit dem Grundsatz Auge um Auge.|hammurapi,auge um auge
+-1332|Tutanchamun wird Pharao|Der Kindkönig Tutanchamun bestieg mit etwa neun Jahren den Thron. Sein fast unberührtes Grab wurde 1922 entdeckt.|
+79|Ausbruch des Vesuv|Der Vesuv verschüttete die Städte Pompeji und Herculaneum unter Asche, die bis heute fast unversehrt erhalten sind.|pompeji,vesuv
+476|Ende des Weströmischen Reichs|Der letzte weströmische Kaiser Romulus Augustulus wurde abgesetzt, das gilt als Beginn des Mittelalters.|untergang roms
+1453|Fall von Konstantinopel|Die Osmanen eroberten Konstantinopel, das heutige Istanbul. Das Byzantinische Reich endete.|konstantinopel,byzanz
+1494|Vertrag von Tordesillas|Spanien und Portugal teilten die Neue Welt unter sich auf, darum spricht man in Brasilien Portugiesisch.|
+1543|Kopernikus' Weltbild|Nikolaus Kopernikus veröffentlichte, dass sich die Erde um die Sonne dreht, nicht umgekehrt.|heliozentrisch
+1564|Geburt Shakespeares|William Shakespeare wurde in Stratford-upon-Avon geboren.|
+1572|Bartholomäusnacht|In Paris wurden Tausende Protestanten, die Hugenotten, ermordet.|hugenotten
+1609|Keplers Gesetze|Johannes Kepler veröffentlichte, dass Planeten auf Ellipsen um die Sonne kreisen.|
+1712|Geburt Friedrichs des Großen|Friedrich II. von Preußen, später der Alte Fritz genannt, wurde in Berlin geboren.|
+1770|Geburt Beethovens|Ludwig van Beethoven wurde in Bonn geboren.|
+1787|US-Verfassung|Die Verfassung der Vereinigten Staaten wurde unterzeichnet, sie ist die älteste noch gültige geschriebene Staatsverfassung.|amerikanische verfassung
+1830|Erste Personeneisenbahn|Zwischen Liverpool und Manchester fuhr die erste Eisenbahn für Passagiere nach Fahrplan.|
+1840|Erste Briefmarke|Großbritannien gab die One Penny Black heraus, die erste Briefmarke der Welt.|penny black
+1844|Weberaufstand|Die schlesischen Weber erhoben sich gegen Hunger und Ausbeutung.|weberaufstand
+1861|Beginn des US-Bürgerkriegs|Die Südstaaten traten aus der Union aus, der Krieg drehte sich vor allem um die Sklaverei.|amerikanischer bürgerkrieg
+1867|Kauf Alaskas|Die USA kauften Alaska für 7,2 Millionen Dollar von Russland.|alaska gekauft
+1886|Freiheitsstatue|Die Freiheitsstatue, ein Geschenk Frankreichs, wurde in New York eingeweiht.|
+1896|Erste moderne Olympische Spiele|In Athen fanden die ersten Olympischen Spiele der Neuzeit statt, angeregt von Pierre de Coubertin.|olympia 1896
+1906|Erdbeben von San Francisco|Ein schweres Erdbeben und Brände zerstörten große Teile von San Francisco.|
+1922|Grab des Tutanchamun entdeckt|Howard Carter fand im Tal der Könige das fast unberührte Grab des Pharaos.|
+1924|Erste Olympische Winterspiele|In Chamonix in Frankreich fanden die ersten Winterspiele statt.|
+1930|Erste Fußball-WM|Die erste Fußball-Weltmeisterschaft fand in Uruguay statt, Uruguay gewann.|wm 1930
+1956|Ungarischer Volksaufstand|Die Ungarn erhoben sich gegen die sowjetische Herrschaft, der Aufstand wurde von Panzern niedergeschlagen.|
+1958|Gründung der EWG|Die Europäische Wirtschaftsgemeinschaft trat in Kraft, ein Vorläufer der EU.|römische verträge
+1966|Kulturrevolution|Mao Zedong startete in China die Kulturrevolution, Millionen Menschen wurden verfolgt.|
+1970|Kniefall von Warschau|Bundeskanzler Willy Brandt kniete am Denkmal für den Aufstand im Warschauer Ghetto, eine Geste der Versöhnung.|brandt kniefall
+1972|Olympia-Attentat München|Palästinensische Terroristen nahmen bei den Spielen israelische Sportler als Geiseln, elf starben.|münchen 1972
+1974|Deutschland Weltmeister|Deutschland wurde im eigenen Land zum zweiten Mal Fußball-Weltmeister.|wm 1974
+1991|Zerfall der Sowjetunion|Die Sowjetunion löste sich in 15 Staaten auf, Gorbatschow trat zurück.|ende udssr
+1997|Hongkong an China|Großbritannien gab Hongkong nach 156 Jahren an China zurück.|
+2002|Euro-Bargeld|Am 1. Januar wurde in Deutschland und elf weiteren Ländern das Euro-Bargeld eingeführt, die D-Mark verschwand.|euro bargeld,einführung euro
+2005|Merkel wird Kanzlerin|Angela Merkel wurde die erste Bundeskanzlerin Deutschlands und blieb 16 Jahre im Amt.|
+2009|Barack Obama Präsident|Barack Obama wurde der erste schwarze Präsident der USA.|
+2014|Deutschland Weltmeister in Brasilien|Deutschland gewann zum vierten Mal die WM, im Halbfinale 7:1 gegen Brasilien, im Finale 1:0 gegen Argentinien durch Götze.|wm 2014,7 zu 1
+2022|ChatGPT erscheint|OpenAI veröffentlichte ChatGPT, das KI-Chatprogramme schlagartig bekannt machte.|
+2023|Atomausstieg Deutschland|Am 15. April wurden die letzten drei deutschen Kernkraftwerke abgeschaltet.|akw abgeschaltet

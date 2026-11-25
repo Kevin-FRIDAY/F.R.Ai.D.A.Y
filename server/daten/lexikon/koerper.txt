@@ -197,3 +197,40 @@ Baby Entwicklung|Babys lächeln bewusst mit etwa 6 Wochen, sitzen mit etwa 6 bis
 Lebenserwartung|Die Lebenserwartung in Deutschland liegt bei etwa 79 Jahren für Männer und 83 Jahren für Frauen.|wie alt werden menschen
 Ältester Mensch|Die Französin Jeanne Calment wurde 122 Jahre alt, das ist der bestätigte Rekord.|aeltester mensch der welt
 Größter Mensch|Der größte Mensch war Robert Wadlow mit 2,72 Metern.|groesster mensch der welt
+Lymphe|Die Lymphe ist eine Flüssigkeit, die Abfallstoffe und Krankheitserreger abtransportiert. Lymphknoten schwellen an, wenn sie Erreger bekämpfen.|lymphknoten
+Blinddarm|Der Wurmfortsatz am Blinddarm ist kleiner als ein Finger. Er hilft vermutlich der Darmflora, man kann aber ohne ihn leben.|wurmfortsatz
+Darmflora|Im Darm leben etwa 100 Billionen Bakterien, das Mikrobiom. Ballaststoffe und vielseitiges Essen halten es gesund.|mikrobiom
+Kehlkopf|Im Kehlkopf liegen die Stimmbänder, die durch Schwingung die Stimme erzeugen.|stimmbänder
+Polypen|Polypen sind vergrößerte Rachenmandeln bei Kindern, die die Nasenatmung behindern können.|
+Zahnfleischbluten|Zahnfleischbluten deutet oft auf eine Entzündung hin. Gründlich putzen, Zahnseide und Zahnarzt helfen.|parodontose
+Gehör|Der Mensch hört etwa Töne zwischen 20 und 20.000 Hertz. Im Alter nehmen die hohen Töne ab.|hören frequenz
+Lärm|Lärm über 85 Dezibel schadet auf Dauer dem Gehör, ein Konzert hat oft über 100.|dezibel gehör
+Pupille|Die Pupille wird im Dunkeln groß und im Hellen klein, damit die richtige Menge Licht ins Auge fällt.|
+Blinder Fleck|Jedes Auge hat einen blinden Fleck, wo der Sehnerv austritt. Das Gehirn füllt die Lücke aus.|
+Tränen|Tränen halten das Auge feucht und spülen Fremdkörper heraus. Gefühlstränen enthalten andere Stoffe als Zwiebeltränen.|weinen
+Haarausfall|Täglich 50 bis 100 Haare zu verlieren ist normal. Erblicher Haarausfall bei Männern hängt mit Hormonen zusammen.|glatze
+Pickel|Pickel entstehen, wenn Talgdrüsen verstopfen und sich entzünden. Nicht ausdrücken, sonst gibt es Narben.|akne
+Muttermal|Muttermale sollte man regelmäßig beobachten. Ab 35 Jahren zahlt die Kasse alle zwei Jahre das Hautkrebs-Screening.|leberfleck
+Narbe|Narben entstehen, wenn verletzte Haut durch Bindegewebe ersetzt wird.|
+Blaue Flecken|Ein blauer Fleck ist ein Bluterguss unter der Haut. Er wird erst blau, dann grün und gelb, wenn der Körper das Blut abbaut.|bluterguss,hämatom
+Blasen|Blasen am Fuß nicht aufstechen, sondern mit Blasenpflaster schützen.|blase am fuß
+Hühnerauge|Ein Hühnerauge ist eine verhornte Druckstelle am Fuß, meist durch enge Schuhe.|
+Fußpilz|Fußpilz juckt zwischen den Zehen. Füße gut abtrocknen und Mittel aus der Apotheke helfen.|
+Kalte Füße|Kalte Füße entstehen, weil der Körper bei Kälte die Durchblutung der Hände und Füße drosselt, um die Organe warm zu halten.|
+Herzfrequenz Sport|Als grobe Formel gilt: maximale Herzfrequenz etwa 220 minus Alter. Ausdauertraining liegt bei 60 bis 70 Prozent davon.|maximalpuls,trainingspuls
+Kalorien verbrennen|Eine Stunde Joggen verbrennt etwa 600 bis 800 Kilokalorien, eine Stunde Spazierengehen etwa 250.|
+Muskelaufbau|Muskeln wachsen durch Training mit Pausen und ausreichend Eiweiß, etwa 1,2 bis 2 Gramm pro Kilo Körpergewicht.|muskeln aufbauen
+Dehnen|Dehnen hält beweglich. Am besten nach dem Sport, wenn die Muskeln warm sind.|stretching
+Sitzen|Langes Sitzen schadet dem Rücken und Kreislauf. Jede halbe Stunde kurz aufstehen hilft.|
+Haltung|Gute Haltung am Schreibtisch: Bildschirm auf Augenhöhe, Füße flach auf dem Boden, Unterarme aufgelegt.|ergonomie
+Augen entspannen|Die 20-20-20-Regel: Alle 20 Minuten 20 Sekunden lang auf etwas in etwa 6 Metern Entfernung schauen.|20 20 20 regel
+Mittagsschlaf|Ein Mittagsschlaf von 10 bis 20 Minuten erfrischt, länger macht oft eher müde.|powernap
+Jetlag|Jetlag entsteht, wenn die innere Uhr nicht zur Ortszeit passt. Tageslicht am Morgen hilft beim Umstellen.|
+Kater|Ein Kater nach Alkohol kommt durch Flüssigkeitsmangel und Abbaustoffe. Wasser, Salz und Schlaf helfen am meisten.|kater alkohol
+Promille Abbau|Der Körper baut etwa 0,1 bis 0,15 Promille Alkohol pro Stunde ab, Kaffee oder kalte Duschen beschleunigen das nicht.|alkohol abbauen
+Rauchen aufhören|Schon 20 Minuten nach der letzten Zigarette sinkt der Puls, nach einem Jahr ist das Herzinfarktrisiko etwa halbiert.|nichtraucher werden
+Vorsorgeuntersuchung|Ab 35 Jahren zahlt die Krankenkasse alle drei Jahre einen Check-up beim Hausarzt.|check up
+Impfungen Erwachsene|Erwachsene sollten Tetanus und Diphtherie alle zehn Jahre auffrischen, ab 60 kommen etwa Grippe und Pneumokokken dazu.|tetanus auffrischen
+Antibiotika|Antibiotika helfen nur gegen Bakterien, nicht gegen Viren wie bei Erkältung. Immer so lange nehmen, wie der Arzt sagt.|
+Ibuprofen und Paracetamol|Ibuprofen hilft gegen Schmerzen und Entzündung, Paracetamol gegen Schmerzen und Fieber. Beide nicht dauerhaft ohne Arzt und nicht über der Höchstdosis.|schmerzmittel
+Long Covid|Bei Long Covid halten Beschwerden wie Erschöpfung und Atemnot nach einer Corona-Infektion länger als vier Wochen an.|post covid

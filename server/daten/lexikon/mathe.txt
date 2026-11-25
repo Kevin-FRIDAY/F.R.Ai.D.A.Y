@@ -88,3 +88,43 @@ Fermats letzter Satz|Fermats letzter Satz wurde über 350 Jahre lang nicht bewie
 Millennium-Probleme|Für die sieben Millennium-Probleme der Mathematik ist je eine Million Dollar ausgesetzt, gelöst ist bisher nur eines.|
 Kopfrechnen Tipp|Mal 5 rechnet man als mal 10 geteilt durch 2, mal 9 als mal 10 minus die Zahl.|kopfrechnen
 Schätzen|Beim Überschlagen rundet man die Zahlen, um schnell ein ungefähres Ergebnis zu prüfen.|ueberschlagen
+Kilometer in Meilen|Ein Kilometer sind etwa 0,62 Meilen. Faustregel: Kilometer mal 6 durch 10.|km in meilen
+Meilen in Kilometer|Eine Meile sind 1,609 Kilometer. Faustregel: Meilen mal 1,6.|meilen in km
+Celsius in Fahrenheit|Fahrenheit ist Celsius mal 1,8 plus 32. 20 Grad Celsius sind 68 Grad Fahrenheit.|grad fahrenheit umrechnen
+Fahrenheit in Celsius|Celsius ist Fahrenheit minus 32, geteilt durch 1,8. 100 Grad Fahrenheit sind etwa 38 Grad Celsius.|fahrenheit umrechnen
+Kelvin|Kelvin ist die Temperatur ab dem absoluten Nullpunkt. 0 Grad Celsius sind 273,15 Kelvin.|absoluter nullpunkt
+Liter und Kubikmeter|Ein Kubikmeter sind 1.000 Liter, ein Liter ist ein Kubikdezimeter.|
+Hektar|Ein Hektar sind 10.000 Quadratmeter, etwa ein bis eineinhalb Fußballfelder.|ha
+Ar|Ein Ar sind 100 Quadratmeter.|
+Quadratkilometer|Ein Quadratkilometer sind 100 Hektar oder eine Million Quadratmeter.|km2
+Tonne|Eine Tonne sind 1.000 Kilogramm.|
+Zentner|Ein Zentner sind 50 Kilogramm, ein Doppelzentner 100 Kilogramm.|
+Pferdestärke|Ein PS sind etwa 0,735 Kilowatt. 100 Kilowatt sind etwa 136 PS.|ps in kw,kw in ps
+Kilowattstunde|Eine Kilowattstunde ist die Energie, die ein Gerät mit 1.000 Watt in einer Stunde verbraucht.|kwh
+Stundenkilometer in Meter pro Sekunde|Kilometer pro Stunde geteilt durch 3,6 ergibt Meter pro Sekunde. 36 km/h sind 10 Meter pro Sekunde.|kmh in ms
+Anhalteweg|Fahrschul-Faustregel: Reaktionsweg ist Tempo durch 10 mal 3, Bremsweg ist Tempo durch 10 mal Tempo durch 10. Bei 50 km/h sind das 15 plus 25 gleich 40 Meter.|bremsweg berechnen
+Prozent ausrechnen|Prozentwert ist Grundwert mal Prozentsatz durch 100. 20 Prozent von 80 sind 16.|prozent rechnen
+Rabatt berechnen|Bei 25 Prozent Rabatt zahlst du 75 Prozent des Preises, also Preis mal 0,75.|
+Mehrwertsteuer herausrechnen|Bei 19 Prozent ist der Nettopreis der Bruttopreis geteilt durch 1,19. Die Steuer ist Brutto minus Netto.|netto berechnen
+Dreisatz|Beim Dreisatz rechnest du erst auf eins und dann auf die gesuchte Menge. 3 Äpfel kosten 1,50 Euro, einer 0,50 Euro, 5 kosten 2,50 Euro.|dreisatz rechnen
+Durchschnitt|Den Durchschnitt berechnest du, indem du alle Werte addierst und durch ihre Anzahl teilst.|mittelwert
+Satz des Pythagoras|Im rechtwinkligen Dreieck gilt a² + b² = c², c ist die längste Seite gegenüber dem rechten Winkel.|pythagoras
+Pi|Pi ist das Verhältnis von Kreisumfang zu Durchmesser, etwa 3,14159. Es hat unendlich viele Nachkommastellen ohne Muster.|kreiszahl
+Kreisfläche|Die Kreisfläche ist Pi mal Radius zum Quadrat.|fläche kreis
+Goldener Schnitt|Der Goldene Schnitt teilt eine Strecke im Verhältnis von etwa 1 zu 1,618. Er gilt als besonders harmonisch.|
+Fibonacci-Folge|In der Fibonacci-Folge ist jede Zahl die Summe der beiden vorherigen: 1, 1, 2, 3, 5, 8, 13, 21. Man findet sie in Sonnenblumen und Tannenzapfen.|fibonacci
+Fakultät|Die Fakultät n! ist das Produkt aller Zahlen von 1 bis n. 5! ist 120.|
+Null|Die Null als Zahl wurde in Indien erfunden und kam über arabische Gelehrte nach Europa.|zahl null
+Negative Zahlen|Minus mal minus ergibt plus. Minus mal plus ergibt minus.|minus mal minus
+Teilen durch Null|Durch Null kann man nicht teilen, das Ergebnis ist nicht definiert.|durch null teilen
+Runden|Ab 5 wird aufgerundet, darunter abgerundet. 2,45 auf eine Stelle gerundet ist 2,5.|
+Wissenschaftliche Schreibweise|Große Zahlen schreibt man mit Zehnerpotenzen: 3 Millionen sind 3 mal 10 hoch 6.|zehnerpotenz
+Billion|Eine Billion sind tausend Milliarden, also eine Eins mit zwölf Nullen.|
+Primfaktorzerlegung|Jede Zahl lässt sich in Primzahlen zerlegen, zum Beispiel 60 = 2 mal 2 mal 3 mal 5.|
+Größter gemeinsamer Teiler|Der ggT ist die größte Zahl, die zwei Zahlen ohne Rest teilt. ggT von 12 und 18 ist 6.|ggt
+Kleinstes gemeinsames Vielfaches|Das kgV ist die kleinste Zahl, die durch beide Zahlen teilbar ist. kgV von 4 und 6 ist 12.|kgv
+Winkel|Ein voller Kreis hat 360 Grad, ein rechter Winkel 90 Grad, ein gestreckter 180.|grad winkel
+Koordinatensystem|Im Koordinatensystem gibt x die Position nach rechts und y nach oben an.|x achse y achse
+Zinseszins|Beim Zinseszins werden Zinsen mitverzinst. 1.000 Euro mit 5 Prozent werden in 10 Jahren zu etwa 1.629 Euro.|
+Kalorien in Joule|Eine Kilokalorie sind etwa 4,19 Kilojoule.|kcal in kj
+Schuhgrößen|Die deutsche Schuhgröße ist etwa Fußlänge in Zentimetern plus 1,5 Zentimeter, mal 1,5.|schuhgröße berechnen

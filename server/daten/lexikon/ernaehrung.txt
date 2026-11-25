@@ -127,3 +127,52 @@ Matcha|Matcha ist fein gemahlener grüner Tee aus Japan.|
 Kombucha|Kombucha ist ein fermentiertes Teegetränk.|
 Smoothie|Ein Smoothie ist ein Getränk aus püriertem Obst, er hat aber viel Fruchtzucker.|
 Lieblingsessen Deutschland|Zu den Lieblingsgerichten der Deutschen zählen Spaghetti Bolognese, Schnitzel, Pizza und Rouladen.|beliebtestes gericht
+Heidelbeere|Heidelbeeren enthalten viele Antioxidantien. Wilde Waldheidelbeeren färben die Zunge blau, Kulturheidelbeeren innen nicht.|blaubeere
+Himbeere|Himbeeren haben viele Ballaststoffe und wenig Zucker.|
+Johannisbeere|Schwarze Johannisbeeren haben etwa dreimal so viel Vitamin C wie Orangen.|
+Stachelbeere|Stachelbeeren sind säuerlich und reich an Vitamin C.|
+Rhabarber|Rhabarber ist eigentlich ein Gemüse. Die Blätter enthalten viel Oxalsäure und sind nicht essbar. Saison ist April bis Juni.|
+Ananas|Ananas enthält das Enzym Bromelain, darum wird Quark mit frischer Ananas bitter und Gelatine wird nicht fest.|
+Papaya|Papaya enthält das Enzym Papain, das Fleisch zart macht.|
+Avocado|Avocados haben viel gesundes Fett. Sie reifen bei Zimmertemperatur nach, neben Äpfeln schneller.|
+Olive|Oliven sind roh ungenießbar bitter und müssen eingelegt werden. Grüne Oliven sind unreif, schwarze reif.|
+Tomate|Tomaten gehören nicht in den Kühlschrank, dort verlieren sie Aroma. Das enthaltene Lycopin wird durch Kochen besser aufgenommen.|
+Rote Bete|Rote Bete färbt stark, auch den Urin, das ist harmlos. Sie enthält viel Nitrat, das den Blutdruck senken kann.|rote beete
+Knoblauch|Knoblauch wirkt leicht antibakteriell. Gegen den Geruch hilft Petersilie oder ein Glas Milch.|
+Ingwer|Ingwer hilft gegen Übelkeit und schmeckt scharf.|
+Kurkuma|Kurkuma färbt Curry gelb. Mit schwarzem Pfeffer wird der Wirkstoff Curcumin besser aufgenommen.|
+Zimt|Cassia-Zimt aus dem Supermarkt enthält Cumarin, darum nicht täglich viel davon essen. Ceylon-Zimt hat fast keines.|
+Chiasamen|Chiasamen quellen in Flüssigkeit stark auf und enthalten Omega-3 und Ballaststoffe.|chia
+Leinsamen|Leinsamen helfen bei der Verdauung, geschrotet werden sie besser aufgenommen.|
+Sonnenblumenkerne|Sonnenblumenkerne liefern Vitamin E und Magnesium.|
+Kürbiskerne|Kürbiskerne aus der Steiermark sind schalenlos und grün, sie liefern Zink und Eisen.|
+Pistazie|Pistazien kommen meist aus dem Iran und den USA, in Dubai-Schokolade sind sie Hauptzutat.|dubai schokolade
+Paranuss|Paranüsse enthalten sehr viel Selen, eine bis zwei am Tag reichen.|
+Macadamia|Macadamia-Nüsse sind die teuersten Nüsse und für Hunde giftig.|
+Eisen|Eisen steckt in Fleisch, Hülsenfrüchten, Haferflocken und Spinat. Mit Vitamin C wird es besser aufgenommen, mit Kaffee schlechter.|eisenmangel
+Magnesium|Magnesium hilft Muskeln und Nerven, es steckt in Nüssen, Vollkorn und Bananen.|magnesium krampf
+Kalzium|Kalzium für die Knochen steckt in Milchprodukten, grünem Gemüse und kalziumreichem Mineralwasser.|calcium
+Vitamin D|Vitamin D bildet der Körper mit Sonnenlicht. Im Winter ist der Spiegel in Deutschland oft niedrig.|sonnenvitamin
+Vitamin B12|Vitamin B12 kommt fast nur in tierischen Lebensmitteln vor. Veganer sollten es ergänzen.|b12
+Omega-3|Omega-3-Fettsäuren stecken in fettem Seefisch, Leinöl, Walnüssen und Algen.|omega 3
+Jod|Jod ist wichtig für die Schilddrüse. In Deutschland hilft Jodsalz, genug davon zu bekommen.|jodsalz
+Kalorienbedarf|Ein Erwachsener braucht etwa 1.800 bis 2.500 Kilokalorien am Tag, je nach Größe, Alter und Bewegung.|kalorien am tag
+Intervallfasten|Beim Intervallfasten isst man zum Beispiel nur innerhalb von acht Stunden am Tag, 16 zu 8. Es kann beim Abnehmen helfen.|16 8 fasten
+Low Carb|Bei Low Carb isst man wenig Kohlenhydrate wie Brot, Nudeln und Zucker.|lowcarb
+Vegan|Vegan heißt: keine tierischen Produkte, also auch keine Milch, Eier und Honig.|veganer
+Pflanzendrinks|Hafer-, Soja- und Mandeldrinks dürfen in der EU nicht Milch heißen. Soja hat am meisten Eiweiß.|hafermilch,sojamilch
+Ersatzfleisch|Fleischersatz wird meist aus Soja, Erbsen, Weizen oder Pilzen gemacht.|veggie burger
+Zuckerersatz|Süßstoffe wie Aspartam und Stevia haben kaum Kalorien. Erythrit und Xylit sind Zuckeralkohole, Xylit ist für Hunde giftig.|süßstoff,stevia
+Transfette|Gehärtete Fette mit Transfetten sind ungesund für das Herz, sie steckten früher oft in Gebäck und Fertigprodukten.|
+Glutamat|Glutamat ist ein Geschmacksverstärker für Umami. Für die meisten Menschen ist es in normalen Mengen unbedenklich.|geschmacksverstärker
+E-Nummern|E-Nummern sind in der EU zugelassene Zusatzstoffe, etwa E330 Zitronensäure. Nicht alle sind künstlich.|e nummer
+Fertiggerichte|Fertiggerichte enthalten oft viel Salz und Fett. Auf das Etikett schauen hilft.|
+Meal Prep|Beim Meal Prep kocht man vor, etwa am Sonntag für mehrere Tage, das spart Zeit und Geld.|vorkochen
+Lebensmittel retten|Mit Apps wie Too Good To Go kaufst du übrig gebliebenes Essen günstig. In Deutschland landen pro Kopf etwa 80 Kilo Lebensmittel im Jahr im Müll.|too good to go,lebensmittelverschwendung
+Leitungswasser|Leitungswasser ist in Deutschland eines der am besten kontrollierten Lebensmittel und viel günstiger als Mineralwasser.|wasser aus der leitung
+Mineralwasser|Mineralwasser kommt aus geschützten Quellen und muss amtlich anerkannt sein.|sprudel
+Kaffee und Wasser|Kaffee entwässert nicht wirklich, er zählt zur Trinkmenge, wenn man daran gewöhnt ist.|kaffee entwässert
+Alkoholfreies Bier|Alkoholfreies Bier darf bis 0,5 Prozent Alkohol enthalten, 0,0 ist komplett alkoholfrei. Es gilt als guter isotonischer Durstlöscher.|
+Frühstück Deutschland|Typisch deutsches Frühstück sind Brötchen mit Butter, Marmelade, Käse oder Wurst, dazu Kaffee und ein gekochtes Ei.|
+Abendbrot|Das Abendbrot mit Brot, Käse und Wurst ist in Deutschland traditionell eine kalte Mahlzeit.|
+Kaffee und Kuchen|Am Nachmittag gibt es in Deutschland traditionell Kaffee und Kuchen, besonders am Sonntag.|

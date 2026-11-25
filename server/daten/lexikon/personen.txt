@@ -488,8 +488,6 @@ Valentina Tereschkowa|geboren 1937|erste Frau im Weltraum, 1963.|tereschkowa
 Sigmund Jähn|1937–2019|erster Deutscher im All, 1978.|jaehn
 Matthias Maurer|geboren 1970|deutscher ESA-Astronaut auf der ISS 2021/22.|maurer
 Wernher von Braun|1912–1977|deutscher Raketeningenieur, baute die Saturn-V-Rakete für die Mondlandung.|von braun
-Stephen Hawking|1942–2018|britischer Physiker, Eine kurze Geschichte der Zeit.|
-Pelé|1940–2022|siehe Fußball: brasilianischer Fußballer, dreimal Weltmeister.|
 Zinédine Zidane|geboren 1972|französischer Fußballstar und Trainer.|zidane
 Johan Cruyff|1947–2016|niederländischer Fußballer, prägte den totalen Fußball.|cruyff
 Lothar Matthäus|geboren 1961|deutscher Rekordnationalspieler, Weltmeister 1990.|matthaeus
@@ -560,3 +558,81 @@ Biene Maja|Kinderbuchfigur seit 1912|Biene aus dem Buch von Waldemar Bonsels.|
 Pumuckl|Figur seit 1962|frecher Kobold mit roten Haaren von Ellis Kaut.|
 Der Sandmann|Figur seit 1959|Unser Sandmännchen aus dem DDR-Fernsehen.|sandmaennchen
 Sendung mit der Maus|seit 1971|Lach- und Sachgeschichten im WDR.|die maus
+Shakira|geboren 1977|Kolumbianische Sängerin, Welthits wie Hips Don't Lie und Waka Waka, dem Lied zur Fußball-WM 2010.|shakira mebarak
+Bruce Lee|1940 bis 1973|Kampfkunst-Legende aus Hongkong und den USA, Filme wie Der Mann mit der Todeskralle, machte Kung-Fu weltweit bekannt.|
+Jackie Chan|geboren 1954|Schauspieler aus Hongkong, bekannt für Actionkomödien wie Rush Hour, macht seine Stunts meist selbst.|
+Hypatia|um 355 bis 415|Mathematikerin und Philosophin in Alexandria, eine der ersten bekannten Wissenschaftlerinnen.|hypatia von alexandria
+Paracelsus|1493 bis 1541|Schweizer Arzt, gilt als Vater der Arzneimittelkunde. Von ihm stammt: Die Dosis macht das Gift.|die dosis macht das gift
+Gianni Versace|1946 bis 1997|Italienischer Modeschöpfer, gründete das Modehaus Versace mit dem Medusa-Logo.|versace
+Giorgio Armani|1934 bis 2025|Italienischer Modeschöpfer, berühmt für elegante Herrenanzüge.|armani
+Christian Dior|1905 bis 1957|Französischer Modeschöpfer, prägte 1947 den New Look.|dior
+Yves Saint Laurent|1936 bis 2008|Französischer Modeschöpfer, brachte den Hosenanzug für Frauen in die Haute Couture.|ysl
+Katy Perry|geboren 1984|US-Sängerin mit Hits wie Firework und Roar, flog 2025 kurz ins All.|
+Ariana Grande|geboren 1993|US-Sängerin und Schauspielerin, bekannt für ihre große Stimmlage, Hits wie 7 rings, spielte Glinda im Film Wicked.|
+Bruno Mars|geboren 1985|US-Sänger mit Hits wie Uptown Funk und Die With A Smile mit Lady Gaga.|
+The Weeknd|geboren 1990|Kanadischer Sänger, Blinding Lights gilt als einer der erfolgreichsten Songs der Geschichte.|abel tesfaye
+The Rolling Stones|seit 1962|Britische Rockband um Mick Jagger und Keith Richards, Hits wie Satisfaction, eine der langlebigsten Bands der Welt.|rolling stones,mick jagger
+Nirvana|1987 bis 1994|US-Grunge-Band um Kurt Cobain, Hit Smells Like Teen Spirit.|kurt cobain
+Pink Floyd|1965 bis 2014|Britische Rockband, Alben wie The Dark Side of the Moon und The Wall.|
+Roland Kaiser|geboren 1952|Deutscher Schlagersänger, Hits wie Santa Maria und Joana.|
+Andrea Berg|geboren 1966|Deutsche Schlagersängerin, Du hast mich tausendmal belogen ist ihr bekanntester Hit.|
+Mark Forster|geboren 1983|Deutscher Popsänger, Hits wie Chöre und 194 Länder, Coach bei The Voice Kids.|
+Lena Meyer-Landrut|geboren 1991|Gewann 2010 den Eurovision Song Contest für Deutschland mit Satellite.|lena,satellite
+Capital Bra|geboren 1994|Deutscher Rapper mit den meisten Nummer-eins-Hits in Deutschland.|
+Apache 207|geboren 1997|Deutscher Rapper und Sänger, Hits wie Roller und Komet mit Udo Lindenberg.|
+Sido|geboren 1980|Berliner Rapper, bekannt aus der Anfangszeit mit Maske, Hits wie Bilder im Kopf.|
+Peter Fox|geboren 1971|Berliner Musiker, Sänger von Seeed, Soloalbum Stadtaffe mit Haus am See.|seeed,haus am see
+Sarah Connor|geboren 1980|Deutsche Sängerin, Hits wie From Sarah With Love und Wie schön du bist.|
+Tokio Hotel|seit 2001|Band aus Magdeburg um die Zwillinge Bill und Tom Kaulitz, Durchbruch mit Durch den Monsun.|kaulitz
+Shirin David|geboren 1995|Deutsche Rapperin und Sängerin, Hits wie Gib ihm und Bauch Beine Po.|
+Theodor Fontane|1819 bis 1898|Deutscher Schriftsteller, Effi Briest und Wanderungen durch die Mark Brandenburg.|fontane,effi briest
+Rainer Maria Rilke|1875 bis 1926|Dichter aus Prag, Gedichte wie Der Panther.|rilke
+Georg Büchner|1813 bis 1837|Dichter und Revolutionär, Woyzeck und Dantons Tod. Nach ihm ist der wichtigste deutsche Literaturpreis benannt.|büchner,woyzeck
+Gotthold Ephraim Lessing|1729 bis 1781|Dichter der Aufklärung, Nathan der Weise mit der Ringparabel über Toleranz.|lessing,nathan der weise
+Stefan Zweig|1881 bis 1942|Österreichischer Schriftsteller, Schachnovelle und Die Welt von Gestern.|zweig,schachnovelle
+Edgar Allan Poe|1809 bis 1849|US-Schriftsteller, Erfinder der Detektivgeschichte und Meister des Gruselns, Der Rabe.|poe
+Dan Brown|geboren 1964|US-Autor von Thrillern wie Sakrileg, im Original The Da Vinci Code.|da vinci code
+Rainer Werner Fassbinder|1945 bis 1982|Deutscher Regisseur, drehte über 40 Filme, etwa Die Ehe der Maria Braun.|fassbinder
+Wim Wenders|geboren 1945|Deutscher Regisseur, Der Himmel über Berlin, Paris Texas und Perfect Days.|wenders
+Werner Herzog|geboren 1942|Deutscher Regisseur, Fitzcarraldo und viele Dokumentarfilme, bekannt für seine Stimme.|
+Wolfgang Petersen|1941 bis 2022|Deutscher Regisseur, Das Boot, dann in Hollywood Air Force One und Troja.|das boot
+Matthias Schweighöfer|geboren 1981|Deutscher Schauspieler und Regisseur, Komödien wie Der Schlussmacher und Army of Thieves.|
+Elyas M'Barek|geboren 1982|Deutscher Schauspieler, bekannt als Lehrer Zeki Müller in Fack ju Göhte.|fack ju göhte
+Sandra Hüller|geboren 1978|Deutsche Schauspielerin, für Anatomie eines Falls 2024 für den Oscar nominiert.|
+Keanu Reeves|geboren 1964|Schauspieler, Neo in Matrix und John Wick, gilt als besonders bescheiden.|
+Zendaya|geboren 1996|US-Schauspielerin, Spider-Man, Dune und Euphoria.|
+Margot Robbie|geboren 1990|Australische Schauspielerin, spielte Barbie im Film 2023.|
+Ryan Gosling|geboren 1980|Kanadischer Schauspieler, La La Land und Ken im Film Barbie.|
+Cillian Murphy|geboren 1976|Irischer Schauspieler, Oscar für Oppenheimer, bekannt aus Peaky Blinders.|
+Audrey Hepburn|1929 bis 1993|Schauspielerin und Stilikone, Frühstück bei Tiffany, später UNICEF-Botschafterin.|
+Clint Eastwood|geboren 1930|US-Schauspieler und Regisseur, Western wie Zwei glorreiche Halunken, Oscar für Erbarmungslos.|
+Sean Connery|1930 bis 2020|Schottischer Schauspieler, der erste James Bond im Kino.|
+Daniel Craig|geboren 1968|Britischer Schauspieler, spielte James Bond von 2006 bis 2021.|
+Rowan Atkinson|geboren 1955|Britischer Komiker, bekannt als Mr. Bean und Blackadder.|
+Jim Carrey|geboren 1962|Kanadischer Komiker, Die Maske und Die Truman Show.|
+Robin Williams|1951 bis 2014|US-Komiker und Schauspieler, Club der toten Dichter, Mrs. Doubtfire und die Stimme des Dschinni in Aladdin.|
+Klaas Heufer-Umlauf|geboren 1983|Deutscher Moderator, mit Joko Winterscheidt bekannt aus Joko und Klaas gegen ProSieben.|klaas
+Jan Böhmermann|geboren 1981|Deutscher Satiriker, Moderator des ZDF Magazin Royale.|böhmermann
+Dieter Bohlen|geboren 1954|Musikproduzent, Modern Talking mit Cheri Cheri Lady, langjähriger Juror bei DSDS.|modern talking
+Barbara Schöneberger|geboren 1974|Deutsche Moderatorin und Sängerin, eine der bekanntesten Fernsehgesichter.|
+Annalena Baerbock|geboren 1980|Grünen-Politikerin, Außenministerin von 2021 bis 2025, seit 2025 Präsidentin der UN-Generalversammlung.|baerbock
+Robert Habeck|geboren 1969|Grünen-Politiker, Wirtschaftsminister und Vizekanzler von 2021 bis 2025.|habeck
+Christian Lindner|geboren 1979|FDP-Politiker, Finanzminister bis November 2024.|lindner
+Markus Söder|geboren 1967|CSU-Politiker, seit 2018 bayerischer Ministerpräsident.|söder
+Lars Klingbeil|geboren 1978|SPD-Politiker, seit 2025 Vizekanzler und Bundesfinanzminister.|klingbeil
+Papst Benedikt XVI.|1927 bis 2022|Joseph Ratzinger aus Bayern, Papst von 2005 bis 2013, trat als erster Papst seit Jahrhunderten zurück.|ratzinger,wir sind papst
+Johannes Paul II.|1920 bis 2005|Karol Wojtyła aus Polen, Papst von 1978 bis 2005, trug zum Ende des Kommunismus in Osteuropa bei.|
+Elisabeth II.|1926 bis 2022|Britische Königin von 1952 bis 2022, 70 Jahre auf dem Thron, so lange wie kein britischer Monarch vor ihr.|queen elizabeth,queen
+Prinzessin Diana|1961 bis 1997|Ehefrau von Prinz Charles, die Prinzessin der Herzen, starb bei einem Autounfall in Paris.|lady di,diana
+Prinz William|geboren 1982|Britischer Thronfolger, Sohn von König Charles und Diana.|william
+Adolf und Rudolf Dassler|1900 bis 1978 und 1898 bis 1974|Brüder aus Herzogenaurach, Adi gründete Adidas, Rudolf Puma.|adidas gründer,puma gründer,dassler
+Margarete Steiff|1847 bis 1909|Gründerin der Spielzeugfirma Steiff, bekannt für den Teddybär mit Knopf im Ohr.|steiff
+Melitta Bentz|1873 bis 1950|Erfand 1908 in Dresden den Kaffeefilter, Gründerin der Firma Melitta.|melitta
+Hans Riegel|1893 bis 1945|Gründer von Haribo in Bonn, erfand 1922 die Gummibärchen.|haribo gründer
+Heinrich Hoffmann|1809 bis 1894|Frankfurter Arzt, schrieb den Struwwelpeter.|struwwelpeter
+Otfried Preußler|1923 bis 2013|Kinderbuchautor, Der Räuber Hotzenplotz, Die kleine Hexe und Krabat.|hotzenplotz,krabat
+Janosch|geboren 1931|Kinderbuchautor und Zeichner, Oh wie schön ist Panama mit Tiger und Bär.|tigerente
+Paul Maar|geboren 1937|Kinderbuchautor, Erfinder des Sams.|sams
+James Krüss|1926 bis 1997|Kinderbuchautor von Helgoland, Timm Thaler oder Das verkaufte Lachen.|timm thaler
+Gaius Julius Caesar|100 bis 44 v. Chr.|Römischer Feldherr und Diktator, eroberte Gallien und wurde an den Iden des März ermordet. Von ihm stammt der Name Kaiser.|cäsar,caesar
+Pjotr Iljitsch Tschaikowski|1840 bis 1893|Russischer Komponist, Schwanensee und Der Nussknacker.|tschaikowski,tschaikowsky,schwanensee

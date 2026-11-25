@@ -155,3 +155,44 @@ Laika|Die Hündin Laika flog 1957 als erstes Lebewesen in eine Erdumlaufbahn.|we
 Ulf Merbold|Ulf Merbold flog 1983 als erster Westdeutscher ins All.|merbold
 Thomas Reiter|Thomas Reiter war der erste Deutsche auf der ISS und bei einem Weltraumspaziergang.|reiter
 Raumfahrt Deutschland|Deutschland ist über das DLR und die ESA an der Raumfahrt beteiligt, Raketen starten aber in Französisch-Guayana.|kourou
+Sonnenalter|Die Sonne ist etwa 4,6 Milliarden Jahre alt und hat etwa die Hälfte ihres Lebens hinter sich.|wie alt ist die sonne
+Sonnentemperatur|Die Oberfläche der Sonne ist etwa 5.500 Grad heiß, ihr Kern etwa 15 Millionen Grad.|wie heiß ist die sonne
+Sonnengröße|In die Sonne würden etwa 1,3 Millionen Erden passen.|wie groß ist die sonne
+Erdalter|Die Erde ist etwa 4,5 Milliarden Jahre alt.|wie alt ist die erde
+Erdumfang|Der Erdumfang am Äquator beträgt etwa 40.075 Kilometer.|umfang der erde
+Erdmasse|Die Erde wiegt etwa 6 Trilliarden Tonnen, eine 6 mit 21 Nullen.|wie schwer ist die erde
+Mondgröße|Der Mond ist etwa ein Viertel so groß wie die Erde, mit 3.474 Kilometern Durchmesser.|
+Mond entfernt sich|Der Mond entfernt sich jedes Jahr etwa 3,8 Zentimeter von der Erde.|
+Gebundene Rotation|Wir sehen vom Mond immer dieselbe Seite, weil er sich in derselben Zeit einmal um sich selbst dreht, in der er die Erde umrundet.|warum sieht man immer die gleiche seite vom mond
+Supermond|Ein Supermond ist ein Vollmond, wenn der Mond der Erde besonders nah ist. Er wirkt etwa 14 Prozent größer.|
+Blutmond|Bei einer totalen Mondfinsternis färbt sich der Mond rötlich, weil nur rotes Licht durch die Erdatmosphäre gestreut zu ihm gelangt.|roter mond
+Blauer Mond|Ein Blue Moon ist der zweite Vollmond in einem Kalendermonat, er ist nicht wirklich blau.|blue moon
+Neumond|Bei Neumond steht der Mond zwischen Sonne und Erde, wir sehen ihn nicht. Gute Nacht für Sternenbeobachtung.|
+Abendstern|Der Abendstern ist kein Stern, sondern der Planet Venus. Morgens heißt sie Morgenstern.|morgenstern
+Mars Farbe|Der Mars ist rot, weil sein Boden viel Eisenoxid enthält, also Rost.|warum ist der mars rot
+Jupiter Monde|Jupiter hat über 90 bekannte Monde. Die vier großen entdeckte Galileo Galilei 1610.|galileische monde
+Saturn Monde|Saturn hat die meisten bekannten Monde im Sonnensystem, über 270.|
+Uranus Entdeckung|Uranus wurde 1781 von Wilhelm Herschel als erster Planet mit dem Teleskop entdeckt.|
+Neptun Entdeckung|Neptun wurde 1846 zuerst berechnet und dann in Berlin von Johann Galle entdeckt.|
+Pluto Entdeckung|Pluto wurde 1930 von Clyde Tombaugh entdeckt und 2006 zum Zwergplaneten herabgestuft.|
+New Horizons|Die Sonde New Horizons flog 2015 an Pluto vorbei und machte die ersten nahen Bilder.|
+Rosetta|Die ESA-Sonde Rosetta landete 2014 mit dem Lander Philae als erste auf einem Kometen, Tschurjumow-Gerassimenko.|philae
+Juice|Die ESA-Sonde Juice ist auf dem Weg zum Jupiter und soll ab 2031 seine Eismonde erforschen.|
+Ariane|Ariane ist die europäische Rakete, gestartet wird sie in Kourou in Französisch-Guayana. Ariane 6 startete 2024 zum ersten Mal.|ariane 6
+Kourou|Der europäische Weltraumbahnhof liegt in Kourou in Französisch-Guayana, nahe am Äquator, wo Raketen Schwung durch die Erddrehung bekommen.|weltraumbahnhof
+Cape Canaveral|Von Cape Canaveral in Florida starten die meisten Raketen der USA, auch die Apollo-Mondflüge.|kennedy space center
+Baikonur|Von Baikonur in Kasachstan startete Gagarin, bis heute fliegen von dort russische Raumschiffe.|
+Sojus|Die Sojus ist das russische Raumschiff, mit dem seit Jahrzehnten Astronauten zur ISS fliegen.|
+Crew Dragon|Crew Dragon von SpaceX bringt seit 2020 Astronauten zur ISS.|dragon
+Blue Origin|Blue Origin ist die Raumfahrtfirma von Jeff Bezos, mit New Shepard für kurze Flüge ins All und New Glenn.|new shepard
+Weltraumtourismus|Kurze Flüge ins All bieten Blue Origin und Virgin Galactic. Tickets kosten Hunderttausende Dollar.|
+Chandrayaan-3|Indien landete 2023 mit Chandrayaan-3 als erstes Land nahe dem Südpol des Mondes.|indien mond
+Chang'e|Mit den Chang'e-Sonden landete China als erstes auf der Mondrückseite und brachte 2024 Proben von dort zur Erde.|china mond
+Lagrange-Punkte|Lagrange-Punkte sind Orte, an denen sich Schwerkräfte so ausgleichen, dass Sonden dort stehen bleiben. Das James-Webb-Teleskop sitzt am Punkt L2.|l2
+Raumzeit|Nach Einstein bilden Raum und Zeit eine Einheit, die Raumzeit. Masse krümmt sie, das erleben wir als Schwerkraft.|
+Zeitdilatation|Je schneller man sich bewegt oder je stärker die Schwerkraft, desto langsamer vergeht die Zeit. GPS-Satelliten müssen das ausgleichen.|zeit langsamer
+Sternentstehung|Sterne entstehen in riesigen Gas- und Staubwolken, die sich durch die Schwerkraft zusammenziehen, bis im Kern Kernfusion zündet.|wie entsteht ein stern
+Sterne zählen|Mit bloßem Auge sieht man in einer klaren, dunklen Nacht etwa 2.500 bis 3.000 Sterne gleichzeitig.|wie viele sterne sieht man
+Sterne im Universum|Im beobachtbaren Universum gibt es schätzungsweise mehr Sterne als Sandkörner an allen Stränden der Erde.|wie viele sterne gibt es
+Fermi-Paradox|Das Fermi-Paradox fragt: Wenn es so viele Sterne gibt, warum haben wir noch keine Außerirdischen gefunden?|
+Wow-Signal|Das Wow-Signal von 1977 war ein starkes Radiosignal aus dem All, das nie wieder empfangen wurde.|

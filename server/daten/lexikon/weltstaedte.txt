@@ -231,3 +231,96 @@ Babylon|Irak|antike Stadt|Berühmte Stadt Mesopotamiens mit Ischtar-Tor und den 
 Karthago|Tunesien|antike Stadt|Rivale Roms, 146 vor Christus zerstört.|carthage
 Angkor|Kambodscha|antike Stadt|Riesige Tempelstadt der Khmer mit Angkor Wat.|angkor wat
 Teotihuacán|Mexiko|antike Stadt|Ruinenstadt mit Sonnen- und Mondpyramide.|teotihuacan
+Göteborg|Schweden|600.000|Zweitgrößte Stadt Schwedens, größter Hafen Skandinaviens und Sitz von Volvo.|göteborg,gothenburg
+Malmö|Schweden|360.000|Über die Öresundbrücke mit Kopenhagen verbunden.|
+Bergen|Norwegen|290.000|Tor zu den Fjorden, bekannt für die bunten Holzhäuser von Bryggen und viel Regen.|
+Tromsø|Norwegen|78.000|Stadt nördlich des Polarkreises, berühmt für Polarlichter und Mitternachtssonne.|tromsö
+Aarhus|Dänemark|290.000|Zweitgrößte Stadt Dänemarks mit dem Kunstmuseum ARoS.|
+Turku|Finnland|200.000|Älteste Stadt Finnlands.|
+Rovaniemi|Finnland|65.000|Am Polarkreis, gilt als offizielle Heimat des Weihnachtsmanns.|weihnachtsmann dorf
+Birmingham|Vereinigtes Königreich|1,1 Millionen|Zweitgrößte Stadt Englands, früher Zentrum der Industrie.|
+Glasgow|Vereinigtes Königreich|630.000|Größte Stadt Schottlands.|
+Cardiff|Vereinigtes Königreich|370.000|Hauptstadt von Wales.|
+Belfast|Vereinigtes Königreich|350.000|Hauptstadt Nordirlands, hier wurde die Titanic gebaut.|
+Oxford|Vereinigtes Königreich|160.000|Berühmte Universitätsstadt, älteste Uni im englischsprachigen Raum.|
+Cambridge|Vereinigtes Königreich|145.000|Universitätsstadt, Isaac Newton und Stephen Hawking forschten hier.|
+Den Haag|Niederlande|560.000|Regierungssitz der Niederlande und Sitz des Internationalen Gerichtshofs.|haag
+Utrecht|Niederlande|370.000|Studentenstadt mit Grachten, Geburtsort von Miffy.|
+Eindhoven|Niederlande|240.000|Technologiestadt, Heimat von Philips und PSV.|
+Maastricht|Niederlande|120.000|Hier wurde 1992 der Vertrag über die Europäische Union unterzeichnet.|
+Brügge|Belgien|120.000|Mittelalterliche Stadt mit Kanälen, das Venedig des Nordens.|
+Gent|Belgien|265.000|Stadt mit mittelalterlichem Hafen und dem Genter Altar.|
+Lüttich|Belgien|195.000|Größte Stadt der Wallonie.|liège
+Toulouse|Frankreich|500.000|Rosa Stadt, Zentrum der Luftfahrt mit Airbus.|
+Nantes|Frankreich|320.000|Stadt an der Loire mit den Maschinen der Insel und einem riesigen mechanischen Elefanten.|
+Lille|Frankreich|235.000|Nahe der belgischen Grenze, mit großem Flohmarkt Braderie.|
+Cannes|Frankreich|74.000|An der Côte d'Azur, berühmt für das Filmfestival.|
+Avignon|Frankreich|90.000|Papststadt mit dem Papstpalast und der berühmten Brücke.|
+Turin|Italien|850.000|Heimat von Fiat und Juventus, mit dem Grabtuch von Turin.|torino
+Bologna|Italien|390.000|Älteste Universität Europas von 1088, Heimat der Bolognese.|
+Genua|Italien|560.000|Hafenstadt, Geburtsort von Kolumbus.|genova
+Verona|Italien|255.000|Stadt von Romeo und Julia, mit römischer Arena für Opern.|
+Pisa|Italien|90.000|Bekannt für den Schiefen Turm.|
+Palermo|Italien|630.000|Hauptstadt Siziliens.|
+Bari|Italien|315.000|Hafenstadt in Apulien.|
+Zaragoza|Spanien|680.000|Fünftgrößte Stadt Spaniens am Ebro.|saragossa
+Ibiza-Stadt|Spanien|50.000|Hauptort der Partyinsel Ibiza mit UNESCO-Altstadt.|
+Santiago de Compostela|Spanien|98.000|Ziel des Jakobswegs mit der Kathedrale des Apostels Jakobus.|jakobsweg ziel
+Faro|Portugal|65.000|Hauptstadt der Algarve.|
+Funchal|Portugal|105.000|Hauptstadt der Insel Madeira, Geburtsort von Cristiano Ronaldo.|madeira
+Brünn|Tschechien|400.000|Zweitgrößte Stadt Tschechiens, hier forschte Gregor Mendel.|brno
+Karlsbad|Tschechien|47.000|Berühmter Kurort.|karlovy vary
+Posen|Polen|540.000|Eine der ältesten Städte Polens.|poznań
+Stettin|Polen|390.000|Hafenstadt an der Oder nahe der deutschen Grenze.|szczecin
+Odessa|Ukraine|1 Million|Hafenstadt am Schwarzen Meer mit der berühmten Potemkinschen Treppe.|odesa
+Charkiw|Ukraine|1,4 Millionen|Zweitgrößte Stadt der Ukraine.|charkow
+Debrecen|Ungarn|200.000|Zweitgrößte Stadt Ungarns.|
+Varna|Bulgarien|330.000|Badeort am Schwarzen Meer.|
+Izmir|Türkei|3 Millionen|Drittgrößte Stadt der Türkei an der Ägäis.|smyrna
+Kappadokien (Göreme)|Türkei|2.500|Ort mitten in der Feenkamin-Landschaft, bekannt für Heißluftballonfahrten.|kappadokien
+Bodrum|Türkei|200.000|Badeort an der Ägäis.|
+Alexandria|Ägypten|5,5 Millionen|Von Alexander dem Großen gegründet, einst mit dem berühmten Leuchtturm und der großen Bibliothek.|
+Luxor|Ägypten|500.000|Das alte Theben mit dem Tal der Könige und dem Karnak-Tempel.|tal der könige
+Hurghada|Ägypten|260.000|Badeort am Roten Meer, beliebt bei Tauchern.|
+Sharm el-Sheikh|Ägypten|75.000|Badeort am Südzipfel des Sinai.|
+Fès|Marokko|1,2 Millionen|Älteste Königsstadt Marokkos mit riesiger Altstadt.|fez
+Mombasa|Kenia|1,2 Millionen|Hafenstadt am Indischen Ozean.|
+Durban|Südafrika|3,9 Millionen (Großraum)|Hafenstadt am Indischen Ozean mit großer indischer Gemeinde.|
+Windhuk|Namibia|480.000|Hauptstadt Namibias mit deutscher Kolonialarchitektur.|windhoek
+Kigali|Ruanda|1,7 Millionen|Hauptstadt Ruandas, gilt als besonders sauber.|
+Niagara Falls|Kanada|90.000|Niagara Falls ist eine Stadt an den berühmten Wasserfällen zwischen Kanada und den USA.|niagara falls
+Calgary|Kanada|1,3 Millionen|Bekannt für die Calgary Stampede, ein großes Rodeo.|
+San Diego|USA|1,4 Millionen|Kalifornische Küstenstadt nahe Mexiko mit berühmtem Zoo.|
+Portland|USA|630.000|Stadt in Oregon, bekannt für Kaffee, Radfahren und Nike in der Nähe.|
+Salt Lake City|USA|200.000|Hauptstadt von Utah, Zentrum der Mormonen.|
+Minneapolis|USA|425.000|Zwillingsstadt mit Saint Paul, mit der riesigen Mall of America.|
+Memphis|USA|620.000|Musikstadt mit Graceland, dem Haus von Elvis Presley.|graceland
+Pittsburgh|USA|300.000|Stahlstadt mit über 400 Brücken.|
+Baltimore|USA|570.000|Hafenstadt in Maryland.|
+Cleveland|USA|360.000|Mit der Rock and Roll Hall of Fame.|
+Kansas City|USA|510.000|Bekannt für Barbecue und Jazz.|
+Puebla|Mexiko|1,7 Millionen|Kolonialstadt mit Tausenden bunten Kacheln und großem VW-Werk.|
+Monterrey|Mexiko|1,1 Millionen|Industriezentrum im Norden Mexikos.|
+Cartagena|Kolumbien|1 Million|Karibikstadt mit bunter Altstadt und Festungsmauern.|
+Medellín|Kolumbien|2,6 Millionen|Stadt des ewigen Frühlings, mit Seilbahnen als Nahverkehr.|
+Valparaíso|Chile|300.000|Bunte Hafenstadt an Hängen mit alten Standseilbahnen.|
+Córdoba (Argentinien)|Argentinien|1,5 Millionen|Zweitgrößte Stadt Argentiniens.|
+Manaus|Brasilien|2,1 Millionen|Großstadt mitten im Amazonas-Regenwald, mit Opernhaus.|
+Recife|Brasilien|1,5 Millionen|Das Venedig Brasiliens mit vielen Brücken.|
+Fortaleza|Brasilien|2,4 Millionen|Großstadt im Nordosten Brasiliens.|
+Yokohama|Japan|3,8 Millionen|Zweitgrößte Stadt Japans, Hafen bei Tokio.|
+Sapporo|Japan|2 Millionen|Bekannt für das Schneefestival und Bier.|
+Nara|Japan|350.000|Alte Kaiserstadt mit frei laufenden zahmen Hirschen.|hirsche japan
+Guilin|China|5 Millionen (Bezirk)|Bekannt für Karstberge am Li-Fluss, abgebildet auf dem 20-Yuan-Schein.|
+Harbin|China|10 Millionen (Bezirk)|Berühmt für das Eis- und Schneefestival.|
+Suzhou|China|12 Millionen (Bezirk)|Stadt der klassischen Gärten und Kanäle.|
+Cebu|Philippinen|960.000|Älteste Stadt der Philippinen.|
+Yangon|Myanmar|5,6 Millionen|Größte Stadt Myanmars mit der goldenen Shwedagon-Pagode.|rangun
+Jaipur|Indien|3,1 Millionen|Die rosa Stadt in Rajasthan mit dem Palast der Winde.|
+Goa (Panaji)|Indien|115.000|Panaji ist die Hauptstadt von Goa, dem kleinsten Bundesstaat Indiens mit Stränden und portugiesischem Erbe.|goa
+Amman|Jordanien|4 Millionen|Hauptstadt Jordaniens.|
+Maskat|Oman|1,5 Millionen|Hauptstadt des Oman.|muscat
+Gold Coast|Australien|700.000|Surferparadies in Queensland.|
+Adelaide|Australien|1,4 Millionen|Hauptstadt von South Australia, Weinregion in der Nähe.|
+Christchurch|Neuseeland|390.000|Größte Stadt der Südinsel Neuseelands.|
+Queenstown|Neuseeland|30.000|Abenteuer-Hauptstadt der Welt, Bungee-Springen wurde hier berühmt.|

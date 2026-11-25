@@ -134,7 +134,6 @@ i. A.|im Auftrag|ia
 i. V.|in Vertretung|iv
 i. d. R.|in der Regel|idr
 i. H. v.|in Höhe von|ihv
-inkl.|inklusive|
 Jh.|Jahrhundert|jh
 jmd.|jemand|jmd
 Kap.|Kapitel|kap
@@ -153,7 +152,6 @@ s. u.|siehe unten|su
 sog.|sogenannt|sog
 Std.|Stunde|std
 tägl.|täglich|taegl
-u. a.|unter anderem|
 u. Ä.|und Ähnliches|uae
 u. U.|unter Umständen|uu
 u. v. m.|und vieles mehr|uvm
@@ -242,7 +240,6 @@ EStG|Einkommensteuergesetz|
 ELSTER|Elektronische Steuererklärung des Finanzamts|elster
 BZSt|Bundeszentralamt für Steuern|
 GEMA|Gesellschaft für musikalische Aufführungsrechte|
-GEZ|früherer Name des Beitragsservice für den Rundfunkbeitrag|
 SEPA|Einheitlicher Euro-Zahlungsverkehrsraum (Single Euro Payments Area)|
 EZB|Europäische Zentralbank|
 IWF|Internationaler Währungsfonds|imf
@@ -282,7 +279,6 @@ MI6|britischer Auslandsgeheimdienst|
 BSI|Bundesamt für Sicherheit in der Informationstechnik|
 BAMF|Bundesamt für Migration und Flüchtlinge|
 BfV|Bundesamt für Verfassungsschutz|
-BAföG|Bundesausbildungsförderungsgesetz, Geld für Schüler und Studenten|
 NRW|Nordrhein-Westfalen|nrw
 BaWü|Baden-Württemberg|bawue
 MV|Mecklenburg-Vorpommern|
@@ -342,7 +338,6 @@ PR|Öffentlichkeitsarbeit (Public Relations) oder Pull Request|
 CRM|Kundenbeziehungs-Verwaltung|
 ERP|Software zur Unternehmensplanung|
 USP|Alleinstellungsmerkmal|
-FAQ|häufig gestellte Fragen|
 TBA|wird noch bekannt gegeben (to be announced)|
 TBD|noch festzulegen (to be determined)|
 ETA|voraussichtliche Ankunftszeit|
@@ -366,7 +361,6 @@ THX|Danke (thanks)|thx
 PLS|bitte (please)|pls
 AFK|nicht an der Tastatur, kurz weg|afk
 BRB|bin gleich zurück|brb
-GG|good game, gutes Spiel|
 GOAT|greatest of all time, der Beste aller Zeiten|goat
 DM (Nachricht)|Direktnachricht in sozialen Netzwerken|direktnachricht
 POV|Point of view, Blickwinkel|pov
@@ -375,7 +369,6 @@ DIN|Deutsches Institut für Normung|din
 DIN A4|Papierformat 21 mal 29,7 Zentimeter|a4
 ISO|Internationale Organisation für Normung|
 CE|Kennzeichen, dass ein Produkt EU-Vorgaben erfüllt|
-TÜV|Technischer Überwachungsverein|
 DEKRA|Prüforganisation, etwa für Hauptuntersuchungen|
 HU|Hauptuntersuchung beim Auto|
 AU (Auto)|Abgasuntersuchung|abgasuntersuchung
@@ -416,7 +409,6 @@ OGS|Offene Ganztagsschule|
 IGS|Integrierte Gesamtschule|
 NC|Numerus clausus, Zulassungsgrenze an Unis|
 ECTS|Leistungspunkte im Studium|
-Bafög|Ausbildungsförderung|
 FSJ|Freiwilliges Soziales Jahr|
 BFD|Bundesfreiwilligendienst|
 Bundeswehr|Streitkräfte Deutschlands|bw armee

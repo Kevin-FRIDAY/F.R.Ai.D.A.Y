@@ -248,3 +248,28 @@ Raspberry Pi|Der Raspberry Pi ist ein kleiner, günstiger Computer zum Basteln.|
 Arduino|Arduino ist eine Bastelplattform für Elektronik-Projekte.|
 Elektroschrott|Alte Elektrogeräte gehören nicht in den Hausmüll, sondern zum Wertstoffhof oder in den Handel.|alte handys entsorgen
 Recht auf Reparatur|Die EU stärkt das Recht auf Reparatur, Hersteller müssen Ersatzteile länger anbieten.|
+Bildschirmgrößen|Bildschirmgrößen werden in Zoll diagonal gemessen, ein Zoll sind 2,54 Zentimeter.|zoll in cm
+Dolby Atmos|Dolby Atmos ist ein Raumklang, bei dem Töne auch von oben zu kommen scheinen.|
+Bluetooth Reichweite|Bluetooth reicht meist etwa 10 Meter, neue Versionen auch weiter.|
+NFC|NFC ist Funk über wenige Zentimeter, damit funktioniert kontaktloses Bezahlen.|
+Akku schonen|Akkus halten länger, wenn sie meist zwischen 20 und 80 Prozent bleiben und nicht heiß werden.|akku pflege
+Mbit/s|Die Internetgeschwindigkeit wird in Megabit pro Sekunde gemessen. Für Streaming in 4K braucht man etwa 25 Mbit/s.|internetgeschwindigkeit
+Speedtest|Mit einem Speedtest misst du, wie schnell dein Internet wirklich ist.|internet testen
+Repeater|Ein Repeater verlängert die WLAN-Reichweite, halbiert aber oft die Geschwindigkeit.|wlan verstärker
+Powerline|Powerline schickt das Internet über die Stromleitung in andere Räume.|dlan
+Starlink|Starlink von SpaceX liefert Internet über tausende Satelliten, auch in abgelegenen Gegenden.|satelliteninternet
+Gigabyte Speicher|Ein Gigabyte reicht etwa für 250 Fotos oder eine Stunde Video in HD.|wie viel ist ein gigabyte
+Terabyte|Ein Terabyte sind 1.000 Gigabyte, Platz für etwa 250.000 Fotos.|
+Antivirus|Auf Macs und iPhones ist ein zusätzlicher Virenschutz meist unnötig, wichtiger sind Updates und Vorsicht bei Links.|virenschutz
+Captcha|Ein Captcha prüft, ob ein Mensch oder ein Roboter eine Seite nutzt, zum Beispiel mit Bildern von Ampeln.|
+Inkognito-Modus|Der private Modus speichert keinen Verlauf auf deinem Gerät, macht dich im Internet aber nicht unsichtbar.|privates surfen
+Werbeblocker|Ein Werbeblocker blendet Werbung auf Webseiten aus.|adblocker
+Streaming Qualität|Netflix braucht für HD etwa 5 Mbit/s, für 4K etwa 15 bis 25 Mbit/s.|
+Smartwatch Funktionen|Smartwatches messen Puls, Schritte und Schlaf, manche auch EKG und Blutsauerstoff.|
+Mähroboter|Mähroboter mähen den Rasen selbst, meist mit Begrenzungsdraht oder per GPS.|rasenroboter
+Balkonkraftwerk|Ein Balkonkraftwerk ist eine kleine Solaranlage mit bis zu 800 Watt, die du einfach in die Steckdose steckst.|stecker solaranlage
+Wärmepumpe|Eine Wärmepumpe holt Wärme aus Luft, Erde oder Wasser und heizt damit, mit Strom als Antrieb. Aus 1 Teil Strom werden 3 bis 4 Teile Wärme.|
+E-Auto Laden|E-Autos lädt man zu Hause an der Wallbox oder an öffentlichen Säulen, Schnelllader schaffen 80 Prozent in etwa 20 bis 30 Minuten.|wallbox
+Reichweite E-Auto|Moderne E-Autos schaffen meist 300 bis 600 Kilometer, im Winter weniger.|
+Wasserstoffauto|Wasserstoffautos tanken Wasserstoff und machen daraus in einer Brennstoffzelle Strom, aus dem Auspuff kommt nur Wasser.|brennstoffzelle
+Kernfusion|Bei Kernfusion verschmelzen Atomkerne wie in der Sonne. Forscher arbeiten an Fusionskraftwerken, etwa ITER in Frankreich.|fusionskraftwerk,iter

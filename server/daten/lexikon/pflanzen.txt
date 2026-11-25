@@ -127,3 +127,52 @@ Sanddorn|Sanddorn wächst an der Küste und hat sehr viel Vitamin C.|
 Schlehe|Schlehen erntet man nach dem ersten Frost.|
 Mispel|Mispeln sind alte Obstsorten, die erst nach Frost genießbar werden.|
 Quitte|Quitten sind roh hart, ergeben aber gutes Gelee.|
+Ulme|Ulmen waren früher häufig in Städten, viele starben am Ulmensterben, einer Pilzkrankheit, die Käfer übertragen.|ulmensterben
+Erle|Die Erle wächst gern an Bächen und Flüssen. Ihr frisch geschnittenes Holz färbt sich orange.|
+Lärche|Die Lärche ist der einzige heimische Nadelbaum, der im Herbst seine Nadeln abwirft.|
+Douglasie|Die Douglasie stammt aus Nordamerika und wächst in deutschen Wäldern schnell, sie gilt als klimafest.|
+Robinie|Die Robinie stammt aus Nordamerika, ihre Blüten liefern Akazienhonig.|akazienhonig
+Platane|Platanen erkennt man an der fleckig abblätternden Rinde, sie sind beliebte Stadtbäume.|
+Walnussbaum|Der Walnussbaum wird bis 25 Meter hoch, seine Blätter halten Mücken fern.|
+Haselstrauch|Die Hasel blüht schon im Februar und ist für Pollenallergiker oft der Start der Saison.|haselnussstrauch
+Flieder|Flieder blüht im Mai lila oder weiß und duftet stark.|
+Forsythie|Die Forsythie blüht im Frühling leuchtend gelb, bevor die Blätter kommen. Bienen finden in ihr aber kaum Nahrung.|
+Rhododendron|Rhododendren mögen sauren Boden und Halbschatten, sie sind giftig.|
+Buchsbaum|Der Buchsbaum ist eine beliebte Hecke, wird aber oft vom Buchsbaumzünsler, einer Raupe, kahl gefressen.|buchsbaumzünsler
+Thuja|Thuja oder Lebensbaum ist eine immergrüne Hecke, aber giftig und für Insekten wertlos.|lebensbaum
+Kirschlorbeer|Kirschlorbeer ist eine immergrüne Hecke, giftig und ökologisch wenig wertvoll. In der Schweiz ist der Verkauf verboten.|
+Sommerflieder|Der Sommerflieder lockt viele Schmetterlinge an und heißt darum auch Schmetterlingsflieder.|schmetterlingsflieder
+Dahlie|Dahlien blühen von Juli bis zum ersten Frost. Die Knollen müssen im Winter frostfrei lagern.|
+Pfingstrose|Pfingstrosen blühen um Pfingsten mit großen, duftenden Blüten und werden sehr alt.|
+Clematis|Die Clematis oder Waldrebe ist eine Kletterpflanze mit großen Blüten. Ihr Kopf will Sonne, ihr Fuß Schatten.|waldrebe
+Glyzinie|Die Glyzinie oder der Blauregen klettert an Hauswänden und hat lange hängende lila Blüten, ist aber giftig.|blauregen
+Kapuzinerkresse|Die Kapuzinerkresse hat essbare Blüten und Blätter, scharf wie Kresse.|essbare blüten
+Ringelblume|Ringelblumen sind orange, essbar und werden als Salbe für die Haut genutzt.|
+Sonnenhut|Der Sonnenhut, Echinacea, wird gegen Erkältungen eingenommen, die Wirkung ist umstritten.|echinacea
+Johanniskraut|Johanniskraut wird gegen leichte depressive Verstimmung eingesetzt, kann aber die Pille unwirksam machen.|
+Baldrian|Baldrian hilft beim Einschlafen und beruhigt. Katzen mögen den Geruch.|
+Arnika|Arnika wächst auf Bergwiesen und wird als Salbe bei Prellungen genutzt.|
+Schachtelhalm|Schachtelhalme sind uralte Pflanzen, die es schon vor den Dinosauriern gab.|zinnkraut
+Wasserlinse|Wasserlinsen sind die kleinsten Blütenpflanzen der Welt und bedecken Teiche wie ein grüner Teppich.|entengrütze
+Riesenseerose|Die Riesenseerose Victoria aus dem Amazonas hat Blätter mit bis zu drei Metern Durchmesser.|victoria seerose
+Rafflesia|Die Rafflesia hat mit bis zu einem Meter die größte Einzelblüte der Welt und riecht nach Aas.|größte blüte
+Titanwurz|Die Titanwurz hat einen bis drei Meter hohen Blütenstand und stinkt nach Verwesung.|
+Sequoia|Der Küstenmammutbaum Hyperion ist mit rund 116 Metern der höchste Baum der Welt.|höchster baum
+Drachenbaum|Der Drachenbaum auf den Kanaren hat roten Saft, das Drachenblut.|
+Zuckerrohr|Aus Zuckerrohr wird Rohrzucker und Rum gemacht. In Deutschland kommt Zucker meist aus Zuckerrüben.|
+Zuckerrübe|Aus der Zuckerrübe wird in Deutschland der meiste Zucker gewonnen.|
+Hanf|Hanf liefert Fasern, Öl und Samen. Bestimmte Sorten enthalten THC und werden als Cannabis genutzt.|
+Flachs|Aus Flachs wird Leinen gemacht und Leinöl gepresst.|lein
+Kork|Kork ist die Rinde der Korkeiche, die alle neun Jahre geschält wird, ohne dass der Baum stirbt.|korkeiche
+Kautschuk|Naturkautschuk kommt aus dem Saft des Kautschukbaums und ist Grundlage für Gummi.|gummibaum
+Gummibaum (Zimmerpflanze)|Der Gummibaum ist eine pflegeleichte Zimmerpflanze und mit dem Kautschukbaum verwandt.|
+Bogenhanf|Bogenhanf, auch Sansevieria, ist eine sehr robuste Zimmerpflanze, die kaum Wasser braucht.|sansevieria,schwiegermutterzunge
+Efeutute|Die Efeutute ist eine pflegeleichte Hänge-Zimmerpflanze, die auch mit wenig Licht auskommt.|
+Einblatt|Das Einblatt zeigt durch hängende Blätter, wenn es Wasser braucht.|
+Glücksfeder|Die Glücksfeder, Zamioculcas, verträgt Trockenheit und wenig Licht.|zamioculcas
+Weihnachtskaktus|Der Weihnachtskaktus blüht um Weihnachten, wenn er im Herbst kühl und dunkler steht.|
+Gießen im Urlaub|Für den Urlaub helfen Tonkegel, Wasserspeicher-Kugeln oder ein Docht vom Wasserglas zur Pflanze.|pflanzen urlaub
+Umtopfen|Zimmerpflanzen topfst du im Frühjahr um, wenn die Wurzeln unten aus dem Topf wachsen, in einen etwas größeren Topf.|
+Dünger|Pflanzen brauchen vor allem Stickstoff, Phosphor und Kalium. Zimmerpflanzen düngst du von Frühling bis Herbst etwa alle zwei Wochen.|düngen
+Rasen vertikutieren|Vertikutieren entfernt Moos und Filz aus dem Rasen, am besten im Frühjahr.|vertikutieren
+Obstbaum schneiden|Obstbäume schneidest du meist im späten Winter, damit Licht in die Krone kommt.|baumschnitt

@@ -53,7 +53,7 @@ Qualle|Manche Quallen gibt es seit über 500 Millionen Jahren. Sie bestehen zu e
 Seepferdchen|Bei Seepferdchen bekommen die Männchen die Babys.|seepferdchen männchen
 Goldfisch|Goldfische haben ein viel besseres Gedächtnis als drei Sekunden, sie merken sich Dinge über Monate.|goldfische
 Hummel|Hummeln fliegen schon bei Kälte und summen Blüten an, damit sie Pollen freigeben.|hummeln
-Regenwurm|Regenwürmer lockern und düngen den Boden. Unter einem Quadratmeter Wiese leben oft über 100.
+Regenwurm|Regenwürmer lockern und düngen den Boden. Unter einem Quadratmeter Wiese leben oft über 100.|
 Storch|Weißstörche ziehen im Winter bis nach Afrika und kehren oft zum selben Nest zurück.|störche
 Kuckuck|Der Kuckuck legt seine Eier in fremde Nester und lässt andere Vögel brüten.|
 Hamster|Hamster tragen Futter in ihren Backentaschen und sind nachtaktiv.|hamster haustier
@@ -258,3 +258,64 @@ Lautestes Tier|Der Pottwal ist das lauteste Tier, an Land der Brüllaffe.|
 Kleinstes Säugetier|Die Etruskerspitzmaus und die Hummelfledermaus sind die kleinsten Säugetiere, nur wenige Gramm schwer.|
 Schlafen Tiere|Koalas und Faultiere schlafen bis zu 20 Stunden am Tag, Giraffen nur etwa 2 Stunden.|welches tier schlaeft am meisten
 Tierschutz Notruf|Wer ein verletztes Wildtier findet, ruft am besten die Polizei, den Tierschutzverein oder eine Wildtierstation an.|verletztes tier gefunden
+Hermelin|Das Hermelin ist ein kleines Marderchen, das im Winter weiß wird. Nur die Schwanzspitze bleibt schwarz.|wiesel
+Iltis|Der Iltis ist ein Marder, von dem das Frettchen abstammt. Er kann bei Gefahr übel riechen.|
+Nerz|Der Nerz ist ein Marder am Wasser. In Europa ist der Europäische Nerz fast ausgestorben.|
+Mungo|Mungos sind flinke Raubtiere aus Afrika und Asien, die sogar Kobras besiegen können.|
+Wüstenfuchs|Der Fennek oder Wüstenfuchs hat riesige Ohren, mit denen er Wärme abgibt und Beute unter dem Sand hört.|fennek
+Rotfuchs Stadt|Füchse leben inzwischen auch in Großstädten wie Berlin und finden dort viel Nahrung.|stadtfuchs
+Goldschakal|Der Goldschakal wandert seit einigen Jahren aus Südosteuropa nach Deutschland ein.|schakal
+Kojote|Der Kojote ist ein Wildhund Nordamerikas, kleiner als der Wolf.|
+Dingo|Der Dingo ist ein wilder Hund in Australien, der vor Tausenden Jahren mit Menschen kam.|
+Erdferkel|Das Erdferkel aus Afrika frisst nachts mit seiner langen Zunge Ameisen und Termiten.|
+Pangolin|Das Schuppentier ist mit Schuppen bedeckt und rollt sich bei Gefahr zusammen. Es ist das am häufigsten geschmuggelte Säugetier der Welt.|schuppentier
+Nacktmull|Nacktmulle leben unter der Erde in Afrika, spüren kaum Schmerz, bekommen fast nie Krebs und werden über 30 Jahre alt.|
+Capybara|Das Wasserschwein aus Südamerika ist das größte Nagetier der Welt, bis 65 Kilo schwer, und gilt als sehr friedlich.|wasserschwein
+Stachelschwein|Stachelschweine sind Nagetiere mit langen Stacheln, die sie nicht schießen können, sondern nur aufstellen.|
+Gepard Jagd|Geparden jagen am Tag, weil Löwen und Hyänen nachts aktiv sind. Ihre Sprints dauern nur 20 bis 30 Sekunden.|
+Serval|Der Serval ist eine afrikanische Wildkatze mit sehr langen Beinen und großen Ohren, die Vögel aus der Luft fängt.|
+Ozelot|Der Ozelot ist eine gefleckte Wildkatze aus Mittel- und Südamerika.|
+Wildkatze|Die Europäische Wildkatze lebt wieder in deutschen Wäldern, etwa in der Eifel und im Harz. Sie sieht einer getigerten Hauskatze ähnlich.|europäische wildkatze
+Mähnenwolf|Der Mähnenwolf aus Südamerika sieht aus wie ein Fuchs auf Stelzen und frisst viel Obst.|
+Roter Panda|Der Rote Panda ist kleiner als der Große Panda und eher mit Mardern und Waschbären verwandt.|kleiner panda,katzenbär
+Gibbon Gesang|Gibbons singen jeden Morgen laute Duette, die man kilometerweit hört.|
+Mandrill|Der Mandrill ist der größte Affe, der kein Menschenaffe ist, mit einem bunten Gesicht.|
+Kapuzineraffe|Kapuzineraffen sind sehr schlau und nutzen Steine als Werkzeug, um Nüsse zu knacken.|
+Plumplori|Plumploris sind kleine Halbaffen mit großen Augen und das einzige giftige Primat.|
+Koboldmaki|Koboldmakis haben die größten Augen im Verhältnis zum Körper aller Säugetiere.|
+Hirscheber|Der Hirscheber aus Indonesien hat Hauer, die durch die Oberlippe wachsen.|
+Manati|Seekühe wie Manatis und Dugongs fressen Seegras und sind mit Elefanten verwandt. Seefahrer hielten sie früher für Meerjungfrauen.|seekuh,dugong
+Seeotter|Seeotter halten sich beim Schlafen an den Pfoten, damit sie nicht auseinandertreiben, und knacken Muscheln mit Steinen.|
+Seehund|Seehunde leben im Wattenmeer der Nordsee. Ein allein liegendes Junges ist nicht verlassen, also Abstand halten und nicht anfassen.|heuler
+Kegelrobbe|Die Kegelrobbe ist das größte Raubtier Deutschlands, Männchen wiegen bis 300 Kilo. Man sieht sie zum Beispiel auf Helgoland.|größtes raubtier deutschland
+Schweinswal|Der Schweinswal ist der einzige heimische Wal in Nord- und Ostsee.|
+Blauwal Herz|Das Herz eines Blauwals wiegt etwa 180 Kilo, so viel wie zwei Menschen.|
+Flughund|Flughunde sind große Fledermäuse, die Früchte fressen. Manche haben fast zwei Meter Spannweite.|
+Vampirfledermaus|Vampirfledermäuse trinken tatsächlich Blut, meist von Rindern, und teilen es mit hungrigen Artgenossen.|
+Kakapo|Der Kakapo aus Neuseeland ist ein flugunfähiger, nachtaktiver Papagei, von dem es nur noch etwa 250 Tiere gibt.|
+Paradiesvogel|Paradiesvögel aus Neuguinea haben prachtvolle Federn und führen auffällige Balztänze auf.|
+Blaufußtölpel|Der Blaufußtölpel von den Galápagos-Inseln zeigt bei der Balz stolz seine blauen Füße.|
+Papageitaucher|Papageitaucher haben bunte Schnäbel und brüten an Klippen, etwa auf Island und Helgoland.|puffin
+Wiedehopf|Der Wiedehopf hat eine auffällige Federhaube und war Vogel des Jahres 2022.|
+Haussperling|Der Spatz, eigentlich Haussperling, ist einer der häufigsten Vögel in Deutschland, wird aber seltener.|
+Grünspecht|Der Grünspecht sucht am Boden nach Ameisen und lacht laut.|
+Zaunkönig|Der Zaunkönig ist einer der kleinsten Vögel Deutschlands, singt aber sehr laut.|
+Goldhähnchen|Das Wintergoldhähnchen ist mit 5 Gramm der kleinste Vogel Europas.|kleinster vogel europas
+Feldlerche|Die Feldlerche singt hoch in der Luft und ist durch die Landwirtschaft selten geworden.|
+Stieglitz|Der Stieglitz oder Distelfink hat ein rotes Gesicht und frisst gern Distelsamen.|distelfink
+Pirol|Der Pirol ist leuchtend gelb, versteckt sich aber gut in Baumkronen.|
+Uhu Größe|Der Uhu ist die größte Eule der Welt, mit bis zu 1,7 Metern Spannweite.|größte eule
+Blutegel|Blutegel werden in der Medizin eingesetzt, weil ihr Speichel das Blut verdünnt.|egel
+Nacktschnecke|Spanische Wegschnecken fressen Gärten kahl. Helfen können Schneckenzäune, Laufenten und Igel.|schnecken garten
+Weinbergschnecke|Die Weinbergschnecke ist die größte Landschnecke Deutschlands und steht unter Schutz.|
+Ohrwurm|Ohrwürmer krabbeln nicht in Ohren. Sie fressen Blattläuse und sind nützlich im Garten.|
+Gottesanbeterin|Die Gottesanbeterin hält ihre Fangbeine wie zum Gebet. Weibchen fressen manchmal das Männchen.|
+Stabheuschrecke|Stabheuschrecken sehen aus wie Zweige und sind gute Tarnkünstler.|
+Wanze|Die Stinkwanze verströmt einen Geruch, wenn sie gestört wird. Die Bettwanze sticht Menschen nachts.|bettwanzen
+Silberfischchen|Silberfischchen leben in feuchten Räumen wie Bädern. Sie sind harmlos, zeigen aber zu viel Feuchtigkeit.|
+Motte|Kleidermotten fressen Wolle, Lebensmittelmotten Mehl und Nudeln. Hilft: Vorräte in dichte Dosen, Lavendel und Zedernholz.|motten
+Pfeilschwanzkrebs|Pfeilschwanzkrebse gibt es seit über 400 Millionen Jahren, ihr blaues Blut wird für Medizin-Tests genutzt.|blaues blut
+Mantarochen|Mantarochen haben bis 7 Meter Spannweite und das größte Gehirn aller Fische.|manta
+Mondfisch|Der Mondfisch ist der schwerste Knochenfisch der Welt, über zwei Tonnen.|schwerster fisch
+Grönlandhai|Der Grönlandhai kann über 250, vielleicht sogar 400 Jahre alt werden.|
+Anglerfisch|Tiefsee-Anglerfische locken Beute mit einer leuchtenden Angel am Kopf.|
