@@ -8,13 +8,13 @@ Alles davon beantwortet Friday **ohne Claude-Guthaben und ohne Internet**.
 | Bereich | Einträge |
 |---|---|
 | Fremdwörter & Begriffe (neu) | 985 |
-| Personen | 650 |
+| Personen | 636 |
 | Abkürzungen | 454 |
 | Englisch-Wörter (neu) | 388 |
 | Wusstest du?-Fakten | 362 |
 | Städte der Welt (neu) | 324 |
-| Tiere | 318 |
-| Sprichwörter & Redewendungen (neu) | 260 |
+| Tiere | 319 |
+| Sprichwörter & Redewendungen (neu) | 221 |
 | Geschichte | 267 |
 | Technik & KI, Körper, Erde, Natur, Geld, Weltraum | je 165 bis 290 |
 | Deutsche Städte | 189 |
