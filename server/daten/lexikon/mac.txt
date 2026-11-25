@@ -32,3 +32,100 @@ Wo ist|Mit der App Wo ist findest du verlorene Apple-Geräte und AirTags. Bei Ve
 Taschenlampe iPhone|Die Taschenlampe schaltest du im Kontrollzentrum ein, oder sag Hey Siri, Taschenlampe an.|taschenlampe
 Bildschirmzeit|Unter Einstellungen, Bildschirmzeit siehst du, wie lange du welche Apps nutzt, und kannst Grenzen setzen.|screen time
 WLAN-Passwort teilen|Hält ein Freund sein iPhone neben deins und will in dein WLAN, fragt dein iPhone, ob es das Passwort teilen soll.|wlan teilen
+Fenster schließen|Mit Befehlstaste und W schließt du das aktuelle Fenster oder den aktuellen Tab.|befehl w,fenster zu
+Neues Fenster|Mit Befehlstaste und N öffnest du ein neues Fenster, zum Beispiel im Finder oder in Safari.|befehl n
+Alles auswählen|Mit Befehlstaste und A markierst du alles.|befehl a,alles markieren
+Speichern Mac|Mit Befehlstaste und S speicherst du eine Datei.|befehl s,speichern
+Drucken Mac|Mit Befehlstaste und P druckst du.|befehl p,drucken
+Wiederherstellen|Mit Befehlstaste, Umschalt und Z machst du ein Rückgängig wieder rückgängig.|redo
+Fenster ausblenden|Mit Befehlstaste und H blendest du die aktuelle App aus, mit Befehlstaste, Wahl und H alle anderen.|befehl h
+Fenster minimieren|Mit Befehlstaste und M legst du ein Fenster ins Dock.|befehl m
+Einstellungen der App|Mit Befehlstaste und Komma öffnest du die Einstellungen der aktuellen App.|befehl komma
+Fenster einer App wechseln|Mit Befehlstaste und der Taste neben dem Umschalt links wechselst du zwischen Fenstern derselben App.|
+Tab wiederherstellen|In Safari holst du mit Befehlstaste, Umschalt und T einen geschlossenen Tab zurück.|tab zurück
+Privates Fenster|In Safari öffnest du mit Befehlstaste, Umschalt und N ein privates Fenster.|inkognito mac
+Adressleiste|Mit Befehlstaste und L springst du in Safari in die Adressleiste.|
+Zoomen Mac|Mit Befehlstaste und Plus oder Minus vergrößerst oder verkleinerst du in Safari. Befehlstaste und 0 setzt zurück.|vergrößern,schrift größer
+Bildschirmaufnahme Video|Mit Befehlstaste, Umschalt und 5 nimmst du den Bildschirm als Video auf oder machst gezielte Screenshots.|bildschirm aufnehmen mac
+Screenshot Ausschnitt|Mit Befehlstaste, Umschalt und 4 wählst du einen Ausschnitt. Drückst du danach die Leertaste, fotografierst du ein einzelnes Fenster.|screenshot teil
+Zeichenübersicht|Mit Control, Befehlstaste und Leertaste öffnest du Emojis und Sonderzeichen.|sonderzeichen mac
+At-Zeichen Mac|Das @ tippst du am Mac mit Wahltaste und L.|at zeichen,klammeraffe
+Eckige Klammern Mac|Eckige Klammern tippst du mit Wahltaste und 5 oder 6, geschweifte mit Wahltaste und 8 oder 9.|klammern mac
+Euro-Zeichen Mac|Das Euro-Zeichen tippst du mit Wahltaste und E.|euro zeichen
+Senkrechter Strich Mac|Den senkrechten Strich tippst du mit Wahltaste und 7, den Backslash mit Wahltaste, Umschalt und 7.|pipe zeichen,backslash mac
+Umlaute ausländische Tastatur|Halte einen Buchstaben gedrückt, dann erscheinen Varianten mit Akzenten und Umlauten.|akzent mac
+Vorschau Leertaste|Markiere eine Datei im Finder und drücke die Leertaste, dann siehst du eine schnelle Vorschau.|übersicht,quick look
+Datei-Info|Mit Befehlstaste und I zeigt der Finder Informationen zu einer Datei, etwa Größe und Datum.|informationen datei
+Ordner anlegen|Im Finder legst du mit Befehlstaste, Umschalt und N einen neuen Ordner an.|neuer ordner
+Datei duplizieren|Mit Befehlstaste und D duplizierst du eine Datei im Finder.|
+Datei löschen Mac|Mit Befehlstaste und Rückschritt kommt eine Datei in den Papierkorb.|löschen mac
+Downloads Ordner|Den Downloads-Ordner öffnest du im Finder mit Befehlstaste, Wahltaste und L.|downloads öffnen
+Schreibtisch zeigen|Mit F11 oder Befehlstaste und F3 schiebst du alle Fenster weg und siehst den Schreibtisch.|desktop zeigen
+Mission Control|Mit Control und Pfeil nach oben oder Wischen mit drei Fingern nach oben siehst du alle offenen Fenster.|alle fenster
+Schreibtische wechseln|Mit Control und Pfeil links oder rechts wechselst du zwischen mehreren Schreibtischen.|spaces
+Fenster nebeneinander|Halte den Mauszeiger über den grünen Punkt oben links im Fenster und wähle links oder rechts anordnen.|split view,fenster teilen
+Stage Manager|Der Stage Manager ordnet offene Apps am linken Rand an. Du schaltest ihn im Kontrollzentrum ein.|
+Kontrollzentrum Mac|Oben rechts in der Menüleiste öffnest du das Kontrollzentrum mit WLAN, Bluetooth, Ton und Helligkeit.|
+Mitteilungszentrale|Klicke oben rechts auf Datum und Uhrzeit, dann öffnet sich die Mitteilungszentrale mit Widgets.|widgets mac
+Dock ausblenden|Mit Befehlstaste, Wahltaste und D blendest du das Dock automatisch aus.|dock verstecken
+Launchpad|Mit Launchpad siehst du alle Apps wie auf dem iPhone. Öffnen mit F4 oder Fingerzusammenziehen.|alle apps mac
+App installieren Mac|Apps lädst du am sichersten aus dem App Store. Andere Apps aus dem Internet ziehst du in den Programme-Ordner.|programm installieren
+App löschen Mac|Eine App löschst du, indem du sie aus dem Programme-Ordner in den Papierkorb ziehst.|programm deinstallieren
+Systemeinstellungen|Die Systemeinstellungen öffnest du über das Apple-Menü oben links.|einstellungen mac
+macOS Update|Updates findest du unter Systemeinstellungen, Allgemein, Softwareupdate.|mac update
+Time Machine|Mit Time Machine sicherst du deinen Mac automatisch auf eine externe Festplatte.|backup mac,sicherung mac
+AirDrop|Mit AirDrop schickst du Dateien drahtlos an Apple-Geräte in der Nähe. Im Finder links AirDrop wählen oder im Teilen-Menü.|airdrop
+Handoff|Mit Handoff machst du auf dem Mac weiter, was du am iPhone angefangen hast, etwa eine Website.|
+Universelle Zwischenablage|Was du am iPhone kopierst, kannst du am Mac einfügen und umgekehrt, wenn beide mit derselben Apple-ID angemeldet sind.|kopieren iphone mac
+iPhone-Synchronisierung|Das iPhone verbindest du im Finder mit dem Mac, links erscheint es unter Orte.|iphone mit mac verbinden
+Sidecar|Mit Sidecar nutzt du ein iPad als zweiten Bildschirm für den Mac.|ipad als monitor
+Bildschirmhelligkeit Mac|Die Helligkeit stellst du mit F1 und F2 oder im Kontrollzentrum ein.|helligkeit
+Nachtmodus Mac|Night Shift macht den Bildschirm abends wärmer. Einstellen unter Systemeinstellungen, Displays.|night shift
+Dunkler Modus|Den dunklen Modus aktivierst du unter Systemeinstellungen, Erscheinungsbild.|dark mode
+Mac Ruhezustand|Klappe das MacBook zu oder wähle Ruhezustand im Apple-Menü.|schlafen mac
+Mac ausschalten|Apple-Menü, Ausschalten. Wenn nichts geht, Ein-Taste etwa zehn Sekunden gedrückt halten.|herunterfahren
+Mac hängt|Wenn der Mac hängt: Befehlstaste, Wahltaste und Escape für Sofort beenden. Hilft das nicht, Ein-Taste lange drücken.|mac reagiert nicht
+Regenbogenrad|Das bunte Drehrad heißt, dass eine App beschäftigt ist. Kurz warten oder die App sofort beenden.|beachball
+Speicherplatz Mac|Unter Systemeinstellungen, Allgemein, Speicher siehst du, was Platz belegt.|speicher voll mac
+Akku Gesundheit Mac|Unter Systemeinstellungen, Batterie siehst du den Batteriezustand.|batteriezustand
+Mac WLAN Probleme|Bei WLAN-Problemen WLAN aus- und wieder einschalten, Router neu starten oder das Netzwerk entfernen und neu verbinden.|internet geht nicht
+Bluetooth Mac|Bluetooth findest du im Kontrollzentrum. Kopfhörer koppelst du unter Systemeinstellungen, Bluetooth.|kopfhörer verbinden mac
+AirPods verbinden|AirPods öffnen neben dem iPhone, dann erscheint ein Fenster zum Verbinden. Am Mac über Bluetooth.|airpods koppeln
+Terminal|Das Terminal ist die Befehlszeile des Mac. Du findest es unter Programme, Dienstprogramme.|terminal öffnen
+Passwörter App|In der App Passwörter findest du alle gespeicherten Passwörter, geschützt mit Touch ID.|passwörter mac,schlüsselbund
+Touch ID|Mit Touch ID entsperrst du den Mac per Fingerabdruck, einrichten unter Systemeinstellungen.|fingerabdruck mac
+Apple Watch entsperren|Der Mac lässt sich mit der Apple Watch entsperren, einzustellen unter Touch ID und Passwort.|
+Notizen App|In der Notizen-App schreibst du Notizen, die über iCloud auf allen Geräten gleich sind.|notizen
+Erinnerungen App|In der Erinnerungen-App legst du Aufgaben mit Datum und Ort an. Friday kann sie auch lesen.|erinnerung anlegen
+Kalender App|In der Kalender-App legst du Termine an. Mit Friday kannst du sie per Sprache abfragen.|termin anlegen
+Vorschau App|Die App Vorschau öffnet PDFs und Bilder und kann sie auch bearbeiten, unterschreiben und zusammenfügen.|pdf bearbeiten mac
+PDF unterschreiben|In Vorschau unter Markierungen findest du Unterschrift. Du kannst sie mit dem Trackpad oder der Kamera erfassen.|unterschrift pdf
+Bilder verkleinern Mac|In Vorschau unter Werkzeuge, Größenanpassung verkleinerst du Bilder.|bild verkleinern
+Zip-Datei|Rechtsklick auf Dateien und Komprimieren erzeugt eine Zip-Datei. Doppelklick entpackt.|zippen,entpacken
+Rechtsklick Mac|Rechtsklick ist am Trackpad Tippen mit zwei Fingern oder Control und Klick.|rechte maustaste
+Scrollen Trackpad|Mit zwei Fingern scrollst du. Mit zwei Fingern nach links oder rechts gehst du in Safari vor und zurück.|trackpad gesten
+Text vorlesen|Markiere Text und drücke Wahltaste und Escape, dann liest der Mac vor, wenn das in den Bedienungshilfen aktiviert ist.|vorlesen mac
+Siri am Mac|Siri startest du mit Befehlstaste und Leertaste lange halten oder dem Siri-Symbol.|siri mac
+Fokus am Mac|Mit Nicht stören im Kontrollzentrum schaltest du Mitteilungen stumm.|nicht stören
+iPhone Kontrollzentrum|Wische oben rechts nach unten, dann öffnet sich das Kontrollzentrum mit Taschenlampe, WLAN und Helligkeit.|kontrollzentrum iphone
+iPhone App löschen|Halte das App-Symbol gedrückt und wähle App entfernen.|app löschen iphone
+iPhone Speicher|Unter Einstellungen, Allgemein, iPhone-Speicher siehst du, welche Apps viel Platz brauchen.|speicher voll iphone
+iPhone Update|Unter Einstellungen, Allgemein, Softwareupdate.|ios update
+iPhone Backup|iCloud-Backup aktivierst du unter Einstellungen, dein Name, iCloud, iCloud-Backup.|iphone sichern
+iPhone suchen|Mit der App Wo ist oder auf icloud.com findest du ein verlorenes iPhone und kannst es klingeln lassen.|iphone verloren
+iPhone ausschalten|Seitentaste und eine Lautstärketaste gedrückt halten, dann den Regler ziehen.|iphone aus
+iPhone Notfall SOS|Seitentaste fünfmal schnell drücken oder Seitentaste und Lautstärke halten, dann ruft das iPhone den Notruf.|notruf iphone,sos
+Notfallpass iPhone|In der Health-App legst du einen Notfallpass mit Allergien und Kontakten an, Retter sehen ihn auf dem Sperrbildschirm.|medizinischer pass
+Rückseite tippen|Unter Bedienungshilfen, Tippen, Auf Rückseite tippen kannst du mit Doppeltippen hinten am iPhone Aktionen starten, etwa einen Kurzbefehl.|back tap
+Bildschirm aufnehmen iPhone|Füge im Kontrollzentrum die Bildschirmaufnahme hinzu, dann tippst du auf den Punkt.|bildschirmaufnahme iphone
+Live-Text|Das iPhone erkennt Text in Fotos. Halte den Finger auf den Text, dann kannst du ihn kopieren.|text aus foto
+Objekt freistellen|Halte den Finger auf eine Person oder ein Tier im Foto, dann kannst du es ohne Hintergrund kopieren.|hintergrund entfernen
+Dokument scannen|In der Notizen-App tippst du auf die Kamera und Dokumente scannen.|scannen iphone
+Maßband iPhone|Mit der App Maßband misst du Längen per Kamera.|messen iphone
+Lupe iPhone|Die App Lupe vergrößert kleine Schrift mit der Kamera.|
+Wasserwaage iPhone|In der App Maßband findest du unten auch eine Wasserwaage.|
+Tastatur einhand|Halte die Weltkugel oder das Emoji-Symbol gedrückt und wähle die Einhand-Tastatur.|
+Cursor bewegen iPhone|Halte die Leertaste gedrückt, dann wird die Tastatur zum Trackpad und du verschiebst den Cursor.|textcursor
+Schütteln zum Widerrufen|Schüttle das iPhone, um Tippen rückgängig zu machen.|rückgängig iphone
+Fotos ausblenden|Fotos kannst du ausblenden, sie landen dann in einem gesperrten Album.|versteckte fotos
+Familienfreigabe|Mit der Familienfreigabe teilt ihr Käufe, iCloud-Speicher und Abos mit bis zu sechs Personen.|familie apple

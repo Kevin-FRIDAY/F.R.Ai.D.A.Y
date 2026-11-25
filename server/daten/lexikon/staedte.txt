@@ -64,3 +64,128 @@ Trier|Rheinland-Pfalz|110.000|Älteste Stadt Deutschlands mit der Porta Nigra.|
 Bremerhaven|Bremen|115.000|Hafenstadt an der Nordsee, mit dem Klimahaus.|
 Erlangen|Bayern|115.000|Siemens-Standort und Universitätsstadt.|
 Schwerin|Mecklenburg-Vorpommern|98.000|Landeshauptstadt mit dem Schweriner Schloss auf einer Insel.|
+Pforzheim|Baden-Württemberg|128.000|Goldstadt, bekannt für Schmuck- und Uhrenindustrie, Tor zum Nordschwarzwald.|
+Reutlingen|Baden-Württemberg|117.000|Am Fuß der Schwäbischen Alb, mit der Spreuerhofstraße, einer der engsten Straßen der Welt.|
+Offenbach am Main|Hessen|132.000|Nachbarstadt von Frankfurt, bekannt für Lederwaren und das Deutsche Ledermuseum.|offenbach
+Fürth|Bayern|130.000|Nachbarstadt von Nürnberg, erste deutsche Eisenbahnstrecke 1835 führte von Nürnberg nach Fürth.|
+Siegen|Nordrhein-Westfalen|101.000|Universitätsstadt im Siegerland, Geburtsort des Malers Peter Paul Rubens.|
+Hildesheim|Niedersachsen|100.000|Bekannt für den Dom und die Michaeliskirche, beide UNESCO-Welterbe, und den tausendjährigen Rosenstock.|
+Salzgitter|Niedersachsen|104.000|Industriestadt mit Stahlwerk und Kurort Salzgitter-Bad.|
+Cottbus|Brandenburg|99.000|Zweitgrößte Stadt Brandenburgs, mit Branitzer Park von Fürst Pückler und sorbischer Kultur.|
+Gütersloh|Nordrhein-Westfalen|101.000|Sitz von Bertelsmann und Miele.|
+Moers|Nordrhein-Westfalen|104.000|Stadt am Niederrhein, bekannt für das Moers Festival für Jazz.|
+Neuss|Nordrhein-Westfalen|155.000|Eine der ältesten Städte Deutschlands, von den Römern gegründet, gegenüber von Düsseldorf am Rhein.|
+Recklinghausen|Nordrhein-Westfalen|111.000|Stadt im Ruhrgebiet, bekannt für die Ruhrfestspiele.|
+Bottrop|Nordrhein-Westfalen|117.000|Ruhrgebietsstadt mit dem Tetraeder auf der Halde und der letzten Steinkohlezeche Prosper-Haniel bis 2018.|
+Remscheid|Nordrhein-Westfalen|111.000|Werkzeugstadt im Bergischen Land, Geburtsort von Wilhelm Conrad Röntgen.|
+Solingen|Nordrhein-Westfalen|160.000|Klingenstadt, berühmt für Messer und Scheren, mit Schloss Burg und der Müngstener Brücke.|
+Bergisch Gladbach|Nordrhein-Westfalen|112.000|Stadt östlich von Köln, früher bekannt für Papierherstellung.|
+Witten|Nordrhein-Westfalen|96.000|Ruhrgebietsstadt mit privater Universität Witten/Herdecke, Wiege des Ruhrbergbaus im Muttental.|
+Iserlohn|Nordrhein-Westfalen|92.000|Größte Stadt im Sauerland, mit der Dechenhöhle.|
+Zwickau|Sachsen|87.000|Autostadt, hier wurde der Trabant gebaut, heute VW-Elektroautos. Geburtsort von Robert Schumann.|
+Plauen|Sachsen|64.000|Bekannt für Plauener Spitze, Stadt im Vogtland.|
+Görlitz|Sachsen|56.000|Östlichste Stadt Deutschlands an der Neiße, gegenüber liegt das polnische Zgorzelec. Beliebter Drehort für Filme.|
+Bautzen|Sachsen|38.000|Zentrum der Sorben in der Oberlausitz, bekannt für Bautzener Senf.|
+Meißen|Sachsen|28.000|Bekannt für das Meissener Porzellan, das erste europäische Porzellan ab 1710, und die Albrechtsburg.|meissen
+Freiberg|Sachsen|40.000|Alte Bergbaustadt mit der ältesten montanwissenschaftlichen Hochschule der Welt, der Bergakademie von 1765.|
+Weimar|Thüringen|65.000|Stadt der deutschen Klassik mit Goethe und Schiller, Gründungsort des Bauhauses 1919 und Namensgeber der Weimarer Republik.|
+Gera|Thüringen|93.000|Drittgrößte Stadt Thüringens, Geburtsort des Malers Otto Dix.|
+Gotha|Thüringen|45.000|Residenzstadt mit Schloss Friedenstein, Gründungsort der SPD 1875.|
+Eisenach|Thüringen|42.000|Mit der Wartburg, wo Martin Luther 1521 das Neue Testament übersetzte. Geburtsort von Johann Sebastian Bach.|
+Wittenberg|Sachsen-Anhalt|45.000|Lutherstadt Wittenberg: hier begann 1517 die Reformation mit Luthers 95 Thesen.|lutherstadt wittenberg
+Dessau-Roßlau|Sachsen-Anhalt|75.000|Bauhaus-Stadt mit dem berühmten Bauhausgebäude von Walter Gropius und dem Gartenreich Dessau-Wörlitz.|dessau
+Quedlinburg|Sachsen-Anhalt|23.000|Fachwerkstadt mit über 2.000 Fachwerkhäusern, UNESCO-Welterbe.|
+Wernigerode|Sachsen-Anhalt|33.000|Bunte Stadt am Harz mit Schloss, Start der Brockenbahn.|
+Halberstadt|Sachsen-Anhalt|39.000|Hier läuft das langsamste Musikstück der Welt, ein Orgelstück von John Cage, das 639 Jahre dauern soll.|
+Stralsund|Mecklenburg-Vorpommern|60.000|Hansestadt am Strelasund, Tor zur Insel Rügen, mit dem Ozeaneum. Altstadt ist UNESCO-Welterbe.|
+Greifswald|Mecklenburg-Vorpommern|60.000|Universitäts- und Hansestadt, Geburtsort des Malers Caspar David Friedrich.|
+Wismar|Mecklenburg-Vorpommern|43.000|Hansestadt an der Ostsee, Altstadt UNESCO-Welterbe, Drehort der Serie SOKO Wismar.|
+Neubrandenburg|Mecklenburg-Vorpommern|63.000|Stadt der Vier Tore mit vollständig erhaltener mittelalterlicher Stadtmauer.|
+Frankfurt (Oder)|Brandenburg|57.000|Grenzstadt zu Polen an der Oder, mit Europa-Universität Viadrina.|frankfurt oder
+Brandenburg an der Havel|Brandenburg|73.000|Namensgeberin des Bundeslandes, mit dem Dom St. Peter und Paul.|
+Lüneburg|Niedersachsen|78.000|Salzstadt, reich geworden durch Salzhandel, Drehort der Serie Rote Rosen.|
+Celle|Niedersachsen|70.000|Fachwerkstadt mit Residenzschloss am Rand der Lüneburger Heide.|
+Wolfenbüttel|Niedersachsen|52.000|Hier wird Jägermeister hergestellt, mit der berühmten Herzog August Bibliothek.|
+Goslar|Niedersachsen|50.000|Kaiserstadt am Harz mit Kaiserpfalz und Erzbergwerk Rammelsberg, UNESCO-Welterbe.|
+Emden|Niedersachsen|50.000|Seehafen in Ostfriesland mit VW-Werk und Otto-Huus von Otto Waalkes.|
+Wilhelmshaven|Niedersachsen|76.000|Marinestützpunkt und einziger deutscher Tiefwasserhafen, der Jade-Weser-Port.|
+Cuxhaven|Niedersachsen|49.000|Nordseebad an der Elbmündung, die Kugelbake ist das Wahrzeichen.|
+Hameln|Niedersachsen|57.000|Rattenfängerstadt, bekannt aus der Sage vom Rattenfänger von Hameln.|
+Lingen|Niedersachsen|57.000|Stadt im Emsland mit Energiestandort.|
+Flensburg|Schleswig-Holstein|92.000|Nördlichste Stadt Deutschlands, Sitz des Kraftfahrt-Bundesamtes mit dem Punkteregister. Bekannt für Flensburger Bier und Rum.|
+Neumünster|Schleswig-Holstein|80.000|Mitten in Schleswig-Holstein, mit großem Outlet-Center.|
+Husum|Schleswig-Holstein|23.000|Die graue Stadt am Meer nach Theodor Storm, bekannt für Krokusblüte.|
+Sylt (Westerland)|Schleswig-Holstein|17.000|Westerland ist der Hauptort der Nordseeinsel Sylt, die über den Hindenburgdamm per Zug erreichbar ist.|westerland
+Rosenheim|Bayern|64.000|Stadt am Inn, Drehort der Serie Die Rosenheim-Cops.|
+Landshut|Bayern|75.000|Bekannt für die Landshuter Hochzeit, ein großes Mittelalterfest alle vier Jahre, und den höchsten Backsteinkirchturm der Welt.|
+Passau|Bayern|53.000|Dreiflüssestadt an Donau, Inn und Ilz, mit einer der größten Kirchenorgeln der Welt im Dom.|
+Bamberg|Bayern|78.000|Altstadt UNESCO-Welterbe, berühmt für Rauchbier und viele Brauereien.|
+Bayreuth|Bayern|74.000|Stadt der Richard-Wagner-Festspiele auf dem Grünen Hügel.|
+Kempten|Bayern|70.000|Eine der ältesten Städte Deutschlands, Zentrum des Allgäus.|
+Kaufbeuren|Bayern|46.000|Allgäuer Stadt mit dem Stadtteil Neugablonz.|
+Garmisch-Partenkirchen|Bayern|27.000|Markt am Fuß der Zugspitze, Austragungsort der Olympischen Winterspiele 1936 und des Neujahrsskispringens.|garmisch
+Berchtesgaden|Bayern|7.700|Markt in den Alpen am Königssee und Watzmann.|königssee
+Aschaffenburg|Bayern|72.000|Stadt am Main mit Schloss Johannisburg, das bayerische Nizza genannt.|
+Schweinfurt|Bayern|54.000|Industriestadt am Main, Zentrum der Wälzlager-Industrie.|
+Neu-Ulm|Bayern|60.000|Bayerische Schwesterstadt von Ulm auf der anderen Donauseite.|
+Kaiserslautern|Rheinland-Pfalz|100.000|Größte Stadt der Pfalz, Fußballtradition mit dem 1. FC Kaiserslautern und dem Betzenberg.|
+Worms|Rheinland-Pfalz|84.000|Nibelungenstadt, hier verteidigte Luther 1521 seine Lehre auf dem Reichstag.|
+Speyer|Rheinland-Pfalz|51.000|Mit dem Kaiserdom, einer der größten romanischen Kirchen der Welt, und dem Technikmuseum.|
+Neustadt an der Weinstraße|Rheinland-Pfalz|54.000|Weinstadt mit dem Hambacher Schloss, wo 1832 für Freiheit und Einheit demonstriert wurde.|
+Landau in der Pfalz|Rheinland-Pfalz|48.000|Südpfälzer Weinstadt.|landau
+Pirmasens|Rheinland-Pfalz|40.000|Deutsche Schuhmetropole mit dem Dynamikum.|
+Idar-Oberstein|Rheinland-Pfalz|28.000|Edelsteinstadt mit Felsenkirche.|
+Neunkirchen|Saarland|46.000|Zweitgrößte Stadt im Saarland mit Zoo.|
+Völklingen|Saarland|40.000|Mit der Völklinger Hütte, einem Eisenwerk, das UNESCO-Welterbe ist.|
+Homburg|Saarland|42.000|Universitätsklinikum des Saarlandes, Brauerei Karlsberg.|
+Marburg|Hessen|77.000|Universitätsstadt mit der ältesten protestantischen Universität der Welt von 1527.|
+Gießen|Hessen|91.000|Universitätsstadt mit dem Mathematikum, einem Mitmach-Museum.|
+Fulda|Hessen|70.000|Barockstadt mit Dom und Grab des heiligen Bonifatius.|
+Hanau|Hessen|100.000|Geburtsort der Brüder Grimm, Start der Deutschen Märchenstraße.|
+Rüsselsheim|Hessen|67.000|Opel-Stadt, Sitz des Autoherstellers seit 1862.|
+Bad Homburg|Hessen|55.000|Kurstadt im Taunus mit Spielbank und Kurpark.|
+Konstanz|Baden-Württemberg|86.000|Am Bodensee an der Grenze zur Schweiz, mit der Insel Mainau in der Nähe.|
+Friedrichshafen|Baden-Württemberg|61.000|Zeppelin-Stadt am Bodensee mit Zeppelin-Museum.|
+Baden-Baden|Baden-Württemberg|56.000|Berühmte Kurstadt mit Casino und Festspielhaus, UNESCO-Welterbe als Bäderstadt.|
+Tübingen|Baden-Württemberg|92.000|Universitätsstadt am Neckar mit Stocherkahnfahrten und dem Hölderlinturm.|
+Esslingen am Neckar|Baden-Württemberg|95.000|Bekannt für Weihnachts- und Mittelaltermarkt und Sektkellerei Kessler.|esslingen
+Ludwigsburg|Baden-Württemberg|94.000|Barockstadt mit einem der größten Barockschlösser Deutschlands und Blühendem Barock.|
+Sindelfingen|Baden-Württemberg|64.000|Großes Mercedes-Benz-Werk.|
+Schwäbisch Hall|Baden-Württemberg|41.000|Salzsiederstadt, bekannt durch die Bausparkasse und die Freilichtspiele auf der Treppe.|
+Ravensburg|Baden-Württemberg|51.000|Stadt der Türme, Sitz des Spieleverlags Ravensburger.|
+Offenburg|Baden-Württemberg|62.000|Größte Stadt der Ortenau, Sitz des Burda-Verlags.|
+Rust|Baden-Württemberg|4.500|Kleine Gemeinde mit dem Europa-Park, dem größten Freizeitpark Deutschlands.|europa park
+Lörrach|Baden-Württemberg|50.000|Grenzstadt im Dreiländereck Deutschland, Schweiz, Frankreich.|
+Heidenheim an der Brenz|Baden-Württemberg|50.000|Bekannt für Voith und den Fußballverein 1. FC Heidenheim.|heidenheim
+Aalen|Baden-Württemberg|69.000|Stadt am Limes mit großem Römermuseum.|
+Herford|Nordrhein-Westfalen|67.000|Stadt mit dem Museum Marta und der Brauerei Herforder.|
+Detmold|Nordrhein-Westfalen|75.000|Mit dem Hermannsdenkmal im Teutoburger Wald und dem Freilichtmuseum.|hermannsdenkmal
+Minden|Nordrhein-Westfalen|82.000|Am Wasserstraßenkreuz, wo der Mittellandkanal die Weser überquert.|
+Arnsberg|Nordrhein-Westfalen|73.000|Sitz der Bezirksregierung im Sauerland.|
+Lüdenscheid|Nordrhein-Westfalen|72.000|Stadt der Knöpfe und Lichtstadt im Sauerland.|
+Dinslaken|Nordrhein-Westfalen|67.000|Stadt am Niederrhein am Rand des Ruhrgebiets.|
+Kleve|Nordrhein-Westfalen|52.000|Schwanenstadt nahe der niederländischen Grenze.|
+Xanten|Nordrhein-Westfalen|22.000|Römerstadt mit Archäologischem Park und Heimat Siegfrieds aus der Nibelungensage.|
+Marl|Nordrhein-Westfalen|85.000|Sitz des Grimme-Instituts, das den Grimme-Preis fürs Fernsehen vergibt.|
+Castrop-Rauxel|Nordrhein-Westfalen|73.000|Stadt im Ruhrgebiet, bekannt für den Europaplatz und Zeche Erin.|
+Gladbeck|Nordrhein-Westfalen|76.000|Ruhrgebietsstadt mit Wasserschloss Wittringen.|
+Velbert|Nordrhein-Westfalen|82.000|Schlüssel- und Schlossstadt, Zentrum der Schlossindustrie.|
+Ratingen|Nordrhein-Westfalen|87.000|Stadt bei Düsseldorf mit der ersten Fabrik Europas, der Textilfabrik Cromford.|
+Euskirchen|Nordrhein-Westfalen|60.000|Kreisstadt am Rand der Eifel.|
+Monschau|Nordrhein-Westfalen|11.000|Malerische Fachwerkstadt in der Eifel mit berühmtem Weihnachtsmarkt.|
+Winterberg|Nordrhein-Westfalen|12.000|Wintersportort im Sauerland mit Bobbahn.|
+Ingelheim am Rhein|Rheinland-Pfalz|36.000|Rotweinstadt und Sitz des Pharmakonzerns Boehringer Ingelheim.|ingelheim
+Bingen am Rhein|Rheinland-Pfalz|26.000|Am Beginn des Oberen Mittelrheintals mit dem Mäuseturm. Hildegard von Bingen wirkte hier.|bingen
+Rüdesheim am Rhein|Hessen|10.000|Weinstadt mit der Drosselgasse und dem Niederwalddenkmal.|rüdesheim
+Cochem|Rheinland-Pfalz|5.000|Moselstädtchen mit der Reichsburg.|
+Bernkastel-Kues|Rheinland-Pfalz|7.000|Weinort an der Mosel mit Fachwerk-Marktplatz.|bernkastel
+Lindau|Bayern|26.000|Inselstadt im Bodensee mit Hafeneinfahrt mit Löwe und Leuchtturm.|
+Füssen|Bayern|15.000|Stadt im Allgäu, in der Nähe stehen Schloss Neuschwanstein und Hohenschwangau.|neuschwanstein stadt
+Rothenburg ob der Tauber|Bayern|11.000|Mittelalterliche Stadt mit erhaltener Stadtmauer, Käthe Wohlfahrts Weihnachtsdorf und vielen Touristen.|rothenburg
+Dinkelsbühl|Bayern|12.000|Mittelalterliche Stadt an der Romantischen Straße.|
+Oberstdorf|Bayern|10.000|Südlichste Gemeinde Deutschlands, Wintersport und Vierschanzentournee.|
+Wunsiedel|Bayern|9.000|Stadt im Fichtelgebirge mit Luisenburg-Festspielen.|
+Bad Tölz|Bayern|19.000|Kurstadt an der Isar, Drehort der Serie Der Bulle von Tölz.|
+Erding|Bayern|37.000|Mit der Therme Erding, einer der größten Thermen der Welt, und dem Erdinger Weißbier.|
+Freising|Bayern|49.000|Domstadt bei München mit Weihenstephan, der ältesten noch bestehenden Brauerei der Welt.|weihenstephan
+Dachau|Bayern|48.000|Stadt bei München mit der KZ-Gedenkstätte Dachau, dem ersten Konzentrationslager der Nazis ab 1933.|

@@ -93,3 +93,105 @@ Facebook|Mark Zuckerberg|2004|In Harvard gegründet.|
 WhatsApp|Jan Koum und Brian Acton|2009|2014 von Facebook gekauft.|
 ChatGPT|OpenAI|2022|KI-Chatbot, startete am 30. November 2022.|
 Claude|Anthropic|2023|KI-Assistent von Anthropic und mein Gehirn.|claude ki
+Schreibschrift Keilschrift|Sumerer|um 3200 v. Chr.|Eine der ersten Schriften der Welt, mit Griffeln in Tontafeln gedrückt, in Mesopotamien.|keilschrift,erste schrift
+Alphabet|Phönizier|um 1100 v. Chr.|Das phönizische Alphabet mit 22 Zeichen ist Vorfahre des griechischen, lateinischen und vieler anderer Alphabete.|alphabet erfunden
+Geld (Münzen)|Lyder|um 600 v. Chr.|Die ersten Münzen wurden im Königreich Lydien in der heutigen Türkei geprägt.|münzen,münzgeld
+Papiergeld|China|um 1000|In China der Song-Dynastie entstanden die ersten Banknoten.|banknoten,geldscheine
+Abakus|Mesopotamien und China|um 2700 v. Chr.|Rechenbrett mit Kugeln, eine der ältesten Rechenhilfen.|rechenbrett
+Uhr (mechanisch)|unbekannt, Europa|um 1300|Die ersten mechanischen Räderuhren hingen in Kirchtürmen.|mechanische uhr,räderuhr
+Taschenuhr|Peter Henlein|um 1510|Der Nürnberger Schlosser gilt als Erfinder der tragbaren Uhr, dem Nürnberger Ei.|nürnberger ei
+Armbanduhr|Patek Philippe und andere|1868|Erste Armbanduhren waren Schmuck für Damen, für Männer setzten sie sich erst im Ersten Weltkrieg durch.|
+Pendeluhr|Christiaan Huygens|1656|Der Niederländer baute die erste genaue Pendeluhr.|
+Quarzuhr|Seiko|1969|Die Seiko Astron war die erste Quarz-Armbanduhr.|
+Atomuhr|Louis Essen|1955|Die genauesten Uhren der Welt, sie gehen in Millionen Jahren kaum eine Sekunde falsch. Die PTB in Braunschweig steuert Deutschlands Funkuhren.|
+Brücke aus Stahlseil (Hängebrücke)|John Roebling|1883|Die Brooklyn Bridge in New York war die erste große Stahlseil-Hängebrücke.|
+Aufzug mit Fangvorrichtung|Elisha Otis|1853|Erst die Sicherheitsbremse von Otis machte Hochhäuser möglich.|fahrstuhl,aufzug
+Rolltreppe|Jesse Reno|1892|Die erste Rolltreppe war eher ein schräges Förderband auf Coney Island.|
+Wolkenkratzer|William Le Baron Jenney|1885|Das Home Insurance Building in Chicago gilt als erstes Hochhaus mit Stahlskelett.|hochhaus
+Beton (modern)|Joseph Aspdin|1824|Er erfand den Portlandzement. Römer kannten aber schon eine Art Beton.|zement,portlandzement
+Stahlbeton|Joseph Monier|1867|Der französische Gärtner erfand ihn ursprünglich für Blumenkübel.|
+Lokomotive|George Stephenson|1825|Seine Locomotion Nr. 1 zog den ersten öffentlichen Dampfzug in England.|dampflok,eisenbahn
+Eisenbahn in Deutschland|Ludwigseisenbahn|1835|Die erste deutsche Eisenbahn fuhr mit der Lok Adler von Nürnberg nach Fürth.|erste eisenbahn deutschland,adler lok
+Straßenbahn (elektrisch)|Werner von Siemens|1881|Die erste elektrische Straßenbahn der Welt fuhr in Berlin-Lichterfelde.|tram
+U-Bahn|London|1863|Die Metropolitan Railway in London war die erste U-Bahn, zuerst mit Dampfloks.|metro,ubahn
+Motorrad|Gottlieb Daimler und Wilhelm Maybach|1885|Der Reitwagen aus Holz war das erste Motorrad.|reitwagen
+Elektromotor|Moritz Hermann Jacobi|1834|Der in Potsdam geborene Jacobi baute den ersten brauchbaren Elektromotor.|
+Generator (Dynamo)|Werner von Siemens|1866|Das dynamoelektrische Prinzip machte günstigen Strom in großen Mengen möglich.|dynamo
+Wechselstrom|Nikola Tesla|1888|Tesla entwickelte den Wechselstrommotor, Wechselstrom setzte sich gegen Edisons Gleichstrom durch.|
+Ottomotor|Nicolaus August Otto|1876|Der Viertaktmotor ist bis heute Grundlage der Benzinmotoren.|viertaktmotor,benzinmotor
+Wankelmotor|Felix Wankel|1957|Ein Motor mit drehendem Kolben statt auf und ab, verbaut zum Beispiel im Mazda RX-8.|kreiskolbenmotor
+Zündkerze|Robert Bosch|1902|Die Hochspannungs-Magnetzündung von Bosch mit Zündkerze machte Motoren zuverlässig.|
+Scheibenwischer|Mary Anderson|1903|Die Amerikanerin erfand ihn nach einer Fahrt im Schneeregen.|
+Navigationssystem im Auto|Honda|1981|Das erste Auto-Navi nutzte noch kein GPS, sondern Kreisel und Folien.|navi,navigationsgerät
+Tempomat|Ralph Teetor|1948|Der blinde Erfinder kam auf die Idee, weil sein Fahrer ständig das Tempo wechselte.|
+ABS|Bosch|1978|Das Antiblockiersystem verhindert, dass Räder beim Bremsen blockieren.|antiblockiersystem
+Kreditkarte|Diners Club|1950|Frank McNamara gründete den Diners Club, nachdem er sein Portemonnaie im Restaurant vergessen hatte.|
+Geldautomat|John Shepherd-Barron|1967|Der erste Geldautomat stand in London bei der Barclays Bank.|bankautomat
+Strichcode|Norman Woodland|1952|Der Barcode wurde 1974 erstmals an der Kasse gescannt, auf einer Kaugummipackung.|barcode
+Scanner-Kasse|NCR|1974|Erste Kasse mit Barcode-Scanner in einem Supermarkt in Ohio.|
+Taschenrechner|Texas Instruments|1967|Der erste tragbare Taschenrechner, ab den 1970ern günstig für alle.|
+Faxgerät|Alexander Bain|1843|Das Prinzip des Fax ist sogar älter als das Telefon.|fax
+Schreibmaschine|Christopher Latham Sholes|1868|Er entwarf auch die QWERTY-Tastatur, deutsche Tastaturen nutzen QWERTZ.|qwertz,qwerty
+Kugelschreiber|László Bíró|1938|Der ungarische Journalist erfand ihn, in vielen Ländern heißt er darum Biro.|kuli
+Füller|Lewis Waterman|1884|Erster zuverlässiger Füllfederhalter mit Tintenkammer.|füllfederhalter
+Bleistift (modern)|Nicolas-Jacques Conté|1795|Mischung aus Graphit und Ton, Blei war nie drin.|
+Radiergummi|Edward Nairne|1770|Er entdeckte, dass Kautschuk Bleistift wegradiert.|
+Streichholz|John Walker|1826|Das Sicherheitszündholz kam 1844 aus Schweden.|zündholz
+Feuerzeug|Johann Wolfgang Döbereiner|1823|Das Döbereiner-Feuerzeug nutzte Wasserstoff und Platin.|
+Dosenkonserve|Nicolas Appert und Peter Durand|1810|Napoleon suchte haltbare Nahrung für seine Armee. Der Dosenöffner kam erst Jahrzehnte später.|konservendose
+Dosenöffner|Ezra Warner|1858|Fast 50 Jahre nach der Konservendose. Vorher öffnete man Dosen mit Hammer und Meißel.|
+Pasteurisieren|Louis Pasteur|1864|Kurzes Erhitzen tötet Keime, so wird Milch länger haltbar.|pasteurisierung
+Babyflasche mit Sauger|Charles Windship und andere|1845|Ab dem 19. Jahrhundert mit Gummisauger.|
+Windel (Wegwerf)|Marion Donovan|1946|Später machte Procter & Gamble mit Pampers die Wegwerfwindel massentauglich.|pampers
+Toilettenpapier|Joseph Gayetty|1857|Erstes verkauftes Toilettenpapier, Rollen kamen 1890.|klopapier
+Spültoilette|John Harington|1596|Er baute eine für Königin Elisabeth I. Durchgesetzt hat sie sich im 19. Jahrhundert.|wassertoilette,wc
+Staubsauger|Hubert Cecil Booth|1901|Der erste Staubsauger war so groß, dass er mit Pferden vor das Haus gezogen wurde.|
+Waschmaschine (elektrisch)|Alva Fisher|1908|Erste elektrische Waschmaschine, in Deutschland ab den 1950ern verbreitet.|
+Geschirrspüler|Josephine Cochrane|1886|Die Amerikanerin wollte, dass ihr Porzellan nicht mehr zerbricht.|spülmaschine
+Toaster|Alan MacMasters|1893|Der automatische Toaster mit Auswurf kam 1919.|
+Kaffeemaschine (Espresso)|Angelo Moriondo|1884|Die erste Espressomaschine aus Turin.|espressomaschine
+Bügeleisen (elektrisch)|Henry Seely|1882|Vorher wurden Eisen auf dem Herd erhitzt.|
+Klimaanlage|Willis Carrier|1902|Ursprünglich für eine Druckerei gebaut, damit das Papier nicht wellt.|
+Ventilator|Schuyler Wheeler|1882|Erster elektrischer Tischventilator.|
+Rauchmelder|George Andrew Darby|1902|Heute in Deutschland in Wohnungen Pflicht.|
+Feuerlöscher|George William Manby|1818|Erster tragbarer Feuerlöscher mit Druckluft.|
+Fallschirm|Gleb Kotelnikow|1911|Leonardo da Vinci hatte schon um 1485 eine Zeichnung.|
+Taucheranzug (Aqualunge)|Jacques Cousteau und Émile Gagnan|1943|Das Atemgerät ermöglichte freies Tauchen mit Pressluft.|aqualunge,tauchgerät
+U-Boot|Cornelis Drebbel|1620|Erstes U-Boot mit Rudern in der Themse. Der Deutsche Wilhelm Bauer baute 1850 den Brandtaucher.|
+Satellit|Sowjetunion|1957|Sputnik 1 war der erste künstliche Satellit und piepte nur.|sputnik
+Raumstation|Sowjetunion|1971|Saljut 1 war die erste Raumstation, heute kreist die ISS.|
+Weltraumteleskop|NASA und ESA|1990|Hubble lieferte über 30 Jahre Bilder aus dem All.|hubble
+Elektronenmikroskop|Ernst Ruska und Max Knoll|1931|Viel stärker als Lichtmikroskope, Ruska bekam dafür 1986 den Nobelpreis.|
+Kernspaltung|Otto Hahn und Fritz Straßmann|1938|In Berlin entdeckt, Lise Meitner erklärte sie physikalisch.|
+Kernkraftwerk|Sowjetunion|1954|Obninsk war das erste Kernkraftwerk, das Strom ins Netz lieferte. Deutschland schaltete die letzten 2023 ab.|atomkraftwerk,akw
+Windkraftanlage zur Stromerzeugung|James Blyth|1887|In Schottland, heute liefern Windräder über ein Viertel des deutschen Stroms.|windrad
+Wasserkraftwerk|William Armstrong|1878|Erstes Haus mit Strom aus Wasserkraft in England.|
+Lithium-Ionen-Akku|John Goodenough, Stanley Whittingham, Akira Yoshino|1985|Steckt in Handys und E-Autos, 2019 gab es den Chemie-Nobelpreis.|akku,lithium akku
+LED|Nick Holonyak|1962|Die erste rote LED, die blaue kam erst 1993 von Shuji Nakamura und machte weißes LED-Licht möglich.|leuchtdiode
+Leuchtstoffröhre|Edmund Germer|1926|Der Deutsche meldete die Leuchtstofflampe an.|neonröhre
+Taschenlampe|David Misell|1899|Erste batteriebetriebene Taschenlampe.|
+Kühlschrank (FCKW-frei)|Foron|1993|Der erste FCKW-freie Kühlschrank kam aus Sachsen, angeregt von Greenpeace.|
+Herz-Lungen-Maschine|John Gibbon|1953|Ermöglichte Operationen am offenen Herzen.|
+Herztransplantation|Christiaan Barnard|1967|Die erste in Kapstadt, Südafrika.|herztransplantation erste
+Narkose|William Morton|1846|Erste öffentliche Operation unter Äther-Narkose in Boston.|betäubung,anästhesie
+Stethoskop|René Laennec|1816|Zuerst eine Papierrolle, aus Scham, das Ohr an die Brust einer Frau zu legen.|
+Blutgruppen|Karl Landsteiner|1901|Erst dadurch wurden sichere Bluttransfusionen möglich.|
+Antibiotika-Massenproduktion|Howard Florey und Ernst Chain|1940er|Machten Penicillin für alle verfügbar.|
+Ultraschall in der Medizin|Karl Dussik|1942|Heute Standard, zum Beispiel in der Schwangerschaft.|
+Computertomographie|Godfrey Hounsfield|1971|Der CT macht Schichtbilder vom Körper.|ct
+Magnetresonanztomographie|Paul Lauterbur und Peter Mansfield|1973|Der MRT arbeitet mit Magneten statt Röntgenstrahlen.|mrt,kernspin
+Hörgerät (elektrisch)|Miller Reese Hutchison|1898|Heute oft winzig klein im Ohr.|
+Rollstuhl (faltbar)|Harry Jennings|1933|Für seinen Freund Herbert Everest.|
+Blindenschrift|Louis Braille|1825|Der Franzose erblindete als Kind und erfand mit 16 die Punktschrift.|braille
+Gebärdensprache (Schule)|Charles-Michel de l’Épée|1760|Gründete in Paris die erste öffentliche Gehörlosenschule.|
+Kaugummi (modern)|Thomas Adams|1871|Aus Chicle-Saft, der Kaugummi wie heute kam später.|
+Coca-Cola|John Pemberton|1886|Der Apotheker in Atlanta mischte es zuerst als Medizin.|cola
+Fanta|Coca-Cola Deutschland|1940|In Deutschland erfunden, weil im Krieg kein Cola-Sirup mehr kam.|
+Ketchup (Tomate)|James Mease|1812|Heinz verkaufte es ab 1876 in Flaschen.|
+Pizza Margherita|Raffaele Esposito|1889|Angeblich für Königin Margherita in Neapel, in den Farben Italiens.|
+Hamburger|unbekannt, USA|um 1900|Benannt nach Hamburg, mehrere Orte in den USA behaupten, ihn erfunden zu haben.|
+Pommes frites|Belgien oder Frankreich|um 1800|Beide Länder streiten, wer sie erfunden hat.|pommes
+Schokoladentafel|Joseph Fry|1847|Erste Tafelschokolade in England, Milchschokolade kam 1875 aus der Schweiz.|schokolade tafel
+Nutella|Pietro Ferrero|1964|Unter dem Namen Nutella ab 1964, vorher als Pasta Gianduja.|
+Instant-Nudeln|Momofuku Ando|1958|Erfinder von Chicken Ramen, später Cup Noodles.|fertignudeln,ramen instant
+Tiefkühlkost|Clarence Birdseye|1924|Er lernte bei den Inuit, wie schnelles Frieren Lebensmittel frisch hält.|tiefkühl
