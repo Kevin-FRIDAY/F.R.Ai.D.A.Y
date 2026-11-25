@@ -631,7 +631,7 @@ app.post("/api/archiv/wegwerfen", (req, res) => { const r = fotoWegwerfen(req.bo
 app.post("/api/archiv/ordner", (req, res) => res.json(oeffneOrdner(req.body?.jahr, req.body?.monat)));
 app.get("/api/webseiten", (req, res) => res.json(listSites()));
 app.get("/api/webseiten/optionen", (req, res) => res.json(vorlagenOptionen()));
-app.post("/api/webseite/vorlage", asyncRoute(async (req, res) => { const r = await baueVorlage(req.body?.auftrag, { stil: req.body?.stil, branche: req.body?.branche }); res.status(r.ok ? 200 : 400).json(r); }));
+app.post("/api/webseite/vorlage", asyncRoute(async (req, res) => { const r = await baueVorlage(req.body?.auftrag, { stil: req.body?.stil, branche: req.body?.branche, eigen: req.body?.eigen }); res.status(r.ok ? 200 : 400).json(r); }));
 app.get("/api/webseite/:id/qualitaet", (req, res) => { const q = getSiteQualitaet(req.params.id); if (!q) return res.status(404).json({ error: "Nicht gefunden" }); res.json(q); });
 // Spiele-Werkstatt: bauen (Code kommt live), Stand abfragen, spielen, wegwerfen.
 app.get("/api/spiele", (req, res) => res.json({ spiele: listeSpiele(), claude: claudeBereit(), vorlagen: vorlagenListe(), plus: plusFrei(), aktuell: aktuellerJob() }));
@@ -641,10 +641,10 @@ app.get("/api/spiel/:id/html", (req, res) => { const html = spielHtml(req.params
 app.post("/api/spiel/:id/weg", (req, res) => { const r = spielWegwerfen(req.params.id); res.status(r.ok ? 200 : 404).json(r); });
 // Live-Bau mit Countdown (v1.145.0): zuerst nur in Eve, in Friday nach Freigabe.
 const liveGesperrt = (res) => { if (liveFrei()) return false; res.status(423).json({ ok: false, gesperrt: true, error: "Der Live-Bau ist noch im Test. Probier ihn in Eve aus und gib ihn dort frei." }); return true; };
-app.post("/api/webseite/live", (req, res) => { if (liveGesperrt(res)) return; const r = startLive(req.body?.auftrag, req.body?.basis || null, { stil: req.body?.stil, branche: req.body?.branche }); res.status(r.ok ? 200 : 400).json(r); });
+app.post("/api/webseite/live", (req, res) => { if (liveGesperrt(res)) return; const r = startLive(req.body?.auftrag, req.body?.basis || null, { stil: req.body?.stil, branche: req.body?.branche, eigen: req.body?.eigen }); res.status(r.ok ? 200 : 400).json(r); });
 app.get("/api/webseite/live/aktuell", (req, res) => { if (liveGesperrt(res)) return; res.json({ job: getLiveAktuell() }); });
 app.get("/api/webseite/live/:id", (req, res) => { if (liveGesperrt(res)) return; const j = getLiveJob(req.params.id, req.query.ab); if (!j) return res.status(404).json({ error: "Unbekannter Bau." }); res.json(j); });
-app.post("/api/webseite", asyncRoute(async (req, res) => { const r = await buildSite(req.body?.auftrag, req.body?.basis || null, { stil: req.body?.stil, branche: req.body?.branche }); res.status(r.ok ? 200 : 400).json(r); }));
+app.post("/api/webseite", asyncRoute(async (req, res) => { const r = await buildSite(req.body?.auftrag, req.body?.basis || null, { stil: req.body?.stil, branche: req.body?.branche, eigen: req.body?.eigen }); res.status(r.ok ? 200 : 400).json(r); }));
 app.get("/api/webseite/:id/html", (req, res) => { const html = getSiteHtml(req.params.id); if (html == null) return res.status(404).json({ error: "Nicht gefunden" }); res.json({ html }); });
 app.post("/api/webseite/:id/verkauft", asyncRoute(async (req, res) => { const r = await markSold(req.params.id, req.body?.betrag); res.status(r.ok ? 200 : 400).json(r); }));
 app.post("/api/webseite/:id/ordner", (req, res) => res.json(openSiteDir(req.params.id)));

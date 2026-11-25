@@ -319,7 +319,7 @@ export const toolDefinitions = [
   },
   {
     name: "webseite_bauen",
-    description: "Webseiten-Werkstatt: baut aus einem Kundenauftrag eine komplette, verkaufsfertige Webseite (eine HTML-Datei) mit Angebotstext und Preisvorschlag, gespeichert in ~/Friday-Webseiten. aendern_id überarbeitet ein bestehendes Projekt. Je nach Größe 30 Sekunden bis 2 Minuten; das Dashboard zeigt den Bau (in Eve live mit Countdown). Nenn im auftrag auch einen Zeitwunsch des Nutzers wörtlich (z. B. 'in 30 Minuten'). Verkaufen und kassieren tut der Nutzer selbst.",
+    description: "Webseiten-Werkstatt: baut aus einem Kundenauftrag eine komplette, verkaufsfertige Webseite (eine HTML-Datei) mit Angebotstext und Preisvorschlag, gespeichert in ~/Friday-Webseiten. aendern_id überarbeitet ein bestehendes Projekt. Je nach Größe 30 Sekunden bis 2 Minuten; das Dashboard zeigt den Bau (in Eve live mit Countdown). Nenn im auftrag auch einen Zeitwunsch des Nutzers wörtlich (z. B. 'in 30 Minuten'). Verkaufen und kassieren tut der Nutzer selbst. Will der Nutzer eine Seite über sich selbst ('bau eine Webseite von uns', 'stell uns vor', 'meine eigene Seite'), setze eigen=true: dann gibt es KEIN Angebot und KEINEN Preis.",
     input_schema: {
       type: "object",
       properties: {
@@ -327,6 +327,7 @@ export const toolDefinitions = [
         aendern_id: { type: "string", description: "optional: id eines bestehenden Projekts" },
         stil: { type: "string", enum: ["neon", "elegant", "hell", "natur", "kraft", "verspielt"], description: "optional: Design-Stil, nur wenn der Nutzer einen nennt (neon=dunkel futuristisch, elegant=schwarz-gold, hell=clean modern, natur=warm grün, kraft=anthrazit-gelb, verspielt=bunt pastell)" },
         sofort: { type: "boolean", description: "true, wenn der Nutzer ausdrücklich eine Sofort-Vorlage/ohne Claude/kostenlos will" },
+        eigen: { type: "boolean", description: "true, wenn die Seite für den Nutzer selbst ist (stellt ihn/seine Familie/sein Team vor) und nicht für einen Kunden – ohne Angebot und Preis" },
       },
       required: ["auftrag"],
     },
@@ -634,18 +635,21 @@ async function runToolIntern(name, input = {}, wer = {}) {
       return { land: country.name, schlagzeilen: news.items.slice(0, 12).map((n) => `${n.title} (${n.source})`) };
     }
     case "webseite_bauen": {
+      const wsOpt = { stil: input.stil, ...(input.eigen === true ? { eigen: true } : {}) };
+      const preisTeil = (r) => (r.eigen ? { eigene_seite: true } : { preisvorschlag_eur: r.preis_eur });
+      const sagDazu = (r) => (r.eigen ? "Das ist die eigene Seite des Nutzers: KEIN Preis, KEIN Angebot erwähnen. Sag kurz und herzlich, was du gebaut hast und dass er Platzhalter in [Klammern] mit eigenen Angaben füllen kann." : "Sag kurz, was du gebaut hast, und den Preisvorschlag.");
       if (input.sofort && !input.aendern_id) {
-        const v = await baueVorlage(input.auftrag, { stil: input.stil });
-        return { gebaut: v.titel, id: v.id, preisvorschlag_eur: v.preis_eur, qualitaet: v.qualitaet?.punkte, hinweis: "Sofort-Vorlage fertig, im Dashboard zu sehen. Sag kurz, was du gebaut hast, und den Preisvorschlag." };
+        const v = await baueVorlage(input.auftrag, wsOpt);
+        return { gebaut: v.titel, id: v.id, ...preisTeil(v), qualitaet: v.qualitaet?.punkte, hinweis: `Sofort-Vorlage fertig, im Dashboard zu sehen. ${sagDazu(v)}` };
       }
       if (liveFrei()) {
-        const l = startLive(input.auftrag, input.aendern_id || null, { stil: input.stil });
+        const l = startLive(input.auftrag, input.aendern_id || null, wsOpt);
         if (!l.ok) return { error: l.error };
         return { baut: l.job.titel || l.job.auftrag, countdown_sekunden: l.job.schaetzung_s, hinweis: `Die Webseiten-Werkstatt zeigt jetzt live, wie die Seite programmiert wird, mit Countdown und sagt am Ende selbst Bescheid. Antworte NUR mit genau diesem Satz, ohne etwas dazu: ${l.job.spruch}` };
       }
-      const r = await buildSite(input.auftrag, input.aendern_id || null, { stil: input.stil });
+      const r = await buildSite(input.auftrag, input.aendern_id || null, wsOpt);
       if (!r.ok) return { error: r.error };
-      return { gebaut: r.titel, id: r.id, preisvorschlag_eur: r.preis_eur, projekte_gesamt: listSites().length, ...(r.hinweis ? { achtung: r.hinweis } : {}), hinweis: "Das Dashboard zeigt die Seite gleich. Sag kurz, was du gebaut hast, und den Preisvorschlag." };
+      return { gebaut: r.titel, id: r.id, ...preisTeil(r), projekte_gesamt: listSites().length, ...(r.hinweis ? { achtung: r.hinweis } : {}), hinweis: `Das Dashboard zeigt die Seite gleich. ${sagDazu(r)}` };
     }
     case "welt_alarm": {
       const d = await getAlarm();

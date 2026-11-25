@@ -4053,6 +4053,26 @@ body.reduce-anim #settings .set-pane.on { animation: none; }
 .bu-bericht-fuss { display: flex; gap: 6px; flex-wrap: wrap; }
 .bu-bericht-fuss a { text-decoration: none; }
 
+/* v1.173.0: Luft-Notfall-Hinweis (adsb.lol Squawk 7700/7600/7500) */
+.plane-notfall { position: absolute; top: 64px; left: 50%; transform: translateX(-50%); z-index: 30; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  max-width: min(92vw, 620px); padding: 8px 34px 8px 12px; border-radius: 12px; background: rgba(40, 6, 10, .82); border: 1px solid rgba(255, 59, 79, .7);
+  box-shadow: 0 0 18px rgba(255, 59, 79, .35); backdrop-filter: blur(8px); color: #ffd9dc; font-size: 13px; animation: planeNfPuls 2.4s ease-in-out infinite; }
+.plane-notfall > b { color: #ff6b7a; letter-spacing: .04em; margin-right: 4px; }
+.plane-notfall > button[data-h] { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 4px 9px; border-radius: 9px; cursor: pointer;
+  background: rgba(255, 59, 79, .16); border: 1px solid rgba(255, 59, 79, .45); color: #fff; font: inherit; }
+.plane-notfall > button[data-h] small { color: #ffb3ba; font-size: 11px; }
+.plane-notfall .ship-x { position: absolute; top: 6px; right: 6px; }
+.fl-lizenz { margin: 8px 0 0; font-size: 10.5px; opacity: .55; }
+@keyframes planeNfPuls { 50% { box-shadow: 0 0 28px rgba(255, 59, 79, .6); } }
+html.perf-fluessig .plane-notfall { animation: none; backdrop-filter: none; }
+@media (max-width: 900px) { .plane-notfall { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 92px); width: max-content; max-width: calc(100vw - 32px); font-size: 12px; } }
+
+/* v1.172.0: Eigene Webseite (ohne Angebot/Preis) */
+.ws-eigen { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); cursor: pointer; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0,0,0,.25); }
+.ws-eigen input { width: 18px; height: 18px; accent-color: var(--cyan, #ff8a1e); margin: 0; }
+.ws-detail.ist-eigen .ws-angebot, .ws-detail.ist-eigen #ws-sold-form { display: none; }
+.ws-list .ws-eigen-marke { color: var(--cyan, #ff8a1e); }
+
 /* v1.171.0 – Schnitt-Team: „So setze ich deine Anweisung um“ */
 .st-verstanden { border: 1px solid var(--u-rand, rgba(255,138,30,.35)); border-radius: 12px; padding: 8px 10px; background: rgba(255,138,30,.06); font-size: 12px; line-height: 1.45; color: #f3e9df; }
 .st-verstanden > b { display: block; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--cyan, #ff8a1e); margin-bottom: 4px; }
