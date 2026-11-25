@@ -26,6 +26,7 @@ import { weckrufStart } from "./weckruf.js";
 import { helferRouten, helferStart } from "./helfer.js";
 import { wunschRouten, wunschStart, widgetRoute } from "./wunschliste.js";
 import { werkzeugRouten } from "./werkzeugkasten.js";
+import { datenRouten } from "./oeffentlich.js";
 import { wacheRouten, wacheStart } from "./wache.js";
 import { kernRouten, kernStart } from "./kern.js";
 import { startShips, getShips, shipsStatus, schiffeRouten } from "./ships.js";
@@ -751,6 +752,7 @@ helferRouten(app, asyncRoute);
 // Kevins Wunschliste aus der Ideen-Schmiede (v1.160.0).
 wunschRouten(app, asyncRoute);
 werkzeugRouten(app, asyncRoute);
+datenRouten(app, asyncRoute);
 // Eve – Testversion von Friday (v1.137.0): Schloss für neue Funktionen + Wünsche an Claude.
 eveRouten(app, asyncRoute);
 appsRouten(app, asyncRoute);

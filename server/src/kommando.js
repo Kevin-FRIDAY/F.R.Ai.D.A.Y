@@ -27,6 +27,7 @@ export const NUR_LESEN = new Set([
   "dokument_erstellen", "fragebogen_erstellen", "tabelle_erstellen", "web_search",
   "dokumente_suchen", "apple_kontakte", // v1.134.0 (nur lesen)
   "werkzeugkasten", // v1.162.0: rechnet und erzeugt nur, wirkt nicht nach außen
+  "oeffentliche_daten", // v1.166.0: liest nur öffentliche Quellen
 ]);
 // Werkzeuge, die nach außen wirken, Geräte schalten oder Friday selbst verändern.
 export const KRITISCH = new Set([
