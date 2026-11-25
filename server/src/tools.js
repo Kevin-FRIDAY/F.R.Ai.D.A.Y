@@ -29,7 +29,7 @@ import { toolDefinitions as dienstTools, smartHomeTool } from "./dienste-werkzeu
 // Kontrollraum (v1.135.0, Bausteine aus Conway-Research/automaton, MIT): Regelwerk, Gedächtnis, Seele, Fähigkeiten.
 import { kernTools, istKernTool, runKernTool } from "./kern.js";
 import { pruefe as regelwerkPruefe } from "./regelwerk.js";
-import { faktMerken, SCHUBLADEN, ereignis as gedaechtnisEreignis } from "./gedaechtnis.js";
+import { faktMerken, kurzMerken, projektNotiz, SCHUBLADEN, ereignis as gedaechtnisEreignis } from "./gedaechtnis.js";
 import { istDienstTool, runDienstTool } from "./dienste.js";
 import { command as haCommand } from "./homeassistant.js";
 import { routeFuerClaude } from "./routen.js";
@@ -185,6 +185,8 @@ export const toolDefinitions = [
       properties: {
         fact: { type: "string", description: "Die Info in einem kurzen Satz" },
         schublade: { type: "string", enum: Object.keys(SCHUBLADEN), description: "Optional: person, vorliebe, ort, termin, technik, arbeit oder sonstiges" },
+        ebene: { type: "string", enum: ["lang", "kurz", "projekt"], description: "Optional: lang (Standard, dauerhaft), kurz (gilt nur ein paar Tage, z. B. 'heute bin ich im Büro') oder projekt (gehört zu einem Projekt)" },
+        projekt: { type: "string", description: "Nur bei ebene=projekt: Name des Projekts" },
       },
       required: ["fact"],
     },
@@ -707,6 +709,8 @@ async function runToolIntern(name, input = {}, wer = {}) {
     case "get_weather":
       return getWeather(input.city || config.city);
     case "remember":
+      if (input.ebene === "kurz") return kurzMerken(String(input.fact || ""));
+      if (input.ebene === "projekt" && input.projekt) return projektNotiz(String(input.projekt), String(input.fact || ""));
       return faktMerken(String(input.fact || ""), input.schublade);
     case "forget":
       return { geloescht: store.forgetMemory(String(input.query || "")) };

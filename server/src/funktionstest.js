@@ -84,6 +84,25 @@ const PRUEFUNGEN = [
     const k = g.kontext("Was weißt du über mich?");
     return k && typeof k.fakten === "string" ? ok(`${u.fakten.length} Fakten, ${u.ablaeufe.length} Abläufe im Gedächtnis.`) : fehler("Kein Kontext.");
   } },
+  { id: "gedaechtnis-ebenen", bereich: "Gedächtnis", name: "Kurzzeit, Langzeit und Projekte getrennt", lauf: async () => {
+    const g = await import("./gedaechtnis.js");
+    const m = g.monitor();
+    const k = g.kontext("Projekt");
+    const themen = g.themenAus("Wie teuer ist ein Carport für die Garage in Hamburg?");
+    if (!("kurzzeit" in k) || !("projekt" in k)) return fehler("Kontext enthält die Ebenen nicht.");
+    if (!themen.includes("Carport") || !themen.includes("Garage")) return fehler(`Themen-Erkennung falsch: ${themen.join(", ")}`);
+    return ok(`${m.zaehl.kurz} Kurzzeit, ${m.zaehl.lang} Langzeit, ${m.zaehl.projekte} Projekte (${m.zaehl.projekt} Notizen). Themen-Erkennung ok.`);
+  } },
+  { id: "wissensnetz", bereich: "Gedächtnis", name: "Wissensnetz baut sich und findet Wissen wieder", lauf: async () => {
+    const n = await import("./neuronen.js");
+    const g = (await import("./gedaechtnis.js")).fakten();
+    const netz = n.netz({ neu: true });
+    if (!g.length) return ok(`Netz gebaut (${netz.stand.knoten} Knoten), noch keine Fakten zum Wiederfinden.`);
+    // Echte Probe: ein vorhandener Fakt muss über seine eigenen Wörter wieder aktiviert werden.
+    const f = g[g.length - 1];
+    const a = n.aktiviere(f.text, { limit: 10, mindest: 0.1 });
+    return a.treffer.some((t) => t.id === `f-${f.id}`) ? ok(`${netz.stand.knoten} Knoten, ${netz.stand.synapsen} Synapsen; letzter Fakt wird wiedergefunden.`) : fehler("Ein vorhandener Fakt wird über seine eigenen Wörter nicht gefunden.");
+  } },
   { id: "haus", bereich: "Werkstätten", name: "Haus-Werkstatt entwirft ein Einfamilienhaus", lauf: async () => {
     const { planHouse } = await import("./haus.js");
     const h = planHouse("bau mir ein Einfamilienhaus mit 2 Etagen");
