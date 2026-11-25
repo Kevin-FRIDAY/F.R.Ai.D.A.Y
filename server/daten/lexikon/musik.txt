@@ -1,0 +1,111 @@
+# musik|Musik|🎵
+# Titel|Text|Aliase
+Noten|Die Grundtöne heißen in Deutschland C, D, E, F, G, A und H, international B statt H.|tonleiter,notennamen
+Tonleiter|Eine Dur-Tonleiter klingt fröhlich, eine Moll-Tonleiter eher traurig.|dur und moll,dur,moll
+Oktave|Eine Oktave ist der Abstand zu einem Ton mit doppelter Frequenz, acht Töne höher.|
+Kammerton|Der Kammerton A hat meist 440 Hertz, nach ihm stimmen Orchester.|440 hertz
+Akkord|Ein Akkord sind mehrere gleichzeitig klingende Töne, ein Dur-Dreiklang besteht aus Grundton, großer Terz und Quinte.|akkorde
+Takt|Der Takt gliedert Musik, der Walzer hat einen Dreivierteltakt, die meisten Popsongs einen Viervierteltakt.|dreivierteltakt
+Tempo Musik|Das Tempo wird in Schlägen pro Minute gemessen, BPM. Pop liegt oft um 120.|bpm
+Notenschlüssel|Der Violinschlüssel gilt für hohe Töne, der Bassschlüssel für tiefe.|violinschluessel
+Klavier|Ein Klavier hat 88 Tasten, 52 weiße und 36 schwarze.|piano,fluegel
+Gitarre|Eine Gitarre hat meist sechs Saiten, gestimmt E, A, D, G, H, E.|gitarre stimmen
+E-Gitarre|Die E-Gitarre braucht einen Verstärker, berühmt sind Fender Stratocaster und Gibson Les Paul.|
+Bass|Der E-Bass hat meist vier Saiten und spielt eine Oktave tiefer als die Gitarre.|bassgitarre
+Schlagzeug|Ein Schlagzeug besteht aus großer Trommel, Snare, Toms und Becken.|drums
+Geige|Die Geige oder Violine ist das höchste Streichinstrument, berühmt sind Stradivari-Geigen.|violine,stradivari
+Bratsche|Die Bratsche ist etwas größer und tiefer als die Geige.|viola
+Cello|Das Cello spielt man sitzend zwischen den Knien.|violoncello
+Kontrabass|Der Kontrabass ist das größte und tiefste Streichinstrument.|
+Harfe|Die Konzertharfe hat 47 Saiten und sieben Pedale.|
+Flöte|Die Querflöte ist ein Holzblasinstrument, obwohl sie meist aus Metall ist.|querfloete,blockfloete
+Klarinette|Die Klarinette hat ein einfaches Rohrblatt.|
+Oboe|Die Oboe gibt im Orchester den Stimmton an.|
+Fagott|Das Fagott ist das tiefe Holzblasinstrument.|
+Saxophon|Das Saxophon erfand der Belgier Adolphe Sax um 1840, obwohl aus Metall gehört es zu den Holzbläsern.|saxofon
+Trompete|Die Trompete ist ein Blechblasinstrument mit drei Ventilen.|
+Posaune|Die Posaune verändert den Ton mit einem Zug.|
+Tuba|Die Tuba ist das tiefste Blechblasinstrument.|
+Horn|Das Waldhorn hat ein langes, aufgewickeltes Rohr.|waldhorn
+Akkordeon|Das Akkordeon ist ein Handzuginstrument, typisch für Volksmusik und Tango.|ziehharmonika
+Mundharmonika|Die Mundharmonika ist klein und typisch für Blues und Folk.|
+Orgel|Die Orgel ist das größte Musikinstrument, mit Tausenden Pfeifen, die größte steht in Passau.|kirchenorgel
+Synthesizer|Ein Synthesizer erzeugt Klänge elektronisch.|synth
+Theremin|Das Theremin spielt man, ohne es zu berühren, durch Handbewegungen in der Luft.|
+Dudelsack|Der Dudelsack ist typisch für Schottland.|
+Didgeridoo|Das Didgeridoo ist ein Blasinstrument der australischen Ureinwohner.|
+Sitar|Die Sitar ist ein indisches Saiteninstrument, bekannt durch Ravi Shankar.|
+Ukulele|Die Ukulele ist eine kleine viersaitige Gitarre aus Hawaii.|
+Orchester|Ein Sinfonieorchester hat bis zu 100 Musiker in Streichern, Holzbläsern, Blechbläsern und Schlagwerk.|sinfonieorchester
+Dirigent|Der Dirigent leitet das Orchester und bestimmt Tempo und Ausdruck.|dirigieren
+Sinfonie|Eine Sinfonie ist ein großes Orchesterwerk, meist in vier Sätzen.|symphonie
+Oper|In der Oper wird eine Geschichte gesungen, mit Orchester, Bühne und Kostümen.|opern
+Operette|Die Operette ist leichter als die Oper, mit gesprochenen Dialogen, etwa Die Fledermaus.|
+Musical|Musicals verbinden Gesang, Tanz und Schauspiel, etwa Das Phantom der Oper oder König der Löwen.|musicals
+Barock Musik|Barockmusik von etwa 1600 bis 1750, mit Bach, Händel und Vivaldi.|barockmusik
+Klassik Musik|Die Wiener Klassik mit Haydn, Mozart und Beethoven, etwa 1750 bis 1820.|wiener klassik
+Romantik Musik|Musik der Romantik im 19. Jahrhundert, mit Schubert, Chopin, Wagner und Brahms.|
+Jazz|Jazz entstand um 1900 in New Orleans, typisch sind Improvisation und Swing.|
+Blues|Der Blues stammt von afroamerikanischen Musikern im Süden der USA und ist die Wurzel von Rock.|
+Rock 'n' Roll|Rock 'n' Roll kam in den 1950ern auf, mit Elvis Presley und Chuck Berry.|rock n roll
+Rockmusik|Rock entwickelte sich in den 1960ern, mit Beatles, Rolling Stones und Led Zeppelin.|rock
+Heavy Metal|Heavy Metal mit verzerrten Gitarren entstand um 1970, Pioniere sind Black Sabbath.|metal
+Punk|Punk ist schnelle, rebellische Rockmusik der 1970er, etwa Sex Pistols und Ramones.|punkrock
+Grunge|Grunge kam Anfang der 1990er aus Seattle, mit Nirvana und Pearl Jam.|
+Pop|Popmusik ist eingängige Musik für ein großes Publikum.|popmusik
+Hip-Hop|Hip-Hop entstand in den 1970ern in der Bronx in New York, mit Rap, DJing, Breakdance und Graffiti.|hiphop,rap
+Reggae|Reggae stammt aus Jamaika, berühmt durch Bob Marley.|
+Soul|Soul verbindet Gospel und Rhythm and Blues, etwa Aretha Franklin und Ray Charles.|
+Funk|Funk hat starke Bassläufe und Groove, etwa James Brown.|
+Disco|Disco prägte die 1970er, etwa ABBA und die Bee Gees.|
+Techno|Techno ist elektronische Tanzmusik, Berlin und Detroit gelten als Zentren.|
+House|House ist elektronische Tanzmusik aus Chicago.|
+Elektronische Musik|Elektronische Musik wird mit Synthesizern und Computern gemacht, Kraftwerk aus Düsseldorf waren Pioniere.|edm
+Schlager|Schlager sind eingängige deutsche Lieder, etwa von Helene Fischer oder Roland Kaiser.|
+Volksmusik|Volksmusik ist traditionelle Musik einer Region, in Bayern etwa mit Blasmusik und Jodeln.|
+Neue Deutsche Welle|Die Neue Deutsche Welle Anfang der 1980er brachte Hits wie 99 Luftballons und Major Tom.|ndw
+Deutschrap|Deutschrap ist heute eines der erfolgreichsten Genres in Deutschland.|deutscher rap
+K-Pop|K-Pop ist Popmusik aus Südkorea, die bekannteste Band ist BTS.|bts
+Country|Countrymusik stammt aus dem Süden der USA, Zentrum ist Nashville.|
+Gospel|Gospel ist christliche Musik afroamerikanischer Kirchen.|
+Flamenco|Flamenco ist Musik und Tanz aus Andalusien.|
+Tango|Der Tango stammt aus Buenos Aires und Montevideo.|
+Salsa|Salsa ist Tanzmusik aus der Karibik und New York.|
+Walzer|Der Wiener Walzer im Dreivierteltakt ist ein klassischer Gesellschaftstanz.|wiener walzer
+Grammy|Der Grammy ist der wichtigste Musikpreis der USA.|grammys
+Eurovision Song Contest|Beim ESC treten Länder Europas mit Liedern gegeneinander an. Deutschland gewann 1982 mit Nicole und 2010 mit Lena.|esc,eurovision
+Bohemian Rhapsody|Bohemian Rhapsody von Queen aus dem Jahr 1975 ist eines der berühmtesten Rocklieder.|
+Imagine|Imagine von John Lennon aus dem Jahr 1971 ist eine Hymne für den Frieden.|
+Thriller|Thriller von Michael Jackson aus dem Jahr 1982 ist das meistverkaufte Album aller Zeiten.|thriller album
+Stille Nacht|Stille Nacht, heilige Nacht entstand 1818 in Oberndorf bei Salzburg.|
+Happy Birthday|Happy Birthday to You ist das bekannteste Lied der Welt.|
+Für Elise|Für Elise ist ein Klavierstück von Beethoven, viele Anfänger lernen es.|fuer elise
+Kleine Nachtmusik|Eine kleine Nachtmusik ist eines der bekanntesten Werke Mozarts.|
+Vier Jahreszeiten|Die vier Jahreszeiten sind vier Violinkonzerte von Vivaldi.|
+Mondscheinsonate|Die Mondscheinsonate ist eine Klaviersonate von Beethoven.|
+Toccata und Fuge|Die Toccata und Fuge in d-Moll ist ein berühmtes Orgelwerk, das Bach zugeschrieben wird.|
+Bolero|Der Bolero von Maurice Ravel steigert eine Melodie 15 Minuten lang.|
+Atemlos|Atemlos durch die Nacht von Helene Fischer aus dem Jahr 2013 ist einer der größten deutschen Schlager.|atemlos durch die nacht
+99 Luftballons|99 Luftballons von Nena wurde 1984 ein Welthit.|
+Wind of Change|Wind of Change von den Scorpions wurde zur Hymne der Wende 1990.|
+Der Kommissar|Der Kommissar von Falco ist ein Hit von 1981.|
+Spotify|Spotify ist der größte Musikstreamingdienst, gegründet in Schweden.|
+Schallplatte|Schallplatten erleben ein Comeback, die Vinyl-Verkäufe steigen seit Jahren.|vinyl
+CD|Die Compact Disc kam 1982 auf den Markt, entwickelt von Philips und Sony.|compact disc
+Walkman|Der Walkman von Sony brachte 1979 Musik zum Mitnehmen.|
+iPod|Der iPod kam 2001, 1.000 Songs in der Hosentasche.|
+Charts|Die Charts sind Hitlisten der meistgehörten Lieder.|hitparade
+Lautstärke Gehör|Dauerhaft über 85 Dezibel schadet dem Gehör, ein Konzert hat oft über 100.|dezibel
+Absolutes Gehör|Mit absolutem Gehör erkennt man Töne ohne Vergleich, das hat nur etwa einer von 10.000.|
+Musik und Gehirn|Musik schüttet Dopamin aus und kann Schmerzen lindern und Erinnerungen wecken.|
+Festival|Bekannte Festivals sind Rock am Ring, Wacken, Glastonbury und Coachella.|wacken,rock am ring
+Woodstock|Das Woodstock-Festival 1969 wurde zum Symbol der Hippie-Bewegung.|
+Bayreuther Festspiele|Die Bayreuther Festspiele zeigen jedes Jahr nur Opern von Richard Wagner.|bayreuth
+Elbphilharmonie|Die Elbphilharmonie in Hamburg ist ein Konzerthaus, 2017 eröffnet.|elphi
+Berliner Philharmoniker|Die Berliner Philharmoniker gelten als eines der besten Orchester der Welt.|
+Wiener Philharmoniker|Die Wiener Philharmoniker spielen jedes Jahr das berühmte Neujahrskonzert.|neujahrskonzert
+Thomanerchor|Der Thomanerchor in Leipzig ist über 800 Jahre alt, Bach war dort Kantor.|
+Karaoke|Karaoke stammt aus Japan und bedeutet leeres Orchester.|
+DJ|Ein DJ legt Musik auf und mischt Lieder ineinander.|discjockey
+Beatbox|Beatboxing ist das Nachmachen von Schlagzeug mit dem Mund.|
+Lied lernen|Lieder lernt man am besten in kleinen Abschnitten, langsam und mit vielen Wiederholungen.|instrument lernen
