@@ -145,19 +145,43 @@ export function gewohnheiten({ tage = 30 } = {}) {
 }
 
 // ---- Prioritäten-Erkennung über alle offenen Aufgaben ----
+// Aufwand grob aus dem Text schätzen (1 klein, 2 mittel, 3 groß) – für "schnelle Erfolge zuerst".
+export function aufwandSchaetzen(text = "") {
+  const t = String(text).toLowerCase();
+  if (/\b(anruf|anrufen|ruf .* an|kurz|schnell|bezahlen|überweisen|ueberweisen|bestellen|abschicken|antworten|zurückrufen|termin machen|kaufen)\b/.test(t)) return 1;
+  if (/\b(planen|erstellen|bauen|renovieren|umziehen|lernen|schreiben|aufräumen|aufraeumen|entwickeln|steuererklärung|steuererklaerung|projekt|organisieren)\b/.test(t)) return 3;
+  return 2;
+}
+const AUFWAND_TEXT = { 1: "klein", 2: "mittel", 3: "groß" };
+
+/**
+ * Prioritäten über alle offenen Dinge, mit Punktzahl 0–100 (v1.185.0):
+ * Wichtigkeit (bis 50) + Frist (bis 35) + kleiner Aufwand (bis 10) + liegt lange (5).
+ */
 export function prioritaeten() {
-  const aufgaben = store.getTasks().filter((t) => !t.done).map((t) => ({ quelle: "Aufgabe", text: t.text, id: t.id }));
-  const zielSchritte = store.load("ziele", []).flatMap((z) => z.schritte.filter((s) => !s.erledigt).slice(0, 1).map((s) => ({ quelle: `Ziel: ${z.titel}`, text: s.text })));
+  const tag = 86400000;
+  const aufgaben = store.getTasks().filter((t) => !t.done).map((t) => ({ quelle: "Aufgabe", text: t.text, id: t.id, alt: t.at ? (Date.now() - Number(t.at)) / tag : 0 }));
+  const zielSchritte = store.load("ziele", []).flatMap((z) => z.schritte.filter((s) => !s.erledigt).slice(0, 1).map((s) => ({ quelle: `Ziel: ${z.titel}`, text: s.text, faellig: /^\d{4}-\d{2}-\d{2}$/.test(z.frist || "") ? `${z.frist}T18:00:00` : null })));
   const erinnerungen = store.getReminders().filter((r) => !r.done).map((r) => ({ quelle: "Erinnerung", text: r.text, faellig: r.due }));
-  const alleOffen = [...aufgaben, ...zielSchritte, ...erinnerungen].map((x) => {
+  const projekt = store.load("projekte", []).filter((p) => p.status !== "fertig").flatMap((p) => (p.aufgaben || []).filter((a) => !a.erledigt).map((a) => ({ quelle: `Projekt: ${p.name}`, text: a.text, faellig: a.frist ? `${a.frist}T18:00:00` : null, wichtig: a.wichtig, aufwand: a.aufwand })));
+  const alleOffen = [...aufgaben, ...zielSchritte, ...erinnerungen, ...projekt].map((x) => {
     let p = erkennePrioritaet(x.text);
+    if (x.wichtig === 3) p = { prio: 1, grund: "als sehr wichtig markiert" };
+    let fristPunkte = 0, fristGrund = "";
     if (x.faellig) {
       const std = (new Date(x.faellig) - Date.now()) / 3600000;
-      if (std < 24) p = { prio: 1, grund: "fällig in weniger als 24 Stunden" };
+      if (std < 24) { p = { prio: 1, grund: "fällig in weniger als 24 Stunden" }; fristPunkte = 35; }
+      else if (std < 72) { fristPunkte = 25; fristGrund = "fällig in 3 Tagen"; }
+      else if (std < 168) { fristPunkte = 15; fristGrund = "fällig diese Woche"; }
+      else fristPunkte = 5;
     }
-    return { ...x, ...p };
+    const aufwand = [1, 2, 3].includes(x.aufwand) ? x.aufwand : aufwandSchaetzen(x.text);
+    const punkte = Math.min(100, ({ 1: 50, 2: 30, 3: 10 })[p.prio] + fristPunkte + (4 - aufwand) * 3 + (x.alt > 14 ? 5 : 0) + (p.prio === 1 ? 6 : 0));
+    const gruende = [p.grund, fristGrund, `Aufwand ${AUFWAND_TEXT[aufwand]}`, x.alt > 14 ? "liegt seit über 2 Wochen" : ""].filter(Boolean);
+    const { alt, wichtig, ...rest } = x;
+    return { ...rest, ...p, aufwand, punkte, gruende };
   });
-  return alleOffen.sort((a, b) => a.prio - b.prio);
+  return alleOffen.sort((a, b) => b.punkte - a.punkte || a.prio - b.prio);
 }
 
 // ---- Persönlicher Berater (mit Claude) ----
