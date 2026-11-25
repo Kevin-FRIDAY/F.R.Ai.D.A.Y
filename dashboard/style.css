@@ -3626,8 +3626,12 @@ html.perf-fluessig .st-kabel.an, html.perf-fluessig .st-knoten.run .st-ring { an
   .as-reihe-text small { font-size: 11px; }
   .as-reihe-titel { margin-top: 44px; }
 }
-.autostudio.ist-echt .as-farben { visibility: hidden; }
-.as-quelle { margin-top: 10px; font: 500 12px system-ui, sans-serif; color: #4a4f57; pointer-events: auto; }
+.autostudio.ist-echt.kein-lack .as-farben { visibility: hidden; }
+.as-schluessel { display: flex; gap: 6px; margin-top: 6px; max-width: 340px; }
+.as-schluessel input { flex: 1; min-width: 0; padding: 7px 10px; border-radius: 10px; border: 1px solid #c9ccd1; background: #fff; color: #111318; font: 500 14px system-ui, sans-serif; }
+.as-quelle .as-schluessel button { text-decoration: none; background: #111318; color: #fff; border-radius: 10px; padding: 7px 12px; }
+.as-quelle [data-as-echt] { font-weight: 600; }
+.as-quelle { max-width: 380px; white-space: normal; margin-top: 10px; font: 500 12px system-ui, sans-serif; color: #4a4f57; pointer-events: auto; }
 .as-quelle a, .as-quelle button { color: #e5621c; background: none; border: 0; padding: 0; font: inherit; cursor: pointer; text-decoration: underline; }
 
 /* v1.147.0 (Eve-Test „gespraech-laenger“): Friday bleibt im Gespräch dran – Restzeit unten */

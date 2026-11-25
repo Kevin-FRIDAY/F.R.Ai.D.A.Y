@@ -125,6 +125,8 @@ export function sketchfabTrennen() {
 
 const TEILE = /\b(wheel|rim|tire|tyre|engine|motor block|interior|seat|steering|cockpit only|dashboard|logo|badge|emblem|key|headlight|taillight|exhaust|spoiler|door|mirror|brake|caliper|piston|gearbox|propeller only|parts?|kit|pack|collection|scene|diorama|garage|showroom|toy|lego|minecraft|cartoon|low ?poly|lowpoly|sketch|wip|blueprint)\b/i;
 
+const AUTO_ARTEN = new Set(["sportwagen", "limousine", "suv", "auto", "coupe", "kombi"]);
+
 export async function sucheSketchfab(text, { art } = {}) {
   const q0 = suchwort(text);
   const q = englisch(q0) || q0;
@@ -140,6 +142,10 @@ export async function sucheSketchfab(text, { art } = {}) {
     if (!glb || !glb.size || glb.size > MAX_BYTES) s -= 2;
     if ((m.faceCount || 0) > MAX_FACES) s -= 0.5;
     if ((m.faceCount || 0) < 3000) s -= 0.3; // sehr grob → wirkt nicht echt
+    // v1.175.0: Autos brauchen viele Flächen, sonst wirken sie wieder wie Spielzeug
+    if (AUTO_ARTEN.has(art) && (m.faceCount || 0) < 25000) s -= 0.35;
+    if (AUTO_ARTEN.has(art) && (m.faceCount || 0) >= 80000) s += 0.08;
+    if (/^(cc0|cc ?by(?! ?-?nc)(?! ?-?nd)|cc attribution$)/i.test(String((m.license && (m.license.label || m.license)) || "").trim())) s += 0.05; // frei auch für Weitergabe
     if ((glb?.size || 0) > 30e6) s -= 0.1; // große Dateien laden auf dem iPhone lange
     s += Math.min(0.25, Math.log10(1 + (m.likeCount || 0)) / 12);
     return { uid: m.uid, name, autor: m.user?.displayName || m.user?.username || "", lizenz: (m.license && (m.license.label || m.license)) || "", link: m.viewerUrl, groesse: glb?.size || 0, faces: m.faceCount || 0, score: s, art };
@@ -203,4 +209,24 @@ export async function startmodelleLaden() {
     } catch { /* später noch einmal */ }
   }
   if (neu) schreibIndex(d);
+}
+
+/**
+ * v1.175.0 Auto-Studio: echtes Modell für "BMW M4" & Co. Erst die eigene Bibliothek, dann Sketchfab.
+ * Antwort: { ok, datei } oder { ok: false, grund: "kein-schluessel" | "nichts-gefunden" | "schluessel-falsch", text }.
+ */
+export async function autoModell(suche, laenge = null) {
+  const q = String(suche || "").trim().slice(0, 120);
+  if (!q) return { ok: false, grund: "nichts-gefunden", text: "Welches Auto?" };
+  const info = (m) => ({ id: m.id, name: m.name, autor: m.autor || "", lizenz: m.lizenz || "", link: m.link || "", quelle: m.quelle || "", laenge });
+  const lokal = findeLokal(q);
+  if (lokal && lokal.id !== "khronos-carconcept") return { ok: true, datei: info(lokal) };
+  if (!sketchfabToken()) return { ok: false, grund: "kein-schluessel", text: "Für echte 3D-Modelle braucht Friday einmalig einen kostenlosen Sketchfab-Schlüssel." };
+  try {
+    const m = await holeModell(q, { art: "sportwagen", titel: q });
+    if (m) return { ok: true, datei: info(m) };
+  } catch (err) {
+    return { ok: false, grund: "schluessel-falsch", text: err.message };
+  }
+  return { ok: false, grund: "nichts-gefunden", text: `Auf Sketchfab gibt es gerade kein frei ladbares, detailreiches Modell für „${q}“.` };
 }
