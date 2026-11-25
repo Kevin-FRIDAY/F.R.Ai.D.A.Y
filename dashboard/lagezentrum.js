@@ -1247,7 +1247,7 @@
       const d = new Date(n.date);
       const when = Number.isNaN(d.getTime()) ? "" : relTime(d);
       const title = escapeHtml(n.title);
-      const inner = `<span class="lz-n-meta"><span class="lz-src">${escapeHtml(n.source || "Quelle")}</span>${when ? `<time>${escapeHtml(when)}</time>` : ""}</span><span class="lz-n-title">${title}</span>`;
+      const inner = `<span class="lz-n-meta"><span class="lz-src">${escapeHtml(n.source || "Quelle")}</span>${n.bewertung ? `<span class="lz-vt s${Number(n.bewertung.stufe) || 3}" title="Quellen-Art: ${escapeHtml(n.bewertung.name || "")}${n.quellen > 1 ? ` · von ${n.quellen} Quellen gemeldet` : ""}">${escapeHtml(n.bewertung.name || "")}${n.quellen > 1 ? ` · ✓ ${n.quellen} Quellen` : ""}</span>` : ""}${when ? `<time>${escapeHtml(when)}</time>` : ""}</span><span class="lz-n-title">${title}</span>`;
       const tag = n.link ? `a href="${escapeHtml(n.link)}" target="_blank" rel="noopener noreferrer"` : "div";
       return `<li class="lz-n${i === 0 ? " top" : ""}"><${tag} class="lz-n-link">${i === 0 ? '<span class="lz-n-img"></span><span class="lz-top-tag">Top-Meldung</span>' : ""}${inner}</${tag.split(" ")[0]}></li>`;
     }).join("")}</ol>`;

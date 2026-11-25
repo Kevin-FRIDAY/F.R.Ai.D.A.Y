@@ -86,6 +86,7 @@ import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } 
 import { ereignisRouten } from "./ereignisbus.js";
 import { cockpitRouten } from "./cockpit.js";
 import { agentenleitungRouten } from "./agentenleitung.js";
+import { weltRouten, weltStart } from "./weltintelligenz.js";
 import { funktionstestStart } from "./funktionstest.js";
 
 const missing = checkConfig();
@@ -809,6 +810,7 @@ jarvisRouten(app, asyncRoute);
 ereignisRouten(app);
 cockpitRouten(app, asyncRoute);
 agentenleitungRouten(app, asyncRoute);
+weltRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
@@ -827,6 +829,7 @@ wacheStart();
 marktWacheStart(); // Markt-Radar Plus: läuft in Eve, in Friday erst nach Freigabe
 kernStart();
 funktionstestStart().catch((err) => console.error("Funktionsprüfung:", err.message));
+weltStart().catch(() => {});
 grossauftragStart();
 if (!IST_EVE) kontenStart(); // Meine Konten: alle 6 Std. frische Kontostände (nur lesen)
 zentraleStart(ask);
