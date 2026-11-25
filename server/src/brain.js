@@ -668,7 +668,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
     }
   }
 
-  // Fridays Lexikon (v1.156.0): rund 1.600 Wissens-Einträge ohne Claude und ohne Internet
+  // Fridays Lexikon (v1.156.0, seit v1.170.0 rund 7.900 Einträge): Wissen ohne Claude und ohne Internet
   // ("Was ist ein ETF?", "Wer war Marie Curie?", "Hauptstadt von Bayern", "Was passierte 1989?").
   if (mode !== "translate" && !image && text && !satzstueck) {
     try {

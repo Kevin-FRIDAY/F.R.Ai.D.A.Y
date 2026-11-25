@@ -1,5 +1,5 @@
 // Fridays Lexikon (v1.156.0): eingebautes Wissen OHNE Claude und OHNE Internet.
-// Seit v1.165.0 rund 7.900 Einträge in über 35 Bereichen (vorher 1.600): alle 118 chemischen Elemente, Weltraum,
+// Seit v1.170.0 rund 7.900 Einträge in über 35 Bereichen (vorher 1.600): alle 118 chemischen Elemente, Weltraum,
 // Bundesländer, deutsche Städte, Städte der Welt, 197 Länder mit Hauptstadt und Währung, Geschichte mit Jahreszahlen,
 // berühmte Menschen, Erfindungen, Technik & KI, Geld, Natur, Erde, Tiere, Pflanzen, Körper & Gesundheit, Essen,
 // Notfall, Kochen, Mac-/iPhone-Tipps, Abkürzungen, Fremdwörter, Sprichwörter, Englisch-Wörter, Berufe, Politik,
