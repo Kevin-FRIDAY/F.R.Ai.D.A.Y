@@ -99,6 +99,7 @@ import { entscheidenRouten, entscheidenStart } from "./entscheiden.js";
 import { unternehmenRouten, unternehmenStart } from "./unternehmen.js";
 import { entwicklungRouten, entwicklungStart } from "./entwicklung.js";
 import { forschungRouten, forschungStart } from "./forschung.js";
+import { zwillingRouten, zwillingStart } from "./zwilling.js";
 import { funktionstestStart } from "./funktionstest.js";
 
 const missing = checkConfig();
@@ -838,6 +839,7 @@ entscheidenRouten(app, asyncRoute);
 unternehmenRouten(app, asyncRoute);
 entwicklungRouten(app, asyncRoute);
 forschungRouten(app, asyncRoute);
+zwillingRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
@@ -869,6 +871,7 @@ entscheidenStart().catch(() => {});
 unternehmenStart().catch(() => {});
 entwicklungStart().catch(() => {});
 forschungStart().catch(() => {});
+zwillingStart().catch(() => {});
 grossauftragStart();
 if (!IST_EVE) kontenStart(); // Meine Konten: alle 6 Std. frische Kontostände (nur lesen)
 zentraleStart(ask);
