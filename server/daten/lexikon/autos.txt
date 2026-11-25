@@ -94,7 +94,6 @@ Hafen Hamburg|Der Hamburger Hafen ist der größte Seehafen Deutschlands.|
 Titanic|Die Titanic sank 1912 auf ihrer Jungfernfahrt nach einem Eisberg, über 1.500 Menschen starben.|
 Kreuzfahrtschiff|Die größten Kreuzfahrtschiffe haben Platz für über 7.000 Passagiere.|
 U-Boot|U-Boote tauchen, indem sie Wasser in Tanks fluten.|uboot
-Hubschrauber Rekord|Hubschrauber können senkrecht starten und in der Luft stehen.|
 Fahrrad Deutschland|In Deutschland gibt es über 80 Millionen Fahrräder.|
 Navigation|Navis berechnen Routen mit GPS und Verkehrsdaten.|navi
 Stau|Die meisten Staus in Deutschland gibt es in Nordrhein-Westfalen.|staus
