@@ -225,7 +225,9 @@ function beleuchtet(pos, ms) {
 
 // ---------- Zusammen ----------
 export async function heute({ ort = "" } = {}) {
-  const o = await ortZuKoordinaten(ort || config.city);
+  let o, ortHinweis = "";
+  try { o = await ortZuKoordinaten(ort || config.city); }
+  catch (err) { o = { name: "Deutschland (Mitte)", lat: 51.16, lon: 10.45 }; ortHinweis = `Ort nicht gefunden (${err.message}), gerechnet für die Mitte Deutschlands.`; }
   const jetzt = Date.now();
   const z = sonnenZeiten(jetzt, o.lat, o.lon);
   let iss = [], issFehler = "";
@@ -237,7 +239,7 @@ export async function heute({ ort = "" } = {}) {
     mond: mond(jetzt),
     planeten: planeten(jetzt, o.lat, o.lon),
     sternschnuppen: sternschnuppen(jetzt),
-    iss, issFehler,
+    iss, issFehler, ortHinweis,
   };
 }
 

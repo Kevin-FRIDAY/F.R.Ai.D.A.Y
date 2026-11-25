@@ -771,6 +771,8 @@
         // Kevins Wunschliste (v1.160.0): "wunsch" = Übersicht, "wunsch:<reiter>[:suche]" = ein Bereich.
         const wunschA = data.actions?.find((a) => a === "wunsch" || (typeof a === "string" && a.startsWith("wunsch:")));
         if (wunschA) { const [, r, q] = wunschA.split(":"); window.FridayWunsch?.open({ reiter: r || "", q: q ? decodeURIComponent(q) : "" }); }
+        // Stern-Ideen (v1.166.0): Radio/Podcast abspielen, Gäste-Modus anzeigen – erledigt dashboard/sternideen.js.
+        try { window.dispatchEvent(new CustomEvent("friday-aktionen", { detail: { actions: data.actions || [] } })); } catch { /* egal */ }
         if (hat("ideen:ausbau")) window.FridayIdeen?.open({ reiter: "ausbau" });
         const ideeA = aktion("idee:");
         if (ideeA) { try { window.FridayIdeen?.open({ wurf: JSON.parse(decodeURIComponent(ideeA.slice(5))) }); } catch { window.FridayIdeen?.open(); } }

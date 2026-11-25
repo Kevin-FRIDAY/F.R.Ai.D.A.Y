@@ -66,7 +66,7 @@ export function satz(d) {
 }
 
 const FRAGE = U(/\b(sprit|spritpreis\w*|benzinpreis\w*|dieselpreis\w*|tankstelle\w*|tanken|super ?e ?(5|10)|diesel)\b/);
-const PREIS = U(/\b(billig|günstig|guenstig|preis|kostet|teuer|wo|wie viel|was kostet|tanken|tankstelle)\w*/);
+const PREIS = U(/\b(billig\w*|günstig\w*|guenstig\w*|\w*preis\w*|kostet|teuer\w*|wo|wie viel|nächste tankstelle|naechste tankstelle)\b/);
 export async function quickCommand(text) {
   const { k } = sauber(text);
   if (!FRAGE.test(k) || !PREIS.test(k)) return null;

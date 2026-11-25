@@ -20,6 +20,7 @@ export const TERMINE = {
 const laden = () => ({ autos: [], tank: [], gemeldet: [], ...store.load(DATEI, {}) });
 const sichern = (d) => store.save(DATEI, d);
 const zahl = (x) => { const n = Number(String(x ?? "").replace(/\./g, "").replace(",", ".")); return Number.isFinite(n) ? n : null; };
+const datumJahr = (d) => { const t = datumLang(`${d}T12:00:00`); return d.slice(0, 4) === tagStr().slice(0, 4) ? t : `${t} ${d.slice(0, 4)}`; };
 const tageBis = (datum) => Math.round((Date.parse(`${datum}T12:00:00`) - Date.parse(`${tagStr()}T12:00:00`)) / 864e5);
 
 export function stand() {
@@ -93,7 +94,7 @@ const satzTermin = (a, k) => {
   const t = a.termine[k];
   if (!t) return `Für ${TERMINE[k].kurz} ist noch kein Datum eingetragen.`;
   const tage = t.tage;
-  return tage < 0 ? `${TERMINE[k].kurz} ist seit ${-tage} Tagen überfällig (war am ${datumLang(t.datum)}).` : tage === 0 ? `${TERMINE[k].kurz} ist heute fällig.` : `${TERMINE[k].kurz} ist am ${datumLang(t.datum)} fällig, in ${tage} Tagen.`;
+  return tage < 0 ? `${TERMINE[k].kurz} ist seit ${-tage} Tagen überfällig (war am ${datumJahr(t.datum)}).` : tage === 0 ? `${TERMINE[k].kurz} ist heute fällig.` : `${TERMINE[k].kurz} ist am ${datumJahr(t.datum)} fällig, in ${tage} Tagen.`;
 };
 
 /** Erinnerungen 30, 7, 1 Tag vorher und am Tag selbst (einmal je Stufe). */
@@ -159,7 +160,7 @@ export async function quickCommand(text) {
   const datum = datumAus(k);
   if (a && datum && /\b(fällig|faellig|ist im|ist am|nächste|naechste|muss|trag|eintragen|bis)\b/.test(k)) {
     autoSpeichern({ termine: { [a]: datum } });
-    return { answer: `Notiert: ${TERMINE[a].kurz} am ${datumLang(datum)}. Ich erinnere dich 30 Tage, eine Woche und einen Tag vorher.`, actions: ["wunsch:fahrzeug"] };
+    return { answer: `Notiert: ${TERMINE[a].kurz} am ${datumJahr(datum)}. Ich erinnere dich 30 Tage, eine Woche und einen Tag vorher.`, actions: ["wunsch:fahrzeug"] };
   }
   if (/verbrauch/.test(k)) {
     const v = stand()[0]?.verbrauch;

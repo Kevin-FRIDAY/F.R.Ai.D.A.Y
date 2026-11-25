@@ -44,6 +44,7 @@ import { quickCommand as marktplusQuick } from "./marktplus.js";
 import { quickCommand as routenQuick } from "./routen.js";
 import { quickCommand as helferQuick } from "./helfer.js";
 import { quickCommand as wunschQuick } from "./wunschliste.js";
+import { fruehBefehl as sternFrueh, gaeste } from "./sternideen.js";
 import { quickCommand as wacheQuick } from "./wache.js";
 import { quickCommand as studioQuick } from "./videostudio.js";
 // Kontrollraum (v1.135.0, Bausteine aus Conway-Research/automaton, MIT): Gedächtnis-Schubladen, Seele,
@@ -212,6 +213,9 @@ function logbuchBefehl(opts, res, dauer) {
 }
 
 async function askIntern({ text, channel = "web", image, mode = "normal", targetLang, keepHistory = true, standort }) {
+  // Gäste-Modus (v1.166.0): Besuch bekommt keinen privaten Gesprächsverlauf zu sehen, und nichts davon wird gespeichert.
+  const gastModus = mode !== "translate" && gaeste.aktiv();
+  if (gastModus) keepHistory = false;
   const history = keepHistory ? store.getHistory(channel) : [];
 
   const userContent = [];
@@ -227,6 +231,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   const protokoll = neuesProtokoll(auftrag);
   let kernAktiv = false; // erst ab dem Claude-Teil prüfen (Schnellbefehle melden selbst ehrlich)
   let nichtGeklappt = false; // Claude nicht erreichbar und auch offline keine Antwort
+
+  // Gäste-Modus schalten/abblocken und eine laufende Vokabel-Abfrage (v1.166.0) – vor allem anderen,
+  // damit eine Vokabel-Antwort wie „dog“ oder „danke“ nicht bei einem anderen Befehl landet.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const sf = sternFrueh(text);
+      if (sf) { actions.push(...sf.actions); return finish(sf.answer); }
+    } catch (err) {
+      console.error("Stern-Ideen:", err.message);
+    }
+  }
 
   // Weckruf-Befehle ("teste den Weckruf", "bitte nicht stören für 2 Stunden") – vor den Anrufen,
   // weil "ruf mich zum Test an" sonst als Anruf an einen Kontakt verstanden würde.
@@ -592,8 +607,14 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // (neue Minute, neue Notiz im Gedächtnis), lehnt Claude die Denk-Blöcke der vorigen Runde ab (Fehler 400).
   const system = [
     { type: "text", text: PERSONA, cache_control: { type: "ephemeral" } },
-    { type: "text", text: seeleKontext() },
-    { type: "text", text: contextBlock({ channel, mode, targetLang, frage: text }) },
+    // Im Gäste-Modus ohne Seele/Gedächtnis/Profil-Kontext: nur Uhrzeit, Stadt und die Gäste-Regel.
+    ...(gastModus ? [
+      { type: "text", text: `Aktuelle Zeit: ${new Date().toLocaleString("de-DE", { timeZone: config.timezone, dateStyle: "full", timeStyle: "short" })}. Stadt: ${config.city}.` },
+      { type: "text", text: gaeste.SYSTEM_HINWEIS },
+    ] : [
+      { type: "text", text: seeleKontext() },
+      { type: "text", text: contextBlock({ channel, mode, targetLang, frage: text }) },
+    ]),
   ];
   let denkBloeckeEntfernt = false;
   const schleife = schleifenWaechter(channel); // Schleifen-Schutz (v1.135.0)
@@ -608,6 +629,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       messages: mitCachePunkt(messages),
     };
     if (mode !== "translate") params.tools = mitWebsuche ? [...toolDefinitions, WEB_SEARCH] : [...toolDefinitions];
+    if (gastModus && params.tools) params.tools = params.tools.filter((t) => !gaeste.PRIVATE_WERKZEUGE.test(t.name || ""));
     let response;
     try {
       response = ohneFallback ? await client.messages.create(params) : await client.beta.messages.create(params);
