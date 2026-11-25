@@ -692,5 +692,6 @@
   }
   el.addEventListener("click", (e) => { if (e.target.closest("[data-friday-modell]") && aktuell) zeigeModell(aktuell.marke, aktuell.modell, aktuell.farbe); });
 
-  window.FridayStudio = { zeige, schliessen, baueAuto, echt };
+  // Gemeinsamer Name mit dem Schnitt-Team (schnitt.js): zusammenführen statt überschreiben.
+  window.FridayStudio = Object.assign(window.FridayStudio || {}, { zeige, schliessen, baueAuto, echt });
 })();

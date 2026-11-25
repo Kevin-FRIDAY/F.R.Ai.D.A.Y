@@ -95,6 +95,9 @@
         <div><b>${esc(t.name)}</b><em>${esc(a.text || t.aufgabe)}</em><span class="gh-bar"><s style="width:${Math.max(2, a.pct || 0)}%"></s></span></div></div>`;
     }).join(""));
 
+    // Was die Regie aus der Anweisung gemacht hat (für Aufträge per Sprache / aus dem Chat)
+    if (j?.auftrag?.regie?.verstanden?.length && !$("st-thema").value.trim()) zeigeVerstanden($("st-verstanden"), j.auftrag.regie.verstanden, laeuft ? "Setze gerade um" : "Umgesetzt");
+
     // Drehbuch
     const db = j?.drehbuch;
     $("st-db-info").textContent = db ? `${db.szenen.length} Szenen · ${db.quelle}` : "";
@@ -106,10 +109,11 @@
     // Zeitleiste: Szenen, Titel, Musik (Takte), Sprecher
     const T = j?.auftrag?.sekunden || wahl.laenge;
     const n = db?.szenen?.length || 0;
-    const L = n ? (T + (n - 1) * 0.6) / n : 0;
+    const U = db?.uebergang ?? 0.6;
+    const L = n ? (T + (n - 1) * U) / n : 0;
     const kopf = j && j.agents.render.status === "läuft" ? `<em style="left:${j.agents.render.pct || 0}%"></em>` : "";
-    const szenen = n ? db.szenen.map((s, i) => `<s style="left:${(i * (L - 0.6) / T) * 100}%;width:${(L / T) * 100}%;background:${esc(s.farbe)}"></s>`).join("") : "";
-    const titel = n ? db.szenen.map((s, i) => `<s style="left:${((i * (L - 0.6) + 0.25) / T) * 100}%;width:${((L - 0.6 * 0.6) / T) * 100 * 0.9}%"></s>`).join("") : "";
+    const szenen = n ? db.szenen.map((s, i) => `<s style="left:${(i * (L - U) / T) * 100}%;width:${(L / T) * 100}%;background:${esc(s.farbe)}"></s>`).join("") : "";
+    const titel = n ? db.szenen.map((s, i) => (s.text || s.unter ? `<s style="left:${((i * (L - U) + 0.25) / T) * 100}%;width:${((L - U * 0.6) / T) * 100 * 0.9}%"></s>` : "")).join("") : "";
     const m = j?.musik;
     const schlaege = m?.bpm ? Math.floor(T / (60 / m.bpm)) : 0;
     const musik = schlaege ? Array.from({ length: Math.min(schlaege, 160) }, (_, i) => `<s style="left:${(i / schlaege) * 100}%;height:${i % 4 === 0 ? 100 : 30 + ((i * 37) % 50)}%"></s>`).join("") : "";
@@ -160,12 +164,43 @@
     if (!thema) { $("st-thema").focus(); $("schnitt-state").textContent = "Schreib zuerst, worum es gehen soll."; return; }
     starting = true;
     try {
-      const res = await api("/api/studio", { method: "POST", body: JSON.stringify({ thema, sekunden: wahl.laenge, format: wahl.format, musik: wahl.musik, bilder: wahl.bilder, sprecher: $("st-sprecher").checked }) });
+      const res = await api("/api/studio", { method: "POST", body: JSON.stringify({ thema, anweisung: thema, sekunden: wahl.laenge, format: wahl.format, musik: wahl.musik, bilder: wahl.bilder, sprecher: $("st-sprecher").checked }) });
       const r = await res.json();
       if (!r.ok) $("schnitt-state").textContent = r.error;
-      else { stStatus = "läuft"; stJobId = r.id; say(`Verstanden, Chef. ${wahl.laenge} Sekunden über ${thema}. Das Team legt los.`); }
+      else {
+        stStatus = "läuft"; stJobId = r.id;
+        const a = r.auftrag || {};
+        const extra = (a.regie?.verstanden || []).length > 1 ? " Ich setze deine Vorgaben um." : "";
+        say(`Verstanden, Chef. ${a.sekunden || wahl.laenge} Sekunden über ${a.thema || thema}.${extra} Das Team legt los.`);
+      }
     } catch { $("schnitt-state").textContent = "Friday ist gerade nicht erreichbar."; } finally { starting = false; refresh(); }
   }
+
+  // „So setze ich es um“: Friday zeigt beim Tippen, welche Vorgaben sie aus dem Text liest (ohne Claude, sofort).
+  function zeigeVerstanden(el, liste, titel) {
+    if (!el) return;
+    if (!liste || !liste.length) { el.classList.add("hidden"); setHtml(el, ""); return; }
+    el.classList.remove("hidden");
+    setHtml(el, `<b>${esc(titel)}</b><ul>${liste.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`);
+  }
+  function liveVerstehen(feld, ziel, art) {
+    let uhrV = null, letzter = "";
+    $(feld)?.addEventListener("input", () => {
+      clearTimeout(uhrV);
+      uhrV = setTimeout(async () => {
+        const text = $(feld).value.trim();
+        if (text === letzter) return;
+        letzter = text;
+        if (!text) return zeigeVerstanden($(ziel), [], "");
+        try {
+          const r = await (await api("/api/regie/verstehen", { method: "POST", body: JSON.stringify({ text, art }) })).json();
+          if (text === letzter) zeigeVerstanden($(ziel), r.verstanden, "So setze ich es um");
+        } catch { /* Vorschau ist optional */ }
+      }, 350);
+    });
+  }
+  liveVerstehen("st-thema", "st-verstanden", "studio");
+  liveVerstehen("vt-anweisung", "vt-verstanden", "schnitt");
 
   // Probehören: Friday komponiert 9 Sekunden in der gewählten Stimmung.
   let probe = null;
@@ -237,6 +272,7 @@
       return `<div class="lv"><s style="height:${h}%;background:${COLORS[i % COLORS.length]}"></s><span>${l == null ? "–" : Math.round(l)}</span></div>`;
     }).join("") : `<p class="muted">Pegel nach der Messung</p>`;
 
+    if (j?.vorgaben?.verstanden?.length && !$("vt-anweisung").value.trim()) zeigeVerstanden($("vt-verstanden"), j.vorgaben.verstanden, running ? "Setze gerade um" : "Umgesetzt");
     $("schnitt-log").innerHTML = j ? j.log.slice(-9).reverse().map((e) => `<li><b>${esc(e.agent.toUpperCase())}</b> ${esc(e.text)}</li>`).join("") : "";
 
     const res = $("schnitt-result");
@@ -255,10 +291,11 @@
     if (starting) return;
     starting = true;
     try {
-      const res = await api("/api/video-job", { method: "POST", body: JSON.stringify({ look: $("schnitt-look").value }) });
+      const anweisung = $("vt-anweisung")?.value.trim() || "";
+      const res = await api("/api/video-job", { method: "POST", body: JSON.stringify({ look: $("schnitt-look").value, anweisung }) });
       const r = await res.json();
       if (!r.ok) $("schnitt-state").textContent = r.error;
-      else { lastStatus = "läuft"; say("Verstanden, Chef. Das Team legt los."); }
+      else { lastStatus = "läuft"; say(anweisung ? "Verstanden, Chef. Das Team schneidet nach deinen Vorgaben." : "Verstanden, Chef. Das Team legt los."); }
     } finally { starting = false; refresh(); }
   }
 
@@ -370,7 +407,8 @@
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && offen()) close(); });
 
-  window.FridayStudio = { open, close, verfolge, refresh };
+  // Gemeinsamer Name mit dem Auto-Studio (autostudio.js): zusammenführen statt überschreiben.
+  window.FridayStudio = Object.assign(window.FridayStudio || {}, { open, close, verfolge, refresh });
   // Im Hintergrund prüfen, damit Friday "Fertig, Chef" auch sagt, wenn per Sprache gestartet wurde.
   setTimeout(refresh, 3000);
 })();

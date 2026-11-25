@@ -32,3 +32,42 @@ Nach etwa einer Minute sagt Friday „Fertig, Chef“, das Video läuft in der V
 - Reiter **▶ Fertige Videos** zeigt alle Videos aus dem Ordner Fertig zum Abspielen und Laden.
 - Braucht ffmpeg. Das ist dabei, wenn das Schnitt-Team eingerichtet ist (sonst `brew install ffmpeg`).
 - Hat eine Szene kein passendes Foto, springt die Neon-Grafik ein. Das Video wird also immer fertig.
+
+## Neu in v1.171.0: Friday setzt um, was du schreibst
+
+Was du ins Feld schreibst, ist eine **Anweisung an das Team**, kein Text fürs Video. Friday liest daraus die Vorgaben und zeigt sofort darunter: **„So setze ich es um“**.
+
+Beispiel (Video erstellen):
+
+> Stell unser Café vor, schnelle Schnitte, warme Farben. Zeig zuerst den Kaffee, dann den Kuchen und das Team. Am Ende: Komm vorbei!
+
+Daraus wird: Thema „Unser Café“, Vorstellungs-Video (ohne Preise), Szenen in genau dieser Reihenfolge, viele kurze Szenen mit kurzen Übergängen und stärkerem Zoom, warmer Farb-Look und „Komm vorbei“ als letzte Szene.
+
+Was Friday versteht:
+
+| Du schreibst | Das passiert |
+|---|---|
+| schnelle Schnitte, dynamisch, TikTok-Tempo | viele kurze Szenen, kurze Übergänge, stärkerer Zoom |
+| ruhig, langsam, entspannt | wenige lange Szenen, weiche Blenden |
+| harte Schnitte / weiche Übergänge | Übergänge ohne bzw. mit Blende |
+| warm, kühl, Kino-Look, Schwarz-Weiß, Retro, Neon, edel | Farb-Look über das ganze Video |
+| ohne Text / wenig Text | keine bzw. nur kurze Einblendungen |
+| Text in „Anführungszeichen“ oder `Text: …` | steht genau so im Video |
+| Am Ende: … / Link in Bio / Komm vorbei | Aufruf als letzte Szene |
+| zeig zuerst …, dann …, am Ende … | Szenen in dieser Reihenfolge |
+| in Orange, rote Schrift | Akzentfarbe |
+| mit Sprecher, 30 Sekunden, Querformat, epische Musik | wie die Knöpfe, der Text gewinnt |
+
+**Clips schneiden** hat jetzt auch ein Feld „Was soll das Team machen?“:
+
+| Du schreibst | Das passiert |
+|---|---|
+| auf 30 Sekunden kürzen | nur die stärksten Stellen, höchstens 30 s |
+| nur die Stellen über mein Auto | nur Abschnitte, in denen „Auto“ gesagt wird |
+| schnelle Schnitte / ruhig | Pausen ganz raus bzw. kurze Atempausen bleiben |
+| Ähms drin lassen | Füllwörter werden nicht geschnitten |
+| ohne Untertitel / ohne Musik | genau das |
+| Titel: „Mein Tag“, Am Ende: Folg mir | Titel am Anfang, Abspann am Ende |
+| Kino-Look, Retro, Schwarz-Weiß | Look für alle Clips |
+
+Das klappt auch ohne Claude-Guthaben. Mit Guthaben bekommt die Regie deine Anweisung zusätzlich im Wortlaut und schreibt das Drehbuch danach.
