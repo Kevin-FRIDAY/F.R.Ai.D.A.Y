@@ -44,6 +44,7 @@ import { quickCommand as marktplusQuick } from "./marktplus.js";
 import { quickCommand as routenQuick } from "./routen.js";
 import { quickCommand as helferQuick } from "./helfer.js";
 import { quickCommand as wunschQuick } from "./wunschliste.js";
+import { fruehBefehl as sternFrueh, gaeste, vorrang as sternVorrang } from "./sternideen.js";
 import { quickCommand as wacheQuick } from "./wache.js";
 import { quickCommand as studioQuick } from "./videostudio.js";
 // Kontrollraum (v1.135.0, Bausteine aus Conway-Research/automaton, MIT): Gedächtnis-Schubladen, Seele,
@@ -226,18 +227,22 @@ async function askVerstanden(opts) {
   const kanal = opts.channel || "web";
   const text = String(opts.text || "");
   if (opts.mode === "translate" || opts.image || !text || opts.keepHistory === false) return askIntern(opts);
+  // Laufende Vokabel-Abfrage (v1.169.0): jede Antwort ("dog", "danke") gehört dem Sprach-Trainer.
+  if (sternVorrang()) return askIntern(opts);
+  // Gäste-Modus (v1.169.0): kein "was hast du gesagt / worüber haben wir geredet" und keine Folgefragen aus Boss' Verlauf.
+  const gast = gaeste.aktiv();
   const vorher = verstehen.schnappschuss();
   const fertig = (res, frage = text) => {
-    verstehen.merke(kanal, { frage, antwort: res.answer, actions: res.actions, claude: res.claude, angelegt: verstehen.neuSeit(vorher) });
+    if (!gaeste.aktiv()) verstehen.merke(kanal, { frage, antwort: res.answer, actions: res.actions, claude: res.claude, angelegt: verstehen.neuSeit(vorher) });
     return res;
   };
 
   // 1. "Was hast du gesagt?", "mach das rückgängig", "merk dir das", "worüber haben wir geredet?"
-  const g = verstehen.gespraechsBefehl(text, kanal);
+  const g = gast ? null : verstehen.gespraechsBefehl(text, kanal);
   if (g) return { answer: g.answer, actions: g.actions };
 
   // 2. Folgefrage, Antwort auf Rückfrage oder Korrektur → ganzer Satz, aber nur, wenn ein Schnellbefehl ihn versteht.
-  const u = verstehen.umschreiben(text, kanal);
+  const u = gast ? null : verstehen.umschreiben(text, kanal);
   if (u) {
     const alt = verstehen.letzter(kanal)?.angelegt;
     const r = await askIntern({ ...opts, text: u.text, nurSchnell: true });
@@ -270,7 +275,7 @@ async function askVerstanden(opts) {
         extra = { ...(r.claude ? { claude: true } : {}), ...(r.fehler ? { fehler: true } : {}), ...(r.erledigt ? { erledigt: r.erledigt } : {}) };
       }
       const answer = verstehen.verbinde(antworten);
-      store.saveHistory(kanal, [...store.getHistory(kanal), { role: "user", content: text }, { role: "assistant", content: answer }]);
+      if (!gast) store.saveHistory(kanal, [...store.getHistory(kanal), { role: "user", content: text }, { role: "assistant", content: answer }]);
       return fertig({ answer, actions: [...actions, "verstehen:mehrfach"], ...extra }, teile.at(-1));
     }
   }
@@ -280,6 +285,9 @@ async function askVerstanden(opts) {
 }
 
 async function askIntern({ text, channel = "web", image, mode = "normal", targetLang, keepHistory = true, standort, nurSchnell = false, verlaufLesen = false, satzstueck = false }) {
+  // Gäste-Modus (v1.169.0): Besuch bekommt keinen privaten Gesprächsverlauf zu sehen, und nichts davon wird gespeichert.
+  const gastModus = mode !== "translate" && gaeste.aktiv();
+  if (gastModus) { keepHistory = false; verlaufLesen = false; }
   const history = keepHistory || verlaufLesen ? store.getHistory(channel) : [];
 
   const userContent = [];
@@ -295,6 +303,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   const protokoll = neuesProtokoll(auftrag);
   let kernAktiv = false; // erst ab dem Claude-Teil prüfen (Schnellbefehle melden selbst ehrlich)
   let nichtGeklappt = false; // Claude nicht erreichbar und auch offline keine Antwort
+
+  // Gäste-Modus schalten/abblocken und eine laufende Vokabel-Abfrage (v1.169.0) – vor allem anderen,
+  // damit eine Vokabel-Antwort wie „dog“ oder „danke“ nicht bei einem anderen Befehl landet.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const sf = sternFrueh(text);
+      if (sf) { actions.push(...sf.actions); return finish(sf.answer); }
+    } catch (err) {
+      console.error("Stern-Ideen:", err.message);
+    }
+  }
 
   // Weckruf-Befehle ("teste den Weckruf", "bitte nicht stören für 2 Stunden") – vor den Anrufen,
   // weil "ruf mich zum Test an" sonst als Anruf an einen Kontakt verstanden würde.
@@ -688,8 +707,14 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // (neue Minute, neue Notiz im Gedächtnis), lehnt Claude die Denk-Blöcke der vorigen Runde ab (Fehler 400).
   const system = [
     { type: "text", text: PERSONA, cache_control: { type: "ephemeral" } },
-    { type: "text", text: seeleKontext() },
-    { type: "text", text: contextBlock({ channel, mode, targetLang, frage: text }) },
+    // Im Gäste-Modus ohne Seele/Gedächtnis/Profil-Kontext: nur Uhrzeit, Stadt und die Gäste-Regel.
+    ...(gastModus ? [
+      { type: "text", text: `Aktuelle Zeit: ${new Date().toLocaleString("de-DE", { timeZone: config.timezone, dateStyle: "full", timeStyle: "short" })}. Stadt: ${config.city}.` },
+      { type: "text", text: gaeste.SYSTEM_HINWEIS },
+    ] : [
+      { type: "text", text: seeleKontext() },
+      { type: "text", text: contextBlock({ channel, mode, targetLang, frage: text }) },
+    ]),
   ];
   let denkBloeckeEntfernt = false;
   const schleife = schleifenWaechter(channel); // Schleifen-Schutz (v1.135.0)
@@ -704,6 +729,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       messages: mitCachePunkt(messages),
     };
     if (mode !== "translate") params.tools = mitWebsuche ? [...toolDefinitions, WEB_SEARCH] : [...toolDefinitions];
+    if (gastModus && params.tools) params.tools = params.tools.filter((t) => !gaeste.PRIVATE_WERKZEUGE.test(t.name || ""));
     let response;
     try {
       response = ohneFallback ? await client.messages.create(params) : await client.beta.messages.create(params);

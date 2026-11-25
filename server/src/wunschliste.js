@@ -20,6 +20,7 @@ import * as familie from "./familie.js";
 import * as rueckblick from "./rueckblick.js";
 import * as vorlieben from "./vorlieben.js";
 import * as widget from "./widget.js";
+import * as stern from "./sternideen.js";
 
 /** Welche Wünsche sind eingebaut? (für das Fenster und die Ideen-Schmiede) */
 export const WUENSCHE = [
@@ -34,6 +35,8 @@ export const WUENSCHE = [
   { id: "widget", reiter: "widget", icon: "📱", titel: "iPhone-Widget", sprache: "–" },
   { id: "familie", reiter: "familie", icon: "👪", titel: "Familien-Pinnwand", sprache: "Friday, schreib an die Pinnwand: …" },
   { id: "tagesrueckblick", reiter: "rueckblick", icon: "🌙", titel: "Abend-Rückblick", sprache: "Friday, wie war mein Tag?" },
+  // v1.169.0: die neuen Stern-Ideen vom 24.11.2026 (server/src/sternideen.js)
+  ...stern.STERN_WUENSCHE.map((w) => ({ ...w, neu: true })),
 ];
 
 /** Ein Schnellbefehl für brain.js (alles ohne Claude). */
@@ -49,7 +52,8 @@ export async function quickCommand(text) {
     || (await pakete.quickCommand(t))
     || (await fritz.quickCommand(t))
     || (await feeds.quickCommand(t))
-    || (await mediathek.quickCommand(t));
+    || (await mediathek.quickCommand(t))
+    || (await stern.quickCommand(t));
 }
 
 /** Ideen im Tresor, die jetzt eingebaut sind, als "erledigt" markieren (einmalig, nur Bereich "Für Friday"). */
@@ -62,11 +66,11 @@ export function tresorAbhaken() {
     for (const i of ideen) {
       if (i.bereich !== "friday" || i.status === "erledigt") continue;
       const id = titel.get(String(i.titel || "").toLowerCase());
-      if (id && gebaut.has(id)) { i.status = "erledigt"; i.erledigtAm = new Date().toISOString(); i.version = "1.160.0"; n++; }
+      if (id && gebaut.has(id)) { i.status = "erledigt"; i.erledigtAm = new Date().toISOString(); i.version = WUENSCHE.find((w) => w.id === id)?.neu ? "1.169.0" : "1.160.0"; n++; }
     }
     if (n) {
       store.save("ideen", ideen);
-      logbuch.eintragen({ bereich: "idee", titel: `Wunschliste: ${n} Ideen eingebaut und abgehakt`, details: "v1.160.0" });
+      logbuch.eintragen({ bereich: "idee", titel: `Wunschliste: ${n} Ideen eingebaut und abgehakt`, details: "Wunschliste" });
     }
     return n;
   } catch { return 0; }
@@ -86,6 +90,7 @@ export function wunschStart() {
   setInterval(sicher(() => rueckblick.pruefen(notifyAll)), 60 * 1000);
   setTimeout(sicher(() => vorlieben.pruefen()), 5 * 60 * 1000);
   setInterval(sicher(() => vorlieben.pruefen()), 12 * 60 * 60 * 1000);
+  stern.sternStart(sicher, notifyAll);
 }
 
 const fehler = (res, err, code = 400) => res.status(err?.status && err.status >= 400 && err.status < 600 ? (err.status === 401 ? 400 : err.status) : code).json({ error: err?.message || String(err) });
@@ -178,4 +183,7 @@ export function wunschRouten(app, asyncRoute) {
   // Friday lernt dich kennen
   app.get("/api/wunsch/vorlieben", r(async (req) => (req.query.neu === "1" ? vorlieben.aktualisieren() : vorlieben.gespeichert() || vorlieben.aktualisieren())));
   app.post("/api/wunsch/vorlieben/ki", r(async () => vorlieben.kiEinschaetzung()));
+
+  // v1.169.0: neue Stern-Ideen
+  stern.sternRouten(app, r, asyncRoute);
 }
