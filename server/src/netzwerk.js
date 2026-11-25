@@ -78,6 +78,8 @@ export function wissensgraph() {
   for (const e of store.load("entscheidungen", []).slice(-40)) add(`e-${e.id}`, "entscheidung", e.entscheidung, `${e.frage} ${e.gruende}`);
   for (const d of alleDokumente().slice(-40)) add(`d-${d.id}`, "dokument", d.titel, String(d.inhalt || (d.fragen || []).map((f) => f.frage).join(" ")).slice(0, 3000));
   for (const [i, g] of store.getMemories().slice(-60).entries()) add(`g-${i}`, "wissen", g.text, "");
+  // v1.179.0: Projektgedächtnis gehört auch in den Graphen (das große Wissensnetz liegt im Gehirn-Cockpit).
+  for (const p of store.load("projekte", []).slice(-30)) add(`pr-${p.id}`, "mission", `📁 ${p.name}`, (p.notizen || []).map((n) => n.text).join(" "));
   try {
     for (const k of kontakte().slice(0, 30)) if (k?.name) add(`p-${k.name}`, "person", k.name, k.rolle === "frau" ? "Frau Ehefrau Familie" : k.rolle || "");
   } catch { /* keine Kontakte */ }

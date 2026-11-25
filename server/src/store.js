@@ -93,7 +93,7 @@ export function getMemories() {
 
 export function addMemory(text) {
   const memories = getMemories();
-  const entry = { id: Date.now().toString(36), text: text.slice(0, 500), created: new Date().toISOString() };
+  const entry = { id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`, text: text.slice(0, 500), created: new Date().toISOString() };
   memories.push(entry);
   save("memory", memories.slice(-300));
   logbuch.eintragen({ bereich: "gedaechtnis", titel: `Gemerkt: ${entry.text}` });

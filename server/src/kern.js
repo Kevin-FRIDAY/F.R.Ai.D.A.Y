@@ -6,6 +6,7 @@
 import * as regelwerk from "./regelwerk.js";
 import * as schleifen from "./schleifen.js";
 import * as gedaechtnis from "./gedaechtnis.js";
+import * as neuronen from "./neuronen.js";
 import * as herzschlag from "./herzschlag.js";
 import * as kostendeckel from "./kostendeckel.js";
 import * as seele from "./seele.js";
@@ -53,6 +54,10 @@ export function kontextFuer(frage = "") {
   const teile = [`Was du über Boss weißt (nach Schubladen):\n${g.fakten}`];
   if (g.ablaeufe) teile.push(`Passende Abläufe aus deinem Gedächtnis (so hat es früher geklappt):\n${g.ablaeufe}`);
   if (g.ereignisse) teile.push(`Passende frühere Ereignisse:\n${g.ereignisse}`);
+  if (g.kurzzeit) teile.push(`Kurzzeitgedächtnis:\n${g.kurzzeit}`);
+  if (g.projekt) teile.push(`Projektgedächtnis:\n${g.projekt}`);
+  const nb = neuronen.kontextBlock(frage, { schon: teile.join("\n") });
+  if (nb) teile.push(nb);
   const f = faehigkeiten.fuerKontext(frage);
   if (f) teile.push(f);
   return teile.join("\n\n");
@@ -112,6 +117,19 @@ export function kernRouten(app, asyncRoute) {
   app.delete("/api/kern/gedaechtnis/fakt/:id", (req, res) => ok(res, gedaechtnis.faktLoeschen(req.params.id)));
   app.post("/api/kern/gedaechtnis/ablauf", (req, res) => ok(res, gedaechtnis.ablaufSpeichern(req.body || {})));
   app.delete("/api/kern/gedaechtnis/ablauf/:id", (req, res) => ok(res, gedaechtnis.ablaufLoeschen(req.params.id)));
+  // Gedächtnis-Ebenen (v1.179.0): Monitor, Kurzzeit, Projekte
+  app.get("/api/gedaechtnis/monitor", (req, res) => res.json(gedaechtnis.monitor()));
+  app.post("/api/gedaechtnis/kurz", (req, res) => ok(res, gedaechtnis.kurzMerken(req.body?.text, { stunden: Math.max(1, Math.min(24 * 7, Number(req.body?.stunden) || 48)) })));
+  app.delete("/api/gedaechtnis/kurz/:id", (req, res) => { gedaechtnis.kurzWeg(req.params.id); res.json({ ok: true }); });
+  app.post("/api/gedaechtnis/projekte", (req, res) => ok(res, gedaechtnis.projektAnlegen(req.body?.name, { aktiv: req.body?.aktiv !== false })));
+  app.post("/api/gedaechtnis/projekte/:id", (req, res) => ok(res, gedaechtnis.projektSetzen(req.params.id, req.body || {})));
+  app.post("/api/gedaechtnis/projekte/:id/notiz", (req, res) => {
+    const p = gedaechtnis.projekte().find((x) => x.id === req.params.id);
+    if (!p) return res.status(404).json({ error: "Projekt nicht gefunden." });
+    ok(res, gedaechtnis.projektNotiz(p.name, req.body?.text));
+  });
+  app.post("/api/gedaechtnis/befoerdern/:id", (req, res) => ok(res, gedaechtnis.befoerdern(req.params.id)));
+  neuronen.neuronenRouten(app);
   // Herzschlag
   app.get("/api/kern/herzschlag", (req, res) => res.json(herzschlag.uebersicht()));
   app.post("/api/kern/herzschlag/:id", (req, res) => ok(res, herzschlag.einstellen(req.params.id, req.body || {})));

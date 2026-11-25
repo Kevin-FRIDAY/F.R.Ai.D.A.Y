@@ -61,6 +61,8 @@ import { quickCommand as agentEinsatzQuick } from "./agenten-einsatz.js";
 import { agentLosschicken } from "./agents.js";
 import { quickCommand as datenQuick } from "./oeffentlich.js";
 import { quickCommand as cockpitQuick } from "./cockpit.js";
+import * as gedaechtnis from "./gedaechtnis.js";
+import { quickCommand as neuronenQuick } from "./neuronen.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
@@ -197,6 +199,8 @@ export async function ask(opts) {
     const kurz = String(res?.answer || "").replace(/\s+/g, " ").slice(0, 300);
     notifyAll("✅ Friday ist fertig", `${String(opts.text || "").slice(0, 80)}: ${kurz}`, { art: "aufgabe", erzwingen: fw.rufen }).catch(() => {});
   }
+  // Erinnerungsintelligenz (v1.179.0): Themen der Frage ins Kurzzeitgedächtnis, oft Gefragtes wandert ins Langzeitgedächtnis.
+  if (opts?.text && opts.mode !== "translate" && (opts.channel || "web") !== "briefing" && !gaeste.aktiv()) gedaechtnis.mitDenken(opts.text);
   store.archiviere({
     typ: "gespraech",
     kanal: opts?.channel || "web",
@@ -457,6 +461,17 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (tvAnswer) { actions.push("fernseher"); return finish(tvAnswer); }
     } catch (err) {
       console.error("Fernseher-Schnellbefehl:", err.message);
+    }
+  }
+
+  // Gedächtnis-Ebenen + Wissensnetz (v1.179.0): "merk dir für Projekt Garage: …", "merk dir für heute: …",
+  // "neues Projekt Garage", "wie hängt Garage mit Auto zusammen?", "zeig mir das Wissensnetz" – ohne Claude.
+  if (mode !== "translate" && !image && text && !gastModus) {
+    try {
+      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text);
+      if (gq) { actions.push(...gq.actions); return finish(gq.answer); }
+    } catch (err) {
+      console.error("Gedächtnis-Ebenen:", err.message);
     }
   }
 

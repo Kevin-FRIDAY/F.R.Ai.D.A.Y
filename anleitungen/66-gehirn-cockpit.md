@@ -11,7 +11,8 @@ Oben stehen immer die wichtigsten Zahlen: wie viele KIs bereit sind, welche Agen
 | 🧠 KI-Modelle | Alle KIs mit Status (grün = bereit), Modell, Anfragen, Tempo, letzter Fehler, Kosten. Schlüssel eintragen, Tageslimit, Reihenfolge |
 | 🤖 Agenten | Welcher Agent gerade arbeitet und woran |
 | 🎯 Missionen | Laufende und abgeschlossene Aufträge mit Fortschritt |
-| 💾 Gedächtnis | Was Friday zuletzt gelernt hat |
+| 💾 Gedächtnis | Gedächtnis-Monitor: Kurzzeit, Langzeit, Projekte, von selbst Übernommenes (siehe 67-gedaechtnis-wissensnetz.md) |
+| 🕸 Wissensnetz | Neural Brain 2.0: wie dein Wissen zusammenhängt, Aktivierung, „wie hängt X mit Y zusammen“ |
 | ⚠ Warnungen | Fehler & Warnungen aus Logbuch, Tests, KI-Pausen, Kosten, Guthaben, Notfall, Festplatte. Mit ✓ als gesehen markieren |
 | 📊 System | Prozessor, Arbeitsspeicher, Festplatte, Netzwerk (live), Tailscale, Mac-Agent |
 | 🔐 Freigaben | Wartende wichtige Aktionen freigeben/ablehnen, Autonomie-Stufe, „Immer nachfragen bei …“ |
