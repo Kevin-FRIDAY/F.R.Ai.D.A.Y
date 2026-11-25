@@ -34,15 +34,17 @@ eigene **Notizen**, der **Ideen-Tresor**, **Entscheidungen**, **Ziele**, **Missi
 Öffnen: Werkzeug-Menü → **Ideen-Schmiede** → Reiter **🤖 Friday ausbauen**, oder sag
 **„Friday, was kann man bei dir noch einbauen?“**
 
-- **Links: Einbinden** – Dienste und Geräte, die Friday anbinden kann (Unwetter-Warnungen, Pollenflug, Spritpreise, Paket-Verfolgung, Müllkalender, Fußball, lokale KI …). Meist kostenlos.
-- **Rechts: Bauen** – neue Funktionen (Sprach-Tagebuch, Gewohnheiten mit Serien, Geburtstage, Haushaltsbuch, Reise-Planer, Abend-Rückblick, iPhone-Widget …).
+- **Links: Einbinden** – Dienste und Geräte, die Friday anbinden kann (Regen in den nächsten 2 Stunden, Was hat jetzt offen?, Film-Tipps, Gratis-Spiele, Paperless, Bilder malen auf dem Mac, eigene Sensoren …). Meist kostenlos.
+- **Rechts: Bauen** – neue Funktionen (Vertrags-Ordner, Zählerstände, Steuer-Sammelmappe, Ausweis-Wächter, Leseliste, Spieleabend-Punkte, Wochenbericht, Sprach-Tagebuch …).
 - **Mitte: Bauplan-Kern** – tipp eine Kachel an und du siehst Nutzen, Aufwand (1–3 Striche), Kosten, was man braucht und den Sprachbefehl.
   - **⭐ Auf die Wunschliste**: landet im Ideen-Tresor mit 🤖-Zeichen.
   - **📋 Bau-Auftrag kopieren**: fertiger Text, den du einfach in den Chat mit Claude einfügst – dann wird es gebaut.
 - **Aus deinem Alltag**: Friday schaut in die eigene Datenbank. *Passt zu dir* zeigt Vorschläge zu Themen, nach denen du oft fragst. *Das konnte Friday noch nicht* zeigt Fragen, bei denen Friday passen musste – mit ⭐ merkst du sie als Wunsch.
 - **🤖 Neue Vorschläge mit KI** (braucht Guthaben): Claude schlägt 5 weitere Ideen vor, passend zu dem, was es in Friday schon gibt.
 
-Was schon eingebaut ist, wird automatisch als „✓ schon da“ markiert.
+Was schon eingebaut ist, fliegt aus dem Bauplan raus und steht nur noch in der aufklappbaren Liste „✓ Schon eingebaut“.
+Seit v1.171.0 sind alle 32 fertigen Ideen (Pakete, Radio, Podcasts, Himmel, Gäste-Modus, Schlaf, NINA, Garantie-Wächter …)
+herausgenommen, dafür sind 20 neue Ideen nachgerückt. ⭐-Wünsche, die inzwischen eingebaut sind, werden im Ideen-Tresor automatisch abgehakt.
 Beim Würfeln gibt es jetzt auch den Bereich **🤖 Für Friday**.
 
 Wichtig: Friday baut sich nicht selbst um. Die Vorschläge sind ein Plan – gebaut wird über einen Pull Request.

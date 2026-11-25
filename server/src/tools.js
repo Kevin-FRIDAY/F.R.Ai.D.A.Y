@@ -292,10 +292,10 @@ export const toolDefinitions = [
   },
   {
     name: "video_schnitt",
-    description: "Fridays Videoschnitt-Team (Regie, Transkript, Schnitt, Farbe, Untertitel, Audio) auf dem Mac. action=start schneidet alle Clips aus dem Ordner ~/Friday-Video/Eingang zu einem 9:16-Video mit Untertiteln (dauert ein paar Minuten, das Ergebnis meldet das Dashboard). action=status zeigt den Stand. action=open_eingang / open_fertig öffnet den Ordner im Finder. look: natürlich, warm, kühl oder kino.",
+    description: "Fridays Videoschnitt-Team (Regie, Transkript, Schnitt, Farbe, Untertitel, Audio) auf dem Mac. action=start schneidet alle Clips aus dem Ordner ~/Friday-Video/Eingang zu einem 9:16-Video mit Untertiteln (dauert ein paar Minuten, das Ergebnis meldet das Dashboard). action=status zeigt den Stand. action=open_eingang / open_fertig öffnet den Ordner im Finder. look: natürlich, warm, kühl, kino, schwarzweiss, retro oder neon. anweisung: Kevins Wunsch in seinen Worten (z. B. 'auf 30 Sekunden kürzen, nur die besten Stellen, schnelle Schnitte, ohne Musik, Titel: \"Mein Tag\"') – das Team setzt ihn um (Länge, Auswahl, Tempo, Look, Untertitel, Titel), er wird NICHT als Text ins Video geschrieben.",
     input_schema: {
       type: "object",
-      properties: { action: { type: "string", enum: ["start", "status", "open_eingang", "open_fertig"] }, look: { type: "string", enum: LOOKS } },
+      properties: { action: { type: "string", enum: ["start", "status", "open_eingang", "open_fertig"] }, look: { type: "string", enum: LOOKS }, anweisung: { type: "string", description: "Kevins Schnitt-Wunsch im Wortlaut" } },
       required: ["action"],
     },
   },
@@ -312,6 +312,7 @@ export const toolDefinitions = [
         bilder: { type: "string", enum: Object.keys(BILDQUELLEN), description: "auto = freie Fotos, grafik = nur Neon-Grafik, eigene = Clips/Fotos aus dem Ordner Eingang" },
         sprecher: { type: "boolean" },
         stil: { type: "string", description: "optional: Stil- oder Inhaltswunsch" },
+        anweisung: { type: "string", description: "Kevins kompletter Wunsch im Wortlaut (Tempo, Look, Szenen-Reihenfolge, Texte in Anführungszeichen, Aufruf am Ende …). Wird als Regie-Anweisung umgesetzt, nicht als Text ins Video geschrieben." },
       },
       required: ["thema"],
     },
@@ -665,7 +666,7 @@ async function runToolIntern(name, input = {}, wer = {}) {
     }
     case "markt_plus": return marktPlus(input);
     case "video_schnitt": {
-      if (input.action === "start") return startVideoJob({ look: input.look });
+      if (input.action === "start") return startVideoJob({ look: input.look, anweisung: input.anweisung });
       if (input.action === "open_eingang") return openVideoDir("eingang");
       if (input.action === "open_fertig") return openVideoDir("fertig");
       const v = getVideoJob();

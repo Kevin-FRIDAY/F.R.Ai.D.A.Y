@@ -4066,3 +4066,10 @@ body.reduce-anim #settings .set-pane.on { animation: none; }
 @keyframes planeNfPuls { 50% { box-shadow: 0 0 28px rgba(255, 59, 79, .6); } }
 html.perf-fluessig .plane-notfall { animation: none; backdrop-filter: none; }
 @media (max-width: 900px) { .plane-notfall { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 92px); width: max-content; max-width: calc(100vw - 32px); font-size: 12px; } }
+
+/* v1.171.0 – Schnitt-Team: „So setze ich deine Anweisung um“ */
+.st-verstanden { border: 1px solid var(--u-rand, rgba(255,138,30,.35)); border-radius: 12px; padding: 8px 10px; background: rgba(255,138,30,.06); font-size: 12px; line-height: 1.45; color: #f3e9df; }
+.st-verstanden > b { display: block; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--cyan, #ff8a1e); margin-bottom: 4px; }
+.st-verstanden ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+.st-verstanden li::before { content: "✓ "; color: var(--cyan, #ff8a1e); font-weight: 700; }
+.schnitt-panel .st-feld textarea { min-height: 70px; }
