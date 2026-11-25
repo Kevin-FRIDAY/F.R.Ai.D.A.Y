@@ -64,6 +64,7 @@ import { quickCommand as cockpitQuick } from "./cockpit.js";
 import * as gedaechtnis from "./gedaechtnis.js";
 import { quickCommand as neuronenQuick } from "./neuronen.js";
 import { quickCommand as leitungQuick } from "./agentenleitung.js";
+import { quickCommand as weltIntelQuick } from "./weltintelligenz.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
@@ -469,7 +470,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // "neues Projekt Garage", "wie hängt Garage mit Auto zusammen?", "zeig mir das Wissensnetz" – ohne Claude.
   if (mode !== "translate" && !image && text && !gastModus) {
     try {
-      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text) || await leitungQuick(text);
+      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text) || await leitungQuick(text) || await weltIntelQuick(text);
       if (gq) { actions.push(...gq.actions); return finish(gq.answer); }
     } catch (err) {
       console.error("Gedächtnis-Ebenen:", err.message);

@@ -6,6 +6,7 @@ import { kiClient } from "./ki-client.js";
 import { config, ROOT, DATA_DIR } from "./config.js";
 import { getPopulation, getAirQuality } from "./extras.js";
 import { recordUsage, isCreditError, markEmpty } from "./energie.js";
+import { entdoppeln } from "./quellen.js";
 
 const client = kiClient();
 
@@ -58,11 +59,13 @@ function parseRss(xml) {
 export async function getCountryNews(country) {
   const cached = newsCache.get(country.id);
   if (cached && Date.now() - cached.at < CACHE_MS) return cached;
-  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(country.name)}+when:1d&hl=de&gl=DE&ceid=DE:de`;
+  const url = `${process.env.FRIDAY_TEST_NEWS || "https://news.google.com"}/rss/search?q=${encodeURIComponent(country.name)}+when:1d&hl=de&gl=DE&ceid=DE:de`;
   const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 F.R.Ai.D.A.Y" }, signal: AbortSignal.timeout(15000) });
   if (!res.ok) throw new Error(`Google News antwortet mit ${res.status}`);
-  const items = parseRss(await res.text());
-  const entry = { at: Date.now(), items };
+  // v1.181.0: gleiche Meldung von mehreren Quellen nur einmal, mit Quellen-Bewertung und Zahl der Bestätigungen.
+  const roh = parseRss(await res.text());
+  const items = entdoppeln(roh);
+  const entry = { at: Date.now(), items, roh: roh.length };
   newsCache.set(country.id, entry);
   return entry;
 }
@@ -106,10 +109,10 @@ export async function getRegionNews(region) {
   if (!region.query) return [];
   const cached = regionCache.get(region.id);
   if (cached && Date.now() - cached.at < 15 * 60 * 1000) return cached.items;
-  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(region.query)}+when:2d&hl=de&gl=DE&ceid=DE:de`;
+  const url = `${process.env.FRIDAY_TEST_NEWS || "https://news.google.com"}/rss/search?q=${encodeURIComponent(region.query)}+when:2d&hl=de&gl=DE&ceid=DE:de`;
   const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 F.R.Ai.D.A.Y" }, signal: AbortSignal.timeout(15000) });
   if (!res.ok) throw new Error(`Google News ${res.status}`);
-  const items = parseRss(await res.text()).slice(0, 15);
+  const items = entdoppeln(parseRss(await res.text())).slice(0, 15);
   regionCache.set(region.id, { at: Date.now(), items });
   return items;
 }

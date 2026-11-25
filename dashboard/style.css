@@ -4130,3 +4130,7 @@ html.perf-fluessig .plane-notfall { animation: none; backdrop-filter: none; }
 #file-list .datei-k { font-size: 12px; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; line-height: 1.2; }
 #file-list .datei-status:empty { display: none; }
 #file-list .datei-status { padding-left: 40px; }
+
+/* v1.181.0 Quellen-Bewertung im Weltgeschehen (Mark XII Punkt 25) */
+.lz-vt { font-size: 10px; padding: 1px 6px; border-radius: 8px; border: 1px solid currentColor; opacity: .85; white-space: nowrap; }
+.lz-vt.s5 { color: #6fe39a; } .lz-vt.s4 { color: #9fe0ff; } .lz-vt.s3 { color: var(--muted, #aaa); } .lz-vt.s2 { color: #ffc46b; } .lz-vt.s1 { color: #ff7b6b; }
