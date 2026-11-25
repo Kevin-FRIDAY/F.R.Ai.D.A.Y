@@ -229,6 +229,9 @@ export async function quickCommand(text) {
   if (/^(öffne|zeig|zeige|starte?)( mir)? (das |dein |mein )?(gehirn-?cockpit|cockpit|ki-?cockpit)$|^(gehirn-?)?cockpit$/.test(t)) {
     return { answer: "Hier ist das Gehirn-Cockpit, Boss. Alles auf einen Blick: KI-Modelle, Agenten, Missionen, Gedächtnis, Warnungen, System und Freigaben.", actions: ["cockpit"] };
   }
+  if (/^(öffne|zeig|zeige|starte?)( mir)? (das |dein )?(omniverse|omniversum|neural ?brain( 3d)?|gehirn in 3d|wissensnetz in 3d|3d-?gehirn)$/.test(t)) {
+    return { answer: "Hier ist das Omniverse: alle Systeme und dein Wissen als 3D-Netz.", actions: ["cockpit:omniverse"] };
+  }
   if (/^(welche|was für) (ki|kis|ki-modelle|modelle|gehirne) (sind|laufen|hast du)( gerade)?( aktiv| an| bereit)?$|^(zeig|zeige)( mir)? (die )?(aktiven )?ki-?modelle$/.test(t)) {
     const b = bereiteGehirne();
     return { answer: b.length ? `Bereit sind gerade ${b.length}: ${b.map((id) => GEHIRN_NAMEN[id]).join(", ")}. Die Reihenfolge bei Ausfällen ist ${kiStand().kette.map((id) => GEHIRN_NAMEN[id].split(" (")[0]).join(", dann ")}.` : "Gerade ist kein KI-Gehirn bereit. Meine Offline-Befehle laufen trotzdem.", actions: ["cockpit:ki"] };
