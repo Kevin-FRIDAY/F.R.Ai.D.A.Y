@@ -117,8 +117,34 @@ if ! install_packages; then
 fi
 
 # 4. Neu starten
+neustart() {
+  if command -v launchctl >/dev/null; then
+    launchctl kickstart -k "gui/$(id -u)/com.friday.agent" 2>/dev/null || true
+    launchctl kickstart -k "gui/$(id -u)/com.friday.server" 2>/dev/null || true
+    return 0
+  fi
+  return 1
+}
+# Gesundheits-Check (v1.183.0): Antwortet Friday nach dem Neustart innerhalb von 90 Sekunden?
+gesund() {
+  local port; port="$(getval PORT)"; port="${port:-3000}"
+  for _ in $(seq 1 45); do
+    sleep 2
+    [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 "http://127.0.0.1:$port/" 2>/dev/null)" = 200 ] && return 0
+  done
+  return 1
+}
 status fertig "Version $VERSION ist installiert. Friday startet neu..." neustart 90
-if command -v launchctl >/dev/null; then
-  launchctl kickstart -k "gui/$(id -u)/com.friday.agent" 2>/dev/null || true
-  launchctl kickstart -k "gui/$(id -u)/com.friday.server" 2>/dev/null || true
+if neustart && [ "${FRIDAY_OHNE_GESUNDHEITSCHECK:-0}" != 1 ]; then
+  if ! gesund; then
+    # Rollback: Die neue Version startet nicht → alte Version zurück, damit Friday weiterläuft.
+    echo "$(date '+%F %T') Version $VERSION startet nicht. Rollback auf $VON."
+    rsync -a --delete "${KEEP[@]}" "$BACKUP/" "$DEST/"
+    install_packages
+    printf '{"zeit":"%s","von":"%s","ziel":"%s","grund":"Friday hat nach dem Update nicht geantwortet (Gesundheits-Check)."}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$VON" "$VERSION" > "$DEST/server/data/update-rollback.json"
+    neustart
+    if gesund; then fail "Version $VERSION startete nicht. Die alte Version $VON ist wiederhergestellt und läuft."; fi
+    fail "Version $VERSION startete nicht, und die alte Version antwortet auch nicht. Bitte Friday wiederherstellen.command starten."
+  fi
+  status fertig "Version $VERSION ist installiert und läuft." neustart 100
 fi

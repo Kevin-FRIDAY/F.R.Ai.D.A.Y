@@ -90,6 +90,9 @@ import { weltRouten, weltStart } from "./weltintelligenz.js";
 import { hausRouten, hausStart } from "./hausintelligenz.js";
 import { lebenRouten, lebenStart } from "./lebensmanager.js";
 import { umgebungRouten, umgebungStart } from "./umgebung.js";
+import { sicherheitRouten, sicherheitStart, anmeldung as sicherheitAnmeldung } from "./sicherheit.js";
+import { arztRouten, arztStart, messer as leistungsMesser } from "./systemarzt.js";
+import { vorausRouten, vorausStart } from "./vorausschau.js";
 import { funktionstestStart } from "./funktionstest.js";
 
 const missing = checkConfig();
@@ -103,6 +106,7 @@ app.disable("x-powered-by");
 app.set("trust proxy", "loopback");
 // Eve (Testversion): im Eve-Modus gehen alle /api-Anfragen an den eigenen Eve-Prozess (eigene Daten).
 if (IST_EVE) eveSchutzAn();
+app.use(leistungsMesser); // Performance-Labor (v1.183.0): misst jede /api-Anfrage
 app.use(eveWeiterleitung);
 app.use(express.json({ limit: "12mb" }));
 
@@ -125,12 +129,14 @@ const asyncRoute = (fn) => (req, res) =>
 // --- Anmeldung ---
 app.post("/api/login", (req, res) => {
   const ip = req.ip;
-  if (!loginAllowed(ip)) return res.status(429).json({ error: "Zu viele Versuche. Warte 15 Minuten." });
+  if (!loginAllowed(ip)) { sicherheitAnmeldung("gesperrt", req); return res.status(429).json({ error: "Zu viele Versuche. Warte 15 Minuten." }); }
   if (!verifyPassword(req.body?.password, config.passwordHash)) {
     recordFailure(ip);
+    sicherheitAnmeldung("falsch", req);
     return res.status(401).json({ error: "Falsches Passwort" });
   }
   clearFailures(ip);
+  sicherheitAnmeldung("ok", req);
   res.json({ token: createToken(), name: config.userName });
 });
 
@@ -817,6 +823,9 @@ weltRouten(app, asyncRoute);
 hausRouten(app, asyncRoute);
 lebenRouten(app, asyncRoute);
 umgebungRouten(app, asyncRoute);
+sicherheitRouten(app, asyncRoute);
+arztRouten(app, asyncRoute);
+vorausRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
@@ -839,6 +848,9 @@ weltStart().catch(() => {});
 hausStart().catch(() => {});
 lebenStart().catch(() => {});
 umgebungStart().catch(() => {});
+sicherheitStart().catch(() => {});
+arztStart().catch(() => {});
+vorausStart().catch(() => {});
 grossauftragStart();
 if (!IST_EVE) kontenStart(); // Meine Konten: alle 6 Std. frische Kontostände (nur lesen)
 zentraleStart(ask);

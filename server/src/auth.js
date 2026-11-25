@@ -36,8 +36,15 @@ export function verifyToken(token) {
   const expected = Buffer.from(sign(payload));
   const given = Buffer.from(parts[2]);
   if (expected.length !== given.length || !crypto.timingSafeEqual(expected, given)) return false;
-  return Number(parts[1]) > Date.now();
+  const ablauf = Number(parts[1]);
+  // "Alle abmelden" (v1.183.0): Anmeldungen, die vor diesem Zeitpunkt entstanden sind, gelten nicht mehr.
+  if (gueltigAb && ablauf - SESSION_DAYS * 24 * 3600 * 1000 < gueltigAb) return false;
+  return ablauf > Date.now();
 }
+
+let gueltigAb = 0;
+/** Ab diesem Zeitpunkt (ms) gelten nur noch neuere Anmeldungen. Wird von sicherheit.js gesetzt. */
+export function setzeGueltigAb(ms) { gueltigAb = Number(ms) || 0; }
 
 export function safeEqual(a, b) {
   const x = Buffer.from(String(a || ""));
