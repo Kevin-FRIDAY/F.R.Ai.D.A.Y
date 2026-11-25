@@ -29,7 +29,10 @@
     try { localStorage.setItem("friday_ws_stil", stil); } catch { /* egal */ }
     $("ws-stile").querySelectorAll("button").forEach((x) => { x.classList.toggle("on", x === b); x.setAttribute("aria-checked", String(x === b)); });
   });
-  const wahl = () => ({ stil: stil || undefined, branche: $("ws-branche")?.value || undefined });
+  const wahl = () => ({ stil: stil || undefined, branche: $("ws-branche")?.value || undefined, eigen: $("ws-eigen")?.checked || $("ws-branche")?.value === "persoenlich" || undefined });
+  // v1.172.0: Eigene Seite (für uns selbst) → kein Preisvorschlag, kein Angebot, kein Verkauf.
+  const preisText = (r) => (r?.eigen ? " Eure eigene Seite, ohne Preis." : ` Preisvorschlag ${eur(r?.preis_eur)}.`);
+  const fertigSagen = (r, vorne = "") => (r?.eigen ? `Fertig, Chef. ${vorne}Eure eigene Seite ${r.titel} steht. Die Platzhalter in Klammern kannst du mit euren Angaben füllen.` : `Fertig, Chef. ${vorne}${r.titel} steht. Mein Preisvorschlag: ${Math.round(r?.preis_eur || 0)} Euro.`);
 
   function geraet(w) {
     $("ws-geraet").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.w === w));
@@ -61,8 +64,8 @@
     try {
       const r = await (await api("/api/webseite/vorlage", { method: "POST", body: JSON.stringify({ auftrag, ...wahl() }) })).json();
       if (!r.ok) { msg(r.error || "Das ging gerade nicht.", true); return; }
-      msg(`Fertig: ${r.titel}. Qualität ${r.qualitaet?.punkte ?? "–"}/100, ${r.qualitaet?.fotos ?? 0} Fotos. Preisvorschlag ${eur(r.preis_eur)}.`);
-      say(`Fertig, Chef. ${r.titel} steht. Mein Preisvorschlag: ${Math.round(r.preis_eur || 0)} Euro.`);
+      msg(`Fertig: ${r.titel}. Qualität ${r.qualitaet?.punkte ?? "–"}/100, ${r.qualitaet?.fotos ?? 0} Fotos.${preisText(r)}`);
+      say(fertigSagen(r));
       await loadList(r.id);
     } catch { msg("Friday ist gerade nicht erreichbar.", true); }
     finally { busy = false; $("ws-go").disabled = false; $("ws-sofort").disabled = false; $("ws-state").textContent = ""; $("ws-state").className = "ws-state"; }
@@ -74,9 +77,10 @@
   async function loadList(selectId) {
     try { sites = await (await api("/api/webseiten")).json(); } catch { sites = []; }
     const sold = sites.filter((s) => s.status === "verkauft");
-    $("ws-sum").textContent = `${sites.length} Projekte · ${sold.length} verkauft · ${eur(sold.reduce((a, s) => a + (s.verkauft_eur || 0), 0))} eingenommen`;
+    const eigene = sites.filter((s) => s.eigen).length;
+    $("ws-sum").textContent = `${sites.length} Projekte${eigene ? ` (${eigene} eigene)` : ""} · ${sold.length} verkauft · ${eur(sold.reduce((a, s) => a + (s.verkauft_eur || 0), 0))} eingenommen`;
     $("ws-list").innerHTML = sites.map((s) => `<li><button type="button" data-id="${escapeHtml(s.id)}" class="${current?.id === s.id ? "on" : ""}">
-        <b>${escapeHtml(s.titel)}</b><span>${new Date(s.erstellt).toLocaleDateString("de-DE")} · ${s.status === "verkauft" ? `✓ verkauft ${eur(s.verkauft_eur)}` : `Entwurf · Vorschlag ${eur(s.preis_eur)}`}${s.qualitaet?.punkte != null ? ` · ★ ${s.qualitaet.punkte}` : ""}${s.quelle === "vorlage" ? " · ⚡ Vorlage" : ""}</span></button></li>`).join("")
+        <b>${escapeHtml(s.titel)}</b><span>${new Date(s.erstellt).toLocaleDateString("de-DE")} · ${s.eigen ? `<i class="ws-eigen-marke">♥ Eigene Seite</i>` : s.status === "verkauft" ? `✓ verkauft ${eur(s.verkauft_eur)}` : `Entwurf · Vorschlag ${eur(s.preis_eur)}`}${s.qualitaet?.punkte != null ? ` · ★ ${s.qualitaet.punkte}` : ""}${s.quelle === "vorlage" ? " · ⚡ Vorlage" : ""}</span></button></li>`).join("")
       || `<li class="muted">Noch keine Webseiten. Beschreib oben deinen ersten Kunden.</li>`;
     const pick = selectId ? sites.find((s) => s.id === selectId) : current ? sites.find((s) => s.id === current.id) : sites[0];
     if (pick) show(pick); else { current = null; $("ws-detail").classList.add("hidden"); }
@@ -88,6 +92,7 @@
     if (live && !live.ende) return; // Während des Live-Baus bleibt die Live-Ansicht vorn.
     if (live) { $("ws-live").classList.add("hidden"); }
     $("ws-detail").classList.remove("hidden");
+    $("ws-detail").classList.toggle("ist-eigen", Boolean(site.eigen));
     $("ws-titel").textContent = site.titel;
     $("ws-angebot").textContent = site.angebot || "";
     $("ws-preis").textContent = site.status === "verkauft" ? `Verkauft für ${eur(site.verkauft_eur)}` : `Preisvorschlag: ${eur(site.preis_eur)}`;
@@ -197,9 +202,9 @@
       wl("wl-code").innerHTML = hl(live.code);
       const r = j.ergebnis;
       const knapp = sek <= j.schaetzung_s + 3 ? `${sek} Sekunden, wie versprochen.` : `${sek} Sekunden, etwas länger als gedacht.`;
-      msg(`${j.hinweis ? `${j.hinweis} ` : ""}Fertig in ${sek} s: ${r.titel}. Qualität ${r.qualitaet?.punkte ?? "–"}/100. Preisvorschlag ${eur(r.preis_eur)}.`, Boolean(j.hinweis));
+      msg(`${j.hinweis ? `${j.hinweis} ` : ""}Fertig in ${sek} s: ${r.titel}. Qualität ${r.qualitaet?.punkte ?? "–"}/100.${preisText(r)}`, Boolean(j.hinweis));
       // Nicht mitten in die letzte Bau-Ansage hinein (höchstens 3 s warten). Schon fertige Bauten nicht noch mal ansagen.
-      const fertigSatz = `Fertig, Chef. ${knapp} ${r.titel} steht. Mein Preisvorschlag: ${Math.round(r.preis_eur || 0)} Euro.`;
+      const fertigSatz = fertigSagen(r, `${knapp} `);
       if (!live.stumm) setTimeout(() => say(fertigSatz), Math.min(3000, Math.max(0, (live.frei || 0) - Date.now())));
       window.FridayEnergie?.refresh();
       setTimeout(() => { if (live?.id === j.id) { liveZeigen(false); loadList(r.id); } }, 4000);
@@ -254,6 +259,7 @@
   async function build(auftrag, basis) {
     if (busy) return;
     auftrag = String(auftrag || "").trim();
+    if (!auftrag && $("ws-eigen")?.checked && !basis) auftrag = "Baue eine Webseite von uns und stelle uns vor";
     if (!auftrag) { msg("Beschreib zuerst den Kunden und die Seite.", true); return; }
     if ((await buildLive(auftrag, basis)) !== false) return;
     busy = true;
@@ -264,8 +270,8 @@
       const res = await api("/api/webseite", { method: "POST", body: JSON.stringify({ auftrag, basis, ...wahl() }) });
       const r = await res.json();
       if (!r.ok) { msg(r.error, true); return; }
-      msg(`${r.hinweis ? `${r.hinweis} ` : ""}Fertig: ${r.titel}. Qualität ${r.qualitaet?.punkte ?? "–"}/100. Preisvorschlag ${eur(r.preis_eur)}.`, Boolean(r.hinweis));
-      say(`Fertig, Chef. ${r.titel} steht. Mein Preisvorschlag: ${Math.round(r.preis_eur || 0)} Euro.`);
+      msg(`${r.hinweis ? `${r.hinweis} ` : ""}Fertig: ${r.titel}. Qualität ${r.qualitaet?.punkte ?? "–"}/100.${preisText(r)}`, Boolean(r.hinweis));
+      say(fertigSagen(r));
       await loadList(r.id);
       window.FridayEnergie?.refresh();
     } catch { msg("Friday ist gerade nicht erreichbar.", true); }
