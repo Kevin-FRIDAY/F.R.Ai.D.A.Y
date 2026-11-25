@@ -185,6 +185,21 @@ function fuelle(vorlage, treffer) {
 }
 const zufaellig = (x) => (Array.isArray(x) ? x[Math.floor(Math.random() * x.length)] : x);
 
+/**
+ * Sandbox-Test (v1.186.0): Welche Antwort gäbe ein (noch nicht installiertes) Modul auf einen Satz?
+ * Ohne Nebenwirkungen: Mitteilungen werden nicht geschickt, Weitergaben an Friday nur beschrieben.
+ */
+export function testeModul(m, satz) {
+  const t = norm(satz);
+  for (const b of m?.befehle || []) for (const s of b.saetze || []) {
+    const tr = passt(s, t);
+    if (!tr) continue;
+    if (b.friday) return { treffer: true, art: "friday", text: `Würde an Friday weitergeben: „${fuelle(zufaellig(b.friday), tr)}“` };
+    return { treffer: true, art: "antwort", text: fuelle(zufaellig(b.antwort || "Erledigt."), tr), mitteilung: b.mitteilung ? fuelle(zufaellig(b.mitteilung), tr) : null };
+  }
+  return { treffer: false, text: "" };
+}
+
 /** Sprachbefehl eines eingeschalteten Moduls? @returns {Promise<{answer:string, actions:string[]}|null>} */
 export async function modulBefehl(text, ask) {
   const t = norm(text);
