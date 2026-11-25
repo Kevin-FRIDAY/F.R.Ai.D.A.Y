@@ -63,6 +63,7 @@ import { quickCommand as datenQuick } from "./oeffentlich.js";
 import { quickCommand as cockpitQuick } from "./cockpit.js";
 import * as gedaechtnis from "./gedaechtnis.js";
 import { quickCommand as neuronenQuick } from "./neuronen.js";
+import { quickCommand as leitungQuick } from "./agentenleitung.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
@@ -468,7 +469,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // "neues Projekt Garage", "wie hängt Garage mit Auto zusammen?", "zeig mir das Wissensnetz" – ohne Claude.
   if (mode !== "translate" && !image && text && !gastModus) {
     try {
-      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text);
+      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text) || await leitungQuick(text);
       if (gq) { actions.push(...gq.actions); return finish(gq.answer); }
     } catch (err) {
       console.error("Gedächtnis-Ebenen:", err.message);
@@ -633,7 +634,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
         const id = ae.team ? "team" : ae.id;
         const b = await agentLosschicken(id, ae.eingabe || "", channel);
         actions.push(`buero:${id === "team" ? "friday" : id}`);
-        return finish(b.text);
+        return finish(`${b.text}${b.pruefung?.status === "fehler" ? ` Der Kontroll-Agent hat das nicht abgenommen: ${b.pruefung.gruende.join("; ")}.` : ""}`);
       }
     } catch (err) {
       console.error("Agenten-Einsatz:", err.message);

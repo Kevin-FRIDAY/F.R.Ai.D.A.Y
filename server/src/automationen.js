@@ -14,7 +14,7 @@ import * as missionen from "./missionen.js";
 const NAME = "automationen";
 const neueId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 export const AUSLOESER = { taeglich: "Täglich um …", intervall: "Alle … Minuten", start: "Wenn Friday startet" };
-export const AKTIONEN = { friday: "Friday einen Auftrag geben", mitteilung: "Mitteilung aufs Handy", protokoll: "Protokoll starten", aufgabe: "Aufgabe anlegen", mission: "Mission starten" };
+export const AKTIONEN = { friday: "Friday einen Auftrag geben", mitteilung: "Mitteilung aufs Handy", protokoll: "Protokoll starten", aufgabe: "Aufgabe anlegen", mission: "Mission starten", agent: "Agenten losschicken (24/7)" };
 const TAGE = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 let askFn = null;
 const laufend = new Set();
@@ -50,7 +50,7 @@ export function speichereRegel(r = {}) {
       ...(r.ausloeser.art === "taeglich" ? { zeit: r.ausloeser.zeit, tage: (Array.isArray(r.ausloeser.tage) ? r.ausloeser.tage : [0, 1, 2, 3, 4, 5, 6]).map(Number).filter((t) => t >= 0 && t <= 6) } : {}),
       ...(r.ausloeser.art === "intervall" ? { minuten: Math.round(Number(r.ausloeser.minuten)) } : {}),
     },
-    aktion: { art: r.aktion.art, ...(r.aktion.art === "protokoll" ? { name: String(r.aktion.name).slice(0, 80) } : { text: String(r.aktion.text).slice(0, 1500) }) },
+    aktion: { art: r.aktion.art, ...(r.aktion.art === "protokoll" ? { name: String(r.aktion.name).slice(0, 80) } : { text: String(r.aktion.text).slice(0, 1500) }), ...(r.aktion.art === "agent" ? { eingabe: String(r.aktion.eingabe || "").slice(0, 300), melden: ["immer", "fehler", "nie"].includes(r.aktion.melden) ? r.aktion.melden : "fehler" } : {}) },
     erstellt: alt?.erstellt || new Date().toISOString(),
     zuletzt: alt?.zuletzt || null,
     ergebnis: alt?.ergebnis || "",
@@ -101,6 +101,13 @@ async function ausfuehren(r, grund = "") {
     } else if (x.art === "aufgabe") {
       store.addTask(x.text);
       ergebnis = "Aufgabe angelegt.";
+    } else if (x.art === "agent") {
+      // 24/7-Missionszentrale (v1.180.0): Agent nach Zeitplan, Kontroll-Agent prüft, gemeldet wird nach Wunsch.
+      const { losschicken } = await import("./agentenleitung.js");
+      const b = await losschicken(x.text, x.eingabe || "", { kanal: "automation" });
+      ok = b.ok !== false && b.pruefung?.status !== "fehler";
+      ergebnis = `${b.text || ""}${!ok && b.pruefung?.gruende?.length ? ` (Kontroll-Agent: ${b.pruefung.gruende.join("; ")})` : ""}`;
+      if (x.melden === "immer" || (x.melden !== "nie" && !ok)) await notifyAll(ok ? r.name : `⚠ ${r.name}`, ergebnis.slice(0, 600), { art: "agent" }).catch(() => {});
     } else if (x.art === "mission") {
       const m = await missionen.neu({ ziel: x.text, titel: x.text.slice(0, 80) });
       ok = !m.error; ergebnis = m.error || `Mission „${m.mission.titel}“ in der Warteschlange.`;

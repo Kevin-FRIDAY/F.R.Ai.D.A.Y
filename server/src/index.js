@@ -85,6 +85,7 @@ import * as produkt from "./produkt.js";
 import { listBackups, createBackup, startRestore, getRestoreStatus, backupDir } from "./backup.js";
 import { ereignisRouten } from "./ereignisbus.js";
 import { cockpitRouten } from "./cockpit.js";
+import { agentenleitungRouten } from "./agentenleitung.js";
 import { funktionstestStart } from "./funktionstest.js";
 
 const missing = checkConfig();
@@ -807,6 +808,7 @@ jarvisRouten(app, asyncRoute);
 // Mark XII (v1.178.0): Ereignis-Bus (Live-Strom) und Gehirn-Cockpit (KI-Schwarm, Labor, Tests, Warnungen, System, Freigaben).
 ereignisRouten(app);
 cockpitRouten(app, asyncRoute);
+agentenleitungRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
