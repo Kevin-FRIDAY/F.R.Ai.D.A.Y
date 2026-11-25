@@ -25,12 +25,29 @@ Volkswagen R (Golf R, Golf R Variant, T-Roc R, Tiguan R, Arteon R, Touareg R),
 Audi RS (RS 3, RS 4, RS 5, RS 6, RS 7, RS Q8, RS e-tron GT), Porsche (911 Carrera, GTS, GT3, Turbo S, Taycan, Cayenne).
 Die Daten sind Herstellerangaben (gerundet, je nach Ausstattung etwas anders). Steht in `server/src/autostudio.js`.
 
-## Noch echter: echte 3D-Modelle
+## Noch echter: echte 3D-Modelle (v1.175.0)
 
-Friday baut die Autos selbst (aus Form, Lack, Felgen und Bremssätteln in Markenfarbe). Das sieht aus wie ein
-Studio-Modell, aber nicht wie ein Foto. **Für den Foto-Look**: in der Werkstatt unter 📦 Vorlagen den kostenlosen
-**Sketchfab-Schlüssel** eintragen (Anleitung 37). Dann lädt Friday bei „bau mir einen M4“ ein echtes 3D-Modell
-und stellt es ins selbe Studio (die Quelle und Lizenz stehen auf der Karte). Bei einer Modellreihe nimmt Friday
+Friday zeichnet die Autos selbst (aus Form, Lack, Felgen und Bremssätteln in Markenfarbe). Das bleibt eine
+Zeichnung – **wie ein Foto sieht nur ein echtes 3D-Modell aus**. So bekommst du es:
+
+1. Auto aufrufen, z. B. „Friday, bau mir einen M4“.
+2. Auf der Karte links auf **✨ Echtes 3D-Modell holen** tippen.
+3. Beim ersten Mal fragt Friday nach dem kostenlosen **Sketchfab-Schlüssel**: auf sketchfab.com kostenlos
+   anmelden → Einstellungen → **Password & API** → Schlüssel kopieren → einfügen → **Verbinden**.
+4. Friday sucht ein frei ladbares, detailreiches Modell, lädt es nach `~/Friday-Modelle` und stellt es ins Studio.
+   Ab dann geht das bei jedem Auto automatisch. Quelle, Urheber und Lizenz stehen auf der Karte.
+
+Die **Farbkreise** wirken auch beim echten Modell: Friday erkennt den Lack und lackiert ihn um.
+„Friday-Modell zeigen“ schaltet zurück auf Fridays Zeichnung. Bei einer Modellreihe nimmt Friday
 immer die eigenen Modelle, damit alle gleich aussehen.
+
+### Foto-Studio-Technik (für alle Autos)
+
+- **Echtes Studio-Licht**: HDR-Aufnahme eines Fotostudios (Poly Haven, gemeinfrei) plus Lichtbalken für die
+  langen Kanten im Lack.
+- **Kontaktschatten**: dunkel, wo die Reifen aufsetzen, weich nach außen – das Auto steht, statt zu schweben.
+- **Weiche Spiegelung**: der Boden spiegelt das Auto zart und blendet nach unten aus.
+- **Reifen auf dem Boden**: echte Modelle werden auf den Millimeter genau auf den Boden gestellt.
+- Die Werkstatt („Massiv“) nutzt dasselbe Studio-Licht.
 
 Markenlogos baut Friday nicht nach – nur Schriftzug und Farben.

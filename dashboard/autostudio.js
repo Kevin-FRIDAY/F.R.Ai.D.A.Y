@@ -312,7 +312,9 @@
   // Bühne: Boden mit Spiegelbild (Kopie des Autos, an y gespiegelt), weicher Schatten, Licht.
   function buehne(renderer, mitHintergrund) {
     const scene = new THREE.Scene();
-    scene.environment = studioUmgebung(renderer);
+    const foto = window.FridayFoto;
+    // v1.175.0: echtes Studio-Licht (HDR-Aufnahme + Softboxen), sonst die alte selbst gerechnete Umgebung
+    scene.environment = foto ? foto.umgebung(renderer, { hell: true, fertig: (t) => { scene.environment = t; } }) : studioUmgebung(renderer);
     if (mitHintergrund) {
       scene.background = verlaufTextur([[0, "#d3d6da"], [0.3, "#e2e4e7"], [0.45, BODEN], [1, BODEN]]);
       scene.fog = new THREE.Fog(BODEN, 16, 40);
@@ -323,22 +325,33 @@
     // Oben im Verlauf = Kameraseite (−z): dort deckend, unter dem Auto durchsichtiger (kräftige Spiegelung).
     // Stufen in Metern ab Automitte (z), Fläche 400 × 400 m, damit nirgends eine Kante zu sehen ist.
     const T = 400, stufe = (z, a) => [(z + T / 2) / T, `rgba(232,234,237,${a})`];
-    const bodenTex = verlaufTextur([[0, "rgba(232,234,237,1)"], stufe(-7.2, 0.97), stufe(-4, 0.72), stufe(-2, 0.46), stufe(0, 0.42), stufe(2, 0.75), stufe(4, 0.97), [1, "rgba(232,234,237,1)"]], 4, 4096);
+    const bodenTex = verlaufTextur([[0, "rgba(232,234,237,1)"], stufe(-7.2, 0.97), stufe(-4, 0.72), stufe(-2, 0.6), stufe(0, 0.56), stufe(2, 0.8), stufe(4, 0.97), [1, "rgba(232,234,237,1)"]], 4, 4096);
     const boden = new THREE.Mesh(new THREE.PlaneGeometry(T, T), new THREE.MeshBasicMaterial({ map: bodenTex, transparent: true, depthWrite: false, fog: true, toneMapped: false }));
     boden.rotation.x = -Math.PI / 2; boden.renderOrder = 1; scene.add(boden);
     const schatten = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: verlaufTextur([[0, "rgba(0,0,0,0.55)"], [0.55, "rgba(0,0,0,0.25)"], [1, "rgba(0,0,0,0)"]], 4, 256, true), transparent: true, depthWrite: false, toneMapped: false }));
     schatten.rotation.x = -Math.PI / 2; schatten.position.y = 0.004; schatten.renderOrder = 2; scene.add(schatten);
-    return { scene, boden, schatten, auto: null, spiegel: null };
+    // v1.175.0: echter Kontaktschatten (dunkel unter den Reifen, weich nach außen) statt nur einem runden Fleck
+    const kontakt = foto ? foto.kontaktSchatten(renderer, { schichten: [{ hoehe: 0.22, weich: 1, dunkel: 1.1 }, { hoehe: 1.2, weich: 5, dunkel: 0.42 }] }) : null;
+    if (kontakt) { scene.add(kontakt.gruppe); schatten.material.opacity = 0.35; }
+    return { scene, renderer, boden, schatten, kontakt, auto: null, spiegel: null };
   }
   function setzeAuto(b, auto) {
-    if (b.auto) { b.scene.remove(b.auto, b.spiegel); entsorge(b.auto); }
+    if (b.auto) { b.scene.remove(b.auto); if (b.auto !== auto) entsorge(b.auto); }
     b.auto = auto;
-    b.spiegel = auto.clone(true); b.spiegel.scale.y = -1;
-    b.scene.add(auto, b.spiegel);
+    b.scene.add(auto);
+    spiegelNeu(b);
+    b.kontakt?.rechne(b.scene, auto);
     const { L, B } = auto.userData.masse;
     b.schatten.scale.set(L * 1.12, B * 1.35, 1);
     // Boden-Verlauf: Mitte des Autos bei v = 0.5 → Fläche so legen, dass der deckende Teil zur Kamera (−z) zeigt.
     b.boden.position.set(0, 0, 0);
+  }
+  // Spiegelbild im Boden: Kopie des Autos, an y gespiegelt; blendet nach unten in die Bodenfarbe aus.
+  function spiegelNeu(b) {
+    if (b.spiegel) { b.scene.remove(b.spiegel); b.spiegel.traverse((k) => { if (k.isMesh) (Array.isArray(k.material) ? k.material : [k.material]).forEach((m) => m?.dispose?.()); }); }
+    b.spiegel = b.auto.clone(true); b.spiegel.scale.y = -1;
+    if (window.FridayFoto) window.FridayFoto.spiegelMaterial(b.spiegel, BODEN, Math.max(0.6, (b.auto.userData.masse?.H || 1.4) * 0.65));
+    b.scene.add(b.spiegel);
   }
   function entsorge(o) {
     o.traverse((k) => { if (k.isMesh) { k.geometry?.dispose(); (Array.isArray(k.material) ? k.material : [k.material]).forEach((m) => m?.dispose?.()); } });
@@ -437,15 +450,54 @@
     $("as-karte").innerHTML = `<div class="as-marke">${akzent(marke)}<span>${escapeHtml(marke.titel)}</span></div>
       <h2 class="as-name">${escapeHtml(modell.name)}</h2>${modell.zusatz ? `<div class="as-zusatz">${escapeHtml(modell.zusatz)}</div>` : ""}
       <ul class="as-daten">${datenZeilen(modell)}</ul>
-      <div class="as-hinweis">Herstellerangaben, gerundet · je nach Ausstattung</div>`;
+      <div class="as-hinweis">Herstellerangaben, gerundet · je nach Ausstattung</div>
+      <div id="as-echt" class="as-quelle"></div>`;
+    echtHinweis();
     el.querySelectorAll("[data-lack]").forEach((b) => b.classList.toggle("on", b.dataset.lack.toLowerCase() === aktuell.farbe.toLowerCase()));
     $("as-reihe-knopf").classList.toggle("hidden", reiheVon(marke).length < 2);
   }
+  // v1.175.0: Hinweis "Fridays Zeichnung" + Knopf für ein echtes 3D-Modell (Sketchfab, kostenloser Schlüssel)
+  let echtLaeuft = false;
+  function echtHinweis(text) {
+    const box = $("as-echt");
+    if (!box || !aktuell || aktuell.echt) return;
+    if (echtLaeuft || aktuell.wartet) { box.innerHTML = "⏳ Friday lädt ein echtes 3D-Modell …"; return; }
+    if (text === "schluessel") {
+      box.innerHTML = `<span>🔑 Einmalig einen kostenlosen Sketchfab-Schlüssel einfügen (<a href="https://sketchfab.com/settings/password" target="_blank" rel="noopener">sketchfab.com → Einstellungen → Password &amp; API</a>):</span>
+        <span class="as-schluessel"><input type="password" autocomplete="off" placeholder="API-Schlüssel" aria-label="Sketchfab-Schlüssel"><button type="button" data-as-schluessel>Verbinden</button></span>`;
+      return;
+    }
+    box.innerHTML = `${text ? `${escapeHtml(text)} · ` : "Das ist Fridays eigene Zeichnung. "}<button type="button" data-as-echt>✨ Echtes 3D-Modell holen</button>`;
+  }
+  async function echtHolen() {
+    if (!aktuell || echtLaeuft) return;
+    const fuer = aktuell.modell.id;
+    echtLaeuft = true; echtHinweis();
+    let r = null;
+    try { r = await (await window.Friday.api("/api/modelle/auto", { method: "POST", body: JSON.stringify({ suche: `${aktuell.marke.marke} ${aktuell.modell.name}`, laenge: aktuell.modell.laenge }) })).json(); } catch { r = { ok: false, text: "Friday ist gerade nicht erreichbar." }; }
+    echtLaeuft = false;
+    if (!aktuell || aktuell.modell.id !== fuer) return;
+    if (r?.ok && r.datei && await echt(r.datei)) return;
+    if (r?.grund === "kein-schluessel" || r?.grund === "schluessel-falsch") { echtHinweis("schluessel"); return; }
+    echtHinweis(r?.text || "Kein passendes Modell gefunden.");
+  }
+  el.addEventListener("click", async (e) => {
+    if (e.target.closest("[data-as-echt]")) { echtHolen(); return; }
+    const k = e.target.closest("[data-as-schluessel]");
+    if (!k) return;
+    const token = k.parentElement.querySelector("input")?.value || "";
+    k.disabled = true;
+    let r = null;
+    try { r = await (await window.Friday.api("/api/modelle/sketchfab", { method: "POST", body: JSON.stringify({ token }) })).json(); } catch { r = { ok: false, error: "Friday ist gerade nicht erreichbar." }; }
+    k.disabled = false;
+    if (r?.ok) echtHolen(); else echtHinweis(r?.error || "Der Schlüssel hat nicht geklappt.");
+  });
   const reiheVon = (marke) => (marke.modelle || []).filter((m) => m.inReihe !== false);
 
-  function zeigeModell(marke, modell, farbe) {
+  function zeigeModell(marke, modell, farbe, wartet = false) {
     initLive();
-    aktuell = { marke, modell, farbe: farbe || modell.farbe };
+    aktuell = { marke, modell, farbe: farbe || modell.farbe, wartet };
+    if (wartet) { const a = aktuell; setTimeout(() => { if (aktuell === a && !a.echt) { a.wartet = false; echtHinweis(); } }, 95000); }
     el.classList.remove("ist-echt");
     setzeAuto(buehneLive, baueAuto(modell, aktuell.farbe));
     zeigeKarte();
@@ -602,7 +654,17 @@
   // ---------- Bedienung ----------
   el.addEventListener("click", (e) => {
     const lack = e.target.closest("[data-lack]");
-    if (lack && aktuell) { zeigeModell(aktuell.marke, aktuell.modell, lack.dataset.lack); return; }
+    if (lack && aktuell) {
+      // v1.175.0: echtes Modell bleibt stehen und wird umlackiert
+      if (aktuell.echt && aktuell.lackTeile?.length && window.FridayFoto) {
+        aktuell.farbe = lack.dataset.lack;
+        aktuell.lackTeile = window.FridayFoto.lackFaerben(buehneLive.auto, aktuell.lackTeile, aktuell.farbe);
+        spiegelNeu(buehneLive);
+        el.querySelectorAll("[data-lack]").forEach((b) => b.classList.toggle("on", b.dataset.lack.toLowerCase() === aktuell.farbe.toLowerCase()));
+        return;
+      }
+      zeigeModell(aktuell.marke, aktuell.modell, lack.dataset.lack); return;
+    }
     const a = e.target.closest("[data-ansicht]");
     if (!a) return;
     const v = a.dataset.ansicht;
@@ -637,13 +699,14 @@
     const farbe = studio.farbe ? FARBWORT[studio.farbe] : null;
     oeffnen();
     Object.assign(ansicht, { yaw: 0, pitch: 0.06, drehen: false }); knopfAn("seite");
+    const wartet = Boolean(studio.wartet || studio.datei);
     if (studio.art === "reihe") {
       const start = marke.modelle.find((m) => m.id === studio.start) || reiheVon(marke)[0];
       zeigeModell(marke, start, farbe || start.farbe);
       zeigeReihe(marke);
     } else {
       const m = marke.modelle.find((x) => x.id === studio.modell) || marke.modelle[0];
-      zeigeModell(marke, m, farbe || m.farbe);
+      zeigeModell(marke, m, farbe || m.farbe, wartet);
     }
     return true;
   }
@@ -668,18 +731,29 @@
       const c = bb.getCenter(new THREE.Vector3());
       obj.position.x -= c.x; obj.position.z -= c.z; obj.position.y -= bb.min.y;
       wrap.updateMatrixWorld(true);
+      const tief = window.FridayFoto?.tiefsterPunkt(wrap); // Reifen genau auf den Boden setzen
+      if (tief != null && Math.abs(tief) < 0.5) { obj.position.y -= tief; wrap.updateMatrixWorld(true); }
       bb = new THREE.Box3().setFromObject(wrap); size = bb.getSize(new THREE.Vector3());
-      obj.traverse((o) => {
-        if (!o.isMesh) return;
-        for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
-          if (m && m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = Math.min(m.opacity ?? 1, 0.35); m.color?.setRGB(0.04, 0.05, 0.06); m.roughness = 0.03; m.depthWrite = false; m.needsUpdate = true; }
-          if (m && "envMapIntensity" in m) m.envMapIntensity = Math.max(m.envMapIntensity || 1, 1.1);
-        }
-      });
+      const foto = window.FridayFoto;
+      if (foto) {
+        foto.modellAufbereiten(obj);
+        // Lack erkennen und in der gewünschten Farbe lackieren (die Farbknöpfe wirken auch hier)
+        aktuell.lackTeile = foto.lackFaerben(obj, foto.lackTeile(obj), aktuell.farbe);
+      } else {
+        obj.traverse((o) => {
+          if (!o.isMesh) return;
+          for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
+            if (m && m.transmission > 0) { m.transmission = 0; m.transparent = true; m.opacity = Math.min(m.opacity ?? 1, 0.35); m.color?.setRGB(0.04, 0.05, 0.06); m.roughness = 0.03; m.depthWrite = false; m.needsUpdate = true; }
+            if (m && "envMapIntensity" in m) m.envMapIntensity = Math.max(m.envMapIntensity || 1, 1.1);
+          }
+        });
+      }
       wrap.userData.masse = { L: size.x, H: size.y, B: size.z };
       setzeAuto(buehneLive, wrap);
       aktuell.echt = datei;
       el.classList.add("ist-echt");
+      el.classList.toggle("kein-lack", !aktuell.lackTeile?.length);
+      $("as-echt")?.remove();
       const q = document.createElement("div");
       q.className = "as-quelle";
       q.innerHTML = `Echtes 3D-Modell: ${escapeHtml(datei.name || "")}${datei.autor ? ` · ${escapeHtml(datei.autor)}` : ""}${datei.lizenz ? ` · ${escapeHtml(datei.lizenz)}` : ""}${/^https:\/\//.test(datei.link || "") ? ` · <a href="${escapeHtml(datei.link)}" target="_blank" rel="noopener">Quelle</a>` : ""} · <button type="button" data-friday-modell>Friday-Modell zeigen</button>`;

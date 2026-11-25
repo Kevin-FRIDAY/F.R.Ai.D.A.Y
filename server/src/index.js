@@ -17,7 +17,7 @@ import { leseAnweisung } from "./regieplan.js";
 import { komponiere, STIMMUNG_IDS } from "./musik.js";
 import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
 import { planBuild, getLatestBuild, getBuildJob } from "./werkstatt.js";
-import { status as modelleStatus, modellDatei, sketchfabVerbinden, sketchfabTrennen, startmodelleLaden } from "./modelle.js";
+import { status as modelleStatus, modellDatei, sketchfabVerbinden, sketchfabTrennen, startmodelleLaden, autoModell } from "./modelle.js";
 import { getEnergie, aufladen, einnahme } from "./energie.js";
 import { getSettings, setSettings, markActive, getUiSettings, setUiSettings } from "./einstellungen.js";
 import { listSites, buildSite, getSiteHtml, markSold, openSiteDir, startLive, getLiveJob, getLiveAktuell, liveFrei, baueVorlage, vorlagenOptionen, getSiteQualitaet } from "./webseiten.js";
@@ -601,6 +601,8 @@ app.get("/api/werkstatt/job/:id", (req, res) => { const j = getBuildJob(req.para
 app.get("/api/modelle", (req, res) => res.json(modelleStatus()));
 app.post("/api/modelle/sketchfab", asyncRoute(async (req, res) => { const r = await sketchfabVerbinden(req.body?.token); res.status(r.ok ? 200 : 400).json(r); }));
 app.delete("/api/modelle/sketchfab", (req, res) => res.json(sketchfabTrennen()));
+// v1.175.0: echtes 3D-Modell für ein Auto aus dem Auto-Studio (eigene Bibliothek, sonst Sketchfab).
+app.post("/api/modelle/auto", asyncRoute(async (req, res) => res.json(await autoModell(req.body?.suche, Number(req.body?.laenge) || null))));
 app.get("/api/modelle/datei/:id", (req, res) => {
   const f = modellDatei(req.params.id);
   if (!f) return res.status(404).json({ error: "Modell nicht gefunden." });

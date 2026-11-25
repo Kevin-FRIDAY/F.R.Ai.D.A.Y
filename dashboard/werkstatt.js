@@ -57,6 +57,11 @@
   // Studio-Umgebung für Spiegelungen auf Lack, Chrom und Glas (selbst gerechnet, keine Datei nötig).
   function studioUmgebung() {
     if (umgebung) return umgebung;
+    // v1.175.0: echtes Studio-Licht (HDR-Aufnahme + Softboxen) aus fotostudio.js
+    if (window.FridayFoto) {
+      umgebung = window.FridayFoto.umgebung(renderer, { hell: false, fertig: (t) => { umgebung = t; if (solid) scene.environment = t; } });
+      return umgebung;
+    }
     const env = new THREE.Scene();
     const raum = new THREE.Mesh(new THREE.BoxGeometry(20, 10, 20), new THREE.MeshBasicMaterial({ color: 0x2b3038, side: THREE.BackSide }));
     raum.position.y = 4;
@@ -340,6 +345,10 @@
     bb = new THREE.Box3().setFromObject(wrap);
     const c = bb.getCenter(new THREE.Vector3());
     obj.position.x -= c.x; obj.position.z -= c.z; obj.position.y -= bb.min.y;
+    // v1.175.0: genau auf den Boden stellen (grobe Boxen lassen Autos schweben) und Materialien wie im Fotostudio
+    const tief = window.FridayFoto?.tiefsterPunkt(wrap);
+    if (tief != null && Math.abs(tief) < Math.max(0.5, hoch * k * 0.2)) { obj.position.y -= tief; wrap.updateMatrixWorld(true); }
+    window.FridayFoto?.modellAufbereiten(obj);
     let dreiecke = 0;
     obj.traverse((o) => {
       if (!o.isMesh) return;
