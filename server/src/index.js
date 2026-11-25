@@ -10,7 +10,7 @@ import { runSystemCheck } from "./syscheck.js";
 import { systemLive } from "./systemlive.js";
 import { gehirnStand } from "./gehirn.js";
 import { getWeather, getProtocols, runTool } from "./tools.js";
-import { agentsWithStatus } from "./agents.js";
+import { agentsWithStatus, agentLosschicken } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
 import { getStudio, starteStudio, listeVideos, zeigeImFinder, posterPfad } from "./videostudio.js";
 import { komponiere, STIMMUNG_IDS } from "./musik.js";
@@ -554,6 +554,12 @@ app.post("/api/dienste/:id/befehl", asyncRoute(async (req, res) => {
   res.status(r.ok ? 200 : 400).json(r);
 }));
 app.get("/api/agents", (req, res) => res.json(agentsWithStatus()));
+// Agenten-Einsatz (v1.165.0): Agent losschicken, Bericht zurück ("team" = Team-Lagebericht)
+app.post("/api/agents/:id/einsatz", asyncRoute(async (req, res) => {
+  const id = String(req.params.id || "").replace(/[^a-z0-9_-]/gi, "").slice(0, 30);
+  const eingabe = typeof req.body?.eingabe === "string" ? req.body.eingabe.slice(0, 500) : "";
+  res.json(await agentLosschicken(id, eingabe, "dashboard"));
+}));
 app.get("/api/video-job", (req, res) => res.json(getVideoJob()));
 app.post("/api/video-job", (req, res) => { const r = startVideoJob({ look: req.body?.look }); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/api/video-open", (req, res) => res.json(openVideoDir(String(req.body?.which || ""))));

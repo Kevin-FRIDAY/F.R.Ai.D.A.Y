@@ -42,6 +42,7 @@ import { toolDefinition as werkzeugkastenTool, runClaudeTool as runWerkzeugkaste
 
 // Osiris Live-Lagekarte: lokal auf dem Mac (Port 3100), sonst automatisch osirisai.live.
 import { osirisUrl } from "./osiris.js";
+import { EINSATZ_IDS } from "./agenten-einsatz.js";
 const OSIRIS_URL = "osiris:"; // Platzhalter, wird beim Öffnen durch die passende Adresse ersetzt
 
 const MAC_ACTIONS = [
@@ -124,6 +125,11 @@ export const toolDefinitions = [
     name: "crypto",
     description: "Aktueller Preis einer Kryptowährung (z. B. Bitcoin, Ethereum) in Euro.",
     input_schema: { type: "object", properties: { coin: { type: "string" }, currency: { type: "string", description: "z. B. eur oder usd" } }, required: ["coin"] },
+  },
+  {
+    name: "agent_einsetzen",
+    description: "Schickt einen Agenten aus Fridays Team los, der echte öffentliche Daten holt und einen fertigen Bericht liefert. strom=günstigste Strom-Stunden, pollen=Pollenflug, pegel=Wasserstände (eingabe=Ort), verkehr=Autobahn-Staus (eingabe=z. B. A7), feiertage=Feiertage+Schulferien, nachrichten=Tagesschau, recherche=Dossier (eingabe=Thema), uebersetzer (eingabe='Englisch: Text'), koch=Rezept aus dem Kühlschrank, erdbeben, weltraum=Raketenstarts+Polarlicht, team=Team-Lagebericht (mehrere Agenten zugleich). Man sieht den Agenten dabei im 3D-Büro arbeiten.",
+    input_schema: { type: "object", properties: { agent: { type: "string", enum: EINSATZ_IDS }, eingabe: { type: "string" } }, required: ["agent"] },
   },
   {
     name: "holidays",
@@ -542,7 +548,7 @@ const LOGTITEL = {
   update: (i) => `Update: ${i.action || "prüfen"}`,
 };
 // Diese Bereiche schreiben ihr Logbuch selbst (mit genauerem Ergebnis).
-const LOGBUCH_SELBST = new Set(["werkzeugkasten", "spiel_bauen", "anrufe", "werkstatt", "add_task", "add_shopping", "set_reminder", "remember", "forget"]);
+const LOGBUCH_SELBST = new Set(["agent_einsetzen", "werkzeugkasten", "spiel_bauen", "anrufe", "werkstatt", "add_task", "add_shopping", "set_reminder", "remember", "forget"]);
 
 /**
  * Führt ein Werkzeug aus und hält es im Logbuch fest.
@@ -794,6 +800,11 @@ async function runToolIntern(name, input = {}, wer = {}) {
       return getExchange(input.amount ?? 1, input.from, input.to);
     case "crypto":
       return getCrypto(input.coin, input.currency || "eur");
+    case "agent_einsetzen": {
+      const { agentLosschicken } = await import("./agents.js");
+      const b = await agentLosschicken(String(input.agent || ""), String(input.eingabe || ""), wer.kanal || "claude");
+      return b.ok ? { bericht: b.text, details: (b.punkte || []).slice(0, 8), quelle: b.quelle, hinweis: "Der Bericht ist im Agenten-Team (Büro) zu sehen. Gib ihn kurz in eigenen Worten wieder." } : { error: b.text };
+    }
     case "holidays":
       return getHolidays(input.country || "DE", input.year);
     case "iss":
