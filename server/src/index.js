@@ -49,6 +49,7 @@ const { alleEintraege } = datenbank;
 import { alleDokumente, dokument, antwortenSpeichern } from "./dokumente.js";
 import { tabellenPfad, amMacOeffnen } from "./tabellen.js";
 import { auftragStand } from "./auftrag.js";
+import { grossauftragRouten, grossauftragStart, erkenne as grossauftragErkennen, starte as grossauftragStarte, standFuerTask } from "./grossauftrag.js";
 import { COUNTRIES, findCountry, getOverview, getQuakes, getEonet, getSatellites, getInfra, getMedia, getNewsImages, getCountryInfo, getCountryNews, REGIONS, ROUTES, HOTSPOTS, getRegionNews, getPlanes, startAutoScan, getSummary, friendlyError, getWorldVideos, getAlarm } from "./lagezentrum.js";
 import { getLandInfo, findeLand } from "./laenderinfo.js";
 import { plane, getOrte, setzeOrt, holeErgebnis, letzteRouteId } from "./routen.js";
@@ -410,8 +411,18 @@ app.delete("/api/wissen/notiz/:id", (req, res) => res.json({ ok: datenbank.notiz
 app.get("/api/systemcheck", asyncRoute(async (req, res) => res.json(await runSystemCheck())));
 app.get("/api/mail", asyncRoute(async (req, res) => res.json(await getMailOverview(req.query.force === "1"))));
 app.post("/api/mail/sort", asyncRoute(async (req, res) => res.json(await sortMail())));
-app.get("/api/tasks", (req, res) => res.json(store.getTasks()));
-app.post("/api/tasks", (req, res) => { const t = store.addTask(String(req.body?.text || "")); store.logActivity("aufgabe", `Aufgabe erstellt: ${t?.text || ""}`, { logbuch: false }); res.json(t); });
+app.get("/api/tasks", (req, res) => res.json(store.getTasks().map((t) => { const ga = standFuerTask(t.id); return ga ? { ...t, grossauftrag: ga } : t; })));
+app.post("/api/tasks", (req, res) => {
+  const text = String(req.body?.text || "");
+  const t = store.addTask(text);
+  store.logActivity("aufgabe", `Aufgabe erstellt: ${t?.text || ""}`, { logbuch: false });
+  // v1.177.0: Auftrag mit mehreren Teilen ("Drehbuch, Film, Webseite, Auto") → Friday erledigt ihn selbst.
+  if (t && grossauftragErkennen(text)) {
+    const r = grossauftragStarte(text, { quelle: "organizer", taskId: t.id });
+    if (r.ok) return res.json({ ...t, grossauftrag: standFuerTask(t.id) });
+  }
+  res.json(t);
+});
 app.patch("/api/tasks/:id", (req, res) => { const t = store.toggleTask(req.params.id) || {}; if (t.done) store.logActivity("aufgabe", `Aufgabe erledigt: ${t.text || ""}`, { logbuch: false }); res.json(t); });
 app.delete("/api/tasks/:id", (req, res) => res.json({ ok: store.deleteTask(req.params.id) }));
 app.get("/api/shopping", (req, res) => res.json(store.getShopping()));
@@ -786,6 +797,7 @@ marktplusRouten(app, asyncRoute);
 wacheRouten(app, asyncRoute);
 // Kontrollraum (v1.135.0): Regelwerk, Schleifen-Schutz, Gedächtnis, Herzschlag, Kosten-Deckel, Seele, Fähigkeiten, Änderungen.
 kernRouten(app, asyncRoute);
+grossauftragRouten(app);
 // OpenJarvis-Paket (v1.134.0): Freigabe-Glocke, Dauer-Wächter, Dokumenten-Wissen, Apple-Apps, Whisper.
 jarvisRouten(app, asyncRoute);
 
@@ -805,6 +817,7 @@ wunschStart();
 wacheStart();
 marktWacheStart(); // Markt-Radar Plus: läuft in Eve, in Friday erst nach Freigabe
 kernStart();
+grossauftragStart();
 if (!IST_EVE) kontenStart(); // Meine Konten: alle 6 Std. frische Kontostände (nur lesen)
 zentraleStart(ask);
 jarvisStart();

@@ -160,6 +160,22 @@ export async function baueVorlage(auftrag, opt = {}) {
   return speichern({ ...v, html: f.html }, f.html, null, text || (w.eigen ? "Unsere eigene Webseite" : `${BRANCHEN[w.branche].name}-Webseite`), { ...w, eigen: w.eigen || v.eigen, qualitaet: f.qualitaet, quelle: "vorlage" });
 }
 
+/**
+ * v1.177.0 Großauftrag: fertig entworfene eigene Seite (z. B. Premieren-Seite zum Film) speichern –
+ * mit Feinschliff, freien Fotos für <img data-bild> und Qualitäts-Check. Kein Angebot, kein Preis.
+ * dateien: [{ von, name }] werden neben die index.html kopiert (z. B. der Film fürs Abspielen am Mac).
+ */
+export async function speichereEigeneSeite({ titel, html, auftrag = "", dateien = [], art = "" }) {
+  if (!/<html[\s>]/i.test(String(html || ""))) return { ok: false, error: "Die Seite ist leer." };
+  const f = await fertigMachen(html, [], titel);
+  const r = speichern({ titel }, f.html, null, String(auftrag || titel).slice(0, 2000), { eigen: true, branche: "persoenlich", qualitaet: f.qualitaet, quelle: art || "grossauftrag" });
+  for (const d of dateien) {
+    if (!d?.von || !/^[\w.-]{1,60}$/.test(d.name || "")) continue;
+    try { fs.copyFileSync(d.von, path.join(WEB_DIR, r.id, d.name)); } catch { /* Seite bleibt trotzdem */ }
+  }
+  return r;
+}
+
 export async function buildSite(auftrag, basisId = null, opt = {}) {
   const text = String(auftrag || "").trim().slice(0, 2000);
   if (!text) return { ok: false, error: "Beschreib mir den Kunden und was die Seite können soll." };

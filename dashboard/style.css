@@ -4084,6 +4084,40 @@ html.perf-fluessig .plane-notfall { animation: none; backdrop-filter: none; }
 .st-verstanden li::before { content: "✓ "; color: var(--cyan, #ff8a1e); font-weight: 700; }
 .schnitt-panel .st-feld textarea { min-height: 70px; }
 
+/* v1.177.0 Großauftrag: Schritte, Mini-Balken, Bilanz – im Stil der Dokument-Karte */
+.ga-karte { width: min(720px, 100%) !important; }
+.ga-karte.ub-rot .ub-ring.still { border-color: var(--bad, #ff5a5a); }
+.ga-auftrag { margin: 4px 0 10px; font-size: 13px; color: var(--muted); font-style: italic; }
+.ga-schritte { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ga-s { display: flex; gap: 10px; padding: 10px 12px; border-radius: 12px; background: var(--cyan-soft); border: 1px solid transparent; }
+.ga-s.ga-laeuft { border-color: var(--cyan); box-shadow: 0 0 14px color-mix(in srgb, var(--cyan) 25%, transparent); }
+.ga-s.ga-fehler { border-color: rgba(255, 90, 90, 0.6); }
+.ga-sym { width: 22px; height: 22px; flex: none; display: grid; place-items: center; border-radius: 50%; font-size: 13px; border: 1px solid var(--cyan); color: var(--cyan); }
+.ga-fertig .ga-sym { background: var(--ok, #46e0a0); border-color: var(--ok, #46e0a0); color: #08120d; }
+.ga-fehler .ga-sym { border-color: #ff5a5a; color: #ff5a5a; }
+.ga-laeuft .ga-sym { animation: ga-puls 1.2s ease-in-out infinite; }
+@keyframes ga-puls { 50% { box-shadow: 0 0 10px var(--cyan); } }
+.ga-mitte { flex: 1; min-width: 0; }
+.ga-mitte small { color: var(--muted); }
+.ga-text { font-size: 13px; margin-top: 3px; }
+.ga-mini { height: 3px; margin-top: 7px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.ga-mini i { display: block; height: 100%; background: var(--cyan); transition: width 0.6s; }
+.ga-video { width: 100%; margin-top: 8px; border-radius: 10px; background: #000; aspect-ratio: 16 / 9; }
+.ga-knoepfe { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.ga-knoepfe:empty { display: none; }
+.ga-bilanz { margin-top: 12px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--cyan); background: rgba(0, 0, 0, 0.25); }
+.ga-bilanz h3 { margin: 0 0 6px; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--cyan); }
+.ga-bilanz h4 { margin: 10px 0 4px; font-size: 13px; }
+.ga-bilanz ul { margin: 0; padding-left: 18px; font-size: 13px; display: grid; gap: 4px; }
+.ga-bilanz p { margin: 0; font-size: 13.5px; }
+.ga-vorschlag { margin: 10px 0; font-size: 13px; }
+.ga-vorschlag summary { cursor: pointer; }
+.ga-hinweis { font-size: 13px; color: var(--muted); }
+.ga-frueher { margin-top: 12px; font-size: 13px; }
+.ga-frueher ul { list-style: none; padding: 0; display: grid; gap: 4px; }
+.org-ga { flex: none; font-size: 11.5px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--cyan); background: transparent; color: var(--cyan); cursor: pointer; }
+.org-ga-fertig { border-color: var(--ok, #46e0a0); color: var(--ok, #46e0a0); }
+.org-ga-fehler { border-color: #ff5a5a; color: #ff5a5a; }
 /* v1.176.0: Dateisuche – Treffer antippbar */
 #file-list .datei-treffer { gap: 6px; padding: 8px 0; }
 #file-list .datei-haupt { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: 0; color: inherit; font: inherit; padding: 6px 8px; border-radius: 10px; cursor: pointer; text-decoration: none; }

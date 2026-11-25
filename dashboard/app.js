@@ -707,6 +707,9 @@
         if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
         if (data.actions?.some((a) => a === "dateien" || a === "mac:find_file")) window.FridayDateien?.zeigeLetzte();
         // Schnitt-Team / Video-Studio (v1.132.0): "erstell mir ein 20-Sekunden-Video über …"
+        // Großauftrag (v1.177.0): Drehbuch, Film, Webseite, Auto … der Reihe nach – Fortschritt zeigen.
+        const gaA = aktion("grossauftrag:");
+        if (gaA) window.FridayGrossauftrag?.open(gaA.slice(13));
         const studioJob = aktion("studio_job:");
         if (studioJob) window.FridayStudio?.verfolge(studioJob.slice(11));
         else if (hat("video_erstellen")) window.FridayStudio?.verfolge(null);
@@ -1234,7 +1237,7 @@
     try {
       const items = await (await api(url)).json();
       list.innerHTML = items.length ? items.map((i) =>
-        `<li class="org-item${i.done ? " done" : ""}" data-id="${i.id}"><button class="org-check" aria-label="Erledigt">${i.done ? "☑" : "☐"}</button><span>${escapeHtml(i.text)}</span><button class="org-del" aria-label="Löschen">✕</button></li>`).join("")
+        `<li class="org-item${i.done ? " done" : ""}" data-id="${i.id}"><button class="org-check" aria-label="Erledigt">${i.done ? "☑" : "☐"}</button><span>${escapeHtml(i.text)}</span>${i.grossauftrag ? `<button class="org-ga org-ga-${escapeHtml(i.grossauftrag.status)}" data-ga="${escapeHtml(i.grossauftrag.id)}" title="Friday erledigt diesen Auftrag selbst – Fortschritt ansehen">${i.grossauftrag.status === "fertig" ? "✓" : i.grossauftrag.status === "teilweise" ? "◐" : i.grossauftrag.status === "fehler" ? "✗" : "⚙"} ${i.grossauftrag.fertig}/${i.grossauftrag.gesamt}</button>` : ""}<button class="org-del" aria-label="Löschen">✕</button></li>`).join("")
         : '<li class="muted">Nichts hier.</li>';
     } catch { list.innerHTML = '<li class="muted">Nicht erreichbar.</li>'; }
   }
@@ -1243,12 +1246,16 @@
       e.preventDefault();
       const inp = $(kind + "-input"); const text = inp.value.trim(); if (!text) return;
       inp.value = "";
-      await api(base, { method: "POST", body: JSON.stringify({ text }) });
+      const neu = await (await api(base, { method: "POST", body: JSON.stringify({ text }) })).json().catch(() => ({}));
       renderOrg(kind, base);
+      // Auftrag mit mehreren Teilen: Friday legt sofort los und zeigt den Fortschritt.
+      if (neu?.grossauftrag?.id) window.FridayGrossauftrag?.open(neu.grossauftrag.id);
     });
     $(kind + "-list")?.addEventListener("click", async (e) => {
       const li = e.target.closest(".org-item"); if (!li) return;
       const id = li.dataset.id;
+      const ga = e.target.closest(".org-ga");
+      if (ga) { window.FridayGrossauftrag?.open(ga.dataset.ga); return; }
       if (e.target.closest(".org-check")) { await api(`${base}/${id}`, { method: "PATCH" }); renderOrg(kind, base); }
       else if (e.target.closest(".org-del")) { await api(`${base}/${id}`, { method: "DELETE" }); renderOrg(kind, base); }
     });
