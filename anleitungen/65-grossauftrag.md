@@ -1,4 +1,4 @@
-# Großauftrag: Friday erledigt mehrere Teile selbst (ab v1.176.0)
+# Großauftrag: Friday erledigt mehrere Teile selbst (ab v1.177.0)
 
 Schreib einen Auftrag mit mehreren Teilen in die **Aufgaben** (Organizer) oder sag ihn Friday, zum Beispiel:
 

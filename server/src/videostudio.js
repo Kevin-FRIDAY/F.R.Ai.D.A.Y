@@ -120,7 +120,7 @@ export function normalisiereAuftrag(a = {}) {
     sprecher: plan.sprecher ?? Boolean(a.sprecher),
     stil: kurz(a.stil, 200),
   };
-  // v1.176.0 Großauftrag: fertiges Drehbuch von außen (Szenen, Sprechertext) statt eigener Regie.
+  // v1.177.0 Großauftrag: fertiges Drehbuch von außen (Szenen, Sprechertext) statt eigener Regie.
   const v = a.vorgabe;
   if (v && Array.isArray(v.szenen) && v.szenen.length) {
     auftrag.vorgabe = {

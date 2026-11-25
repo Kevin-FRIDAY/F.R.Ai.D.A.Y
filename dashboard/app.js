@@ -705,8 +705,9 @@
         if (hat("welttour_zurueck")) window.FridayWelttour?.zurueck();
         if (hat("welttour_stopp")) window.FridayWelttour?.stopp(true);
         if (data.actions?.includes("webseite_bauen")) window.FridayWebseiten?.open();
+        if (data.actions?.some((a) => a === "dateien" || a === "mac:find_file")) window.FridayDateien?.zeigeLetzte();
         // Schnitt-Team / Video-Studio (v1.132.0): "erstell mir ein 20-Sekunden-Video über …"
-        // Großauftrag (v1.176.0): Drehbuch, Film, Webseite, Auto … der Reihe nach – Fortschritt zeigen.
+        // Großauftrag (v1.177.0): Drehbuch, Film, Webseite, Auto … der Reihe nach – Fortschritt zeigen.
         const gaA = aktion("grossauftrag:");
         if (gaA) window.FridayGrossauftrag?.open(gaA.slice(13));
         const studioJob = aktion("studio_job:");
@@ -1336,16 +1337,56 @@
     await api(`/api/reminders/${li.dataset.id}`, { method: "DELETE" }); loadKalender(); loadToday();
   });
 
-  // ---------- Dateien-Sheet ----------
+  // ---------- Dateien-Sheet (v1.176.0: Treffer antippbar) ----------
+  // Tipp auf einen Treffer: am Mac öffnet er sich in der passenden App (dort auch bearbeiten),
+  // auf dem iPhone/iPad wird er im Browser angezeigt. Der Server kennt nur Treffer-Nummern, keine Pfade vom Browser.
+  const AM_HANDY = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent) && !/^(127\.0\.0\.1|localhost)$/.test(location.hostname));
+  const DATEI_ICON = (t) => t.istOrdner ? "📁" : ({ pdf: "📕", numbers: "📊", xlsx: "📊", xls: "📊", csv: "📊", pages: "📝", docx: "📝", doc: "📝", txt: "📝", key: "📽", pptx: "📽", jpg: "🖼", jpeg: "🖼", png: "🖼", heic: "🖼", mp4: "🎬", mov: "🎬", mp3: "🎵", m4a: "🎵" }[t.endung] || "📄");
+  const kb = (b) => (b == null ? "" : b < 1024 * 1024 ? `${Math.max(1, Math.round(b / 1024))} KB` : `${(b / 1048576).toFixed(1).replace(".", ",")} MB`);
+  let dateiTreffer = [];
+  function zeigeDateien(r) {
+    const list = $("file-list"); if (!list) return;
+    if (r && r.online === false) { list.innerHTML = '<li class="muted">Mac nicht verbunden.</li>'; return; }
+    if (r?.error) { list.innerHTML = `<li class="muted">${escapeHtml(r.error)}</li>`; return; }
+    dateiTreffer = r?.treffer || [];
+    if (!dateiTreffer.length) { list.innerHTML = '<li class="muted">Nichts gefunden.</li>'; return; }
+    list.innerHTML = dateiTreffer.map((t) => `<li class="filerow datei-treffer" data-id="${escapeHtml(t.id)}">
+      ${(() => { const inhalt = `<span class="datei-icon">${DATEI_ICON(t)}</span><span class="datei-text"><b>${escapeHtml(t.name)}</b><small class="muted">${escapeHtml([t.ordner, kb(t.groesse)].filter(Boolean).join(" · "))}</small></span>`;
+        return AM_HANDY && t.ansehen ? `<a class="datei-haupt" href="${escapeHtml(t.ansehen)}" target="_blank" rel="noopener" title="Ansehen">${inhalt}</a>` : `<button type="button" class="datei-haupt" data-art="mac" title="Am Mac öffnen">${inhalt}</button>`; })()}
+      <span class="datei-knoepfe">
+        <button type="button" class="chip datei-k" data-art="mac" title="Am Mac in der passenden App öffnen – dort kannst du sie bearbeiten">🖥 Am Mac öffnen</button>
+        ${t.ansehen ? `<a class="chip datei-k" href="${escapeHtml(t.ansehen)}" target="_blank" rel="noopener" title="Hier im Browser anzeigen">👁 Ansehen</a><a class="chip datei-k" href="${escapeHtml(t.laden)}" download="${escapeHtml(t.name)}" title="Auf dieses Gerät laden">⬇ Laden</a>` : ""}
+        <button type="button" class="chip datei-k" data-art="finder" title="Im Finder zeigen">📂 Finder</button>
+      </span><small class="datei-status muted" aria-live="polite"></small></li>`).join("");
+  }
+  async function dateiAktion(li, art) {
+    const id = li.dataset.id; if (!dateiTreffer.some((x) => x.id === id)) return;
+    const status = li.querySelector(".datei-status");
+    const melde = (txt) => { if (status) status.textContent = txt; };
+    try {
+      melde("Öffne am Mac …");
+      const r = await (await api(`/api/find/${encodeURIComponent(id)}/oeffnen`, { method: "POST", body: JSON.stringify({ art: art === "finder" ? "finder" : "oeffnen" }) })).json();
+      melde(r.ok ? (art === "finder" ? "Im Finder gezeigt." : "Am Mac geöffnet – dort kannst du sie bearbeiten.") : (r.error || "Hat nicht geklappt."));
+    } catch { melde("Fehler – ist der Mac erreichbar?"); }
+  }
+  async function zeigeLetzteDateien() {
+    openSheet("dateien");
+    try {
+      const r = await (await api("/api/find/letzte")).json();
+      if (r.treffer?.length) { if ($("file-input") && r.q) $("file-input").value = r.q; zeigeDateien({ online: true, treffer: r.treffer }); }
+    } catch { /* egal */ }
+  }
+  window.FridayDateien = { zeigeLetzte: zeigeLetzteDateien };
   $("dateien-x")?.addEventListener("click", () => closeSheet("dateien"));
+  $("file-list")?.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-art]"); const li = e.target.closest(".datei-treffer");
+    if (b && li) dateiAktion(li, b.dataset.art);
+  });
   $("file-form")?.addEventListener("submit", async (e) => {
     e.preventDefault(); const q = $("file-input").value.trim(); const list = $("file-list"); if (!q || !list) return;
     list.innerHTML = '<li class="muted">Suche...</li>';
-    try {
-      const r = await (await api(`/api/find?q=${encodeURIComponent(q)}`)).json();
-      if (!r.online) { list.innerHTML = '<li class="muted">Mac nicht verbunden.</li>'; return; }
-      list.innerHTML = r.dateien.length ? r.dateien.map((f) => `<li class="filerow">${escapeHtml(f.split("/").pop())}<small class="muted">${escapeHtml(f)}</small></li>`).join("") : '<li class="muted">Nichts gefunden.</li>';
-    } catch { list.innerHTML = '<li class="muted">Fehler.</li>'; }
+    try { zeigeDateien(await (await api(`/api/find?q=${encodeURIComponent(q)}`)).json()); }
+    catch { list.innerHTML = '<li class="muted">Fehler.</li>'; }
   });
 
   const APPS = [

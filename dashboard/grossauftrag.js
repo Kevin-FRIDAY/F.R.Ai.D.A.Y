@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y Großauftrag (v1.176.0): zeigt, wie Friday einen Auftrag mit mehreren Teilen der Reihe nach erledigt
+// F.R.Ai.D.A.Y Großauftrag (v1.177.0): zeigt, wie Friday einen Auftrag mit mehreren Teilen der Reihe nach erledigt
 // (Drehbuch → Film → Auto → Premieren-Webseite), mit Fortschritt je Schritt und ehrlicher Bilanz am Ende.
 (() => {
   "use strict";

@@ -1,4 +1,4 @@
-// v1.176.0 Großauftrag: ein Auftrag mit mehreren Teilen, den Friday komplett selbst der Reihe nach erledigt.
+// v1.177.0 Großauftrag: ein Auftrag mit mehreren Teilen, den Friday komplett selbst der Reihe nach erledigt.
 // Beispiel (Kevin): „Mach mir ein Drehbuch für einen Kurzfilm, dreh den Film, bau dazu eine Webseite für die
 // Premiere und ein passendes Auto zum Film.“
 //

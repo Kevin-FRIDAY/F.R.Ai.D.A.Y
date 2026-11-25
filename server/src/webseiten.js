@@ -161,7 +161,7 @@ export async function baueVorlage(auftrag, opt = {}) {
 }
 
 /**
- * v1.176.0 Großauftrag: fertig entworfene eigene Seite (z. B. Premieren-Seite zum Film) speichern –
+ * v1.177.0 Großauftrag: fertig entworfene eigene Seite (z. B. Premieren-Seite zum Film) speichern –
  * mit Feinschliff, freien Fotos für <img data-bild> und Qualitäts-Check. Kein Angebot, kein Preis.
  * dateien: [{ von, name }] werden neben die index.html kopiert (z. B. der Film fürs Abspielen am Mac).
  */

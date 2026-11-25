@@ -1,4 +1,5 @@
 // F.R.Ai.D.A.Y Server - startet alles.
+import * as dateisuche from "./dateisuche.js";
 import http from "node:http";
 import express from "express";
 import { config, checkConfig, DASHBOARD_DIR, IST_EVE } from "./config.js";
@@ -160,6 +161,10 @@ app.get("/api/spotify/callback", asyncRoute(async (req, res) => {
 <div style="font-size:42px">${r.ok ? "🎵" : "⚠️"}</div><h1 style="color:#ff8a1e;font-size:20px;letter-spacing:.08em">${esc(titel)}</h1><p style="line-height:1.5">${esc(text)}</p>
 <p><a href="/" style="color:#ff8a1e">Zurück zu Friday</a></p></div></body>`);
 }));
+
+// v1.176.0: Gefundene Datei ansehen/laden. Der Link enthält ein einmaliges Ticket (10 Min., nur für genau diese Datei),
+// das nur ein angemeldetes Dashboard über POST /api/find/:id/link bekommt.
+app.get("/datei/:ticket/:name", asyncRoute(async (req, res) => dateisuche.ausliefern(req, res)));
 
 // Alles ab hier braucht eine Anmeldung.
 // Archiv-Dateien (Fotos, Videos, Webseiten) für <img>/<video>: Anmeldung per Kopfzeile, Cookie oder ?t=
@@ -411,7 +416,7 @@ app.post("/api/tasks", (req, res) => {
   const text = String(req.body?.text || "");
   const t = store.addTask(text);
   store.logActivity("aufgabe", `Aufgabe erstellt: ${t?.text || ""}`, { logbuch: false });
-  // v1.176.0: Auftrag mit mehreren Teilen ("Drehbuch, Film, Webseite, Auto") → Friday erledigt ihn selbst.
+  // v1.177.0: Auftrag mit mehreren Teilen ("Drehbuch, Film, Webseite, Auto") → Friday erledigt ihn selbst.
   if (t && grossauftragErkennen(text)) {
     const r = grossauftragStarte(text, { quelle: "organizer", taskId: t.id });
     if (r.ok) return res.json({ ...t, grossauftrag: standFuerTask(t.id) });
@@ -434,12 +439,11 @@ app.delete("/api/reminders/:id", (req, res) => {
   const list = store.getReminders().filter((r) => r.id !== req.params.id);
   store.updateReminders(list); res.json({ ok: true });
 });
-app.get("/api/find", asyncRoute(async (req, res) => {
-  if (!isAgentOnline()) return res.json({ online: false, dateien: [] });
-  const r = await sendToAgent("find_file", { value: String(req.query.q || "") }, 25000);
-  const text = r && r.result ? String(r.result) : "";
-  res.json({ online: true, dateien: text && text !== "Nichts gefunden" ? text.split("\n").filter(Boolean).slice(0, 15) : [] });
-}));
+// v1.176.0: Dateisuche – Treffer bekommen Nummern, Öffnen/Ansehen nur über diese Nummern (server/src/dateisuche.js).
+app.get("/api/find", asyncRoute(async (req, res) => res.json(await dateisuche.sucheFuerDashboard(req.query.q))));
+app.get("/api/find/letzte", (req, res) => res.json(dateisuche.letzteTreffer()));
+app.post("/api/find/:id/oeffnen", asyncRoute(async (req, res) => { const r = await dateisuche.amMac(req.params.id, req.body?.art === "finder" ? "finder" : "oeffnen"); if (r.ok) store.logActivity("dateien", `Datei am Mac geöffnet: ${r.name}`, { logbuch: false }); res.status(r.ok ? 200 : r.status || 400).json(r); }));
+app.post("/api/find/:id/link", (req, res) => { const r = dateisuche.link(req.params.id, Boolean(req.body?.laden)); res.status(r.ok ? 200 : r.status || 400).json(r); });
 app.get("/api/memory", (req, res) => res.json(store.getMemories()));
 app.post("/api/memory", (req, res) => {
   const text = String(req.body?.text || "").trim();
