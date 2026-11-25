@@ -1,6 +1,7 @@
 // Fridays Webseiten-Werkstatt: baut aus einem Auftrag eine fertige Webseite (eine HTML-Datei)
 // plus Angebotstext. Verkaufen und kassieren tut der Nutzer selbst; einen Verkauf trägt er ein,
 // dann zählt er als Einnahme in Fridays Überlebens-Bilanz.
+// v1.171.0: Eigene Seiten ("bau eine Webseite von uns und stell uns vor") bekommen kein Angebot und keinen Preis.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -9,7 +10,8 @@ import { kiClient, ersatzBereit } from "./ki-client.js";
 import { config, IST_EVE, DATA_DIR } from "./config.js";
 import { istFrei } from "./eve.js";
 import { brainModel, SPAR_MODELL, recordUsage, isCreditError, markEmpty, einnahme } from "./energie.js";
-import { bauVorlage, erkenneBranche, erkenneStil, designVorgabe, vorlagenOptionen, STILE, BRANCHEN, ICONS } from "./webvorlagen.js";
+import { bauVorlage, erkenneBranche, erkenneStil, designVorgabe, vorlagenOptionen, istEigeneSeite, STILE, BRANCHEN, ICONS } from "./webvorlagen.js";
+import { getMemories } from "./store.js";
 import { fuelleBilder, bilderAbziehen, bilderZurueck } from "./webbilder.js";
 import { politur, pruefeQualitaet } from "./webpolitur.js";
 
@@ -28,6 +30,20 @@ const WEBSEITE_TOOL = {
       preis_eur: { type: "number", description: "Realistischer Preisvorschlag in Euro für eine kleine Firma" },
     },
     required: ["titel", "html", "angebot", "preis_eur"],
+  },
+};
+
+// v1.171.0: Eigene Seite ("bau eine Webseite von uns und stell uns vor"): nur Titel + HTML, kein Angebot, kein Preis.
+const EIGEN_TOOL = {
+  name: "webseite",
+  description: "Gibt die fertige eigene Webseite zurück (ohne Angebot und ohne Preis).",
+  input_schema: {
+    type: "object",
+    properties: {
+      titel: { type: "string", description: "Kurzer Name der Seite, z. B. 'Kevin & Familie – Das sind wir'" },
+      html: { type: "string", description: "Vollständiges, eigenständiges HTML-Dokument (<!doctype html> … </html>) mit allem CSS und JS inline" },
+    },
+    required: ["titel", "html"],
   },
 };
 
@@ -59,6 +75,25 @@ TEXTE
 
 Antworte immer, indem du das Werkzeug "webseite" genau einmal aufrufst; schreib keinen Text daneben. Fang mit "titel" an, dann "html".`;
 
+const EIGEN_ZUSATZ = `
+
+EIGENE SEITE (geht allem oben vor): Diese Seite ist NICHT für einen Kunden, sondern für deinen Chef selbst (und die Menschen, die er mit „uns“ meint). Sie wird nicht verkauft.
+- Kein Angebot, kein Preisvorschlag, keine Preis-Pakete, keine Preise „ab …“, keine Kundenstimmen, kein Verkaufs-Ton, keine Öffnungszeiten.
+- Stattdessen eine persönliche, warme Vorstellung mit Wow-Effekt: Hero „Das sind wir“, Wer wir sind (Karten), Unsere Geschichte (Zeitstrahl), Was uns antreibt / Werte, Projekte (z. B. der KI-Assistent F.R.Ai.D.A.Y, falls passend), Einblicke-Galerie, ein paar persönliche Fragen & Antworten, Kontakt-Formular.
+- Nutze die Angaben unter „Was Friday über uns weiß“ für echte, persönliche Texte. Nimm nur Harmloses, das man öffentlich zeigen kann (Interessen, Projekte, Werte, Stil). Lass Adresse, Telefon, Gesundheit, Geld, Konten, Passwörter und alles Private weg. Was fehlt, als klaren Platzhalter in [eckigen Klammern] markieren, nichts erfinden.
+- Wir-Form („Wir sind …“), Du-Form gegenüber Besuchern.`;
+
+/** Was Friday über den Nutzer weiß, ohne heikle Dinge (für die eigene Seite). */
+function eigenesProfil() {
+  const HEIKEL = /passw|kennwort|pin\b|iban|bic\b|konto|karte|schlüssel|schluessel|token|api|adresse|straße|strasse|plz|telefon|handy|nummer|@|krank|arzt|medikament|diagnose|schulden|gehalt|kredit|steuer|geburtsdatum|ausweis/i;
+  let fakten = [];
+  try { fakten = getMemories().map((m) => String(m.text || "").trim()).filter((t) => t && !HEIKEL.test(t)).slice(-40); } catch { /* egal */ }
+  const name = /^(boss|chef)$/i.test(config.userName || "") ? "" : config.userName || "";
+  return `Was Friday über uns weiß:\n- Name des Chefs: ${name || "[Name]"}${config.city ? `\n- Stadt: ${config.city} (nur nennen, wenn es passt)` : ""}${fakten.length ? `\n${fakten.map((f) => `- ${f.slice(0, 240)}`).join("\n")}` : "\n- (noch nichts gemerkt – Platzhalter nutzen)"}`;
+}
+
+const eigenerName = () => (/^(boss|chef)$/i.test(config.userName || "") ? "" : String(config.userName || "").slice(0, 30));
+
 const slug = (s) => String(s || "projekt").toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-").slice(0, 40) || "projekt";
 
 function projectDirs() {
@@ -88,17 +123,25 @@ export function getSiteHtml(id) {
 export { vorlagenOptionen };
 
 /** Stil und Branche: was der Nutzer gewählt hat, sonst aus dem Auftrag erkannt. */
-function wahl(text, { stil, branche } = {}) {
-  const b = BRANCHEN[branche] ? branche : erkenneBranche(text);
+function wahl(text, { stil, branche, eigen } = {}) {
+  const istEigen = eigen === true || eigen === "true" || (eigen !== false && eigen !== "false" && (branche === "persoenlich" || istEigeneSeite(text)));
+  let b = BRANCHEN[branche] ? branche : erkenneBranche(text);
+  if (istEigen && b === "allgemein") b = "persoenlich";
   const s = STILE[stil] ? stil : erkenneStil(text, b);
-  return { branche: b, stil: s };
+  return { branche: b, stil: s, eigen: istEigen };
+}
+/** Bei Überarbeitung: Stil/Branche/eigen vom Projekt übernehmen. */
+function wahlBasis(basis, text, opt) {
+  const m = readMeta(basis), w = wahl(text, opt);
+  return { stil: m.stil || w.stil, branche: m.branche || w.branche, eigen: Boolean(m.eigen) };
 }
 
 /** Nachricht an Claude: Auftrag + Design-Vorgabe, bei Überarbeitung die bisherige Seite (Fotos als kurze Marken). */
 function claudeNachricht(text, basis, w) {
-  if (!basis) return { user: `Auftrag: ${text}\n\n${designVorgabe(w.branche, w.stil)}`, liste: [] };
+  const profil = w.eigen ? `\n\n${eigenesProfil()}` : "";
+  if (!basis) return { user: `${w.eigen ? "Eigene Seite (für uns selbst, kein Kunde, kein Preis)" : "Auftrag"}: ${text}\n\n${designVorgabe(w.branche, w.stil)}${profil}`, liste: [] };
   const { html, liste } = bilderAbziehen(getSiteHtml(basis));
-  return { user: `Überarbeite diese bestehende Webseite nach dem Wunsch unten und gib die komplette neue Datei zurück. Eingebettete Fotos stehen als src="bild:1", src="bild:2" … – lass diese Marken genau so stehen, wenn das Foto bleiben soll. Neue Fotos wie gewohnt mit data-bild ohne src.\n\nBestehende Seite:\n${html}\n\nWunsch: ${text}`, liste };
+  return { user: `Überarbeite diese bestehende Webseite nach dem Wunsch unten und gib die komplette neue Datei zurück. Eingebettete Fotos stehen als src="bild:1", src="bild:2" … – lass diese Marken genau so stehen, wenn das Foto bleiben soll. Neue Fotos wie gewohnt mit data-bild ohne src.\n\nBestehende Seite:\n${html}${profil}\n\nWunsch: ${text}`, liste };
 }
 
 /** Feinschliff, echte Fotos, Qualitäts-Check – für Claude-Seiten und Vorlagen gleich. */
@@ -112,16 +155,16 @@ async function fertigMachen(html, liste, titel) {
 export async function baueVorlage(auftrag, opt = {}) {
   const text = String(auftrag || "").trim().slice(0, 2000);
   const w = wahl(text, opt);
-  const v = bauVorlage({ auftrag: text, ...w });
+  const v = bauVorlage({ auftrag: text, ...w, ...(w.eigen && eigenerName() && !opt.name ? { name: eigenerName() } : {}) });
   const f = await fertigMachen(v.html, [], v.titel);
-  return speichern({ ...v, html: f.html }, f.html, null, text || `${BRANCHEN[w.branche].name}-Webseite`, { ...w, qualitaet: f.qualitaet, quelle: "vorlage" });
+  return speichern({ ...v, html: f.html }, f.html, null, text || (w.eigen ? "Unsere eigene Webseite" : `${BRANCHEN[w.branche].name}-Webseite`), { ...w, eigen: w.eigen || v.eigen, qualitaet: f.qualitaet, quelle: "vorlage" });
 }
 
 export async function buildSite(auftrag, basisId = null, opt = {}) {
   const text = String(auftrag || "").trim().slice(0, 2000);
   if (!text) return { ok: false, error: "Beschreib mir den Kunden und was die Seite können soll." };
   const basis = basisId ? safeId(basisId) : null;
-  const w = basis ? { stil: readMeta(basis).stil || wahl(text, opt).stil, branche: readMeta(basis).branche || wahl(text, opt).branche } : wahl(text, opt);
+  const w = basis ? wahlBasis(basis, text, opt) : wahl(text, opt);
   // Ohne Claude: neue Seiten trotzdem als Profi-Vorlage bauen.
   const rettung = async (grund) => (basis ? { ok: false, error: grund } : { ...(await baueVorlage(text, w)), hinweis: `${grund} Ich habe dir stattdessen meine Profi-Vorlage gebaut.` });
   if (!config.anthropicKey && !ersatzBereit()) return rettung("Ohne Claude-Schlüssel kann ich nicht frei entwerfen.");
@@ -133,8 +176,8 @@ export async function buildSite(auftrag, basisId = null, opt = {}) {
     const params = {
       model,
       max_tokens: sparen ? 20000 : 32000,
-      system: SYSTEM,
-      tools: [WEBSEITE_TOOL],
+      system: SYSTEM + (w.eigen ? EIGEN_ZUSATZ : ""),
+      tools: [w.eigen ? EIGEN_TOOL : WEBSEITE_TOOL],
       tool_choice: { type: "auto" },
       messages: [{ role: "user", content: user }],
       ...(sparen ? { output_config: { effort: "low" } } : { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" }),
@@ -160,9 +203,11 @@ function speichern(w, html, basis, text, extra = {}) {
   // Vorige Fassung behalten, falls die Überarbeitung schlechter ist.
   if (basis && fs.existsSync(path.join(dir, "index.html"))) fs.copyFileSync(path.join(dir, "index.html"), path.join(dir, `index.vorher-${Date.now().toString(36)}.html`));
   fs.writeFileSync(path.join(dir, "index.html"), html);
-  fs.writeFileSync(path.join(dir, "angebot.txt"), `${w.angebot}\n\nPreisvorschlag: ${w.preis_eur} €\n`);
   const alt = basis ? readMeta(basis) : {};
-  const meta = { ...alt, titel: String(w.titel).slice(0, 120), auftrag: alt.auftrag || text, angebot: w.angebot, preis_eur: Number(w.preis_eur) || null, erstellt: alt.erstellt || new Date().toISOString(), geaendert: new Date().toISOString(), status: alt.status || "entwurf",
+  const eigen = Boolean(extra.eigen || alt.eigen);
+  // Eigene Seite: kein Angebot, kein Preis, nichts zu verkaufen.
+  if (!eigen) fs.writeFileSync(path.join(dir, "angebot.txt"), `${w.angebot}\n\nPreisvorschlag: ${w.preis_eur} €\n`);
+  const meta = { ...alt, titel: String(w.titel).slice(0, 120), auftrag: alt.auftrag || text, angebot: eigen ? "" : w.angebot, preis_eur: eigen ? null : Number(w.preis_eur) || null, erstellt: alt.erstellt || new Date().toISOString(), geaendert: new Date().toISOString(), status: eigen ? "eigen" : alt.status || "entwurf", ...(eigen ? { eigen: true } : {}),
     ...(extra.stil ? { stil: extra.stil } : {}), ...(extra.branche ? { branche: extra.branche } : {}), ...(extra.quelle ? { quelle: extra.quelle } : {}), ...(extra.qualitaet ? { qualitaet: { punkte: extra.qualitaet.punkte, fotos: extra.qualitaet.fotos, abschnitte: extra.qualitaet.abschnitte, groesse_kb: extra.qualitaet.groesse_kb } } : {}) };
   fs.writeFileSync(path.join(dir, "projekt.json"), JSON.stringify(meta, null, 2));
   latestId = id;
@@ -207,6 +252,7 @@ async function markSoldOnce(ok, betragEur) {
   const eur = Number(betragEur);
   if (!Number.isFinite(eur) || eur <= 0 || eur > 100000) return { ok: false, error: "Bitte den Verkaufspreis in Euro eingeben." };
   const meta = readMeta(ok);
+  if (meta.eigen) return { ok: false, error: "Das ist eure eigene Seite, die wird nicht verkauft." };
   if (meta.status === "verkauft") return { ok: false, error: "Die Seite ist schon als verkauft eingetragen." };
   const usd = await eurToUsd(eur);
   const r = einnahme(usd, `Webseite verkauft: ${meta.titel} (${eur.toLocaleString("de-DE")} €)`);
@@ -323,7 +369,7 @@ function phaseAus(html, job) {
   if (job.schritt === "fotos") return "Sucht passende Fotos und poliert die Seite …";
   if (job.schritt === "vorlage") return "Baut die Profi-Vorlage …";
   if (!html) return job.titel ? `Plant „${job.titel}“ …` : "Plant die Seite …";
-  if (/<\/html>/i.test(html)) return job.angebotDa ? "Schreibt das Angebot …" : "Schreibt Angebot und Preis …";
+  if (/<\/html>/i.test(html)) return job.eigen ? "Macht den Feinschliff …" : job.angebotDa ? "Schreibt das Angebot …" : "Schreibt Angebot und Preis …";
   const rest = html.slice(-4000);
   const treffer = [...rest.matchAll(/<(style|header|nav|section|main|footer|script|form)\b([^>]*)>?/gi)].pop();
   if (!treffer) return "Legt das Grundgerüst an …";
@@ -351,6 +397,7 @@ export function phaseSatz(phase) {
   if (p === "Legt das Grundgerüst an") return "Das baue ich gerade: das Grundgerüst.";
   if (/^Gestaltet das Design/.test(p)) return "Jetzt gestalte ich das Design, Farben und Schriften.";
   if (/^Schreibt/.test(p)) return "Die Seite steht. Jetzt schreibe ich noch Angebot und Preis.";
+  if (/^Macht den Feinschliff/.test(p)) return "Die Seite steht. Jetzt noch der Feinschliff.";
   if (/^Sucht passende Fotos/.test(p)) return "Jetzt suche ich passende Fotos und poliere alles.";
   if (/^Baut die Profi-Vorlage/.test(p)) return "Claude ist gerade nicht da. Ich baue dir meine Profi-Vorlage.";
   if (p === "Programmiert die Funktionen") return "Jetzt programmiere ich die Funktionen.";
@@ -368,19 +415,19 @@ function liveStand(job, ab = 0) {
     vergangen_s: Math.round(vergangen * 10) / 10, titel: job.titel, zeichen: html.length,
     zeilen: html ? html.split("\n").length : 0, phase: phaseAus(html, job), sprich: phaseSatz(phaseAus(html, job)),
     ab: von, code: html.slice(von), ergebnis: job.ergebnis || null, error: job.error || null, hinweis: job.hinweis || null,
-    stil: job.stil, branche: job.branche,
+    stil: job.stil, branche: job.branche, eigen: Boolean(job.eigen),
   };
 }
 
 /** Startet den Live-Bau und kommt sofort zurück. Den Fortschritt holt das Dashboard über getLiveJob(). */
-export function startLive(auftrag, basisId = null, { chef, stil, branche } = {}) {
+export function startLive(auftrag, basisId = null, { chef, stil, branche, eigen } = {}) {
   if (!liveFrei()) return { ok: false, gesperrt: true, error: "Der Live-Bau ist noch im Test. Probier ihn in Eve aus und gib ihn dort frei." };
   const text = String(auftrag || "").trim().slice(0, 2000);
   if (!text) return { ok: false, error: "Beschreib mir den Kunden und was die Seite können soll." };
   if (!config.anthropicKey && !ersatzBereit() && basisId) return { ok: false, error: "Ohne Claude-Schlüssel kann ich keine Seite überarbeiten." };
   if (liveAktuell && liveAktuell.status === "baut") return { ok: true, laeuft_schon: true, job: liveStand(liveAktuell) };
   const basis = basisId ? safeId(basisId) : null;
-  const w = basis ? { stil: readMeta(basis).stil || wahl(text).stil, branche: readMeta(basis).branche || wahl(text).branche } : wahl(text, { stil, branche });
+  const w = basis ? wahlBasis(basis, text, {}) : wahl(text, { stil, branche, eigen });
   const wunsch = zeitWunsch(text);
   const modus = wunsch && !basis ? "schnell" : "normal";
   const s = schaetzung(modus);
@@ -402,13 +449,13 @@ export function startLive(auftrag, basisId = null, { chef, stil, branche } = {})
 async function liveRettung(job, grund) {
   if (job.basis) throw new Error(grund);
   job.schritt = "vorlage";
-  const v = bauVorlage({ auftrag: job.auftrag, stil: job.stil, branche: job.branche });
+  const v = bauVorlage({ auftrag: job.auftrag, stil: job.stil, branche: job.branche, eigen: job.eigen, ...(job.eigen && eigenerName() ? { name: eigenerName() } : {}) });
   job.titel = v.titel.slice(0, 120);
   // Den Code in Häppchen "tippen", damit die Live-Ansicht wächst.
   for (let i = 0; i < v.html.length; i += 2400) { job.html = v.html.slice(0, i + 2400); await new Promise((ok) => setTimeout(ok, 60)); }
   job.schritt = "fotos";
   const f = await fertigMachen(v.html, [], v.titel);
-  job.ergebnis = speichern({ ...v, html: f.html }, f.html, null, job.auftrag, { stil: job.stil, branche: job.branche, qualitaet: f.qualitaet, quelle: "vorlage" });
+  job.ergebnis = speichern({ ...v, html: f.html }, f.html, null, job.auftrag, { stil: job.stil, branche: job.branche, eigen: job.eigen || v.eigen, qualitaet: f.qualitaet, quelle: "vorlage" });
   job.ergebnis.qualitaet = f.qualitaet;
   job.hinweis = `${grund} Ich habe dir stattdessen meine Profi-Vorlage gebaut.`;
   job.schritt = "";
@@ -427,8 +474,8 @@ async function liveBauen(job) {
     const params = {
       model,
       max_tokens: schnell ? 14000 : sparen ? 16000 : 32000,
-      system: SYSTEM + (schnell ? TEMPO_ZUSATZ : ""),
-      tools: [WEBSEITE_TOOL],
+      system: SYSTEM + (job.eigen ? EIGEN_ZUSATZ : "") + (schnell ? (job.eigen ? TEMPO_ZUSATZ.replace("Preise, FAQ", "Geschichte, Einblicke") : TEMPO_ZUSATZ) : ""),
+      tools: [job.eigen ? EIGEN_TOOL : WEBSEITE_TOOL],
       tool_choice: { type: "auto" },
       messages: [{ role: "user", content: user }],
       ...(sparen || schnell ? { output_config: { effort: "low" } } : { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" }),
@@ -461,7 +508,7 @@ async function liveBauen(job) {
   tempoMerken(job.modus, (Date.now() - job.start) / 1000, html.length);
   job.schritt = "fotos";
   const f = await fertigMachen(html, liste, job.titel);
-  const r = speichern(block.input, f.html, job.basis, job.auftrag, { stil: job.stil, branche: job.branche, qualitaet: f.qualitaet, quelle: "claude" });
+  const r = speichern(block.input, f.html, job.basis, job.auftrag, { stil: job.stil, branche: job.branche, eigen: job.eigen, qualitaet: f.qualitaet, quelle: "claude" });
   r.qualitaet = f.qualitaet;
   job.schritt = "";
   job.ergebnis = r;
