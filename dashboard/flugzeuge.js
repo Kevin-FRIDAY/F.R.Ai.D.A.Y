@@ -1,6 +1,8 @@
 // F.R.Ai.D.A.Y Weltgeschehen: ALLE Flugzeuge, die öffentlich ihre Position senden (ADS-B).
 // Weltweit über OpenSky (alle paar Minuten), dazwischen rechnet Friday jedes Flugzeug mit Tempo + Kurs weiter.
-// Nah herangezoomt kommen genaue Live-Daten aus adsb.lol dazu. Antippen -> Steckbrief
+// Nah herangezoomt kommen genaue Live-Daten aus adsb.lol dazu.
+// v1.173.0: adsb.lol-Live-Schicht (Militär & Staat + Notfall-Codes weltweit, jede Minute), Notfall-Hinweis oben,
+// Ersatz-Weltkarte aus adsb.lol, wenn OpenSky streikt. Antippen -> Steckbrief
 // (Airline, Strecke von → nach, Typ, Kennzeichen, Halter, Foto, Höhe, Tempo, Steigen/Sinken, Squawk).
 (() => {
   "use strict";
@@ -12,7 +14,7 @@
   const G = () => window.FridayGlobus;
   const RAD = Math.PI / 180;
 
-  const FARBEN = { linie: "#ffd34d", privat: "#7fe7ff", heli: "#c792ea", boden: "#8a939b", notfall: "#ff3b4f" };
+  const FARBEN = { linie: "#ffd34d", privat: "#7fe7ff", heli: "#c792ea", boden: "#8a939b", notfall: "#ff3b4f", militaer: "#9dff6a" };
 
   // Zeile: [hex, lat, lon, hoehe_m, tempo_kmh, kurs, gruppe, rufzeichen, land, steig_ms, zeit_s]
   let gruppen = [], flieger = [], aktiv = new Set(), info = {};
@@ -60,7 +62,8 @@
       const r = await api("/api/flugzeuge");
       if (!r.ok) throw new Error("Server");
       const d = await r.json();
-      info = { stand: d.stand, naechster: d.naechster, mit_konto: d.mit_konto, fehler: d.fehler, quelle: d.quelle };
+      info = { stand: d.stand, naechster: d.naechster, mit_konto: d.mit_konto, fehler: d.fehler, quelle: d.quelle, live: d.live || null };
+      notfallHinweis(d.live?.notfaelle || []);
       const erstesMal = !gruppen.length;
       gruppen = d.gruppen || [];
       // genaue Nah-Daten (adsb.lol) behalten, wenn sie neuer sind als der Schnappschuss
@@ -126,11 +129,38 @@
     takt(); rechenTakt();
     clearTimeout(nahTimer); nahTimer = setTimeout(nahTakt, 3000);
   }
+  // ---------- Notfall-Hinweis (Squawk 7700/7600/7500) ----------
+  const gesehen = new Set();
+  const NF_ART = { 7700: "NOTFALL", 7600: "Funkausfall", 7500: "Entführungs-Code" };
+  function notfallHinweis(liste) {
+    let box = $("plane-notfall");
+    // Schalter „Flugzeuge in Not“ (Lage-Plus) aus → kein Hinweis
+    if ($("lage-lp-notflug-on") && !$("lage-lp-notflug-on").checked) liste = [];
+    const neu = liste.filter((x) => !gesehen.has(x.hex + x.squawk));
+    if (!liste.length) { box?.remove(); return; }
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "plane-notfall"; box.className = "plane-notfall";
+      $("lage")?.append(box);
+      box.addEventListener("click", (e) => {
+        if (e.target.closest("[data-a=zu]")) { box.remove(); return; }
+        const h = e.target.closest("[data-h]")?.dataset.h;
+        if (h) waehle(h);
+      });
+    }
+    box.innerHTML = `<button class="ship-x" data-a="zu" title="Ausblenden">✕</button><b>⚠ Luft-Notfall live</b>`
+      + liste.slice(0, 4).map((x) => `<button type="button" data-h="${esc(x.hex)}"><span>${esc(x.rufzeichen || x.hex.toUpperCase())}</span><small>${esc(x.squawk)} · ${esc(NF_ART[x.squawk] || "")}${x.typ ? " · " + esc(x.typ) : ""}</small></button>`).join("")
+      + (liste.length > 4 ? `<small>+ ${liste.length - 4} weitere</small>` : "");
+    for (const x of liste) gesehen.add(x.hex + x.squawk);
+    if (neu.length && gesehen.size > neu.length) window.FridayRing?.melde?.("flug-notfall", "warn", `Luft-Notfall: ${neu[0].rufzeichen || neu[0].hex.toUpperCase()} (${neu[0].squawk})`, 60000);
+  }
+
   function halt() { clearTimeout(ladeTimer); clearTimeout(nahTimer); clearTimeout(rechenTimer); }
   function stoppen() {
     halt();
     if (L) L.ctx.clearRect(0, 0, L.canvas.width, L.canvas.height);
     karteZu();
+    $("plane-notfall")?.remove();
     const c = $("cnt-planes"); if (c) c.textContent = "";
   }
 
@@ -340,7 +370,8 @@
     <div class="sc-abschnitt">Steckbrief</div><div class="mc-rows">${reihen([
       ["Typ", d.typ || d.typ_code || "nicht öffentlich angegeben"], ["Typ-Code", d.typ && d.typ_code ? d.typ_code : null],
       ["Kennzeichen", d.kennzeichen], ["Halter", d.halter], ["Land", d.herkunft], ["Rufzeichen", d.rufzeichen], ["ICAO-Kennung", d.hex.toUpperCase()],
-    ])}</div>`;
+      ["Datenschutz", d.privat_hinweis],
+    ])}</div>${d.lizenz ? `<p class="fl-lizenz">${esc(d.lizenz)}</p>` : ""}`;
     const a = card.querySelector(".sc-mehr");
     if (a && d.mehr) { a.href = d.mehr; a.classList.remove("hidden"); }
   }
@@ -366,7 +397,7 @@
       <div id="plane-treffer" class="sat-treffer"></div>
       <div class="sat-gruppen-kopf"><span>Arten</span><button type="button" class="chip" data-a="alle">Alle</button><button type="button" class="chip" data-a="keine">Keine</button></div>
       <div id="plane-gruppen" class="sat-gruppen"></div>
-      <p class="sat-ehrlich">Gezeigt werden alle Flugzeuge, deren ADS-B-Signal freiwillige Empfänger auffangen (OpenSky Network, adsb.lol). Zwischen den Abrufen rechnet Friday jedes Flugzeug mit Tempo und Kurs weiter. Über Ozeanen und in manchen Ländern fehlen viele. Militär- und manche Regierungsflüge senden oft nicht oder werden ausgeblendet – die sind nicht öffentlich.</p>`;
+      <p class="sat-ehrlich">Gezeigt werden alle Flugzeuge, deren ADS-B-Signal freiwillige Empfänger auffangen (OpenSky Network, adsb.lol – Daten unter ODbL-Lizenz). Zwischen den Abrufen rechnet Friday jedes Flugzeug mit Tempo und Kurs weiter. Militär & Staat sowie Notfall-Codes kommen jede Minute frisch von adsb.lol. Über Ozeanen und in manchen Ländern fehlen viele; viele Militärflüge senden gar nicht. Bei Privatfliegern zeigt Friday keinen Halter.</p>`;
     $("lage")?.append(p);
     p.addEventListener("click", (e) => {
       const a = e.target.closest("[data-a]")?.dataset.a;
@@ -396,8 +427,9 @@
     const st = $("plane-status");
     if (!st) return;
     if (!flieger.length) st.textContent = info.fehler ? `Flugdaten gerade nicht verfügbar (${info.fehler}).` : "Flugdaten werden geladen …";
-    else st.textContent = `${zahl(flieger.length)} Flugzeuge · Stand ${info.stand ? uhr(info.stand) : "–"}${info.naechster ? " · neu ab " + uhr(info.naechster) : ""} · dazwischen live weitergerechnet`
-      + (info.mit_konto ? "" : " · Tipp: mit kostenlosem OpenSky-Konto alle 2 Min. frisch (Anleitung 32-flugzeuge.md)");
+    else st.textContent = `${zahl(flieger.length)} Flugzeuge · ${info.quelle || "Quelle –"} · Stand ${info.stand ? uhr(info.stand) : "–"}${info.naechster ? " · neu ab " + uhr(info.naechster) : ""} · dazwischen live weitergerechnet`
+      + (info.live?.stand ? ` · adsb.lol live ${uhr(info.live.stand)} (${zahl(info.live.militaer || 0)} Militär, ${(info.live.notfaelle?.length || 0) === 1 ? "1 Notfall" : zahl(info.live.notfaelle?.length || 0) + " Notfälle"})` : "")
+      + (info.mit_konto || String(info.quelle || "").startsWith("adsb.lol") ? "" : " · Tipp: mit kostenlosem OpenSky-Konto alle 2 Min. frisch (Anleitung 32-flugzeuge.md)");
   }
   const IATA = { LH: "DLH", EW: "EWG", FR: "RYR", U2: "EZY", BA: "BAW", AF: "AFR", KL: "KLM", UA: "UAL", AA: "AAL", DL: "DAL", EK: "UAE", QR: "QTR", TK: "THY", LX: "SWR", OS: "AUA", DE: "CFG", X3: "TUI", W6: "WZZ", EY: "ETD", SQ: "SIA" };
   function suche(q) {
