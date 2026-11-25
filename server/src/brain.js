@@ -63,6 +63,7 @@ import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken,
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
 // Sprachverständnis (v1.166.0): mehrere Befehle in einem Satz, Folgefragen, Rückfragen, Korrekturen, Rückgängig.
 import * as verstehen from "./verstehen.js";
+import * as kennenlernen from "./kennenlernen.js";
 
 // Denk-Tempo (Einstellungen → Assistent): schnell ist der Standard.
 const TEMPO = {
@@ -131,6 +132,7 @@ function contextBlock(extra = {}) {
 Mac verbunden: ${isoAgentText()}.
 ${dienstKurzinfo()}
 ${profilKurzinfo()}
+${kennenlernen.kontext()}
 ${duFormFrei() ? 'Nachrichten an andere (anrufe): Schreib den Text so, wie Boss ihn dem Empfänger selbst sagen würde, direkt in der Du-Form. "Sag meiner Frau, dass ich sie liebe" → Text "Ich liebe dich.", nicht "Ich liebe sie."\n' : ""}Kanal: ${extra.channel || "web"}.
 
 ${kernKontext(extra.frage || "")}
@@ -228,7 +230,7 @@ async function askVerstanden(opts) {
   const text = String(opts.text || "");
   if (opts.mode === "translate" || opts.image || !text || opts.keepHistory === false) return askIntern(opts);
   // Laufende Vokabel-Abfrage (v1.169.0): jede Antwort ("dog", "danke") gehört dem Sprach-Trainer.
-  if (sternVorrang()) return askIntern(opts);
+  if (sternVorrang() || kennenlernen.laeuft()) return askIntern(opts);
   // Gäste-Modus (v1.169.0): kein "was hast du gesagt / worüber haben wir geredet" und keine Folgefragen aus Boss' Verlauf.
   const gast = gaeste.aktiv();
   const vorher = verstehen.schnappschuss();
@@ -236,6 +238,17 @@ async function askVerstanden(opts) {
     if (!gaeste.aktiv()) verstehen.merke(kanal, { frage, antwort: res.answer, actions: res.actions, claude: res.claude, angelegt: verstehen.neuSeit(vorher) });
     return res;
   };
+
+  // 0. Friday lernt dich kennen (v1.171.0): Aussagen über Boss ("ich mag Sushi") nebenbei merken.
+  //    Ist der ganze Satz nur so eine Aussage, antwortet Friday gleich selbst (ohne Claude).
+  if (!gast) {
+    try {
+      const kv = kennenlernen.vorab(text, verstehen.letzter(kanal)?.actions || []);
+      if (kv) return fertig(kv);
+    } catch (err) {
+      console.error("Kennenlernen:", err.message);
+    }
+  }
 
   // 1. "Was hast du gesagt?", "mach das rückgängig", "merk dir das", "worüber haben wir geredet?"
   const g = gast ? null : verstehen.gespraechsBefehl(text, kanal);
@@ -312,6 +325,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (sf) { actions.push(...sf.actions); return finish(sf.answer); }
     } catch (err) {
       console.error("Stern-Ideen:", err.message);
+    }
+  }
+
+  // Laufende Kennenlern-Runde (v1.171.0): jede Antwort gehört dorthin ("Pizza", "weiter", "Stopp").
+  if (mode !== "translate" && !image && text && !gastModus) {
+    try {
+      const kf = kennenlernen.fruehBefehl(text);
+      if (kf) { actions.push(...kf.actions); return finish(kf.answer); }
+    } catch (err) {
+      console.error("Kennenlernen:", err.message);
     }
   }
 
@@ -443,6 +466,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (wa) { actions.push(...wa.actions); return finish(wa.answer); }
     } catch (err) {
       console.error("Kamera-Wache:", err.message);
+    }
+  }
+
+  // Friday lernt dich kennen (v1.171.0): "lern mich kennen", "wie gut kennst du mich?", "was ist mein Lieblingsessen?".
+  if (mode !== "translate" && !image && text && !gastModus) {
+    try {
+      const kq = kennenlernen.quickCommand(text);
+      if (kq) { actions.push(...kq.actions); return finish(kq.answer); }
+    } catch (err) {
+      console.error("Kennenlernen:", err.message);
     }
   }
 
