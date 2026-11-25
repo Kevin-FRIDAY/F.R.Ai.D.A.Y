@@ -45,6 +45,25 @@ function osa(script, ...args) {
 
 const LEISE_AKTIONEN = new Set(["system_info"]);
 
+// ---------- Dateisuche (v1.176.0) ----------
+// Merkt sich, was find_file gefunden hat. Öffnen/Holen geht NUR für diese Pfade.
+const gefunden = new Set();
+const HOME = os.homedir();
+function dateiSichtbar(p) {
+  if (!p || !p.startsWith("/")) return false;
+  // Versteckte Ordner, Programm-Interna und Caches nicht anzeigen.
+  if (/\/\.[^/]/.test(p) || p.includes("/node_modules/")) return false;
+  if (p.startsWith(`${HOME}/Library/`) && !p.startsWith(`${HOME}/Library/Mobile Documents/`) && !p.startsWith(`${HOME}/Library/CloudStorage/`)) return false;
+  if (/^\/(System|private|Library|usr|bin|sbin|opt)\//.test(p)) return false;
+  return true;
+}
+function gefundenerPfad(value) {
+  const p = path.resolve(String(value || ""));
+  if (!gefunden.has(p)) throw new Error("Diese Datei kam nicht aus der Suche. Bitte zuerst suchen.");
+  if (!fs.existsSync(p)) throw new Error("Die Datei gibt es nicht mehr");
+  return p;
+}
+
 const clampVolume = (v) => Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
 
 // ---------- Apple Kalender & Erinnerungen ----------
@@ -653,9 +672,40 @@ const actions = {
     return "Design umgeschaltet";
   },
   async find_file({ value }) {
-    const out = await run("mdfind", ["-name", String(value)], 25000);
-    const files = out.split("\n").filter(Boolean).slice(0, 10);
+    const q = String(value).trim().slice(0, 200);
+    if (!q) return "Nichts gefunden";
+    let out = await run("mdfind", ["-name", q], 25000);
+    let files = out.split("\n").filter(dateiSichtbar);
+    // v1.176.0: Mehrere Wörter ("Sushi for you Lohnabrechnungen") → jedes Wort muss im Namen vorkommen, egal in welcher Reihenfolge.
+    const woerter = q.split(/\s+/).filter((w) => w.length > 1).slice(0, 6);
+    if (!files.length && woerter.length > 1) {
+      const abfrage = woerter.map((w) => `kMDItemFSName == "*${w.replace(/["\\*]/g, "")}*"cd`).join(" && ");
+      out = await run("mdfind", [abfrage], 25000);
+      files = out.split("\n").filter(dateiSichtbar);
+    }
+    files = files.slice(0, 15);
+    for (const f of files) gefunden.add(f);
+    while (gefunden.size > 300) gefunden.delete(gefunden.values().next().value);
     return files.length ? files.join("\n") : "Nichts gefunden";
+  },
+  // v1.176.0: Gefundene Datei öffnen / im Finder zeigen / ans Dashboard schicken.
+  // Nur Dateien, die find_file vorher selbst gefunden hat – nie beliebige Pfade.
+  async datei_oeffnen({ value }) {
+    const p = gefundenerPfad(value);
+    await run("open", [p], 15000);
+    return "Geöffnet";
+  },
+  async datei_zeigen({ value }) {
+    const p = gefundenerPfad(value);
+    await run("open", ["-R", p], 15000);
+    return "Im Finder gezeigt";
+  },
+  async datei_holen({ value }) {
+    const p = gefundenerPfad(value);
+    const st = fs.statSync(p);
+    if (!st.isFile()) throw new Error("Das ist ein Ordner, keine Datei");
+    if (st.size > 10 * 1024 * 1024) throw new Error("Die Datei ist zu groß für die Übertragung (über 10 MB)");
+    return { daten: fs.readFileSync(p).toString("base64"), groesse: st.size };
   },
   async kalender_termine({ value }) {
     const v = jsonVal(value);

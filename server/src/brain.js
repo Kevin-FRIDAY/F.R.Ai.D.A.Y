@@ -8,6 +8,7 @@ import { agentsBrief } from "./agents.js";
 import { quickCommand as alexaQuick } from "./alexa.js";
 import { quickCommand as anrufQuick } from "./anrufe.js";
 import { quickCommand as weckrufQuick, fertigWunsch } from "./weckruf.js";
+import { quick as dateiQuick } from "./dateisuche.js";
 import { notifyAll } from "./notify.js";
 import { quickCommand as tvQuick } from "./fernseher.js";
 import { quickCommand as dienstQuick, dienstKurzinfo } from "./dienste.js";
@@ -335,6 +336,16 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (kf) { actions.push(...kf.actions); return finish(kf.answer); }
     } catch (err) {
       console.error("Kennenlernen:", err.message);
+    }
+  }
+
+  // Dateisuche ohne Claude (v1.176.0): „such die Datei …“, „öffne die zweite“. Nie im Gäste-Modus (private Dateien).
+  if (mode !== "translate" && !image && text && !gastModus) {
+    try {
+      const d = await dateiQuick(text);
+      if (d) { actions.push(...d.actions); return finish(d.answer); }
+    } catch (err) {
+      console.error("Dateisuche:", err.message);
     }
   }
 

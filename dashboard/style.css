@@ -4083,3 +4083,16 @@ html.perf-fluessig .plane-notfall { animation: none; backdrop-filter: none; }
 .st-verstanden ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
 .st-verstanden li::before { content: "✓ "; color: var(--cyan, #ff8a1e); font-weight: 700; }
 .schnitt-panel .st-feld textarea { min-height: 70px; }
+
+/* v1.176.0: Dateisuche – Treffer antippbar */
+#file-list .datei-treffer { gap: 6px; padding: 8px 0; }
+#file-list .datei-haupt { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: 0; color: inherit; font: inherit; padding: 6px 8px; border-radius: 10px; cursor: pointer; text-decoration: none; }
+#file-list .datei-haupt:hover, #file-list .datei-haupt:focus-visible { background: rgba(255, 138, 30, .10); outline: 1px solid rgba(255, 138, 30, .45); }
+#file-list .datei-icon { font-size: 22px; flex: 0 0 auto; }
+#file-list .datei-text { display: flex; flex-direction: column; min-width: 0; }
+#file-list .datei-text b { font-weight: 600; overflow-wrap: anywhere; }
+#file-list .datei-text small { overflow-wrap: anywhere; }
+#file-list .datei-knoepfe { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 40px; }
+#file-list .datei-k { font-size: 12px; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; line-height: 1.2; }
+#file-list .datei-status:empty { display: none; }
+#file-list .datei-status { padding-left: 40px; }
