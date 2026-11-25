@@ -160,7 +160,7 @@ export function tresorAbgleich() {
 }
 
 // Antworten, bei denen Friday passen musste → Lücken
-const LUECKE = /\b(kann ich (leider )?(noch )?nicht|kann ich dir (leider )?(noch )?nicht|weiß ich (leider )?nicht|weiss ich (leider )?nicht|habe ich keinen zugriff|hab ich keinen zugriff|keinen zugriff|nicht verstanden|dafür habe ich kein|dafuer habe ich kein|das geht (noch )?nicht|nicht möglich|nicht moeglich|keine verbindung zu|guthaben ist leer)\b/i;
+export const LUECKE = /\b(kann ich (leider )?(noch )?nicht|kann ich dir (leider )?(noch )?nicht|weiß ich (leider )?nicht|weiss ich (leider )?nicht|habe ich keinen zugriff|hab ich keinen zugriff|keinen zugriff|nicht verstanden|dafür habe ich kein|dafuer habe ich kein|das geht (noch )?nicht|nicht möglich|nicht moeglich|keine verbindung zu|guthaben ist leer)\b/i;
 
 export function ausbau({ tage = 60 } = {}) {
   const abgehakt = tresorAbgleich();

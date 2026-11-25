@@ -71,6 +71,9 @@ import { quickCommand as umgebungQuick } from "./umgebung.js";
 import { quickCommand as sicherheitQuick } from "./sicherheit.js";
 import { quickCommand as arztQuick } from "./systemarzt.js";
 import { quickCommand as vorausQuick } from "./vorausschau.js";
+import { quickCommand as kontextQuick } from "./kontext.js";
+import { quickCommand as selbstlernenQuick, nachAntwort as selbstlernenNach } from "./selbstlernen.js";
+import { quickCommand as entscheidenQuick } from "./entscheiden.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
 import { tabelleErstellen, vorlageFuer } from "./tabellen.js";
@@ -216,6 +219,8 @@ export async function ask(opts) {
     antwort: String(res?.answer || "").slice(0, 4000),
     ...(res?.actions?.length ? { aktionen: res.actions.filter((a) => typeof a === "string").slice(0, 8) } : {}),
   });
+  // Selbstlernen (v1.184.0): Antwortqualität prüfen, Wissenslücken sammeln, Antwortwege zählen.
+  if (opts?.text && opts.mode !== "translate" && !gaeste.aktiv()) { try { selbstlernenNach({ frage: opts.text, antwort: res?.answer, kanal, res }); } catch { /* egal */ } }
   return res;
 }
 
@@ -476,7 +481,7 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
   // "neues Projekt Garage", "wie hängt Garage mit Auto zusammen?", "zeig mir das Wissensnetz" – ohne Claude.
   if (mode !== "translate" && !image && text && !gastModus) {
     try {
-      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text) || await leitungQuick(text) || await weltIntelQuick(text) || await lebenQuick(text) || await umgebungQuick(text) || await hausIntelQuick(text) || await sicherheitQuick(text) || await arztQuick(text) || await vorausQuick(text);
+      const gq = gedaechtnis.quickCommand(text) || neuronenQuick(text) || await leitungQuick(text) || await weltIntelQuick(text) || await lebenQuick(text) || await umgebungQuick(text) || await hausIntelQuick(text) || await sicherheitQuick(text) || await arztQuick(text) || await vorausQuick(text) || await selbstlernenQuick(text) || await kontextQuick(text) || await entscheidenQuick(text);
       if (gq) { actions.push(...gq.actions); return finish(gq.answer); }
     } catch (err) {
       console.error("Gedächtnis-Ebenen:", err.message);

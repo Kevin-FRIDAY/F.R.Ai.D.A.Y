@@ -93,6 +93,9 @@ import { umgebungRouten, umgebungStart } from "./umgebung.js";
 import { sicherheitRouten, sicherheitStart, anmeldung as sicherheitAnmeldung } from "./sicherheit.js";
 import { arztRouten, arztStart, messer as leistungsMesser } from "./systemarzt.js";
 import { vorausRouten, vorausStart } from "./vorausschau.js";
+import { kontextRouten, kontextStart } from "./kontext.js";
+import { selbstlernenRouten, selbstlernenStart } from "./selbstlernen.js";
+import { entscheidenRouten, entscheidenStart } from "./entscheiden.js";
 import { funktionstestStart } from "./funktionstest.js";
 
 const missing = checkConfig();
@@ -826,6 +829,9 @@ umgebungRouten(app, asyncRoute);
 sicherheitRouten(app, asyncRoute);
 arztRouten(app, asyncRoute);
 vorausRouten(app, asyncRoute);
+kontextRouten(app, asyncRoute);
+selbstlernenRouten(app, asyncRoute);
+entscheidenRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
@@ -851,6 +857,9 @@ umgebungStart().catch(() => {});
 sicherheitStart().catch(() => {});
 arztStart().catch(() => {});
 vorausStart().catch(() => {});
+kontextStart().catch(() => {});
+selbstlernenStart().catch(() => {});
+entscheidenStart().catch(() => {});
 grossauftragStart();
 if (!IST_EVE) kontenStart(); // Meine Konten: alle 6 Std. frische Kontostände (nur lesen)
 zentraleStart(ask);

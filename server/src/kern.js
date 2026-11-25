@@ -7,6 +7,8 @@ import * as regelwerk from "./regelwerk.js";
 import * as schleifen from "./schleifen.js";
 import * as gedaechtnis from "./gedaechtnis.js";
 import * as neuronen from "./neuronen.js";
+import * as kontext from "./kontext.js";
+import * as selbstlernen from "./selbstlernen.js";
 import * as herzschlag from "./herzschlag.js";
 import * as kostendeckel from "./kostendeckel.js";
 import * as seele from "./seele.js";
@@ -60,6 +62,11 @@ export function kontextFuer(frage = "") {
   if (nb) teile.push(nb);
   const f = faehigkeiten.fuerKontext(frage);
   if (f) teile.push(f);
+  // Mark XIII (v1.184.0): Lage jetzt + Fehlergedächtnis/selbst Nachrecherchiertes
+  const lage = kontext.zeile();
+  if (lage) teile.push(lage);
+  const sl = selbstlernen.kontextHinweis(frage);
+  if (sl) teile.push(sl);
   return teile.join("\n\n");
 }
 
