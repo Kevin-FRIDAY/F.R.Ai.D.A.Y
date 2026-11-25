@@ -27,6 +27,21 @@ BASE = os.environ.get("FRIDAY_VIDEO_DIR") or os.path.join(os.path.expanduser("~"
 IN, OUT, WORK, LUTS, MUSIK = (os.path.join(BASE, d) for d in ("Eingang", "Fertig", ".arbeit", "LUTs", "Musik"))
 MODEL = os.environ.get("FRIDAY_WHISPER", "mlx-community/whisper-small-mlx")
 LOOK = os.environ.get("FRIDAY_LOOK", "natürlich")
+# Kevins Anweisung, von Friday schon in Vorgaben übersetzt (server/src/regieplan.js)
+try:
+    V = json.loads(os.environ.get("FRIDAY_VORGABEN") or "{}")
+except ValueError:
+    V = {}
+PAUSEN = V.get("pausen") or "normal"            # hart | normal | sanft
+AEHMS_RAUS = V.get("aehms", "raus") != "drin"
+MAX_SEK = float(V["maxSekunden"]) if V.get("maxSekunden") else None
+FOKUS = [w.lower() for w in (V.get("fokus") or []) if w]
+UNTERTITEL = V.get("untertitel", True) is not False
+MUSIK_AN = V.get("musik", "an") != "aus"
+TITEL = (V.get("titel") or "").strip()
+ABSPANN = (V.get("abspann") or "").strip()
+FARBE = V.get("farbe")  # "#rrggbb" oder None
+HL = "&H0000FFFF&"
 FONTS = "/System/Library/Fonts/Supplemental"
 VIDEO_EXT = (".mp4", ".mov", ".m4v", ".mkv", ".webm")
 FILLER = {"äh", "ähm", "öhm", "ehm", "hm", "hmm", "mhm", "uh", "um", "uhm", "äää", "ähh", "ääh", "öh"}
@@ -35,6 +50,9 @@ LOOKS = {
     "warm": "eq=contrast=1.06:saturation=1.12,colorbalance=rs=0.05:bs=-0.05:rm=0.03:bm=-0.03",
     "kühl": "colorbalance=rs=-0.04:bs=0.05,eq=contrast=1.05:saturation=1.02",
     "kino": "eq=contrast=1.12:saturation=0.92,colorbalance=bs=0.06:rs=-0.02:rh=0.05:bh=-0.04",
+    "schwarzweiss": "hue=s=0,eq=contrast=1.12:brightness=0.01",
+    "retro": "curves=preset=vintage,eq=saturation=0.9,vignette=PI/4",
+    "neon": "eq=contrast=1.1:saturation=1.3,colorbalance=rs=0.04:bs=0.06:gm=-0.02",
 }
 
 _lock = threading.Lock()
@@ -63,7 +81,15 @@ def clean(word):
 
 
 def is_filler(word):
-    return re.sub(r"[^\wäöüß]", "", word.lower()) in FILLER
+    return AEHMS_RAUS and re.sub(r"[^\wäöüß]", "", word.lower()) in FILLER
+
+
+def ass_farbe(hexfarbe, standard="&H0000FFFF&"):
+    m = re.match(r"^#?([0-9a-fA-F]{6})$", hexfarbe or "")
+    if not m:
+        return standard
+    r, g, b = m[1][0:2], m[1][2:4], m[1][4:6]
+    return f"&H00{b}{g}{r}&".upper()
 
 
 # ---------- Regie: Plan ----------
@@ -143,7 +169,10 @@ def analyse_color(clips):
 
 # ---------- Schnitt ----------
 def plan_cuts(clips):
-    agent("schnitt", "läuft", "Suche Pausen und Ähms …", 0)
+    agent("schnitt", "läuft", "Suche Pausen und Ähms …" if AEHMS_RAUS else "Ähms bleiben drin (so gewünscht) · suche nur lange Pausen …", 0)
+    luecke, vor, nach = {"hart": (0.3, 0.08, 0.12), "sanft": (1.2, 0.3, 0.4)}.get(PAUSEN, (0.6, 0.15, 0.2))
+    if not AEHMS_RAUS and PAUSEN != "hart":
+        luecke = max(luecke, 1.5)
     fillers, cut_away = 0, 0.0
     for c in clips:
         segs, start, end = [], None, None
@@ -154,21 +183,77 @@ def plan_cuts(clips):
                     segs.append((start, w["s"]))
                 start = None
                 continue
-            if start is not None and w["s"] - end > 0.6:
-                segs.append((start, min(c["dur"], end + 0.2)))
+            if start is not None and w["s"] - end > luecke:
+                segs.append((start, min(c["dur"], end + nach)))
                 start = None
             if start is None:
-                start = max(0.0, w["s"] - 0.15)
+                start = max(0.0, w["s"] - vor)
             end = w["e"]
         if start is not None:
-            segs.append((start, min(c["dur"], end + 0.25)))
+            segs.append((start, min(c["dur"], end + nach + 0.05)))
         segs = [(a, b) for a, b in segs if b - a > 0.25]
         c["segs"] = segs or [(0.0, c["dur"])]  # ohne Sprache: Clip ganz behalten
         cut_away += c["dur"] - sum(b - a for a, b in c["segs"])
     total = sum(b - a for c in clips for a, b in c["segs"])
     emit(type="plan", clips=[{"name": c["name"], "segs": [[round(a, 2), round(b, 2)] for a, b in c["segs"]]} for c in clips], total=round(total, 2))
-    agent("schnitt", "fertig", f"{fillers} Ähms und {cut_away:.0f} s Pausen raus · neue Länge {total:.0f} s", 100)
+    tempo = {"hart": " · enger Schnitt", "sanft": " · Atempausen bleiben"}.get(PAUSEN, "")
+    agent("schnitt", "läuft" if (FOKUS or MAX_SEK) else "fertig", f"{fillers} Ähms und {cut_away:.0f} s Pausen raus{tempo} · neue Länge {total:.0f} s", 100)
     return total
+
+
+def seg_text(c, a, b):
+    return " ".join(w["w"] for w in c["words"] if w["s"] >= a - 0.01 and w["s"] < b)
+
+
+def stamm(w):
+    w = re.sub(r"[^\wäöüß]", "", w.lower())
+    return w[:5] if len(w) > 5 else w
+
+
+def auswahl(clips, total):
+    """Kevins Vorgaben: nur Stellen zu bestimmten Themen und/oder höchstens X Sekunden (die stärksten Stellen)."""
+    if not FOKUS and not MAX_SEK:
+        return total
+    teile = []
+    for ci, c in enumerate(clips):
+        for si, (a, b) in enumerate(c["segs"]):
+            text = seg_text(c, a, b)
+            woerter = [stamm(x) for x in text.split()]
+            treffer = sum(1 for f in FOKUS if any(x.startswith(stamm(f)) for x in woerter if x))
+            dauer = b - a
+            # Stärke: viel gesagt pro Sekunde, Ausrufe/Fragen, Fokus-Treffer, Einstieg bekommt Bonus
+            score = (len(woerter) / max(dauer, 0.5)) + 1.5 * text.count("!") + 0.7 * text.count("?") + 4 * treffer + (1.0 if ci == 0 and si == 0 else 0)
+            if not c["words"]:
+                score = 1.0  # Clip ohne Sprache: neutral
+            teile.append({"ci": ci, "si": si, "a": a, "b": b, "dur": dauer, "score": score, "treffer": treffer})
+    gruende = []
+    if FOKUS:
+        passend = [t for t in teile if t["treffer"]]
+        if passend:
+            gruende.append(f"{len(passend)} von {len(teile)} Stellen passen zu „{', '.join(FOKUS)}“")
+            teile = passend
+        else:
+            gruende.append(f"Keine Stelle erwähnt „{', '.join(FOKUS)}“ · behalte alles")
+    if MAX_SEK and sum(t["dur"] for t in teile) > MAX_SEK:
+        rest, gewaehlt = MAX_SEK, []
+        for t in sorted(teile, key=lambda t: -t["score"]):
+            if rest <= 0.4:
+                break
+            if t["dur"] > rest:
+                t = dict(t, b=t["a"] + rest, dur=rest)
+            gewaehlt.append(t)
+            rest -= t["dur"]
+        gruende.append((f"die {len(gewaehlt)} stärksten Stellen" if len(gewaehlt) != 1 else "die stärkste Stelle") + f" für höchstens {MAX_SEK:.0f} s")
+        teile = gewaehlt
+    teile.sort(key=lambda t: (t["ci"], t["a"]))
+    von = sum(len(c["segs"]) for c in clips)
+    for ci, c in enumerate(clips):
+        c["segs"] = [(t["a"], t["b"]) for t in teile if t["ci"] == ci]
+    neu = sum(b - a for c in clips for a, b in c["segs"])
+    emit(type="auswahl", behalten=len(teile), von=von, grund=" · ".join(gruende))
+    emit(type="plan", clips=[{"name": c["name"], "segs": [[round(a, 2), round(b, 2)] for a, b in c["segs"]]} for c in clips], total=round(neu, 2))
+    agent("schnitt", "fertig", f"Deine Vorgabe umgesetzt: {' · '.join(gruende)} · neue Länge {neu:.0f} s", 100)
+    return neu
 
 
 # ---------- Untertitel ----------
@@ -177,8 +262,10 @@ def ass_time(t):
     return f"{int(t // 3600)}:{int(t % 3600 // 60):02d}:{t % 60:05.2f}"
 
 
-def build_subs(clips, path):
-    agent("untertitel", "läuft", "Baue Untertitel …", 0)
+def build_subs(clips, path, total=0.0):
+    global HL
+    HL = ass_farbe(FARBE)
+    agent("untertitel", "läuft", "Baue Untertitel …" if UNTERTITEL else "Ohne Untertitel (so gewünscht)", 0)
     timed, off = [], 0.0
     for c in clips:
         for a, b in c["segs"]:
@@ -202,7 +289,7 @@ def build_subs(clips, path):
             end = g[k + 1][0] if k + 1 < len(g) else g[-1][1] + 0.15
             if next_start is not None:
                 end = min(end, next_start)  # Blöcke dürfen sich nicht überlappen
-            text = " ".join(("{\\c&H0000FFFF&\\fscx112\\fscy112}" + x[2] + "{\\r}") if j == k else x[2] for j, x in enumerate(g))
+            text = " ".join(("{\\c" + HL + "\\fscx112\\fscy112}" + x[2] + "{\\r}") if j == k else x[2] for j, x in enumerate(g))
             lines.append(f"Dialogue: 0,{ass_time(start)},{ass_time(max(end, start + 0.05))},Friday,,0,0,0,,{text}")
     header = """[Script Info]
 ScriptType: v4.00+
@@ -213,14 +300,24 @@ WrapStyle: 0
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Friday,Arial Black,78,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,-1,0,0,0,100,100,1,0,1,6,2,2,60,60,420,1
+Style: Titel,Arial Black,104,&H00FFFFFF,&H00FFFFFF,&H00000000,&H78000000,-1,0,0,0,100,100,2,0,1,7,3,8,70,70,300,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
+    if not UNTERTITEL:
+        lines, groups = [], []
+    t_ass = lambda x: re.sub(r"[{}\\]", "", x)
+    if TITEL:  # Text in Anführungszeichen / nach „Titel:“ – steht genau so im Video
+        lines.append(f"Dialogue: 2,{ass_time(0.1)},{ass_time(min(2.8, max(1.0, total - 0.2)))},Titel,,0,0,0,,{{\\fad(250,300)\\3c{HL}\\blur1}}{t_ass(TITEL)}")
+    if ABSPANN and total > 4:
+        lines.append(f"Dialogue: 2,{ass_time(total - 2.6)},{ass_time(total)},Titel,,0,0,0,,{{\\fad(300,200)\\3c{HL}\\blur1}}{t_ass(ABSPANN)}")
     with open(path, "w", encoding="utf-8") as f:
         f.write(header + "\n".join(lines) + "\n")
     emit(type="subs", blocks=[[round(g[0][0], 2), round(g[-1][1], 2)] for g in groups])
-    agent("untertitel", "fertig", f"{len(groups)} Untertitel-Blöcke, aktuelles Wort gelb", 100)
+    extra = (" · Titel „" + TITEL + "“" if TITEL else "") + (" · Abspann „" + ABSPANN + "“" if ABSPANN else "")
+    farbe = "in deiner Farbe" if FARBE else "gelb"
+    agent("untertitel", "fertig" if UNTERTITEL else "übersprungen", (f"{len(groups)} Untertitel-Blöcke, aktuelles Wort {farbe}" if UNTERTITEL else "Keine Untertitel") + extra, 100)
 
 
 # ---------- Regie: zusammensetzen ----------
@@ -244,7 +341,7 @@ def render(clips, ass, out, total):
     parts.append(f"{''.join(labels)}concat=n={n}:v=1:a=1[vc][ac]")
     parts.append(f"[vc]subtitles=filename='{esc(ass)}':fontsdir='{esc(FONTS)}'[vout]")
     voice = "[ac]afftdn=nf=-25,highpass=f=80"
-    music = sorted(f for f in glob.glob(os.path.join(MUSIK, "*")) if f.lower().endswith((".mp3", ".m4a", ".wav", ".aac")))
+    music = [] if not MUSIK_AN else sorted(f for f in glob.glob(os.path.join(MUSIK, "*")) if f.lower().endswith((".mp3", ".m4a", ".wav", ".aac")))
     if music:
         inputs += ["-stream_loop", "-1", "-i", music[0]]
         parts.append(f"{voice},asplit=2[voice][key]")
@@ -253,7 +350,7 @@ def render(clips, ass, out, total):
         parts.append("[voice][duck]amix=inputs=2:duration=first:dropout_transition=0,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[aout]")
     else:
         parts.append(f"{voice},loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[aout]")
-    agent("audio", "läuft", "Rauschfilter + Lautheit" + (f" · Musik „{os.path.basename(music[0])}“ unter der Sprache leiser" if music else ""), None)
+    agent("audio", "läuft", "Rauschfilter + Lautheit" + ("" if MUSIK_AN else " · ohne Musik (so gewünscht)") + (f" · Musik „{os.path.basename(music[0])}“ unter der Sprache leiser" if music else ""), None)
     cmd = [FF, "-hide_banner", "-nostdin", "-y", *inputs, "-filter_complex", ";".join(parts), "-map", "[vout]", "-map", "[aout]",
            "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart",
            "-progress", "pipe:1", "-nostats", out]
@@ -301,9 +398,14 @@ def main():
         jobs = [pool.submit(transcribe, clips), pool.submit(analyse_audio, clips), pool.submit(analyse_color, clips)]
         for j in jobs:
             j.result()
+    if V.get("verstanden"):
+        agent("regie", "läuft", "Deine Anweisung: " + " · ".join(V["verstanden"])[:180], 8)
     total = plan_cuts(clips)
+    total = auswahl(clips, total)
+    if total <= 0.2:
+        raise RuntimeError("Nach deinen Vorgaben bleibt nichts vom Video übrig.")
     ass = os.path.join(WORK, "untertitel.ass")
-    build_subs(clips, ass)
+    build_subs(clips, ass, total)
     out = os.path.join(OUT, time.strftime("Friday-Schnitt_%Y-%m-%d_%H-%M.mp4"))
     render(clips, ass, out, total)
     err = ff(["-i", out]).stderr
