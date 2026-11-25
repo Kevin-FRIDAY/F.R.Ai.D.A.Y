@@ -30,7 +30,7 @@
     $("ws-stile").querySelectorAll("button").forEach((x) => { x.classList.toggle("on", x === b); x.setAttribute("aria-checked", String(x === b)); });
   });
   const wahl = () => ({ stil: stil || undefined, branche: $("ws-branche")?.value || undefined, eigen: $("ws-eigen")?.checked || $("ws-branche")?.value === "persoenlich" || undefined });
-  // v1.171.0: Eigene Seite (für uns selbst) → kein Preisvorschlag, kein Angebot, kein Verkauf.
+  // v1.172.0: Eigene Seite (für uns selbst) → kein Preisvorschlag, kein Angebot, kein Verkauf.
   const preisText = (r) => (r?.eigen ? " Eure eigene Seite, ohne Preis." : ` Preisvorschlag ${eur(r?.preis_eur)}.`);
   const fertigSagen = (r, vorne = "") => (r?.eigen ? `Fertig, Chef. ${vorne}Eure eigene Seite ${r.titel} steht. Die Platzhalter in Klammern kannst du mit euren Angaben füllen.` : `Fertig, Chef. ${vorne}${r.titel} steht. Mein Preisvorschlag: ${Math.round(r?.preis_eur || 0)} Euro.`);
 

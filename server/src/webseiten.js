@@ -1,7 +1,7 @@
 // Fridays Webseiten-Werkstatt: baut aus einem Auftrag eine fertige Webseite (eine HTML-Datei)
 // plus Angebotstext. Verkaufen und kassieren tut der Nutzer selbst; einen Verkauf trägt er ein,
 // dann zählt er als Einnahme in Fridays Überlebens-Bilanz.
-// v1.171.0: Eigene Seiten ("bau eine Webseite von uns und stell uns vor") bekommen kein Angebot und keinen Preis.
+// v1.172.0: Eigene Seiten ("bau eine Webseite von uns und stell uns vor") bekommen kein Angebot und keinen Preis.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -33,7 +33,7 @@ const WEBSEITE_TOOL = {
   },
 };
 
-// v1.171.0: Eigene Seite ("bau eine Webseite von uns und stell uns vor"): nur Titel + HTML, kein Angebot, kein Preis.
+// v1.172.0: Eigene Seite ("bau eine Webseite von uns und stell uns vor"): nur Titel + HTML, kein Angebot, kein Preis.
 const EIGEN_TOOL = {
   name: "webseite",
   description: "Gibt die fertige eigene Webseite zurück (ohne Angebot und ohne Preis).",

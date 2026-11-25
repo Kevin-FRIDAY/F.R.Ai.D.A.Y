@@ -187,7 +187,7 @@ export const BRANCHEN = {
     faq: [["Wie lange dauert ein Projekt?", "Eine Landingpage oft 2 Wochen, größere Projekte 6–12 Wochen."], ["Arbeitet ihr remote?", "Ja, und gern auch vor Ort beim Kickoff."], ["Was kostet die Betreuung?", "Je nach Umfang, transparent als Monatspaket."]],
     bilder: { hero: "modern office technology", about: "team meeting startup", galerie: ["laptop design workspace", "creative team brainstorming", "city skyline night"] }, zeiten: [["Mo–Fr", "9–18 Uhr"], ["Termine", "auch online"], ["Support", "[Angabe eintragen]"]], preis: 1490,
   },
-  // v1.171.0: Eigene Seite ("bau eine Webseite von uns und stell uns vor") – keine Preise, kein Verkauf.
+  // v1.172.0: Eigene Seite ("bau eine Webseite von uns und stell uns vor") – keine Preise, kein Verkauf.
   persoenlich: {
     name: "Persönlich (wir selbst)", re: /$^/, stil: "neon", beispiel: "Das sind wir", icons: ["herz", "stern", "funke", "uhr"], ohnePreise: true,
     kicker: "Hallo, schön dass du da bist", h1: "Das sind wir. Schön, dich kennenzulernen.", sub: "Hier erzählen wir, wer wir sind, was uns antreibt und woran wir gerade arbeiten. Ganz persönlich, ohne Werbung.",
@@ -219,7 +219,7 @@ export function erkenneBranche(text) {
   return "allgemein";
 }
 
-/** v1.171.0: Ist das eine Seite für den Nutzer selbst ("von uns", "stell uns vor") statt für einen Kunden? Dann kein Angebot und kein Preis. */
+/** v1.172.0: Ist das eine Seite für den Nutzer selbst ("von uns", "stell uns vor") statt für einen Kunden? Dann kein Angebot und kein Preis. */
 export function istEigeneSeite(text) {
   const t = String(text || "").toLowerCase().replace(/ü/g, "ue");
   if (/\b(ohne|kein(?:en|e)?)\s+(?:verkaufs-?)?(?:preis|angebot)|nicht\s+(?:zum\s+)?verkauf(?:en)?\b|nicht\s+fuer\s+(?:einen\s+)?kunden|fuer\s+(?:uns|mich)\s+selbst|privat\w*\s+(?:web)?seite/.test(t)) return true;

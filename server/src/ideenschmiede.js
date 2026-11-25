@@ -2,6 +2,7 @@
 // für Alltag und privaten Nutzen. Friday würfelt Ideen, prüft deine eigenen mit einem ehrlichen
 // Schnell-Check (Problem, Zielgruppe, Geld, Aufwand, Risiko) und hebt alles im Ideen-Tresor auf.
 // v1.164.0: Was schon in Friday eingebaut ist, wird nicht mehr vorgeschlagen; frische Ideen rücken nach.
+// v1.171.0: aufgeräumt (Eingebautes raus) und mit neuen Ideen aufgefüllt.
 // Läuft OHNE Claude. Nur „Ausarbeiten mit KI“ (Geschäftsmodell-Leinwand, Namensideen, erste Kunden) braucht Guthaben.
 import * as store from "./store.js";
 import * as logbuch from "./logbuch.js";
@@ -25,7 +26,7 @@ export const BEREICHE = {
 const SAMEN = [
   ["alltag", "Nachbarschafts-Werkzeugverleih", "Bohrmaschine, Leiter, Hochdruckreiniger: einmal kaufen, im Haus per Liste verleihen.", "Zettel im Treppenhaus: Wer hat was? 10 Antworten sammeln.", "0–50 €"],
   ["alltag", "Rechnungs- und Vertrags-Ordner mit Fristen-Wecker", "Alle Verträge an einem Ort, Friday erinnert vor Kündigungsfristen.", "Deine 5 wichtigsten Verträge mit Kündigungsfrist notieren.", "0 €", "vertraege.js"],
-  ["alltag", "Wochen-Essensplan aus dem Angebotsprospekt", "Aus den Angeboten der Woche einen günstigen Essensplan für die Familie bauen.", "Einen Prospekt nehmen und daraus 5 Gerichte planen.", "0 €"],
+  ["alltag", "Wochen-Essensplan aus dem Angebotsprospekt", "Aus den Angeboten der Woche einen günstigen Essensplan für die Familie bauen.", "Einen Prospekt nehmen und daraus 5 Gerichte planen.", "0 €", "essensplan.js"],
   ["alltag", "Familien-Notfallmappe", "Wichtige Nummern, Medikamente, Passwörter-Hinweise und Dokumente an einem sicheren Ort.", "Eine Seite mit den 10 wichtigsten Infos ausfüllen.", "0–20 €", "notfall.js"],
   ["alltag", "Garten- und Pflanzen-Gießplan", "Welche Pflanze wann Wasser braucht – mit Erinnerung.", "Alle Pflanzen fotografieren und Namen herausfinden.", "0 €", "pflanzen.js"],
   ["kreativ", "Mini-Doku über deine Stadt", "Jede Woche ein 60-Sekunden-Video über einen unbekannten Ort in deiner Stadt.", "Drei Orte aufschreiben und den ersten mit dem Handy filmen.", "0 €"],
@@ -39,8 +40,7 @@ const SAMEN = [
   ["nische", "Webseiten für Handwerker", "Einfache, schnelle Ein-Seiten-Webseiten für kleine Betriebe ohne Internetauftritt.", "Drei Betriebe ohne Webseite in deiner Nähe heraussuchen.", "0 €"],
   ["nische", "Haustier-Sitting per App-Liste", "Katzen füttern und Gassi gehen in der Nachbarschaft – mit Foto-Update.", "In der Nachbarschaftsgruppe nachfragen, wer Bedarf hat.", "0 €"],
   ["nische", "Flohmarkt-Profi", "Für andere Sachen fotografieren, beschreiben und online verkaufen – gegen Anteil.", "Fünf eigene Sachen perfekt einstellen und verkaufen.", "0 €"],
-  ["technik", "Energie-Spion für zu Hause", "Mit Zwischenstecker-Messgeräten die größten Stromfresser finden.", "Ein Messgerät besorgen und eine Woche lang Geräte messen.", "15–40 €"],
-  ["technik", "Friday als Haus-Info-Display", "Ein altes Tablet an die Wand: Wetter, Termine, Müllabfuhr, Bahn.", "Altes Tablet suchen und Fridays Kern-Seite öffnen.", "0–30 €", "core.html"],
+  ["technik", "Energie-Spion für zu Hause", "Mit Zwischenstecker-Messgeräten die größten Stromfresser finden.", "Ein Messgerät besorgen und eine Woche lang Geräte messen.", "15–40 €", "shelly.js"],
   ["technik", "Pflanzen-Feuchtigkeitssensor", "Kleiner Sensor meldet per Telegram, wenn die Erde trocken ist.", "Einen ESP32 mit Bodenfeuchte-Sensor bestellen.", "10–20 €"],
   ["technik", "Lokaler Foto-Tresor", "Alle Familienfotos automatisch vom Handy auf eine eigene Festplatte sichern.", "Speicherbedarf prüfen und eine Festplatte aussuchen.", "60–120 €"],
   ["technik", "Briefkasten-Melder", "Sensor in der Klappe meldet: Post ist da.", "Einen Tür/Fenster-Sensor fürs Smart Home besorgen.", "10–25 €"],
@@ -57,6 +57,19 @@ const SAMEN = [
   ["technik", "Eigene Wetterstation", "ESP32 mit Temperatur-, Feuchte- und Luftdrucksensor auf dem Balkon, Friday zeigt die Werte.", "Einen ESP32 und einen BME280-Sensor bestellen.", "15–30 €"],
   ["technik", "Retro-Spielkonsole", "Ein Raspberry Pi wird zur Spielkonsole für alte Spiele, die du selbst besitzt.", "Raspberry Pi und zwei günstige Controller besorgen.", "60–100 €"],
   ["technik", "Altes Handy als Küchen-Radio", "Ein ausgemustertes Handy mit Lautsprecher in der Küche: Radio, Rezepte, Timer.", "Altes Handy zurücksetzen und nur Radio-App plus Friday einrichten.", "0–20 €"],
+  // ---- Neu nachgerückt (v1.171.0) ----
+  ["alltag", "Leih-Kiste für Kinderkleidung", "Kinder wachsen schnell: Eltern im Haus tauschen Kleidung in Kisten nach Größe, statt ständig neu zu kaufen.", "Eine Kiste Größe 98 packen und in der Eltern-Gruppe anbieten.", "0 €"],
+  ["alltag", "Zehn-Minuten-Aufräumen am Abend", "Jeden Abend ein Timer für 10 Minuten, alle räumen gleichzeitig auf, danach ist frei.", "Heute Abend einen Timer stellen und ausprobieren, was in 10 Minuten schaffbar ist.", "0 €"],
+  ["alltag", "Wochenend-Ausflug-Glas", "Zettel mit Ausflugsideen in ein Glas, am Freitag wird eine gezogen. Keine Diskussion mehr, was man macht.", "Mit der Familie 15 Ideen sammeln und aufschreiben.", "0–5 €", "ausfluege.js"],
+  ["kreativ", "Eigenes Kartenspiel entwerfen", "Ein Familien-Kartenspiel mit eigenen Regeln und Figuren, selbst gezeichnet und gedruckt.", "Zehn Karten auf Papier skizzieren und eine Proberunde spielen.", "0–30 €"],
+  ["kreativ", "Hörspiel mit verteilten Rollen", "Eine kurze Geschichte mit Freunden einsprechen, Geräusche selbst machen, Friday schneidet Musik darunter.", "Ein 2-Seiten-Skript schreiben und die Rollen verteilen.", "0 €"],
+  ["kreativ", "Foto-Schnitzeljagd", "Liste mit 20 Motiven (etwas Rotes, ein Spiegelbild …), wer zuerst alle fotografiert hat, gewinnt.", "Eine Liste schreiben und am Wochenende mit der Familie losziehen.", "0 €"],
+  ["nische", "Handy-Umzug-Service", "Daten, Fotos, WhatsApp und Apps vom alten aufs neue Handy übertragen, für Leute, die Angst vor Datenverlust haben.", "Bei zwei Bekannten den nächsten Handy-Wechsel übernehmen und die Zeit stoppen.", "0 €"],
+  ["nische", "Balkon-Kraftwerk-Berater", "Leuten helfen, das passende Steckersolargerät auszusuchen, anzumelden und sicher aufzubauen.", "Die Anmeldung bei deinem Netzbetreiber einmal selbst durchspielen und aufschreiben.", "0 €"],
+  ["nische", "Geburtstags-Video-Collage", "Grußvideos von Freunden einsammeln und zu einem fertigen Geburtstagsfilm schneiden.", "Für den nächsten Geburtstag im Freundeskreis 5 Grüße sammeln.", "0 €"],
+  ["technik", "Strom vom Balkon messen", "Ein Balkonkraftwerk mit Messsteckdose: Friday zeigt, wie viel Sonne heute Geld gespart hat.", "Preise für ein 800-Watt-Set vergleichen und die Balkonrichtung prüfen.", "300–600 €"],
+  ["technik", "Bewässerung mit Raspberry Pi", "Kleine Pumpe und Feuchtesensor gießen die Balkonpflanzen im Urlaub automatisch.", "Eine 5-Volt-Pumpe, einen Schlauch und einen Sensor bestellen.", "20–40 €"],
+  ["technik", "Nachtlicht mit Bewegungsmelder", "LED-Streifen im Flur, der nachts nur gedimmt angeht, wenn jemand vorbeiläuft. Kein Stolpern, kein grelles Licht.", "Einen LED-Streifen und einen kleinen Bewegungssensor fürs Smart Home bestellen.", "15–30 €"],
 ];
 // Würfel-Bausteine für frische Kombinationen
 const FUER = ["Familien mit kleinen Kindern", "Senioren", "Haustierbesitzer", "Pendler", "kleine Handwerksbetriebe", "Studenten", "Gartenfreunde", "Vereine", "Nachbarn im Haus", "Hobby-Köche"];

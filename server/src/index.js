@@ -13,6 +13,7 @@ import { getWeather, getProtocols, runTool } from "./tools.js";
 import { agentsWithStatus, agentLosschicken } from "./agents.js";
 import { getVideoJob, startVideoJob, openVideoDir } from "./videoteam.js";
 import { getStudio, starteStudio, listeVideos, zeigeImFinder, posterPfad } from "./videostudio.js";
+import { leseAnweisung } from "./regieplan.js";
 import { komponiere, STIMMUNG_IDS } from "./musik.js";
 import { getForecast, getDepot, paperTrade, resetDepot } from "./markt.js";
 import { planBuild, getLatestBuild, getBuildJob } from "./werkstatt.js";
@@ -562,14 +563,21 @@ app.post("/api/agents/:id/einsatz", asyncRoute(async (req, res) => {
   res.json(await agentLosschicken(id, eingabe, "dashboard"));
 }));
 app.get("/api/video-job", (req, res) => res.json(getVideoJob()));
-app.post("/api/video-job", (req, res) => { const r = startVideoJob({ look: req.body?.look }); res.status(r.ok ? 200 : 400).json(r); });
+app.post("/api/video-job", (req, res) => { const r = startVideoJob({ look: req.body?.look, anweisung: typeof req.body?.anweisung === "string" ? req.body.anweisung : "" }); res.status(r.ok ? 200 : 400).json(r); });
 app.post("/api/video-open", (req, res) => res.json(openVideoDir(String(req.body?.which || ""))));
 // Video-Studio: Videos auf Zuruf (Drehbuch, freie Fotos/eigene Clips, eigene Musik, Sprecher)
 app.get("/api/studio", (req, res) => res.json(getStudio()));
 app.post("/api/studio", (req, res) => {
   const b = req.body || {};
-  const r = starteStudio({ thema: b.thema, sekunden: b.sekunden, format: b.format, musik: b.musik, bilder: b.bilder, sprecher: b.sprecher === true, stil: b.stil });
+  const r = starteStudio({ thema: b.thema, anweisung: typeof b.anweisung === "string" ? b.anweisung : undefined, sekunden: b.sekunden, format: b.format, musik: b.musik, bilder: b.bilder, sprecher: b.sprecher === true, stil: b.stil });
   res.status(r.ok ? 200 : 400).json(r);
+});
+// Vorschau im Schnitt-Team: was Friday aus dem Text als Regie-Anweisung liest (ohne Claude, sofort)
+app.post("/api/regie/verstehen", (req, res) => {
+  const text = typeof req.body?.text === "string" ? req.body.text.slice(0, 900) : "";
+  const art = req.body?.art === "schnitt" ? "schnitt" : "studio";
+  const p = leseAnweisung(text, { art });
+  res.json({ kern: p.kern, verstanden: p.verstanden });
 });
 app.get("/api/studio/videos", (req, res) => res.json({ videos: listeVideos() }));
 app.get("/api/studio/hoerprobe/:stimmung", (req, res) => {
