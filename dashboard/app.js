@@ -715,6 +715,9 @@
         if (hat("archiv")) window.FridayArchiv?.open();
         if (hat("gehirn")) window.FridayGehirn?.open();
         if (hat("oekosystem")) window.FridayOekosystem?.open();
+        // Agenten-Einsatz (v1.165.0): Büro öffnen und den losgeschickten Agenten zeigen
+        const bueroA = aktion("buero:");
+        if (bueroA) window.Friday?.buero?.zeige(bueroA.slice(6));
         // Routen & Verbindungen: Karte mit Auto, Rad, zu Fuß und Bahn/Bus zeigen.
         const routeAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("route:"));
         const routeZiel = data.actions?.find((a) => typeof a === "string" && a.startsWith("route_ziel:"));

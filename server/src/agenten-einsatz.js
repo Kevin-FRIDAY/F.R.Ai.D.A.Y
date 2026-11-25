@@ -65,10 +65,10 @@ export async function heimOrt(name = config.city) {
 
 // Strompreis: günstigste Stunden an der Strombörse (aWATTar, Day-Ahead Deutschland).
 async function strom() {
-  const o = await oeffentlich("strom");
-  const d = await holeJson(`https://api.awattar.de/v1/marketdata?start=${Date.now() - 3600000}`);
+  const d = await holeJson(`https://api.awattar.de/v1/marketdata?start=${Date.now() - 3600000}`).catch(() => ({ data: [] }));
   const slots = (d.data || []).map((s) => ({ von: s.start_timestamp, bis: s.end_timestamp, ct: s.marketprice / 10 })).filter((s) => s.bis > Date.now());
   if (!slots.length) {
+    const o = await oeffentlich("strom");
     if (o) return { titel: o.titel || "Strompreis", text: o.text, punkte: o.zeilen || [], quelle: o.quelle };
     throw new Error("Keine Börsenpreise gefunden");
   }
@@ -389,9 +389,11 @@ export async function einsetzen(id, eingabe = "", { name = id, kanal = "dashboar
       e.lauf(String(eingabe || "").slice(0, 500)),
       new Promise((_, nein) => setTimeout(() => nein(new Error("Die Quelle antwortet gerade nicht (Zeitlimit).")), MAX_MS)),
     ]);
-    bericht = { agent: id, ok: true, titel: r.titel || name, text: r.text, punkte: (r.punkte || []).filter(Boolean).slice(0, 10), quelle: r.quelle || "", link: r.link || "", at: new Date().toISOString(), dauer_ms: Date.now() - start };
+    bericht = { agent: id, ok: true, titel: r.titel || name, text: String(r.text || "").replace(/\.\.(?=\s|$)/g, "."), punkte: (r.punkte || []).filter(Boolean).slice(0, 10), quelle: r.quelle || "", link: r.link || "", at: new Date().toISOString(), dauer_ms: Date.now() - start };
   } catch (err) {
-    bericht = { agent: id, ok: false, titel: name, text: `${name} kam nicht durch: ${String(err?.message || err).slice(0, 160)}`, punkte: [], at: new Date().toISOString(), dauer_ms: Date.now() - start };
+    const m = String(err?.message || err);
+    const grund = /fetch failed|ENOTFOUND|ECONNREFUSED|EAI_AGAIN|network/i.test(m) ? "Die Quelle ist gerade nicht erreichbar (Internet?)." : /abort|timeout/i.test(m) ? "Die Quelle antwortet gerade nicht (Zeitlimit)." : m;
+    bericht = { agent: id, ok: false, titel: name, text: `${name} kam nicht durch: ${grund.slice(0, 160)}`, punkte: [], at: new Date().toISOString(), dauer_ms: Date.now() - start };
   } finally {
     laufend.delete(id);
     try { auftragFertig(kanalId, bericht?.ok !== false); } catch { /* egal */ }
