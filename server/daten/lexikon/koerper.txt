@@ -48,3 +48,152 @@ Diabetes|Bei Diabetes ist der Blutzucker dauerhaft zu hoch, weil Insulin fehlt o
 Augen und Bildschirm|Die 20-20-20-Regel entlastet die Augen: alle 20 Minuten für 20 Sekunden etwas in etwa 6 Metern Entfernung ansehen.|bildschirmarbeit augen
 Organspende|In Deutschland kann man im Organspendeausweis oder im Online-Register festhalten, ob man Organe spenden möchte.|organspendeausweis
 Blutspende|Blut spenden dürfen gesunde Menschen ab 18 Jahren. Männer bis zu sechsmal, Frauen bis zu viermal im Jahr. Eine Spende sind etwa 500 Milliliter.|blut spenden
+Skelett|Ein erwachsener Mensch hat rund 206 Knochen, ein Baby hat bei der Geburt etwa 300, die später teilweise zusammenwachsen.|knochen anzahl,wie viele knochen
+Oberschenkelknochen|Der Oberschenkelknochen ist der längste und stärkste Knochen des Menschen.|femur,laengster knochen
+Steigbügel|Der Steigbügel im Mittelohr ist mit rund 3 Millimetern der kleinste Knochen des Menschen.|kleinster knochen
+Wirbelsäule|Die Wirbelsäule hat 24 freie Wirbel plus Kreuzbein und Steißbein, sie trägt den Körper und schützt das Rückenmark.|wirbel
+Bandscheibe|Bandscheiben liegen als Puffer zwischen den Wirbeln. Beim Bandscheibenvorfall drückt Gewebe auf Nerven.|bandscheibenvorfall
+Gelenke|Gelenke verbinden Knochen beweglich, etwa Kugelgelenk an Schulter und Hüfte, Scharniergelenk am Knie.|gelenk
+Sehne|Sehnen verbinden Muskeln mit Knochen, die Achillessehne ist die stärkste des Körpers.|achillessehne,sehnen
+Kreuzband|Kreuzbänder stabilisieren das Knie, ein Kreuzbandriss ist eine typische Sportverletzung.|kreuzbandriss
+Meniskus|Der Meniskus ist eine Knorpelscheibe im Knie, die Stöße abfedert.|
+Zunge|Die Zunge ist ein starker Muskel. Die Idee von festen Geschmackszonen ist ein Mythos.|zungenkarte
+Geschmack|Wir schmecken süß, sauer, salzig, bitter und umami. Viel vom Geschmack ist eigentlich Geruch.|geschmacksrichtungen
+Nase|Der Mensch kann vermutlich mehr als eine Billion Gerüche unterscheiden.|geruchssinn
+Sinne|Die fünf klassischen Sinne sind Sehen, Hören, Riechen, Schmecken und Tasten. Dazu kommen Gleichgewicht, Temperatur und Schmerz.|fünf sinne,fuenf sinne
+Gleichgewichtssinn|Der Gleichgewichtssinn sitzt im Innenohr.|
+Nerven|Nervensignale rasen mit bis zu 120 Metern pro Sekunde durch den Körper.|nervensystem
+Neuronen|Das Gehirn hat rund 86 Milliarden Nervenzellen.|nervenzellen
+Rückenmark|Das Rückenmark verbindet Gehirn und Körper und liegt geschützt in der Wirbelsäule.|
+Blutkreislauf|Das Blut braucht etwa eine Minute für einen Umlauf durch den Körper. Alle Blutgefäße zusammen wären rund 100.000 Kilometer lang.|kreislauf,blutgefaesse
+Rote Blutkörperchen|Rote Blutkörperchen transportieren Sauerstoff mit dem Eiweiß Hämoglobin und leben etwa 120 Tage.|erythrozyten
+Weiße Blutkörperchen|Weiße Blutkörperchen gehören zum Immunsystem und bekämpfen Krankheitserreger.|leukozyten
+Blutplättchen|Blutplättchen sorgen dafür, dass Wunden sich schließen.|thrombozyten
+Cholesterin|Cholesterin ist ein Fett im Blut. Zu viel LDL-Cholesterin kann die Gefäße verengen, HDL gilt als das gute.|cholesterinwert
+Arteriosklerose|Bei Arteriosklerose lagern sich Fette und Kalk in den Gefäßwänden ab, umgangssprachlich Gefäßverkalkung.|gefaessverkalkung
+Thrombose|Eine Thrombose ist ein Blutgerinnsel, oft in den Beinvenen. Bei langen Flügen hilft Bewegung und Trinken.|blutgerinnsel
+Lungenembolie|Bei einer Lungenembolie verstopft ein Gerinnsel ein Lungengefäß, plötzliche Atemnot ist ein Notfall: 112.|
+Asthma|Bei Asthma verengen sich die Atemwege anfallsweise, Auslöser sind oft Allergien, Kälte oder Anstrengung.|
+Bronchitis|Eine Bronchitis ist eine Entzündung der Bronchien mit Husten, meist durch Viren.|
+Lungenentzündung|Eine Lungenentzündung macht hohes Fieber, Husten und Atemnot und gehört zum Arzt.|pneumonie
+Mandelentzündung|Bei einer Mandelentzündung sind die Rachenmandeln geschwollen und schmerzen beim Schlucken.|angina,tonsillitis
+Mittelohrentzündung|Eine Mittelohrentzündung ist bei Kindern häufig und verursacht starke Ohrenschmerzen.|ohrenschmerzen
+Bindehautentzündung|Bei einer Bindehautentzündung sind die Augen rot, jucken und tränen. Manche Formen sind ansteckend.|
+Magen-Darm-Grippe|Ein Magen-Darm-Infekt, oft durch Noroviren, macht Übelkeit, Erbrechen und Durchfall. Wichtig ist viel trinken.|magen darm,noroviren,durchfall
+Sodbrennen|Bei Sodbrennen steigt Magensäure in die Speiseröhre, kleinere Mahlzeiten und nicht spät essen helfen.|
+Blinddarmentzündung|Eine Blinddarmentzündung beginnt oft mit Schmerzen um den Nabel, die in den rechten Unterbauch wandern. Sofort zum Arzt.|appendizitis,blinddarm
+Gallensteine|Gallensteine können krampfartige Schmerzen im rechten Oberbauch auslösen.|
+Nierensteine|Nierensteine verursachen sehr starke Koliken, viel Trinken beugt vor.|
+Migräne|Migräne sind starke, oft einseitige Kopfschmerzen, manchmal mit Lichtempfindlichkeit und Übelkeit.|
+Tinnitus|Tinnitus ist ein Ohrgeräusch wie Pfeifen oder Rauschen, das andere nicht hören.|ohrgeraeusch
+Hörsturz|Ein plötzlicher Hörverlust auf einem Ohr sollte zügig ärztlich abgeklärt werden.|hoersturz
+Grauer Star|Beim Grauen Star trübt sich die Augenlinse, eine Operation hilft sehr zuverlässig.|katarakt
+Grüner Star|Beim Grünen Star schädigt meist zu hoher Augendruck den Sehnerv, Vorsorge beim Augenarzt hilft.|glaukom
+Kurzsichtigkeit|Kurzsichtige sehen in der Ferne unscharf, Weitsichtige in der Nähe.|weitsichtigkeit
+Rot-Grün-Schwäche|Etwa jeder zwölfte Mann hat eine Rot-Grün-Sehschwäche, bei Frauen ist es sehr selten.|farbenblind
+Krebs (Krankheit)|Krebs entsteht, wenn Zellen unkontrolliert wachsen. Häufige Krebsarten sind Brust-, Prostata-, Darm- und Lungenkrebs. Vorsorge erhöht die Heilungschancen.|krebs krankheit,tumor
+Darmkrebsvorsorge|In Deutschland wird ab 50 eine Darmspiegelung zur Vorsorge angeboten, die Kasse zahlt sie.|darmspiegelung
+Hautkrebs|Sonnenschutz senkt das Hautkrebsrisiko. Auffällige Leberflecken sollte ein Hautarzt ansehen.|
+Bluthochdruck|Bluthochdruck tut nicht weh, schädigt aber Herz und Gefäße, darum regelmäßig messen.|hypertonie
+Niedriger Blutdruck|Niedriger Blutdruck ist meist harmlos, kann aber Schwindel beim Aufstehen machen.|hypotonie
+Diabetes Typ 1|Bei Typ-1-Diabetes produziert der Körper kein Insulin mehr, Betroffene müssen Insulin spritzen.|typ 1 diabetes
+Diabetes Typ 2|Typ-2-Diabetes entsteht oft durch Übergewicht und Bewegungsmangel, die Zellen sprechen schlecht auf Insulin an.|typ 2 diabetes
+Unterzuckerung|Bei Unterzuckerung helfen schnell Traubenzucker oder ein zuckerhaltiges Getränk. Bewusstlos: 112.|hypoglykaemie
+Schilddrüse|Die Schilddrüse am Hals steuert mit Hormonen den Stoffwechsel.|schilddruese
+Insulin|Insulin ist ein Hormon aus der Bauchspeicheldrüse, das den Blutzucker senkt.|
+Adrenalin|Adrenalin ist das Stresshormon, das Herzschlag und Aufmerksamkeit bei Gefahr steigert.|
+Dopamin|Dopamin ist ein Botenstoff im Gehirn, der bei Belohnung und Motivation eine Rolle spielt.|
+Serotonin|Serotonin ist ein Botenstoff, der Stimmung und Schlaf beeinflusst.|glueckshormon
+Melatonin|Melatonin ist das Schlafhormon, es wird bei Dunkelheit ausgeschüttet.|schlafhormon
+Endorphine|Endorphine sind körpereigene Glückshormone, etwa nach Sport.|
+Testosteron|Testosteron ist das wichtigste männliche Sexualhormon.|
+Östrogen|Östrogen ist das wichtigste weibliche Sexualhormon.|oestrogen
+Depression|Eine Depression ist eine ernste Krankheit mit lang anhaltender Niedergeschlagenheit und Antriebslosigkeit. Sie ist gut behandelbar, Hilfe gibt es beim Hausarzt oder bei der Telefonseelsorge 0800 111 0 111.|depressionen
+Burnout-Syndrom|Burnout ist ein Zustand tiefer Erschöpfung durch Dauerstress, oft im Beruf.|
+Angststörung|Bei einer Angststörung treten starke Ängste ohne echte Gefahr auf, etwa als Panikattacke. Psychotherapie hilft gut.|panikattacke
+Demenz|Bei Demenz lassen Gedächtnis und Denken nach, die häufigste Form ist Alzheimer.|
+Alzheimer|Alzheimer ist die häufigste Form der Demenz, benannt nach dem deutschen Arzt Alois Alzheimer.|
+Parkinson|Parkinson ist eine Nervenkrankheit mit Zittern und steifen Bewegungen.|
+Multiple Sklerose|Multiple Sklerose ist eine Krankheit, bei der das Immunsystem die Nerven angreift.|ms
+Epilepsie|Bei Epilepsie kommt es zu Krampfanfällen. Während eines Anfalls nichts in den Mund stecken, Verletzungen verhindern, bei langem Anfall 112.|krampfanfall
+Rheuma|Rheuma ist ein Sammelbegriff für Erkrankungen von Gelenken und Bindegewebe.|
+Arthrose|Arthrose ist Gelenkverschleiß, besonders in Knie und Hüfte.|
+Osteoporose|Bei Osteoporose werden die Knochen brüchig, Kalzium, Vitamin D und Bewegung beugen vor.|knochenschwund
+Gicht|Gicht entsteht durch Harnsäurekristalle im Gelenk, oft am großen Zeh.|
+Rückenschmerzen|Die meisten Rückenschmerzen sind harmlos und bessern sich mit Bewegung statt Schonung.|ruecken schmerzen
+Hexenschuss|Ein Hexenschuss ist ein plötzlicher, heftiger Schmerz im unteren Rücken.|
+Muskelkater|Muskelkater entsteht durch winzige Risse in den Muskelfasern nach ungewohnter Belastung und vergeht nach ein paar Tagen.|
+Krampf|Bei einem Wadenkrampf hilft Dehnen, Magnesium kann vorbeugen.|wadenkrampf
+Schwindel|Schwindel kann viele Ursachen haben, von Kreislauf bis Innenohr. Plötzlicher starker Schwindel mit Lähmung: 112.|
+Ohnmacht|Bei einer Ohnmacht die Person hinlegen und die Beine hochlegen. Wird sie nicht schnell wach: 112.|bewusstlos
+Hitzschlag|Bei Hitzschlag ist der Körper überhitzt, die Haut heiß und trocken. In den Schatten bringen, kühlen, 112 rufen.|sonnenstich
+Unterkühlung|Bei Unterkühlung langsam aufwärmen, warme Getränke geben, aber nicht stark reiben.|
+Erfrierung|Erfrorene Stellen langsam mit Körperwärme aufwärmen, nicht reiben.|
+Schock|Bei einem Schock ist die Person blass, kaltschweißig und unruhig. Hinlegen, Beine hoch, zudecken, 112.|schocklage
+Insektenstich|Bei einem Insektenstich kühlen. Atemnot oder Schwellung im Hals ist ein Notfall: 112.|wespenstich,bienenstich
+Allergischer Schock|Ein allergischer Schock mit Atemnot und Schwellung ist lebensgefährlich: 112, Notfallset benutzen, falls vorhanden.|anaphylaxie
+Heimlich-Griff|Bei Erstickung durch einen Fremdkörper erst kräftig zwischen die Schulterblätter klopfen, dann den Heimlich-Griff: von hinten umfassen und ruckartig in den Oberbauch drücken.|verschlucken,erstickung
+Wunde versorgen|Kleine Wunden mit Wasser spülen, desinfizieren und mit Pflaster abdecken. Starke Blutung: drücken und 112.|schnittwunde
+Knochenbruch|Bei Verdacht auf einen Knochenbruch das Körperteil ruhigstellen und zum Arzt.|bruch
+Verstauchung|Bei Verstauchungen gilt die PECH-Regel: Pause, Eis, Compression, Hochlagern.|pech regel
+Gehirnerschütterung|Nach einem Schlag auf den Kopf mit Übelkeit, Kopfschmerz oder Gedächtnislücken zum Arzt.|
+Schlafphasen|Der Schlaf läuft in Zyklen von etwa 90 Minuten mit Leichtschlaf, Tiefschlaf und Traumschlaf (REM).|rem schlaf,tiefschlaf
+Schlafbedarf|Erwachsene brauchen meist 7 bis 9 Stunden Schlaf, Kinder deutlich mehr.|wie viel schlaf
+Träume|Wir träumen jede Nacht mehrmals, vor allem im REM-Schlaf, vergessen die meisten Träume aber.|traeumen
+Schnarchen|Schnarchen entsteht durch flatterndes Gewebe im Rachen. Atemaussetzer sollte man abklären lassen.|schlafapnoe
+Gähnen|Warum wir gähnen, ist nicht ganz geklärt, vermutlich kühlt es das Gehirn. Gähnen steckt an.|gaehnen
+Schluckauf|Schluckauf ist ein Krampf des Zwerchfells. Luft anhalten oder Wasser trinken hilft oft.|
+Niesen|Beim Niesen schießt Luft mit über 100 Kilometern pro Stunde aus der Nase.|
+Gänsehaut|Gänsehaut ist ein Überbleibsel aus der Zeit, als Menschen mehr Fell hatten.|gaensehaut
+Fingernägel|Fingernägel wachsen etwa 3 Millimeter pro Monat, schneller als Fußnägel.|naegel
+Haare wachsen|Kopfhaare wachsen etwa einen Zentimeter pro Monat, ein Mensch hat rund 100.000 davon.|
+Graue Haare|Haare werden grau, wenn die Pigmentzellen im Alter weniger Farbstoff bilden.|
+Schweiß|Schweiß kühlt den Körper durch Verdunstung. Riechen tut er erst, wenn Bakterien ihn zersetzen.|schwitzen
+Körpertemperatur|Die normale Körpertemperatur liegt bei etwa 36,3 bis 37,4 Grad, ab 38 Grad spricht man von Fieber.|normale temperatur
+Wasseranteil Körper|Der menschliche Körper besteht zu etwa 60 Prozent aus Wasser.|
+Größtes Organ|Die Haut ist das größte Organ des Menschen, bei Erwachsenen fast 2 Quadratmeter.|
+Bauchspeicheldrüse|Die Bauchspeicheldrüse bildet Verdauungssäfte und die Hormone Insulin und Glukagon.|pankreas
+Milz|Die Milz filtert alte Blutkörperchen und unterstützt das Immunsystem. Man kann ohne sie leben.|
+Gallenblase|Die Gallenblase speichert Galle, die bei der Fettverdauung hilft.|galle
+Speiseröhre|Die Speiseröhre transportiert Nahrung mit Muskelbewegungen in den Magen, sogar im Kopfstand.|
+Zwerchfell|Das Zwerchfell ist der wichtigste Atemmuskel.|
+Mandeln|Die Mandeln im Rachen gehören zum Immunsystem.|rachenmandeln
+Lymphknoten|Lymphknoten filtern die Lymphe und schwellen bei Infekten an.|
+Antikörper|Antikörper sind Eiweiße des Immunsystems, die Erreger erkennen und markieren.|
+Impfung Wirkung|Eine Impfung trainiert das Immunsystem mit harmlosen Bestandteilen eines Erregers, damit es später schnell reagiert.|wie wirkt eine impfung
+Impfkalender|Die Ständige Impfkommission STIKO empfiehlt unter anderem Impfungen gegen Tetanus, Diphtherie, Masern und Grippe für Ältere.|stiko
+Tetanus|Tetanus, der Wundstarrkrampf, wird über Wunden übertragen. Die Impfung sollte alle 10 Jahre aufgefrischt werden.|wundstarrkrampf
+Masern|Masern sind hoch ansteckend, in Deutschland gibt es eine Impfpflicht für Kinder in Kita und Schule.|
+Windpocken|Windpocken machen juckende Bläschen, das Virus kann später als Gürtelrose zurückkehren.|guertelrose
+Borreliose|Borreliose wird durch Zecken übertragen, typisch ist eine sich ausbreitende Rötung um den Stich.|lyme
+FSME|FSME ist eine von Zecken übertragene Hirnhautentzündung, vor allem in Süddeutschland. Es gibt eine Impfung.|
+Corona|Covid-19 wird durch das Coronavirus SARS-CoV-2 ausgelöst, die Pandemie begann Ende 2019.|covid,covid 19
+Malaria|Malaria wird von Mücken übertragen und ist in den Tropen eine der tödlichsten Krankheiten.|
+Antibiotika und Viren|Antibiotika helfen nur gegen Bakterien, nicht gegen Viren wie bei Erkältung oder Grippe.|helfen antibiotika gegen erkaeltung
+Händewaschen|Richtig Händewaschen dauert 20 bis 30 Sekunden mit Seife, auch zwischen den Fingern.|haende waschen
+Zähneputzen|Zweimal täglich zwei Minuten mit Fluoridzahnpasta putzen, dazu Zahnseide. Elektrische Zahnbürsten putzen meist gründlicher.|zaehne putzen
+Karies|Karies entsteht, wenn Bakterien Zucker zu Säure verarbeiten und den Zahnschmelz angreifen.|loch im zahn
+Weisheitszähne|Weisheitszähne kommen oft erst ab 17, viele Menschen lassen sie ziehen.|weisheitszaehne
+Zahnschmelz|Zahnschmelz ist die härteste Substanz im menschlichen Körper.|
+Raucherlunge|Rauchen schädigt fast jedes Organ. Schon nach einem Jahr ohne Zigarette sinkt das Herzinfarktrisiko deutlich.|rauchen aufhoeren
+Sport Empfehlung|Die WHO empfiehlt Erwachsenen mindestens 150 Minuten mäßige Bewegung pro Woche, plus Krafttraining zweimal pro Woche.|wie viel sport
+Kalorienbedarf|Ein Erwachsener braucht grob 1.800 bis 2.500 Kilokalorien am Tag, je nach Größe, Alter und Bewegung.|kalorien am tag
+Grundumsatz|Der Grundumsatz ist die Energie, die der Körper in Ruhe verbraucht, etwa für Atmen und Herzschlag.|
+Abnehmen|Abnehmen klappt, wenn man auf Dauer weniger Energie aufnimmt als man verbraucht. Viel Gemüse, Eiweiß und Bewegung helfen.|abnehmen tipps
+Intervallfasten|Beim Intervallfasten, etwa 16 zu 8, isst man nur in einem Zeitfenster von 8 Stunden.|16 8 fasten
+Vitamin D|Vitamin D bildet die Haut mit Sonnenlicht. Im Winter haben viele in Deutschland zu wenig.|
+Vitamin C|Vitamin C steckt in Paprika, Zitrusfrüchten, Brokkoli und Kiwis und unterstützt das Immunsystem.|
+Vitamin B12|Vitamin B12 steckt fast nur in tierischen Lebensmitteln, Veganer sollten es ergänzen.|b12
+Eisen|Eisen braucht der Körper für das Blut, es steckt in Fleisch, Hülsenfrüchten und Haferflocken.|eisenmangel
+Magnesium|Magnesium ist wichtig für Muskeln und Nerven, es steckt in Nüssen und Vollkorn.|
+Kalzium|Kalzium baut Knochen und Zähne auf, viel davon steckt in Milchprodukten.|calcium
+Jod|Jod braucht die Schilddrüse, darum gibt es Jodsalz.|jodsalz
+Omega-3|Omega-3-Fettsäuren stecken in fettem Fisch, Leinöl und Walnüssen und sind gut fürs Herz.|omega 3
+Kreatin|Kreatin ist ein Stoff in Muskeln, als Nahrungsergänzung hilft er bei Kraftsport.|
+Linkshänder|Etwa jeder zehnte Mensch ist Linkshänder.|linkshaendigkeit
+Zwillinge Mensch|Eineiige Zwillinge entstehen aus einer Eizelle und haben fast gleiches Erbgut, zweieiige sind wie normale Geschwister.|eineiige zwillinge
+Schwangerschaft|Eine Schwangerschaft dauert etwa 40 Wochen ab dem ersten Tag der letzten Periode.|wie lange schwanger
+Baby Entwicklung|Babys lächeln bewusst mit etwa 6 Wochen, sitzen mit etwa 6 bis 8 Monaten und laufen meist um den ersten Geburtstag.|
+Lebenserwartung|Die Lebenserwartung in Deutschland liegt bei etwa 79 Jahren für Männer und 83 Jahren für Frauen.|wie alt werden menschen
+Ältester Mensch|Die Französin Jeanne Calment wurde 122 Jahre alt, das ist der bestätigte Rekord.|aeltester mensch der welt
+Größter Mensch|Der größte Mensch war Robert Wadlow mit 2,72 Metern.|groesster mensch der welt
