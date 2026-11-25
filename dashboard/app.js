@@ -715,6 +715,9 @@
         if (hat("archiv")) window.FridayArchiv?.open();
         if (hat("gehirn")) window.FridayGehirn?.open();
         if (hat("oekosystem")) window.FridayOekosystem?.open();
+        // Agenten-Einsatz (v1.165.0): Büro öffnen und den losgeschickten Agenten zeigen
+        const bueroA = aktion("buero:");
+        if (bueroA) window.Friday?.buero?.zeige(bueroA.slice(6));
         // Routen & Verbindungen: Karte mit Auto, Rad, zu Fuß und Bahn/Bus zeigen.
         const routeAktion = data.actions?.find((a) => typeof a === "string" && a.startsWith("route:"));
         const routeZiel = data.actions?.find((a) => typeof a === "string" && a.startsWith("route_ziel:"));
@@ -764,6 +767,8 @@
         const gegenA = aktion("gegenrede:");
         if (gegenA) window.FridayGegen?.open({ id: gegenA.slice(10) });
         else if (hat("gegenrede")) window.FridayGegen?.open();
+        // Öffentliche Daten (v1.167.0): "daten", "daten:<id>:<eingabe>", "oeffentliche_daten" (Claude)
+        window.FridayDaten?.vonAussen(data.actions || []);
         const wissenA = data.actions?.find((a) => a === "wissen" || (typeof a === "string" && a.startsWith("wissen:")));
         if (wissenA) window.FridayWissen?.oeffne(wissenA.startsWith("wissen:") ? decodeURIComponent(wissenA.slice(7)) : "");
         const lexA = data.actions?.find((a) => a === "lexikon" || (typeof a === "string" && a.startsWith("lexikon:")));
@@ -771,7 +776,7 @@
         // Kevins Wunschliste (v1.160.0): "wunsch" = Übersicht, "wunsch:<reiter>[:suche]" = ein Bereich.
         const wunschA = data.actions?.find((a) => a === "wunsch" || (typeof a === "string" && a.startsWith("wunsch:")));
         if (wunschA) { const [, r, q] = wunschA.split(":"); window.FridayWunsch?.open({ reiter: r || "", q: q ? decodeURIComponent(q) : "" }); }
-        // Stern-Ideen (v1.166.0): Radio/Podcast abspielen, Gäste-Modus anzeigen – erledigt dashboard/sternideen.js.
+        // Stern-Ideen (v1.169.0): Radio/Podcast abspielen, Gäste-Modus anzeigen – erledigt dashboard/sternideen.js.
         try { window.dispatchEvent(new CustomEvent("friday-aktionen", { detail: { actions: data.actions || [] } })); } catch { /* egal */ }
         if (hat("ideen:ausbau")) window.FridayIdeen?.open({ reiter: "ausbau" });
         const ideeA = aktion("idee:");

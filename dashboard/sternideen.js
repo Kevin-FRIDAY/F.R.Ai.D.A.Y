@@ -1,4 +1,4 @@
-// F.R.Ai.D.A.Y – Neue Stern-Ideen (v1.166.0)
+// F.R.Ai.D.A.Y – Neue Stern-Ideen (v1.169.0)
 // Weitere Kacheln im Fenster „⭐ Meine Wunschliste“: Himmel, Spritpreise, Drucken, Radio, Podcasts, Gewohnheiten,
 // Schlaf, Sprach-Trainer, Auto-Logbuch, Gäste-Modus, Briefing zum Mitnehmen. Dazu ein kleiner Player unten
 // (Radio/Podcasts, Aktionen "radio_spiel:", "podcast_spiel:", "radio_stopp") und ein Hinweis-Chip im Gäste-Modus.

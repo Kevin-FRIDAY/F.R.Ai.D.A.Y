@@ -1,4 +1,4 @@
-// Schlaf-Protokoll (v1.166.0, Stern-Idee aus der Ideen-Schmiede).
+// Schlaf-Protokoll (v1.169.0, Stern-Idee aus der Ideen-Schmiede).
 // "Friday, gute Nacht" merkt sich die Uhrzeit, "Friday, guten Morgen" rechnet die Schlafdauer aus
 // und liest danach das kostenlose Kurz-Briefing vor. Wochenkurve im Fenster. Ohne Claude, ohne Uhr am Arm.
 import * as store from "./store.js";

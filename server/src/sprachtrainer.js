@@ -1,4 +1,4 @@
-// Sprach-Trainer (v1.166.0, Stern-Idee aus der Ideen-Schmiede).
+// Sprach-Trainer (v1.169.0, Stern-Idee aus der Ideen-Schmiede).
 // Jeden Tag 5 neue Wörter (Englisch, Spanisch, Französisch, Italienisch). "Friday, frag mich Vokabeln ab":
 // Friday fragt per Sprache, hört die Antwort ab (Mikro bleibt an) und wiederholt, was noch hakt (Lernkartei
 // mit 5 Fächern: falsch → Fach 1, richtig → ein Fach weiter, Fach 1 täglich, Fach 5 nach 2 Wochen). Ohne Claude.
@@ -45,6 +45,7 @@ const RUNDE = 8;
 const laden = () => ({ sprache: "en", karten: {}, neuHeute: { tag: "", n: 0 }, verlauf: [], ...store.load(DATEI, {}) });
 const sichern = (d) => store.save(DATEI, d);
 let abfrage = null; // { bis, sprache, liste:[deutsch], i, richtig, falsch, versuch }
+export const laeuft = () => Boolean(abfrage && abfrage.bis > Date.now());
 
 const ohneAkzent = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z' -]/g, " ").replace(/\s+/g, " ").trim();
 const ARTIKEL = /^(the|a|an|to|el|la|los|las|un|una|le|les|l'|une|il|lo|gli|i|uno)\s+|^l'|^(the|el|la|le|il) /;

@@ -1,4 +1,4 @@
-// Was ist heute am Himmel? (v1.166.0, Stern-Idee aus der Ideen-Schmiede)
+// Was ist heute am Himmel? (v1.169.0, Stern-Idee aus der Ideen-Schmiede)
 // Alles wird direkt auf dem Mac berechnet, ohne Claude und ohne Schlüssel:
 // Mondphase, Sonnenauf-/untergang, sichtbare Planeten (Keplerbahnen nach JPL-Näherung, gut auf ~1°),
 // Sternschnuppen-Nächte (feste Tabelle der großen Ströme) und ISS-Überflüge (Bahndaten von CelesTrak,

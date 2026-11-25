@@ -346,6 +346,6 @@
 }`;
   document.head.appendChild(style);
 
-  // v1.166.0: weitere Ansichten (neue Stern-Ideen) hängen sich hier an, siehe dashboard/sternideen.js.
+  // v1.169.0: weitere Ansichten (neue Stern-Ideen) hängen sich hier an, siehe dashboard/sternideen.js.
   window.FridayWunsch = { open: (o) => { w.auf(o || {}); }, ansichten: ANSICHTEN, hilfen: { karte, sprache, status: (t, f) => status(t, f), zeige: () => zeige(), $, w, datum, zeit, sicherUrl } };
 })();

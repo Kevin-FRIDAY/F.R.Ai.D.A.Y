@@ -1,4 +1,4 @@
-// Spritpreise in der Nähe (v1.166.0, Stern-Idee aus der Ideen-Schmiede).
+// Spritpreise in der Nähe (v1.169.0, Stern-Idee aus der Ideen-Schmiede).
 // Tankerkönig (creativecommons.tankerkoenig.de) liefert die Preise der Markttransparenzstelle für Kraftstoffe,
 // live und kostenlos. Man braucht nur einen kostenlosen Schlüssel (onboarding.tankerkoenig.de).
 // Schlüssel: Fenster "Meine Wunschliste" → Spritpreise, oder .env TANKERKOENIG_API_KEY. Ohne Claude.

@@ -35,7 +35,7 @@ export const WUENSCHE = [
   { id: "widget", reiter: "widget", icon: "📱", titel: "iPhone-Widget", sprache: "–" },
   { id: "familie", reiter: "familie", icon: "👪", titel: "Familien-Pinnwand", sprache: "Friday, schreib an die Pinnwand: …" },
   { id: "tagesrueckblick", reiter: "rueckblick", icon: "🌙", titel: "Abend-Rückblick", sprache: "Friday, wie war mein Tag?" },
-  // v1.166.0: die neuen Stern-Ideen vom 24.11.2026 (server/src/sternideen.js)
+  // v1.169.0: die neuen Stern-Ideen vom 24.11.2026 (server/src/sternideen.js)
   ...stern.STERN_WUENSCHE.map((w) => ({ ...w, neu: true })),
 ];
 
@@ -66,7 +66,7 @@ export function tresorAbhaken() {
     for (const i of ideen) {
       if (i.bereich !== "friday" || i.status === "erledigt") continue;
       const id = titel.get(String(i.titel || "").toLowerCase());
-      if (id && gebaut.has(id)) { i.status = "erledigt"; i.erledigtAm = new Date().toISOString(); i.version = WUENSCHE.find((w) => w.id === id)?.neu ? "1.166.0" : "1.160.0"; n++; }
+      if (id && gebaut.has(id)) { i.status = "erledigt"; i.erledigtAm = new Date().toISOString(); i.version = WUENSCHE.find((w) => w.id === id)?.neu ? "1.169.0" : "1.160.0"; n++; }
     }
     if (n) {
       store.save("ideen", ideen);
@@ -184,6 +184,6 @@ export function wunschRouten(app, asyncRoute) {
   app.get("/api/wunsch/vorlieben", r(async (req) => (req.query.neu === "1" ? vorlieben.aktualisieren() : vorlieben.gespeichert() || vorlieben.aktualisieren())));
   app.post("/api/wunsch/vorlieben/ki", r(async () => vorlieben.kiEinschaetzung()));
 
-  // v1.166.0: neue Stern-Ideen
+  // v1.169.0: neue Stern-Ideen
   stern.sternRouten(app, r, asyncRoute);
 }

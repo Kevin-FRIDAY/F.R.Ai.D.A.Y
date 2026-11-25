@@ -1,4 +1,4 @@
-// Podcasts hören (v1.166.0, Stern-Idee aus der Ideen-Schmiede).
+// Podcasts hören (v1.169.0, Stern-Idee aus der Ideen-Schmiede).
 // Suche über das freie Podcast-Verzeichnis von Apple (itunes.apple.com/search, ohne Schlüssel),
 // Folgen direkt aus dem RSS-Feed des Podcasts. Abos in data/podcasts.json; alle 3 Stunden schaut Friday
 // nach neuen Folgen und meldet sie per Telegram/Push. Abspielen im Dashboard. Ohne Claude.

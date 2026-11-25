@@ -1,4 +1,4 @@
-// Drucken per Sprache (v1.166.0, Stern-Idee aus der Ideen-Schmiede).
+// Drucken per Sprache (v1.169.0, Stern-Idee aus der Ideen-Schmiede).
 // "Friday, druck die Einkaufsliste" → Friday baut eine saubere Textseite und schickt sie mit `lp`
 // an den Drucker, der am Mac eingerichtet ist (CUPS, ohne Zusatzprogramm). Ohne Claude.
 // Druckbar: Einkaufsliste, Aufgaben, Packliste (aus dem Fenster), ein von Friday erstelltes Dokument, freier Text.
@@ -28,9 +28,10 @@ export async function drucker() {
   try {
     const out = await run("lpstat", ["-p", "-d"]);
     for (const z of out.split("\n")) {
-      const p = z.match(/^(?:printer|Drucker)\s+(\S+)\s+(.*)$/i);
-      if (p) liste.push({ name: p[1], bereit: !/disabled|deaktiviert/i.test(p[2]), info: p[2].slice(0, 80) });
-      const s = z.match(/(?:system default destination|Standard-Ziel des Systems|Standardziel)\s*:\s*(\S+)/i);
+      // englisch: printer Brother is idle.  · deutsch (macOS): Drucker „Brother_MFC_7360N“ ist inaktiv; aktiviert seit …
+      const p = z.match(/^(?:printer|Drucker)\s+[„"']?([^\s„“"']+)[“"']?\s+(.*)$/i);
+      if (p) liste.push({ name: p[1], bereit: !/\bdisabled\b|deaktiviert/i.test(p[2]), info: p[2].slice(0, 80) });
+      const s = z.match(/(?:system default destination|Standard-?Ziel\w* des Systems|Standard-?ziel\w*)\s*:\s*[„"']?([^\s„“"']+)/i);
       if (s) standard = s[1];
     }
   } catch (err) {

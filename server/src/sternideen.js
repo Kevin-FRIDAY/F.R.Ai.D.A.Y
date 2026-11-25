@@ -1,4 +1,4 @@
-// Neue Stern-Ideen aus der Ideen-Schmiede (v1.166.0).
+// Neue Stern-Ideen aus der Ideen-Schmiede (v1.169.0).
 // Kevin hat am 24.11.2026 weitere Bauplan-Ideen mit ⭐ auf die Wunschliste gesetzt. Diese 11 sind hier eingebaut,
 // alle kostenlos und ohne Claude: Was ist am Himmel · Spritpreise · Drucken per Sprache · Internetradio · Podcasts
 // · Gewohnheiten mit Serien · Schlaf-Protokoll · Sprach-Trainer · Auto-Logbuch · Gäste-Modus · Briefing zum Mitnehmen.
@@ -57,6 +57,8 @@ export async function quickCommand(text) {
 }
 
 export { gaeste };
+/** Laufende Vokabel-Abfrage: dann kein Sprachverständnis-Umbau (Folgefragen, Zerlegen) davor. */
+export const vorrang = () => trainer.laeuft();
 
 export function sternStart(sicher, notifyAll) {
   if (IST_EVE) return;
@@ -86,7 +88,7 @@ export function sternRouten(app, r, asyncRoute) {
   app.post("/api/wunsch/drucken/einstellungen", r(async (req) => drucken.einstellen(req.body || {})));
 
   // Radio
-  app.get("/api/wunsch/radio", r(async (req) => ({ favoriten: radio.favoriten(), sender: req.query.q ? await radio.suchen(String(req.query.q)) : await radio.beliebt().catch(() => []) })));
+  app.get("/api/wunsch/radio", r(async (req) => ({ favoriten: await radio.frisch(radio.favoriten()), sender: req.query.q ? await radio.suchen(String(req.query.q)) : await radio.beliebt().catch(() => []) })));
   app.post("/api/wunsch/radio/favorit", r(async (req) => ({ favoriten: radio.favoritDazu(req.body || {}) })));
   app.delete("/api/wunsch/radio/favorit/:id", r(async (req) => ({ favoriten: radio.favoritWeg(req.params.id) })));
   app.post("/api/wunsch/radio/gehoert", r(async (req) => { radio.merkeZuletzt(req.body || {}); radio.geklickt(req.body?.id); return { ok: true }; }));

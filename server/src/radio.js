@@ -1,4 +1,4 @@
-// Internetradio per Sprache (v1.166.0, Stern-Idee aus der Ideen-Schmiede).
+// Internetradio per Sprache (v1.169.0, Stern-Idee aus der Ideen-Schmiede).
 // Über 30.000 Sender aus dem freien Verzeichnis radio-browser.info (ohne Schlüssel).
 // "Friday, spiel Radio Eins" → Sender suchen, im Dashboard abspielen. "Radio aus" stoppt.
 // Lieblingssender lassen sich speichern und dann auch ohne das Wort "Radio" starten ("spiel 1Live"). Ohne Claude.
@@ -41,6 +41,15 @@ export async function beliebt() {
 export function geklickt(id) { if (/^[0-9a-f-]{36}$/i.test(id || "")) api(`url/${id}`).catch(() => {}); }
 
 export const favoriten = () => daten().favoriten;
+/** Stream-Adressen enthalten oft ein Sitzungs-Token, das abläuft: vor dem Abspielen frisch beim Verzeichnis holen. */
+export async function frisch(liste) {
+  const ids = liste.map((s) => s.id).filter((id) => /^[0-9a-f-]{36}$/i.test(id || ""));
+  if (!ids.length) return liste;
+  try {
+    const neu = new Map((await api(`stations/byuuid?uuids=${ids.join(",")}`)).map((x) => [x.stationuuid, sicher(x.url_resolved || x.url)]));
+    return liste.map((s) => (neu.get(s.id) ? { ...s, url: neu.get(s.id) } : s));
+  } catch { return liste; }
+}
 export function favoritDazu(s = {}) {
   const d = daten();
   const url = sicher(s.url);
@@ -60,14 +69,14 @@ export async function quickCommand(text) {
   if (/^(das )?radio (aus|stopp|stop|beenden|leiser aus)$|^(stopp|stop|beende) (das )?radio$|^mach (das )?radio aus$/.test(k)) return { answer: "Radio ist aus.", actions: ["radio_stopp"] };
   if (/^(öffne |zeig )?(das |mein )?(internet)?radio( an)?$|^(mach|schalte?) (das )?radio an$/.test(k)) {
     const z = daten().zuletzt;
-    if (z && /an$/.test(k)) return { answer: `Ich spiele ${z.name}.`, actions: ["wunsch:radio", abspielen(z)] };
+    if (z && /an$/.test(k)) { const [f] = await frisch([z]); return { answer: `Ich spiele ${z.name}.`, actions: ["wunsch:radio", abspielen(f)] }; }
     return { answer: "Welchen Sender möchtest du hören? Sag zum Beispiel: „Spiel Radio Eins.“", actions: ["wunsch:radio"] };
   }
   const m = t.match(/^(?:bitte )?(?:spiel|spiele|starte|mach|schalte?)\s+(?:mir\s+)?(?:den\s+|das\s+)?(?:(?:radio)?sender\s+|internetradio\s+)?(.+?)(?:\s+an|\s+ab)?$/i);
   if (!m) return null;
   const wunsch = m[1].trim();
   const fav = favoriten().find((f) => normal(f.name) === normal(wunsch) || normal(`radio ${f.name}`) === normal(wunsch));
-  if (fav) return { answer: `Ich spiele ${fav.name}.`, actions: ["wunsch:radio", abspielen(fav)] };
+  if (fav) { const [f] = await frisch([fav]); return { answer: `Ich spiele ${fav.name}.`, actions: ["wunsch:radio", abspielen(f)] }; }
   // Ohne Lieblingssender nur, wenn es klar ums Radio geht (sonst ist "spiel Iron Man" ein Film, "spiel Snake" ein Spiel).
   if (!/\b(radio|sender|fm|welle|eins|1live|bayern ?\d|antenne|ndr|wdr|swr|hr\d|mdr|rbb|br ?\d|dlf|deutschlandfunk|ffh|bigfm|energy|sunshine live|klassik|jazz ?radio|lounge ?fm)\b/i.test(wunsch)) return null;
   const q = wunsch.replace(/^(das |den )?(internet)?radio(sender)?\s*/i, "").trim() || wunsch;

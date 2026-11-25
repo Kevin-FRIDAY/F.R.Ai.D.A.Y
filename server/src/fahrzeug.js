@@ -1,4 +1,4 @@
-// Auto-Logbuch (v1.166.0, Stern-Idee aus der Ideen-Schmiede).
+// Auto-Logbuch (v1.169.0, Stern-Idee aus der Ideen-Schmiede).
 // TÜV/HU, Ölwechsel, Reifenwechsel (von O bis O: Oktober bis Ostern), Inspektion und ein Tankbuch mit Verbrauch.
 // Friday erinnert 30, 7 und 1 Tag vorher per Telegram/Push und im Herbst/Frühling an die Reifen. Ohne Claude.
 // Nur ein Notizbuch: Friday bezahlt oder bucht nichts.

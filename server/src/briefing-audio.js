@@ -1,4 +1,4 @@
-// Briefing zum Mitnehmen (v1.166.0, Stern-Idee aus der Ideen-Schmiede).
+// Briefing zum Mitnehmen (v1.169.0, Stern-Idee aus der Ideen-Schmiede).
 // Jeden Morgen spricht Friday das Briefing als Audio-Datei (.m4a) ein, mit der Mac-Stimme (`say`, kostenlos),
 // und legt sie in iCloud Drive → Friday → Briefings. Auf dem iPhone: Dateien-App → iCloud Drive → Friday.
 // Text: das heutige Morgenbriefing, falls Claude es schon geschrieben hat, sonst das kostenlose Kurz-Briefing.
@@ -31,7 +31,8 @@ export function einstellen(e = {}) {
 export async function stimmen() {
   try {
     const out = await run("say", ["-v", "?"], 15000);
-    return out.split("\n").map((z) => z.match(/^(.+?)\s{2,}(de[_-][A-Z]{2})\b/)).filter(Boolean).map((m) => m[1].trim());
+    // z. B. "Anna (Deutsch (Deutschland)) de_DE    # Hallo! Ich heiße Anna." oder älter "Anna   de_DE  # …"
+    return [...new Set(out.split("\n").map((z) => z.match(/^(.+?)\s+de_[A-Z]{2}\s/)).filter(Boolean).map((m) => m[1].trim()))];
   } catch { return []; }
 }
 

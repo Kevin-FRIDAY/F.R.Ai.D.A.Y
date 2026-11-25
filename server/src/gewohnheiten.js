@@ -1,4 +1,4 @@
-// Gewohnheiten mit Serien (v1.166.0, Stern-Idee aus der Ideen-Schmiede).
+// Gewohnheiten mit Serien (v1.169.0, Stern-Idee aus der Ideen-Schmiede).
 // Wasser trinken, Sport, Lesen …: per Sprache abhaken, Friday zählt die Tage am Stück (Serie),
 // feiert Rekorde und erinnert abends, wenn eine Serie zu reißen droht. Ohne Claude.
 import * as store from "./store.js";
