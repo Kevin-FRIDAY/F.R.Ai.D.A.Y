@@ -52,6 +52,7 @@ export const BEREICHE = {
   apple: ["🍏", "Apple-Apps"],
   waechter: ["🔭", "Dauer-Wächter"],
   system: ["⚙", "System"],
+  agent: ["🤖", "Agenten-Team"],
   // Wunschliste aus der Ideen-Schmiede (v1.160.0)
   wetter: ["⛈", "Unwetter-Warnungen"],
   paket: ["📦", "Pakete"],

@@ -41,6 +41,7 @@
   function open() { sheet.classList.remove("hidden"); load(); } // Status jedes Mal frisch
   function close() { sheet.classList.add("hidden"); }
 
+  window.FridayAgenten = { open, close };
   $("agents-open")?.addEventListener("click", open);
   $("agents-x")?.addEventListener("click", close);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !sheet.classList.contains("hidden")) close(); });

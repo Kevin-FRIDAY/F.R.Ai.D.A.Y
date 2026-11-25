@@ -29,7 +29,7 @@
 
   async function start(opts = {}) {
     try { wuensche = (await json("/api/wunsch")).wuensche || []; } catch (err) { status(fehlerText(err), true); }
-    $("#wl-kacheln").innerHTML = wuensche.map((x) => `<button type="button" class="wl-kachel${x.reiter === reiter ? " an" : ""}" data-r="${esc(x.reiter)}" role="tab"><span class="wl-icon">${x.icon}</span><span class="wl-name">${esc(x.titel)}</span><span class="wl-ok">✓ eingebaut</span></button>`).join("");
+    $("#wl-kacheln").innerHTML = wuensche.map((x) => `<button type="button" class="wl-kachel${x.reiter === reiter ? " an" : ""}" data-r="${esc(x.reiter)}" role="tab"><span class="wl-icon">${x.icon}</span><span class="wl-name">${esc(x.titel)}</span><span class="wl-ok">${x.neu ? "★ neu" : "✓ eingebaut"}</span></button>`).join("");
     zeige(opts);
     setTimeout(() => { try { w.$(".wl-kachel.an")?.scrollIntoView({ block: "nearest", inline: "center" }); } catch { /* egal */ } }, 50);
   }
@@ -346,5 +346,6 @@
 }`;
   document.head.appendChild(style);
 
-  window.FridayWunsch = { open: (o) => { w.auf(o || {}); } };
+  // v1.169.0: weitere Ansichten (neue Stern-Ideen) hängen sich hier an, siehe dashboard/sternideen.js.
+  window.FridayWunsch = { open: (o) => { w.auf(o || {}); }, ansichten: ANSICHTEN, hilfen: { karte, sprache, status: (t, f) => status(t, f), zeige: () => zeige(), $, w, datum, zeit, sicherUrl } };
 })();

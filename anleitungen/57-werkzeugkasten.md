@@ -4,8 +4,10 @@ Friday hat jetzt **100 kleine Werkzeuge**: Rechner, Generatoren, Prüfer und Vor
 Gesundheit, Text, Sicherheit, Technik, Mathe, Reisen, Natur, Familie und Büro.
 **Alle laufen ohne Claude-Guthaben.** Sie rechnen auf dem Mac oder fragen kostenlose Dienste ohne Schlüssel.
 
-Öffnen: **Werkzeug-Menü → Alltag → 🧰 Werkzeugkasten (100)** oder sag „Friday, öffne den Werkzeugkasten“.
-Oben suchen, darunter nach Bereichen filtern. „⭐ Zuletzt“ zeigt deine zuletzt benutzten Werkzeuge.
+**Seit v1.165.0 gibt es kein eigenes Werkzeugkasten-Fenster mehr** (auch kein Eintrag im Werkzeug-Menü).
+Alle Werkzeuge bleiben da: Du sagst Friday einfach, was du brauchst. Wenn es etwas zu sehen gibt
+(QR-Code, Tabelle, Liste, Datei zum Herunterladen, Passwort/PIN 🔒), geht von selbst eine kleine
+Ergebnis-Karte auf. Fragst du „Friday, öffne den Werkzeugkasten“, nennt sie dir Beispiele.
 
 ## Warum ein Werkzeugkasten statt 100 einzelner Werkzeuge?
 

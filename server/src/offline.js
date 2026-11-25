@@ -232,6 +232,7 @@ function hilfeText() {
     `Ich stelle Timer und Erinnerungen, führe deine Aufgaben- und Einkaufsliste, merke mir Dinge, rechne, ` +
     `nenne Bitcoin- und Wechselkurse, schlage Begriffe bei Wikipedia nach und lese dir die Schlagzeilen zu jedem Land vor. ` +
     `Und ich steuere Mac, Fernseher und Alexa. Sobald sie verbunden sind, auch Kalender, Spotify, Hue-Lampen, Home Assistant, Todoist und Notion. ` + EXTRA_HILFE +
+    ` Du kannst mehrere Befehle in einen Satz packen, nachfragen wie "und morgen?", mich mit "nein, ich meinte …" verbessern oder sagen: Mach das rückgängig.` +
     ` Sag auch: Systemstatus, Wie viel Guthaben hast du, Starte Snake, Zeig mir Japan oder Wie lange brauche ich nach Hamburg.`;
 }
 
@@ -399,7 +400,10 @@ async function offlineAnswerIntern(text, { notfall = false } = {}) {
       .replace(U(/\b(bitte|noch|hinzu|ein|dazu|mal)\b/g), " ").replace(/\s+/g, " ").trim()
       .replace(/^(und|:)\s*/, "");
     if (!was) return ok("Was soll auf die Einkaufsliste?");
-    const teileListe = was.split(/,| und /).map((x) => gross1(orig(x.trim()))).filter(Boolean).slice(0, 10);
+    // Kommas gehen beim Normalisieren verloren ("Milch, Eier und Brot") – aus dem Originaltext zurückholen.
+    const vorKomma = new Set((String(text).toLowerCase().match(/[a-zäöüß0-9-]+(?=\s*,)/g) || []));
+    if (vorKomma.size) was = was.split(" ").map((w) => (vorKomma.has(w) ? `${w},` : w)).join(" ");
+    const teileListe = was.split(/\s*,\s*| und /).map((x) => gross1(orig(x.trim()))).filter(Boolean).slice(0, 10);
     for (const x of teileListe) store.addShopping(x);
     return ok(`Steht drauf: ${teileListe.join(", ")}.`, "add_shopping");
   }

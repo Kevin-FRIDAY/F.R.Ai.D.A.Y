@@ -15,6 +15,7 @@ import { todoistBereit } from "./todoist.js";
 import { notionBereit } from "./notion.js";
 import { laufendeAuftraege, werkzeugName } from "./auftrag.js";
 import { letzte as letzteLogbuch, BEREICHE, tagVon } from "./logbuch.js";
+import { EINSAETZE, einsatzLaeuft, letzterBericht, einsetzen, teamEinsatz, TEAM } from "./agenten-einsatz.js";
 
 // need beschreibt, was ein Agent braucht:
 //  {type:"frei"}                      -> immer einsatzbereit (kostenlose Quelle)
@@ -36,10 +37,25 @@ export const AGENTS = [
   // --- Lagezentrum ---
   { id: "lage", name: "Lage-Agent", emoji: "🌍", cat: "Lagezentrum", purpose: "Weltlage und aktuelle Nachrichten im Weltgeschehen.", examples: ["Was ist auf der Welt los?", "Welt-Alarm", "Was ist in der Ukraine los?"], need: { type: "frei" } },
   { id: "wetter", name: "Wetter-Agent", emoji: "⛅", cat: "Lagezentrum", purpose: "Wetter und Unwetterwarnungen.", examples: ["Wie wird das Wetter morgen?", "Brauche ich einen Schirm?"], need: { type: "frei" } },
-  { id: "karten", name: "Karten-Agent", emoji: "🗺️", cat: "Lagezentrum", purpose: "Orte, Routen und Karten.", examples: ["Wie weit ist es nach München?", "Zeig mir die Route"], need: { type: "setup", label: "Mapbox" } },
+  { id: "karten", name: "Karten-Agent", emoji: "🗺️", cat: "Lagezentrum", purpose: "Orte, Routen und Karten: Auto, Rad, zu Fuß und Bahn/Bus (OpenStreetMap).", examples: ["Wie weit ist es nach München?", "Route nach Hamburg mit dem Rad"], need: { type: "frei" } },
   { id: "krypto", name: "Krypto-Agent", emoji: "🪙", cat: "Lagezentrum", purpose: "Krypto-Kurse und Charts – nur Daten, kein Handel.", examples: ["Was kostet Bitcoin?", "Wie steht Ethereum heute?"], need: { type: "frei" } },
   { id: "markt", name: "Markt-Radar", emoji: "📈", cat: "Lagezentrum", purpose: "100 mögliche Kursverläufe mit Kronos, Papierdepot mit Spielgeld – keine echten Orders.", examples: ["Friday, wie sieht Gold aus?", "Wie läuft mein Papierdepot?"], need: { type: "check", ok: () => marktReady(), label: "Kronos" } },
+  { id: "erdbeben", name: "Erdbeben-Wächter", emoji: "🌋", cat: "Lagezentrum", purpose: "Prüft die Erdbeben der letzten 24 Stunden weltweit und in deiner Nähe (USGS).", examples: ["Schick den Erdbeben-Agenten los", "Gab es Erdbeben in der Nähe?"], need: { type: "frei" } },
+  { id: "weltraum", name: "Weltraum-Agent", emoji: "🚀", cat: "Lagezentrum", purpose: "Nächste Raketenstarts, Sonnenstürme und Polarlicht-Chancen.", examples: ["Schick den Weltraum-Agenten los", "Wann startet die nächste Rakete?"], need: { type: "frei" } },
   { id: "weltdaten", name: "Welt-Daten-Agent", emoji: "🛰️", cat: "Lagezentrum", purpose: "Flüge, Schiffe, ISS, Webcams und Ereignisse.", examples: ["Wo ist die ISS gerade?", "Welche Flüge sind über mir?"], need: { type: "frei" } },
+
+  // --- Recherche (v1.165.0) ---
+  { id: "recherche", name: "Recherche-Agent", emoji: "🔎", cat: "Recherche", purpose: "Recherchiert ein Thema in der Wikipedia und legt ein Dossier unter Dokumente ab.", examples: ["Recherchiere Kernfusion", "Mach mir ein Dossier über Mars"], need: { type: "frei" } },
+  { id: "nachrichten", name: "Nachrichten-Agent", emoji: "📰", cat: "Recherche", purpose: "Holt die wichtigsten Meldungen der Tagesschau und liest sie vor.", examples: ["Schick den Nachrichten-Agenten los", "Was sind die Top-Meldungen?"], need: { type: "frei" } },
+  { id: "uebersetzer", name: "Übersetzer", emoji: "🈯", cat: "Recherche", purpose: "Übersetzt Sätze in über 15 Sprachen (MyMemory).", examples: ["Englisch: Wo ist der Bahnhof?", "Türkisch: Guten Appetit"], need: { type: "frei" } },
+
+  // --- Alltag & Umwelt (v1.165.0) ---
+  { id: "strom", name: "Strompreis-Agent", emoji: "⚡", cat: "Alltag & Umwelt", purpose: "Findet die günstigsten Strom-Stunden an der Börse – fürs Waschen, Trocknen oder Auto-Laden.", examples: ["Schick den Strompreis-Agenten los", "Wann ist Strom heute billig?"], need: { type: "frei" } },
+  { id: "pollen", name: "Pollen-Agent", emoji: "🌾", cat: "Alltag & Umwelt", purpose: "Pollenflug für dein Bundesland vom Deutschen Wetterdienst.", examples: ["Schick den Pollen-Agenten los", "Wie ist der Pollenflug?"], need: { type: "frei" } },
+  { id: "pegel", name: "Pegel-Agent", emoji: "🌊", cat: "Alltag & Umwelt", purpose: "Wasserstände der Flüsse in deiner Nähe (Pegelonline).", examples: ["Schick den Pegel-Agenten los", "Wie hoch steht der Rhein in Köln?"], need: { type: "frei" } },
+  { id: "verkehr", name: "Verkehrs-Agent", emoji: "🚗", cat: "Alltag & Umwelt", purpose: "Staus, Sperrungen und Baustellen auf jeder Autobahn (Autobahn GmbH).", examples: ["Ist Stau auf der A7?", "Verkehrs-Agent A100"], need: { type: "frei" } },
+  { id: "feiertage", name: "Ferien-Agent", emoji: "🏖️", cat: "Alltag & Umwelt", purpose: "Nächste Feiertage und Schulferien in deinem Bundesland.", examples: ["Schick den Ferien-Agenten los", "Wann sind die nächsten Ferien?"], need: { type: "frei" } },
+  { id: "koch", name: "Koch-Agent", emoji: "👨‍🍳", cat: "Alltag & Umwelt", purpose: "Schlägt Rezepte vor, die verwerten, was im Kühlschrank bald abläuft.", examples: ["Schick den Koch-Agenten los", "Was koche ich heute?"], need: { type: "frei" } },
 
   // --- Kreativ ---
   { id: "video", name: "Video-Team", emoji: "🎬", cat: "Kreativ", purpose: "Schneidet Clips lokal zu einem 9:16-Video: Regie, Transkript, Schnitt, Farbe, Untertitel, Audio.", examples: ["Friday, schneide das Video", "Schneide das Video im Kino-Look"], need: { type: "check", ok: () => videoTeamReady(), label: "Python-Umgebung" } },
@@ -57,7 +73,7 @@ export const AGENTS = [
   { id: "system", name: "System-Agent", emoji: "🛡️", cat: "Entwicklung & Steuerung", purpose: "System-Check, Sicherungen und Updates.", examples: ["Mach einen System-Check", "Sicher dich jetzt"], need: { type: "frei" } },
 ];
 
-export const CATEGORIES = ["Organisation", "Stimme & Medien", "Lagezentrum", "Kreativ", "Entwicklung & Steuerung"];
+export const CATEGORIES = ["Organisation", "Stimme & Medien", "Lagezentrum", "Recherche", "Alltag & Umwelt", "Kreativ", "Entwicklung & Steuerung"];
 
 // Woran man erkennt, dass ein Agent gerade arbeitet oder zuletzt gearbeitet hat:
 // b = Logbuch-Bereiche, w = Claude-Werkzeuge / Schnellbefehl-Aktionen (Teil vor ":").
@@ -90,6 +106,7 @@ const ARBEIT = {
 const wzName = (a) => String(a || "").split(":")[0];
 function passtZu(agentId, eintrag) {
   const r = ARBEIT[agentId];
+  if ((eintrag.aktionen || []).includes(`agent_${agentId}`)) return true;
   if (!r) return false;
   if (r.b.includes(eintrag.bereich)) return true;
   return (eintrag.aktionen || []).some((a) => r.w.includes(wzName(a)));
@@ -110,6 +127,10 @@ function taetigkeiten(ids) {
       }
     }
   }
+  // Direkt losgeschickte Agenten (Einsatz-Knopf, Sprachbefehl, Team-Lagebericht)
+  for (const [id, e] of einsatzLaeuft()) {
+    if (out[id]) { out[id].arbeitet = true; out[id].jetzt = e.text; }
+  }
   let eintraege = [];
   try { eintraege = letzteLogbuch({ anzahlMonate: 2, limit: 4000 }); } catch { /* kein Logbuch */ }
   const heuteTag = tagVon();
@@ -124,6 +145,14 @@ function taetigkeiten(ids) {
   return { out, laufend };
 }
 
+// Kann der Agent direkt losgeschickt werden? Mit letztem Bericht.
+function einsatzInfo(id) {
+  const e = EINSAETZE[id];
+  if (!e) return {};
+  const b = letzterBericht(id);
+  return { einsatz: { knopf: e.knopf, eingabe: e.eingabe || null, pflicht: Boolean(e.pflicht) }, bericht: b ? { titel: b.titel, text: b.text, punkte: b.punkte, quelle: b.quelle, link: b.link, at: b.at, ok: b.ok } : null };
+}
+
 // Status eines Agenten anhand von .env + Mac-Verbindung.
 function statusOf(agent, macOnline) {
   const n = agent.need;
@@ -136,10 +165,11 @@ function statusOf(agent, macOnline) {
 
 export function agentsWithStatus() {
   const macOnline = isAgentOnline();
-  const { out: tun, laufend } = taetigkeiten(AGENTS.map((a) => a.id));
-  const list = AGENTS.map((a) => ({ id: a.id, name: a.name, emoji: a.emoji, cat: a.cat, purpose: a.purpose, examples: a.examples, ...statusOf(a, macOnline), ...tun[a.id] }));
+  let { out: tun, laufend } = taetigkeiten(AGENTS.map((a) => a.id));
+  const list = AGENTS.map((a) => ({ id: a.id, name: a.name, emoji: a.emoji, cat: a.cat, purpose: a.purpose, examples: a.examples, ...statusOf(a, macOnline), ...tun[a.id], ...einsatzInfo(a.id) }));
   const aktiv = list.filter((a) => a.status === "aktiv").length;
   const arbeiten = list.filter((a) => a.arbeitet).length;
+  laufend = laufend.filter((a) => !String(a.kanal || "").startsWith("agent:"));
   const chefin = laufend.length
     ? { arbeitet: true, jetzt: laufend[0].text || "Friday arbeitet an einem Auftrag …", prozent: laufend[0].prozent || 0, kanal: laufend[0].kanal }
     : { arbeitet: false, jetzt: arbeiten ? `Leitet ${arbeiten} Agenten` : "Leitet das Team – wartet auf deinen Auftrag", prozent: 0 };
@@ -155,3 +185,14 @@ export function agentsBrief() {
   }).join("\n");
   return `Dein Team hat ${gesamt} Agenten (${aktiv} aktiv):\n${byCat}`;
 }
+
+// Einen Agenten (oder mit "team" den Team-Lagebericht) losschicken – für Dashboard, Werkzeug und Sprachbefehl.
+export async function agentLosschicken(id, eingabe = "", kanal = "dashboard") {
+  const namen = Object.fromEntries(AGENTS.map((a) => [a.id, a.name]));
+  if (id === "team") return teamEinsatz({ namen, kanal });
+  const a = AGENTS.find((x) => x.id === id);
+  if (!a || !EINSAETZE[id]) return { agent: id, ok: false, titel: "Kein Einsatz", text: a ? `${a.name} arbeitet nur auf Zuruf über Friday, nicht per Einsatz-Knopf.` : `Den Agenten „${id}“ gibt es nicht.`, punkte: [] };
+  if (EINSAETZE[id].pflicht && !String(eingabe || "").trim()) return { agent: id, ok: false, titel: a.name, text: `${a.name} braucht noch eine Angabe: ${EINSAETZE[id].eingabe?.label || "Eingabe"}.`, punkte: [] };
+  return einsetzen(id, eingabe, { name: a.name, kanal });
+}
+export const TEAM_IDS = TEAM;
