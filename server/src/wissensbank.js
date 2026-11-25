@@ -1,13 +1,16 @@
 // Fridays Lexikon (v1.156.0): eingebautes Wissen OHNE Claude und OHNE Internet.
-// Rund 1.600 Einträge in über 20 Bereichen: alle 118 chemischen Elemente, Weltraum, Bundesländer,
-// deutsche Großstädte, 197 Länder mit Hauptstadt und Währung, Geschichte mit Jahreszahlen, berühmte Menschen,
-// Erfindungen, Technik & KI, Geld, Natur, Erde & Rekorde, Tiere, Körper & Gesundheit, Notfall-Nummern,
-// Kochen, Mac-/iPhone-Tipps, Abkürzungen, Sport, Kalender, Alltag & Recht und über 100 „Wusstest du?“-Fakten.
+// Seit v1.165.0 rund 7.900 Einträge in über 35 Bereichen (vorher 1.600): alle 118 chemischen Elemente, Weltraum,
+// Bundesländer, deutsche Städte, Städte der Welt, 197 Länder mit Hauptstadt und Währung, Geschichte mit Jahreszahlen,
+// berühmte Menschen, Erfindungen, Technik & KI, Geld, Natur, Erde, Tiere, Pflanzen, Körper & Gesundheit, Essen,
+// Notfall, Kochen, Mac-/iPhone-Tipps, Abkürzungen, Fremdwörter, Sprichwörter, Englisch-Wörter, Berufe, Politik,
+// Musik, Kunst & Kultur, Religion & Mythologie, Firmen & Marken, Autos, Mathe, Sport, Kalender & Feiertage,
+// Alltag & Recht und über 350 „Wusstest du?“-Fakten.
 //
 // Die Inhalte liegen als einfache Textdateien in server/daten/lexikon/*.txt (eine Zeile = ein Eintrag,
 // Felder mit | getrennt). Neue Einträge: einfach eine Zeile in die passende Datei schreiben, Friday lädt sie beim Start.
 // Sprachbefehle: „Was ist ein ETF?“, „Wer war Marie Curie?“, „Wer hat das Telefon erfunden?“, „Was passierte 1989?“,
-// „Ordnungszahl von Gold“, „Hauptstadt von Bayern“, „Was bedeutet DSGVO?“, „Wie hoch ist die Zugspitze?“, „öffne das Lexikon“.
+// „Ordnungszahl von Gold“, „Hauptstadt von Bayern“, „Was bedeutet DSGVO?“, „Wie hoch ist die Zugspitze?“, „öffne das Lexikon“,
+// „Was heißt Schmetterling auf Englisch?“, „Was bedeutet empathisch?“, „Wie viele Einwohner hat Paris?“, „In welchem Land liegt Porto?“.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -110,6 +113,37 @@ function eintragAus(kat, z, i) {
       const [kurz, lang, aliase] = z;
       return { id, kat, titel: kurz, text: `${kurz} steht für ${punkt(lang)}`, info: "Abkürzung", aliase: aliasListe(aliase) };
     }
+    case "weltstaedte": {
+      const [name, staat, einw, zusatz, aliase] = z;
+      const nameOhne = String(name || "").replace(/\s*\(.*\)\s*$/, "");
+      if (!nameOhne || !staat) return null;
+      return { id, kat, titel: name, staat, einwohner: einw, zusatz: punkt(zusatz), text: `${nameOhne} ist eine Stadt in ${staat} mit rund ${einw} Einwohnern. ${punkt(zusatz)}`.trim(), info: staat, aliase: aliasListe(aliase) };
+    }
+    case "fremdwoerter": {
+      const [wort, bedeutung, aliase] = z;
+      if (!wort || !bedeutung) return null;
+      return { id, kat, titel: wort, text: `${wort} bedeutet: ${punkt(bedeutung)}`, info: "Fremdwort", aliase: aliasListe(aliase) };
+    }
+    case "sprichwoerter": {
+      const [spruch, bedeutung, aliase] = z;
+      if (!spruch || !bedeutung) return null;
+      return { id, kat, titel: spruch, text: `„${spruch}“ bedeutet: ${punkt(bedeutung)}`, info: "Redewendung", aliase: aliasListe(aliase) };
+    }
+    case "englisch": {
+      const [de, en, aliase] = z;
+      if (!de || !en) return null;
+      const wort = de.replace(/\s*\(.*\)\s*$/, "");
+      const freund = /falscher freund/i.test(de);
+      // englisches Hauptwort für die Rückrichtung: "flat (britisch) oder apartment" → "flat"
+      const enWort = freund ? "" : en.replace(/^to /, "").split(/ \(| oder |,|\?/)[0].trim();
+      const a = [`${wort} auf englisch`, `${wort} englisch`, `englisch ${wort}`, `englisches wort fuer ${wort}`];
+      if (enWort && enWort.length > 1) a.push(`${enWort} auf deutsch`, `${enWort} deutsch`);
+      return {
+        id, kat, titel: de, nurAlias: true,
+        text: freund ? punkt(en) : `„${wort}“ heißt auf Englisch: ${punkt(en)}`,
+        info: freund ? "Falscher Freund" : en.split(/,|\?/)[0], aliase: [...a, ...aliasListe(aliase)],
+      };
+    }
     case "fakten":
       return { id, kat, titel: z.join("|").slice(0, 70), text: punkt(z.join("|")), fakt: true, aliase: [] };
     default: {
@@ -159,8 +193,10 @@ export function laden(neu = false) {
   const add = (k, e) => { const n = norm(k); if (!n) return; if (!index.has(n)) index.set(n, []); if (!index.get(n).includes(e)) index.get(n).push(e); };
   for (const e of eintraege) {
     if (e.fakt) continue;
-    add(e.titel, e);
-    add(e.titel.replace(/\s*\(.*\)\s*$/, ""), e); // "Titan (Mond)" → "titan"
+    if (!e.nurAlias) { // Englisch-Wörter nur über "X auf Englisch" finden, sonst wäre "Kopf" eine Vokabel
+      add(e.titel, e);
+      add(e.titel.replace(/\s*\(.*\)\s*$/, ""), e); // "Titan (Mond)" → "titan"
+    }
     for (const a of e.aliase || []) add(a, e);
     if (e.kat === "personen") { const teile = e.titel.split(" "); if (teile.length > 1) add(teile[teile.length - 1], e); }
     e._such = norm(`${e.titel} ${(e.aliase || []).join(" ")} ${e.info || ""} ${e.text}`);
@@ -173,7 +209,7 @@ export function laden(neu = false) {
 
 // ---------- Nachschlagen ----------
 // Reihenfolge, wenn ein Wort in mehreren Bereichen vorkommt (z. B. "Berlin": Stadt vor Bundesland).
-const VORRANG = ["technik", "geld", "natur", "weltraum", "koerper", "notfall", "erde", "tiere", "staedte", "bundeslaender", "personen", "erfindungen", "geschichte", "kochen", "mac", "alltag", "sport", "sternzeichen", "elemente", "abkuerzungen", "laender"];
+const VORRANG = ["technik", "geld", "natur", "weltraum", "koerper", "notfall", "erde", "tiere", "pflanzen", "staedte", "bundeslaender", "personen", "erfindungen", "geschichte", "kochen", "ernaehrung", "mac", "alltag", "berufe", "politik", "sport", "musik", "kultur", "glaube", "marken", "autos", "mathe", "sternzeichen", "elemente", "abkuerzungen", "laender", "weltstaedte", "fremdwoerter", "sprichwoerter", "englisch"];
 const rang = (k) => { const i = VORRANG.indexOf(k); return i < 0 ? 99 : i; };
 const ARTIKEL = /^(der|die|das|den|dem|des|ein|eine|einen|einem|einer|eines|mein|meine|unser|unsere) /;
 
@@ -267,6 +303,32 @@ export function quickCommand(text, { locker = false } = {}) {
     return { answer: `In meinem Lexikon stehen ${st.gesamt.toLocaleString("de-DE")} Einträge in ${st.kategorien.length} Bereichen, zum Beispiel ${top}. Alles ohne Claude und ohne Internet.`, actions: ["lexikon"] };
   }
 
+  // Englisch: "was heißt Hund auf Englisch", "Schmetterling auf Englisch", "was bedeutet dog auf Deutsch"
+  m = t.match(/^(?:was (?:heisst|bedeutet|ist)|wie (?:sagt|nennt) man|wie heisst|uebersetze|uebersetz mir) (?:das wort |das |der |die |den |ein |eine )?(.{1,40}?) (?:auf|in|ins) (englisch|deutsch)$/)
+    || t.match(/^(?:das wort )?(.{1,40}?) auf (englisch|deutsch)$/) || t.match(/^was ist (?:das )?englische wort fuer (.{1,40})()$/);
+  if (m) {
+    const ziel = m[2] || "englisch";
+    const e = finde(`${m[1]} auf ${ziel}`, { kat: "englisch" });
+    if (e && e.kat === "englisch") {
+      if (ziel === "deutsch" && !/falscher freund/i.test(e.titel)) return { ...antwort(e), answer: `„${m[1]}“ heißt auf Deutsch: ${e.titel.replace(/\s*\(.*$/, "")}.` };
+      return antwort(e);
+    }
+  }
+
+  // In welchem Land / Bundesland liegt eine Stadt?
+  m = t.match(/^(?:in welchem (?:land|staat|bundesland)|wo) (?:liegt|ist) (?:die stadt )?(.{2,40})$/);
+  if (m) {
+    const e = finde(m[1], { kat: ["staedte", "weltstaedte"] });
+    if (e?.kat === "weltstaedte") return { ...antwort(e), answer: `${e.titel.replace(/\s*\(.*$/, "")} liegt in ${e.staat}. ${e.zusatz || ""}`.trim() };
+    if (e?.kat === "staedte") return { ...antwort(e), answer: `${e.titel} liegt in ${e.bundesland}. ${e.zusatz || ""}`.trim() };
+  }
+
+  // Sprichwörter & Fremdwörter mit Vorwort: "was bedeutet das Sprichwort ...", "was bedeutet das Fremdwort ..."
+  m = t.match(/^(?:was (?:bedeutet|heisst|meint man mit)|erklaer(?:e)? mir) (?:das sprichwort|die redewendung|der spruch|die redensart|der ausdruck) (.{3,90})$/);
+  if (m) { const e = finde(m[1], { kat: "sprichwoerter" }); if (e) return antwort(e); }
+  m = t.match(/^(?:was (?:bedeutet|heisst)) (?:das fremdwort|das wort|der begriff) (.{2,40})$/);
+  if (m) { const e = finde(m[1], { kat: ["fremdwoerter", "englisch"] }) || finde(m[1]); if (e) return antwort(e); }
+
   // Chemische Elemente
   m = t.match(/^(?:was ist |wie (?:ist|lautet|heisst) )?(?:die |das |der )?(ordnungszahl|atomnummer|atommasse|chemische zeichen|chemisches zeichen|chemische symbol|chemisches symbol|elementsymbol|symbol|zeichen) (?:von|fuer|vom) (.{2,30})$/);
   if (m) {
@@ -298,8 +360,9 @@ export function quickCommand(text, { locker = false } = {}) {
   // Einwohner
   m = t.match(/^wie ?viele? (?:einwohner|menschen|leute) (?:hat|leben in|wohnen in) (.{2,40})$/);
   if (m) {
-    const e = finde(m[1], { kat: ["staedte", "bundeslaender"] });
-    if (e && e.einwohner) return { ...antwort(e), answer: `${e.titel} hat rund ${e.einwohner} Einwohner${e.bundesland && norm(e.bundesland) !== norm(e.titel) ? ` und liegt in ${e.bundesland}` : ""}. ${e.zusatz || ""}`.trim() };
+    const e = finde(m[1], { kat: ["staedte", "bundeslaender", "weltstaedte"] });
+    const ort = e?.bundesland || e?.staat;
+    if (e && e.einwohner) return { ...antwort(e), answer: `${e.titel.replace(/\s*\(.*$/, "")} hat rund ${e.einwohner} Einwohner${ort && norm(ort) !== norm(e.titel) ? ` und liegt in ${ort}` : ""}. ${e.zusatz || ""}`.trim() };
   }
 
   // Erfindungen
@@ -320,7 +383,7 @@ export function quickCommand(text, { locker = false } = {}) {
   m = t.match(/^wann (?:war|ist|begann|endete|fiel|kam|gab es|passierte|wurde|wurden|starb|lebte|fand) (?:der |die |das |den )?(.{3,50}?)(?: statt| gebaut| gegruendet| eingefuehrt| entdeckt| geboren| erfunden)?$/);
   if (m) {
     const e = finde(m[1], { kat: ["geschichte", "personen", "erfindungen"] });
-    if (e && ["geschichte", "personen", "erfindungen", "weltraum", "erde", "sternzeichen"].includes(e.kat)) return antwort(e);
+    if (e && !["abkuerzungen", "englisch", "fremdwoerter"].includes(e.kat)) return antwort(e);
   }
 
   // Küche: "wie lange muss ich Eier kochen", "wie koche ich Reis"
@@ -352,7 +415,7 @@ export function quickCommand(text, { locker = false } = {}) {
   }
 
   // Was ist / Was sind / Was bedeutet / Erklär mir
-  m = t.match(/^(?:was (?:ist|sind|war|waren|bedeutet|heisst|meint man mit|versteht man unter)|erklaer(?:e)? mir|erklaer(?:e)?|was ist eigentlich|was genau ist|definiere|definition von|was ist mit) (?:was )?(.{1,60}?)(?: ist| sind| bedeutet)?$/);
+  m = t.match(/^(?:was (?:ist|sind|war|waren|bedeutet|heisst|meint man mit|versteht man unter)|erklaer(?:e)? mir|erklaer(?:e)?|was ist eigentlich|was genau ist|definiere|definition von|was ist mit) (?:was )?(.{1,90}?)(?: ist| sind| bedeutet)?$/);
   if (m) {
     const e = finde(m[1]);
     if (e) return antwort(e);

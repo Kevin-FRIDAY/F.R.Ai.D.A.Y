@@ -111,7 +111,7 @@ Durchschnitt|Den Durchschnitt berechnest du, indem du alle Werte addierst und du
 Satz des Pythagoras|Im rechtwinkligen Dreieck gilt a² + b² = c², c ist die längste Seite gegenüber dem rechten Winkel.|pythagoras
 Pi|Pi ist das Verhältnis von Kreisumfang zu Durchmesser, etwa 3,14159. Es hat unendlich viele Nachkommastellen ohne Muster.|kreiszahl
 Kreisfläche|Die Kreisfläche ist Pi mal Radius zum Quadrat.|fläche kreis
-Goldener Schnitt|Der Goldene Schnitt teilt eine Strecke im Verhältnis von etwa 1 zu 1,618. Er gilt als besonders harmonisch.|
+Goldener Schnitt|Der Goldene Schnitt teilt eine Strecke im Verhältnis von etwa 1 zu 1,618. Er gilt als besonders harmonisch.|goldene schnitt
 Fibonacci-Folge|In der Fibonacci-Folge ist jede Zahl die Summe der beiden vorherigen: 1, 1, 2, 3, 5, 8, 13, 21. Man findet sie in Sonnenblumen und Tannenzapfen.|fibonacci
 Fakultät|Die Fakultät n! ist das Produkt aller Zahlen von 1 bis n. 5! ist 120.|
 Null|Die Null als Zahl wurde in Indien erfunden und kam über arabische Gelehrte nach Europa.|zahl null
