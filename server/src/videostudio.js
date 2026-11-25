@@ -15,6 +15,7 @@ import { VIDEO_DIRS } from "./videoteam.js";
 import { komponiere, STIMMUNGEN, STIMMUNG_IDS, stimmungAus } from "./musik.js";
 import { denke, jsonAus } from "./denker.js";
 import { eintragen } from "./logbuch.js";
+import { leseAnweisung, LOOK_FILTER, LOOK_NAMEN } from "./regieplan.js";
 
 export const FORMATE = {
   hoch: { w: 1080, h: 1920, name: "9:16 Hochformat (TikTok, Reels, Shorts)", openverse: "tall" },
@@ -33,6 +34,8 @@ export const STUDIO_TEAM = [
 const FPS = 30;
 const UEBERGANG = 0.6;
 const UEBERGAENGE = ["fade", "slideleft", "circleopen", "smoothup", "dissolve", "wipeleft", "radial", "slideup"];
+const UEBERGAENGE_WEICH = ["fade", "dissolve", "fadeblack", "smoothleft"];
+const UEBERGAENGE_SCHNELL = ["slideleft", "wipeup", "smoothup", "slideright", "zoomin", "wipeleft"];
 const BILD_EXT = /\.(jpe?g|png|webp)$/i;
 const VIDEO_EXT = /\.(mp4|mov|m4v|mkv|webm)$/i;
 const FONTS_MAC = "/System/Library/Fonts/Supplemental";
@@ -105,7 +108,37 @@ export function normalisiereAuftrag(a = {}) {
   if (musik === false || musik === "nein") musik = "aus";
   if (!["auto", "aus", "eigene", ...STIMMUNG_IDS].includes(musik)) musik = stimmungAus(musik) || "auto";
   const bilder = BILDQUELLEN[a.bilder] ? a.bilder : "auto";
-  return { thema: kurz(a.thema || "Friday", 300) || "Friday", sekunden, format, musik, bilder, sprecher: Boolean(a.sprecher), stil: kurz(a.stil, 120) };
+  // Der Text ist eine Regie-Anweisung: daraus werden echte Schnitt-Vorgaben (und nur ein kurzes Thema).
+  const anweisung = kurz([a.anweisung || a.thema, a.stil].filter(Boolean).join(". "), 900);
+  const plan = leseAnweisung(anweisung, { art: "studio" });
+  const auftrag = {
+    thema: plan.kern || kurz(a.thema, 60) || "Friday", anweisung,
+    sekunden: plan.sekunden ? klemm(plan.sekunden, 5, 90) : sekunden,
+    format: plan.format || format,
+    musik: plan.musik || musik,
+    bilder: plan.bilder || bilder,
+    sprecher: plan.sprecher ?? Boolean(a.sprecher),
+    stil: kurz(a.stil, 200),
+  };
+  auftrag.regie = regieWerte(plan, auftrag);
+  return auftrag;
+}
+
+/** Aus dem Regie-Plan konkrete Werte für Szenen, Übergänge, Zoom, Look und Text machen. */
+export function regieWerte(plan, a) {
+  const tempo = plan.tempo || "normal";
+  const proSzene = tempo === "schnell" ? 2.2 : tempo === "ruhig" ? 6 : 4;
+  let anzahl = klemm(Math.round(a.sekunden / proSzene), 2, tempo === "schnell" ? 20 : 12);
+  if (plan.szenen.length) anzahl = klemm(Math.max(anzahl, plan.szenen.length + (plan.cta ? 1 : 0)), 2, 20);
+  const uebergang = plan.uebergang || (tempo === "schnell" ? "schnell" : tempo === "ruhig" ? "weich" : "dynamisch");
+  const dauer = { hart: 0.08, schnell: 0.3, weich: 1.0, dynamisch: UEBERGANG }[uebergang];
+  return {
+    tempo, anzahl, uebergang, uebergangDauer: Math.min(dauer, (a.sekunden / anzahl) * 0.4),
+    zoom: tempo === "schnell" ? 0.22 : tempo === "ruhig" ? 0.07 : 0.14,
+    look: plan.look || null, farbe: plan.farbe?.hex || null, textmenge: plan.textmenge || "normal",
+    ziel: plan.ziel, szenen: plan.szenen, texte: plan.texte, cta: plan.cta,
+    verstanden: plan.verstanden,
+  };
 }
 
 // ---------- Start ----------
@@ -153,14 +186,18 @@ async function produziere(j) {
   j.arbeit = fs.mkdtempSync(path.join(os.tmpdir(), "friday-studio-"));
 
   // 1) Regie: Drehbuch
-  const anzahl = klemm(Math.round(a.sekunden / 4), 2, 12);
-  melde(j, "regie", "läuft", `Schreibe Drehbuch: ${anzahl} Szenen für ${a.sekunden} Sekunden …`, 10);
+  const R = a.regie;
+  const anzahl = R.anzahl;
+  if (R.verstanden.length) melde(j, "regie", "läuft", `Deine Anweisung: ${R.verstanden.slice(1).join(" · ") || R.verstanden[0]}`, 5);
+  melde(j, "regie", "läuft", `Schreibe Drehbuch: ${anzahl} Szenen für ${a.sekunden} Sekunden (Tempo ${R.tempo}) …`, 10);
   const db = await drehbuch(a, anzahl, j);
+  setzeVorgaben(db, a);
+  db.uebergang = R.uebergangDauer;
   j.drehbuch = db;
-  melde(j, "regie", "fertig", `„${db.titel}“ · ${db.szenen.length} Szenen · ${db.quelle}`);
+  melde(j, "regie", "fertig", `„${db.titel}“ · ${db.szenen.length} Szenen · ${db.quelle}${R.look ? ` · Look ${LOOK_NAMEN[R.look]}` : ""}`);
 
   // 2) Bildsucher + 3) Komponist + Sprecher parallel
-  const stimmung = a.musik === "auto" ? (STIMMUNGEN[db.stimmung] ? db.stimmung : stimmungAus(`${a.thema} ${a.stil}`) || "neon") : a.musik;
+  const stimmung = a.musik === "auto" ? (STIMMUNGEN[db.stimmung] ? db.stimmung : stimmungAus(`${a.anweisung} ${R.tempo === "schnell" ? "energie" : R.tempo === "ruhig" ? "chill" : ""}`) || "neon") : a.musik;
   const [, musikDatei, stimme] = await Promise.all([
     bilderSuchen(j, db, F),
     musikMachen(j, stimmung, a.sekunden),
@@ -172,10 +209,12 @@ async function produziere(j) {
   db.szenen.forEach((s, i) => {
     if (!s.datei) { s.datei = path.join(j.arbeit, `grafik-${i}.ppm`); neonGrafik(s.datei, F.w / 2, F.h / 2, s.farbe, i); s.art = "grafik"; }
   });
-  const L = (a.sekunden + (db.szenen.length - 1) * UEBERGANG) / db.szenen.length;
+  const U = db.uebergang;
+  const L = (a.sekunden + (db.szenen.length - 1) * U) / db.szenen.length;
   const ass = path.join(j.arbeit, "titel.ass");
-  fs.writeFileSync(ass, titelAss(db, F, L));
-  melde(j, "grafik", "fertig", `${db.szenen.filter((s) => s.art === "grafik").length} Neon-Grafiken · ${db.szenen.length} Titel · ${db.szenen.length - 1} Übergänge`);
+  fs.writeFileSync(ass, titelAss(db, F, L, U, R.textmenge));
+  const nTitel = db.szenen.filter((s) => s.text).length;
+  melde(j, "grafik", "fertig", `${db.szenen.filter((s) => s.art === "grafik").length} Neon-Grafiken · ${nTitel ? `${nTitel} Titel` : "ohne Text"} · ${db.szenen.length - 1} ${R.uebergang === "hart" ? "harte Schnitte" : R.uebergang === "weich" ? "weiche Blenden" : "Übergänge"}`);
 
   // 5) Render
   const stamm = `Friday-Studio_${new Date().toISOString().slice(0, 16).replace("T", "_").replace(":", "-")}_${slug(db.titel)}`;
@@ -185,7 +224,7 @@ async function produziere(j) {
   if (!dur) throw new Error("Das fertige Video ist leer.");
   // Vorschaubild (für die Video-Liste und iPhone-Safari, das ohne Antippen nur Schwarz zeigt)
   await new Promise((res) => execFile(findeFfmpeg(), ["-hide_banner", "-loglevel", "error", "-y", "-ss", String(Math.min(2.2, dur / 3)), "-i", out, "-frames:v", "1", "-vf", "scale=540:-2", "-q:v", "4", out.replace(/\.mp4$/, ".jpg")], () => res()));
-  const info = { titel: db.titel, thema: a.thema, sekunden: Math.round(dur * 10) / 10, format: a.format, musik: j.musik, sprecher: Boolean(stimme), szenen: db.szenen.map((s) => ({ text: s.text, unter: s.unter, bild: s.bild || null })), erstellt: new Date().toISOString() };
+  const info = { titel: db.titel, thema: a.thema, anweisung: a.anweisung, regie: { tempo: R.tempo, uebergang: R.uebergang, look: R.look, textmenge: R.textmenge, verstanden: R.verstanden }, sekunden: Math.round(dur * 10) / 10, format: a.format, musik: j.musik, sprecher: Boolean(stimme), szenen: db.szenen.map((s) => ({ text: s.text, unter: s.unter, bild: s.bild || null })), erstellt: new Date().toISOString() };
   fs.writeFileSync(out.replace(/\.mp4$/, ".json"), JSON.stringify(info, null, 2));
   const quellen = db.szenen.filter((s) => s.bild?.seite).map((s) => `- ${s.bild.titel || "Foto"} (${s.bild.lizenz}) ${s.bild.seite}`);
   fs.writeFileSync(out.replace(/\.mp4$/, ".txt"), `${db.titel}\n\n${db.beschreibung || ""}\n\n${db.hashtags || ""}\n\nMusik: selbst komponiert von Friday (${j.musik?.name || "ohne"}), frei verwendbar.\n${quellen.length ? `Fotos (gemeinfrei, keine Namensnennung nötig):\n${quellen.join("\n")}\n` : ""}`);
@@ -202,16 +241,32 @@ function slug(s) {
 const FARBEN = ["#ff8a1e", "#2ee6d0", "#a978ff", "#ff3fa8", "#4f8dff", "#ffc44d"];
 
 async function drehbuch(a, anzahl, j) {
-  const system = "Du bist die Regie in Fridays Video-Studio. Du schreibst Drehbücher für kurze Social-Media-Videos auf Deutsch. Antworte NUR mit JSON, ohne Erklärung.";
-  const text = `Schreib ein Drehbuch für ein ${a.sekunden}-Sekunden-Video (${FORMATE[a.format].name}) zum Thema: "${a.thema}"${a.stil ? `. Stil/Wunsch: ${a.stil}` : ""}.
+  const R = a.regie;
+  const system = "Du bist die Regie in Fridays Video-Studio. Du schreibst Drehbücher für kurze Social-Media-Videos auf Deutsch. Der Auftrag ist eine ANWEISUNG an dich (worum es geht, wie es wirken soll) und KEIN Text fürs Video: setze sie um, übernimm keine Sätze daraus wörtlich ins Bild (Ausnahme: Texte in Anführungszeichen). Antworte NUR mit JSON, ohne Erklärung.";
+  const vorgaben = [
+    `Thema: ${a.thema}`,
+    R.ziel && `Ziel: ${{ vorstellung: "Vorstellung – wer sind sie, was machen sie, warum sie (persönlich, sympathisch, KEIN Verkaufspreis, keine Preise)", werbung: "Werbung – klarer Nutzen, Aufruf am Ende", erklaerung: "Erklärvideo – Schritt für Schritt, ein Gedanke pro Szene", story: "Kleine Geschichte mit Anfang, Höhepunkt, Ende" }[R.ziel]}`,
+    `Tempo: ${R.tempo}${R.tempo === "schnell" ? " (kurze, knackige Zeilen, viele Szenen)" : R.tempo === "ruhig" ? " (wenige, ruhige Szenen)" : ""}`,
+    R.szenen.length && `Szenen-Reihenfolge (genau so einhalten, je eine Szene, Bild passend dazu): ${R.szenen.map((x, i) => `${i + 1}. ${x}`).join("; ")}`,
+    R.texte.length && `Diese Texte müssen wörtlich vorkommen: ${R.texte.map((x) => `"${x}"`).join(", ")}`,
+    R.cta && `Letzte Szene = Aufruf: "${R.cta}"`,
+    R.textmenge === "ohne" ? "Kein Text im Bild: text und unter leer lassen (außer den vorgegebenen Texten)." : R.textmenge === "wenig" ? "Wenig Text: nur Hauptzeilen mit höchstens 4 Wörtern, unter leer." : "",
+    R.look && `Look: ${LOOK_NAMEN[R.look]}`,
+  ].filter(Boolean).join("\n");
+  const text = `Auftrag von Kevin (Anweisung, nicht abschreiben): """${a.anweisung}"""
+
+Was die Regie daraus verstanden hat:
+${vorgaben}
+
+Schreib ein Drehbuch für ein ${a.sekunden}-Sekunden-Video (${FORMATE[a.format].name}).
 Genau ${anzahl} Szenen. JSON-Form:
-{"titel":"kurzer Videotitel","stimmung":"${STIMMUNG_IDS.join("|")}","szenen":[{"text":"Hauptzeile, höchstens 6 Wörter","unter":"Unterzeile, höchstens 10 Wörter (oder leer)","bild":"englischer Suchbegriff für ein passendes Foto (2-4 Wörter)","farbe":"#rrggbb Akzentfarbe"}],"sprecher":"Sprechertext für genau ${a.sekunden} Sekunden (ca. ${Math.round(a.sekunden * 2.2)} Wörter)","beschreibung":"Bildunterschrift für Social Media, 1-2 Sätze","hashtags":"4 passende Hashtags"}
-Szene 1 ist ein starker Einstieg (Hook), die letzte ein Abschluss. Keine erfundenen Zahlen, keine Markennamen-Werbung.`;
+{"titel":"kurzer Videotitel","stimmung":"${STIMMUNG_IDS.join("|")}","szenen":[{"text":"Hauptzeile, höchstens 6 Wörter (eigene Worte, nicht aus dem Auftrag kopiert)","unter":"Unterzeile, höchstens 10 Wörter (oder leer)","bild":"englischer Suchbegriff für ein passendes Foto (2-4 Wörter, konkret: was man sieht)","farbe":"#rrggbb Akzentfarbe"}],"sprecher":"Sprechertext für genau ${a.sekunden} Sekunden (ca. ${Math.round(a.sekunden * 2.2)} Wörter)","beschreibung":"Bildunterschrift für Social Media, 1-2 Sätze","hashtags":"4 passende Hashtags"}
+Szene 1 ist ein starker Einstieg (Hook), die letzte ein Abschluss. Keine erfundenen Zahlen, keine Preise, keine Markennamen-Werbung.${R.farbe ? ` Akzentfarbe überwiegend ${R.farbe}.` : ""}`;
   let roh = null;
   let uhr;
   try {
     const r = await Promise.race([
-      denke({ system, text, stufe: "leicht", maxTokens: 1800, quelle: "schnitt" }),
+      denke({ system, text, stufe: "leicht", maxTokens: 2200, quelle: "schnitt" }),
       new Promise((res) => { uhr = setTimeout(() => res({ ok: false, error: "Zeitüberschreitung" }), 35000); }),
     ]);
     clearTimeout(uhr);
@@ -220,41 +275,83 @@ Szene 1 ist ein starker Einstieg (Hook), die letzte ein Abschluss. Keine erfunde
   } catch { /* Plan B */ }
   if (roh?.szenen?.length) {
     const szenen = roh.szenen.slice(0, anzahl).map((s, i) => ({
-      text: kurz(s.text, 60) || a.thema, unter: kurz(s.unter, 90), suche: kurz(s.bild, 60) || a.thema,
-      farbe: /^#[0-9a-f]{6}$/i.test(s.farbe || "") ? s.farbe : FARBEN[i % FARBEN.length],
+      text: istKopie(s.text, a.anweisung) ? "" : kurz(s.text, 60), unter: istKopie(s.unter, a.anweisung) ? "" : kurz(s.unter, 90), suche: kurz(s.bild, 60) || R.szenen[i] || a.thema,
+      farbe: R.farbe || (/^#[0-9a-f]{6}$/i.test(s.farbe || "") ? s.farbe : FARBEN[i % FARBEN.length]),
     }));
     return { titel: kurz(roh.titel, 70) || a.thema, stimmung: roh.stimmung, szenen, sprecher: kurz(roh.sprecher, 1200), beschreibung: kurz(roh.beschreibung, 300), hashtags: kurz(roh.hashtags, 120), quelle: "Claude" };
   }
   return planB(a, anzahl, j);
 }
 
-// Ohne Claude: Wikipedia-Zusammenfassung zum Thema, sonst eine eingebaute Vorlage.
+/** Hat jemand den Auftragstext einfach abgeschrieben? (mehr als 6 Wörter am Stück gleich) */
+function istKopie(zeile, auftrag) {
+  const z = String(zeile || "").toLowerCase().replace(/[^\p{L}\p{N} ]/gu, " ").replace(/\s+/g, " ").trim();
+  const a = String(auftrag || "").toLowerCase().replace(/[^\p{L}\p{N} ]/gu, " ").replace(/\s+/g, " ");
+  return z.split(" ").length >= 6 && a.includes(z);
+}
+
+/** Vorgaben aus der Anweisung fest einbauen – egal ob Claude oder Plan B das Drehbuch geschrieben hat. */
+function setzeVorgaben(db, a) {
+  const R = a.regie;
+  const sz = db.szenen;
+  // Szenen-Reihenfolge: Bildsuche je Szene nach Kevins Liste
+  R.szenen.forEach((x, i) => { if (sz[i] && !sz[i].sucheFest) { sz[i].sucheFest = true; if (db.quelle !== "Claude") sz[i].suche = x; } });
+  if (R.textmenge === "ohne") sz.forEach((s) => { s.text = ""; s.unter = ""; });
+  if (R.textmenge === "wenig") sz.forEach((s) => { s.unter = ""; s.text = s.text.split(" ").slice(0, 4).join(" "); });
+  // Texte in Anführungszeichen stehen wörtlich im Video
+  R.texte.forEach((x, i) => { if (sz[i]) { sz[i].text = x; if (R.textmenge !== "normal") sz[i].unter = ""; } });
+  if (R.cta && sz.length) { const l = sz[sz.length - 1]; l.text = R.cta; if (R.textmenge !== "normal") l.unter = ""; }
+  if (R.farbe) sz.forEach((s) => { s.farbe = R.farbe; });
+}
+
+// Ohne Claude: Wikipedia-Zusammenfassung zum Thema, sonst eine Vorlage passend zum Ziel.
+// Wichtig: der Auftragstext selbst landet NIE als Bildschirmtext – nur das kurze Thema.
+const VORLAGEN = {
+  vorstellung: [["Das sind wir", "Schön, dass du da bist"], ["Was wir machen", "Mit Herz und Können"], ["Darauf kannst du zählen", "Ehrlich, persönlich, zuverlässig"], ["Unser Team", "Menschen, die anpacken"], ["Lern uns kennen", ""]],
+  werbung: [["Neu für dich", ""], ["Das bekommst du", "Qualität, die man sieht"], ["Darum lohnt es sich", "Einfach. Schnell. Gut."], ["Überzeug dich selbst", ""]],
+  erklaerung: [["So funktioniert's", "Schritt für Schritt"], ["Schritt 1", "Der Anfang"], ["Schritt 2", "Jetzt wird's spannend"], ["Schritt 3", "Fertig!"], ["Gut zu wissen", "Kurz erklärt"]],
+  story: [["Es fing an …", ""], ["Dann passierte es", ""], ["Der beste Moment", ""], ["Und am Ende", ""]],
+  normal: [["Schon gewusst?", ""], ["Kurz & knackig", "In Sekunden erklärt"], ["Bleib dran", "Gleich kommt das Beste"], ["Das Wichtigste", ""]],
+};
 async function planB(a, anzahl, j) {
-  melde(j, "regie", "läuft", "Ohne Claude: lese Wikipedia zum Thema …", 50);
+  const R = a.regie;
+  melde(j, "regie", "läuft", "Ohne Claude: baue das Drehbuch aus deinen Vorgaben …", 50);
   let saetze = [];
   let titel = a.thema;
-  try {
-    const r = await fetch(`https://de.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(a.thema.replace(/^(über|ueber|zu|zum thema)\s+/i, ""))}`, { headers: { "User-Agent": "F.R.Ai.D.A.Y/1.0" }, signal: AbortSignal.timeout(8000) });
-    if (r.ok) {
-      const d = await r.json();
-      if (d.type !== "disambiguation" && d.extract) {
-        titel = d.title || titel;
-        saetze = d.extract.replace(/\([^)]*\)/g, "").split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter((s) => s.length > 12);
+  if (!R.ziel || R.ziel === "erklaerung") {
+    try {
+      const r = await fetch(`https://de.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(a.thema)}`, { headers: { "User-Agent": "F.R.Ai.D.A.Y/1.0" }, signal: AbortSignal.timeout(8000) });
+      if (r.ok) {
+        const d = await r.json();
+        if (d.type !== "disambiguation" && d.extract) {
+          titel = d.title || titel;
+          saetze = d.extract.replace(/\([^)]*\)/g, "").split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter((s) => s.length > 12);
+        }
       }
-    }
-  } catch { /* Vorlage */ }
-  const szenen = [{ text: titel.toUpperCase(), unter: `${a.sekunden} Sekunden`, suche: a.thema }];
-  const mitte = saetze.length
-    ? saetze.slice(0, anzahl - 2).map((s) => { const w = s.split(" "); return { text: w.slice(0, 5).join(" ") + (w.length > 5 ? " …" : ""), unter: w.slice(5, 15).join(" "), suche: a.thema }; })
-    : [{ text: "Schon gewusst?", unter: `Alles Wichtige über ${a.thema}`, suche: a.thema }, { text: "Kurz & knackig", unter: "Erklärt in Sekunden", suche: a.thema }, { text: "Bleib dran", unter: "Gleich kommt das Beste", suche: a.thema }];
-  for (let i = 0; szenen.length < anzahl - 1 && i < mitte.length; i++) szenen.push(mitte[i]);
-  while (szenen.length < anzahl - 1) szenen.push({ text: a.thema, unter: "", suche: a.thema });
-  szenen.push({ text: "Folge für mehr", unter: "Erstellt mit F.R.Ai.D.A.Y", suche: a.thema });
+    } catch { /* Vorlage */ }
+  }
+  const kurzTitel = kurz(titel, 40);
+  const szenen = [{ text: R.tempo === "schnell" ? kurzTitel.toUpperCase() : kurzTitel, unter: R.ziel === "vorstellung" ? "Stellt sich vor" : "", suche: a.thema }];
+  let mitte;
+  if (R.szenen.length) {
+    // Kevins Reihenfolge: je Szene ein Bild und eine kurze Zeile
+    mitte = R.szenen.map((x) => { const t = x.replace(/^(den|die|das|dem|der|ein|eine|einen)\s+/i, ""); return { text: kurz(t.charAt(0).toUpperCase() + t.slice(1), 40), unter: "", suche: x }; });
+    szenen.length = 0;
+  } else if (saetze.length) {
+    mitte = saetze.slice(0, anzahl - 2).map((s) => { const w = s.split(" "); return { text: w.slice(0, 5).join(" ") + (w.length > 5 ? " …" : ""), unter: w.slice(5, 15).join(" "), suche: a.thema }; });
+  } else {
+    mitte = VORLAGEN[R.ziel || "normal"].map(([t, u]) => ({ text: t, unter: u, suche: a.thema }));
+  }
+  const ende = R.cta ? 1 : 1;
+  for (let i = 0; szenen.length < anzahl - ende && i < mitte.length; i++) szenen.push(mitte[i]);
+  let k = 0;
+  while (szenen.length < anzahl - ende) { const v = VORLAGEN[R.ziel || "normal"]; const [t, u] = v[k++ % v.length]; szenen.push({ text: t, unter: R.tempo === "schnell" ? "" : u, suche: a.thema }); }
+  szenen.push({ text: R.cta || (R.ziel === "vorstellung" ? "Lern uns kennen" : R.ziel === "werbung" ? "Jetzt entdecken" : "Folge für mehr"), unter: kurzTitel, suche: a.thema });
   szenen.forEach((s, i) => { s.farbe = FARBEN[i % FARBEN.length]; });
   return {
-    titel, stimmung: stimmungAus(`${a.thema} ${a.stil}`) || "neon", szenen,
-    sprecher: saetze.length ? saetze.join(" ").split(" ").slice(0, Math.round(a.sekunden * 2.2)).join(" ") : `${titel}. In ${a.sekunden} Sekunden erklärt.`,
-    beschreibung: `${titel} in ${a.sekunden} Sekunden.`, hashtags: `#${slug(titel).replace(/-/g, "")} #friday #kurzvideo #wissen`,
+    titel: kurzTitel, stimmung: stimmungAus(`${a.anweisung} ${R.tempo === "schnell" ? "energie" : R.tempo === "ruhig" ? "chill" : ""}`) || "neon", szenen,
+    sprecher: saetze.length ? saetze.join(" ").split(" ").slice(0, Math.round(a.sekunden * 2.2)).join(" ") : szenen.map((s) => [s.text, s.unter].filter(Boolean).join(". ")).filter(Boolean).join(". "),
+    beschreibung: `${kurzTitel} in ${a.sekunden} Sekunden.`, hashtags: `#${slug(kurzTitel).replace(/-/g, "")} #friday #kurzvideo #${R.ziel === "vorstellung" ? "überuns" : "wissen"}`,
     quelle: saetze.length ? "Wikipedia (ohne Claude)" : "Vorlage (ohne Claude)",
   };
 }
@@ -424,23 +521,24 @@ function assFarbe(hex) {
   return `&H00${b.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${r.toString(16).padStart(2, "0")}&`.toUpperCase();
 }
 
-function titelAss(db, F, L) {
+function titelAss(db, F, L, U = UEBERGANG, textmenge = "normal") {
   const s = F.w / 1080; // Schriftgröße passend zum Format
   const gross = Math.round((F.h > F.w ? 96 : 84) * s), klein = Math.round((F.h > F.w ? 48 : 42) * s);
   const unten = Math.round(F.h * (F.h > F.w ? 0.27 : 0.16));
   const rand = Math.round(70 * s);
   const zeilen = [];
   db.szenen.forEach((sz, i) => {
-    const a = i * (L - UEBERGANG) + 0.25;
-    const e = a + L - UEBERGANG * 0.6;
+    if (!sz.text && !sz.unter) return; // Szene ohne Text (z. B. „ohne Text“ gewünscht)
+    const a = i * (L - U) + Math.min(0.25, U / 2);
+    const e = a + L - U * 0.6;
     const yH = F.h - unten - klein * 1.6, yU = F.h - unten + klein * 0.2;
     const farbe = assFarbe(sz.farbe);
     // Hauptzeile: gleitet von unten rein, leuchtet in der Szenenfarbe
-    zeilen.push(`Dialogue: 1,${assZeit(a)},${assZeit(e)},Haupt,,0,0,0,,{\\an2\\move(${F.w / 2},${Math.round(yH + 40 * s)},${F.w / 2},${Math.round(yH)},0,350)\\fad(250,250)\\3c${farbe}\\blur2}${assText(i === 0 ? sz.text.toUpperCase() : sz.text)}`);
+    if (sz.text) zeilen.push(`Dialogue: 1,${assZeit(a)},${assZeit(e)},Haupt,,0,0,0,,{\\an2\\move(${F.w / 2},${Math.round(yH + 40 * s)},${F.w / 2},${Math.round(yH)},0,350)\\fad(250,250)\\3c${farbe}\\blur2}${assText(i === 0 ? sz.text.toUpperCase() : sz.text)}`);
     if (sz.unter) zeilen.push(`Dialogue: 0,${assZeit(a + 0.3)},${assZeit(e)},Unter,,0,0,0,,{\\an2\\pos(${F.w / 2},${Math.round(yU + klein)})\\fad(300,250)}${assText(sz.unter)}`);
     // Leuchtstrich unter der Hauptzeile
     const bw = Math.round(F.w * 0.18);
-    zeilen.push(`Dialogue: 0,${assZeit(a + 0.15)},${assZeit(e)},Strich,,0,0,0,,{\\an7\\pos(${Math.round(F.w / 2 - bw / 2)},${Math.round(yH + 14 * s)})\\fad(200,250)\\1c${farbe}\\3c${farbe}\\blur3\\p1}m 0 0 l ${bw} 0 ${bw} ${Math.round(6 * s)} 0 ${Math.round(6 * s)}{\\p0}`);
+    if (sz.text) zeilen.push(`Dialogue: 0,${assZeit(a + 0.15)},${assZeit(e)},Strich,,0,0,0,,{\\an7\\pos(${Math.round(F.w / 2 - bw / 2)},${Math.round(yH + 14 * s)})\\fad(200,250)\\1c${farbe}\\3c${farbe}\\blur3\\p1}m 0 0 l ${bw} 0 ${bw} ${Math.round(6 * s)} 0 ${Math.round(6 * s)}{\\p0}`);
   });
   return `[Script Info]
 ScriptType: v4.00+
@@ -473,6 +571,11 @@ function dauer(datei) {
 
 async function render(j, { db, F, L, ass, musikDatei, stimme, out, T }) {
   melde(j, "render", "läuft", "Setze Szenen, Übergänge, Titel und Ton zusammen …", 1);
+  const R = j.auftrag.regie || {};
+  const U = db.uebergang ?? UEBERGANG;
+  const ZOOM = R.zoom ?? 0.14;
+  const liste = R.uebergang === "weich" ? UEBERGAENGE_WEICH : R.uebergang === "hart" ? ["fade"] : R.uebergang === "schnell" ? UEBERGAENGE_SCHNELL : UEBERGAENGE;
+  const lookFilter = R.look ? `,${LOOK_FILTER[R.look]}` : "";
   const W = F.w, H = F.h;
   const frames = Math.ceil(L * FPS) + 2;
   const inputs = [], teile = [];
@@ -484,7 +587,7 @@ async function render(j, { db, F, L, ass, musikDatei, stimme, out, T }) {
       inputs.push("-i", s.datei);
       const W2 = Math.round(W * 1.5 / 2) * 2, H2 = Math.round(H * 1.5 / 2) * 2;
       const zoomRein = i % 2 === 0;
-      const z = zoomRein ? `'min(1+${(0.14 / frames).toFixed(6)}*on,1.14)'` : `'max(1.14-${(0.14 / frames).toFixed(6)}*on,1)'`;
+      const z = zoomRein ? `'min(1+${(ZOOM / frames).toFixed(6)}*on,${(1 + ZOOM).toFixed(3)})'` : `'max(${(1 + ZOOM).toFixed(3)}-${(ZOOM / frames).toFixed(6)}*on,1)'`;
       const dx = [0, 1, -1][i % 3];
       const x = `'iw/2-(iw/zoom/2)+${dx}*on*${(W2 * 0.03 / frames).toFixed(4)}'`;
       const look = s.art === "foto" ? "eq=contrast=1.08:saturation=1.12:brightness=-0.03,vignette=PI/5" : "eq=saturation=1.05";
@@ -493,12 +596,12 @@ async function render(j, { db, F, L, ass, musikDatei, stimme, out, T }) {
   });
   let letzte = "v0";
   for (let i = 1; i < db.szenen.length; i++) {
-    const off = (i * (L - UEBERGANG)).toFixed(3);
-    teile.push(`[${letzte}][v${i}]xfade=transition=${UEBERGAENGE[(i - 1) % UEBERGAENGE.length]}:duration=${UEBERGANG}:offset=${off}[x${i}]`);
+    const off = (i * (L - U)).toFixed(3);
+    teile.push(`[${letzte}][v${i}]xfade=transition=${liste[(i - 1) % liste.length]}:duration=${U.toFixed(3)}:offset=${off}[x${i}]`);
     letzte = `x${i}`;
   }
   const fonts = fs.existsSync(FONTS_MAC) ? `:fontsdir='${ffEsc(FONTS_MAC)}'` : "";
-  teile.push(`[${letzte}]subtitles=filename='${ffEsc(ass)}'${fonts},fade=t=in:st=0:d=0.4,fade=t=out:st=${(T - 0.6).toFixed(2)}:d=0.6,format=yuv420p[vout]`);
+  teile.push(`[${letzte}]${lookFilter.slice(1) ? `${lookFilter.slice(1)},` : ""}subtitles=filename='${ffEsc(ass)}'${fonts},fade=t=in:st=0:d=0.4,fade=t=out:st=${(T - 0.6).toFixed(2)}:d=0.6,format=yuv420p[vout]`);
 
   // Ton: Musik (unter dem Sprecher leiser), Sprecher, sonst Stille
   let n = db.szenen.length;
@@ -573,7 +676,7 @@ export function verstehe(text = "") {
   const t = roh.toLowerCase();
   if (!/\b(video|clip|reel|tiktok|short)s?\b/.test(t)) return null;
   if (!/\b(erstell|generier|produzier|erzeug|zauber)\w*|\bdreh\w* (mir |uns )?(ein|einen|eine)\b|\b(mach|bau)\w* (mir |uns |mal )*(ein|einen|eine|n|nen)\b/.test(t)) return null;
-  if (/\b(schneid|schnitt|eingang)\w*/.test(t) && !/\b(über|ueber|zum thema|thema)\b/.test(t)) return null;
+  if (/\b(schneid|schnitt|eingang)\w*/.test(t) && !/(^|\s)(über|ueber|zum thema|thema)\s/.test(t)) return null;
   let sekunden = 20;
   const zahl = /(\d{1,3})\s*(?:-\s*)?(sek|sec|s\b|minute|min)/.exec(t) || new RegExp(`\\b(${Object.keys(ZAHLWORT).join("|")}|eine?)\\s*(?:-\\s*)?(sekunden|minute)`).exec(t);
   if (/einminüt|einminuet|eine minute/.test(t)) sekunden = 60;
@@ -596,7 +699,8 @@ export function verstehe(text = "") {
     .replace(/\b(bitte|mal|danke)\b/gi, "").replace(/\s+/g, " ").trim();
   if (!thema || /^\d/.test(thema)) thema = "";
   else thema = thema.charAt(0).toUpperCase() + thema.slice(1);
-  return { thema, sekunden: klemm(sekunden, 5, 90), format, musik, bilder, sprecher };
+  // Der ganze Satz geht als Regie-Anweisung mit (Tempo, Look, Szenen …), das Thema bleibt kurz.
+  return { thema, anweisung: roh, sekunden: klemm(sekunden, 5, 90), format, musik, bilder, sprecher };
 }
 
 export function quickCommand(text) {
@@ -606,7 +710,7 @@ export function quickCommand(text) {
   }
   const a = verstehe(text);
   if (!a) return null;
-  if (!a.thema) return { answer: "Gern, Chef. Worüber soll das Video sein? Schreib das Thema oben ins Studio, oder sag zum Beispiel: Erstell mir ein 20-Sekunden-Video über Mallorca.", actions: ["studio"] };
+  if (!a.thema && !leseAnweisung(a.anweisung).kern) return { answer: "Gern, Chef. Worüber soll das Video sein? Schreib das Thema oben ins Studio, oder sag zum Beispiel: Erstell mir ein 20-Sekunden-Video über Mallorca.", actions: ["studio"] };
   const r = starteStudio(a, { quelle: "sprache" });
   if (!r.ok) return { answer: r.laeuftSchon ? `Moment, Chef. ${r.error} Ich sag Bescheid, wenn es fertig ist.` : r.error, actions: ["studio"] };
   const m = r.auftrag.musik === "aus" ? "ohne Musik" : r.auftrag.musik === "eigene" ? "mit deiner Musik" : r.auftrag.musik === "auto" ? "mit eigener Musik" : `mit ${STIMMUNGEN[r.auftrag.musik].name}-Musik`;

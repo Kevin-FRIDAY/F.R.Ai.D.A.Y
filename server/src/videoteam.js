@@ -8,6 +8,7 @@ import { spawn, execFile } from "node:child_process";
 import { kiClient, ersatzBereit } from "./ki-client.js";
 import { config, ROOT } from "./config.js";
 import { recordUsage } from "./energie.js";
+import { leseAnweisung } from "./regieplan.js";
 
 const BASE = process.env.FRIDAY_VIDEO_DIR || path.join(os.homedir(), "Friday-Video");
 export const VIDEO_DIRS = {
@@ -19,7 +20,7 @@ export const VIDEO_DIRS = {
 const PYTHON = path.resolve(ROOT, "..", ".venv", "bin", "python");
 const SCRIPT = path.join(ROOT, "tools", "videoteam.py");
 const VIDEO_EXT = /\.(mp4|mov|m4v|mkv|webm)$/i;
-export const LOOKS = ["natürlich", "warm", "kühl", "kino"];
+export const LOOKS = ["natürlich", "warm", "kühl", "kino", "schwarzweiss", "retro", "neon"];
 export const TEAM = [
   ["regie", "Regie", "Plan machen, verteilen, zusammensetzen, prüfen"],
   ["transkript", "Transkript", "Jedes Wort mit Zeitstempel (Whisper, lokal)"],
@@ -61,20 +62,42 @@ export function getVideoJob() {
 
 const short = (s, n = 160) => String(s || "").slice(0, n);
 
-export function startVideoJob({ look } = {}) {
+/** Kevins Anweisung („auf 30 Sekunden, nur die besten Stellen, Kino-Look …“) → Vorgaben für das Team. */
+export function schnittVorgaben(anweisung = "", look) {
+  const p = leseAnweisung(anweisung, { art: "schnitt" });
+  const hex = p.farbe?.hex || null;
+  return {
+    anweisung: String(anweisung || "").slice(0, 900),
+    look: p.look || (LOOKS.includes(look) ? look : "natürlich"),
+    pausen: p.pausen || "normal",            // hart = jede Pause raus, sanft = Atempausen bleiben
+    aehms: p.aehms || "raus",
+    maxSekunden: p.maxSekunden || null,
+    auswahl: p.auswahl || (p.maxSekunden ? "beste" : null),
+    fokus: p.fokus,
+    untertitel: p.untertitel !== false,
+    musik: p.musik === "aus" ? "aus" : "an",
+    titel: p.texte[0] || "",
+    abspann: p.cta || p.texte[1] || "",
+    farbe: hex,
+    verstanden: p.verstanden,
+  };
+}
+
+export function startVideoJob({ look, anweisung } = {}) {
   ensureDirs();
   if (!videoTeamReady()) return { ok: false, error: "Das Schnitt-Team ist auf diesem Mac nicht installiert (Python-Umgebung fehlt)." };
   if (job && job.status === "läuft") return { ok: false, error: "Das Team schneidet gerade schon ein Video." };
   const clips = listClips();
   if (!clips.length) return { ok: false, error: `Keine Clips gefunden. Leg deine Videos in den Ordner ${VIDEO_DIRS.eingang}.` };
-  const chosenLook = LOOKS.includes(look) ? look : "natürlich";
+  const vorgaben = schnittVorgaben(anweisung, look);
+  const chosenLook = vorgaben.look;
   job = {
-    id: Date.now(), status: "läuft", started: new Date().toISOString(), look: chosenLook, clips,
+    id: Date.now(), status: "läuft", started: new Date().toISOString(), look: chosenLook, clips, vorgaben,
     agents: Object.fromEntries(TEAM.map(([id]) => [id, { status: "wartet", text: "", pct: 0 }])),
     log: [], plan: null, subs: null, levels: null, result: null, error: null,
   };
   const current = job;
-  const proc = spawn(PYTHON, [SCRIPT], { cwd: path.dirname(SCRIPT), env: { ...process.env, FRIDAY_VIDEO_DIR: BASE, FRIDAY_LOOK: chosenLook } });
+  const proc = spawn(PYTHON, [SCRIPT], { cwd: path.dirname(SCRIPT), env: { ...process.env, FRIDAY_VIDEO_DIR: BASE, FRIDAY_LOOK: chosenLook, FRIDAY_VORGABEN: JSON.stringify(vorgaben) } });
   let buf = "";
   proc.stdout.on("data", (chunk) => {
     buf += chunk.toString();
@@ -99,10 +122,10 @@ export function startVideoJob({ look } = {}) {
     current.ended = new Date().toISOString();
     if (current.status === "fertig") await writeCaption(current).catch(() => {});
     eintragen(current.status === "fertig"
-      ? { bereich: "video", titel: `Video fertig geschnitten (${current.clips?.length || 0} Clips, Look ${current.look})`, details: current.result?.name || current.result?.file || "", quelle: "automatisch" }
+      ? { bereich: "video", titel: `Video fertig geschnitten (${current.clips?.length || 0} Clips, Look ${current.look}${current.vorgaben?.anweisung ? `, Anweisung: ${current.vorgaben.anweisung.slice(0, 60)}` : ""})`, details: current.result?.name || current.result?.file || "", quelle: "automatisch" }
       : { bereich: "video", titel: "Videoschnitt abgebrochen", details: current.error || "", quelle: "automatisch", ok: false });
   });
-  return { ok: true, clips: clips.length, look: chosenLook };
+  return { ok: true, clips: clips.length, look: chosenLook, verstanden: vorgaben.verstanden };
 }
 
 function handle(j, msg) {
@@ -116,6 +139,7 @@ function handle(j, msg) {
   } else if (msg.type === "plan") j.plan = msg;
   else if (msg.type === "subs") j.subs = msg.blocks.slice(0, 400);
   else if (msg.type === "levels") j.levels = msg.levels;
+  else if (msg.type === "auswahl") j.auswahl = { behalten: msg.behalten, von: msg.von, grund: short(msg.grund, 200) };
   else if (msg.type === "done") j.result = { file: msg.file, name: msg.name, dur: msg.dur, transcript: msg.transcript };
   else if (msg.type === "error") { j.status = "fehler"; j.error = short(msg.error, 300); }
 }
