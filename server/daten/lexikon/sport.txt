@@ -26,3 +26,101 @@ Darts|Beim Darts startet man meist mit 501 Punkten und muss genau auf null komme
 Boxen|Ein Boxkampf geht bei Profis über bis zu 12 Runden zu je 3 Minuten.|box regeln
 Skispringen|Der Weitenrekord im Skifliegen liegt bei über 250 Metern. Die Vierschanzentournee findet jedes Jahr um Neujahr in Deutschland und Österreich statt.|vierschanzentournee
 Bundesjugendspiele|Die Bundesjugendspiele gibt es in Deutschland seit 1951 an Schulen mit Laufen, Springen und Werfen.|
+Fußball-WM 2026|Die Fußball-WM 2026 findet in den USA, Kanada und Mexiko statt, erstmals mit 48 Mannschaften.|wm 2026
+Fußball-WM 2030|Die WM 2030 findet in Spanien, Portugal und Marokko statt, mit Auftaktspielen in Südamerika.|wm 2030
+Fußball-WM 2022|Die WM 2022 in Katar gewann Argentinien mit Lionel Messi im Elfmeterschießen gegen Frankreich.|wm 2022
+Fußball-WM 2014|2014 wurde Deutschland in Brasilien Weltmeister, mit dem 7 zu 1 gegen Brasilien im Halbfinale und Götzes Tor im Finale gegen Argentinien.|7 zu 1,wm 2014
+Wunder von Bern|1954 gewann Deutschland in Bern sensationell gegen Ungarn das WM-Finale 3 zu 2.|
+Europameisterschaft 2024|Die EM 2024 fand in Deutschland statt, Spanien wurde Europameister.|em 2024
+Deutschland Europameister|Deutschland wurde dreimal Europameister: 1972, 1980 und 1996.|wie oft europameister
+Frauenfußball|Die deutschen Frauen wurden 2003 und 2007 Weltmeisterinnen und achtmal Europameisterinnen.|frauen nationalmannschaft
+Bundesliga Rekordmeister|Der FC Bayern München ist mit Abstand Rekordmeister der Bundesliga.|rekordmeister
+Bayer Leverkusen|Bayer Leverkusen wurde 2024 erstmals deutscher Meister, ungeschlagen.|leverkusen meister
+DFB-Pokal|Der DFB-Pokal ist der wichtigste Pokalwettbewerb, das Finale findet in Berlin statt.|dfb pokal
+Champions League Rekord|Real Madrid hat die Champions League beziehungsweise den Europapokal der Landesmeister am häufigsten gewonnen.|
+Ballon d'Or|Der Ballon d'Or ist die wichtigste Auszeichnung für Fußballer, Messi gewann ihn achtmal.|ballon dor,weltfussballer
+Elfmeter|Ein Elfmeter wird aus 11 Metern geschossen.|strafstoss
+Gelbe und Rote Karte|Gelb ist eine Verwarnung, Gelb-Rot oder Rot ein Platzverweis.|rote karte
+VAR|Der Videoassistent überprüft strittige Szenen im Fußball.|videobeweis
+Fußballfeld|Ein Fußballfeld ist etwa 105 mal 68 Meter groß.|groesse fussballfeld
+Fußball Spielzeit|Ein Fußballspiel dauert zweimal 45 Minuten plus Nachspielzeit.|
+Derby|Ein Derby ist ein Spiel zwischen Rivalen, etwa Schalke gegen Dortmund im Revierderby.|revierderby
+Schalke 04|Schalke 04 aus Gelsenkirchen ist ein Traditionsverein und siebenfacher deutscher Meister.|schalke
+Hamburger SV|Der HSV war lange der Dino der Bundesliga, bis zum ersten Abstieg 2018.|hsv
+Union Berlin|Union Berlin aus Köpenick stieg 2019 in die Bundesliga auf.|
+FC St. Pauli|Der FC St. Pauli ist ein Kultklub aus Hamburg.|st pauli
+Real Madrid|Real Madrid ist der erfolgreichste Klub in der Champions League.|
+FC Barcelona|Der FC Barcelona spielt im Camp Nou.|barca
+Manchester United|Manchester United ist einer der berühmtesten englischen Klubs.|
+Premier League|Die Premier League ist die englische Fußballliga und die reichste der Welt.|
+La Liga|La Liga ist die spanische Liga.|
+Serie A|Die Serie A ist die italienische Liga.|
+Olympische Spiele 2024|Die Sommerspiele 2024 fanden in Paris statt.|olympia 2024
+Olympische Spiele 2028|Die Sommerspiele 2028 finden in Los Angeles statt.|olympia 2028
+Olympische Winterspiele 2026|Die Winterspiele 2026 finden in Mailand und Cortina d'Ampezzo statt.|olympia 2026
+Olympia München 1972|Die Spiele 1972 in München wurden vom Attentat auf die israelische Mannschaft überschattet.|
+Paralympics|Die Paralympics sind die Spiele für Sportler mit Behinderung, direkt nach Olympia.|
+Zehnkampf|Der Zehnkampf besteht aus zehn Disziplinen an zwei Tagen, der Sieger gilt als König der Athleten.|
+Weitsprung-Weltrekord|Der Weitsprung-Weltrekord der Männer steht seit 1991 bei 8,95 Metern von Mike Powell.|weitsprung
+Hochsprung-Weltrekord|Der Hochsprung-Weltrekord liegt bei 2,45 Metern von Javier Sotomayor aus dem Jahr 1993.|hochsprung
+Stabhochsprung|Armand Duplantis hat den Stabhochsprung-Weltrekord immer wieder verbessert, auf über 6,20 Meter.|duplantis
+Marathon-Weltrekord|Der Marathon-Weltrekord der Männer liegt bei unter 2 Stunden und 1 Minute.|
+Berlin-Marathon|Der Berlin-Marathon gilt als schnellster Marathon der Welt, viele Weltrekorde fielen dort.|
+Triathlon|Ein Triathlon besteht aus Schwimmen, Radfahren und Laufen, der Ironman aus 3,8, 180 und 42,2 Kilometern.|ironman
+Biathlon|Biathlon verbindet Skilanglauf und Schießen.|
+Skispringen Rekord|Der Weitenweltrekord im Skifliegen liegt bei über 250 Metern.|skifliegen
+Vierschanzentournee|Die Vierschanzentournee findet zum Jahreswechsel in Oberstdorf, Garmisch, Innsbruck und Bischofshofen statt.|
+Ski Alpin|Ski alpin hat die Disziplinen Abfahrt, Super-G, Riesenslalom und Slalom.|
+Eiskunstlauf|Beim Eiskunstlauf werden Sprünge wie der Axel bewertet.|
+Bobfahren|Deutschland ist im Bob und Rodeln besonders erfolgreich.|rodeln
+Eishockey Deutschland|Deutschland holte 2018 Olympia-Silber im Eishockey.|
+Handball Deutschland|Deutschland wurde 1938, 1978 und 2007 Handball-Weltmeister.|
+Basketball Weltmeister|Deutschland wurde 2023 erstmals Basketball-Weltmeister.|
+NBA|Die NBA ist die stärkste Basketball-Liga, Rekordmeister sind Boston Celtics und Los Angeles Lakers.|
+Super Bowl Rekord|Die meisten Super-Bowl-Siege haben die New England Patriots und die Pittsburgh Steelers.|
+American Football|Im American Football hat jedes Team vier Versuche, um zehn Yards zu schaffen.|football
+Baseball|Baseball ist in den USA, Japan und der Karibik beliebt.|
+Cricket|Cricket ist in Indien, England und Australien sehr beliebt, ein Spiel kann Tage dauern.|
+Rugby|Rugby ist ein Mannschaftssport mit eiförmigem Ball, beliebt in Neuseeland, die All Blacks tanzen den Haka.|haka
+Volleyball|Beim Volleyball darf jedes Team den Ball dreimal berühren.|beachvolleyball
+Tischtennis|Tischtennis ist in China Nationalsport, Timo Boll ist der bekannteste Deutsche.|timo boll
+Badminton|Badminton ist eine der schnellsten Ballsportarten, der Federball erreicht über 400 Kilometer pro Stunde.|federball
+Wimbledon|Wimbledon in London ist das älteste Tennisturnier, gespielt auf Rasen in Weiß.|
+Grand Slam|Die vier Grand-Slam-Turniere sind Australian Open, French Open, Wimbledon und US Open.|grand slam tennis
+Tennis Zählweise|Im Tennis zählt man 15, 30, 40, Spiel, bei 40 zu 40 heißt es Einstand.|
+Golf Begriffe|Ein Birdie ist ein Schlag unter Par, ein Eagle zwei, ein Bogey einer über Par.|birdie,par
+Snooker|Snooker ist eine Billardvariante, die Höchstpunktzahl ist ein Maximum Break von 147.|billard
+Darts WM|Die Darts-WM findet jedes Jahr um den Jahreswechsel im Ally Pally in London statt.|
+Formel 1 Rekorde|Lewis Hamilton und Michael Schumacher haben je sieben WM-Titel.|
+Formel 1 Rennen|Eine Formel-1-Saison hat heute über 20 Rennen, ein Rennen ist etwa 305 Kilometer lang.|
+Formel 1 Teams|Bekannte Formel-1-Teams sind Ferrari, Mercedes, Red Bull und McLaren.|
+Boxen Gewichtsklassen|Im Boxen gibt es viele Gewichtsklassen von Fliegengewicht bis Schwergewicht.|
+Kampfsport|Bekannte Kampfsportarten sind Judo, Karate, Taekwondo, Kickboxen und Mixed Martial Arts.|judo,karate,mma
+Schwimmen Lagen|Die vier Schwimmlagen sind Freistil, Brust, Rücken und Schmetterling.|schwimmstile
+Rudern|Beim Rudern hat jeder ein Ruder, beim Skullen zwei.|
+Segeln|Der America's Cup ist die älteste Segeltrophäe.|
+Surfen|Surfen wurde 2021 olympisch.|
+Klettern|Sportklettern ist seit 2021 olympisch, Bouldern ist Klettern ohne Seil in geringer Höhe.|bouldern
+Skateboarden|Skateboarden ist seit 2021 olympisch.|
+Breakdance|Breaking war 2024 in Paris olympisch.|breaking
+E-Sport Olympia|Das IOC plant eigene Olympische E-Sport-Spiele.|
+Schach Weltmeister|Schachweltmeister ist derzeit Gukesh Dommaraju aus Indien, der jüngste Weltmeister.|gukesh
+Schach Figuren|Jeder Spieler hat 16 Figuren: König, Dame, zwei Türme, zwei Läufer, zwei Springer und acht Bauern.|schachfiguren
+Schach Regeln|Ziel im Schach ist es, den gegnerischen König schachmatt zu setzen.|schachmatt
+Rochade|Bei der Rochade ziehen König und Turm gleichzeitig.|
+Fitness|Für Fitness empfiehlt sich eine Mischung aus Ausdauer, Kraft und Beweglichkeit.|
+Liegestütze|Liegestütze trainieren Brust, Schultern und Trizeps.|
+Plank|Der Unterarmstütz trainiert die Rumpfmuskulatur.|unterarmstuetz
+Joggen Anfänger|Anfänger beginnen am besten mit Gehen und Laufen im Wechsel, etwa 3 Mal pro Woche 30 Minuten.|laufen anfangen
+Puls Training|Der maximale Puls liegt grob bei 220 minus Lebensalter.|maximalpuls
+Aufwärmen|Vor dem Sport 5 bis 10 Minuten leicht aufwärmen beugt Verletzungen vor.|aufwaermen
+Dehnen|Dehnen nach dem Sport hilft der Beweglichkeit.|
+Muskelaufbau|Für Muskelaufbau braucht man Krafttraining, Eiweiß und Erholung.|
+HIIT|Hochintensives Intervalltraining wechselt kurze harte Phasen mit Pausen.|intervalltraining
+Pilates|Pilates stärkt die tiefe Rumpfmuskulatur.|
+Sportabzeichen|Das Deutsche Sportabzeichen kann jeder in Ausdauer, Kraft, Schnelligkeit und Koordination ablegen.|
+Bundesliga Gründung|Die Bundesliga wurde 1963 gegründet.|
+Sportschau|Die Sportschau in der ARD zeigt seit 1961 Fußball.|
+Torjäger Bundesliga|Gerd Müller hält mit 365 Toren den Rekord, Robert Lewandowski schoss 41 Tore in einer Saison.|lewandowski
+Ewige Tabelle|Der FC Bayern führt die ewige Tabelle der Bundesliga an.|
+Fan|Fußballfans stehen oft in der Kurve, Ultras sind besonders organisierte Fans.|ultras

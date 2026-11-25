@@ -39,3 +39,95 @@ Spaghetti Carbonara|Echte Carbonara ohne Sahne: Spaghetti, Guanciale oder Speck,
 Lasagne|Lasagne braucht bei 180 Grad etwa 40 bis 45 Minuten im Ofen. Danach 10 Minuten ruhen lassen, dann lässt sie sich besser schneiden.|
 Kuchen fertig|Ob ein Kuchen fertig ist, prüft man mit der Stäbchenprobe: Holzstäbchen hineinstechen, bleibt kein Teig hängen, ist er durch.|stäbchenprobe
 Wasser kocht|Auf Meereshöhe kocht Wasser bei 100 Grad. Auf der Zugspitze schon bei etwa 90 Grad, deshalb dauert dort das Eierkochen länger.|siedepunkt
+Rührei|Für Rührei Eier verquirlen, salzen und bei mittlerer Hitze langsam stocken lassen, öfter umrühren.|ruehrei
+Spiegelei|Ein Spiegelei bei mittlerer Hitze braten, bis das Eiweiß fest ist, etwa 3 bis 4 Minuten.|
+Pochiertes Ei|Ein Ei in siedendes Wasser mit Essig gleiten lassen und 3 bis 4 Minuten garen.|
+Omelett|Für ein Omelett 2 bis 3 Eier verquirlen, in Butter stocken lassen und zusammenklappen.|omelette
+Bratkartoffeln|Für Bratkartoffeln gekochte, kalte Kartoffeln in Scheiben in reichlich Fett goldbraun braten.|
+Kartoffelpüree|Kartoffeln weich kochen, stampfen und mit warmer Milch, Butter, Salz und Muskat verrühren.|kartoffelbrei
+Pommes selber machen|Kartoffelstifte erst bei 140 Grad vorfrittieren, dann bei 180 Grad knusprig, oder im Ofen bei 220 Grad etwa 25 Minuten.|
+Heißluftfritteuse|In der Heißluftfritteuse gart man mit heißer Luft und wenig Fett, Pommes brauchen meist 15 bis 20 Minuten bei 200 Grad.|airfryer
+Bolognese|Für Bolognese Hackfleisch mit Zwiebel, Karotte und Sellerie anbraten, Tomaten dazu und mindestens eine Stunde schmoren.|spaghetti bolognese
+Tomatensoße|Für Tomatensoße Zwiebel und Knoblauch in Olivenöl anschwitzen, Dosentomaten dazu, salzen und 20 Minuten köcheln.|tomatensauce
+Pesto|Pesto alla Genovese besteht aus Basilikum, Pinienkernen, Parmesan, Knoblauch und Olivenöl.|
+Bechamelsoße|Für Bechamel Butter schmelzen, Mehl einrühren, nach und nach Milch dazu und köcheln lassen.|bechamel
+Mehlschwitze|Eine Mehlschwitze aus Butter und Mehl bindet Soßen.|
+Soße binden|Soßen bindet man mit Speisestärke, kalt angerührt, oder mit einer Mehlschwitze.|sosse andicken
+Gulasch|Für Gulasch Rindfleisch mit viel Zwiebeln und Paprikapulver anbraten und zwei Stunden schmoren.|
+Rouladen|Rinderrouladen werden mit Senf, Speck, Zwiebel und Gurke gefüllt und geschmort.|rinderrouladen
+Schweinebraten|Schweinebraten mit Kruste gart bei etwa 160 Grad, zum Schluss bei hoher Hitze knusprig.|
+Gänsebraten|Eine Gans braucht im Ofen etwa 4 bis 5 Stunden bei niedriger Temperatur.|weihnachtsgans
+Ente braten|Eine Ente braucht etwa 2 bis 2,5 Stunden bei 160 bis 180 Grad.|
+Lachs braten|Lachs auf der Hautseite etwa 4 Minuten braten, wenden und 1 bis 2 Minuten fertig garen.|
+Fisch gar|Fisch ist gar, wenn er sich leicht in Lamellen teilen lässt, Kerntemperatur etwa 55 bis 60 Grad.|
+Kerntemperatur|Hähnchen braucht 75 Grad Kerntemperatur, Schwein etwa 65, Rind medium etwa 56.|
+Steak Garstufen|Rare etwa 50 Grad, medium rare 54, medium 57, well done über 65 Grad Kerntemperatur.|garstufen
+Fleisch ruhen lassen|Fleisch nach dem Braten ein paar Minuten ruhen lassen, dann bleibt der Saft drin.|
+Burger Patty|Ein Patty aus Rinderhack mit etwa 20 Prozent Fett pro Seite 3 bis 4 Minuten scharf braten.|
+Schnitzel panieren|Zum Panieren Fleisch erst in Mehl, dann in Ei, dann in Semmelbröseln wenden.|panieren
+Frikadellen|Frikadellen aus Hack, eingeweichtem Brötchen, Ei, Zwiebel und Gewürzen formen und braten.|buletten,fleischpflanzerl
+Gemüsesuppe|Für Gemüsesuppe Gemüse würfeln, anschwitzen, mit Brühe aufgießen und 20 Minuten köcheln.|
+Kürbissuppe|Hokkaido mit Zwiebel anschwitzen, mit Brühe kochen, pürieren und mit Sahne oder Kokosmilch verfeinern.|kuerbissuppe
+Hühnersuppe|Hühnersuppe wird aus Suppenhuhn, Wurzelgemüse und Wasser zwei Stunden gekocht.|huehnersuppe
+Linsensuppe|Linsen mit Gemüse und Brühe kochen, mit etwas Essig abschmecken.|
+Kartoffelsalat|Norddeutsch mit Mayonnaise, süddeutsch mit Brühe, Essig und Öl.|
+Salatdressing|Ein einfaches Dressing: 3 Teile Öl, 1 Teil Essig, Senf, Salz, Pfeffer und etwas Honig.|vinaigrette
+Guacamole|Guacamole aus reifer Avocado, Limette, Salz, Zwiebel und Tomate.|
+Tzatziki|Tzatziki aus Joghurt, geraspelter Gurke, Knoblauch und Olivenöl.|zaziki
+Pizza backen|Pizza bei maximaler Hitze, 250 Grad oder mehr, etwa 8 bis 12 Minuten backen, am besten auf einem Pizzastein.|
+Hefeteig|Hefeteig braucht Wärme und Zeit, etwa eine Stunde gehen lassen, bis er doppelt so groß ist.|
+Mürbeteig|Mürbeteig: 3 Teile Mehl, 2 Teile Butter, 1 Teil Zucker, kalt verarbeiten.|
+Rührteig|Rührteig: Butter, Zucker, Eier, Mehl und Backpulver verrühren.|
+Biskuit|Für Biskuit Eier lange mit Zucker aufschlagen, das Mehl vorsichtig unterheben.|
+Brandteig|Brandteig für Windbeutel wird im Topf abgebrannt.|windbeutel
+Plätzchen backen|Plätzchen backen meist bei 180 Grad Ober- und Unterhitze etwa 8 bis 12 Minuten.|kekse backen
+Marmorkuchen|Marmorkuchen ist ein Rührkuchen mit hellem und dunklem Teig.|
+Käsekuchen|Käsekuchen wird mit Quark gebacken und sollte langsam im Ofen abkühlen, damit er nicht reißt.|kaesekuchen
+Apfelkuchen|Für einen einfachen Apfelkuchen Rührteig mit Apfelspalten belegen und bei 180 Grad etwa 45 Minuten backen.|
+Muffins|Muffins backen bei etwa 180 Grad 20 bis 25 Minuten.|
+Brownies|Brownies sind innen saftig, wenn man sie nicht zu lange backt, etwa 20 bis 25 Minuten bei 180 Grad.|
+Waffeln|Waffelteig aus Butter, Zucker, Eiern, Mehl und Milch im Waffeleisen backen.|
+Crêpes|Crêpes sind dünne Pfannkuchen aus Mehl, Eiern, Milch und etwas Butter.|crepes
+Grießbrei|Grießbrei: Milch mit Zucker aufkochen, Grieß einrühren und quellen lassen.|griessbrei
+Milchreis|Milchreis braucht etwa 30 bis 40 Minuten bei kleiner Hitze unter Rühren.|
+Sahne schlagen|Sahne wird gut steif, wenn sie und die Schüssel sehr kalt sind.|schlagsahne
+Eischnee|Für Eischnee Eiweiß ohne Eigelbreste mit einer Prise Salz steif schlagen.|eiweiss steif schlagen
+Karamell|Für Karamell Zucker in der Pfanne schmelzen, bis er goldbraun ist, nicht rühren.|
+Schokolade schmelzen|Schokolade schmilzt man am besten im Wasserbad.|wasserbad
+Butter ersetzen|Butter lässt sich beim Backen oft durch Margarine oder Öl ersetzen, etwa 80 Gramm Öl für 100 Gramm Butter.|
+Ei ersetzen|Ein Ei ersetzt man beim Backen etwa durch eine halbe zerdrückte Banane oder einen Esslöffel Leinsamen mit Wasser.|vegan backen
+Backpulver und Natron|Backpulver enthält Natron und eine Säure, Natron allein braucht Säure im Teig.|natron
+Mehl Type 405|Type 405 ist feines Weizenmehl für Kuchen, Type 550 für Brot und Brötchen.|mehltype
+Sauerteig|Sauerteig ist ein Triebmittel aus Mehl, Wasser und wilden Hefen und Milchsäurebakterien.|
+Brötchen aufbacken|Altbackene Brötchen kurz anfeuchten und 5 Minuten bei 200 Grad aufbacken.|
+Gewürze Grundausstattung|Eine gute Grundausstattung sind Salz, Pfeffer, Paprika, Curry, Oregano, Zimt, Muskat und Chili.|
+Kräuter frisch oder getrocknet|Getrocknete Kräuter sind stärker, man nimmt etwa ein Drittel der frischen Menge.|
+Zu salzig|Ist ein Eintopf zu salzig, hilft mehr Flüssigkeit oder ungesalzene Zutaten wie Kartoffeln.|versalzen
+Zu scharf|Gegen zu viel Schärfe helfen Sahne, Joghurt, Kokosmilch oder etwas Zucker.|
+Angebrannt|Angebranntes nicht umrühren, sondern den guten Teil in einen neuen Topf füllen.|
+Messer schärfen|Messer schärft man am besten auf einem Schleifstein im Winkel von etwa 15 bis 20 Grad.|
+Gusseisenpfanne|Eine Gusseisenpfanne nicht mit Spülmittel schrubben, sondern mit heißem Wasser reinigen und einölen.|
+Beschichtete Pfanne|Beschichtete Pfannen nicht überhitzen und keine Metallwender benutzen.|teflon pfanne
+Induktion|Induktion erhitzt den Topfboden direkt per Magnetfeld, man braucht magnetische Töpfe.|induktionsherd
+Schnellkochtopf|Im Schnellkochtopf garen Speisen unter Druck bis zu dreimal schneller.|
+Sous-vide|Beim Sous-vide gart man vakuumiertes Essen im Wasserbad bei genauer Temperatur.|sous vide
+Meal Prep|Beim Meal Prep kocht man vor und portioniert Essen für mehrere Tage.|vorkochen
+Reste verwerten|Aus Resten werden Bratreis, Aufläufe, Suppen oder Frittata.|resteverwertung
+Brot einfrieren|Brot in Scheiben einfrieren, dann kann man es einzeln toasten.|
+Bananen einfrieren|Überreife Bananen einfrieren, sie eignen sich für Smoothies und Bananenbrot.|bananenbrot
+Kräuter einfrieren|Kräuter mit etwas Öl im Eiswürfelbehälter einfrieren.|
+Grillen Temperatur|Direkte Hitze für Steaks und Würstchen, indirekte für große Stücke.|
+Marinade|Eine Marinade aus Öl, Säure und Gewürzen macht Fleisch würziger, Salz erst kurz vor dem Grillen.|marinieren
+Raclette|Beim Raclette schmilzt Käse in Pfännchen, dazu Kartoffeln und Gemüse.|
+Fondue|Beim Fondue tunkt man Brot in geschmolzenen Käse oder gart Fleisch in Brühe oder Öl.|
+Glühwein|Glühwein aus Rotwein mit Zimt, Nelken, Orange und Zucker erhitzen, aber nicht kochen.|
+Punsch|Kinderpunsch aus Früchtetee und Saft mit Gewürzen.|kinderpunsch
+Cocktail Mojito|Ein Mojito besteht aus weißem Rum, Limette, Minze, Zucker und Soda.|mojito
+Kaffee Brühtemperatur|Kaffee brüht man am besten mit Wasser von etwa 92 bis 96 Grad.|
+Grüner Tee Temperatur|Grünen Tee mit etwa 70 bis 80 Grad heißem Wasser 2 Minuten ziehen lassen, sonst wird er bitter.|
+Wasser sparen beim Kochen|Mit Deckel kochen spart bis zu zwei Drittel Energie.|
+Portionsgrößen|Pro Person rechnet man etwa 125 Gramm Fleisch, 200 Gramm Gemüse und 80 Gramm Nudeln als Beilage.|wie viel pro person
+Ofen vorheizen|Viele Gerichte gelingen auch ohne Vorheizen, Kuchen und Brot brauchen aber die richtige Starthitze.|vorheizen
+Umrechnung Ober- und Unterhitze|Umluft ist etwa 20 Grad niedriger als Ober- und Unterhitze, 180 Grad Ober-Unterhitze entsprechen 160 Grad Umluft.|umluft umrechnen
+Cup in Gramm|Ein amerikanischer Cup sind etwa 240 Milliliter, das sind etwa 125 Gramm Mehl oder 200 Gramm Zucker.|cup umrechnen
+Teelöffel und Esslöffel|Ein Teelöffel sind etwa 5 Milliliter, ein Esslöffel etwa 15 Milliliter.|teeloeffel
