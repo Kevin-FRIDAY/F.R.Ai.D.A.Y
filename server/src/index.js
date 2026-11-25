@@ -101,6 +101,7 @@ import { entwicklungRouten, entwicklungStart } from "./entwicklung.js";
 import { forschungRouten, forschungStart } from "./forschung.js";
 import { zwillingRouten, zwillingStart } from "./zwilling.js";
 import { zuhauseRouten, zuhauseStart } from "./zuhause.js";
+import { tagesplanRouten, tagesplanStart } from "./tagesplan.js";
 import { funktionstestStart } from "./funktionstest.js";
 
 const missing = checkConfig();
@@ -842,6 +843,7 @@ entwicklungRouten(app, asyncRoute);
 forschungRouten(app, asyncRoute);
 zwillingRouten(app, asyncRoute);
 zuhauseRouten(app, asyncRoute);
+tagesplanRouten(app, asyncRoute);
 
 // --- Dashboard ---
 app.use(express.static(DASHBOARD_DIR, { index: "index.html" }));
@@ -875,6 +877,7 @@ entwicklungStart().catch(() => {});
 forschungStart().catch(() => {});
 zwillingStart().catch(() => {});
 zuhauseStart().catch(() => {});
+tagesplanStart().catch(() => {});
 grossauftragStart();
 if (!IST_EVE) kontenStart(); // Meine Konten: alle 6 Std. frische Kontostände (nur lesen)
 zentraleStart(ask);
