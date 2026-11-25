@@ -44,12 +44,14 @@ import { toolDefinition as datenTool, runClaudeTool as runDaten } from "./oeffen
 // Osiris Live-Lagekarte: lokal auf dem Mac (Port 3100), sonst automatisch osirisai.live.
 import { osirisUrl } from "./osiris.js";
 import { EINSATZ_IDS } from "./agenten-einsatz.js";
+import * as dateisuche from "./dateisuche.js";
+import { aktiv as gaesteAktiv } from "./gaeste.js";
 const OSIRIS_URL = "osiris:"; // Platzhalter, wird beim Öffnen durch die passende Adresse ersetzt
 
 const MAC_ACTIONS = [
   "open_app", "quit_app", "open_url", "volume_set", "volume_up", "volume_down", "mute",
   "music_play_pause", "music_next", "music_previous", "say", "notify", "lock_screen",
-  "sleep_display", "battery", "screenshot_look", "find_file", "dark_mode_toggle",
+  "sleep_display", "battery", "screenshot_look", "find_file", "open_found_file", "dark_mode_toggle",
 ];
 
 export const toolDefinitions = [
@@ -219,7 +221,8 @@ export const toolDefinitions = [
       "Steuert den Mac des Nutzers. Aktionen: open_app/quit_app (value=App-Name), open_url (value=URL), " +
       "volume_set (value=0-100), volume_up, volume_down, mute, music_play_pause, music_next, music_previous, " +
       "say (value=Text laut sagen), notify (value=Text als Mitteilung), lock_screen, sleep_display, battery, " +
-      "screenshot_look (Friday sieht den Bildschirm), find_file (value=Dateiname), dark_mode_toggle.",
+      "screenshot_look (Friday sieht den Bildschirm), find_file (value=Dateiname oder Wörter daraus; die Treffer erscheinen antippbar im Dashboard), " +
+      "open_found_file (value=Nummer des Treffers aus der letzten Suche, öffnet die Datei am Mac in der passenden App zum Ansehen und Bearbeiten), dark_mode_toggle.",
     input_schema: {
       type: "object",
       properties: {
@@ -717,7 +720,17 @@ async function runToolIntern(name, input = {}, wer = {}) {
     case "mac": {
       if (!MAC_ACTIONS.includes(input.action)) return { error: "Unbekannte Mac-Aktion" };
       if (!isAgentOnline()) return { error: "Der Mac ist gerade nicht verbunden." };
-      const result = await sendToAgent(input.action, { value: input.value ?? "" }, input.action === "find_file" ? 30000 : 20000);
+      // v1.176.0: Dateisuche läuft über dateisuche.js, damit die Treffer im Dashboard antippbar sind.
+      if ((input.action === "find_file" || input.action === "open_found_file") && gaesteAktiv()) return { error: "Im Gäste-Modus durchsuche ich keine privaten Dateien." };
+      if (input.action === "find_file") {
+        const r = await dateisuche.suche(input.value);
+        return r.error ? { error: r.error } : dateisuche.fuerClaude(r.treffer);
+      }
+      if (input.action === "open_found_file") {
+        const r = await dateisuche.oeffneNr(input.value);
+        return r.ok ? { geoeffnet: r.name, hinweis: "Die Datei ist am Mac in der passenden App offen und kann dort bearbeitet werden." } : { error: r.error };
+      }
+      const result = await sendToAgent(input.action, { value: input.value ?? "" }, 20000);
       if (input.action === "screenshot_look" && result.ok && result.image) {
         return {
           content: [
