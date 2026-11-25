@@ -99,3 +99,152 @@ Finder|Der Finder ist der Dateimanager auf dem Mac, das Programm mit dem lachend
 Screenshot|Ein Screenshot ist ein Bildschirmfoto. Am Mac drückst du Befehl, Umschalt und 3 für den ganzen Bildschirm oder 4 für einen Ausschnitt. Am iPhone Seitentaste und Lauter gleichzeitig.|bildschirmfoto
 AirDrop|AirDrop schickt Dateien drahtlos zwischen Apple-Geräten in der Nähe.|airdrop senden
 iCloud|iCloud ist der Cloud-Dienst von Apple für Fotos, Dateien, Backups und Passwörter.|icloud drive
+Transformer|Der Transformer ist die Bauart moderner Sprachmodelle, 2017 von Google-Forschern vorgestellt. Kern ist die Aufmerksamkeit, mit der das Modell Wörter im Zusammenhang gewichtet.|transformer modell,attention
+Kontextfenster|Das Kontextfenster ist die Textmenge, die ein Sprachmodell auf einmal betrachten kann, gemessen in Token.|context window
+Parameter KI|Parameter sind die gelernten Zahlen in einem neuronalen Netz, große Sprachmodelle haben Milliarden davon.|
+Training KI|Beim Training lernt ein Modell aus riesigen Datenmengen, indem es Fehler schrittweise verkleinert.|ki training
+Feinabstimmung|Beim Fine-Tuning wird ein fertiges Modell mit speziellen Daten nachtrainiert.|fine tuning,finetuning
+RAG|Retrieval-Augmented Generation heißt, dass eine KI vor der Antwort passende Dokumente heraussucht und damit antwortet.|retrieval augmented generation
+Embedding|Ein Embedding verwandelt Text in eine Zahlenreihe, ähnliche Bedeutungen liegen nah beieinander.|embeddings,vektor
+Vektordatenbank|Eine Vektordatenbank speichert Embeddings und findet ähnliche Inhalte schnell.|
+Bildgenerator|KI-Bildgeneratoren wie Midjourney oder Stable Diffusion erzeugen Bilder aus Textbeschreibungen.|midjourney,stable diffusion,dall e
+Diffusionsmodell|Ein Diffusionsmodell erzeugt Bilder, indem es aus Rauschen Schritt für Schritt ein Bild formt.|
+Computer Vision|Computer Vision bringt Computern das Sehen bei, etwa Gesichter oder Gegenstände erkennen.|bilderkennung
+Turing-Test|Beim Turing-Test soll ein Mensch im Gespräch nicht unterscheiden können, ob er mit einer Maschine spricht.|turing test
+Deep Blue|1997 besiegte IBMs Schachcomputer Deep Blue Weltmeister Garri Kasparow.|
+AlphaGo|2016 besiegte DeepMinds AlphaGo den Go-Meister Lee Sedol.|alpha go
+AlphaFold|AlphaFold sagt die 3D-Form von Eiweißen voraus, dafür gab es 2024 den Chemie-Nobelpreis.|
+Gemini|Gemini ist das KI-Modell von Google.|google gemini
+Copilot|Copilot ist der KI-Assistent von Microsoft und GitHub.|github copilot
+Llama|Llama ist eine Reihe offener Sprachmodelle von Meta.|
+Mistral|Mistral AI ist ein französisches KI-Unternehmen.|
+KI-Verordnung|Der AI Act der EU regelt KI nach Risiko, besonders riskante Anwendungen sind verboten oder streng geregelt.|ai act
+Chip|Ein Chip ist ein kleines Plättchen aus Silizium mit Milliarden winziger Transistoren.|computerchip
+Moore'sches Gesetz|Das Mooresche Gesetz besagt, dass sich die Zahl der Transistoren auf einem Chip etwa alle zwei Jahre verdoppelt.|moores law
+Nanometer Chip|Moderne Chips werden in Verfahren mit wenigen Nanometern Strukturgröße gebaut, etwa 3 Nanometer.|
+TSMC|TSMC aus Taiwan ist der größte Auftragsfertiger für Computerchips, auch für Apple und Nvidia.|
+Nvidia|Nvidia baut Grafikkarten und die meisten Chips für KI-Rechenzentren.|
+Apple Silicon|Seit 2020 nutzt Apple eigene Chips wie M1, M2, M3 und M4 im Mac, sehr schnell und stromsparend.|m1,m2,m3,m4 chip
+ARM|ARM ist eine Prozessor-Architektur, die in fast allen Handys und den neuen Macs steckt.|
+x86|x86 ist die Prozessor-Architektur von Intel und AMD in den meisten Windows-PCs.|
+Kern Prozessor|Ein Prozessorkern ist eine Recheneinheit, moderne Chips haben viele Kerne für parallele Aufgaben.|cpu kerne
+Taktfrequenz|Die Taktfrequenz in Gigahertz gibt an, wie viele Rechenschritte ein Prozessor pro Sekunde macht.|gigahertz
+Mainboard|Das Mainboard verbindet alle Teile eines Computers.|motherboard
+Netzteil|Das Netzteil wandelt die Steckdosen-Spannung für den Computer um.|
+Lüfter|Lüfter kühlen Prozessor und Grafikkarte.|
+Monitor|Ein Monitor zeigt das Bild, wichtig sind Auflösung, Bildwiederholrate in Hertz und Panel.|bildschirm
+Bildwiederholrate|Die Bildwiederholrate in Hertz gibt an, wie oft der Bildschirm pro Sekunde neu zeichnet, 120 Hertz wirken flüssiger als 60.|hertz bildschirm
+Retina|Retina nennt Apple Displays, bei denen man aus normalem Abstand keine einzelnen Pixel mehr sieht.|retina display
+Tastatur QWERTZ|Deutsche Tastaturen haben die QWERTZ-Belegung, englische QWERTY.|qwertz
+Maus und Trackpad|Am Mac kann man mit dem Trackpad wischen, zoomen und mit drei Fingern Fenster verschieben.|trackpad
+Drucker|Tintenstrahldrucker sind günstig in der Anschaffung, Laserdrucker im Verbrauch.|laserdrucker
+Scanner|Mit der Notizen-App am iPhone kann man Dokumente scannen.|dokument scannen
+Webcam|Eine Webcam ist eine Kamera für Videoanrufe.|
+Mikrofon|Ein gutes Mikrofon verbessert Videoanrufe und Spracherkennung deutlich.|
+Kopfhörer Noise Cancelling|Aktive Geräuschunterdrückung erzeugt Gegenschall, der Umgebungslärm auslöscht.|noise cancelling,anc
+AirPods|AirPods sind kabellose Kopfhörer von Apple.|
+Apple Watch|Die Apple Watch misst Puls, Schritte und kann EKGs aufzeichnen.|
+iPad|Das iPad ist Apples Tablet, seit 2010 auf dem Markt.|
+Vision Pro|Die Apple Vision Pro ist eine Mixed-Reality-Brille, 2024 erschienen.|apple vision pro
+HomePod|Der HomePod ist Apples smarter Lautsprecher mit Siri.|
+Apple TV|Apple TV ist eine Box und ein Streamingdienst von Apple.|
+Android|Android ist das Handy-Betriebssystem von Google, weltweit das verbreitetste.|
+Windows|Windows ist das Betriebssystem von Microsoft auf den meisten PCs.|
+Linux|Linux ist ein freies Betriebssystem, es läuft auf den meisten Servern und in Android.|
+Unix|Unix ist ein Betriebssystem aus den 1970ern, macOS basiert darauf.|
+Treiber|Ein Treiber ist Software, die einem Betriebssystem sagt, wie es ein Gerät ansteuert.|
+Firmware|Firmware ist fest eingebaute Software in Geräten wie Routern oder Fernsehern.|
+Programmiersprachen|Bekannte Programmiersprachen sind Python, JavaScript, Java, C, C++, C#, Swift, Go und Rust.|programmiersprache
+Swift|Swift ist Apples Programmiersprache für iPhone- und Mac-Apps.|
+Java|Java ist eine weit verbreitete Programmiersprache, nicht zu verwechseln mit JavaScript.|
+C++|C++ ist eine schnelle Programmiersprache für Spiele und Systeme.|c plus plus
+Rust|Rust ist eine moderne, sichere Programmiersprache.|
+TypeScript|TypeScript ist JavaScript mit Typen, von Microsoft.|
+React|React ist eine JavaScript-Bibliothek von Meta für Benutzeroberflächen.|
+Three.js|Three.js ist eine JavaScript-Bibliothek für 3D-Grafik im Browser, Friday nutzt sie für Hologramme.|threejs
+WebGL|WebGL bringt schnelle 3D-Grafik in den Browser.|
+Frontend Backend|Frontend ist der Teil, den man sieht, Backend der Teil auf dem Server.|frontend,backend
+Variable Programmieren|In der Programmierung ist eine Variable ein benannter Speicherplatz für einen Wert.|
+Schleife|Eine Schleife wiederholt Code, solange eine Bedingung erfüllt ist.|loop
+Funktion Programmieren|Eine Funktion ist ein wiederverwendbarer Code-Baustein.|
+Compiler|Ein Compiler übersetzt Programmcode in Maschinensprache.|
+Debugging|Debugging ist die Fehlersuche im Code.|debuggen
+Versionsverwaltung|Mit Versionsverwaltung wie Git kann man jede Änderung am Code nachvollziehen und zurückholen.|
+Pull Request|Ein Pull Request ist ein Änderungsvorschlag in Git, den andere prüfen, bevor er übernommen wird.|
+Entwicklerumgebung|Eine IDE wie Visual Studio Code ist ein Programm zum Schreiben von Code.|vs code,ide
+Docker|Docker packt Programme mit allem, was sie brauchen, in Container.|container
+Kubernetes|Kubernetes verwaltet viele Container automatisch.|
+Localhost|Localhost oder 127.0.0.1 ist die Adresse des eigenen Computers, Friday läuft dort.|127 0 0 1
+Port|Ein Port ist eine Nummer, unter der ein Programm erreichbar ist, Friday nutzt etwa 3000 oder 3001.|
+Domain|Eine Domain ist der Name einer Webseite, etwa beispiel.de.|
+Hosting|Hosting heißt, eine Webseite auf einem Server bereitzustellen.|
+SSL-Zertifikat|Ein Zertifikat beweist, dass eine Webseite echt ist, und ermöglicht HTTPS.|zertifikat
+Firewall|Eine Firewall kontrolliert, welche Verbindungen in ein Netzwerk hinein und hinaus dürfen.|
+Passwort-Manager|Ein Passwort-Manager speichert sichere Passwörter, am Mac und iPhone etwa die App Passwörter.|passwoerter app
+Passkey|Ein Passkey ersetzt das Passwort durch Gesicht oder Fingerabdruck und ist sicherer.|passkeys
+Face ID|Face ID entsperrt das iPhone per 3D-Gesichtsscan.|
+Touch ID|Touch ID entsperrt per Fingerabdruck.|
+Biometrie|Biometrie nutzt Körpermerkmale wie Fingerabdruck oder Gesicht zur Anmeldung.|
+Sicheres Passwort|Ein sicheres Passwort ist lang, mindestens 12 Zeichen, und wird nirgends sonst benutzt.|passwort sicher
+Datenleck|Ob die eigene Mail in einem Datenleck vorkommt, kann man beim HPI Identity Leak Checker oder Have I Been Pwned prüfen.|have i been pwned
+Spam|Spam sind unerwünschte Massen-Mails.|
+Trojaner Software|Ein Trojaner ist ein getarntes Schadprogramm.|
+Virenscanner|Ein Virenscanner sucht nach Schadsoftware, der Mac hat einen eingebauten Schutz namens XProtect.|antivirus
+Social Engineering|Social Engineering ist Betrug durch Täuschung von Menschen, etwa falsche Anrufe vom Support.|
+Enkeltrick|Beim Enkeltrick geben sich Betrüger am Telefon als Verwandte in Not aus. Immer zurückrufen unter der bekannten Nummer.|schockanruf
+Fake-Shop|Fake-Shops locken mit sehr günstigen Preisen und nur Vorkasse. Impressum und Bewertungen prüfen.|fakeshop
+Darknet|Das Darknet ist ein verborgener Teil des Internets, nur mit Spezialsoftware wie Tor erreichbar.|tor
+Cloud-Speicher|Cloud-Speicher wie iCloud, Google Drive oder Dropbox speichern Dateien im Internet.|
+Synchronisation|Synchronisation hält Daten auf mehreren Geräten gleich.|sync
+Mesh-WLAN|Ein Mesh-WLAN verteilt das Netz mit mehreren Geräten gleichmäßig in der Wohnung.|mesh
+WLAN-Frequenzen|WLAN funkt auf 2,4 Gigahertz mit großer Reichweite und auf 5 oder 6 Gigahertz schneller.|
+Mbit|Internetgeschwindigkeit wird in Megabit pro Sekunde gemessen, 8 Megabit sind 1 Megabyte.|mbit s,internet geschwindigkeit
+Ping|Der Ping misst in Millisekunden, wie schnell eine Antwort aus dem Internet kommt, wichtig fürs Gaming.|latenz
+Satelliteninternet|Satelliteninternet wie Starlink funktioniert auch in abgelegenen Gegenden.|
+eSIM|Eine eSIM ist eine fest eingebaute digitale SIM-Karte.|esim
+Dual-SIM|Mit Dual-SIM kann ein Handy zwei Nummern gleichzeitig nutzen.|
+Roaming|In der EU telefoniert und surft man seit 2017 ohne Roaming-Aufpreis.|
+Akkulaufzeit|Lithium-Ionen-Akkus halten am längsten, wenn man sie zwischen 20 und 80 Prozent lädt.|akku laden tipp
+Schnellladen|Schnellladen lädt Handys oder E-Autos mit hoher Leistung in kurzer Zeit.|
+MagSafe|MagSafe ist Apples magnetisches Ladesystem.|
+USB-C|USB-C ist der einheitliche Stecker für Laden und Daten, in der EU seit 2024 Pflicht für viele Geräte.|usb c
+Thunderbolt|Thunderbolt ist eine sehr schnelle Schnittstelle im USB-C-Stecker.|
+Lightning|Lightning war der Ladestecker älterer iPhones, ab dem iPhone 15 kam USB-C.|
+Smart TV|Ein Smart TV hat Apps wie Netflix eingebaut.|
+Streamingdienste|Bekannte Streamingdienste sind Netflix, Disney+, Amazon Prime Video, Apple TV+, Spotify und YouTube.|netflix,disney plus
+Spielkonsole|Bekannte Konsolen sind PlayStation, Xbox und Nintendo Switch.|playstation,xbox,nintendo switch
+Minecraft|Minecraft ist das meistverkaufte Videospiel aller Zeiten, man baut Welten aus Blöcken.|
+Tetris|Tetris wurde 1984 vom Russen Alexei Paschitnow erfunden.|
+Super Mario|Super Mario ist Nintendos berühmte Spielfigur seit 1985.|mario
+Pac-Man|Pac-Man ist ein Arcade-Klassiker von 1980.|pacman
+Fortnite|Fortnite ist ein beliebtes Battle-Royale-Spiel.|
+GTA|Grand Theft Auto ist eine der erfolgreichsten Spielreihen, GTA V brach Verkaufsrekorde.|grand theft auto
+E-Sport|E-Sport ist professionelles Videospielen mit Turnieren und Preisgeldern.|esport
+Robotik|Robotik baut Maschinen, die selbstständig Aufgaben erledigen.|
+Humanoider Roboter|Humanoide Roboter haben menschliche Gestalt, etwa Atlas von Boston Dynamics oder Optimus von Tesla.|optimus,atlas roboter
+Saugroboter|Saugroboter fahren selbstständig durch die Wohnung und saugen.|staubsaugerroboter
+Autonomes Fahren|Autonomes Fahren hat Stufen von 0 bis 5, Stufe 5 fährt komplett ohne Mensch.|selbstfahrendes auto
+Lidar|Lidar misst Abstände mit Laserlicht, etwa für selbstfahrende Autos.|
+Radar|Radar misst Abstände und Geschwindigkeit mit Funkwellen.|
+Sonar|Sonar nutzt Schall unter Wasser, Fledermäuse und Delfine machen es ähnlich.|echolot
+Wärmebildkamera|Eine Wärmebildkamera zeigt Temperaturen als Farben.|
+Lautsprecher Bluetooth|Bluetooth-Lautsprecher verbinden sich kabellos mit dem Handy.|
+Smart Plug|Eine smarte Steckdose kann Geräte per App oder Sprache schalten.|smarte steckdose
+Matter|Matter ist ein gemeinsamer Standard für Smart-Home-Geräte von Apple, Google und Amazon.|
+Zigbee|Zigbee ist ein Funkstandard für Smart-Home-Geräte wie Hue-Lampen.|
+Philips Hue|Philips Hue sind smarte Lampen, die man per App und Sprache steuert.|hue
+Home Assistant|Home Assistant ist eine freie Smart-Home-Zentrale, die viele Marken verbindet.|
+Bitrate|Die Bitrate gibt an, wie viele Daten pro Sekunde für Ton oder Video genutzt werden.|
+Codec|Ein Codec komprimiert Ton oder Video, etwa H.264 oder HEVC.|
+Megapixel|Megapixel geben die Auflösung einer Kamera an, mehr Megapixel bedeuten nicht automatisch bessere Bilder.|
+HDR|HDR zeigt einen größeren Helligkeitsumfang mit hellen Lichtern und dunklen Schatten.|
+Bildstabilisator|Ein Bildstabilisator gleicht Wackeln beim Filmen aus.|
+Spiegelreflexkamera|Spiegelreflexkameras werden zunehmend von spiegellosen Systemkameras abgelöst.|dslr
+Drohne Regeln|Drohnen über 250 Gramm brauchen in der EU eine Registrierung und meist einen Führerschein.|drohnenfuehrerschein
+3D-Scanner|Ein 3D-Scanner erfasst Gegenstände als 3D-Modell, manche iPhones können das mit Lidar.|
+Blender|Blender ist ein kostenloses Programm für 3D-Grafik und Animation.|
+CAD-Programm|Mit CAD-Programmen wie Fusion oder FreeCAD konstruiert man Bauteile am Computer.|
+Raspberry Pi|Der Raspberry Pi ist ein kleiner, günstiger Computer zum Basteln.|
+Arduino|Arduino ist eine Bastelplattform für Elektronik-Projekte.|
+Elektroschrott|Alte Elektrogeräte gehören nicht in den Hausmüll, sondern zum Wertstoffhof oder in den Handel.|alte handys entsorgen
+Recht auf Reparatur|Die EU stärkt das Recht auf Reparatur, Hersteller müssen Ersatzteile länger anbieten.|
