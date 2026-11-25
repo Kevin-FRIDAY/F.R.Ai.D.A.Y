@@ -54,6 +54,8 @@ import { sperre as deckelSperre } from "./kostendeckel.js";
 import { neuerWaechter as schleifenWaechter } from "./schleifen.js";
 import { quickCommand as jarvisQuick } from "./jarvis-paket.js";
 import { quickCommand as werkzeugQuick } from "./werkzeugkasten.js";
+import { quickCommand as agentEinsatzQuick } from "./agenten-einsatz.js";
+import { agentLosschicken } from "./agents.js";
 import { quickCommand as datenQuick } from "./oeffentlich.js";
 // Auftrags-Kern (v1.161.0): Aufträge wirklich ausführen und ehrlich melden, ob es geklappt hat.
 import { erkenne as auftragErkennen, neuesProtokoll, nachhakText, sollNachhaken, ehrlich, NUR_ANGEKUENDIGT } from "./auftragskern.js";
@@ -519,6 +521,21 @@ async function askIntern({ text, channel = "web", image, mode = "normal", target
       if (db) { actions.push(...db.actions); return finish(db.answer); }
     } catch (err) {
       console.error("Datenbank:", err.message);
+    }
+  }
+
+  // Agenten-Einsatz ("schick den Pollen-Agenten los", "Team-Lagebericht") – ohne Claude, mit echten Daten.
+  if (mode !== "translate" && !image && text) {
+    try {
+      const ae = agentEinsatzQuick(text);
+      if (ae) {
+        const id = ae.team ? "team" : ae.id;
+        const b = await agentLosschicken(id, ae.eingabe || "", channel);
+        actions.push(`buero:${id === "team" ? "friday" : id}`);
+        return finish(b.text);
+      }
+    } catch (err) {
+      console.error("Agenten-Einsatz:", err.message);
     }
   }
 
