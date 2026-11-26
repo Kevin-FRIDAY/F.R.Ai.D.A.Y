@@ -516,6 +516,7 @@
   async function say(text, { hinweis = true } = {}) {
     if (!$("voice-toggle").checked || !text) return;
     const nr = ++sprechNr;
+    const warSchonAmSprechen = speaking;
     speaking = true;
     hueSprechen(true);
     gesagtText = String(text);
@@ -527,13 +528,24 @@
       if (mikroWarAn) await new Promise((r) => setTimeout(r, 600));
       if (nr !== sprechNr) return;
       if ("speechSynthesis" in window) {
+        // v1.191.1: Das iPhone lässt die Stimme nach Hintergrund/Auto-Update manchmal "hängen":
+        // Safari meint, es spreche noch (oder ist pausiert), und stellt jeden neuen Satz stumm hinten an.
+        // Darum vor dem Sprechen aufräumen, wenn gerade keine eigene Ansage läuft.
+        try {
+          if (speechSynthesis.paused) speechSynthesis.resume();
+          if (!warSchonAmSprechen && (speechSynthesis.speaking || speechSynthesis.pending)) {
+            speechSynthesis.cancel();
+            await new Promise((r) => setTimeout(r, 120));
+          }
+        } catch { /* egal */ }
+        let irgendwasGehoert = false, stummVersuche = 0;
         // v1.121.3: Auf dem iPhone bricht iOS die Stimme ab, wenn ein Geräusch (S-Bahn) das Mikrofon
         // anspringen lässt. Hört Friday auf, ohne dass jemand "Friday"/Stopp gesagt hat, spricht sie
         // ab der Stelle weiter, an der sie unterbrochen wurde (höchstens 4-mal).
         let rest = text, neuStarts = 0;
         while (rest && nr === sprechNr) {
           const teil = rest;
-          let bisZeichen = 0, fehler = "", zeitUm = false;
+          let bisZeichen = 0, fehler = "", zeitUm = false, gestartet = false;
           const t0 = Date.now();
           await new Promise((resolve) => {
             const u = new SpeechSynthesisUtterance(teil);
@@ -542,9 +554,10 @@
             u.rate = Number(storage.get("friday_rate")) || 1.05;
             u.pitch = Number(storage.get("friday_pitch")) || 1;
             u.volume = Math.min(1, Math.max(0.05, Number(storage.get("friday_lautstaerke")) || 1));
-            u.onstart = () => window.FridayFace?.talk(true);
+            u.onstart = () => { gestartet = true; irgendwasGehoert = true; window.FridayFace?.talk(true); };
             // Mund im Takt der gesprochenen Wörter bewegen
             u.onboundary = (e) => {
+              gestartet = true; irgendwasGehoert = true;
               if (e.charIndex > bisZeichen) bisZeichen = e.charIndex;
               if (!e.name || e.name === "word") window.FridayFace?.boundary?.(e.charIndex, teil);
             };
@@ -553,16 +566,32 @@
             let fertig = false;
             const ende = () => { if (fertig) return; fertig = true; clearTimeout(waechter); clearInterval(pruef); resolve(); };
             const waechter = setTimeout(() => { zeitUm = true; diag.schritt("Stimme hing, übersprungen", "warn"); ende(); }, Math.min(90000, 4000 + teil.split(/\s+/).length * 550));
-            let still = 0;
+            let still = 0, sek = 0;
             const pruef = setInterval(() => {
+              sek++;
               try { still = (speechSynthesis.speaking || speechSynthesis.pending) ? 0 : still + 1; } catch { still++; }
               if (still >= 3) ende();
+              // v1.191.1: Nach 4 s noch kein einziger Laut → hängt (Safari meldet sonst erst viel später).
+              else if (!gestartet && sek >= 4) ende();
             }, 1000);
             u.onend = ende;
             u.onerror = (e) => { fehler = e?.error || "fehler"; if (fehler !== "interrupted" && fehler !== "canceled") diag.schritt(`Stimme: Fehler „${fehler}“${fehler === "not-allowed" ? " – einmal tippen" : ""}`, "bad"); ende(); };
             speechSynthesis.speak(u);
           });
           if (nr !== sprechNr) break; // absichtlich gestoppt ("Friday", Stopp, Tippen)
+          // v1.191.1: Stimme ist gar nicht erst angegangen (iPhone: Ton gesperrt oder Stimme hängt).
+          // Einmal mit frischer Stimme neu versuchen, sonst ehrlich melden und beim nächsten Tippen nachholen.
+          if (!gestartet && fehler !== "interrupted" && fehler !== "canceled") {
+            if (stummVersuche < 1) {
+              stummVersuche++;
+              diag.schritt("Stimme blieb stumm, neuer Versuch", "warn");
+              try { speechSynthesis.cancel(); if (speechSynthesis.paused) speechSynthesis.resume(); } catch { /* egal */ }
+              await new Promise((r) => setTimeout(r, 300));
+              continue;
+            }
+            if (!irgendwasGehoert) stimmeGesperrt(text);
+            break;
+          }
           if (zeitUm) { try { speechSynthesis.cancel(); } catch { /* egal */ } break; } // hing: nicht noch mal von vorn
           const erwartetMs = (teil.length / 14) * 1000 / (Number(storage.get("friday_rate")) || 1.05);
           const zuFrueh = fehler === "interrupted" || fehler === "canceled"
@@ -2208,9 +2237,24 @@
   // stumm. Beim ersten Tipp (egal wo) spielen wir einmal "Stille" ab, danach darf sie jederzeit reden.
   const STILLE = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
   let tonFrei = false;
+  let verpasst = ""; // v1.191.1: Antwort, die stumm blieb – wird beim nächsten Tippen nachgeholt
+  function stimmeGesperrt(text) {
+    verpasst = String(text || "");
+    tonFrei = false; // nächstes Tippen schaltet den Ton neu frei
+    diag.schritt("Ton gesperrt – einmal auf den Bildschirm tippen", "bad");
+    try { window.FridayRing?.melde?.("stimme", "warn", "🔇 Ton gesperrt – einmal auf den Bildschirm tippen, dann spricht Friday", 5 * 60000, () => tonFreischalten()); } catch { /* egal */ }
+  }
   function tonFreischalten() {
     if (tonFrei || speaking) return;
     tonFrei = true;
+    if (verpasst) {
+      const nochmal = verpasst; verpasst = "";
+      try { window.FridayRing?.melde?.("stimme", null); } catch { /* egal */ }
+      try { speechSynthesis.cancel(); if (speechSynthesis.paused) speechSynthesis.resume(); } catch { /* egal */ }
+      // Direkt in der Tipp-Geste sprechen: so gibt iOS den Ton sicher frei.
+      say(nochmal);
+      return;
+    }
     // v1.122.7: Auf dem iPhone darf dabei das Mikrofon nicht laufen, sonst bekommt Safari es danach
     // nicht mehr ("audio-capture", Friday hört nichts). Also: Mikro kurz aus, Stille abspielen,
     // Audio wieder freigeben, Mikro neu starten.
@@ -2240,7 +2284,11 @@
   }
   // App im Hintergrund: Mikrofon aus. Wieder vorne: neu starten.
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") { ohr.brauchtTipp = false; ohrSpaeter(400); }
+    if (document.visibilityState === "visible") {
+      ohr.brauchtTipp = false; ohrSpaeter(400);
+      // v1.191.1: iPhone – nach dem Hintergrund hängt die Stimme oft. Aufräumen und beim nächsten Tippen neu freischalten.
+      if (IST_IOS && !speaking) { try { speechSynthesis.cancel(); if (speechSynthesis.paused) speechSynthesis.resume(); } catch { /* egal */ } tonFrei = false; }
+    }
     else { befehlEnde(); ohrStopp(); }
   });
   window.addEventListener("pageshow", () => ohrSpaeter(400));
