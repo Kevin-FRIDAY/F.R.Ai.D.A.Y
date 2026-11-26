@@ -56,6 +56,10 @@ const START = new RegExp("^(?:(?:zeig|zeige|sag|erzähl|erzaehl|erzähle|erzaehl
   + `|was ist ${ZEIT}${IN_WELT} ${ZEIT}(?:passiert|geschehen)`
   + ")(?: (?:gerade|heute|aktuell|so|jetzt|momentan))?(?: bitte)?$");
 const START2 = /^(?:(?:zeig|zeige|starte|mach|lies|lese)(?: mir| uns)?(?: mal)?(?: bitte)? )?(?:die |eine )?(?:welt ?tour|weltreise|welt ?runde|weltnachrichten|nachrichten (?:der|aller) weltmächte|nachrichten (?:aus|der|in) (?:aller |der )?welt|top ?nachrichten (?:der|aus der) welt|welt ?news)(?: vor| an| starten| bitte)?$/;
+// v1.191.2: Kevin sagt meist "Zeig mir das aktuelle Weltgeschehen" und erwartet die Welt-Runde (Länder anfliegen + vorlesen).
+// "aktuell/heute/neueste" + Weltgeschehen/Weltlage/Lage der Welt startet die Runde. "Zeig mir das Weltgeschehen" ohne Zusatz
+// bleibt das Gespräch "Welches Land?" (weltgespraech.js).
+const START3 = /^(?:(?:zeig|zeige|sag|erzähl|erzaehl|erzähle|erzaehle|gib|lies|lese|was ist|wie ist)(?: mir| uns)?(?: mal)?(?: bitte)? )?(?:das |die |den )?(?:(?:aktuelle|aktuellen|heutige|heutigen|neueste|neuesten|momentane|jetzige)s? (?:welt ?ge(?:sch|s)ehen|welt ?lage|lage (?:in |auf |der )(?:der )?welt|welt ?nachrichten|nachrichten (?:aus |der |in )(?:der )?welt)|welt ?lage|(?:welt ?ge(?:sch|s)ehen|weltlage) (?:von |für |fuer )?(?:heute|gerade|aktuell|jetzt|im moment))(?: vor| an| bitte)?$/;
 const WEITER = /^(?:weiter|nächstes?|naechstes?|nächstes land|naechstes land|das nächste|überspring(?:en)?|ueberspring(?:en)?|skip)(?: bitte| land)?$/;
 const ZURUECK = /^(?:zurück|zurueck|vorheriges?(?: land)?|nochmal|noch ?mal)(?: bitte)?$/;
 const STOPP = /^(?:stopp?|halt|genug|aufhören|aufhoeren|ende|beenden|abbrechen|schluss|danke|das reicht|das war's|das wars)(?: bitte| danke| friday| boss)*$/;
@@ -78,7 +82,7 @@ export function quickCommand(text, channel = "web") {
     if (ZURUECK.test(t)) return { answer: "", actions: ["welttour_zurueck"] };
     if (STOPP.test(t)) { aktiv.delete(channel); return { answer: "Alles klar, Boss. Die Welt-Runde ist beendet.", actions: ["welttour_stopp"] }; }
   } else if (bis) aktiv.delete(channel);
-  if (START.test(t) || START2.test(t)) {
+  if (START.test(t) || START2.test(t) || START3.test(t)) {
     aktiv.set(channel, Date.now() + AKTIV_MS);
     return { answer: "", actions: ["weltgeschehen", "welttour"] };
   }
